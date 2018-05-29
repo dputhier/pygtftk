@@ -1,0 +1,134 @@
+/*
+ * add_exon_number.c
+ *
+ *  Created on: Jul 31, 2017
+ *      Author: fafa
+ */
+
+#include "libgtftk.h"
+
+/*
+ * external functions declaration
+ */
+extern void add_attribute(GTF_ROW *row, char *key, char *value);
+extern INDEX_ID *index_gtf(GTF_DATA *gtf_data, char *key);
+extern GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data);
+extern void *rebookmem(void *ptr, int size, char *file, const char *func, int line);
+extern void freemem(void *ptr, char *file, const char *func, int line);
+extern char *dupstring(const char *s, char *file, const char *func, int line);
+
+/*
+ * global variables declaration
+ */
+extern COLUMN **column;
+
+/*
+ * We need some local variables because the research is made with the twalk
+ * mechanism (tree browsing) in a separate function (action_aen) with
+ * restricted arguments.
+ * 	gtf_d:			a local copy of the GTF_DATA to process
+ * 	sort_row:		a table of exon rows to sort to get their ranks
+ * 	nb_sort_row:	the number of rows in the sort_row table
+ * 	enf:			the name of the attribute
+ */
+GTF_DATA *gtf_d;
+SORT_ROW *sort_row;
+int nb_sort_row;
+char *enf;
+
+/*
+ * the comparison function for SORT_ROW structures. Used to sort the exon rows
+ * of each transcript to get their rank, based on the genomic locations
+ */
+int compare_sort_row(const void *r1, const void *r2) {
+	SORT_ROW *sr1 = (SORT_ROW *)r1;
+	SORT_ROW *sr2 = (SORT_ROW *)r2;
+	return sr1->value - sr2->value;
+}
+
+/*
+ * The tree parsing function used by twalk.
+ * This function is used to browse an index on "transcript_id" attribute
+ * containing ROW_LIST elements. For each exon line, we add an attribute called
+ * exon_number to indicate the exon's rank in the transcript.
+ */
+static void action_aen(const void *nodep, const VISIT which, const int depth) {
+	ROW_LIST *datap;
+	GTF_ROW *row;
+	char tmp[10];
+	int i, start, end;
+
+	switch (which) {
+		case preorder:
+			break;
+
+		case leaf:
+		case postorder:
+			datap = *((ROW_LIST **)nodep);
+			nb_sort_row = 0;
+			for (i = 0; i < datap->nb_row; i++) {
+				row = gtf_d->data[datap->row[i]];
+				if (!strcmp(row->field[2], "exon")) {
+					nb_sort_row++;
+					//sort_row = (SORT_ROW *)realloc(sort_row, nb_sort_row * sizeof(SORT_ROW));
+					sort_row = (SORT_ROW *)rebookmem(sort_row, nb_sort_row * sizeof(SORT_ROW), __FILE__, __func__, __LINE__);
+					start = atoi(row->field[3]);
+					end = atoi(row->field[4]);
+					sort_row[nb_sort_row - 1].row = i;
+					if (*(row->field[6]) == '+')
+						sort_row[nb_sort_row - 1].value = start;
+					else
+						sort_row[nb_sort_row - 1].value = -end;
+				}
+			}
+			qsort(sort_row, nb_sort_row, sizeof(SORT_ROW), compare_sort_row);
+			for (i = 0; i < nb_sort_row; i++) {
+				row = gtf_d->data[datap->row[sort_row[i].row]];
+				sprintf(tmp, "%d", i + 1);
+				add_attribute(row, enf, tmp);
+			}
+			break;
+
+		case endorder:
+			break;
+	}
+}
+
+/*
+ *
+ */
+__attribute__ ((visibility ("default")))
+GTF_DATA *add_exon_number(GTF_DATA *gtf_data, char *exon_number_field) {
+	/*
+	 * copy the initial GTF data
+	 */
+	GTF_DATA *ret = clone_gtf_data(gtf_data);
+
+	/*
+	 * indexing the gtf with transcript_id
+	 */
+	INDEX_ID *ix = index_gtf(ret, "transcript_id");
+
+	/*
+	 * setup local variables to allow action_sbnoe function to access these
+	 * values
+	 */
+	gtf_d = ret;
+	nb_sort_row = 0;
+	sort_row = NULL;
+	if (exon_number_field != NULL)
+		//enf = strdup(exon_number_field);
+		enf = dupstring(exon_number_field, __FILE__, __func__, __LINE__);
+	else
+		//enf = strdup("exon_number");
+		enf = dupstring("exon_number", __FILE__, __func__, __LINE__);
+
+	/*
+	 * tree browsing of the transcript_id index
+	 */
+	twalk(column[ix->column]->index[ix->index_rank]->data, action_aen);
+
+	freemem(enf, __FILE__, __func__, __LINE__);
+
+	return ret;
+}

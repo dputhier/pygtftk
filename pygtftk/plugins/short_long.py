@@ -1,0 +1,133 @@
+# -*- coding: utf-8 -*-
+""" Select the shortest mature transcript (i.e without introns) for each gene or the longest if the \
+-l arguments is used. """
+
+__updated__ = "2018-01-25"
+
+import argparse
+import sys
+
+from pygtftk.arg_formatter import FileWithExtension
+from pygtftk.cmd_object import CmdObject
+from pygtftk.gtf_interface import GTF
+
+
+def make_parser():
+    """parse"""
+    parser = argparse.ArgumentParser(add_help=True)
+
+    parser_grp = parser.add_argument_group('Argument')
+
+    parser_grp.add_argument('-i', '--inputfile',
+                            help="Path to the GTF file. Default to STDIN",
+                            default=sys.stdin,
+                            metavar="GTF",
+                            type=FileWithExtension('r',
+                                                   valid_extensions=('\.[Gg][Tt][Ff](\.[Gg][Zz])?$')))
+
+    parser_grp.add_argument('-o', '--outputfile',
+                            help="Output file.",
+                            default=sys.stdout,
+                            metavar="GTF",
+                            type=FileWithExtension('w',
+                                                   valid_extensions=('\.[Gg][Tt][Ff]$')))
+
+    parser_grp.add_argument('-l', '--longs',
+                            help="Take the longest transcript of each gene",
+                            action="store_true")
+
+    parser_grp.add_argument('-g', '--keep-gene-lines',
+                            help="Add gene lines to the output",
+                            action="store_true")
+
+    return parser
+
+
+def short_long(inputfile=None,
+               outputfile=None,
+               longs=None,
+               keep_gene_lines=False,
+               tmp_dir=None,
+               logger_file=None,
+               verbosity=0):
+    """ Select the shortest transcript for each gene, Or the longuest if the \
+-l arguments is used. """
+
+    gtf = GTF(inputfile, check_ensembl_format=False)
+
+    if longs:
+        gtf = gtf.select_longuest_transcripts()
+    else:
+        gtf = gtf.select_shortest_transcripts()
+
+    if not keep_gene_lines:
+        gtf = gtf.select_by_key("feature", "gene", 1)
+
+    gtf.write(outputfile)
+
+
+def main():
+    """main"""
+
+    myparser = make_parser()
+    print(myparser)
+    args = myparser.parse_args()
+    args = dict(args.__dict__)
+    print(args)
+    short_long(**args)
+
+
+if __name__ == '__main__':
+    main()
+
+else:
+    test = """
+    
+    #Test number of output lines
+    @test "short_long_1" {
+    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf  -g | gtftk select_by_key -t | wc -l)
+    [ $result -eq 11 ]
+    }
+    
+    #Checks that the shortest transcripts have been selected (short)
+    @test "short_long_2" {
+    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf| grep -c -E 'G0001T002|G0002T002|G0003T002|G0006T002|G0008T002|G0011T001')
+    [ $result -eq 22 ]
+    }
+    
+    #Checks that the transcripts With the same tss are not present (short)
+    @test "short_long_3" {
+    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf | perl -ne 'print if (/(G0001T001)|(G0002T001)|(G0003T001)|(G0006T001)|(G0008T001)|(G0011T002)/)')
+    [ -z $result ]
+    }
+    
+    #Checks that the longest transcripts have been selected (long)
+    @test "short_long_4" {
+    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf -l | grep -c -E 'G0001T001|G0002T001|G0003T001|G0006T001|G0008T001|G0011T002')
+    [ $result -eq 27 ]
+    }
+    
+    #Checks that the transcripts With the same tss are not present (long)
+    @test "short_long_5" {
+    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf -l | perl -ne 'print if (/(G0001T002)|(G0002T002)|(G0003T002)|(G0006T002)|(G0008T002)|(G0011T001)/)')
+    [ -z $result ]
+    }
+
+    #Test number of output lines (genes)
+    @test "short_long_6" {
+    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf  -g |  gtftk select_by_key -k feature -v gene| wc -l)
+    [ $result -eq 11 ]
+    }
+
+    
+    """
+
+    CmdObject(name="short_long",
+              message="Get the shortest or longest \
+              transcript of each gene",
+              parser=make_parser(),
+              fun=short_long,
+              group="selection",
+              desc=__doc__,
+              updated=__updated__,
+              test=test)
