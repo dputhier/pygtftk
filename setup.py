@@ -6,6 +6,8 @@ import glob
 import os
 import sys
 
+from sys import platform
+
 import git
 from setuptools import setup, Extension
 
@@ -44,13 +46,19 @@ version_file.close()
 
 cmd_src_list = glob.glob("pygtftk/src/libgtftk/command/*.c")
 
+if platform == "darwin":
+    dyn_lib_compil = ['-dynamiclib', '-shared']
+else:
+    dyn_lib_compil = ['-shared']
+
 extra_compile_args = ['-Ipygtftk/src/libgtftk',
                       '-O3',
                       '-Wall',
                       '-fPIC',
+                      '-shared',
                       '-MMD',
                       '-MP',
-                      '-fmessage-length=0']
+                      '-fmessage-length=0'] + dyn_lib_compil
 
 lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                       include_dirs=[
