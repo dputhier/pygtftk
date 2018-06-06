@@ -389,8 +389,6 @@ class GTF(object):
         """
         cmd_manager.CmdManager.check_config_file()
 
-        message("Creating a GTF instance.", type="DEBUG")
-
         # Increment the number of instances at the
         # class level
         self._add_instance()
@@ -465,6 +463,8 @@ class GTF(object):
         self._message("GTF created ", type="DEBUG_MEM")
         self._ptr_addr += [id(self._data)]
 
+        message("LEAVING INIT")
+
     def merge_attr(self, feat="*", keys="gene_id,transcript_id",
                    new_key="gn_tx_id", sep="|"):
 
@@ -491,28 +491,56 @@ class GTF(object):
                                             new_key,
                                             sep)
 
-        return self._clone(new_data)
+            return self._clone(new_data)
 
     def _message(self, msg="", type='DEBUG'):
+        """A processing message whose verbosity is adapted based on pygtftk.utils.VERBOSITY.
+
+        >>> import pygtftk.utils
+        >>> pygtftk.utils.VERBOSITY = 0
+        >>> from pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file("simple", "gtf")[1]
+        >>> gtf = GTF(a_file)
+        >>> pygtftk.utils.VERBOSITY = 2
+        >>> gtf._message('bla')
+        >>> pygtftk.utils.VERBOSITY = 3
+        >>> gtf._message('bla')
+        """
         addr = re.search("([^\s]+)>", repr(self._data))
         addr = addr.group(1)
-        if pygtftk.utils.VERBOSITY > 2:
+        if pygtftk.utils.VERBOSITY >= 3 :
             msg = msg + \
-                  "(#lines={a}, file={b}, ptr_addr={c}, id={d}, nb={e})."
+                  "(#lines={a}, ptr_addr={c}, file={b}, id={d}, nb={e})."
             msg = msg.format(a=self._data.size,
                              b=self.fn,
                              c=addr,
                              d=id(self),
                              e=self._nb)
             message(msg, type=type)
+
+        elif pygtftk.utils.VERBOSITY == 2 :
+            msg = msg + \
+                  "(#lines={a}, ptr_addr={c}, file={b}, id={d})."
+            msg = msg.format(a=self._data.size,
+                             b=self.fn,
+                             c=addr,
+                             d=id(self))
+            message(msg, type=type)
+
+        elif pygtftk.utils.VERBOSITY == 1 :
+            msg = msg + \
+                  "(#lines={a}, ptr_addr={c}, file={b})."
+            msg = msg.format(a=self._data.size,
+                             b=self.fn,
+                             c=addr)
+            message(msg, type=type)
+
         else:
             msg = msg + \
                   "(#lines={a}, file={b})."
             msg = msg.format(a=self._data.size,
-                             b=os.path.basename(self.fn),
-                             c=addr,
-                             d=id(self),
-                             e=self._nb)
+                             b=os.path.basename(self.fn))
             message(msg, type=type)
 
     @classmethod
@@ -520,7 +548,19 @@ class GTF(object):
         cls._instance_count += 1
 
     def __del__(self):
+        """Delete a GTF_DATA object (set it to 0).
 
+        :Example:
+        >>> import pygtftk.utils
+        >>> pygtftk.utils.VERBOSITY = 1
+        >>> from pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file("simple", "gtf")[1]
+        >>> gtf = GTF(a_file)
+        >>> clone = gtf._clone(gtf._data)
+        >>> clone = gtf._clone(gtf._data)
+        >>> clone = gtf._clone(gtf._data)
+        """
         if self._data != 0:
             self._message("GTF deleted ", type="DEBUG_MEM")
             self._dll.free_gtf_data(self._data)
@@ -672,9 +712,6 @@ class GTF(object):
         """
         message("Interating over GTF instance.", type="DEBUG")
 
-        if self._data is None:
-            self = self.load()
-
         for i in range(self._data.size):
             feat = Feature(ptr=self._data.data[i])
             yield feat
@@ -705,9 +742,6 @@ class GTF(object):
                 raise GTFtkError("Need a tuple with two string or an integer")
             elif len(x) == 2:
                 key, val = [str(i) for i in x]
-
-                if self._data is None:
-                    self = self.load()
 
                 new_data = self._dll.select_by_key(self._data, key, val, 0)
 
@@ -765,9 +799,6 @@ class GTF(object):
         >>> a_gtf.select_by_key("feature", "gene,transcript", invert_match=True)
 
         """
-
-        if self._data is None:
-            self = self.load()
 
         message("Calling convert_to_ensembl")
         new_data = self._dll.convert_to_ensembl(self._data)
@@ -876,9 +907,6 @@ class GTF(object):
         keys_csv = ",".join(keys)
 
         message("Calling extract_data (" + ",".join(keys) + ").", type="DEBUG")
-
-        if self._data is None:
-            self = self.load()
 
         if as_list_of_list:
 
@@ -1074,9 +1102,6 @@ class GTF(object):
         keys = [x if x not in ['chrom', 'chr'] else 'seqid' for x in keys]
         keys_csv = ",".join(keys)
 
-        if self._data is None:
-            self = self.load()
-
         ptr = self._dll.extract_data(self._data, keys_csv, base, nr)
         nb_cols = ptr.nb_columns
         nb_rows = ptr.nb_rows
@@ -1174,9 +1199,6 @@ class GTF(object):
         >>> assert  a_list == ['2', '1']
         """
 
-        if self._data is None:
-            self = self.load()
-
         new_data = self._dll.add_exon_number(self._data, key)
         return self._clone(new_data)
 
@@ -1206,9 +1228,6 @@ class GTF(object):
             suffix = 1
         else:
             suffix = 0
-
-        if self._data is None:
-            self = self.load()
 
         if key is None or txt is None:
             raise GTFtkError("You must provide key and txt arguments.")
@@ -1297,10 +1316,6 @@ class GTF(object):
         msg = msg.format(k=str(key), v=str(val_msg))
 
         message(msg, type="DEBUG")
-
-        if self._data is None:
-            self = self.load()
-            new_data = self._data
 
         if key is None or value is None:
             # We don't know what to return.
@@ -1431,9 +1446,6 @@ class GTF(object):
 
         message("Calling select_by_size.", type="DEBUG")
 
-        if self._data is None:
-            self = self.load()
-
         new_data = self._dll.select_by_transcript_size(self._data, min, max)
 
         return self._clone(new_data)
@@ -1512,9 +1524,6 @@ class GTF(object):
         >>> assert "G0006T002" not in l
         """
 
-        if self._data is None:
-            self = self.load()
-
         nb_exons = self.nb_exons()
 
         info = self.extract_data("gene_id,transcript_id",
@@ -1557,9 +1566,6 @@ class GTF(object):
         """
 
         message("Calling select_by_number_of_exons.", type="DEBUG")
-
-        if self._data is None:
-            self = self.load()
 
         if max is None:
             max = 100000000
@@ -1888,9 +1894,6 @@ class GTF(object):
 
         tmp_file.close()
 
-        if self._data is None:
-            self = self.load()
-
         message("Calling internal C function (add_attributes)")
 
         new_data = self._dll.add_attributes(self._data,
@@ -1935,9 +1938,6 @@ class GTF(object):
 
         if isinstance(inputfile, file):
             inputfile = inputfile.name
-
-        if self._data is None:
-            self = self.load()
 
         id_to_val = defaultdict(lambda: defaultdict(list))
 
@@ -2047,9 +2047,6 @@ class GTF(object):
             tmp_file.write("\t".join([str(i), str(j)]) + "\n")
         tmp_file.close()
 
-        if self._data is None:
-            self = self.load()
-
         new_data = self._dll.add_attributes(self._data,
                                             feat,
                                             key,
@@ -2098,9 +2095,6 @@ class GTF(object):
             tmp_file.write("\t".join([str(i), str(j)]) + "\n")
         tmp_file.close()
 
-        if self._data is None:
-            self = self.load()
-
         new_data = self._dll.add_attributes(self._data,
                                             feat,
                                             key,
@@ -2145,9 +2139,6 @@ class GTF(object):
                 raise GTFtkError(
                     "transcript_id/gene_id can't be removed. Use force if required.")
 
-        if self._data is None:
-            self = self.load()
-
         new_data = self._dll.del_attributes(self._data,
                                             ",".join(feat),
                                             ",".join(keys))
@@ -2171,9 +2162,6 @@ class GTF(object):
 
         message("Calling select_shortest_transcripts.", type="DEBUG")
 
-        if self._data is None:
-            self = self.load()
-
         new_data = self._dll.select_transcript(self._data, 1)
 
         return self._clone(new_data)
@@ -2195,9 +2183,6 @@ class GTF(object):
 
         message("Calling select_longuest_transcripts.", type="DEBUG")
 
-        if self._data is None:
-            self = self.load()
-
         new_data = self._dll.select_transcript(self._data, 2)
 
         return self._clone(new_data)
@@ -2218,9 +2203,6 @@ class GTF(object):
         """
 
         message("Calling select_5p_transcript.", type="DEBUG")
-
-        if self._data is None:
-            self = self.load()
 
         new_data = self._dll.select_transcript(self._data, 3)
 
@@ -2247,9 +2229,6 @@ class GTF(object):
             feat_id = ft_type + "_id"
 
         feat_size_dict = dict()
-
-        if self._data is None:
-            self = self.load()
 
         new_data = self.select_by_key("feature", ft_type, 0)
 
@@ -3203,9 +3182,6 @@ class GTF(object):
             if "\t" in line:
                 raise GTFtkError("input_file should contain only one column.")
 
-        if self._data is None:
-            self = self.load()
-
         new_data = self._dll.add_attr_column(
             self._data,
             input_file.name,
@@ -3215,6 +3191,7 @@ class GTF(object):
 
 
 if __name__ == "__main__":
+
     from pygtftk.utils import get_example_file
     from pygtftk.gtf_interface import GTF
 

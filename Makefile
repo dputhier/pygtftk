@@ -60,7 +60,7 @@ pylintshort:
 	@find . -name "*.py"  -exec pylint $(PYLINT_ARGS) {} \; 2>/dev/null |perl -ne  "print if(/(Your code has been rated)|(\*\*\*\* Module)/)"
 
 nose:
-	@cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,gtftk; print(os.path.dirname(gtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
+	@cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
 
 install:
 	@rm -Rf build  dist pygtftk.egg-info ~/.gtftk; \
@@ -97,7 +97,7 @@ test_para: $(addsuffix .completed, $(shell gtftk -l))
 
 clean:
 	@make bats_cmd CMD=clean
-	@rm -rf prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh; \
+	@rm -rf prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott; \
 	cd docs/manual/; make clean;
 
 check_cmd_has_example:

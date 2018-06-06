@@ -1,25 +1,25 @@
-Plugin developement
+Plugin development
 ===================
 
 
 Writing your own commands (plugins)
 -----------------------------------
  
-It can be interesting to develop your own commands to share them with your collaborators or with the community. 
+Maybe you will be interested in helping us in the future by sharing your own commands. We provide an example below of the development of a very basic command that prints a GTF file.
 
 Just do the following things to declare a new command named **'print_gtf'**:
 
 - Write a script using the template provided below. This script can be run as a stand-alone script or as a gtftk plugin.
 - Add this script to the gtftk/plugins or ~/.gtftk/plugins/ directories.
-- Call gtftk. A new command should be available.
-- You can propose this new command by sending us a pull request.
+- Call *gtftk -u* to update the plugin list. A new command should be available upon *gtftk -h*.
+- You can propose new commands by sending us pull requests.
 
 
 .. code-block:: python
 
    #!/usr/bin/env python
    """
-   Description: This module is intented to multiply a word several times...
+   Description: This module is intented to print a GTF.
    Developer: D. Puthier.
    Last modifications: 09 Mar 2016.
    Version: {v}
@@ -27,9 +27,9 @@ Just do the following things to declare a new command named **'print_gtf'**:
    
    import sys
    import argparse
-   from gtftk.cmd_object import CmdObject
-   from gtftk.gtf_interface import GTF
-   from gtftk.arg_formatter import FileWithExtension
+   from pygtftk.cmd_object import CmdObject
+   from pygtftk.gtf_interface import GTF
+   from pygtftk.arg_formatter import FileWithExtension
 
    #-------------------------------------------------------------------------
    # NOTES: Just place this file into ~/.gtftk/plugins
@@ -46,7 +46,7 @@ Just do the following things to declare a new command named **'print_gtf'**:
    # verbosity
    #-------------------------------------------------------------------------
    
-   from gtftk.utils import message
+   from pygtftk.utils import message
 
    #-------------------------------------------------------------------------
    # Any temporary file created using the make_tmp_file function
@@ -55,7 +55,7 @@ Just do the following things to declare a new command named **'print_gtf'**:
    # This command should thus be used to create any temporary file.
    #-------------------------------------------------------------------------
    
-   from gtftk.utils import make_tmp_file
+   from pygtftk.utils import make_tmp_file
     
    #-------------------------------------------------------------------------
    # Command information
@@ -68,7 +68,7 @@ Just do the following things to declare a new command named **'print_gtf'**:
    
    
    __notes__ = """
-   -- Some notes that will appear when 'gtftk my_command -h' will be called.
+   -- A note that will appear when 'gtftk my_command -h' will be called.
    -- Another note. If you want to refer to long form arguments use '\'. e.g -\-distance.
    """
    

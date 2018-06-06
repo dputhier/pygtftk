@@ -1298,7 +1298,7 @@ Description: Shift coordinates in 3' or 5' direction.
 .. command-output:: gtftk get_example|  head -n 1
 	:shell:
 
-.. command-output:: gtftk get_example|  gtftk shift -s -10| head -n 1
+.. command-output:: gtftk get_example -f chromInfo > simple.chromInfo; gtftk get_example |  gtftk shift -s -10 -c simple.chromInfo | head -n 1
 	:shell:
 
 

@@ -41,6 +41,7 @@ class FASTA(object):
         >>> # Please use get_sequences method from the GTF object.
         >>> from pygtftk.fasta_interface import  FASTA
         >>> from pygtftk.gtf_interface import GTF
+        >>> from pygtftk.utils import get_example_file
         >>> a_file = get_example_file("simple", "gtf")[0]
         >>> a_gtf = GTF(a_file)
         >>> genome_fa = get_example_file("simple", "fa")[0]
@@ -247,11 +248,11 @@ class FASTA(object):
         >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 71, 71, '+', 'exon')] == 'g'
         >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 65, 68, '+', 'exon')] == 'atct'
         >>> a_dict = a_fa.as_dict(feat="CDS")
-        >>> assert a_dict[('G0001', 'G0001T002', 'chr1', 125, 138, '+', 'CDS')] == 'cccccgttacgtag'
-        >>> assert a_dict[('G0003', 'G0003T001', 'chr1', 50, 54, '-', 'exon')] == 'gcttg'
-        >>> assert a_dict[('G0003', 'G0003T001', 'chr1', 57, 61, '-', 'exon')] == 'aatta'
-        >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 71, 71, '+', 'exon')] == 'g'
-        >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 65, 68, '+', 'exon')] == 'atct'
+        >>> assert a_dict[('G0001', 'G0001T002', 'chr1', 125, 130, '+', 'CDS')] == 'cccccgttacgtag'
+        >>> assert a_dict[('G0003', 'G0003T001', 'chr1', 50, 54, '-', 'CDS')] == 'gcttg'
+        >>> assert a_dict[('G0003', 'G0003T001', 'chr1', 57, 61, '-', 'CDS')] == 'aatta'
+        >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 71, 71, '+', 'CDS')] == 'g'
+        >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 65, 68, '+', 'CDS')] == 'atct'
         >>> assert a_dict[('G0001', 'G0001T002', 'chr1', 125, 130, '+', 'CDS')] == 'cccccg'
         >>> assert a_dict[('G0001', 'G0001T001', 'chr1', 130, 132, '+', 'CDS')] == 'gtt'
         >>> assert a_dict[('G0008', 'G0008T001', 'chr1', 211, 213, '-', 'CDS')]  == 'cgc'

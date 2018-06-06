@@ -612,7 +612,7 @@ def message(msg, nl=True, type="INFO", force=False):
 
 
     >>> from pygtftk.utils import message
-pygtftk"""
+    """
 
     now = datetime.datetime.now()
     ho_min = str(now.hour) + ":" + str(now.minute).zfill(2)
