@@ -1,6 +1,6 @@
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/dputhier/gtftk) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dputhier/gtftk/issues) [![HitCount](http://hits.dwyl.io/puthier/gtftk.svg)](http://hits.dwyl.io/puthier/gtftk)
 
-# GTFtoolkit
+# Python GTF toolkit (pygtftk)
 
 
 The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF (Gene Transfer Format) files. One of our objective is to propose a set of tools that performs common and simple tasks to limit the use of perl/awk onliners that tend to limit readability of our bioinformatics workflows (and maybe yours). 
@@ -13,7 +13,7 @@ The pygtftk package comes with a set of **UNIX commands** that can be accessed t
 
 The gtftk set of Unix command, can be easily extended using a basic plugin architecture. All these aspects are covered in the help section.
 
-While the gtftk program comes with hundreds of unitary and functionnal tests, it is still upon  active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository. 
+While the gtftk Unix program comes with hundreds of unitary and functionnal tests, it is still upon  active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository. 
 
 ## System requirements
 

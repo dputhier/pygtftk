@@ -20,8 +20,6 @@ extern int comprow(const void *m1, const void *m2);
 extern int add_row_list(ROW_LIST *src, ROW_LIST *dst);
 extern int update_row_table(GTF_DATA *gtf_data);
 extern void add_attribute(GTF_ROW *row, char *key, char *value);
-extern void *bookmem(int nb, int size, char *file, const char *func, int line);
-extern char *dupstring(const char *s, char *file, const char *func, int line);
 
 /*
  * global variables declaration
@@ -102,14 +100,12 @@ GTF_DATA *select_by_transcript_size(GTF_DATA *gtf_data, int min, int max) {
 	/*
 	 * reserve memory for the GTF_DATA structure to return
 	 */
-	//GTF_DATA *ret = (GTF_DATA *)calloc(1, sizeof(GTF_DATA));
-	GTF_DATA *ret = (GTF_DATA *)bookmem(1, sizeof(GTF_DATA), __FILE__, __func__, __LINE__);
+	GTF_DATA *ret = (GTF_DATA *)calloc(1, sizeof(GTF_DATA));
 
 	/*
 	 * reserve memory for the local ROW_LIST
 	 */
-	//row_list = (ROW_LIST *)calloc(1, sizeof(ROW_LIST));
-	row_list = (ROW_LIST *)bookmem(1, sizeof(ROW_LIST), __FILE__, __func__, __LINE__);
+	row_list = (ROW_LIST *)calloc(1, sizeof(ROW_LIST));
 
 	/*
 	 * setup local variables to allow action_sbts function to access these
@@ -139,21 +135,17 @@ GTF_DATA *select_by_transcript_size(GTF_DATA *gtf_data, int min, int max) {
 	/*
 	 * now we fill the resulting GTF_DATA with the found rows and return it
 	 */
-	//ret->data = (GTF_ROW **)calloc(row_list->nb_row, sizeof(GTF_ROW *));
-	ret->data = (GTF_ROW **)bookmem(row_list->nb_row, sizeof(GTF_ROW *), __FILE__, __func__, __LINE__);
+	ret->data = (GTF_ROW **)calloc(row_list->nb_row, sizeof(GTF_ROW *));
 	GTF_ROW *row, *previous_row = NULL;
 	for (i = 0; i < row_list->nb_row; i++) {
-		//row = (GTF_ROW *)calloc(1, sizeof(GTF_ROW));
-		row = (GTF_ROW *)bookmem(1, sizeof(GTF_ROW), __FILE__, __func__, __LINE__);
-		//row->field = (char **)calloc(8, sizeof(char *));
-		row->field = (char **)bookmem(8, sizeof(char *), __FILE__, __func__, __LINE__);
+		row = (GTF_ROW *)calloc(1, sizeof(GTF_ROW));
+		row->field = (char **)calloc(8, sizeof(char *));
 		if (i == 0) ret->data[0] = row;
 		for (k = 0; k < gtf_data->data[row_list->row[i]]->attributes.nb; k++)
 			add_attribute(row, gtf_data->data[row_list->row[i]]->attributes.attr[k]->key,
 							gtf_data->data[row_list->row[i]]->attributes.attr[k]->value);
 		for (k = 0; k < 8; k++)
-			//row->field[k] = strdup(gtf_data->data[row_list->row[i]]->field[k]);
-			row->field[k] = dupstring(gtf_data->data[row_list->row[i]]->field[k], __FILE__, __func__, __LINE__);
+			row->field[k] = strdup(gtf_data->data[row_list->row[i]]->field[k]);
 		row->rank = gtf_data->data[row_list->row[i]]->rank;
 		if (i > 0) previous_row->next = row;
 		previous_row = row;

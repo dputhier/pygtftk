@@ -13,9 +13,6 @@
 extern void add_attribute(GTF_ROW *row, char *key, char *value);
 extern INDEX_ID *index_gtf(GTF_DATA *gtf_data, char *key);
 extern GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data);
-extern void *rebookmem(void *ptr, int size, char *file, const char *func, int line);
-extern void freemem(void *ptr, char *file, const char *func, int line);
-extern char *dupstring(const char *s, char *file, const char *func, int line);
 
 /*
  * global variables declaration
@@ -70,8 +67,7 @@ static void action_aen(const void *nodep, const VISIT which, const int depth) {
 				row = gtf_d->data[datap->row[i]];
 				if (!strcmp(row->field[2], "exon")) {
 					nb_sort_row++;
-					//sort_row = (SORT_ROW *)realloc(sort_row, nb_sort_row * sizeof(SORT_ROW));
-					sort_row = (SORT_ROW *)rebookmem(sort_row, nb_sort_row * sizeof(SORT_ROW), __FILE__, __func__, __LINE__);
+					sort_row = (SORT_ROW *)realloc(sort_row, nb_sort_row * sizeof(SORT_ROW));
 					start = atoi(row->field[3]);
 					end = atoi(row->field[4]);
 					sort_row[nb_sort_row - 1].row = i;
@@ -117,18 +113,16 @@ GTF_DATA *add_exon_number(GTF_DATA *gtf_data, char *exon_number_field) {
 	nb_sort_row = 0;
 	sort_row = NULL;
 	if (exon_number_field != NULL)
-		//enf = strdup(exon_number_field);
-		enf = dupstring(exon_number_field, __FILE__, __func__, __LINE__);
+		enf = strdup("exon_number_field");
 	else
-		//enf = strdup("exon_number");
-		enf = dupstring("exon_number", __FILE__, __func__, __LINE__);
+		enf = strdup("exon_number");
 
 	/*
 	 * tree browsing of the transcript_id index
 	 */
 	twalk(column[ix->column]->index[ix->index_rank]->data, action_aen);
 
-	freemem(enf, __FILE__, __func__, __LINE__);
+	free(enf);
 
 	return ret;
 }

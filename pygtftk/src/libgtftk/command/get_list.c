@@ -11,10 +11,6 @@ extern INDEX_ID *index_gtf(GTF_DATA *gtf_data, char *key);
 extern COLUMN **column;
 extern STRING_LIST *get_all_attributes(GTF_DATA *gtf_data);
 
-extern void *bookmem(int nb, int size, char *file, const char *func, int line);
-extern void *rebookmem(void *ptr, int size, char *file, const char *func, int line);
-extern char *dupstring(const char *s, char *file, const char *func, int line);
-
 TTEXT *vret;
 
 static void action_list(const void *nodep, const VISIT which, const int depth) {
@@ -27,15 +23,11 @@ static void action_list(const void *nodep, const VISIT which, const int depth) {
 		case postorder:
 		case leaf:
 			datap = *((ROW_LIST **)nodep);
-			//vret->data = (char ***)realloc(vret->data, (vret->size + 1) * sizeof(char **));
-			vret->data = (char ***)rebookmem(vret->data, (vret->size + 1) * sizeof(char **), __FILE__, __func__, __LINE__);
-			//vret->data[vret->size] = (char **)calloc(2, sizeof(char *));
-			vret->data[vret->size] = (char **)bookmem(2, sizeof(char *), __FILE__, __func__, __LINE__);
+			vret->data = (char ***)realloc(vret->data, (vret->size + 1) * sizeof(char **));
+			vret->data[vret->size] = (char **)calloc(2, sizeof(char *));
 			sprintf(tmp, "%d", datap->nb_row);
-			//vret->data[vret->size][0] = strdup(tmp);
-			vret->data[vret->size][0] = dupstring(tmp, __FILE__, __func__, __LINE__);
-			//vret->data[vret->size][1] = strdup(datap->token);
-			vret->data[vret->size][1] = dupstring(datap->token, __FILE__, __func__, __LINE__);
+			vret->data[vret->size][0] = strdup(tmp);
+			vret->data[vret->size][1] = strdup(datap->token);
 			vret->size++;
 			break;
 		case endorder:
@@ -48,8 +40,7 @@ TTEXT *get_feature_list(GTF_DATA *gtf_data) {
 	/*
 	 * reserve memory for the TTEXT structure to return
 	 */
-	//vret = (TTEXT *)calloc(1, sizeof(TTEXT));
-	vret = (TTEXT *)bookmem(1, sizeof(TTEXT), __FILE__, __func__, __LINE__);
+	vret = (TTEXT *)calloc(1, sizeof(TTEXT));
 
 	/*
 	 * indexing the GTF_DATA with the feature column
@@ -69,8 +60,7 @@ TTEXT *get_seqid_list(GTF_DATA *gtf_data) {
 	/*
 	 * reserve memory for the TTEXT structure to return
 	 */
-	//vret = (TTEXT *)calloc(1, sizeof(TTEXT));
-	vret = (TTEXT *)bookmem(1, sizeof(TTEXT), __FILE__, __func__, __LINE__);
+	vret = (TTEXT *)calloc(1, sizeof(TTEXT));
 
 	/*
 	 * indexing the GTF_DATA with the seqid column
@@ -93,23 +83,19 @@ TTEXT *get_attribute_list(GTF_DATA *gtf_data) {
 	/*
 	 * reserve memory for the TTEXT structure to return
 	 */
-	//vret = (TTEXT *)calloc(1, sizeof(TTEXT));
-	vret = (TTEXT *)bookmem(1, sizeof(TTEXT), __FILE__, __func__, __LINE__);
+	vret = (TTEXT *)calloc(1, sizeof(TTEXT));
 
 	/*
 	 * reserve memory for the data table (a list in this case)
 	 */
-	//vret->data = (char ***)calloc(sl->nb, sizeof(char **));
-	vret->data = (char ***)bookmem(sl->nb, sizeof(char **), __FILE__, __func__, __LINE__);
+	vret->data = (char ***)calloc(sl->nb, sizeof(char **));
 
 	/*
 	 * fill the list-like table
 	 */
 	for (i = 0; i < sl->nb; i++) {
-		//vret->data[i] = (char **)calloc(1, sizeof(char *));
-		vret->data[i] = (char **)bookmem(1, sizeof(char *), __FILE__, __func__, __LINE__);
-		//vret->data[i][0] = strdup(sl->list[i]);
-		vret->data[i][0] = dupstring(sl->list[i], __FILE__, __func__, __LINE__);
+		vret->data[i] = (char **)calloc(1, sizeof(char *));
+		vret->data[i][0] = strdup(sl->list[i]);
 	}
 	/*
 	 * setup the number of strings
@@ -124,8 +110,7 @@ TTEXT *get_attribute_values_list(GTF_DATA *gtf_data, char *attribute) {
 	/*
 	 * reserve memory for the TTEXT structure to return
 	 */
-	//vret = (TTEXT *)calloc(1, sizeof(TTEXT));
-	vret = (TTEXT *)bookmem(1, sizeof(TTEXT), __FILE__, __func__, __LINE__);
+	vret = (TTEXT *)calloc(1, sizeof(TTEXT));
 
 	/*
 	 * indexing the GTF_DATA with the provided attribute

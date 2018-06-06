@@ -20,10 +20,6 @@
 #include "libgtftk.h"
 
 extern void print_row(FILE *output, GTF_ROW *r, char delim, int add_chr);
-void *bookmem(int nb, int size, char *file, const char *func, int line);
-void *rebookmem(void *ptr, int size, char *file, const char *func, int line);
-void freemem(void *ptr, char *file, const char *func, int line);
-char *dupstring(const char *s, char *file, const char *func, int line);
 
 /*
  * This is a pointer on the column model of a GTF file. It is initialized by
@@ -65,8 +61,7 @@ int split_ip(char ***tab, char *s, char *delim) {
 			in_token = 1;
 			n++;
 		}
-	//*tab = (char **)calloc(n, sizeof(char *));, __LINE__, "dst->row{add_row}"
-	*tab = (char **)bookmem(n, sizeof(char *), __FILE__, __func__, __LINE__);
+	*tab = (char **)calloc(n, sizeof(char *));
 	for (i = 0; i < l; i++)
 		if (*(s + i ) != 0) {
 			(*tab)[k++] = s + i;
@@ -120,15 +115,13 @@ void split_key_value(char *s, char **key, char **value) {
 		while (*s == ' ') s++;
 		while (*(s + k) != ' ') k++;
 		*(s + k) = 0;
-		//*key = strdup(s);
-		*key = dupstring(s, __FILE__, __func__, __LINE__);
+		*key = strdup(s);
 		s += k + 1;
 		while ((*s == ' ') || (*s == '"')) s++;
 		k = 0;
 		while ((*(s + k) != '"') && (*(s + k) != ' ') && (*(s + k) != 0)) k++;
 		*(s + k) = 0;
-		//*value = strdup(s);
-		*value = dupstring(s, __FILE__, __func__, __LINE__);
+		*value = strdup(s);
 	}
 }
 
@@ -186,16 +179,13 @@ int comprow(const void *m1, const void *m2) {
  */
 int add_row(int src, ROW_LIST *dst) {
 	if (dst == NULL) {
-		//dst = (ROW_LIST *)calloc(1, sizeof(ROW_LIST));
-		dst = (ROW_LIST *)bookmem(1, sizeof(ROW_LIST), __FILE__, __func__, __LINE__);
-		//dst->row = (int *)calloc(1, sizeof(int));
-		dst->row = (int *)bookmem(1, sizeof(int), __FILE__, __func__, __LINE__);
+		dst = (ROW_LIST *)calloc(1, sizeof(ROW_LIST));
+		dst->row = (int *)calloc(1, sizeof(int));
 		dst->row[dst->nb_row] = src;
 		dst->nb_row++;
 	}
 	else if (bsearch(&src, dst->row, dst->nb_row, sizeof(int), comprow) == NULL) {
-		//dst->row = (int *)realloc(dst->row, (dst->nb_row + 1) * sizeof(int));
-		dst->row = (int *)rebookmem(dst->row, (dst->nb_row + 1) * sizeof(int), __FILE__, __func__, __LINE__);
+		dst->row = (int *)realloc(dst->row, (dst->nb_row + 1) * sizeof(int));
 		dst->row[dst->nb_row] = src;
 		dst->nb_row++;
 	}
@@ -236,6 +226,7 @@ void print_gtf_data(GTF_DATA *gtf_data, char *output, int add_chr) {
  * Parameters:
  * 		raw_data:	a pointer on the RAW_DATA structure to be printed
  * 		delim:		a single character delimiter
+ * 		output:		a file name or "-" for standard output
  */
 __attribute__ ((visibility ("default")))
 void print_raw_data(RAW_DATA *raw_data, char delim, char *output) {
@@ -300,15 +291,14 @@ char *get_attribute_value(GTF_ROW *row, char *attr) {
 __attribute__ ((visibility ("default")))
 char *get_memory(long int size) {
 	int i;
-	//char *mem = calloc(size, 1);
-	char *mem = bookmem(1, size, __FILE__, __func__, __LINE__);
+	char *mem = calloc(size, 1);
 	for (i = 0; i < size; i++) mem[i] = i & 0xFF;
 	return mem;
 }
 
 __attribute__ ((visibility ("default")))
 int free_mem(char *ptr) {
-	freemem(ptr, __FILE__, __func__, __LINE__);
+	free(ptr);
 	return 0;
 }
 
@@ -325,11 +315,9 @@ GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data) {
 	/*
 	 * The clone GTF data to return
 	 */
-	//GTF_DATA *ret = (GTF_DATA *)calloc(1, sizeof(GTF_DATA));
-	GTF_DATA *ret = (GTF_DATA *)bookmem(1, sizeof(GTF_DATA), __FILE__, __func__, __LINE__);
+	GTF_DATA *ret = (GTF_DATA *)calloc(1, sizeof(GTF_DATA));
 	ret->size = gtf_data->size;
-	//ret->data = (GTF_ROW **)calloc(ret->size, sizeof(GTF_ROW *));
-	ret->data = (GTF_ROW **)bookmem(ret->size, sizeof(GTF_ROW *), __FILE__, __func__, __LINE__);
+	ret->data = (GTF_ROW **)calloc(ret->size, sizeof(GTF_ROW *));
 
 	/*
 	 * The GTF rows loop
@@ -338,8 +326,7 @@ GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data) {
 		/*
 		 * creates a new row, put it in the cloned gtf_data, and fill it
 		 */
-		//row = (GTF_ROW *)calloc(1, sizeof(GTF_ROW));
-		row = (GTF_ROW *)bookmem(1, sizeof(GTF_ROW), __FILE__, __func__, __LINE__);
+		row = (GTF_ROW *)calloc(1, sizeof(GTF_ROW));
 		ret->data[i] = row;
 		row->rank = gtf_data->data[i]->rank;
 		row->attributes.nb = gtf_data->data[i]->attributes.nb;
@@ -352,8 +339,8 @@ GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data) {
 		/*
 		 * creates the attributes table
 		 */
-		//row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
-		row->attributes.attr = (ATTRIBUTE **)bookmem(row->attributes.nb, sizeof(ATTRIBUTE *), __FILE__, __func__, __LINE__);
+		row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
+		//row->attributes.attr = (ATTRIBUTE **)bookmem(row->attributes.nb, sizeof(ATTRIBUTE *), __FILE__, __func__, __LINE__);
 
 		/*
 		 * the attributes loop
@@ -362,12 +349,9 @@ GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data) {
 			/*
 			 * create an attribute in the attributes table of the row and fill it
 			 */
-			//row->attributes.attr[j] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
-			row->attributes.attr[j] = (ATTRIBUTE *)bookmem(1, sizeof(ATTRIBUTE), __FILE__, __func__, __LINE__);
-			//row->attributes.attr[j]->value = strdup(gtf_data->data[i]->attributes.attr[j]->value);
-			row->attributes.attr[j]->value = dupstring(gtf_data->data[i]->attributes.attr[j]->value, __FILE__, __func__, __LINE__);
-			//row->attributes.attr[j]->key = strdup(gtf_data->data[i]->attributes.attr[j]->key);
-			row->attributes.attr[j]->key = dupstring(gtf_data->data[i]->attributes.attr[j]->key, __FILE__, __func__, __LINE__);
+			row->attributes.attr[j] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
+			row->attributes.attr[j]->value = strdup(gtf_data->data[i]->attributes.attr[j]->value);
+			row->attributes.attr[j]->key = strdup(gtf_data->data[i]->attributes.attr[j]->key);
 
 			/*
 			 * make the attributes linked list at the same time
@@ -377,71 +361,22 @@ GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data) {
 		/*
 		 * copy the 8 first columns values
 		 */
-		//row->field = (char **)calloc(8, sizeof(char *));
-		row->field = (char **)bookmem(8, sizeof(char *), __FILE__, __func__, __LINE__);
-		//for (j = 0; j < 8; j++) row->field[j] = strdup(gtf_data->data[i]->field[j]);
-		for (j = 0; j < 8; j++) row->field[j] = dupstring(gtf_data->data[i]->field[j], __FILE__, __func__, __LINE__);
+		row->field = (char **)calloc(8, sizeof(char *));
+		for (j = 0; j < 8; j++) row->field[j] = strdup(gtf_data->data[i]->field[j]);
 	}
 
 	return ret;
 }
-
-void *bookmem(int nb, int size, char *file, const char *func, int line) {
-	void *m = calloc(nb, size);
-	if (!m) {
-		if (LOG_MEMORY_HANDLING) fprintf(stderr, "A\t%p\t%d\t%s\t%s\t%d\t%d\n", m, line, func, file, nb, size);
-		fprintf(stderr, "\n!!! ERROR ALLOCATING MEMORY FOR %s in %s at line %d (%d times %d bytes) : ERRNO = %d !!!\n\n", func, file, nb, line, size, errno);
-		exit(errno);
-	}
-	else if (LOG_MEMORY_HANDLING)
-		fprintf(stderr, "A\t%p\t%d\t%s\t%s\t%d\t%d\n", m, line, func, file, nb, size);
-
-	return m;
-}
-
-void *rebookmem(void *ptr, int size, char *file, const char *func, int line) {
-	void *m = realloc(ptr, size);
-	if (!m && size > 0) {
-		if (LOG_MEMORY_HANDLING) fprintf(stderr, "R\t%p\t%d\t%s\t%s\t\t%d\n", m, line, func, file, size);
-		fprintf(stderr, "\nERROR REALLOCATING MEMORY FOR %s in %s at line %d (size : %d) : ERRNO = %d !!!!\n\n", func, file, line, size, errno);
-		exit(errno);
-	}
-	else if (LOG_MEMORY_HANDLING)
-		fprintf(stderr, "R\t%p\t%d\t%s\t%s\t\t%d\n", m, line, func, file, size);
-	return m;
-}
-
-void freemem(void *ptr, char *file, const char *func, int line) {
-	if (ptr != NULL) {
-		free(ptr);
-		if (LOG_MEMORY_HANDLING) fprintf(stderr, "F\t%p\t%d\t%s\t%s\t\t\t%d\n", ptr, line, func, file, errno);
-		ptr = NULL;
-	}
-}
-
-char *dupstring(const char *s, char *file, const char *func, int line) {
-	char *ret = strdup(s);
-	if (!ret) {
-		if (LOG_MEMORY_HANDLING) fprintf(stderr, "D\t%p\t%d\t%s\t%s\t\t%d\n", ret, line, func, file, (int)strlen(ret));
-		fprintf(stderr, "\nERROR DUPLICATING STRING \"%s\" in %s at line %d : ERRNO = %d !!!!\n\n", s, file, line, errno);
-		exit(errno);
-	}
-	else if (LOG_MEMORY_HANDLING)
-		fprintf(stderr, "D\t%p\t%d\t%s\t%s\t\t%d\n", ret, line, func, file, (int)strlen(ret));
-	return ret;
-}
-
+/*
+ * Add an attribute in a row. The memory needed to store the attribute is
+ * reserved and the new attribute is linked with the last one.
+ */
 void add_attribute(GTF_ROW *row, char *key, char *value) {
 	row->attributes.nb++;
-	//row->attributes.attr = (ATTRIBUTE **)realloc(row->attributes.attr, row->attributes.nb * sizeof(ATTRIBUTE *));
-	row->attributes.attr = (ATTRIBUTE **)rebookmem(row->attributes.attr, row->attributes.nb * sizeof(ATTRIBUTE *), __FILE__, __func__, __LINE__);
-	//row->attributes.attr[row->attributes.nb - 1] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
-	row->attributes.attr[row->attributes.nb - 1] = (ATTRIBUTE *)bookmem(1, sizeof(ATTRIBUTE), __FILE__, __func__, __LINE__);
-	//row->attributes.attr[row->attributes.nb - 1]->key = strdup(key);
-	row->attributes.attr[row->attributes.nb - 1]->key = dupstring(key, __FILE__, __func__, __LINE__);
-	//row->attributes.attr[row->attributes.nb - 1]->value = strdup(value);
-	row->attributes.attr[row->attributes.nb - 1]->value = dupstring(value, __FILE__, __func__, __LINE__);
+	row->attributes.attr = (ATTRIBUTE **)realloc(row->attributes.attr, row->attributes.nb * sizeof(ATTRIBUTE *));
+	row->attributes.attr[row->attributes.nb - 1] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
+	row->attributes.attr[row->attributes.nb - 1]->key = strdup(key);
+	row->attributes.attr[row->attributes.nb - 1]->value = strdup(value);
 	if (row->attributes.nb > 1)
 		row->attributes.attr[row->attributes.nb - 2]->next = row->attributes.attr[row->attributes.nb - 1];
 }
-

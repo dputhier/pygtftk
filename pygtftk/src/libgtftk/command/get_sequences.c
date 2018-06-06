@@ -6,16 +6,13 @@
  */
 
 #include  "libgtftk.h"
+#include <sys/stat.h>
 
 extern int split_ip(char ***tab, char *s, char *delim);
 extern int compare_row_list(const void *p1, const void *p2);
 extern INDEX_ID *index_gtf(GTF_DATA *gtf_data, char *key);
 extern int is_in_attrs(GTF_ROW *row, char *at);
 extern char *get_attribute_value(GTF_ROW *row, char *attr);
-extern void *bookmem(int nb, int size, char *file, const char *func, int line);
-extern void *rebookmem(void *ptr, int size, char *file, const char *func, int line);
-extern void freemem(void *ptr, char *file, const char *func, int line);
-extern char *dupstring(const char *s, char *file, const char *func, int line);
 
 extern COLUMN **column;
 
@@ -92,8 +89,7 @@ void get_chunk(char *ret, FILE *fasta_file, long seqpos, int L, int N, int p, ch
 }
 
 SEQFRAG *make_seqfrag(char *seqid, int start, int end, char strand, char *style, char *color) {
-	//SEQFRAG *sf = (SEQFRAG *)calloc(1, sizeof(SEQFRAG));
-	SEQFRAG *sf = (SEQFRAG *)bookmem(1, sizeof(SEQFRAG), __FILE__, __func__, __LINE__);
+	SEQFRAG *sf = (SEQFRAG *)calloc(1, sizeof(SEQFRAG));
 
 	sf->start = start;
 	sf->end = end;
@@ -145,8 +141,7 @@ static int compare_feature_tr(const void *p1, const void *p2) {
 }
 
 char *make_header(GTF_ROW *row, int intron, int rc) {
-	//char *buffer = (char *)calloc(1000, sizeof(char));
-	char *buffer = (char *)bookmem(1000, sizeof(char), __FILE__, __func__, __LINE__);
+	char *buffer = (char *)calloc(1000, sizeof(char));
 
 	strcat(buffer, ">");
 	print_attribute(row, "gene_id", buffer + strlen(buffer), '_');
@@ -161,8 +156,7 @@ char *make_header(GTF_ROW *row, int intron, int rc) {
 	strcat(buffer, row->field[6]);
 	if (rc && *(row->field[6]) == '-') strcat(buffer, "_RC");
 	if (!intron) strcat(buffer, "_mRNA");
-	//buffer = (char *)realloc(buffer, (strlen(buffer) + 1) * sizeof(char));
-	buffer = (char *)rebookmem(buffer, (strlen(buffer) + 1) * sizeof(char), __FILE__, __func__, __LINE__);
+	buffer = (char *)realloc(buffer, (strlen(buffer) + 1) * sizeof(char));
 	return buffer;
 }
 
@@ -193,13 +187,19 @@ FILE *get_fasta_file(char *fasta_file, char *buffer) {
 FILE *get_fasta_file_index(FILE *fasta_file, char *index) {
 	FILE *ffi = NULL;
 	long pfasta;
-	char *buffer = NULL;
+	char *buffer = NULL, *p_end_dir = NULL;
 	int maxLineSize = 0;
 	size_t size = 0;
 	unsigned int n;
 	unsigned long old_crc, crc;
 
 	if (access(index, F_OK)) {
+		p_end_dir = strrchr(index, (int)'/');
+		if (p_end_dir != NULL) {
+			*p_end_dir = 0;
+			mkdir(index, 0744);
+			*p_end_dir = '/';
+		}
 		ffi = fopen(index, "w+");
 		pfasta = ftell(fasta_file);
 		crc = crc32(0L, Z_NULL, 0);
@@ -218,6 +218,7 @@ FILE *get_fasta_file_index(FILE *fasta_file, char *index) {
 		fprintf(ffi, "%d\n", maxLineSize - 1);
 		fprintf(ffi, "%lx\n", crc);
 		fflush(ffi);
+		rewind(ffi);
 	}
 	else {
 		ffi = fopen(index, "r");
@@ -289,21 +290,18 @@ void print_fasta_sequence(SEQUENCE *seq) {
  */
 __attribute__ ((visibility ("default")))
 SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int rc) {
-	//SEQUENCES *ret = (SEQUENCES *)calloc(1, sizeof(SEQUENCES));
-	SEQUENCES *ret = (SEQUENCES *)bookmem(1, sizeof(SEQUENCES), __FILE__, __func__, __LINE__);
+	SEQUENCES *ret = (SEQUENCES *)calloc(1, sizeof(SEQUENCES));
 	SEQUENCE *sequence = NULL;
 	FEATURE *feat, *new_feat;
 	FILE *ff = NULL, *ffi;
-	//char *buffer = (char *)calloc(10000, sizeof(char));
-	char *buffer = (char *)bookmem(10000, sizeof(char), __FILE__, __func__, __LINE__);
+	char *buffer = (char *)calloc(10000, sizeof(char));
 	int j, k, pb, pe, pf, start, end, tr_start, tr_end;
 	ENTRY item, *e;
 	SEQFRAG *seqfrag;
 
 	char **token, *feature, *attr;
 	int i, n, nb_exon = 0, tr_len, maxLineSize = 0, pcdna;
-	//ROW_LIST *test_row_list = calloc(1, sizeof(ROW_LIST)), **find_row_list;
-	ROW_LIST *test_row_list = bookmem(1, sizeof(ROW_LIST), __FILE__, __func__, __LINE__), **find_row_list;
+	ROW_LIST *test_row_list = calloc(1, sizeof(ROW_LIST)), **find_row_list;
 	GTF_ROW *row;
 	INDEX_ID *trid_index_id;
 
@@ -336,17 +334,15 @@ SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int 
 		while (fgets(buffer, 999, ffi) != NULL) {
 			n = split_ip(&token, buffer, " \t\n");
 			if (n > 1) {
-				//item.key = strdup(token[0]);
-				item.key = dupstring(token[0], __FILE__, __func__, __LINE__);
-				//item.data = (long *)malloc(sizeof(long));
-				item.data = (long *)bookmem(1, sizeof(long), __FILE__, __func__, __LINE__);
+				item.key = strdup(token[0]);
+				item.data = (long *)malloc(sizeof(long));
 				*(long *)item.data = atol(token[n - 1]);
 				hsearch(item, ENTER);
-				freemem(token, __FILE__, __func__, __LINE__);
+				free(token);
 			}
 			else {
 				maxLineSize = atoi(token[0]);
-				freemem(token, __FILE__, __func__, __LINE__);
+				free(token);
 				break;
 			}
 		}
@@ -364,10 +360,8 @@ SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int 
 				/*
 				 * Create a new SEQUENCE and add it in the results table
 				 */
-				//sequence = (SEQUENCE *)calloc(1, sizeof(SEQUENCE));
-				sequence = (SEQUENCE *)bookmem(1, sizeof(SEQUENCE), __FILE__, __func__, __LINE__);
-				//ret->sequence = (SEQUENCE **)realloc(ret->sequence, (ret->nb + 1) * sizeof(SEQUENCE *));
-				ret->sequence = (SEQUENCE **)rebookmem(ret->sequence, (ret->nb + 1) * sizeof(SEQUENCE *), __FILE__, __func__, __LINE__);
+				sequence = (SEQUENCE *)calloc(1, sizeof(SEQUENCE));
+				ret->sequence = (SEQUENCE **)realloc(ret->sequence, (ret->nb + 1) * sizeof(SEQUENCE *));
 				ret->sequence[ret->nb] = sequence;
 				ret->nb++;
 
@@ -381,17 +375,13 @@ SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int 
 				 * gene_biotype
 				 */
 				attr = get_attribute_value(row, "gene_id");
-				//if (attr != NULL) sequence->gene_id = strdup(attr);
-				if (attr != NULL) sequence->gene_id = dupstring(attr, __FILE__, __func__, __LINE__);
+				if (attr != NULL) sequence->gene_id = strdup(attr);
 				attr = get_attribute_value(row, "transcript_id");
-				//if (attr != NULL) sequence->transcript_id = strdup(attr);
-				if (attr != NULL) sequence->transcript_id = dupstring(attr, __FILE__, __func__, __LINE__);
+				if (attr != NULL) sequence->transcript_id = strdup(attr);
 				attr = get_attribute_value(row, "gene_name");
-				//if (attr != NULL) sequence->gene_name = strdup(attr);
-				if (attr != NULL) sequence->gene_name = dupstring(attr, __FILE__, __func__, __LINE__);
+				if (attr != NULL) sequence->gene_name = strdup(attr);
 				attr = get_attribute_value(row, "gene_biotype");
-				//if (attr != NULL) sequence->gene_biotype = strdup(attr);
-				if (attr != NULL) sequence->gene_biotype = dupstring(attr, __FILE__, __func__, __LINE__);
+				if (attr != NULL) sequence->gene_biotype = strdup(attr);
 
 				/*
 				 * save the strand
@@ -407,8 +397,7 @@ SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int 
 				/*
 				 * save the sequence id (chromosome)
 				 */
-				//sequence->seqid = strdup(row->field[0]);
-				sequence->seqid = dupstring(row->field[0], __FILE__, __func__, __LINE__);
+				sequence->seqid = strdup(row->field[0]);
 
 				/*
 				 * Look for chromosome in the hashtable made from genome index
@@ -436,8 +425,7 @@ SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int 
 						/*
 						 * reserve memory for the table of exons
 						 */
-						//seqfrag = (SEQFRAG *)calloc(nb_exon, sizeof(SEQFRAG));
-						seqfrag = (SEQFRAG *)bookmem(nb_exon, sizeof(SEQFRAG), __FILE__, __func__, __LINE__);
+						seqfrag = (SEQFRAG *)calloc(nb_exon, sizeof(SEQFRAG));
 
 						/*
 						 * fill the table of exons and compute the transcript
@@ -471,8 +459,7 @@ SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int 
 						 */
 						if (intron) {
 							tr_len = atoi(row->field[4]) - atoi(row->field[3]) + 1;
-							//sequence->sequence = (char *)calloc(tr_len + 1, sizeof(char));
-							sequence->sequence = (char *)bookmem(tr_len + 1, sizeof(char), __FILE__, __func__, __LINE__);
+							sequence->sequence = (char *)calloc(tr_len + 1, sizeof(char));
 							get_chunk(sequence->sequence, ff, *(long *)(e->data), maxLineSize, tr_len, atoi(row->field[3]), rc ? *(row->field[6]) : '+');
 						}
 
@@ -484,8 +471,7 @@ SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int 
 						 * in the first argument of get_chunk.
 						 */
 						else {
-							//sequence->sequence = (char *)calloc(tr_len + 1, sizeof(char));
-							sequence->sequence = (char *)bookmem(tr_len + 1, sizeof(char), __FILE__, __func__, __LINE__);
+							sequence->sequence = (char *)calloc(tr_len + 1, sizeof(char));
 							pcdna = 0;
 							for (i = 0; i < nb_exon; i++) {
 								get_chunk(sequence->sequence + pcdna, ff, *(long *)(e->data), maxLineSize, seqfrag[i].end - seqfrag[i].start + 1, seqfrag[i].start, rc ? seqfrag[i].strand : '+');
@@ -496,18 +482,14 @@ SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int 
 						/*
 						 * Make the features
 						 */
-						//sequence->features = (FEATURES *)calloc(1, sizeof(FEATURES));
-						sequence->features = (FEATURES *)bookmem(1, sizeof(FEATURES), __FILE__, __func__, __LINE__);
+						sequence->features = (FEATURES *)calloc(1, sizeof(FEATURES));
 						for (i = 0; i < (*find_row_list)->nb_row; i++) {
 							feature = gtf_data->data[(*find_row_list)->row[i]]->field[2];
 							if (strcmp(feature, "transcript") && strcmp(feature, "ncRNA")) {
-								//sequence->features->feature = (FEATURE **)realloc(sequence->features->feature, (sequence->features->nb + 1) * sizeof(FEATURE *));
-								sequence->features->feature = (FEATURE **)rebookmem(sequence->features->feature, (sequence->features->nb + 1) * sizeof(FEATURE *), __FILE__, __func__, __LINE__);
-								//feat = sequence->features->feature[sequence->features->nb] = (FEATURE *)calloc(1, sizeof(FEATURE));
-								feat = sequence->features->feature[sequence->features->nb] = (FEATURE *)bookmem(1, sizeof(FEATURE), __FILE__, __func__, __LINE__);
+								sequence->features->feature = (FEATURE **)realloc(sequence->features->feature, (sequence->features->nb + 1) * sizeof(FEATURE *));
+								feat = sequence->features->feature[sequence->features->nb] = (FEATURE *)calloc(1, sizeof(FEATURE));
 								sequence->features->nb++;
-								//feat->name = strdup(feature);
-								feat->name = dupstring(feature, __FILE__, __func__, __LINE__);
+								feat->name = strdup(feature);
 								feat->start = atoi(gtf_data->data[(*find_row_list)->row[i]]->field[3]);
 								feat->end = atoi(gtf_data->data[(*find_row_list)->row[i]]->field[4]);
 							}
@@ -533,13 +515,10 @@ SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int 
 										if (pb == 0)
 											pb = feat->start;
 										else {
-											//sequence->features->feature = (FEATURE **)realloc(sequence->features->feature, (sequence->features->nb + 1) * sizeof(FEATURE *));
-											sequence->features->feature = (FEATURE **)rebookmem(sequence->features->feature, (sequence->features->nb + 1) * sizeof(FEATURE *), __FILE__, __func__, __LINE__);
-											//new_feat = sequence->features->feature[sequence->features->nb] = (FEATURE *)calloc(1, sizeof(FEATURE));
-											new_feat = sequence->features->feature[sequence->features->nb] = (FEATURE *)bookmem(1, sizeof(FEATURE), __FILE__, __func__, __LINE__);
+											sequence->features->feature = (FEATURE **)realloc(sequence->features->feature, (sequence->features->nb + 1) * sizeof(FEATURE *));
+											new_feat = sequence->features->feature[sequence->features->nb] = (FEATURE *)calloc(1, sizeof(FEATURE));
 											sequence->features->nb++;
-											//new_feat->name = strdup("intron");
-											new_feat->name = dupstring("intron", __FILE__, __func__, __LINE__);
+											new_feat->name = strdup("intron");
 											new_feat->start = feat->end + 1;
 											new_feat->end = pb - 1;
 											pb = feat->start;
@@ -555,13 +534,10 @@ SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int 
 										if (pe == 0)
 											pe = feat->end;
 										else {
-											//sequence->features->feature = (FEATURE **)realloc(sequence->features->feature, (sequence->features->nb + 1) * sizeof(FEATURE *));
-											sequence->features->feature = (FEATURE **)rebookmem(sequence->features->feature, (sequence->features->nb + 1) * sizeof(FEATURE *), __FILE__, __func__, __LINE__);
-											//new_feat = sequence->features->feature[sequence->features->nb] = (FEATURE *)calloc(1, sizeof(FEATURE));
-											new_feat = sequence->features->feature[sequence->features->nb] = (FEATURE *)bookmem(1, sizeof(FEATURE), __FILE__, __func__, __LINE__);
+											sequence->features->feature = (FEATURE **)realloc(sequence->features->feature, (sequence->features->nb + 1) * sizeof(FEATURE *));
+											new_feat = sequence->features->feature[sequence->features->nb] = (FEATURE *)calloc(1, sizeof(FEATURE));
 											sequence->features->nb++;
-											//new_feat->name = strdup("intron");
-											new_feat->name = dupstring("intron", __FILE__, __func__, __LINE__);
+											new_feat->name = strdup("intron");
 											new_feat->start = pe + 1;
 											new_feat->end = feat->start - 1;
 											pe = feat->end;

@@ -34,10 +34,6 @@ extern int comprow(const void *m1, const void *m2);
 extern int split_ip(char ***tab, char *s, char *delim);
 extern void split_key_value(char *s, char **key, char **value);
 extern char *trim_ip(char *);
-extern void *bookmem(int nb, int size, char *file, const char *func, int line);
-extern void *rebookmem(void *ptr, int size, char *file, const char *func, int line);
-extern void freemem(void *ptr, char *file, const char *func, int line);
-extern char *dupstring(const char *s, char *file, const char *func, int line);
 
 /*
  * global variables in libgtftk.c
@@ -56,10 +52,8 @@ extern int nb_column;
  */
 int add_index(char *key, GTF_DATA *gtf_data) {
 	column[8]->nb_index++;
-	//column[8]->index = realloc(column[8]->index, column[8]->nb_index * sizeof(INDEX));
-	column[8]->index = rebookmem(column[8]->index, column[8]->nb_index * sizeof(INDEX), __FILE__, __func__, __LINE__);
-	//column[8]->index[column[8]->nb_index - 1]->key = strdup(key);
-	column[8]->index[column[8]->nb_index - 1]->key = dupstring(key, __FILE__, __func__, __LINE__);
+	column[8]->index = realloc(column[8]->index, column[8]->nb_index * sizeof(INDEX));
+	column[8]->index[column[8]->nb_index - 1]->key = strdup(key);
 	column[8]->index[column[8]->nb_index - 1]->data = NULL;
 	column[8]->index[column[8]->nb_index - 1]->gtf_data = gtf_data;
 	return column[8]->nb_index - 1;
@@ -93,8 +87,7 @@ int update_row_table(GTF_DATA *gtf_data) {
 	GTF_ROW *row = gtf_data->data[0];
 	int i;
 
-	//gtf_data->data = (GTF_ROW **)realloc(gtf_data->data, gtf_data->size * sizeof(GTF_ROW *));
-	gtf_data->data = (GTF_ROW **)rebookmem(gtf_data->data, gtf_data->size * sizeof(GTF_ROW *), __FILE__, __func__, __LINE__);
+	gtf_data->data = (GTF_ROW **)realloc(gtf_data->data, gtf_data->size * sizeof(GTF_ROW *));
 	for (i = 0; i < gtf_data->size; i++) {
 		gtf_data->data[i] = row;
 		row = row->next;
@@ -117,9 +110,8 @@ int update_attribute_table(GTF_ROW *row) {
 	int i;
 	ATTRIBUTE *att;
 	att = row->attributes.attr[0];
-	freemem(row->attributes.attr, __FILE__, __func__, __LINE__);
-	//row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
-	row->attributes.attr = (ATTRIBUTE **)bookmem(row->attributes.nb, sizeof(ATTRIBUTE *), __FILE__, __func__, __LINE__);
+	free(row->attributes.attr);
+	row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
 	for (i = 0; i < row->attributes.nb; i++) {
 		row->attributes.attr[i] = att;
 		att = att->next;
@@ -143,15 +135,15 @@ int update_linked_list(GTF_DATA *gtf_data) {
 	for (i = 0; i < gtf_data->size - 1; i++) {
 		if ((gtf_data->data[i]->next != NULL) && (gtf_data->data[i]->next != gtf_data->data[i + 1])) {
 			row = gtf_data->data[i]->next;
-			for (j = 0; j < 8; j++) freemem(row->field[j], __FILE__, __func__, __LINE__);
-			freemem(row->field, __FILE__, __func__, __LINE__);
+			for (j = 0; j < 8; j++) free(row->field[j]);
+			free(row->field);
 			for (j = 0; j < row->attributes.nb; j++) {
-				freemem(row->attributes.attr[j]->key, __FILE__, __func__, __LINE__);
-				freemem(row->attributes.attr[j]->value, __FILE__, __func__, __LINE__);
-				freemem(row->attributes.attr[j], __FILE__, __func__, __LINE__);
+				free(row->attributes.attr[j]->key);
+				free(row->attributes.attr[j]->value);
+				free(row->attributes.attr[j]);
 			}
-			freemem(row->attributes.attr, __FILE__, __func__, __LINE__);
-			freemem(row, __FILE__, __func__, __LINE__);
+			free(row->attributes.attr);
+			free(row);
 		}
 		gtf_data->data[i]->next = gtf_data->data[i + 1];
 	}
@@ -174,8 +166,7 @@ GTF_DATA *load_GTF(char *input) {
 	/*
 	 * a buffer to store rows of GTF file as they are read
 	 */
-	//char *buffer = (char *)calloc(10000, sizeof(char));
-	char *buffer = (char *)bookmem(10000, sizeof(char), __FILE__, __func__, __LINE__);
+	char *buffer = (char *)calloc(10000, sizeof(char));
 	char *trim_buffer;
 
 	/*
@@ -203,14 +194,12 @@ GTF_DATA *load_GTF(char *input) {
 	/*
 	 * allocates memory for the GTF_DATA structure to return
 	 */
-	//GTF_DATA *ret = (GTF_DATA *)calloc(1, sizeof(GTF_DATA));
-	GTF_DATA *ret = (GTF_DATA *)bookmem(1, sizeof(GTF_DATA), __FILE__, __func__, __LINE__);
+	GTF_DATA *ret = (GTF_DATA *)calloc(1, sizeof(GTF_DATA));
 
 	/*
 	 * allocates memory for one row in the table.
 	 */
-	//ret->data = (GTF_ROW **)calloc(1, sizeof(GTF_ROW *));
-	ret->data = (GTF_ROW **)bookmem(1, sizeof(GTF_ROW *), __FILE__, __func__, __LINE__);
+	ret->data = (GTF_ROW **)calloc(1, sizeof(GTF_ROW *));
 
 	GTF_ROW *row, *previous_row;
 
@@ -230,8 +219,7 @@ GTF_DATA *load_GTF(char *input) {
 			/*
 			 * allocates memory for a new row in the row list
 			 */
-			//row = (GTF_ROW *)calloc(1, sizeof(GTF_ROW));
-			row = (GTF_ROW *)bookmem(1, sizeof(GTF_ROW), __FILE__, __func__, __LINE__);
+			row = (GTF_ROW *)calloc(1, sizeof(GTF_ROW));
 			if (nb_row == 0) ret->data[0] = row;
 
 			/*
@@ -250,14 +238,12 @@ GTF_DATA *load_GTF(char *input) {
 			/*
 			 * allocates memory for the 8 first fields
 			 */
-			//row->field = (char **)calloc(8, sizeof(char *));
-			row->field = (char **)bookmem(8, sizeof(char *), __FILE__, __func__, __LINE__);
+			row->field = (char **)calloc(8, sizeof(char *));
 
 			/*
 			 * store the 8 first fields
 			 */
-			//for (i = 0; i < 8; i++) row->field[i] = strdup(token[i]);
-			for (i = 0; i < 8; i++) row->field[i] = dupstring(token[i], __FILE__, __func__, __LINE__);
+			for (i = 0; i < 8; i++) row->field[i] = strdup(token[i]);
 
 			/*
 			 * split the attributes
@@ -267,15 +253,13 @@ GTF_DATA *load_GTF(char *input) {
 			/*
 			 * allocates memory for the attributes
 			 */
-			//row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
-			row->attributes.attr = (ATTRIBUTE **)bookmem(row->attributes.nb, sizeof(ATTRIBUTE *), __FILE__, __func__, __LINE__);
+			row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
 
 			/*
 			 * store the attributes
 			 */
 			for (i = 0; i < row->attributes.nb; i++) {
-				//row->attributes.attr[i] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
-				row->attributes.attr[i] = (ATTRIBUTE *)bookmem(1, sizeof(ATTRIBUTE), __FILE__, __func__, __LINE__);
+				row->attributes.attr[i] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
 				split_key_value(attr[i], &(row->attributes.attr[i]->key), &(row->attributes.attr[i]->value));
 			}
 
@@ -298,8 +282,8 @@ GTF_DATA *load_GTF(char *input) {
 			/*
 			 * free memory used to split the row and the attributes
 			 */
-			freemem(token, __FILE__, __func__, __LINE__);
-			freemem(attr, __FILE__, __func__, __LINE__);
+			free(token);
+			free(attr);
 		}
 	}
 
@@ -316,10 +300,10 @@ GTF_DATA *load_GTF(char *input) {
 	/*
 	 * free the buffer used to read GTF file
 	 */
-	freemem(buffer, __FILE__, __func__, __LINE__);
+	free(buffer);
 	if (gr != NULL) {
-		freemem(gr->filename, __FILE__, __func__, __LINE__);
-		freemem(gr, __FILE__, __func__, __LINE__);
+		free(gr->filename);
+		free(gr);
 	}
 	return ret;
 }
@@ -343,8 +327,7 @@ STRING_LIST *get_all_attributes(GTF_DATA *gtf_data) {
 	 * The list of attributes to return. Each time a new attribute is found,
 	 * it will be added in this list.
 	 */
-	//STRING_LIST *sl = (STRING_LIST *)calloc(1, sizeof(STRING_LIST));
-	STRING_LIST *sl = (STRING_LIST *)bookmem(1, sizeof(STRING_LIST), __FILE__, __func__, __LINE__);
+	STRING_LIST *sl = (STRING_LIST *)calloc(1, sizeof(STRING_LIST));
 
 	/*
 	 * a variable to point on each attribute we want to look for in the
@@ -381,8 +364,7 @@ STRING_LIST *get_all_attributes(GTF_DATA *gtf_data) {
 			 * the lsearch function
 			 */
 			if (!lfind(pkey, sl->list, (size_t *)(&sl->nb), sizeof(char *), compatt)) {
-				//sl->list = (char **)realloc(sl->list, (sl->nb + 1) * sizeof(char *));
-				sl->list = (char **)rebookmem(sl->list, (sl->nb + 1) * sizeof(char *), __FILE__, __func__, __LINE__);
+				sl->list = (char **)realloc(sl->list, (sl->nb + 1) * sizeof(char *));
 				lsearch(pkey, sl->list, (size_t *)(&sl->nb), sizeof(char *), compatt);
 			}
 		}
@@ -403,7 +385,9 @@ void action_destroy(void *nodep) {
  * research tree
  */
 static void action_sort(const void *nodep, const VISIT which, const int depth) {
-	// the row list of the current gene
+	/*
+	 * the row list of the current gene
+	 */
 	ROW_LIST *datap = *((ROW_LIST **)nodep);
 
 	switch (which) {
@@ -439,12 +423,13 @@ static void action_sort(const void *nodep, const VISIT which, const int depth) {
  */
 INDEX_ID *get_index(GTF_DATA *gtf_data, char *key) {
 	int c, k;
-	//INDEX_ID *ret = calloc(1, sizeof(INDEX_ID));
-	INDEX_ID *ret = bookmem(1, sizeof(INDEX_ID), __FILE__, __func__, __LINE__);
+	INDEX_ID *ret = calloc(1, sizeof(INDEX_ID));
 
 	ret->column = ret->index_rank = -1;
 
-	// look for key in the 8 first column names and index the column if found
+	/*
+	 * look for key in the 8 first column names and index the column if found
+	 */
 	for (c = 0; c < (nb_column - 1); c++)
 		if (!strcmp(column[c]->name, key)) {
 			/*
@@ -539,8 +524,7 @@ INDEX_ID *index_gtf(GTF_DATA *gtf_data, char *key) {
 			 * indexes all the rows of the GTF data with an attribute and put a
 			 * reference on the GTF data in the INDEX
 			 */
-			//int *kk = (int *)calloc(gtf_data->size, sizeof(int)), kq, kr;
-			int *kk = (int *)bookmem(gtf_data->size, sizeof(int), __FILE__, __func__, __LINE__), kq, kr;
+			int *kk = (int *)calloc(gtf_data->size, sizeof(int)), kq, kr;
 			for (k = 0; k < gtf_data->size; k++) kk[k] = k;
 			for (k = 0; k < gtf_data->size; k++) {
 				kr = k + rand() / (RAND_MAX / (gtf_data->size - k) + 1);

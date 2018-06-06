@@ -93,7 +93,11 @@ test_cmd:
 	@bats $<
 	@echo "completed" > $@
 
-test_para: $(addsuffix .completed, $(shell gtftk -l))
+OUTPUT = $(eval OUTPUT := $$(shell gtftk -l))$(OUTPUT)
+
+OUTPUT2 = $(addsuffix .completed, $(OUTPUT))
+
+test_para: $(OUTPUT2)
 
 clean:
 	@make bats_cmd CMD=clean

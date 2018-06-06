@@ -11,10 +11,6 @@
 
 #include "libgtftk.h"
 
-extern void *bookmem(int nb, int size, char *file, const char *func, int line);
-extern void freemem(void *ptr, char *file, const char *func, int line);
-extern char *dupstring(const char *s, char *file, const char *func, int line);
-
 /*
  * Returns the next row of text from the file pointed by gr (a gzipped file or a flat file),
  * or NULL if the EOF has been reached
@@ -44,58 +40,61 @@ char *get_next_gtf_line(GTF_READER *gr, char *buffer) {
  *  - a file in ~/.gtftk/
  */
 GTF_READER *get_gtf_reader(char *query) {
-	//GTF_READER *gr = (GTF_READER *)calloc(1, sizeof(GTF_READER));
-	GTF_READER *gr = (GTF_READER *)bookmem(1, sizeof(GTF_READER), __FILE__, __func__, __LINE__);
-	//char *tmp = (char *)calloc(1000, sizeof(char)), *query_filename;
-	char *tmp = (char *)bookmem(1000, sizeof(char), __FILE__, __func__, __LINE__), *query_filename;
+	GTF_READER *gr = (GTF_READER *)calloc(1, sizeof(GTF_READER));
+	char *tmp = (char *)calloc(1000, sizeof(char)), *query_filename;
 
 	if (access(query, F_OK) && strcmp(query, "-")) {
-		// query is not a local file
+		/*
+		 * query is not a local file. Look for it in ~/.gtftk
+		 */
 		strcpy(tmp, getenv("HOME"));
 		strcat(tmp, "/.gtftk/");
 		strcat(tmp, query);
 		if (access(tmp, F_OK)) {
-			// query is not a file in ~/.gtftk
+			/*
+			 * query is not a file in ~/.gtftk
+			 */
 			query_filename = NULL;
-
-			// query is not valid
 			perror(query);
 		}
 		else
-			// query is a file in ~/.gtftk
-			//query_filename = strdup(tmp);
-			query_filename = dupstring(tmp, __FILE__, __func__, __LINE__);
+			/*
+			 * query is a file in ~/.gtftk
+			 */
+			query_filename = strdup(tmp);
 	}
 	else
-		// query is a valid local file
-		//query_filename = strdup(query);
-		query_filename = dupstring(query, __FILE__, __func__, __LINE__);
+		/*
+		 * query is a valid local file
+		 */
+		query_filename = strdup(query);
 
 	if (query_filename != NULL) {
-		// here we got a valid local file in query_filename
+		/*
+		 * here we got a valid file or standard input in query_filename
+		 */
 		if (strstr(query_filename, ".gtf.gz")) {
-			// gz file
 			gr->filename = query_filename;
 			gr->gz = 1;
 			gr->gzfile = gzopen(gr->filename, "r");
 			gr->plainfile = NULL;
 		}
 		else if (strstr(query_filename, ".gtf")) {
-			// plain text file
 			gr->filename = query_filename;
 			gr->plainfile = fopen(gr->filename, "ro");
 			gr->gzfile = NULL;
 			gr->gz = 0;
 		}
 		else if (!strcmp(query_filename, "-")) {
-			// query is standard input
 			gr->plainfile = stdin;
 			gr->gzfile = NULL;
 			gr->filename = query_filename;
 			gr->gz = 0;
 		}
 		else {
-			// suppose it is a GTF file ...
+			/*
+			 * we suppose it is a GTF file, even if the extension is not gtf ...
+			 */
 			gr->filename = query_filename;
 			gr->plainfile = fopen(gr->filename, "ro");
 			gr->gzfile = NULL;
@@ -103,10 +102,14 @@ GTF_READER *get_gtf_reader(char *query) {
 		}
 	}
 	else {
-		freemem(gr, __FILE__, __func__, __LINE__);
+		/*
+		 * query is not a valid file name nor standard input, so we return a
+		 * NULL GTF_READER
+		 */
+		free(gr);
 		gr = NULL;
 	}
 
-	freemem(tmp, __FILE__, __func__, __LINE__);
+	free(tmp);
 	return gr;
 }

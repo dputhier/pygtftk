@@ -12,7 +12,6 @@
  */
 extern GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data);
 extern int update_attribute_table(GTF_ROW * row);
-extern void freemem(void *ptr, char *file, const char *func, int line);
 
 __attribute__ ((visibility ("default")))
 GTF_DATA *del_attributes(GTF_DATA *gtf_data, char *features, char *keys) {
@@ -24,7 +23,6 @@ GTF_DATA *del_attributes(GTF_DATA *gtf_data, char *features, char *keys) {
 	GTF_DATA *ret = clone_gtf_data(gtf_data);
 
 	GTF_ROW *row;
-
 	ATTRIBUTE *pattr, *previous_pattr;
 
 	for (i = 0; i < ret->size; i++) {
@@ -36,8 +34,8 @@ GTF_DATA *del_attributes(GTF_DATA *gtf_data, char *features, char *keys) {
 			previous_pattr = NULL;
 			while (pattr != NULL) {
 				if (strstr(keys, pattr->key)) {
-					freemem(pattr->key, __FILE__, __func__, __LINE__);
-					freemem(pattr->value, __FILE__, __func__, __LINE__);
+					free(pattr->key);
+					free(pattr->value);
 					if (previous_pattr != NULL)
 						previous_pattr->next = pattr->next;
 					else

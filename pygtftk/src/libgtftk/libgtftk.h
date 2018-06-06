@@ -8,6 +8,12 @@
  *  Contains all the structure definitions and the prototype declarations.
  */
 
+/*
+ * If this flag is set, the library output a very huge debug information used
+ * to find memory leaks.
+ */
+//#define GTFTOOLKIT_DEBUG
+
 #ifndef GTFTOOLKIT_GTFTK_SRC_LIB_LIBGTFTK_H_
 #define GTFTOOLKIT_GTFTK_SRC_LIB_LIBGTFTK_H_
 #define _GNU_SOURCE
@@ -20,9 +26,19 @@
 #include <errno.h>
 
 /*
- * Flag to write memory operations (malloc, calloc, realloc, free) in stderr
+ * Debug of memory allocation. Must be linked with libmemory.so shared library.
+ * GTFTOOLKIT_DEBUG must be defined.
  */
-#define LOG_MEMORY_HANDLING 0
+#ifdef GTFTOOLKIT_DEBUG
+extern void *F_calloc(int nb, int size, char *file, const char *func, int line);
+extern void *F_realloc(void *ptr, int size, char *file, const char *func, int line);
+extern void F_free(void *ptr, char *file, const char *func, int line);
+extern void *F_malloc(int size, char *file, const char *func, int line);
+#define calloc(nb, size) F_calloc(nb, size, __FILE__, __func__, __LINE__)
+#define realloc(ptr, size) F_realloc(ptr, size, __FILE__, __func__, __LINE__)
+#define malloc(size) F_malloc(size, __FILE__, __func__, __LINE__)
+#define free(p) F_free(p, __FILE__, __func__, __LINE__)
+#endif /* GTFTOOLKIT_DEBUG */
 
 /*
  * constants for transcript selection in select_transcript function
@@ -31,6 +47,9 @@
 #define LONGEST_TRANSCRIPT 2
 #define MOST5P_TRANSCRIPT 3
 
+/*
+ * some usefull macros used in get_sequences.c
+ */
 #define MIN(x, y) (x <= y ? x : y)
 #define MAX(x, y) (x > y ? x : y)
 #define COMPLEMENT(c) (	c == 'A' ? 'T' : \
@@ -41,13 +60,6 @@
 						c == 'g' ? 'c' : \
 						c == 'C' ? 'G' : \
 						c == 'c' ? 'g' : c)
-
-#define EXON 0
-#define INTRON 1
-#define UTR3P 2
-#define UTR5P 3
-#define STARTCODON 4
-#define STOPCODON 5
 
 /*
  * This structure describes the input (i.e. a GTF file or a gzipped GTF file).
@@ -97,8 +109,7 @@ typedef struct ATTRIBUTES {
 
 
 /*
- * A structure to store a row from a GTF file. field contains the string values
- * of the 8 first fields. Attributes are stored in the key/value string tables.
+ * A structure to store a row from a GTF file.
  */
 typedef struct GTF_ROW {
 	/*
@@ -181,6 +192,11 @@ typedef struct INDEX {
 
 } INDEX;
 
+/*
+ * A structure that contains the information about an index in the column model:
+ * the column and the rank as an index can contain several indexes. The index
+ * can be accessed as: column[index_id.column]->index[index_id.index_rank]
+ */
 typedef struct INDEX_ID {
 	int column;
 	int index_rank;
@@ -312,6 +328,10 @@ typedef struct SEQUENCES {
 	SEQUENCE **sequence;
 } SEQUENCES;
 
+/*
+ * Used by get_list function to store an return the results as a matrix of
+ * character strings.
+ */
 typedef struct TTEXT {
 	int size;
 	char ***data;
@@ -336,7 +356,7 @@ GTF_DATA *select_by_number_of_exon(GTF_DATA *gtf_data, int min, int max);
 GTF_DATA *select_by_genomic_location(GTF_DATA *gtf_data, int nb_loc, char **chr, int *begin_gl, int *end_gl);
 RAW_DATA *extract_data(GTF_DATA *gtf_data, char *key, int base, int uniq);
 void print_raw_data(RAW_DATA *raw_data, char delim, char *output);
-GTF_DATA *select_transcript(GTF_DATA *gtf_data, int type);
+//GTF_DATA *select_transcript(GTF_DATA *gtf_data, int type);
 SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int rc);
 int free_gtf_data(GTF_DATA *gtf_data);
 int free_raw_data(RAW_DATA *raw_data);
