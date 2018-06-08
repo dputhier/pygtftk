@@ -116,11 +116,13 @@ else:
     [ -z $result ]
     }
 
+
     #Test number of output lines (genes)
     @test "short_long_6" {
     result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf  -g |  gtftk select_by_key -k feature -v gene| wc -l)
     [ $result -eq 11 ]
     }
+
 
     #Check size
     @test "short_long_7" {
@@ -152,6 +154,7 @@ else:
     [ $result -eq 788 ]
     } 
               
+
     
     """
 
