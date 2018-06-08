@@ -29,21 +29,21 @@ rule retrieveBigwig:
 rule retrieveGTF_retrieve:
     output: 'output/01_get_gtf/{s}_{r}.gtf'
     shell: """
-    gtftk retrieve -V 2 -C -s {wildcards.s} -r {wildcards.r} -cd > {output}
+    gtftk retrieve -V 1 -C -s {wildcards.s} -r {wildcards.r} -cd > {output}
     """
 
 rule selectChrom_select_by_regexp:
     input: 'output/01_get_gtf/{s}_{r}.gtf'
     output: 'output/02_select_chrom/{s}_{r}.gtf'
     shell: """
-    gtftk select_by_regexp -V 2  -k chrom -r "chr[0-9XY]+" -i {input} -o {output}
+    gtftk select_by_regexp -V 1  -k chrom -r "chr[0-9XY]+" -i {input} -o {output}
     """
 
 rule oneTranscriptPerGene_random_tx:
     input: 'output/02_select_chrom/{s}_{r}.gtf'
     output: 'output/03_select_random_transcript/{s}_{r}.gtf'
     shell: """
-    gtftk random_tx -V 2 -m 1  -i {input} -o {output}
+    gtftk random_tx -V 1 -m 1  -i {input} -o {output}
     """
 
 rule selectByGeneOntology_select_by_go:
@@ -84,7 +84,7 @@ rule computePromoterCoverage_mk_matrix:
             s='output/07_chrom_size/chrom_size_{s}_{r}.txt'
     output: 'output/08_prepare_profile/{s}_{r}_matrix.zip'
     shell: """
-    gtftk mk_matrix -V 2 -i {input.g} -o output/08_prepare_profile/{wildcards.s}_{wildcards.r}_matrix -u 2500 -d 2500 -k 4 -c  {input.s} {input.bw} 
+    gtftk mk_matrix -V 1 -i {input.g} -o output/08_prepare_profile/{wildcards.s}_{wildcards.r}_matrix -u 2500 -d 2500 -k 4 -c  {input.s} {input.bw} 
     """
 
 
@@ -92,7 +92,7 @@ rule computeMetaplot_profile:
     input: z='output/08_prepare_profile/{s}_{r}_matrix.zip', c='output/06_merge/merge_class.txt'
     output: 'output/09_profile/profile_{s}_{r}.pdf'
     shell: """
-    gtftk profile  -V 2 -t {input.c} -i {input.z} -o output/09_profile -g tx_classes -f bwig  -if output/09_profile/profile_{wildcards.s}_{wildcards.r}.pdf -pw 8
+    gtftk profile  -V 1 -t {input.c} -i {input.z} -o output/09_profile -g tx_classes -f bwig  -if output/09_profile/profile_{wildcards.s}_{wildcards.r}.pdf -pw 8
     """
 
 # c='output/06_merge/merge_class.txt', \
