@@ -93,7 +93,7 @@ test_cmd:
 	@bats $<
 	@echo "completed" > $@
 
-OUTPUT = $(eval OUTPUT := $$(shell gtftk -l))$(OUTPUT)
+OUTPUT = $(eval OUTPUT := $$(shell gtftk -l 2>/dev/null))$(OUTPUT)
 
 OUTPUT2 = $(addsuffix .completed, $(OUTPUT))
 

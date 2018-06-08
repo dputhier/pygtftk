@@ -204,7 +204,7 @@ static void action_st(const void *nodep, const VISIT which, const int depth) {
 }
 
 __attribute__ ((visibility ("default")))
-GTF_DATA *select_transcript2(GTF_DATA *gtf_data, int type) {
+GTF_DATA *select_transcript(GTF_DATA *gtf_data, int type) {
 	INDEX_ID *gid_index;
 	int i, k;
 	tr_type = type;

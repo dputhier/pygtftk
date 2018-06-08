@@ -37,6 +37,7 @@ CHROM_CHECKED = False
 
 # Characters
 TAB = '\t'
+NEWLINE = '\n'
 
 # R libraries
 R_LIB = defaultdict(list)
@@ -189,11 +190,9 @@ def add_prefix_to_file(infile, prefix=None):
 
     :Example:
 
-    >>> from pygtftk.utils import get_example_file
     >>> from pygtftk.utils import add_prefix_to_file
-    >>> gtf = get_example_file()[0]
-    >>> result = ppygtftkk
-    >>> assert add_prefix_to_file(get_example_file()[0], "bla_")[-32::1] == result
+    >>> result = 'data/simple/bla_simple.gtf'
+    >>> assert add_prefix_to_file('data/simple/simple.gtf', "bla_") == result
 
     """
 
@@ -221,8 +220,8 @@ def chomp(string):
     :Example:
 
     >>> from pygtftk.utils import chomp
-  pygtftk assert "\r" not in chomp("blabla\r\n")
-    >>> assert "\n" not in chomp("blabla\r\n")
+    >>> from pygtftk.utils import NEWLINE
+    >>> assert NEWLINE not in chomp("blabla\r\n")
 
     """
     string = string.rstrip('\r\n')
@@ -236,8 +235,8 @@ def simple_line_count(afile):
 
     :Example:
 
-    >>> from pygtftk.utils import get_exampygtftkile
-    >>> from pygtftk.utils import simple_lpygtftkount
+    >>> from pygtftk.utils import get_example_file
+    >>> from pygtftk.utils import simple_line_count
     >>> my_file = get_example_file(datasetname="simple", ext="gtf")
     >>> my_file_h = open(my_file[0], "r")
     >>> assert simple_line_count(my_file_h) == 70
@@ -262,8 +261,8 @@ def simple_nb_column(afile, separator="\t"):
 
     :Example:
 
-    >>> from pygtftk.utils import get_exampygtftkile
-    >>> from pygtftk.utils import simple_npygtftkumn
+    >>> from pygtftk.utils import get_example_file
+    >>> from pygtftk.utils import simple_nb_column
     >>> my_file = get_example_file(datasetname="simple", ext="gtf")
     >>> my_file_h = open(my_file[0], "r")
     >>> assert simple_nb_column(my_file_h) == 9
@@ -292,8 +291,9 @@ def head_file(afile=None, nb_line=6):
 
     :Example:
 
-    >>> from pygtftk.utils import get_exampygtftkile
-    >>> from pygtftk.utils import head_filpygtftk >>> my_file = open(get_example_file()[0], "r")
+    >>> from pygtftk.utils import get_example_file
+    >>> from pygtftk.utils import head_file
+    >>> my_file = open(get_example_file()[0], "r")
     >>> #head_file(my_file)
 
     """
@@ -317,7 +317,7 @@ def is_fasta_header(string):
 
     :Example:
 
-    >>> from pygtftk.utils import is_fastapygtftker
+    >>> from pygtftk.utils import is_fasta_header
     >>> assert is_fasta_header(">DFTDFTD")
 
     """
@@ -336,8 +336,8 @@ def check_file_or_dir_exists(file_or_dir=None):
 
     :Example:
 
-    >>> from pygtftk.utils import get_exampygtftkile
-    >>> from pygtftk.utils import check_fipygtftk_dir_exists
+    >>> from pygtftk.utils import get_example_file
+    >>> from pygtftk.utils import check_file_or_dir_exists
     >>> assert check_file_or_dir_exists(get_example_file()[0])
     >>> assert check_file_or_dir_exists(get_example_file())
 
@@ -370,11 +370,13 @@ def tab_line(token=None, newline=False):
 
     :Example:
 
-    >>> from pygtftk.utils import tab_linepygtftk>>> assert tab_line(["a","b", "c"]) == "a\tb\tc"
+    >>> from pygtftk.utils import tab_line
+    >>> from pygtftk.utils import TAB
+    >>> assert tab_line(['a','b', 'c']) == 'a' + TAB + 'b' + TAB + 'c'
 
     """
     if not isinstance(token, list):
-        raise pygtftk.error.GTFtkError("tab_line  eeds a list as input.")
+        raise pygtftk.error.GTFtkError("tab_line  needs a list as input.")
 
     token = [str(t) for t in token]
 
@@ -391,8 +393,8 @@ def chrom_info_as_dict(chrom_info_file):
 
     :Example:
 
-    >>> from pygtftk.utils import get_exampygtftkile
-    >>> from pygtftk.utils import chrom_inpygtftk_dict
+    >>> from pygtftk.utils import get_example_file
+    >>> from pygtftk.utils import chrom_info_as_dict
     >>> a = get_example_file(ext='chromInfo')[0]
     >>> b = chrom_info_as_dict(open(a, "r"))
     >>> assert b['chr1'] == 300
@@ -463,8 +465,8 @@ def chrom_info_to_bed_file(chrom_file, chr_list=None):
     :param chrom_file: A file object.
     :param chr_list: A list of chromosome to be printed to bed file.
 
-    >>> from  pygtftk.utils import chrom_inpygtftk_bed_file
-    >>> from  pygtftk.utils import get_exampygtftkile
+    >>> from  pygtftk.utils import chrom_info_to_bed_file
+    >>> from  pygtftk.utils import get_example_file
     >>> from pybedtools import  BedTool
     >>> a = get_example_file(ext='chromInfo')
     >>> b = chrom_info_to_bed_file(open(a[0], 'r'))
@@ -514,7 +516,7 @@ def close_properly(*args):
 
     :Example:
 
-    >>> from pygtftk.utils import close_prpygtftky
+    >>> from pygtftk.utils import close_properly
 
     """
     for afile in args:
@@ -529,7 +531,7 @@ def write_properly(string, afile):
     :param string: a character string.
     :param afile: a file object.
 
-    >>> from pygtftk.utils import write_prpygtftky
+    >>> from pygtftk.utils import write_properly
 
     """
     if afile is not None and afile.name != '<stdout>':
@@ -550,7 +552,7 @@ def make_outdir_and_file(out_dir=None,
 
     :Example:
 
-    >>> from pygtftk.utils import make_outpygtftknd_file
+    >>> from pygtftk.utils import make_outdir_and_file
 
     """
 
@@ -588,7 +590,8 @@ def silentremove(filename):
 
     :param filename: a file name (or file object).
 
-    >>> from pygtftk.utils import silentrepygtftk    >>> from pygtftk.utils import make_tmppygtftk
+    >>> from pygtftk.utils import silentremove
+    >>> from pygtftk.utils import make_tmp_file
     >>> a = make_tmp_file()
 
 
@@ -732,7 +735,7 @@ def is_exon(string):
     :Example:
 
     >>> from pygtftk.utils import is_exon
-pygtftk>> assert is_exon("Exon") and is_exon("exon")
+    >>> assert is_exon("Exon") and is_exon("exon")
 
     """
     if string.lower().strip() == "exon":
@@ -749,7 +752,8 @@ def is_empty(string):
 
     :Example:
 
-    >>> from pygtftk.utils import is_emptypygtftk>>> assert is_empty("")
+    >>> from pygtftk.utils import is_empty
+    >>> assert is_empty("")
 
     """
     return not string.strip()
@@ -762,7 +766,8 @@ def is_comment(string):
 
     :Example:
 
-    >>> from pygtftk.utils import is_commepygtftk  >>> assert is_comment("#bla")
+    >>> from pygtftk.utils import is_comment
+    >>> assert is_comment("#bla")
 
     """
 
@@ -873,7 +878,8 @@ def sort_2_lists(list1, list2):
 
     :Example:
 
-    >>> from pygtftk.utils import sort_2_lpygtftk    >>> a = ["c", "a", "b"]
+    >>> from pygtftk.utils import sort_2_lists
+    >>> a = ["c", "a", "b"]
     >>> b = ["A", "B", "C"]
     >>> c = sort_2_lists(a, b)
     >>> assert c == [('a', 'b', 'c'), ('B', 'C', 'A')]
@@ -913,7 +919,8 @@ def median_comp(alist):
 
     :Example:
 
-    >>> from pygtftk.utils import median_cpygtftk   >>> a = [10,20,30,40,50]
+    >>> from pygtftk.utils import median_comp
+    >>> a = [10,20,30,40,50]
     >>> assert median_comp(a) == 30
     >>> a = [10,20,40,50]
     >>> assert median_comp(a) == 30
@@ -937,7 +944,8 @@ def intervals(l, n, silent=False):
 
     :Example:
 
-    >>> from pygtftk.utils import  intervapygtftk  >>> l = range(10)
+    >>> from pygtftk.utils import  intervals
+    >>> l = range(10)
     >>> a = intervals(l, 3)
     >>> assert a == [(0, 3), (3, 6), (6, 10)]
 
@@ -977,7 +985,8 @@ def check_r_installed():
 
     :Example:
 
-    >>> from pygtftk.utils import check_r_pygtftklled
+    >>> from pygtftk.utils import check_r_installed
+    >>> check_r_installed()
     """
     if find_executable('R') is None:
         raise pygtftk.error.GTFtkError("R software was not found and is required.")
@@ -992,7 +1001,7 @@ def check_r_packages(r_pkg_list=None, no_error=True):
 
     :Example:
 
-    >>> from pygtftk.utils import check_r_pygtftkges
+    >>> from pygtftk.utils import check_r_packages
     """
 
     p1 = Popen(["echo",

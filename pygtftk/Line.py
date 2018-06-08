@@ -653,7 +653,7 @@ class Feature(object):
 
         >>> from pygtftk.utils import get_example_feature
         >>> feat = get_example_feature()
-        >>> feat= feat.add_attr("foo", "bar")
+        >>> feat.add_attr("foo", "bar")
         >>> assert feat.get_attr_value('foo') == ['bar']
         """
         self.attr[key] = str(val)

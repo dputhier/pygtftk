@@ -113,7 +113,7 @@ GTF_DATA *add_exon_number(GTF_DATA *gtf_data, char *exon_number_field) {
 	nb_sort_row = 0;
 	sort_row = NULL;
 	if (exon_number_field != NULL)
-		enf = strdup("exon_number_field");
+		enf = strdup(exon_number_field);
 	else
 		enf = strdup("exon_number");
 

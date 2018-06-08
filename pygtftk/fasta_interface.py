@@ -248,14 +248,13 @@ class FASTA(object):
         >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 71, 71, '+', 'exon')] == 'g'
         >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 65, 68, '+', 'exon')] == 'atct'
         >>> a_dict = a_fa.as_dict(feat="CDS")
-        >>> assert a_dict[('G0001', 'G0001T002', 'chr1', 125, 130, '+', 'CDS')] == 'cccccgttacgtag'
-        >>> assert a_dict[('G0003', 'G0003T001', 'chr1', 50, 54, '-', 'CDS')] == 'gcttg'
-        >>> assert a_dict[('G0003', 'G0003T001', 'chr1', 57, 61, '-', 'CDS')] == 'aatta'
-        >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 71, 71, '+', 'CDS')] == 'g'
-        >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 65, 68, '+', 'CDS')] == 'atct'
         >>> assert a_dict[('G0001', 'G0001T002', 'chr1', 125, 130, '+', 'CDS')] == 'cccccg'
-        >>> assert a_dict[('G0001', 'G0001T001', 'chr1', 130, 132, '+', 'CDS')] == 'gtt'
-        >>> assert a_dict[('G0008', 'G0008T001', 'chr1', 211, 213, '-', 'CDS')]  == 'cgc'
+        >>> assert a_dict[('G0003', 'G0003T001', 'chr1', 50, 52, '-', 'CDS')] == 'ttg'
+        >>> assert a_dict[('G0004', 'G0004T001', 'chr1', 65, 67, '+', 'CDS')] == 'atc'
+        >>> assert a_dict[('G0004', 'G0004T002', 'chr1', 71, 71, '+', 'CDS')] == 'g'
+        >>> assert a_dict[('G0004', 'G0004T002', 'chr1', 74, 75, '+', 'CDS')] == 'gc'
+        >>> assert a_dict[('G0006', 'G0006T001', 'chr1', 22, 25, '-', 'CDS')] == 'acat'
+        >>> assert a_dict[('G0006', 'G0006T001', 'chr1', 28, 30, '-', 'CDS')]  == 'att'
         """
 
         d_out = OrderedDict()

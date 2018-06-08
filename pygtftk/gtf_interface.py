@@ -33,7 +33,7 @@ from pyparsing import operatorPrecedence
 
 import pygtftk
 import pygtftk.utils
-from fasta_interface import FASTA
+from pygtftk.fasta_interface import FASTA
 from pygtftk import cmd_manager
 from pygtftk.Line import Feature
 from pygtftk.error import GTFtkError
@@ -43,7 +43,7 @@ from pygtftk.utils import chrom_info_to_bed_file
 from pygtftk.utils import flatten_list_recur
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
-from tab_interface import TAB
+from pygtftk.tab_interface import TAB
 
 # ---------------------------------------------------------------
 # find module path
@@ -549,15 +549,9 @@ class GTF(object):
         """Delete a GTF_DATA object (set it to 0).
 
         :Example:
-        >>> import pygtftk.utils
-        >>> pygtftk.utils.VERBOSITY = 1
-        >>> from pygtftk.utils import get_example_file
-        >>> from pygtftk.gtf_interface import GTF
-        >>> a_file = get_example_file("simple", "gtf")[1]
-        >>> gtf = GTF(a_file)
-        >>> clone = gtf._clone(gtf._data)
-        >>> clone = gtf._clone(gtf._data)
-        >>> clone = gtf._clone(gtf._data)
+
+        >>> # To be used internally
+
         """
         if self._data != 0:
             self._message("GTF deleted ", type="DEBUG_MEM")
@@ -792,9 +786,7 @@ class GTF(object):
         >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
-        >>> a_gtf.select_by_key("feature", "gene,transcript")
-        >>> #assert len(a_gtf.select_by_key("feature", "gene,transcript", invert_match=True).convert_to_ensembl())
-        >>> a_gtf.select_by_key("feature", "gene,transcript", invert_match=True)
+        >>> assert len(a_gtf.select_by_key("feature", "gene,transcript", invert_match=True).convert_to_ensembl()) == len(a_gtf)
 
         """
 
@@ -3153,14 +3145,16 @@ class GTF(object):
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
         >>> from pygtftk.utils import make_tmp_file
+        >>> from pygtftk.utils import NEWLINE
         >>> a_path = get_example_file()[0]
         >>> gtf = GTF(a_path)
         >>> tmp_file =  make_tmp_file()
-        >>> for i in range(len(gtf)): tmp_file.write(str(i) + "\n")
+        >>> for i in range(len(gtf)): tmp_file.write(str(i) + NEWLINE)
         >>> tmp_file.close()
         >>> gtf = gtf.add_attr_column(tmp_file, new_key='foo')
         >>> a_list = gtf.extract_data('foo', as_list=True)
         >>> assert [int(x) for x in a_list] == range(70)
+
 
         """
 
