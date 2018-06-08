@@ -356,7 +356,7 @@ GTF_DATA *select_by_number_of_exon(GTF_DATA *gtf_data, int min, int max);
 GTF_DATA *select_by_genomic_location(GTF_DATA *gtf_data, int nb_loc, char **chr, int *begin_gl, int *end_gl);
 RAW_DATA *extract_data(GTF_DATA *gtf_data, char *key, int base, int uniq);
 void print_raw_data(RAW_DATA *raw_data, char delim, char *output);
-//GTF_DATA *select_transcript(GTF_DATA *gtf_data, int type);
+GTF_DATA *select_transcript(GTF_DATA *gtf_data, int type);
 SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int rc);
 int free_gtf_data(GTF_DATA *gtf_data);
 int free_raw_data(RAW_DATA *raw_data);
@@ -375,7 +375,6 @@ GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features, char *key, char *txt, i
 GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_key, char *sep);
 void clear_indexes(void);
 GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
-GTF_DATA *select_transcript2(GTF_DATA *gtf_data, int type);
 int int_array_test(int *pos, int size);
 
 #endif /* GTFTOOLKIT_GTFTK_SRC_LIB_LIBGTFTK_H_ */

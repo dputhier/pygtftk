@@ -302,6 +302,7 @@ GTF_DATA *select_by_key(GTF_DATA *gtf_data, char *key, char *value, int not) {
 	if (all_rows != NULL) {
 		if (all_rows->row != NULL) free(all_rows->row);
 		free(all_rows);
+		all_rows = NULL;
 	}
 	free(index_id);
 

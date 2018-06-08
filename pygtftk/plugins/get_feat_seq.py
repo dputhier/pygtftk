@@ -216,18 +216,6 @@ else:
     test = """
 
     #get_feat_seq:
-    @test "get_feat_seq_0.0" {
-     result=`echo 1`
-      [ "$result" = "1" ]
-    }
-    
-    #get_feat_seq:
-    @test "get_feat_seq_0.1" {
-     result=`gtftk get_feat_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa  -l feature,transcript_id,start -t  exon  | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
-      [ "$result" = "aatta,gcttg," ]
-    }
-
-    #get_feat_seq:
     @test "get_feat_seq_1" {
      result=`gtftk get_feat_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa  -l feature,transcript_id,start -t  exon -n | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
       [ "$result" = "caagc,taatt," ]

@@ -11,6 +11,9 @@ from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 
+__doc__ = """
+Select the shortest mature transcript (i.e without introns) for each gene or the longest if the -l arguments is used.
+"""
 
 def make_parser():
     """parse"""
@@ -119,6 +122,36 @@ else:
     [ $result -eq 11 ]
     }
 
+    #Check size
+    @test "short_long_7" {
+    result=$(gtftk get_example -d mini_real  | gtftk short_long |  gtftk feature_size -t mature_rna |  gtftk select_by_key -k gene_name -v AURKAIP1 | gtftk select_by_key --select-transcripts | gtftk tabulate -Hun -k feat_size)
+    [ $result -eq 608 ]
+    }
+    
+    #Check size
+    @test "short_long_7" {
+    result=$(gtftk get_example -d mini_real  | gtftk short_long |  gtftk feature_size -t mature_rna |  gtftk select_by_key -k gene_name -v AURKAIP1 | gtftk select_by_key --select-transcripts | gtftk tabulate -Hun -k feat_size)
+    [ $result -eq 608 ]
+    }
+    
+    #Check size
+    @test "short_long_8" {
+    result=$(gtftk get_example -d mini_real  | gtftk short_long -l |  gtftk feature_size -t mature_rna |  gtftk select_by_key -k gene_name -v AURKAIP1 | gtftk select_by_key --select-transcripts | gtftk tabulate -Hun -k feat_size)
+    [ $result -eq 1072 ]
+    }   
+
+    #Check size
+    @test "short_long_9" {
+    result=$(gtftk get_example -d mini_real  | gtftk feature_size -t mature_rna | gtftk short_long |  gtftk select_by_key -k gene_name -v ISG15 | gtftk select_by_key -t |  gtftk tabulate -H -k feat_size)
+    [ $result -eq 657 ]
+    } 
+
+    #Check size
+    @test "short_long_10" {
+    result=$(gtftk get_example -d mini_real  | gtftk feature_size -t mature_rna | gtftk short_long -l |  gtftk select_by_key -k gene_name -v ISG15 | gtftk select_by_key -t |  gtftk tabulate -H -k feat_size)
+    [ $result -eq 788 ]
+    } 
+              
     
     """
 

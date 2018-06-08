@@ -158,7 +158,19 @@ else:
     [ $result -eq 1 ]
     }
     
+    #Check mini_real example.
+    @test "rm_dup_tss_4" {
+    result=$(gtftk get_example -d mini_real  | gtftk select_by_key -t | gtftk 5p_3p_coord -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
+    [ $result -eq 27 ]
+    }
     
+ 
+    #Check mini_real example.
+    @test "rm_dup_tss_4" {
+    result=$(gtftk get_example -d mini_real  | gtftk rm_dup_tss | gtftk select_by_key -t | gtftk 5p_3p_coord -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
+    [ $result -eq 1 ]
+    }
+
     """
 
     CmdObject(name="rm_dup_tss",

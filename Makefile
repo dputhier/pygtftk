@@ -98,7 +98,7 @@ OUTPUT = $(eval OUTPUT := $$(shell gtftk -l))$(OUTPUT)
 OUTPUT2 = $(addsuffix .completed, $(OUTPUT))
 
 test_para: $(OUTPUT2)
-
+	@make clean
 clean:
 	@make bats_cmd CMD=clean
 	@rm -rf prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott; \

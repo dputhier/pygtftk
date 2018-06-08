@@ -83,13 +83,13 @@ else:
     #select_most_5p_tx
     @test "select_most_5p_tx_1" {
      result=`gtftk get_example -d simple_04 | gtftk select_most_5p_tx| wc -l`
-      [ "$result" -eq 40 ]
+      [ "$result" -eq 41 ]
     }
     
     #select_most_5p_tx
     @test "select_most_5p_tx_2" {
      result=`gtftk get_example -d simple_04 | gtftk select_most_5p_tx -g | wc -l`
-      [ "$result" -eq 50 ]
+      [ "$result" -eq 51 ]
     }
     """
 
