@@ -157,8 +157,20 @@ else:
     result=$(gtftk get_example -d mini_real -f gtf | gtftk rm_dup_tss | gtftk select_by_key  -t |  gtftk 5p_3p_coord -n gene_id | grep "\+" | cut -f2,4 | sort | uniq -c | sort -n| perl -npe 's/^ +//; s/ +/\\t/' | cut -f 1| sort | uniq)
     [ $result -eq 1 ]
     }
+
+    #Check without rmdup (27 tx with the same TSS)
+    @test "rm_dup_tss_5" {
+    result=$(gtftk get_example -d mini_real  | gtftk select_by_key -t | gtftk 5p_3p_coord -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
+    [ $result -eq 27 ]
+    }
     
     
+    #Check with rmdup (now 1 tx with the same TSS)
+    @test "rm_dup_tss_5" {
+    result=$(gtftk get_example -d mini_real  | gtftk rm_dup_tss | gtftk select_by_key -t | gtftk 5p_3p_coord -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
+    [ $result -eq 1 ]
+    }
+        
     """
 
     CmdObject(name="rm_dup_tss",

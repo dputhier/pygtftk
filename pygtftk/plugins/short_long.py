@@ -113,12 +113,38 @@ else:
     [ -z $result ]
     }
 
+
     #Test number of output lines (genes)
     @test "short_long_6" {
     result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf  -g |  gtftk select_by_key -k feature -v gene| wc -l)
     [ $result -eq 11 ]
     }
 
+
+    #Test number of output lines (genes)
+    @test "short_long_7" {
+    result=$(gtftk get_example -d mini_real  | gtftk feature_size -t mature_rna | gtftk short_long -l |  gtftk select_by_key -k gene_name -v ISG15 | gtftk select_by_key -t |  gtftk tabulate -H -k feat_size)
+    [ $result -eq 788 ]
+    }
+    
+    #Test number of output lines (genes)
+    @test "short_long_8" {
+    result=$(gtftk get_example -d mini_real  | gtftk feature_size -t mature_rna | gtftk short_long  |  gtftk select_by_key -k gene_name -v ISG15 | gtftk select_by_key -t |  gtftk tabulate -H -k feat_size)
+    [ $result -eq 657 ]
+    }
+
+
+    #Test number of output lines (genes)
+    @test "short_long_9" {
+    result=$(gtftk get_example -d mini_real  | gtftk short_long -l |  gtftk feature_size -t mature_rna |  gtftk select_by_key -k gene_name -v AURKAIP1 | gtftk select_by_key --select-transcripts | gtftk tabulate -Hun -k feat_size)
+    [ $result -eq 1072 ]
+    }
+    
+    #Test number of output lines (genes)
+    @test "short_long_9" {
+    result=$(gtftk get_example -d mini_real  | gtftk short_long  |  gtftk feature_size -t mature_rna |  gtftk select_by_key -k gene_name -v AURKAIP1 | gtftk select_by_key --select-transcripts | gtftk tabulate -Hun -k feat_size)
+    [ $result -eq 608 ]
+    }
     
     """
 
