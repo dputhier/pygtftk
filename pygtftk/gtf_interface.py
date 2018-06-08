@@ -463,8 +463,6 @@ class GTF(object):
         self._message("GTF created ", type="DEBUG_MEM")
         self._ptr_addr += [id(self._data)]
 
-        message("LEAVING INIT")
-
     def merge_attr(self, feat="*", keys="gene_id,transcript_id",
                    new_key="gn_tx_id", sep="|"):
 
