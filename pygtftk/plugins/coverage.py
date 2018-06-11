@@ -341,16 +341,6 @@ def coverage(
                                    r=downstream,
                                    g=chrom_info.name).sort()
 
-        """
-        bed_names = dict()
-
-        for i in region_bo:
-            if i.name not in bed_names:
-                bed_names[i.name] = 1
-            else:
-                message("Warning names in BED file are ambiguous.",
-                        type="ERROR")
-        """
 
     region_bed = make_tmp_file(prefix="region", suffix=".bed")
 
@@ -378,17 +368,21 @@ def coverage(
         df_first = pd.read_csv(result_bed.name, sep="\t", header=None)
 
         df_first = df_first.ix[:, [0, 1, 2, 3, 5, 4]]
+        """
         bwig = [z.split("|")[0] for z in df_first[3]]
         bwig_nr = list(set(bwig))
+        """
 
         df_list = []
-
+        """
         for i in range(len(bwig_nr)):
+        """
+        for i in range(len(labels)):
             # create a sub data frame containing the coverage values of the
             # current bwig
-            str_to_find = r"^" + bwig_nr[i] + r"\|"
+            str_to_find = r"^" + labels[i] + r"\|"
             tmp_df = df_first[df_first[3].str.match(str_to_find)].copy()
-            to_replace = r"^" + bwig_nr[i] + r"\|"
+            to_replace = r"^" + labels[i] + r"\|"
             tmp_df.iloc[:, 3] = tmp_df.iloc[:, 3].replace(to_replace,
                                                           r"", regex=True)
 
@@ -407,7 +401,7 @@ def coverage(
                             "start",
                             "end",
                             "name",
-                            "strand"] + bwig_nr
+                            "strand"] + labels
 
         df_final.to_csv(outputfile, sep="\t", index=False)
 
@@ -572,7 +566,20 @@ else:
      result=`gtftk coverage -s sum -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo  -f tts  -p 0 -K toto  pygtftk/data/simple/simple.bw | sortBed |  cut -f5 | perl -npe 's/\\n/,/'`
       [ "$result" = "0.0,6.0,10.0,8.0,8.0,0.0," ]
     }
+
+    #coverage: test -s 
+    @test "coverage_22" {
+     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw  -l s1,s2 -x | cut -f7 | perl -npe 's/\n/,/'`
+      [ "$result" = "s2,0.0,2.0,3.333333,2.666667,2.666667,0.0," ]
+    }
       
+            
+    #coverage: test -s 
+    @test "coverage_23" {
+     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw  -l s1,s2 -x | cut -f6 | perl -npe 's/\n/,/'`
+      [ "$result" = "s1,0.0,2.0,3.333333,2.666667,2.666667,0.0," ]
+    }
+          
     """
 
     CmdObject(name='coverage',
