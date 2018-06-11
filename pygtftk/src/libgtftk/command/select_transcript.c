@@ -77,11 +77,9 @@ static void action_st(const void *nodep, const VISIT which, const int depth) {
 			break;
 		case leaf :
 		case postorder:
-			most_5p = 0;
 			max_trsize = 0;
 			min_trsize = 10000000;
 
-			//fprintf(stderr, "gene_id = %s\n", datap->token);
 			/*
 			 * loop on the rows of a gene
 			 */
@@ -93,6 +91,15 @@ static void action_st(const void *nodep, const VISIT which, const int depth) {
 					rg = datap->row[i];
 			}
 			nb_tr = get_trid_list(datap, &tr_list);
+
+			/*
+			 * we set most_5p to a great number if the gene is on the positive strand
+			 */
+			if (datap->nb_row > 0) {
+				row = gtf_d->data[rg];
+				if (*(row->field[6]) == '+') most_5p = 300000000;
+			}
+
 			//fprintf(stderr, "nb_tr = %d\n", nb_tr);
 			for (i = 0; i < nb_tr; i++) {
 				row_list->token = tr_list[i];
@@ -105,14 +112,6 @@ static void action_st(const void *nodep, const VISIT which, const int depth) {
 					 * transcripts
 					 */
 					qsort((*find_row_list)->row, (*find_row_list)->nb_row, sizeof(int), comprow);
-
-					/*
-					 * we set most_5p to a great number if the gene is on the positive strand
-					 */
-					if ((*find_row_list)->nb_row > 0) {
-						row = gtf_d->data[(*find_row_list)->row[0]];
-						if (*(row->field[6]) == '+') most_5p = 300000000;
-					}
 
 					/*
 					 * we loop on all exon rows of the transcript

@@ -91,6 +91,25 @@ else:
      result=`gtftk get_example -d simple_04 | gtftk select_most_5p_tx -g | wc -l`
       [ "$result" -eq 50 ]
     }
+
+    #select_most_5p_tx
+    @test "select_most_5p_tx_3" {
+     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx |  gtftk select_by_key -k gene_name -v ISG15 | gtftk select_by_key --select-transcripts | gtftk 5p_3p_coord| cut -f4`
+      [ "$result" = "ENSG00000187608|ENST00000624697" ]
+    }
+
+    #select_most_5p_tx
+    @test "select_most_5p_tx_4" {
+     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx | gtftk select_by_key -k gene_name -v CRABP2 | gtftk select_by_key --select-transcripts | gtftk 5p_3p_coord  -t transcript  cut -f4`
+      [ "$result" = "ENSG00000143320|ENST00000368220" ]
+    }        
+    
+    #select_most_5p_tx
+    @test "select_most_5p_tx_5" {
+     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx |  gtftk select_by_key -k gene_name -v RAB13 | gtftk select_by_key --select-transcripts | gtftk 5p_3p_coord  -t transcript  | cut -f 4`
+      [ "$result" = "ENSG00000143545|ENST00000495720" ]
+    }  
+
     """
 
     CmdObject(name="select_most_5p_tx",

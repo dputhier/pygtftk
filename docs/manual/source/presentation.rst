@@ -1289,6 +1289,60 @@ Description: Get feature sequence (e.g exon, UTR...).
 .. command-output:: gtftk get_feat_seq -h
 	:shell:
 
+
+------------------------------------------------------------------------------------------------------------------
+
+
+Genomic coverage analysis
+=========================
+
+coverage
+--------
+
+Description: Takes a GTF as input to compute bigwig coverage in regions of interest (promoter, transcript body, intron, intron_by_tx, tts...) or a BED6 to focus on user-defined regions. If --n-highest is used the program will compute the coverage of each bigwig based on the average value of the n windows (--nb-window) with the highest coverage values.
+Regions were signal can be computed (if GTF file as input) are promoter, tts, introns, intergenic regions or any feature available in the GTF file (transcript, exon, gene...).
+If --matrix-out is selected, the signal for each bigwig will be provided in a dedicated column. Otherwise, signal for each bigwig is provided through a dedicated line.
+
+
+ **Example:**
+
+We will first request a lightweight example dataset.
+
+
+.. command-output:: gtftk get_example -d mini_real -f '*'
+	:shell:
+
+
+Although we could work on the full dataset, we will focus on transcripts whose promoter region do not overlaps with any transcript from another gene.
+
+
+.. command-output:: gtftk overlapping -i mini_real.gtf.gz -c hg38.genome  -n > mini_real_noov.gtf
+	:shell:
+
+
+We will select a representative transcript for each gene. Here we will perform this step using random_tx although another interesting choice would be rm_dup_tss.
+
+.. command-output:: gtftk random_tx -i mini_real_noov.gtf  -m 1 -s 123 > mini_real_noov_rnd_tx.gtf
+	:shell:
+
+Now we will compute coverage of promoters regions using 3 bigWig files as input.
+
+
+.. command-output:: gtftk coverage -l H3K4me3,H3K79me2,H3K36me3 -u 5000 -d 5000 -i mini_real_noov_rnd_tx.gtf -c hg38.genome -m transcript_id,gene_name -x ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw > coverage.bed
+	:shell:
+
+
+Now we can have a look at the result:
+
+.. command-output:: head -n 10 coverage.bed
+	:shell:
+
+
+**Arguments:**
+
+.. command-output::  gtftk coverage -h
+	:shell:
+
 ------------------------------------------------------------------------------------------------------------------
 
 
@@ -1330,3 +1384,4 @@ Description: Returns a list of gene matched for expression based on reference va
 
 .. command-output:: gtftk control_list -h
 	:shell:
+

@@ -101,8 +101,14 @@ test_para: $(OUTPUT2)
 
 clean:
 	@make bats_cmd CMD=clean
-	@rm -rf prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott; \
+	@rm -rf cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott; \
 	cd docs/manual/; make clean;
 
 check_cmd_has_example:
 	@for i in $$(gtftk -l); do if grep -q  "^$$i" docs/manual/source/presentation.rst; then echo "" >/dev/null; else echo $$i; fi; done
+
+check_example_has_cmd:
+	@gtftk -l > cmd_list.txt
+	@grep "\-\-" -B 1 docs/manual/source/presentation.rst | grep -v "^$$" | grep -v " " |grep -v "^\-\-" > example_list.txt
+	@for i in $$(cat example_list.txt); do if $$(cat cmd_list.txt  | grep -q "^$$i")  ; then echo "" >/dev/null; else echo $$i; fi; done
+	@#rm -f cmd_list.txt example_list.txt tmp_list.txt
