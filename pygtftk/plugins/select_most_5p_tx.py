@@ -100,7 +100,7 @@ else:
 
     #select_most_5p_tx
     @test "select_most_5p_tx_4" {
-     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx | gtftk select_by_key -k gene_name -v CRABP2 | gtftk select_by_key --select-transcripts | gtftk 5p_3p_coord  -t transcript  cut -f4`
+     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx | gtftk select_by_key -k gene_name -v CRABP2 | gtftk select_by_key --select-transcripts | gtftk 5p_3p_coord  -t transcript | cut -f4`
       [ "$result" = "ENSG00000143320|ENST00000368220" ]
     }        
     

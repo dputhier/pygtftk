@@ -5,6 +5,7 @@ The setup.py file of the gtfk package.
 import glob
 import os
 import sys
+from distutils import sysconfig
 
 from sys import platform
 
@@ -47,7 +48,9 @@ version_file.close()
 cmd_src_list = glob.glob("pygtftk/src/libgtftk/command/*.c")
 
 if platform == "darwin":
-    dyn_lib_compil = ['-dynamiclib', '-shared']
+    vars = sysconfig.get_config_vars()
+    vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
+    dyn_lib_compil = ['-shared']
 else:
     dyn_lib_compil = ['-shared']
 
@@ -124,4 +127,6 @@ try:
 except OSError as e:
     pass
 
+vars = sysconfig.get_config_vars()
+print(vars)
 sys.stderr.write("Installation complete.\n")

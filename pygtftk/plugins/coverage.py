@@ -238,6 +238,7 @@ def coverage(
                     os.path.basename(
                         bw_list[i]))[0]]
 
+
     # -------------------------------------------------------------------------
     # Check the number of windows
     #
@@ -275,6 +276,7 @@ def coverage(
             is_gtf = True
         else:
             is_gtf = False
+
 
     # -------------------------------------------------------------------------
     # Get regions of interest
