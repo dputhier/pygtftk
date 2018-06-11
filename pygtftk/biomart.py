@@ -19,7 +19,7 @@ class Biomart(object):
 
         :param url: The full url to the mart server.
         :param xml: A string/docstring containing the query.
-        :param http_proxy:
+        :param http_proxy: Not tested at the moment.
 
         """
 
