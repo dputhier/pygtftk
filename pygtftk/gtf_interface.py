@@ -504,6 +504,7 @@ class GTF(object):
         >>> gtf._message('bla')
         >>> pygtftk.utils.VERBOSITY = 3
         >>> gtf._message('bla')
+        >>> pygtftk.utils.VERBOSITY = 0
         """
         addr = re.search("([^\s]+)>", repr(self._data))
         addr = addr.group(1)
