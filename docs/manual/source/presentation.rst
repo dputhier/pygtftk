@@ -1789,7 +1789,7 @@ Description: Returns a list of gene matched for expression based on reference va
 
 **Example:**
 
-.. command-output:: #gtftk control_list -i gtftk/data/control_list/control_list_data.txt -r gtftk/data/control_list/control_list_reference.txt -D ; cat control_list/control_list.txt
+.. command-output:: #gtftk control_list -i pygtftk/data/control_list/control_list_data.txt -r pygtftk/data/control_list/control_list_reference.txt -D ; cat control_list/control_list.txt
 	:shell:
 
 **Arguments:**

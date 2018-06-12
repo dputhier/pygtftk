@@ -346,27 +346,27 @@ else:
     test = """
     
     @test "cov_around_mid_1" {
-     result=`gtftk get_example | gtftk cov_around_mid -c gtftk/data/simple/simple.chromInfo -i gtftk/data/simple/simple.gtf gtftk/data/simple/simple.bw -u 1 -d 1 -s 1 -f tts -p 0 | grep G0009T001| perl -npe 's/\\t/|/g'`
+     result=`gtftk get_example | gtftk cov_around_mid -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf pygtftk/data/simple/simple.bw -u 1 -d 1 -s 1 -f tts -p 0 | grep G0009T001| perl -npe 's/\\t/|/g'`
      [ "$result" = "chr1|1|4|simple|G0009T001|.|-|1.0|1.0" ]
     }
     
     @test "cov_around_mid_2" {
-      result=`gtftk get_example | gtftk cov_around_mid -c gtftk/data/simple/simple.chromInfo -i gtftk/data/simple/simple.gtf gtftk/data/simple/simple.bw -u 1 -d 1 -s 1 -f tts -p 0 | grep G0006T001| perl -npe 's/\\t/|/g'`
+      result=`gtftk get_example | gtftk cov_around_mid -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf pygtftk/data/simple/simple.bw -u 1 -d 1 -s 1 -f tts -p 0 | grep G0006T001| perl -npe 's/\\t/|/g'`
       [ "$result" = "chr1|20|23|simple|G0006T001|.|-|3.0|3.0" ]
     }
     
     @test "cov_around_mid_3" {
-      result=`gtftk get_example | gtftk cov_around_mid -c gtftk/data/simple/simple.chromInfo -i gtftk/data/simple/simple.gtf gtftk/data/simple/simple.bw -u 7 -d 0  -s 1 -f tss -p 0  -K toto | grep G0010T001| perl -npe 's/\\t/|/g'`
+      result=`gtftk get_example | gtftk cov_around_mid -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf pygtftk/data/simple/simple.bw -u 7 -d 0  -s 1 -f tss -p 0  -K toto | grep G0010T001| perl -npe 's/\\t/|/g'`
         [ "$result" = "chr1|168|176|simple|G0010T001|.|+|3.0|3.0|2.0|2.0|1.0|1.0|0.0" ]
     } 
         
     @test "cov_around_mid_4" {
-      result=`gtftk get_example | gtftk cov_around_mid -c gtftk/data/simple/simple.chromInfo -i gtftk/data/simple/simple.gtf gtftk/data/simple/simple.bw -u 5 -d 0  -s 1 -f CDS -p 0  -K toto | perl -npe 's/\\t/|/g' | grep G0001T001`
+      result=`gtftk get_example | gtftk cov_around_mid -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf pygtftk/data/simple/simple.bw -u 5 -d 0  -s 1 -f CDS -p 0  -K toto | perl -npe 's/\\t/|/g' | grep G0001T001`
         [ "$result" = "chr1|125|131|simple|G0001T001|.|+|4.0|3.0|3.0|2.0|2.0" ]
     }     
 
     @test "cov_around_mid_5" {
-      result=`gtftk get_example | gtftk cov_around_mid -c gtftk/data/simple/simple.chromInfo -i gtftk/data/simple/simple.gtf gtftk/data/simple/simple.bw -u 5 -d 0  -s 1 -f exon| grep G0004T001| wc -l`
+      result=`gtftk get_example | gtftk cov_around_mid -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf pygtftk/data/simple/simple.bw -u 5 -d 0  -s 1 -f exon| grep G0004T001| wc -l`
         [ "$result" -eq 3 ]
     }   
     """
