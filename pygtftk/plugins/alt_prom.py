@@ -9,13 +9,13 @@ from _collections import defaultdict
 
 from pybedtools import BedTool
 
-from gtftk.arg_formatter import FileWithExtension
-from gtftk.arg_formatter import bedFileWithUnambiguousNames
-from gtftk.cmd_object import CmdObject
-from gtftk.gtf_interface import GTF
-from gtftk.utils import close_properly, message
-from gtftk.utils import flatten_list
-from gtftk.utils import make_tmp_file
+from pygtftk.arg_formatter import FileWithExtension
+from pygtftk.arg_formatter import bedFileWithUnambiguousNames
+from pygtftk.cmd_object import CmdObject
+from pygtftk.gtf_interface import GTF
+from pygtftk.utils import close_properly, message
+from pygtftk.utils import flatten_list
+from pygtftk.utils import make_tmp_file
 
 __updated__ = "2018-02-15"
 __doc__ = """

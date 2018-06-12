@@ -6,14 +6,14 @@ import argparse
 import os
 import sys
 
-from gtftk.arg_formatter import FileWithExtension
-from gtftk.arg_formatter import checkChromFile
-from gtftk.bedtool_extension import BedTool
-from gtftk.bwig.bw_coverage import bw_profile_mp
-from gtftk.cmd_object import CmdObject
-from gtftk.gtf_interface import GTF
-from gtftk.utils import close_properly, message
-from gtftk.utils import make_tmp_file
+from pygtftk.arg_formatter import FileWithExtension
+from pygtftk.arg_formatter import checkChromFile
+from pygtftk.bedtool_extension import BedTool
+from pygtftk.bwig.bw_coverage import bw_profile_mp
+from pygtftk.cmd_object import CmdObject
+from pygtftk.gtf_interface import GTF
+from pygtftk.utils import close_properly, message
+from pygtftk.utils import make_tmp_file
 
 __updated__ = "2018-02-05"
 __doc__ = """
