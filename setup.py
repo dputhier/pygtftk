@@ -127,6 +127,4 @@ try:
 except OSError as e:
     pass
 
-vars = sysconfig.get_config_vars()
-print(vars)
 sys.stderr.write("Installation complete.\n")

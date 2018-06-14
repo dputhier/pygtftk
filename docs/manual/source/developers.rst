@@ -1,10 +1,7 @@
-Plugin development
-===================
+Writing your own commands
+=============================
 
 
-Writing your own commands (plugins)
------------------------------------
- 
 Maybe you will be interested in helping us in the future by sharing your own commands. We provide an example below of the development of a very basic command that prints a GTF file.
 
 Just do the following things to declare a new command named **'print_gtf'**:

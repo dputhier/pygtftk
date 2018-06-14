@@ -3,21 +3,15 @@
 # Python GTF toolkit (pygtftk)
 
 
-The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF (Gene Transfer Format) files. One of our objective is to propose a set of tools that performs common and simple tasks to limit the use of perl/awk onliners that tend to limit readability of our bioinformatics workflows (and maybe yours). 
+The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package is compatible with Python 2.7 and relies on **libgtftk**, a library of functions **written in C**. 
 
-The pygtftk package relies on **libgtftk**, a library of functions **written in C**.
-
-The pygtftk package can be used through a Python interpreter or imported in any Python programs written for Python 2.7 language. 
-
-The pygtftk package comes with a set of **UNIX commands** that can be accessed through the main **gtftk  program**. The gtftk program implements several atomic tools than can be used and piped to filter, convert, or extract data from GTF files.
-
-The gtftk set of Unix command, can be easily extended using a basic plugin architecture. All these aspects are covered in the help section.
+The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools than piped to filter, convert, or extract data from GTF files. The gtftk set of Unix command, can be easily extended using. All these aspects are covered in the help section.
 
 While the gtftk Unix program comes with hundreds of unitary and functionnal tests, it is still upon  active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository. 
 
 ## System requirements
 
-Depending on the size of the GTF file, pygtftk may require lot of memory to perform selected task. A computer with 16Go is recommended in order to be able to pipe several commands when working with human annotations from ensembl release (e.g. 91).
+Depending on the size of the GTF file, pygtftk may require lot of memory to perform selected tasks. A computer with 16Go is recommended in order to be able to pipe several commands when working with human annotations from ensembl release (e.g. 91).
 
 At the moment, the gtftk program has been tested on:
 
@@ -29,7 +23,7 @@ Windows users should try *Cygwin* or *Bash on Ubuntu on Windows* although it has
 
 ## Installation through conda package building
 
-Installation through **conda** should be the prefered solution. Although the GTF interface of pygtftk should work properly after a pip install (see next section), the UNIX commands (gtftk program) require several external dependencies with some version constrains.
+Installation through **conda** should be the prefered install solution. Although the GTF interface of pygtftk should work properly after a pip install (see next section), the UNIX commands (gtftk program) require several external dependencies with some version constrains.
 
 At the moment, there is no built conda package available. You can however create an environment with all prerequisites using the commands below.
 If conda is not available on your system, first install miniconda from the official [web site](http://conda.pydata.org/miniconda.html).
@@ -63,10 +57,9 @@ To get the list of all dependencies and associated versions, please have a look 
 
 Installation through pip can be done as follow.
 
-
+    pip install -r requirements.txt
     pip install pygtftk
     
-   
 
 ## Building doc files
 
@@ -78,11 +71,11 @@ The following commands can be used to build the help files:
     
 ## Running functional tests
 
-A lot of functional tests have been developed to ensure consistency with expected results. This does not rule out that bugs may hide throughout the code... In order to check that installation is functional you may be interested in running functional tests. The definition of all functional tests declared in  gtftk commands/plugins is accessible using the -p/--plugin-tests argument:
+A lot of functional tests have been developed to ensure consistency with expected results. This does not rule out that bugs may hide throughout the code... In order to check that installation is functional you may be interested in running functional tests. The definition of all functional tests declared in  gtftk commands is accessible using the -p/--plugin-tests argument:
 
     gtftk -p
 
-You will need to install [bats (Bash Automated Testing System)](https://github.com/sstephenson/bats). Once bats is installed you may run the tests using the following commands:
+To run the tests, you will need to install [bats (Bash Automated Testing System)](https://github.com/sstephenson/bats). Once bats is installed run the following commands:
 
     # The tests should be run in the pygtftk git
     # directory because several tests contains references (relative path)
@@ -90,7 +83,7 @@ You will need to install [bats (Bash Automated Testing System)](https://github.c
     gtftk -p > gtftk_test.bats
     bats gtftk_test.bats
 
-Note, alternatively you may directly call the tests through the Makefile
+Note, alternatively you may directly call the tests using the Makefile
 
     make test
 

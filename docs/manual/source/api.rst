@@ -1,5 +1,5 @@
-API
-===
+Help on Python package (pygtftk)
+====================================
 
 The GTF class
 -------------

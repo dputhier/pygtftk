@@ -1,16 +1,22 @@
-gtftk main parser arguments
-===========================
+Help on gtftk Unix commands
+============================
+
+
+Main parser arguments of gtftk
+-------------------------------
+
 
 Getting help with -h
---------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 The -h argument can be used to get a synopsis for each implemented commands.
 
 .. command-output:: gtftk -h
 	:shell:
 
+
 Getting Bash completion
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 You may be interested in performing the following operations to activate bash completion for subcommands.
 
@@ -31,7 +37,7 @@ Or alternatively
 
 
 Getting the list of required R libraries
-----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The list of required R libraries can be accessed through the --r-libs/-r argument.
 
@@ -42,7 +48,7 @@ The list of required R libraries can be accessed through the --r-libs/-r argumen
 
 
 Getting the list of command tests
----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 One can access the list of tests through the -p/--plugin-tests arguments. These tests may be run using [bats](https://github.com/sstephenson/bats) (Bash Automated Testing System).
 
@@ -55,7 +61,7 @@ One can access the list of tests through the -p/--plugin-tests arguments. These 
 ------------------------------------------------------------------------------------------------------------------
 
 Naming conventions
-==================
+----------------------
 
 .. note:: We will use the terms **attribute or key** for any descriptor found in the 9th column (*e.g.* transcript_id) and the term **value** for its associated string (e.g. "NM_334567"). The eight first columns of the gtf file (chrom/seqid, source, type, start, end, score, strand, frame) will be refered as **basic attributes**. In the example below, gene_id is the attribute and 'G0001' is the associated value. 
 
@@ -68,7 +74,7 @@ Naming conventions
 
 
 About supported GTF file formats (you must read this section !)
-===============================================================
+-----------------------------------------------------------------
 
 .. warning:: The gtftk program is designed to handle files in **ensembl** GTF format. This means that the GTF file provided to gtftk **must contain transcript and gene feature/lines** as shown below (**see get_example command**). They will be used when required to get access to transcript and gene coordinates. This solution was choosen to define a reference GTF file format for gtftk (since Ensembl format is probably the most widely used).
 
@@ -97,9 +103,9 @@ Below an example in which we first select only exon features then use *convert_e
 
 
 Command-wide arguments
-======================
+--------------------------
 
-Description: The following arguments are available in almost all gtftk commands :
+**Description:** The following arguments are available in almost all gtftk commands :
 
 - -h, --help : Refers to argument list and details.
 - -i, --inputfile: Refers to the input file (may be <stdin>).
@@ -114,13 +120,13 @@ Description: The following arguments are available in almost all gtftk commands 
 ------------------------------------------------------------------------------------------------------------------
 
 Information
-===========
+-------------------
 
 
 apropos
--------- 
+~~~~~~~~~
 
-Description: Search in all command description files those related to a user-defined keyword.
+**Description:** Search in all command description files those related to a user-defined keyword.
 
 **Example:** Search all commands related to promoters.
 
@@ -137,9 +143,9 @@ Description: Search in all command description files those related to a user-def
 ------------------------------------------------------------------------------------------------------------------
 
 retrieve
---------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Retrieve a GTF file from ensembl.
+**Description:** Retrieve a GTF file from ensembl.
 
 **Example:** List the available GTF files in ensembl FTP. Bacteria are not listed at the moment.
 
@@ -160,9 +166,9 @@ Description: Retrieve a GTF file from ensembl.
 ------------------------------------------------------------------------------------------------------------------
 
 get_example
------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Get an example GTF file (or any other kind of example available in the installation directory). This command is only provided for demonstration purpose.
+**Description:** Get an example GTF file (or any other kind of example available in the installation directory). This command is only provided for demonstration purpose.
 
 We can see from the example below that this gtf file **follows the ensembl format** and contains the **transcript and gene features** (column 3).
 
@@ -191,9 +197,9 @@ let's get all files from the *simple* dataset.
 ------------------------------------------------------------------------------------------------------------------
 
 add_exon_nb
------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Add exon number transcript-wise (based on 5' to 3' orientation).
+**Description:** Add exon number transcript-wise (based on 5' to 3' orientation).
 
 **Example:** 
 
@@ -212,9 +218,9 @@ Description: Add exon number transcript-wise (based on 5' to 3' orientation).
 ------------------------------------------------------------------------------------------------------------------
 
 count
------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Count the number of features (transcripts, genes, exons, introns).
+**Description:** Count the number of features (transcripts, genes, exons, introns).
 
 **Example:**
 
@@ -230,9 +236,9 @@ Description: Count the number of features (transcripts, genes, exons, introns).
 ------------------------------------------------------------------------------------------------------------------
 
 count_key_values
-----------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Count the number values for a set of keys.
+**Description:** Count the number values for a set of keys.
 
 **Example:** Count the number of time gene_id and transcript_id appear in the GTF file.
 
@@ -254,9 +260,9 @@ Description: Count the number values for a set of keys.
 ------------------------------------------------------------------------------------------------------------------
 
 get_attr_list
--------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Get the list of attributes from a GTF file.
+**Description:** Get the list of attributes from a GTF file.
 
 **Example:** Get the list of attributes in the "simple" dataset.
 
@@ -272,9 +278,9 @@ Description: Get the list of attributes from a GTF file.
 ------------------------------------------------------------------------------------------------------------------
 
 get_attr_value_list
--------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Get the list of values observed for an attributes.
+**Description:** Get the list of values observed for an attributes.
 
 **Example:** Get the list of values observed for transcript_id.
 
@@ -295,9 +301,9 @@ Description: Get the list of values observed for an attributes.
 ------------------------------------------------------------------------------------------------------------------
 
 get_feature_list
-----------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Get the list of features enclosed in the GTF.
+**Description:** Get the list of features enclosed in the GTF.
 
 **Example:** Get the list of features enclosed in the GTF.
 
@@ -313,9 +319,9 @@ Description: Get the list of features enclosed in the GTF.
 ------------------------------------------------------------------------------------------------------------------
 
 nb_exons
---------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Count the number of exons and add it as a novel key/value. Output may also be in text format if requested.
+**Description:** Count the number of exons and add it as a novel key/value. Output may also be in text format if requested.
 
 **Example:**
 
@@ -334,9 +340,9 @@ Description: Count the number of exons and add it as a novel key/value. Output m
 ------------------------------------------------------------------------------------------------------------------
 
 nb_transcripts
---------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Count the number of transcript per gene.
+**Description:** Count the number of transcript per gene.
 
 **Example:** Count the number of transcript per gene.
 
@@ -352,9 +358,9 @@ Description: Count the number of transcript per gene.
 ------------------------------------------------------------------------------------------------------------------
 
 seqid_list
-----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Returns the chromosome list.
+**Description:** Returns the chromosome list.
 
 **Example:** Returns the chromosome list.
 
@@ -370,9 +376,9 @@ Description: Returns the chromosome list.
 ------------------------------------------------------------------------------------------------------------------
 
 tss_dist
-----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Computes the distance between TSSs of pairs of gene transcripts. The tss_num_1/tss_num_1 columns contains the numbering of TSSs (transcript_id_1 and transcript_id_2 respectively) for each gene. Numering starts from 1 (most 5' TSS) to the number of different TSS coordinates. Two or more transcripts will have the same tss_num if they share a TSS.
+**Description:** Computes the distance between TSSs of pairs of gene transcripts. The tss_num_1/tss_num_1 columns contains the numbering of TSSs (transcript_id_1 and transcript_id_2 respectively) for each gene. Numering starts from 1 (most 5' TSS) to the number of different TSS coordinates. Two or more transcripts will have the same tss_num if they share a TSS.
 
 **Example:** Returns the chromosome list.
 
@@ -389,9 +395,9 @@ Description: Computes the distance between TSSs of pairs of gene transcripts. Th
 
 
 feature_size
-------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Get the size and limits (start/end) of features enclosed in the GTF. If bed format is requested returns the limits in bed format and the size as a score. Otherwise output GTF file with 'feat_size' as a new key and size as value
+**Description:** Get the size and limits (start/end) of features enclosed in the GTF. If bed format is requested returns the limits in bed format and the size as a score. Otherwise output GTF file with 'feat_size' as a new key and size as value
 
 
 **Example:** Add trancript size (mature RNA) to the gtf.
@@ -419,13 +425,13 @@ Description: Get the size and limits (start/end) of features enclosed in the GTF
 ------------------------------------------------------------------------------------------------------------------
 
 Editing
-=======
+---------
 
 
 add_prefix
-----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Add a prefix (or suffix) to one of the attribute value (*e.g.* gene_id)
+**Description:** Add a prefix (or suffix) to one of the attribute value (*e.g.* gene_id)
 
 **Example:**
 
@@ -443,9 +449,9 @@ Description: Add a prefix (or suffix) to one of the attribute value (*e.g.* gene
 ------------------------------------------------------------------------------------------------------------------
 
 del_attr
---------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Delete an attribute and its corresponding values.
+**Description:** Delete an attribute and its corresponding values.
 
 **Example:**
 
@@ -464,9 +470,9 @@ Description: Delete an attribute and its corresponding values.
 ------------------------------------------------------------------------------------------------------------------
 
 join_attr
----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Add attributes from a file. This command can be used to import additional key/values into the gtf (e.g CPAT for coding potential, DESeq for differential analysis,...). The imported file can be in 2 formats (2 columns or matrix):
+**Description:** Add attributes from a file. This command can be used to import additional key/values into the gtf (e.g CPAT for coding potential, DESeq for differential analysis,...). The imported file can be in 2 formats (2 columns or matrix):
 
 - With a 2-columns file:
 
@@ -512,9 +518,9 @@ Description: Add attributes from a file. This command can be used to import addi
 ------------------------------------------------------------------------------------------------------------------
 
 join_multi_file
----------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Join attributes from mutiple files.
+**Description:** Join attributes from mutiple files.
 
 
 **Example:** Add key/value to gene feature.
@@ -532,9 +538,9 @@ Description: Join attributes from mutiple files.
 ------------------------------------------------------------------------------------------------------------------
 
 merge_attr
-----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Merge a set of attributes into a destination attribute.
+**Description:** Merge a set of attributes into a destination attribute.
 
 
 **Example:** Merge gene_id and transcript_id into a new key associated to transcript features.
@@ -552,9 +558,9 @@ Description: Merge a set of attributes into a destination attribute.
 
 
 discretize_key
---------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Create a new key by discretizing a numeric key. This can be helpful to create new classes on the fly that can be used subsequently.
+**Description:** Create a new key by discretizing a numeric key. This can be helpful to create new classes on the fly that can be used subsequently.
 The default is to create equally spaced interval. The intervals can also be created by computing the percentiles (-p).
 
 
@@ -577,13 +583,13 @@ The default is to create equally spaced interval. The intervals can also be crea
 ------------------------------------------------------------------------------------------------------------------
 
 Filtering/selecting commands
-============================
+----------------------------
 
 
 select_by_key
--------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Extract lines from the gtf based on key and values.
+**Description:** Extract lines from the gtf based on key and values.
 
 
 **Example:** Select some features (genes) then some gene_id.
@@ -614,9 +620,9 @@ Description: Extract lines from the gtf based on key and values.
 ------------------------------------------------------------------------------------------------------------------
 
 select_by_regexp
-----------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Select lines based by testing values of a particular key with a regular expression
+**Description:** Select lines based by testing values of a particular key with a regular expression
 
 **Example:** Select lines corresponding to gene_names matching the regular expression 'BCL.*'.
 
@@ -631,9 +637,9 @@ Description: Select lines based by testing values of a particular key with a reg
 ------------------------------------------------------------------------------------------------------------------
 
 select_by_intron_size
----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Delete genes containing an intron whose size is below s. If -m is selected, any gene whose sum of intronic region length is above s is deleted. Monoexonic genes are kept.
+**Description:** Delete genes containing an intron whose size is below s. If -m is selected, any gene whose sum of intronic region length is above s is deleted. Monoexonic genes are kept.
 
 **Example:** Select lines corresponding to gene_names matching the regular expression 'BCL.*'.
 
@@ -648,9 +654,9 @@ Description: Delete genes containing an intron whose size is below s. If -m is s
 ------------------------------------------------------------------------------------------------------------------
 
 select_by_max_exon_nb
----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: For each gene select the transcript with the highest number of exons.
+**Description:** For each gene select the transcript with the highest number of exons.
 
 
 **Example:** Select lines corresponding to gene_names matching the regular expression 'BCL.*'.
@@ -667,9 +673,9 @@ Description: For each gene select the transcript with the highest number of exon
 ------------------------------------------------------------------------------------------------------------------
 
 select_by_loc
--------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Select transcripts/gene overlapping a given locations. A transcript is defined here as the genomic region from TSS to TTS including introns. This function will return the transcript and all its associated elements (exons, utr,...) even if only a fraction (e.g intron) of the transcript is overlapping the feature. If -/-ft-type is set to 'gene' returns the gene and all its associated elements.
+**Description:** Select transcripts/gene overlapping a given locations. A transcript is defined here as the genomic region from TSS to TTS including introns. This function will return the transcript and all its associated elements (exons, utr,...) even if only a fraction (e.g intron) of the transcript is overlapping the feature. If -/-ft-type is set to 'gene' returns the gene and all its associated elements.
 
 **Example:** Select transcripts at a given location.
 
@@ -684,9 +690,9 @@ Description: Select transcripts/gene overlapping a given locations. A transcript
 ------------------------------------------------------------------------------------------------------------------
 
 select_by_nb_exon
------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Select transcripts based on the number of exons.
+**Description:** Select transcripts based on the number of exons.
 
 **Example:**
 
@@ -703,9 +709,9 @@ Description: Select transcripts based on the number of exons.
 
 
 select_by_numeric_value
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Select lines from a GTF file based on a boolean test on numeric values.
+**Description:** Select lines from a GTF file based on a boolean test on numeric values.
 
 **Example:**
 
@@ -721,9 +727,9 @@ Description: Select lines from a GTF file based on a boolean test on numeric val
 ------------------------------------------------------------------------------------------------------------------
 
 random_list
------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Select a random list of genes or transcripts.
+**Description:** Select a random list of genes or transcripts.
 
 **Example:** Select randomly 3 transcripts.
 
@@ -739,9 +745,9 @@ Description: Select a random list of genes or transcripts.
 ------------------------------------------------------------------------------------------------------------------
 
 random_tx
----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Select randomly up to m transcript for each gene.
+**Description:** Select randomly up to m transcript for each gene.
 
 **Example:** Select randomly 1 transcript per gene (*-m 1*).
 
@@ -756,9 +762,9 @@ Description: Select randomly up to m transcript for each gene.
 ------------------------------------------------------------------------------------------------------------------
 
 rm_dup_tss
-------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: If several transcripts of a gene share the same tss, select only one.
+**Description:** If several transcripts of a gene share the same tss, select only one.
 
 **Example:** Use rm_dup_tss to select transcripts that will be used for mk_matrix (see later).
 
@@ -775,9 +781,9 @@ Description: If several transcripts of a gene share the same tss, select only on
 ------------------------------------------------------------------------------------------------------------------
 
 select_by_go
-------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Select genes from a GTF file using a Gene Ontology ID (e.g GO:0050789).
+**Description:** Select genes from a GTF file using a Gene Ontology ID (e.g GO:0050789).
 
 **Example:** Select genes with transcription factor activity from the GTF. They could be used subsequently to test their epigenetic features (see later).
 
@@ -793,9 +799,9 @@ Description: Select genes from a GTF file using a Gene Ontology ID (e.g GO:00507
 ------------------------------------------------------------------------------------------------------------------
 
 select_by_tx_size
------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Select transcript based on their size (i.e size of mature/spliced transcript).
+**Description:** Select transcript based on their size (i.e size of mature/spliced transcript).
 
 **Example:**
 
@@ -816,9 +822,9 @@ Description: Select transcript based on their size (i.e size of mature/spliced t
 ------------------------------------------------------------------------------------------------------------------
 
 select_most_5p_tx
------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Select the most 5' transcript of each gene.
+**Description:** Select the most 5' transcript of each gene.
 
 **Example:**
 
@@ -833,9 +839,9 @@ Description: Select the most 5' transcript of each gene.
 ------------------------------------------------------------------------------------------------------------------
 
 short_long
-----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Get the shortest or longest transcript of each gene
+**Description:** Get the shortest or longest transcript of each gene
 
 **Example:**
 
@@ -852,12 +858,12 @@ Description: Get the shortest or longest transcript of each gene
 
 
 Conversion
-==========
+------------
 
 convert
--------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: This command can be used to convert to various formats. Currently only a limited number is supported.
+**Description:** This command can be used to convert to various formats. Currently only a limited number is supported.
 
 * **bed**:  classical bed6 format.
 * **bed6**: classical bed6 format.
@@ -887,9 +893,9 @@ Description: This command can be used to convert to various formats. Currently o
 ------------------------------------------------------------------------------------------------------------------
 
 tabulate
---------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Extract key/values from the GTF and convert them to tabulated format. When requesting coordinates they will be provided in 1-based format.
+**Description:** Extract key/values from the GTF and convert them to tabulated format. When requesting coordinates they will be provided in 1-based format.
 
 
 **Example:** Simply get the list of transcripts and gene.
@@ -918,10 +924,10 @@ Description: Extract key/values from the GTF and convert them to tabulated forma
 
 
 bed_to_gtf
-----------
+~~~~~~~~~~~~~~~~~~~~~~
 
 
-Description: Convert a bed file to gtf-like format.
+**Description:** Convert a bed file to gtf-like format.
 
 **Example:**
 
@@ -939,10 +945,10 @@ Description: Convert a bed file to gtf-like format.
 
 
 convert_ensembl
----------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 
-Description: Convert the GTF file to ensembl format. Essentially add 'transcript'/'gene' features.
+**Description:** Convert the GTF file to ensembl format. Essentially add 'transcript'/'gene' features.
 
 **Example:** Delete gene and transcript feature. Regenerate them.
 
@@ -961,13 +967,13 @@ Description: Convert the GTF file to ensembl format. Essentially add 'transcript
 
 
 Annotation
-==========
+------------
 
 
 closest_genes
--------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Find the n closest genes for each transcript.
+**Description:** Find the n closest genes for each transcript.
 
 **Example:**
 
@@ -982,9 +988,9 @@ Description: Find the n closest genes for each transcript.
 
 
 overlapping
------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Find transcripts whose body/TSS/TTS region extended in 5' and 3' (-u/-d) overlaps with any transcript from another gene. Strandness is not considered by default. Used --invert-match to find those that do not overlap. If --annotate-gtf is used, all lines of the input GTF file will be printed and a new key containing the list of overlapping transcripts will be added to the transcript features/lines (key will be 'overlapping_*' with * one of body/TSS/TTS). The --annotate-gtf and --invert-match arguments are mutually exclusive.
+**Description:** Find transcripts whose body/TSS/TTS region extended in 5' and 3' (-u/-d) overlaps with any transcript from another gene. Strandness is not considered by default. Used --invert-match to find those that do not overlap. If --annotate-gtf is used, all lines of the input GTF file will be printed and a new key containing the list of overlapping transcripts will be added to the transcript features/lines (key will be 'overlapping_*' with * one of body/TSS/TTS). The --annotate-gtf and --invert-match arguments are mutually exclusive.
 
 
 **Example:** Find transcript whose promoter overlap transcript from other genes.
@@ -1006,9 +1012,9 @@ Description: Find transcripts whose body/TSS/TTS region extended in 5' and 3' (-
 ------------------------------------------------------------------------------------------------------------------
 
 divergent
----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Find transcript with divergent promoters. These transcripts will be defined here
+**Description:** Find transcript with divergent promoters. These transcripts will be defined here
 as those whose promoter region (defined by -u/-d) overlaps with the tss of
 another gene in reverse/antisens orientation. This may be useful to select
 coding genes in head-to-head orientation or LUAT as described in "Divergent
@@ -1034,9 +1040,9 @@ also provided as an additional key (dist_to_divergent).
 ------------------------------------------------------------------------------------------------------------------
 
 convergent
-----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Find transcript with convergent tts. These transcripts will be defined here
+**Description:** Find transcript with convergent tts. These transcripts will be defined here
 as those whose tts region (defined by -u/-d) overlaps with the tts of
 another gene in reverse/antisens orientation. The ouput is a GTF with an
 additional key ('convergent') whose value is set to '.' if the gene has no
@@ -1059,9 +1065,9 @@ The tts to tts distance is also provided as an additional key (dist_to_convergen
 ------------------------------------------------------------------------------------------------------------------
 
 exon_sizes
-----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Add a new key to transcript features containing a comma separated list of exon sizes.
+**Description:** Add a new key to transcript features containing a comma separated list of exon sizes.
 
 
 **Example:**
@@ -1078,9 +1084,9 @@ Description: Add a new key to transcript features containing a comma separated l
 
 
 intron_sizes
-------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Add a new key to transcript features containing a comma separated list of intron sizes.
+**Description:** Add a new key to transcript features containing a comma separated list of intron sizes.
 
 
 **Example:**
@@ -1096,16 +1102,13 @@ Description: Add a new key to transcript features containing a comma separated l
 ------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 Coordinates
-===========
+---------------
 
 midpoints
----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Get the genomic midpoint of each features: genes, transcripts, exons or introns. Output is currently in bed format only.
+**Description:** Get the genomic midpoint of each features: genes, transcripts, exons or introns. Output is currently in bed format only.
 
 
 **Example:** Get mipoints of all transcripts and exons.
@@ -1122,9 +1125,9 @@ Description: Get the genomic midpoint of each features: genes, transcripts, exon
 ------------------------------------------------------------------------------------------------------------------
 
 5p_3p_coord
------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Get the 5p or 3p coordinates for each feature (e.g TSS or TTS for a transcript).
+**Description:** Get the 5p or 3p coordinates for each feature (e.g TSS or TTS for a transcript).
 Output is bed format.
 
 **Example:** Get the 5p ends of transcripts and exons.
@@ -1147,9 +1150,9 @@ Output is bed format.
 
 
 intergenic
-----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Extract intergenic regions. This command requires a chromInfo file to compute
+**Description:** Extract intergenic regions. This command requires a chromInfo file to compute
 the bed file boundaries. The command will print the coordinates of genomic
 regions without transcript features.
 
@@ -1167,9 +1170,9 @@ regions without transcript features.
 ------------------------------------------------------------------------------------------------------------------
 
 intronic
---------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Returns a bed file containing the intronic regions. If by_transcript is false
+**Description:** Returns a bed file containing the intronic regions. If by_transcript is false
 (default), returns merged genic regions with no exonic overlap ("strict" mode).
 Otherwise, the intronic regions corresponding to each transcript are returned
 (may contain exonic overlap and redundancy).
@@ -1193,9 +1196,9 @@ Otherwise, the intronic regions corresponding to each transcript are returned
 
 
 splicing_site
--------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Compute the locations of donor and acceptor splice sites. This command will return a single position which corresponds to the most 5' and/or the most 3' intronic region. If the gtf file does not contain exon numbering you can compute it using the
+**Description:** Compute the locations of donor and acceptor splice sites. This command will return a single position which corresponds to the most 5' and/or the most 3' intronic region. If the gtf file does not contain exon numbering you can compute it using the
 add_exon_nb command. The score column of the bed file contain the number of the closest exon relative to the splice site.
 
 **Example:**
@@ -1211,9 +1214,9 @@ add_exon_nb command. The score column of the bed file contain the number of the 
 ------------------------------------------------------------------------------------------------------------------
 
 shift
------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Shift coordinates in 3' or 5' direction.
+**Description:** Shift coordinates in 3' or 5' direction.
 
 **Example:**
 
@@ -1233,13 +1236,13 @@ Description: Shift coordinates in 3' or 5' direction.
 ------------------------------------------------------------------------------------------------------------------
 
 Sequence
-========
+-------------
 
 
 get_tx_seq
-----------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Get transcript sequences in fasta format.
+**Description:** Get transcript sequences in fasta format.
 
 **Example:** Get sequences of transcripts in 5' to 3' orientation
 
@@ -1274,9 +1277,9 @@ A particular header format that should be compliant with sleuth is also proposed
 ------------------------------------------------------------------------------------------------------------------
 
 get_feat_seq
-------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Get feature sequence (e.g exon, UTR...).
+**Description:** Get feature sequence (e.g exon, UTR...).
 
 
 **Example:**
@@ -1294,12 +1297,12 @@ Description: Get feature sequence (e.g exon, UTR...).
 
 
 Genomic coverage analysis
-=========================
+--------------------------
 
 coverage
---------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Description: Takes a GTF as input to compute bigwig coverage in regions of interest (promoter, transcript body, intron, intron_by_tx, tts...) or a BED6 to focus on user-defined regions. If --n-highest is used the program will compute the coverage of each bigwig based on the average value of the n windows (--nb-window) with the highest coverage values.
+**Description:** Takes a GTF as input to compute bigwig coverage in regions of interest (promoter, transcript body, intron, intron_by_tx, tts...) or a BED6 to focus on user-defined regions. If --n-highest is used the program will compute the coverage of each bigwig based on the average value of the n windows (--nb-window) with the highest coverage values.
 Regions were signal can be computed (if GTF file as input) are promoter, tts, introns, intergenic regions or any feature available in the GTF file (transcript, exon, gene...).
 If --matrix-out is selected, the signal for each bigwig will be provided in a dedicated column. Otherwise, signal for each bigwig is provided through a dedicated line.
 
@@ -1347,13 +1350,13 @@ Now we can have a look at the result:
 
 
 miscellaneous
-=============
+----------------
 
 col_from_tab
-------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 
-Description: Select columns from a tabulated file based on their names.
+**Description:** Select columns from a tabulated file based on their names.
 
 **Example:**
 
@@ -1370,10 +1373,10 @@ Description: Select columns from a tabulated file based on their names.
 
 
 control_list
-------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 
-Description: Returns a list of gene matched for expression based on reference values. Based on a reference gene list (or more generally IDs) this command tries to extract a set of other genes/IDs matched for signal/expression. The --reference-gene-file contains the list of reference IDs while the --inputfile contains a tuple gene/signal for all genes.
+**Description:** Returns a list of gene matched for expression based on reference values. Based on a reference gene list (or more generally IDs) this command tries to extract a set of other genes/IDs matched for signal/expression. The --reference-gene-file contains the list of reference IDs while the --inputfile contains a tuple gene/signal for all genes.
 
 **Example:**
 

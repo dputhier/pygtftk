@@ -784,7 +784,11 @@ def to_alphanum(string):
 
     :param string: A character string in which non alphanumeric char have to be replaced.
     :param replacement_list:
-    :return:
+
+    :Example :
+
+    >>> from pygtftk.utils import to_alphanum
+    >>> assert to_alphanum("%gtf.bla") == 'gtf_bla'
     """
 
     if isinstance(string, int):
