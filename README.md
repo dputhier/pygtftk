@@ -23,7 +23,7 @@ Windows users should try *Cygwin* or *Bash on Ubuntu on Windows* although it has
 
 ## Installation through conda package building
 
-Installation through **conda** should be the prefered install solution. Although the GTF interface of pygtftk should work properly after a pip install (see next section), the UNIX commands (gtftk program) require several external dependencies with some version constrains.
+Installation through **conda** should be the **prefered install solution**. Although the GTF interface of pygtftk should work properly after a pip install (see next section), the UNIX commands (gtftk program) require several external dependencies with some version constrains.
 
 At the moment, there is no built conda package available. You can however create an environment with all prerequisites using the commands below.
 If conda is not available on your system, first install miniconda from the official [web site](http://conda.pydata.org/miniconda.html).
@@ -58,6 +58,7 @@ To get the list of all dependencies and associated versions, please have a look 
 Installation through pip can be done as follow.
 
     pip install -r requirements.txt
+
     pip install pygtftk
     
 

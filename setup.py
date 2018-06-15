@@ -5,8 +5,9 @@ The setup.py file of the gtfk package.
 import glob
 import os
 import sys
+import re
 from distutils import sysconfig
-
+from pygtftk.utils import chomp
 from sys import platform
 
 import git
@@ -25,13 +26,14 @@ except:
 
 try:
     repo = git.Repo(search_parent_directories=True)
+    branch = repo.active_branch
     sha = repo.head.object.hexsha
     sha = repo.git.rev_parse(sha, short=4)
 
 except:
     sha = ""
 
-if sha != "":
+if sha != "" and branch != "master":
     __version__ = __base_version__ + ".dev0+" + sha
 else:
     __version__ = __base_version__
@@ -73,14 +75,57 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                                               'pygtftk/src/libgtftk/gtf_reader.c',
                                               'pygtftk/src/libgtftk/libgtftk.c'])
 
+# Delete the first line from REAME.md
+# and convert .md to .rst...
+
+long_description_file = open('README.md')
+long_description = []
+markup_char = {1:"=", 2:"-", 3:"~"}
+markup_level = 0
+past_line_len = 0
+
+for pos,line in enumerate(long_description_file):
+    line = chomp(line)
+
+    if pos > 0:
+        # Replace title
+        if markup_level > 0:
+            title = markup_char[markup_level] * past_line_len
+            long_description += [title]
+        len_line = len(line)
+        line = re.sub("^#+", "", line)
+        markup_level = len_line - len(line)
+        past_line_len = len(line)
+
+        # replace URL
+        for hit in re.finditer("\[(.*?)\]\((.*?)\)", line):
+            line= line.replace("[" + hit.group(1) + "]", "`" + hit.group(1) + " <")
+            line = line.replace("(" + hit.group(2) + ")", hit.group(2) + ">`_")
+
+        if markup_level:
+            long_description += [line.lstrip(" ")]
+        else:
+            long_description += [line]
+
+long_description = "\n".join(long_description)
+
+print(long_description)
+
+
+
 setup(name="pygtftk",
       version=__version__,
-      author_email='puthier@gmail.com',
-      author="Denis Puthier",
-      description="Genomic tool suite",
-      url="",
+      author_email='fabrice.lopez@inserm.fr,denis.puthier@univ-amu.fr',
+      author="fabrice Lopez,Denis Puthier",
+      description="The Python GTF toolkit (pygtftk) package: easy handling of GTF files",
+      url="https://github.com/dputhier/pygtftk",
       zip_safe=False,
-      keywords="genomics",
+      project_urls={
+        'Source': 'https://github.com/dputhier/pygtftk',
+        'Tracker': 'https://github.com/dputhier/pygtftk/issues'
+      },
+      python_requires='~=2.7',
+      keywords="genomics bioinformatics GTF BED",
       packages=['pygtftk',
                 'pygtftk/plugins',
                 'pygtftk/bwig',
@@ -108,13 +153,19 @@ setup(name="pygtftk",
                     'pygtftk/src/libgtftk/command': ['*.*']},
       scripts=['bin/gtftk'],
       license='LICENSE.txt',
-      long_description=open('README.md').read(),
+
+      classifiers=(
+          "Programming Language :: Python :: 2.7",
+          "License :: OSI Approved :: MIT License",
+          "Operating System :: MacOS",
+          "Operating System :: POSIX :: Linux",
+          "Development Status :: 4 - Beta",
+          "Environment :: Console"
+      ),
+      long_description=long_description,
       install_requires=['pyyaml', 'argparse', 'cloudpickle',
                         'ftputil', 'pybedtools', 'pandas', 'pyBigWig',
                         'requests', 'cffi', 'biopython', 'pyparsing'],
-      classifiers=[
-          ""
-      ],
       ext_modules=[lib_pygtftk])
 
 config_dir = os.path.join(os.path.expanduser("~"), ".gtftk")

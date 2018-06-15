@@ -3,7 +3,7 @@ MAKEFILE=Makefile
 
 .PHONY: help doc pylint pylintshort \
 nose unittest install install_user test bats bats_cmd \
-test_cmd clean_install
+test_cmd clean_install prepare_pip
 
 
 #------------------------------------------------------------------
@@ -101,7 +101,7 @@ test_para: $(OUTPUT2)
 
 clean:
 	@make bats_cmd CMD=clean
-	@rm -rf cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott; \
+	@rm -rf pygtftk.egg-info build dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott; \
 	cd docs/manual/; make clean;
 
 check_cmd_has_example:
@@ -112,3 +112,8 @@ check_example_has_cmd:
 	@grep "\-\-" -B 1 docs/manual/source/presentation.rst | grep -v "^$$" | grep -v " " |grep -v "^\-\-" > example_list.txt
 	@for i in $$(cat example_list.txt); do if $$(cat cmd_list.txt  | grep -q "^$$i")  ; then echo "" >/dev/null; else echo $$i; fi; done
 	@#rm -f cmd_list.txt example_list.txt tmp_list.txt
+
+prepare_pip:
+	@rm -rf build/ dist/ pygtftk.egg-info/
+	@python setup.py sdist
+	@python setup.py bdist_wheel
