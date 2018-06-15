@@ -572,14 +572,14 @@ else:
 
     #coverage: test -s 
     @test "coverage_22" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw  -l s1,s2 -x | cut -f7 | perl -npe 's/\n/,/'`
+     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw  -l s1,s2 -x | cut -f7 | perl -npe 's/\\n/,/'`
       [ "$result" = "s2,0.0,2.0,3.333333,2.666667,2.666667,0.0," ]
     }
       
             
     #coverage: test -s 
     @test "coverage_23" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw  -l s1,s2 -x | cut -f6 | perl -npe 's/\n/,/'`
+     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw  -l s1,s2 -x | cut -f6 | perl -npe 's/\\n/,/'`
       [ "$result" = "s1,0.0,2.0,3.333333,2.666667,2.666667,0.0," ]
     }
           
