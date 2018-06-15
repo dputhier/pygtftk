@@ -76,7 +76,12 @@ def _big_wig_coverage_worker(input_values):
 
     for cpt, big_wig in enumerate(bw_list):
 
-        bigwig = pyBigWig.open(big_wig)
+        try:
+            bigwig = pyBigWig.open(big_wig)
+            if not bigwig.isBigWig():
+                message("Not a bigwig file :" + big_wig, type="ERROR")
+        except:
+            message("Not a bigwig file :" + big_wig, type="ERROR")
 
         mesg = "Computing coverage for %s (chunks : #%s , type : %s, lab : %s)."
         mesg = mesg % (os.path.basename(big_wig), str(span[1] - span[0]), type, label[cpt])

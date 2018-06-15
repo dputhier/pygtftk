@@ -47,7 +47,8 @@ def make_parser():
     parser_grp.add_argument(
         'bw_list',
         help='A list of Bigwig file (last argument).',
-        type=argparse.FileType('r'),
+        type=FileWithExtension('r',valid_extensions=('\.[Bb][Ww]$',
+                                                     '\.[Bb][Ii][Gg][Ww][Ii][Gg]$')),
         nargs='+')
 
     parser_grp.add_argument('-i', '--inputfile',

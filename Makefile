@@ -109,7 +109,7 @@ check_cmd_has_example:
 
 check_example_has_cmd:
 	@gtftk -l > cmd_list.txt
-	@grep "\-\-" -B 1 docs/manual/source/presentation.rst | grep -v "^$$" | grep -v " " |grep -v "^\-\-" > example_list.txt
+	@grep "~~" -B 1 docs/manual/source/presentation.rst | grep -v "^$$" | grep -v " " |grep -v "^~~" | grep -v  "^\-\-" > example_list.txt
 	@for i in $$(cat example_list.txt); do if $$(cat cmd_list.txt  | grep -q "^$$i")  ; then echo "" >/dev/null; else echo $$i; fi; done
 	@#rm -f cmd_list.txt example_list.txt tmp_list.txt
 

@@ -9,7 +9,7 @@ import re
 from distutils import sysconfig
 from pygtftk.utils import chomp
 from sys import platform
-
+from pygtftk.utils import  make_tmp_file
 import git
 from setuptools import setup, Extension
 
@@ -75,8 +75,15 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                                               'pygtftk/src/libgtftk/gtf_reader.c',
                                               'pygtftk/src/libgtftk/libgtftk.c'])
 
+
+# ----------------------------------------------------------------------
 # Delete the first line from REAME.md
 # and convert .md to .rst...
+# This is required for Pypi that use rst format
+# and will read the content of the long_description key
+# ----------------------------------------------------------------------
+
+
 
 long_description_file = open('README.md')
 long_description = []
@@ -110,9 +117,38 @@ for pos,line in enumerate(long_description_file):
 
 long_description = "\n".join(long_description)
 
-print(long_description)
+# ----------------------------------------------------------------------
+# Update the docs/manual/source/conf.py
+# This will allow the doc to display the right version
+# of the pygtftk library
+# ----------------------------------------------------------------------
 
 
+
+
+
+tmp_file_conf = make_tmp_file(prefix="pygtftk_", suffix="_conf.py")
+
+conf_file = open("docs/manual/source/conf.py", "r")
+for line in conf_file:
+    if line.startswith("version = "):
+        line = "version = " + "u'" + __version__ + "'\n"
+
+    if line.startswith("release = "):
+        line = "release = " + "u'" + __version__ + "'\n"
+
+
+    tmp_file_conf.write(line)
+
+tmp_file_conf.close()
+conf_file.close()
+
+os.remove(conf_file.name)
+os.rename(tmp_file_conf.name, conf_file.name)
+
+# ----------------------------------------------------------------------
+# Declare the setup function
+# ----------------------------------------------------------------------
 
 setup(name="pygtftk",
       version=__version__,
@@ -180,3 +216,4 @@ except OSError as e:
     pass
 
 sys.stderr.write("Installation complete.\n")
+
