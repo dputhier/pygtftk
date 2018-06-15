@@ -6,6 +6,7 @@ import glob
 import os
 import sys
 import re
+import shutil
 from distutils import sysconfig
 from pygtftk.utils import chomp
 from sys import platform
@@ -123,10 +124,6 @@ long_description = "\n".join(long_description)
 # of the pygtftk library
 # ----------------------------------------------------------------------
 
-
-
-
-
 tmp_file_conf = make_tmp_file(prefix="pygtftk_", suffix="_conf.py")
 
 conf_file = open("docs/manual/source/conf.py", "r")
@@ -143,8 +140,13 @@ for line in conf_file:
 tmp_file_conf.close()
 conf_file.close()
 
+# Using copy instead of move due to a bug both in
+# os.rename and shutils.move...
+# https://tinyurl.com/y8ghvgyq
+
 os.remove(conf_file.name)
-os.rename(tmp_file_conf.name, conf_file.name)
+shutil.copy(tmp_file_conf.name, conf_file.name)
+os.remove(tmp_file_conf.name)
 
 # ----------------------------------------------------------------------
 # Declare the setup function
