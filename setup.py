@@ -33,7 +33,7 @@ try:
 except:
     sha = ""
 
-if sha != "" and branch != "master":
+if sha != "" and branch != "master" and not os.path.exists("pypi_release_in_progress"):
     __version__ = __base_version__ + ".dev0+" + sha
 else:
     __version__ = __base_version__
@@ -85,7 +85,8 @@ markup_level = 0
 past_line_len = 0
 
 for pos,line in enumerate(long_description_file):
-    line = chomp(line)
+    if not line.startswith("    "):
+        line = chomp(line)
 
     if pos > 0:
         # Replace title

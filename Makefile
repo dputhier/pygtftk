@@ -114,6 +114,11 @@ check_example_has_cmd:
 	@#rm -f cmd_list.txt example_list.txt tmp_list.txt
 
 prepare_pip:
+	@touch pypi_release_in_progress
 	@rm -rf build/ dist/ pygtftk.egg-info/
 	@python setup.py sdist
 	@python setup.py bdist_wheel
+	@rm -f pypi_release_in_progress
+
+send_to_pypi:
+	@twine upload --repository-url https://test.pypi.org/legacy/ dist/* --verbose
