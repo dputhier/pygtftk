@@ -1,30 +1,42 @@
 #!/usr/bin/env python
 from __future__ import division
+
 import argparse
-import re
 import os
+import re
 import warnings
 import zipfile
-from scipy.stats import iqr
-import plotnine
-from plotnine import ggplot, aes, geom_tile, ggsave, facet_grid, theme, element_text, element_blank, element_rect, element_line, theme_bw, annotate
-from plotnine.scales import scale_fill_gradientn, scale_x_continuous
+from collections import OrderedDict
+
 import numpy as np
 import pandas as pd
+import plotnine
+from numpy import random
 from pandas import Categorical
+from plotnine import element_blank
+from plotnine import element_line
+from plotnine import element_rect
+from plotnine import element_text
+from plotnine import facet_grid
+from plotnine import ggplot, aes, geom_tile
+from plotnine import scale_fill_gradientn
+from plotnine import scale_x_continuous
+from plotnine import theme
+from plotnine import theme_bw
+from plotnine.labels import ggtitle
+from scipy.cluster.vq import vq, kmeans
+from scipy.stats import iqr
+
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import float_greater_than_null
 from pygtftk.arg_formatter import float_grt_than_null_and_lwr_than_one
 from pygtftk.arg_formatter import int_greater_than_null
 from pygtftk.cmd_object import CmdObject
 from pygtftk.utils import chomp
+from pygtftk.utils import mad
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
-from collections import OrderedDict
-from scipy.cluster.vq import vq, kmeans
-from numpy import random
-from plotnine.labels import ggtitle
-
+from pygtftk.utils import pos_max_val
 
 __updated__ = "2018-01-20"
 __doc__ = """
@@ -111,7 +123,6 @@ def make_parser():
                                      'signal',
                                      'eq_sizes'],
                             required=False)
-
 
     parser_grp.add_argument('-c', '--color-palette',
                             type=str,
@@ -213,6 +224,13 @@ def make_parser():
                             type=int,
                             default=0,
                             required=False)
+
+    parser_grp.add_argument('-dpi', '--dpi',
+                            help='Dpi to use.',
+                            type=int_greater_than_null,
+                            default=300,
+                            required=False)
+
     return parser
 
 
@@ -236,6 +254,7 @@ def heatmap(inputfile=None,
             page_height=7,
             page_format='pdf',
             user_img_file=None,
+            dpi=300,
             max_line=False,
             tmp_dir=None,
             xlabel="Selected genomic regions",
@@ -422,7 +441,6 @@ def heatmap(inputfile=None,
                 "--y-factor is set to tx_classes.",
                 type="ERROR")
 
-
     # -------------------------------------------------------------------------
     #
     # Prepare output files
@@ -480,7 +498,6 @@ def heatmap(inputfile=None,
         if any([x not in infile_bwig for x in bwig_order]):
             message("Fix --bwig-order. Some bigwigs were not found.",
                     type="ERROR")
-
 
     # -------------------------------------------------------------------------
     #
@@ -597,7 +614,7 @@ def heatmap(inputfile=None,
 
     dm = data.melt(id_vars=['tx_classes', 'bwig', 'chrom', 'start', 'end', 'gene', 'strand'], value_vars=pos_order)
     dm = dm.rename(columns={'variable': 'pos', 'value': 'exprs'})
-    dm['bwig'] = Categorical(dm['bwig'].tolist(), categories=bwig_order, ordered=True)
+    dm['bwig'] = Categorical(dm['bwig'], categories=bwig_order, ordered=True)
 
     # -------------------------------------------------------------------------
     #
@@ -638,7 +655,6 @@ def heatmap(inputfile=None,
             tmp_norm = (tmp - min(tmp)) / (max(tmp) - min(tmp)) * 100
             dm.loc[dm.bwig == k, 'exprs'] = tmp_norm
 
-
         ylab = "scaled(" + ylab + ", %)"
 
     # -------------------------------------------------------------------------
@@ -666,7 +682,7 @@ def heatmap(inputfile=None,
     elif order_fun == 'max':
         fun_rows = np.nanmax
     elif order_fun == 'l_r':
-        fun_rows = np.nanargmax
+        fun_rows = pos_max_val
     elif order_fun == 'r_l':
         fun_rows = np.nanargmin
 
@@ -678,15 +694,18 @@ def heatmap(inputfile=None,
 
     message("Computing gene ordering.")
     if order_fun == 'user_defined':
+        message("Ordering based on --transcript-file.")
         dm['gene'] = Categorical(dm['gene'],
                                  categories=tx_ordering,
                                  ordered=True)
     else:
-        tmp = data.loc[data.bwig == first_bigwig, ['gene'] + pos_order].set_index('gene')
-        tmp = tmp.assign(fun_order=tmp.apply(fun_rows, axis=1))
+
+        message("Ordering based on : " + order_fun + ".")
+        tmp = data.loc[data.bwig == first_bigwig, ['gene'] + pos_order]
+        tmp = tmp.assign(fun_order=tmp[pos_order].apply(fun_rows, axis=1))
         tmp = tmp.sort_values('fun_order', ascending=True)
-        dm['gene'] = Categorical(dm['gene'],
-                                 categories=tmp.index,
+        dm['gene'] = Categorical(dm['gene'].tolist(),
+                                 categories=tmp['gene'].tolist(),
                                  ordered=True)
 
     # -------------------------------------------------------------------------
@@ -697,7 +716,6 @@ def heatmap(inputfile=None,
 
     message("Computing gene classes")
 
-    bwig_all = dm['bwig'].unique()
     random.seed((1000, 2000))
 
     if y_factor == 'gkmeans':
@@ -717,6 +735,8 @@ def heatmap(inputfile=None,
         cluster_labels = vq(matrix, centers)[0]
         km_dict = OrderedDict(zip(df_cbind.index, cluster_labels))
         dm = dm.assign(y_factor=[km_dict[x] for x in dm.gene])
+
+        message("Nb elements per class : " + str(Categorical(cluster_labels).value_counts().tolist()))
 
 
     elif y_factor == 'kmeans':
@@ -743,15 +763,18 @@ def heatmap(inputfile=None,
         km_dict = OrderedDict(zip(df_first_bw.index, cluster_labels))
         dm = dm.assign(y_factor=[km_dict[x] for x in dm.gene])
 
+        message("Nb elements per class : " + str(Categorical(cluster_labels).value_counts().tolist()))
 
     elif y_factor == 'signal':
 
         if nb_class > 1:
-            tmp = data.loc[data.bwig == first_bigwig, ['gene'] + pos_order].set_index('gene')
-            signal = tmp.apply(order_fun, axis=1)
+            tmp = data.loc[data.bwig == first_bigwig, ['gene'] + pos_order]
+            signal = tmp[pos_order].apply(fun_rows, axis=1)
             row_classes = pd.cut(signal, nb_class)
             gene2classes = OrderedDict(zip(tmp.index, row_classes))
             dm = dm.assign(y_factor=[gene2classes[x] for x in dm.gene])
+
+        message("Nb elements per class : " + str(row_classes.value_counts().tolist()))
 
     # by eq_sizes
 
@@ -759,8 +782,8 @@ def heatmap(inputfile=None,
 
         if nb_class > 1:
 
-            tmp = data.loc[data.bwig == first_bigwig, ['gene'] + pos_order].set_index('gene')
-            signal = tmp.apply(order_fun, axis=1)
+            tmp = data.loc[data.bwig == first_bigwig, ['gene'] + pos_order]
+            signal = tmp[pos_order].apply(fun_rows, axis=1)
             classes = np.array_split(sorted(signal), nb_class)
             k = OrderedDict()
 
@@ -769,14 +792,16 @@ def heatmap(inputfile=None,
                     k[j] = i
 
             gene_to_class = dict()
-            for i, j in zip(tmp.index, signal):
+            for i, j in zip(tmp['gene'], signal):
                 gene_to_class[i] = k[j]
 
             dm = dm.assign(y_factor=[str(gene_to_class[x]) for x in dm.gene])
         else:
             dm = dm.assign(y_factor=['1' for x in dm.gene])
 
-    dm.y_factor = Categorical(dm.y_factor)
+        message("Nb elements per class : " + str(Categorical([x[1] for x in k.items()]).value_counts().tolist()))
+
+    dm.y_factor = Categorical(dm.y_factor.tolist())
 
     # -------------------------------------------------------------------------
     #
@@ -786,7 +811,7 @@ def heatmap(inputfile=None,
 
     message("Computing column ordering.")
     pos_order = sorted(sorted(dm.pos.unique(), reverse=True), key=lambda x: int(x.split("_")[1]))
-    dm.pos = Categorical(dm.pos, categories=pos_order, ordered=True)
+    dm.pos = Categorical(dm.pos.tolist(), categories=pos_order, ordered=True)
 
     # -------------------------------------------------------------------------
     #
@@ -815,7 +840,6 @@ def heatmap(inputfile=None,
 
     dm = dm.drop('extra', axis=1)
 
-
     # -------------------------------------------------------------------------
     #
     # Preparing diagram
@@ -825,14 +849,14 @@ def heatmap(inputfile=None,
     message("Preparing diagram")
 
     p = ggplot(data=dm, mapping=aes('pos',
-                                    'object')) + geom_tile(aes(fill='exprs'))
+                                    'gene')) + geom_tile(aes(fill='exprs'))
 
     p += theme_bw()
     p += theme(legend_text=element_text(size=6),
                panel_grid_major=element_blank(),
                panel_grid_minor=element_blank(),
                panel_border=element_rect(colour="black", size=1),
-               legend_key_size = 2,
+               legend_key_size=2,
                legend_position="top",
                legend_key=element_rect(colour="white"),
                axis_text_y=element_text(colour="#333333",
@@ -877,8 +901,8 @@ def heatmap(inputfile=None,
                     bin_nb_total - bin_nb_dws / 2, bin_nb_total]
                 ticks = [x / bin_nb_total * 100 for x in ticks]
                 labels = [-fr,
-                            round(-fr / 2, 0)
-                            ] + [str(x) + "%" for x in np.linspace(0, 100, 11)] + [round(to / 2, 0), to]
+                          round(-fr / 2, 0)
+                          ] + [str(x) + "%" for x in np.linspace(0, 100, 11)] + [round(to / 2, 0), to]
 
 
             else:
@@ -892,9 +916,9 @@ def heatmap(inputfile=None,
             if config['to']:
 
                 ticks = list(np.linspace(0, bin_nb_main, 11)) + [bin_nb_total - bin_nb_dws / 2,
-                                                           bin_nb_total,
-                                                           bin_nb_total - bin_nb_dws / 2,
-                                                           bin_nb_total]
+                                                                 bin_nb_total,
+                                                                 bin_nb_total - bin_nb_dws / 2,
+                                                                 bin_nb_total]
                 ticks = [x / bin_nb_total * 100 for x in ticks]
 
                 labels = [str(x) + "%" for x in np.linspace(0, 100, 6)] + [to / 2, to]
@@ -908,12 +932,9 @@ def heatmap(inputfile=None,
         p += scale_x_continuous(expand=[0, 0], breaks=ticks, labels=labels)
 
     else:
-        pass
         p += scale_x_continuous(expand=[0, 0])
 
-    p +=  plotnine.facet_grid("y_factor ~ bwig ",
-                              scales="free_y",
-                              space="free")
+    p += facet_grid("y_factor ~ bwig ", scales="free_y", space="free_y")
 
     p += ggtitle(title)
 
@@ -923,10 +944,8 @@ def heatmap(inputfile=None,
     # this solution...
     # -------------------------------------------------------------------------
 
-
     def fxn():
         warnings.warn("deprecated", DeprecationWarning)
-
 
     # -------------------------------------------------------------------------
     #
@@ -937,9 +956,11 @@ def heatmap(inputfile=None,
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         fxn()
-        message("Saving diagram")
-        p.save(filename=img_file.name, width=page_width, height=page_height)
+        message("Saving diagram to file : " + img_file.name)
+        message("Be patient. This may be long for large datasets.")
+        p.save(filename=img_file.name, width=page_width, height=page_height, dpi=dpi)
         dm.to_csv(data_file, sep="\t", header=True, index=False)
+
 
 if __name__ == '__main__':
 

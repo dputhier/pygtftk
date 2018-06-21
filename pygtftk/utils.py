@@ -12,6 +12,8 @@ from subprocess import PIPE
 from subprocess import Popen
 from tempfile import NamedTemporaryFile
 
+import numpy as np
+import pandas as pd
 import pysam
 import requests
 
@@ -903,16 +905,36 @@ def call_nested_dict_from_list(data, args=[]):
 
 
 # ---------------------------------------------------------------
-# Stats
+# Stats / math
 # ---------------------------------------------------------------
+
+
+def pos_max_val(x):
+    """Returns the position of the maximum value in the list."""
+    if isinstance(x, pd.core.series.Series):
+        x = x.tolist()
+    m = np.nanmax(x)
+    l = [i for i, j in enumerate(x) if j == m]
+    return l[0]
+
+
+def pos_min_val(x):
+    """Returns the position of the maximum value in the list."""
+    if isinstance(x, pd.core.series.Series):
+        x = x.tolist()
+    m = np.nanmin(x)
+    l = [i for i, j in enumerate(x) if j == m]
+    return l[0]
+
 
 def mad(arr):
     """ Median Absolute Deviation: a "Robust" version of standard deviation.
         https://stackoverflow.com/questions/8930370/where-can-i-find-mad-mean-absolute-deviation-in-scipy
     """
-    arr = np.ma.array(arr).compressed() # should be faster to not use masked arrays.
+    arr = np.ma.array(arr).compressed()  # should be faster to not use masked arrays.
     med = np.median(arr)
     return np.median(np.abs(arr - med))
+
 
 def median_comp(alist):
     """Compute the median from a list.
