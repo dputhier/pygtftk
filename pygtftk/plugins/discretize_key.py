@@ -195,7 +195,7 @@ def discretize_key(inputfile=None,
         max_val = max(numeric_val)
         min_val = min(numeric_val)
 
-    # Apply the same rule as pandas.cut when bins is an int.
+    # Apply the same rule as pandas.cut
     min_val = min_val - max_val / 1000
 
     # -------------------------------------------------------------------------

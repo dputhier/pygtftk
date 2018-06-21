@@ -23,12 +23,12 @@ __doc__ = """
 """
 
 __notes__ = """
- -- The ranging nomalization method [1] implies the following transformation: 
+ -- The ranging normalization method [1] implies the following transformation: 
  -- -  (x_i - min(x))/(max(x) - min(x)).
  -- Think about using normalized bigWig files as input to mk_matrix. This
  will limit the requirement for an additional normalization step (see
  Deeptools for a set of useful methods implemented in bamCoverage/bamCompare).
-""".format(r=R_LIB)
+"""
 
 __references__ = """
  -- [1] Numerical Ecology - second Edition - P. Legendre, L. Legendre (1998) Elsevier.

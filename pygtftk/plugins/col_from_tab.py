@@ -45,7 +45,8 @@ def make_parser():
     parser_grp.add_argument('-c', '--columns',
                             help="The list (csv) of column names.",
                             default=None,
-                            type=str)
+                            type=str,
+                            required=True)
 
     parser_grp.add_argument('-n', '--invert-match',
                             help='Not/invert match.',

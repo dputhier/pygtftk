@@ -11,7 +11,7 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import is_comment
 
 __updated__ = "2018-01-20"
-__doc__ = """Convert a GTF to various format (still limited)."""
+__doc__ = """Convert a GTF to bed."""
 
 
 def make_parser():
@@ -227,7 +227,7 @@ else:
     '''
 
     CmdObject(name="convert",
-              message="Convert a GTF to various format including bed.",
+              message="Convert a GTF to bed.",
               parser=make_parser(),
               fun=convert,
               updated=__updated__,

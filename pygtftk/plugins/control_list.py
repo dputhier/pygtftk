@@ -15,9 +15,8 @@ from pygtftk.cmd_object import CmdObject
 from pygtftk.utils import chomp
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
-
-R_LIB = 'beanplot,ggplot2,reshape2'
-
+import pandas as pd
+import plotnine
 __updated__ = "2018-01-20"
 __doc__ = """
  Based on a reference gene list (or more generally IDs) this command tries to extract a set of
@@ -93,6 +92,14 @@ def control_list(in_file=None,
                  tmp_dir=None,
                  logger_file=None,
                  verbosity=None):
+
+
+    # -------------------------------------------------------------------------
+    #
+    # Check in_file content
+    #
+    # -------------------------------------------------------------------------
+
     for p, line in enumerate(in_file):
 
         line = chomp(line)
@@ -114,7 +121,12 @@ def control_list(in_file=None,
             msg += "columns are ordered properly."
             message(msg, type="ERROR")
 
-    message("Selecting genes (R call).")
+
+    # -------------------------------------------------------------------------
+    #
+    # Preparing output files
+    #
+    # -------------------------------------------------------------------------
 
     # Preparing pdf file name
     file_out_list = make_outdir_and_file(out_dir, ["control_list.txt",
@@ -126,140 +138,137 @@ def control_list(in_file=None,
 
     control_file, reference_file_out, pdf_file, r_code_file, log_file = file_out_list
 
-    code_body = """
 
-            ########################################
-            # Load library
-            ########################################
+    # -------------------------------------------------------------------------
+    #
+    # Read the reference list
+    #
+    # -------------------------------------------------------------------------
 
-            suppressWarnings(suppressMessages(library(beanplot)))
-            suppressWarnings(suppressMessages(library(ggplot2)))
-            suppressWarnings(suppressMessages(library(reshape2)))
+    # Convert to np.array
+    reference_genes = pd.read_csv(referenceGeneFile.name, sep="\t", header=None)
+    reference_genes.columns = ['gene']
 
-            ########################################
-            # Function declaration
-            ########################################
+    # -------------------------------------------------------------------------
+    #
+    # Read expression data and add the pseudo_count
+    #
+    # -------------------------------------------------------------------------
 
-            message <- function(msg){{
-                cat(paste("    |--- ", msg, "\\n", sep=""), file=stderr())
-            }}
+    exp_data = pd.read_csv(in_file.name, sep="\t", header=None, index_col=0)
+    exp_data.columns = ['Expression']
+    exp_data.exprs = exp_data.exprs.values + pseudo_count
 
-            ########################################
-            ## Get the list of reference genes
-            ########################################
+    # -------------------------------------------------------------------------
+    #
+    # log transformation
+    #
+    # -------------------------------------------------------------------------
+
+    ylabel = 'Expression'
+    if log2:
+        if len(exp_data.exprs.values[exp_data.exprs.values == 0]):
+            message("Can't use log transformation on zero or negative values. Use -p.",
+                    type="ERROR")
+        else:
+            exp_data.exprs = np.log2(exp_data.exprs.values)
+            ylabel = 'log2(Expression)'
+
+    # -------------------------------------------------------------------------
+    #
+    # Are reference gene found in control list
+    #
+    # -------------------------------------------------------------------------
+
+    # Sort in increasing order
+    exp_data = exp_data.sort_values('Expression')
+
+    #  Vector with positions indicating which in the
+    # expression data list are found in reference_gene
+
+    reference_genes_found =  [x for x  in reference_genes['gene'] if x in exp_data.index]
+    msg = "Found genes %d of the reference in the provided signal file" % len(reference_genes_found)
+    message(msg)
+
+    not_found = [x for x in reference_genes['gene'] if x not in exp_data.index ]
+
+    if len(not_found):
+        message("List of reference genes not found :%s" % reference_genes[not_found])
+    else:
+        message("All reference genes were found.")
+
+
+    # -------------------------------------------------------------------------
+    #
+    # Search for genes with matched signal
+    #
+    # -------------------------------------------------------------------------
+
+    exp_data_save = exp_data.copy()
+
+    control_list = list()
+
+    nb_candidate_left = exp_data.shape[0] - len(reference_genes_found)
+
+    if nb_candidate_left < len(reference_genes_found):
+        message("Not enough element to perform selection. Exiting", type="ERROR")
+
+
+    for i in reference_genes_found:
+
+        not_candidates = reference_genes_found + control_list
+        not_candidates = list(set(not_candidates))
+
+        diff = abs(exp_data.loc[i] - exp_data)
+        control_list += diff.loc[np.setdiff1d(diff.index, not_candidates)].idxmin(axis=0, skipna=True).tolist()
+
+
+    # -------------------------------------------------------------------------
+    #
+    # write results
+    #
+    # -------------------------------------------------------------------------
+
+    exp_data_save.loc[reference_genes_found].sort_values('Expression').to_csv(reference_file_out.name, sep="\t")
+    exp_data_save.loc[control_list].sort_values('Expression').to_csv(control_file.name, sep="\t")
+
+    # -------------------------------------------------------------------------
+    #
+    # Prepare a dataframe for plotting
+    #
+    # -------------------------------------------------------------------------
+
+
+    reference = exp_data_save.loc[reference_genes_found].sort_values('Expression')
+    reference = reference.assign(genesets=['Reference'] * reference.shape[0])
+
+    control = exp_data_save.loc[control_list].sort_values('Expression')
+    control = control.assign(genesets=['Control'] * control.shape[0])
+
+    data = pd.concat([reference, control])
+
+    # -------------------------------------------------------------------------
+    #
+    # Diagnostic plots
+    #
+    # -------------------------------------------------------------------------
+
+    from plotnine import ggplot
+    from plotnine import (geom_violin, aes, xlab,
+                          ylab, theme_bw, geom_jitter)
+
+    p = ggplot(data, aes(x='genesets', y='Expression'))
+
+    p += geom_violin(aes(fill = 'genesets'))
+
+    p += xlab('Gene sets') + ylab(ylabel) + theme_bw()
+
+    p += geom_jitter()
+
+
+
             
-            reference_genes <- as.character(read.table('{reference_file}',
-                                            header=F)[,1])
 
-            ########################################
-            ## Get expression data
-            ########################################
-            
-            exp_data <- read.table('{signal_file}', sep="\\t", head =F)
-            
-            exp_data_vec <- exp_data[,2] + {pseudo_count}
-            
-            ########################################
-            ## Log transformation
-            ########################################
-            
-            to.log <- '{log2}'
-            
-            if(to.log == 'True'){{
-                if(length(exp_data_vec[exp_data_vec == 0])){{
-                    message("Can't use log transformation on zero or negative values. Use -p. Exiting.")
-                    q("no", 1, FALSE)
-                }}
-                exp_data_vec <- log2(exp_data_vec)
-            }}
-            
-            names(exp_data_vec) <- exp_data[,1]
-
-            # Now we have sorted expression data with gene/tx names.
-            exp_data_vec <- sort(exp_data_vec)
-
-            # T/F vector indicating which in the
-            # expression data list are found in reference_gene
-            which_reference_genes <- names(exp_data_vec) %in% reference_genes
-
-            # convert the T/F vector to positions indicating wich position in
-            # expression data is a reference gene/tx
-
-            which_reference_genes <- which(which_reference_genes)
-
-            message(paste("Found ", length(which_reference_genes),
-                    " genes of the reference in the provided signal file", sep=""))
-            
-            not_found <- !(reference_genes %in% names(exp_data_vec))
-            if(length(reference_genes[not_found]) > 0){{
-                message(paste("List of reference genes not found :", reference_genes[not_found]))
-            }}else{{
-                message("All reference genes were found.")
-            }}
-
-            ########################################
-            ## Search for gene with matched signal
-            ########################################
-            
-            control_list<- c()
-
-            nb.candidate.left <- length(exp_data_vec) -  length(which_reference_genes)
-            
-            if(nb.candidate.left < length(which_reference_genes) ){{
-                message("Not enough element to perform selection. Exiting")
-                q("no", 1, FALSE)
-            }}
-
-            cpt <- 1
-            
-            candidates <- exp_data_vec
-
-            for(i in which_reference_genes){{
-                p <- i
-                not_candidate_pos <- unique(c(which_reference_genes, control_list))
-                candidates[not_candidate_pos] <- NA
-                diff <- abs(exp_data_vec[p] - candidates)
-                control_list[cpt] <- which.min(diff)
-                cpt <- cpt + 1
-                
-            }}
-
-
-            write.table(cbind(exp_data_vec[which_reference_genes]),
-                    "{reference_file_out}",
-                    sep="\t",
-                    quote=F,
-                    col.names=NA)
-
-            write.table(cbind(exp_data_vec[control_list]),
-                    "{control_file}",
-                    sep="\t",
-                    quote=F,
-                    col.names=NA)
-                    
-
-            message("Preparing diagnostic plots.")
-            m <- as.data.frame(cbind(
-                                exp_data_vec[control_list],
-                                exp_data_vec[which_reference_genes]
-                )
-            )
-                            
-            colnames(m) <- c("Control", "Reference")
-            
-            
-            pdf("{pdf_file}")
-            
-            # Preparing beanplot (side=both)
-            beanplot(m,
-                    col = list("blue", "darkgrey"),
-                    border="white",
-                    log="",
-                    ll=0.13,
-                    what=c(0,1,0,1),
-                    side="both"
-            )
-            grid(col="grey", nx=0, ny=NULL)
             beanplot(m,
                     col = list("blue", "darkgrey"),
                     border="white",
@@ -315,7 +324,7 @@ def control_list(in_file=None,
             p <- p + scale_color_manual(values=levels(col))
             p <- p + theme(legend.title=element_blank())
             
-            suppressMessages(print(p))
+
             
             out <- dev.off()
     """.format(signal_file=in_file.name,
@@ -370,5 +379,4 @@ else:
                     updated=__updated__,
                     notes=__notes__,
                     group="miscellaneous",
-                    test=test,
-                    rlib=R_LIB)
+                    test=test)

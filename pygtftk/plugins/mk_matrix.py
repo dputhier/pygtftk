@@ -353,14 +353,15 @@ def mk_matrix(
     # Print a header in the output file
     #
     # -------------------------------------------------------------------------
-    message("Printing header")
+    message("Preparing comments")
 
-    header = "#"
-    header += "ft_type:" + ft_type + ";"
-    header += "from:" + str(upstream) + ";"
-    header += "to:" + str(downstream) + ";"
-    header += "labels:" + ",".join(labels) + ";"
-    outputfile.write(header + "\n")
+    comments = "#"
+    comments += "ft_type:" + ft_type + ";"
+    comments += "from:" + str(upstream) + ";"
+    comments += "to:" + str(downstream) + ";"
+    comments += "labels:" + ",".join(labels) + ";"
+
+
 
     # -------------------------------------------------------------------------
     # Compute coverage of requested region
@@ -527,9 +528,15 @@ def mk_matrix(
     df_main.insert(2, 'start', df_start)
     df_main.insert(3, 'end', df_end)
 
-    df_main.to_csv(outputfile, sep="\t", index=False, na_rep='NA')
-
+    message("Writing to file")
     outputfile.close()
+
+    with open(outputfile.name, 'a') as f:
+        f.write(comments + "\n")
+    df_main.to_csv(f, sep="\t", index=False,
+                   mode='a',
+                   columns=df_main.columns, na_rep='NA')
+
 
     # -------------------------------------------------------------------------
     #

@@ -906,6 +906,14 @@ def call_nested_dict_from_list(data, args=[]):
 # Stats
 # ---------------------------------------------------------------
 
+def mad(arr):
+    """ Median Absolute Deviation: a "Robust" version of standard deviation.
+        https://stackoverflow.com/questions/8930370/where-can-i-find-mad-mean-absolute-deviation-in-scipy
+    """
+    arr = np.ma.array(arr).compressed() # should be faster to not use masked arrays.
+    med = np.median(arr)
+    return np.median(np.abs(arr - med))
+
 def median_comp(alist):
     """Compute the median from a list.
 
