@@ -2430,7 +2430,8 @@ class GTF(object):
                    as_dict=False,
                    more_name=[],
                    one_based=False,
-                   feature_name=None):
+                   feature_name=None,
+                   explicit=False):
         """Returns a Bedtool object containing the 5' coordinates of selected
         features (Bed6 format) or a dict (zero-based coordinate).
 
@@ -2441,6 +2442,7 @@ class GTF(object):
         :param as_dict: return the result as a dictionnary.
         :param one_based: if as_dict is requested, return coordinates in on-based format.
         :param feature_name: A feature name to be added to the 4th column.
+        :param explicit: Write explicitly the key name in the 4th column (e.g transcript_id=NM123|gene_name=AGENE|...).
 
         :Example:
 
@@ -2454,7 +2456,9 @@ class GTF(object):
         >>> assert len(a_dict) == 25
         >>> a_dict = a_gtf.select_by_key("feature", "exon").get_5p_end(feat_type="exon", name=["exon_id", "transcript_id"], as_dict=True)
         >>> assert len(a_dict) == 25
-
+        >>> a_bed = a_gtf.select_by_key("feature", "exon").get_5p_end(feat_type="exon", name=["transcript_id", "gene_id"], explicit=True)
+        >>> for i in a_bed: break
+        >>> assert i.name == 'transcript_id=G0001T002|gene_id=G0001'
         """
 
         message("Calling 'get_5p_end'.", type="DEBUG")
@@ -2465,10 +2469,22 @@ class GTF(object):
             name_list = i.get_attr_value(attr_name=name,
                                          upon_none='set_na')
 
-            if not feature_name is not None:
-                name_out = sep.join(name_list + more_name)
+            name_out = []
+
+            if feature_name is  None:
+                value_name = name_list + more_name
+                key_name = name + ["more_name"]
             else:
-                name_out = sep.join(name_list + more_name + [feature_name])
+                value_name = name_list + more_name + [feature_name]
+                key_name = name + ["more_name"] + ["feature_name"]
+
+            if explicit:
+                for k,v in zip(key_name, value_name):
+                    name_out +=[str(k) + "=" + str(v)]
+            else:
+                name_out = value_name
+
+            name_out = sep.join(name_out)
 
             i.write_bed_5p_end(name=name_out,
                                outputfile=tx_bed)
@@ -2496,7 +2512,8 @@ class GTF(object):
                 as_dict=False,
                 more_name=[],
                 one_based=False,
-                feature_name=None):
+                feature_name=None,
+                explicit=False):
         """Returns a Bedtool object containing the TSSs (Bed6 format) or a dict
         (zero-based coordinate).
 
@@ -2506,6 +2523,7 @@ class GTF(object):
         :param as_dict: return the result as a dictionnary.
         :param one_based: if as_dict is requested, return coordinates in on-based format.
         :param feature_name: A feature name to be added to the 4th column.
+        :param explicit: Write explicitly the key name in the 4th column (e.g transcript_id=NM123|gene_name=AGENE|...).
 
         :Example:
 
@@ -2524,7 +2542,8 @@ class GTF(object):
                                 feature_name=feature_name,
                                 sep=sep,
                                 as_dict=as_dict,
-                                one_based=one_based))
+                                one_based=one_based,
+                                explicit=explicit))
 
     def get_3p_end(self,
                    feat_type="transcript",
@@ -2532,7 +2551,8 @@ class GTF(object):
                    sep="|",
                    as_dict=False,
                    more_name=[],
-                   feature_name=None):
+                   feature_name=None,
+                   explicit=False):
         """Returns a Bedtool object containing the 3' coordinates of selected
         features (Bed6 format) or a dict (zero-based coordinate).
 
@@ -2542,6 +2562,7 @@ class GTF(object):
         :param sep: The separator used for the name (e.g 'gene_id|transcript_id".
         :param as_dict: return the result as a dictionnary.
         :param feature_name: A feature name to be added to the 4th column.
+        :param explicit: Write explicitly the key name in the 4th column (e.g transcript_id=NM123|gene_name=AGENE|...).
 
         :Example:
 
@@ -2553,7 +2574,9 @@ class GTF(object):
         >>> assert len(a_bed) == 25
         >>> a_bed = a_gtf.select_by_key("feature", "exon").get_3p_end(feat_type="exon", name=["gene_id","exon_id"])
         >>> assert len(a_bed) == 25
-
+        >>> a_bed = a_gtf.select_by_key("feature", "exon").get_3p_end(feat_type="exon", name=["gene_id","exon_id"], explicit=True)
+        >>> for i in a_bed: break
+        >>> assert i.name == 'gene_id=G0001|exon_id=G0001T002E001'
         """
         message("Calling 'get_3p_end'.", type="DEBUG")
 
@@ -2562,11 +2585,22 @@ class GTF(object):
         for i in self.select_by_key("feature", feat_type):
             name_list = i.get_attr_value(attr_name=name,
                                          upon_none='set_na')
-            if not feature_name is not None:
-                name_out = sep.join(name_list + more_name)
-            else:
-                name_out = sep.join(name_list + more_name + [feature_name])
+            name_out = []
 
+            if feature_name is  None:
+                value_name = name_list + more_name
+                key_name = name + ["more_name"]
+            else:
+                value_name = name_list + more_name + [feature_name]
+                key_name = name + ["more_name"] + ["feature_name"]
+
+            if explicit:
+                for k,v in zip(key_name, value_name):
+                    name_out +=[str(k) + "=" + str(v)]
+            else:
+                name_out = value_name
+
+            name_out = sep.join(name_out)
             i.write_bed_3p_end(name=name_out,
                                outputfile=tx_bed)
         tx_bed.close()
@@ -2589,7 +2623,8 @@ class GTF(object):
                 sep="|",
                 as_dict=False,
                 more_name=[],
-                feature_name=None
+                feature_name=None,
+                explicit=False
                 ):
         """Returns a Bedtool object containing the TTSs (Bed6 format) or a dict
         (zero-based coordinate).
@@ -2599,6 +2634,7 @@ class GTF(object):
         :param as_dict: return the result as a dictionnary.
         :param more_name: Additional text to add to the name (a list).
         :param feature_name: A feature name to be added to the 4th column.
+        :param explicit: Write explicitly the key name in the 4th column (e.g transcript_id=NM123|gene_name=AGENE|...).
 
         :Example:
 
@@ -2615,7 +2651,8 @@ class GTF(object):
                                 sep=sep,
                                 more_name=more_name,
                                 feature_name=feature_name,
-                                as_dict=as_dict))
+                                as_dict=as_dict,
+                                explicit=explicit))
 
     def get_gn_to_tx(self,
                      ordered_5p=False,
