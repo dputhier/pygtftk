@@ -73,6 +73,10 @@ def make_parser():
                             metavar="SEP",
                             type=str)
 
+    parser_grp.add_argument('-e', '--explicit',
+                            help="Write explicitly the name of the keys in the header.",
+                            action="store_true",
+                            required=False)
     return parser
 
 
@@ -85,6 +89,7 @@ def get_5p_3p_coord(
         more_names='',
         transpose=0,
         invert=False,
+        explicit=False,
         tmp_dir=None,
         logger_file=None,
         verbosity=0):
@@ -111,14 +116,16 @@ def get_5p_3p_coord(
         bed_obj = gtf.get_5p_end(feat_type=ft_type,
                                  name=nms,
                                  sep=separator,
-                                 more_name=more_names)
+                                 more_name=more_names,
+                                 explicit=explicit)
 
     else:
 
         bed_obj = gtf.get_3p_end(feat_type=ft_type,
                                  name=nms,
                                  sep=separator,
-                                 more_name=more_names)
+                                 more_name=more_names,
+                                 explicit=explicit)
 
     if not len(bed_obj):
         message("Requested feature could not be found. Use convert_ensembl maybe.",
@@ -224,6 +231,14 @@ else:
       [ "$result" -eq 50 ]
     }
 
+    #5p_3p_coord: test transpose
+    @test "5p_3p_coord_11" {
+     result=`gtftk get_example| gtftk  5p_3p_coord -p 10 -e -m bla -n transcript_id,gene_id,gene_name| head -1 | cut -f4`
+      [ "$result" = "transcript_id=G0001T002|gene_id=G0001|gene_name=.|more_name=bla" ]
+    }
+    
+    
+    
     """
     CmdObject(name="5p_3p_coord",
               message="Get the 5p or 3p coordinate for each feature. TSS or TTS for a transcript.",
