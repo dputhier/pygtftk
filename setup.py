@@ -1,19 +1,27 @@
 """
-The setup.py file of the gtfk package.
+The gtfk package.
+
+The Python GTF toolkit (pygtftk) package is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package is compatible with Python 2.7 and relies on libgtftk, a library of functions written in C.
+The package comes with a set of UNIX commands that can be accessed through the gtftk program. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files. The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help section.
+While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository.
+
+Authors: D. Puthier and F. Lopez
+Programming Language :: Python :: 2.7"
 """
 
 import glob
 import os
-import sys
 import re
 import shutil
+import sys
 from distutils import sysconfig
-from pygtftk.utils import chomp
 from sys import platform
-from pygtftk.utils import  make_tmp_file
+
 import git
 from setuptools import setup, Extension
 
+from pygtftk.utils import chomp
+from pygtftk.utils import make_tmp_file
 from pygtftk.version import __base_version__
 
 try:
@@ -67,15 +75,14 @@ extra_compile_args = ['-Ipygtftk/src/libgtftk',
                       '-fmessage-length=0'] + dyn_lib_compil
 
 lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
-                      include_dirs=[
-                          'pygtftk/src/libgtftk'],
-                      library_dirs=['/usr/lib'],
-                      libraries=['z'],
-                      extra_compile_args=extra_compile_args,
-                      sources=cmd_src_list + ['pygtftk/src/libgtftk/column.c',
-                                              'pygtftk/src/libgtftk/gtf_reader.c',
-                                              'pygtftk/src/libgtftk/libgtftk.c'])
-
+                        include_dirs=[
+                            'pygtftk/src/libgtftk'],
+                        library_dirs=['/usr/lib'],
+                        libraries=['z'],
+                        extra_compile_args=extra_compile_args,
+                        sources=cmd_src_list + ['pygtftk/src/libgtftk/column.c',
+                                                'pygtftk/src/libgtftk/gtf_reader.c',
+                                                'pygtftk/src/libgtftk/libgtftk.c'])
 
 # ----------------------------------------------------------------------
 # Delete the first line from REAME.md
@@ -83,16 +90,16 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
 # This is required for Pypi that use rst format
 # and will read the content of the long_description key
 # ----------------------------------------------------------------------
-
-
+# I just realized that github also support rst...
+# This part should be deleted in the future.
 
 long_description_file = open('README.md')
 long_description = []
-markup_char = {1:"=", 2:"-", 3:"~"}
+markup_char = {1: "=", 2: "-", 3: "~"}
 markup_level = 0
 past_line_len = 0
 
-for pos,line in enumerate(long_description_file):
+for pos, line in enumerate(long_description_file):
     if not line.startswith("    "):
         line = chomp(line)
 
@@ -108,7 +115,7 @@ for pos,line in enumerate(long_description_file):
 
         # replace URL
         for hit in re.finditer("\[(.*?)\]\((.*?)\)", line):
-            line= line.replace("[" + hit.group(1) + "]", "`" + hit.group(1) + " <")
+            line = line.replace("[" + hit.group(1) + "]", "`" + hit.group(1) + " <")
             line = line.replace("(" + hit.group(2) + ")", hit.group(2) + ">`_")
 
         if markup_level:
@@ -134,7 +141,6 @@ for line in conf_file:
     if line.startswith("release = "):
         line = "release = " + "u'" + __version__ + "'\n"
 
-
     tmp_file_conf.write(line)
 
 tmp_file_conf.close()
@@ -152,6 +158,7 @@ os.remove(tmp_file_conf.name)
 # Declare the setup function
 # ----------------------------------------------------------------------
 
+
 setup(name="pygtftk",
       version=__version__,
       author_email='fabrice.lopez@inserm.fr,denis.puthier@univ-amu.fr',
@@ -160,8 +167,8 @@ setup(name="pygtftk",
       url="https://github.com/dputhier/pygtftk",
       zip_safe=False,
       project_urls={
-        'Source': 'https://github.com/dputhier/pygtftk',
-        'Tracker': 'https://github.com/dputhier/pygtftk/issues'
+          'Source': 'https://github.com/dputhier/pygtftk',
+          'Tracker': 'https://github.com/dputhier/pygtftk/issues'
       },
       python_requires='~=2.7',
       keywords="genomics bioinformatics GTF BED",
@@ -176,6 +183,7 @@ setup(name="pygtftk",
                 'pygtftk/data/simple_04',
                 'pygtftk/data/simple_05',
                 'pygtftk/data/mini_real',
+                'pygtftk/data/control_list',
                 'pygtftk/src/',
                 'pygtftk/src/libgtftk',
                 'pygtftk/src/libgtftk/command'],
@@ -186,6 +194,7 @@ setup(name="pygtftk",
                     'pygtftk/data/simple_04': ['*.*'],
                     'pygtftk/data/simple_05': ['*.*'],
                     'pygtftk/data/mini_real': ['*.*'],
+                    'pygtftk/data/control_list': ['*.*'],
                     'pygtftk/plugins': ['*.*'],
                     'pygtftk/src': ['*.*'],
                     'pygtftk/src/libgtftk': ['*.*'],
@@ -202,9 +211,17 @@ setup(name="pygtftk",
           "Environment :: Console"
       ),
       long_description=long_description,
-      install_requires=['pyyaml', 'argparse', 'cloudpickle',
-                        'ftputil', 'pybedtools', 'pandas', 'pyBigWig',
-                        'requests', 'cffi', 'biopython', 'pyparsing'],
+      install_requires=['pyyaml >=3.12',
+                        'argparse',
+                        'cloudpickle >=0.4.0',
+                        'ftputil >=3.3.1',
+                        'pybedtools >=0.7.8',
+                        'pandas >=0.19.2,<0.20',
+                        'pyBigWig >=0.2.8',
+                        'requests >=2.13.0',
+                        'cffi >=1.10.0',
+                        'biopython >=1.69',
+                        'pyparsing >=2.2.0'],
       ext_modules=[lib_pygtftk])
 
 config_dir = os.path.join(os.path.expanduser("~"), ".gtftk")
@@ -218,4 +235,3 @@ except OSError as e:
     pass
 
 sys.stderr.write("Installation complete.\n")
-
