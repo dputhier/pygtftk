@@ -597,10 +597,16 @@ def heatmap(inputfile=None,
     df_cbind = df_cbind.set_index('gene')
 
     nb_gene_before = len(all_tx)
+    msg = "Number of lines before filtering (--min-signal): {a}.".format(a=nb_gene_before)
+    message(msg)
+
     df_cbind = df_cbind.assign(row_sum=df_cbind.sum(axis=1))
     df_cbind = df_cbind[df_cbind.row_sum >= min_signal].drop('row_sum', axis=1)
     all_tx = list(OrderedDict.fromkeys(df_cbind.index))
-    msg = "Deleted {a} lines (not enough signal, see -ms).".format(a=nb_gene_before - len(all_tx))
+
+    msg = "Deleted lines (not enough signal, see -ms) : {a}.".format(a=nb_gene_before - len(all_tx))
+    message(msg)
+    msg = "Line kept: {a}.".format(a=len(all_tx))
     message(msg)
 
     # subset the main dataframe
@@ -703,7 +709,7 @@ def heatmap(inputfile=None,
         message("Ordering based on : " + order_fun + ".")
         tmp = data.loc[data.bwig == first_bigwig, ['gene'] + pos_order]
         tmp = tmp.assign(fun_order=tmp[pos_order].apply(fun_rows, axis=1))
-        tmp = tmp.sort_values('fun_order', ascending=True)
+        tmp = tmp.sort_values('fun_order', ascending=False)
         dm['gene'] = Categorical(dm['gene'].tolist(),
                                  categories=tmp['gene'].tolist(),
                                  ordered=True)
@@ -714,7 +720,8 @@ def heatmap(inputfile=None,
     #
     # -------------------------------------------------------------------------
 
-    message("Computing gene classes")
+    msg = "Computing gene classes n={a}.".format(a=nb_class)
+    message(msg)
 
     random.seed((1000, 2000))
 
@@ -783,19 +790,18 @@ def heatmap(inputfile=None,
         if nb_class > 1:
 
             tmp = data.loc[data.bwig == first_bigwig, ['gene'] + pos_order]
-            signal = tmp[pos_order].apply(fun_rows, axis=1)
-            classes = np.array_split(sorted(signal), nb_class)
-            k = OrderedDict()
+            signal = tmp[pos_order].apply(fun_rows, axis=1).tolist()
+
+            classes = np.array_split(np.argsort(signal), nb_class)
+
+            k = dict()
 
             for i in range(nb_class):
                 for j in classes[i]:
-                    k[j] = i
+                    k[tmp.iloc[j].loc['gene']] = i
 
-            gene_to_class = dict()
-            for i, j in zip(tmp['gene'], signal):
-                gene_to_class[i] = k[j]
+            dm = dm.assign(y_factor=[k[x] for x in dm.gene])
 
-            dm = dm.assign(y_factor=[str(gene_to_class[x]) for x in dm.gene])
         else:
             dm = dm.assign(y_factor=['1' for x in dm.gene])
 

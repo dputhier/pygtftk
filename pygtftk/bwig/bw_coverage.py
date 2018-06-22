@@ -78,7 +78,7 @@ def _big_wig_coverage_worker(input_values):
 
         bigwig = pyBigWig.open(big_wig)
 
-        mesg = "Computing coverage for %s (chunks : #%s , type : %s, lab : %s)."
+        mesg = "Coverage -- (%s, chunks: #%s , type: %s, lab: %s)."
         mesg = mesg % (os.path.basename(big_wig), str(span[1] - span[0]), type, label[cpt])
         message(mesg, type="INFO")
 
