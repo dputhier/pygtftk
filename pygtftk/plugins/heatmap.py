@@ -305,7 +305,7 @@ def heatmap(inputfile=None,
 
     dir_name = os.path.dirname(os.path.abspath(inputfile.name))
 
-    message("Uncompressing in directory :" + dir_name,
+    message("Uncompressing :" + dir_name,
             type="DEBUG")
     # input_zip = zipfile.ZipFile(inputfile.name, "r")
     # input_zip = input_zip.extractall()
@@ -317,7 +317,7 @@ def heatmap(inputfile=None,
         message("Problem encountered when unzipping...",
                 type="ERROR")
     inputfile_main = open(os.path.join(dir_name, zf.namelist()[0]), "r")
-    message("Reading from file:" + inputfile_main.name,
+    message("Reading :" + inputfile_main.name,
             type="DEBUG")
 
     # -------------------------------------------------------------------------
@@ -465,6 +465,12 @@ def heatmap(inputfile=None,
             msg = "Image format: {f}. Please fix.".format(f=page_format)
             message(msg, type="ERROR")
 
+        test_path = os.path.abspath(img_file.name)
+        test_path = os.path.dirname(test_path)
+
+        if not os.path.exists(test_path):
+            os.makedirs(test_path)
+
     # -------------------------------------------------------------------------
     #
     # Colors for profiles
@@ -531,7 +537,7 @@ def heatmap(inputfile=None,
         # -------------------------------------------------------------------------
 
         message("Reading transcript file.")
-        df_classes = pd.read_csv(transcript.file, sep='\t', header=None)
+        df_classes = pd.read_csv(transcript_file, sep='\t', header=None)
         message("Deleting duplicates in transcript-file.")
         df_classes = df_classes.drop_duplicates(subset=[0])
         tx_ordering = df_classes[0].tolist()
@@ -869,10 +875,12 @@ def heatmap(inputfile=None,
                                         size=4),
                axis_line=element_line(size=0.1, colour=""),
                axis_text_x=element_text(colour="#333333",
-                                        size=6, angle=65,
+                                        size=6,
+                                        angle=65,
                                         face="plain"),
                axis_title_x=element_text(colour="#333333",
-                                         size=8, angle=0,
+                                         size=8,
+                                         angle=0,
                                          face="plain"),
                axis_title_y=element_text(colour="#333333",
                                          size=8, angle=90,
