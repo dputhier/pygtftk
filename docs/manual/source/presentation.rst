@@ -1560,7 +1560,19 @@ Finally, the same dataset used for plotting but adding a normalization step (*pc
 .. image:: example_04b.png
 	:width: 80%
 
+Two examples using statistic 'max' and 2 différents values of '--upper-limit'.
 
+.. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom_1b -pf png -if example_04_max_a.png -pw 4 -V 3 -lw 1 -at 5 -s max -ul 1
+
+.. image:: example_04_max_a.png
+	:width: 80%
+
+
+
+.. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom_1b -pf png -if example_04_max_b.png -pw 4 -V 3 -lw 1 -at 5 -s max -ul 0.99
+
+.. image:: example_04_max_b.png
+	:width: 80%
 
 **Faceted profiles**
 
