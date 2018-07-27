@@ -5,20 +5,19 @@
 
 The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package is compatible with Python 2.7 and relies on **libgtftk**, a library of functions **written in C**. 
 
-The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files. The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help section.
+The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files. The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help sections.
 
 While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon  active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository. 
 
 ## System requirements
 
-Depending on the size of the GTF file, pygtftk may require lot of memory to perform selected tasks. A computer with 16Go is recommended in order to be able to pipe several commands when working with human annotations from ensembl release (e.g. 91).
+Depending on the **size of the GTF file**, pygtftk may require lot of memory to perform selected tasks. A computer with 16Go is recommended in order to be able to pipe several commands when working with human annotations from ensembl release (e.g. 91).
 
 At the moment, the gtftk program has been tested on:
 
 - Linux (Ubuntu 12.04)
 - OSX (Yosemite, El Capitan).
-
-Windows users should try *Cygwin* or *Bash on Ubuntu on Windows* although it has not been tested in our hands.
+- WSL/Bash on Ubuntu on Windows.
 
 
 ## Installation through conda package building

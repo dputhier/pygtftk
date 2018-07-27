@@ -335,11 +335,12 @@ class CmdManager(object):
                         nargs=0,
                         help="Display bats tests for all plugin.",
                         action=GetTests)
-
+    """
     parser.add_argument('-r', '--r-libs',
                         nargs=0,
                         help="Print required R libraries.",
                         action=RequiredRLib)
+
 
     parser.add_argument('-a', '--add-plugin',
                         nargs=3,
@@ -350,6 +351,8 @@ class CmdManager(object):
                         nargs=0,
                         help="Enforce gtftk to search for new plugins in dedicated folders.",
                         action=UpdatePlugin)
+
+    """
 
     parser.add_argument('-l', '--list-plugins',
                         nargs=0,
@@ -362,7 +365,7 @@ class CmdManager(object):
 
     # Declare a subparser
     sub_parsers = parser.add_subparsers(
-        title='Available sub-commands',
+        title='Available sub-commands/plugins',
         dest='command',
         metavar='')
 

@@ -1,5 +1,5 @@
 package:
-  name: gtftk
+  name: pygtftk
   # Note that conda versions cannot contain -, so any -'s in the version have
   # been replaced with _'s.
   version: "0.2.0"
@@ -29,25 +29,21 @@ build:
 # Suggests: knitr, rmarkdown
 requirements:
   build:
-    - zlib
+    - GitPython >=2.1.8
     - python >=2.7,<3
+    - pyparsing
     - argparse
     - nose
     - bats
-    - r-ggplot2
-    - r-reshape2
-    - r-data.table
-    - r-plyr
     - bedtools ==2.27.1
-    - r-base ==3.4.1
     - cloudpickle >=0.4.0
     - ftputil >=3.3.1
-    - pandas >=0.19.2,<0.20 # 0.20 removes the 'replace' attribute for 'pandas._libs.interval.Interval' object.
+    - pandas >=0.23.3
     - pybedtools >=0.7.8
     - pybigwig >=0.2.8
     - pysam >=0.9.1.4
     - pyyaml >=3.12
-    - gcc # [not win]
+    - gcc >=4.8.5
     - sphinx_bootstrap_theme >=0.4.9
     - sphinxcontrib-programoutput >=0.8
     - sphinx >=1.5.2
@@ -55,26 +51,26 @@ requirements:
     - cffi >=1.10.0
     - pyparsing >=2.2.0
     - biopython >=1.69
+    - zlib <1.2.8-3
+    - matplotlib >=2.0.2
+    - plotnine >=0.3.0
+
   run:
-    - zlib
+    - GitPython >=2.1.8
     - python >=2.7,<3
+    - pyparsing
     - argparse
     - nose
     - bats
-    - r
-    - r-ggplot2
-    - r-reshape2
-    - r-data.table
-    - r-plyr
     - bedtools ==2.27.1
     - cloudpickle >=0.4.0
     - ftputil >=3.3.1
-    - pandas >=0.19.2,<0.20 # 0.20 removes the 'replace' attribute for 'pandas._libs.interval.Interval' object.
+    - pandas >=0.23.3
     - pybedtools >=0.7.8
     - pybigwig >=0.2.8
     - pysam >=0.9.1.4
     - pyyaml >=3.12
-    - gcc # [not win]
+    - gcc >=4.8.5
     - sphinx_bootstrap_theme >=0.4.9
     - sphinxcontrib-programoutput >=0.8
     - sphinx >=1.5.2
@@ -82,7 +78,10 @@ requirements:
     - cffi >=1.10.0
     - pyparsing >=2.2.0
     - biopython >=1.69
-    
+    - zlib <1.2.8-3
+    - matplotlib >=2.0.2
+    - plotnine >=0.3.0
+
 test:
   commands:
     # You can put additional test commands to be run here.
@@ -96,34 +95,8 @@ test:
     # Put any additional test requirements here.
 
 about:
-  #home: http://github.com/slowkow/ggrepel
-  #license: GPL-2
+  home: https://github.com/dputhier/pygtftk
+  license: MIT
   summary: 'The gtftk suite.'
 
 
-# The original CRAN metadata for this package was:
-
-# Package: ggrepel
-# Version: 0.5
-# Authors@R: c(person("Kamil", "Slowikowski", role = c("aut", "cre"), email = "kslowikowski@fas.harvard.edu"))
-# Title: Repulsive Text and Label Geoms for 'ggplot2'
-# Description:  Provides text and label geoms for 'ggplot2' that help to avoid overlapping text labels. Labels repel away from each other and away from the data points.
-# Depends: R (>= 3.0.0), ggplot2 (>= 2.0.0)
-# Imports: grid, Rcpp
-# Suggests: knitr, rmarkdown
-# VignetteBuilder: knitr
-# License: GPL-2
-# URL: http://github.com/slowkow/ggrepel
-# BugReports: http://github.com/slowkow/ggrepel/issues
-# RoxygenNote: 5.0.1
-# LinkingTo: Rcpp
-# NeedsCompilation: yes
-# Packaged: 2016-02-08 13:56:35 UTC; slowikow
-# Author: Kamil Slowikowski [aut, cre]
-# Maintainer: Kamil Slowikowski <kslowikowski@fas.harvard.edu>
-# Repository: CRAN
-# Date/Publication: 2016-02-08 15:39:34
-
-# See
-# http://docs.continuum.io/conda/build.html for
-# more information about meta.yaml

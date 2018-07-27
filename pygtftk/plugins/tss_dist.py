@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import errno
 import sys
 from collections import defaultdict
 
@@ -82,27 +83,35 @@ def tss_dist(
                                 "dist",
                                 "tss_num_1",
                                 "tss_num_2"]) + "\n")
-    for gn_id in gn_tss_dist:
-        tx_list = gn_tss_dist[gn_id].keys()
-        for i in range(len(tx_list) - 1):
-            for j in range(i + 1, len(tx_list)):
-                dist = str(abs(gn_tss_dist[gn_id][tx_list[i]] - gn_tss_dist[gn_id][tx_list[j]]))
-                tss_1 = gn_to_tx_to_tss[gn_id][tx_list[i]]
-                tss_2 = gn_to_tx_to_tss[gn_id][tx_list[j]]
-                if tss_1 < tss_2:
-                    outputfile.write("\t".join([gn_id,
-                                                tx_list[i],
-                                                tx_list[j],
-                                                dist,
-                                                str(tss_1),
-                                                str(tss_2)]) + "\n")
-                else:
-                    outputfile.write("\t".join([gn_id,
-                                                tx_list[j],
-                                                tx_list[i],
-                                                dist,
-                                                str(tss_2),
-                                                str(tss_1)]) + "\n")
+    try:
+        for gn_id in gn_tss_dist:
+            tx_list = gn_tss_dist[gn_id].keys()
+            for i in range(len(tx_list) - 1):
+
+                for j in range(i + 1, len(tx_list)):
+                    dist = str(abs(gn_tss_dist[gn_id][tx_list[i]] - gn_tss_dist[gn_id][tx_list[j]]))
+                    tss_1 = gn_to_tx_to_tss[gn_id][tx_list[i]]
+                    tss_2 = gn_to_tx_to_tss[gn_id][tx_list[j]]
+
+                    if tss_1 < tss_2:
+                        str_out = "\t".join([gn_id,
+                                             tx_list[i],
+                                             tx_list[j],
+                                             dist,
+                                             str(tss_1),
+                                             str(tss_2)]) + "\n"
+                        outputfile.write(str_out)
+                    else:
+                        str_out = "\t".join([gn_id,
+                                             tx_list[j],
+                                             tx_list[i],
+                                             dist,
+                                             str(tss_2),
+                                             str(tss_1)]) + "\n"
+                        outputfile.write(str_out)
+    except IOError as e:
+        if e.errno == errno.EPIPE:
+            message("Received a boken pipe signal", type="WARNING")
 
     close_properly(outputfile, inputfile)
 

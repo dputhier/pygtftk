@@ -36,17 +36,6 @@ Or alternatively
 
 
 
-Getting the list of required R libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The list of required R libraries can be accessed through the --r-libs/-r argument.
-
-
-.. code-block:: bash
-
-  gtftk -r 
-
-
 Getting the list of command tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -68,15 +57,13 @@ Naming conventions
 .. command-output:: gtftk get_example| gtftk select_by_key -k feature -v gene| head -1
 	:shell:
 
-.. warning::  The **gene_id** and **transcript_id** are mandatory for all lines except the **gene feature** that contains only the gene_id. 
-
 ------------------------------------------------------------------------------------------------------------------
 
 
 About supported GTF file formats (you must read this section !)
 -----------------------------------------------------------------
 
-.. warning:: The gtftk program is designed to handle files in **ensembl** GTF format. This means that the GTF file provided to gtftk **must contain transcript and gene feature/lines** as shown below (**see get_example command**). They will be used when required to get access to transcript and gene coordinates. This solution was choosen to define a reference GTF file format for gtftk (since Ensembl format is probably the most widely used).
+.. warning:: The gtftk program is designed to handle files in **ensembl** GTF format. This means that the GTF file provided to gtftk **must contain (for most of the commands) transcript and gene features/lines** except the **gene feature** that contains only the gene_id (**see get_example command for an example**). Transcript and gene lines will be used when required to get access to transcript and gene coordinates. This solution was choosen to define a reference GTF file format for gtftk (since Ensembl format is probably the most widely used).
 
 You may use the *convert_ensembl* command to convert your non- (or old) ensembl format to current ensembl format.
 
@@ -119,8 +106,8 @@ Command-wide arguments
 
 ------------------------------------------------------------------------------------------------------------------
 
-Information
--------------------
+Commands from section 'information'
+--------------------------------------
 
 
 apropos
@@ -424,8 +411,8 @@ feature_size
 
 ------------------------------------------------------------------------------------------------------------------
 
-Editing
----------
+Commands from section 'Editing'
+----------------------------------
 
 
 add_prefix
@@ -582,8 +569,8 @@ The default is to create equally spaced interval. The intervals can also be crea
 
 ------------------------------------------------------------------------------------------------------------------
 
-Filtering/selecting commands
-----------------------------
+Commands from section 'selection'
+---------------------------------
 
 
 select_by_key
@@ -766,7 +753,7 @@ rm_dup_tss
 
 **Description:** If several transcripts of a gene share the same tss, select only one.
 
-**Example:** Use rm_dup_tss to select transcripts that will be used for mk_matrix (see later).
+**Example:** Use rm_dup_tss to select transcripts that will be used for mk_matrix -k 5 (see later).
 
 .. command-output:: gtftk get_example |  gtftk rm_dup_tss| gtftk select_by_key -k feature -v transcript
 	:shell:
@@ -857,8 +844,8 @@ short_long
 
 
 
-Conversion
-------------
+Commands from section 'convertion'
+-----------------------------------
 
 convert
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -966,8 +953,8 @@ convert_ensembl
 ------------------------------------------------------------------------------------------------------------------
 
 
-Annotation
-------------
+Commands from section 'annotation'
+------------------------------------
 
 
 closest_genes
@@ -1102,8 +1089,8 @@ intron_sizes
 ------------------------------------------------------------------------------------------------------------------
 
 
-Coordinates
----------------
+Commands from section 'coordinates'
+-----------------------------------
 
 midpoints
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -1235,8 +1222,8 @@ shift
 
 ------------------------------------------------------------------------------------------------------------------
 
-Sequence
--------------
+Commands from section 'sequence'
+---------------------------------
 
 
 get_tx_seq
@@ -1296,11 +1283,11 @@ get_feat_seq
 ------------------------------------------------------------------------------------------------------------------
 
 
-Genomic coverage analysis
---------------------------
+Commands from section 'coverage'
+----------------------------------
 
 coverage
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
 
 **Description:** Takes a GTF as input to compute bigwig coverage in regions of interest (promoter, transcript body, intron, intron_by_tx, tts...) or a BED6 to focus on user-defined regions. If --n-highest is used the program will compute the coverage of each bigwig based on the average value of the n windows (--nb-window) with the highest coverage values.
 Regions were signal can be computed (if GTF file as input) are promoter, tts, introns, intergenic regions or any feature available in the GTF file (transcript, exon, gene...).
@@ -1349,8 +1336,267 @@ Now we can have a look at the result:
 ------------------------------------------------------------------------------------------------------------------
 
 
-miscellaneous
-----------------
+mk_matrix
+~~~~~~~~~~
+
+Description: Gtftk implements commands that can be used to produce coverage profiles around genomic features or inside user-defined regions. A coverage matrix need first to  be produced from a bwig using the mk_matrix command.
+
+**Example:**
+
+We will used the same dataset (mini_real.gtf) as produced above (see help on *coverage* command).
+
+We can now create a coverage matrix around TSS/TTS or along the full transcript
+(with or without 5' and 3' regions). Provide a BED file as *---inputfile* if you
+want to use your own, user-specific, regions.
+Will will create tree example datasets:
+
+First we will create a coverage matrix around promoter based on a subset of randomly choose transcripts (one per gene) from the 'mini_real' dataset (see section on the *coverage* command to get info about the construction of the *mini_real_noov_rnd_tx.gtf.gz* dataset).
+
+.. command-output::  gtftk get_example -f '*' -d mini_real
+	:shell:
+
+
+.. command-output:: gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter
+	:shell:
+
+
+Then we will also compute coverage profil around around tts.
+
+
+.. command-output:: gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -t tts  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tts
+	:shell:
+
+
+The following command compute coverage profil along the whole transcript
+
+.. command-output:: gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx
+	:shell:
+
+
+Along the whole transcript but increasing the number of windows dedicated to upstream and downstream regions.
+
+
+.. command-output:: gtftk mk_matrix -k 5 --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_2
+	:shell:
+
+Along a user defined set of regions (in bed6 format). Here we will used the transcript coordinates in bed format as an example.
+
+.. command-output:: gtftk select_by_key -i mini_real_noov_rnd_tx.gtf.gz -k feature -v transcript | gtftk convert -f bed6 > mini_real_rnd_tx.bed
+	:shell:
+
+.. command-output:: gtftk mk_matrix -k 5 --bin-around-frac 0.5 -i mini_real_rnd_tx.bed -t user_regions  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_user_def
+	:shell:
+
+And finally using a set of single nucleotides coordinates that will be extend (-u/-d) and assessed for coverage. Here we will take the coordinates of TSS as example.
+
+.. command-output:: gtftk select_by_key -i mini_real_noov_rnd_tx.gtf.gz -k feature -v transcript |  gtftk 5p_3p_coord > tss.bed
+	:shell:
+
+.. command-output:: gtftk mk_matrix -k 5 -u 5000 -d 5000 -i tss.bed -w 200 -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_single_nuc -c hg38.genome -t single_nuc
+	:shell:
+
+
+------------------------------------------------------------------------------------------------------------------
+
+
+profile
+~~~~~~~
+
+
+Description: This command is used to create profil diagrams from a *mk_matrix* output. The two important arguments for
+this command are *---group-by*, that defines the variable controling the set of colored lines and *---facet-var* that defines the variable controling the way the plot is facetted . Both *---group-by* and *---facet-var* should be set to one of *bwig*, *tx_classes* or *chrom*.
+
+
+**Basic profiles**
+
+A simple overlayed profile of all epigenetic marks around promoter. Here *---group-by* is, by default set to *bwig* and *---facet-var* is set to None. Thus a single plot with several lines corresponding to bwig coverage is obtained.
+
+
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_01.png
+	:shell:
+
+.. image:: example_01.png
+	:width: 80%
+
+
+The same diagram is obtained if a bed file pointing to TSS was provided to *mk_matrix* and used in *single_nuc* mode.
+
+
+.. command-output:: gtftk profile -i mini_real_single_nuc.zip -o profile_prom -pf png -if example_01a.png
+	:shell:
+
+
+.. image:: example_01a.png
+	:width: 80%
+
+Changing colors and applying color order can be done using the following syntax:
+
+
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -c 'red,blue,violet' -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if example_01b.png
+	:shell:
+
+
+.. image:: example_01b.png
+	:width: 80%
+
+
+A subset of bigwig assessed for coverage can be selected for plotting. This is achieved using the *--subset-bwig* argument:
+
+.. command-output:: gtftk profile -f bwig -D -i mini_real_tx.zip  -fo  -o profile_tx -pf png -if example_01c.png  -fo -c 'red' -V 3  -w  -tl -e -lw 0.5 -u H3K4me3
+
+
+.. image:: example_01c.png
+	:width: 80%
+
+
+Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5' and 3' regions:
+
+.. command-output:: gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if example_02.png
+	:shell:
+
+
+.. image:: example_02.png
+	:width: 80%
+
+
+Almost the same but increasing the bins dedicated to upstream and dowstream regions (see *---bin-around-frac argument of *mk_matrix*).
+
+
+.. command-output:: gtftk profile -D -i mini_real_tx_2.zip -o profile_tx -pf png -if example_03.png
+	:shell:
+
+
+.. image:: example_03.png
+	:width: 80%
+
+
+Note that the same is obtained when using user-defined regions (*i.e* when providing a bed as input corresponding to transcript coordinates).
+
+.. command-output:: gtftk profile -D -i mini_real_user_def.zip -o profile_udef_4  -pf png -if example_04.png
+	:shell:
+
+
+.. image:: example_04.png
+	:width: 80%
+
+
+The same dataset used for plotting but adding a normalization step (*ranging*). When using *ranging* normalization, values are expressed as a percentage of the range between max and min value.
+
+
+.. command-output:: gtftk profile -D -nm ranging -i mini_real_user_def.zip -o profile_udef_5  -pf png -if example_04b.png
+	:shell:
+
+
+.. image:: example_04b.png
+	:width: 80%
+
+
+Two examples using statistic 'max' and 2 differents values of '--upper-limit'.
+
+.. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_a.png  -V 3 -lw 1 -at 5 -s max -ul 1
+
+.. image:: example_04_max_a.png
+	:width: 80%
+
+
+
+.. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_b.png  -V 3 -lw 1 -at 5 -s max -ul 0.99
+
+.. image:: example_04_max_b.png
+	:width: 80%
+
+
+
+**Faceted profiles**
+
+Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to bwig classes and the facets to transcript classes. Things can be simply done by providing an additional file containing the transcript and their associated classes.
+
+
+**Example:**
+
+
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_05.png -e -V 3 -fc 2
+	:shell:
+
+
+.. image:: example_05.png
+	:width: 80%
+
+
+Alternatively, the groups can be set to chromosomes or transcript classes:
+
+
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06.png -V 3 -nm ranging
+	:shell:
+
+
+.. image:: example_06.png
+	:width: 80%
+
+
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06b.png -V 3 -nm ranging
+	:shell:
+
+
+.. image:: example_06b.png
+	:width: 80%
+
+
+Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
+
+
+
+.. command-output:: gtftk profile -D -i mini_real_tx_2.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if example_07.png  -fo -w -nm ranging
+	:shell:
+
+
+.. image:: example_07.png
+	:width: 80%
+
+
+.. command-output:: gtftk profile -D -i mini_real_tx_2.zip -g chrom -f bwig  -o profile_tx -pf png -if example_08.png  -fo -w -nm ranging
+	:shell:
+
+
+.. image:: example_08.png
+	:width: 80%
+
+
+
+**Theming**
+
+The --theme argument controls plotnine theming.
+
+.. command-output:: gtftk profile -th classic -D -i mini_real_promoter.zip -g bwig -f chrom  -o profile_prom  -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -pf png -if example_09b.png
+	:shell:
+
+.. image:: example_09b.png
+	:width: 80%
+
+
+.. command-output:: gtftk profile -th seaborn -D -i mini_real_promoter.zip -g bwig -f chrom  -o profile_prom   -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -pf png -if example_10.png
+	:shell:
+
+.. image:: example_10.png
+	:width: 80%
+
+.. command-output:: gtftk profile -th matplotlib -D -i mini_real_promoter.zip -g bwig -f chrom  -o profile_prom   -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -pf png -if example_11.png
+	:shell:
+
+.. image:: example_11.png
+	:width: 80%
+
+**Arguments:**
+
+.. command-output:: gtftk profile -h
+	:shell:
+
+
+------------------------------------------------------------------------------------------------------------------
+
+
+Commands from section 'miscellaneous'
+---------------------------------------
 
 col_from_tab
 ~~~~~~~~~~~~~~~~~~~~~~
