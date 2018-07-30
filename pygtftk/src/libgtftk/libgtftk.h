@@ -345,6 +345,39 @@ typedef struct SORT_ROW {
 	int value;
 } SORT_ROW;
 
+typedef struct BLAST_HEADER {
+	char *program_name;
+	char *database_name;
+	unsigned int database_length;
+	int database_nb_sequences;
+} BLAST_HEADER;
+
+typedef struct BLAST_QUERY {
+	char *query_name;
+	int query_length;
+	int nb_subject;
+} BLAST_QUERY;
+
+typedef struct BLAST_SUBJECT {
+	char *subject_name;
+	int subject_length;
+	int nb_HSP;
+} BLAST_SUBJECT;
+
+typedef struct BLAST_HSP {
+	BLAST_HEADER bh;
+	BLAST_QUERY bq;
+	BLAST_SUBJECT bs;
+	double score;
+	double expect;
+	char *identities;
+	int identities_percent;
+	char *gaps;
+	int gap_percent;
+	char strand_query, strand_subject;
+	int query_start, query_end, subject_start, subject_end;
+} BLAST_HSP;
+
 /*
  * Prototypes for the visible functions (callable by external cient)
  */
@@ -373,6 +406,7 @@ GTF_DATA *select_by_positions(GTF_DATA *gtf_data, int *pos, int size);
 GTF_DATA *add_exon_number(GTF_DATA *gtf_data, char *exon_number_field);
 GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features, char *key, char *txt, int suffix);
 GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_key, char *sep);
+GTF_DATA *load_blast(char *input);
 void clear_indexes(void);
 GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 int int_array_test(int *pos, int size);

@@ -95,6 +95,7 @@ static void action_st(const void *nodep, const VISIT which, const int depth) {
 			/*
 			 * we set most_5p to a great number if the gene is on the positive strand
 			 */
+			most_5p = 0;
 			if (datap->nb_row > 0) {
 				row = gtf_d->data[rg];
 				if (*(row->field[6]) == '+') most_5p = 300000000;

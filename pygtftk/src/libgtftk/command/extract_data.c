@@ -183,7 +183,7 @@ RAW_DATA *extract_data(GTF_DATA *gtf_data, char *key, int base, int uniq) {
 			 * present in all the rows of a GTF_DATA)
 			 */
 			else
-				row->list[i] = strdup(".");
+				row->list[i] = strdup("?");
 		}
 		/*
 		 * if uniq is set, put the row in a hashtable to allow removing of
