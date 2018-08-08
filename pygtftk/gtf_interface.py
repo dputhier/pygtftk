@@ -33,17 +33,17 @@ from pyparsing import operatorPrecedence
 
 import pygtftk
 import pygtftk.utils
-from pygtftk.fasta_interface import FASTA
 from pygtftk import cmd_manager
 from pygtftk.Line import Feature
 from pygtftk.error import GTFtkError
+from pygtftk.fasta_interface import FASTA
+from pygtftk.tab_interface import TAB
 from pygtftk.utils import check_file_or_dir_exists
 from pygtftk.utils import chomp
 from pygtftk.utils import chrom_info_to_bed_file
 from pygtftk.utils import flatten_list_recur
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
-from pygtftk.tab_interface import TAB
 
 # ---------------------------------------------------------------
 # find module path
@@ -368,6 +368,10 @@ class GTF(object):
     _id_list = []
     _ptr_addr = []
 
+    # ---------------------------------------------------------------
+    # Constructor
+    # ---------------------------------------------------------------
+
     def __init__(
             self, input_obj=None, check_ensembl_format=True, new_data=None):
         """
@@ -463,8 +467,27 @@ class GTF(object):
         self._message("GTF created ", type="DEBUG_MEM")
         self._ptr_addr += [id(self._data)]
 
+    # ---------------------------------------------------------------
+    # Constructor
+    # ---------------------------------------------------------------
+
     def merge_attr(self, feat="*", keys="gene_id,transcript_id",
                    new_key="gn_tx_id", sep="|"):
+        """
+        Merge a set of source keys (e.g gene_id and transcript_id) into a destination attribute.
+
+        :param feat: The target features.
+        :param keys: The source keys.
+        :param new_key: The destination key.
+        :param sep: The separator.
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> a_list = a_gtf.merge_attr(feat="exon,transcript,CDS", keys="gene_id,transcript_id", new_key="merge").extract_data("merge", hide_undef=True, as_list=True, nr=True)
+        >>> assert a_list[0] == 'G0001|G0001T002'
+        """
 
         if sep == "\t":
             raise GTFtkError("Tabulation is not allowed as a separator.")
@@ -473,13 +496,43 @@ class GTF(object):
 
             tmp_file = make_tmp_file(prefix="merge_attr",
                                      suffix=".txt")
+            if feat == "*":
+                self.extract_data(keys,
+                                  no_na=False,
+                                  hide_undef=False).write(tmp_file,
+                                                          sep=sep)
+                self = self.del_attr("*", new_key, force=True)
+                self = self.add_attr_column(tmp_file, new_key)
+                return self
 
-            self.extract_data(keys).write(tmp_file, sep=sep)
-            self = self.del_attr("*", new_key, force=True)
+            else:
 
-            self = self.add_attr_column(tmp_file, new_key)
+                tab = self.extract_data("feature," + keys,
+                                        no_na=False,
+                                        hide_undef=False,
+                                        as_list_of_list=True)
+                key_vals = self.extract_data(new_key,
+                                             no_na=False,
+                                             hide_undef=False,
+                                             as_list=True)
+                feat_list = feat.split(",")
 
-            return self
+                for i, j in zip(tab, key_vals):
+                    if i[0] in feat_list:
+
+                        tmp_file.write(sep.join(i[1:]) + "\n")
+                    else:
+                        tmp_file.write(j + "\n")
+
+                tmp_file.close()
+
+                self = self.del_attr("*", new_key, force=True)
+                self = self.add_attr_column(input_file=open(tmp_file.name), new_key=new_key)
+
+                return self
+
+
+
 
         else:
 
@@ -508,7 +561,7 @@ class GTF(object):
         """
         addr = re.search("([^\s]+)>", repr(self._data))
         addr = addr.group(1)
-        if pygtftk.utils.VERBOSITY >= 3 :
+        if pygtftk.utils.VERBOSITY >= 3:
             msg = msg + \
                   "(#lines={a}, ptr_addr={c}, file={b}, id={d}, nb={e})."
             msg = msg.format(a=self._data.size,
@@ -518,7 +571,7 @@ class GTF(object):
                              e=self._nb)
             message(msg, type=type)
 
-        elif pygtftk.utils.VERBOSITY == 2 :
+        elif pygtftk.utils.VERBOSITY == 2:
             msg = msg + \
                   "(#lines={a}, ptr_addr={c}, file={b}, id={d})."
             msg = msg.format(a=self._data.size,
@@ -527,7 +580,7 @@ class GTF(object):
                              d=id(self))
             message(msg, type=type)
 
-        elif pygtftk.utils.VERBOSITY == 1 :
+        elif pygtftk.utils.VERBOSITY == 1:
             msg = msg + \
                   "(#lines={a}, ptr_addr={c}, file={b})."
             msg = msg.format(a=self._data.size,
@@ -832,8 +885,11 @@ class GTF(object):
                      as_dict=False,
                      as_dict_of_merged_list=False,
                      nr=False,
+                     hide_undef=False,
                      as_list_of_list=False):
         """Extract attribute values into containers of various types. Note that in case dict are requested, key are force to no_na.
+
+        Note: no_na, hide_undef, nr, zero_based are not applied in case a tab object is returned (default).
 
         :param keys: The name of the basic or extended attributes.
         :param as_list: if true returns values for the first requested key as a list.
@@ -844,25 +900,26 @@ class GTF(object):
         :param as_dict_of_merged_list: if true returns a dict (where the key corresponds to values for the first requested key and the value to the list of other elements encountered throughout any line).
         :param as_list_of_list: if True returns a list for each line.
         :param nr: in case a as_list or as_list_of_list is choosen, return a non redondant list.
+        :param hide_undef: if hide_undef, then records for which the key does not exists (value = "?") are set to are discarded.
         :param zero_based: If set to True, the start position will be start-1.
 
         :Example:
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import TAB
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> a_tab = a_gtf.extract_data("gene_id,transcript_id")
         >>> assert a_tab.ncols == 2
         >>> assert len(a_tab) == 70
-        >>> assert len(a_gtf.extract_data("transcript_id", nr=False, as_list=True,no_na=False)) == 70
+        >>> assert len(a_gtf.extract_data("transcript_id", nr=False, as_list=True,no_na=False, hide_undef=False)) == 70
+        >>> assert len(a_gtf.extract_data("transcript_id", nr=False, as_list=True,no_na=False, hide_undef=True)) == 60
         >>> assert len(a_gtf.extract_data("transcript_id", nr=False, as_list=True,no_na=True)) == 60
         >>> assert len(a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start")) == 15
         >>> assert len(a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start",as_list=True))
         >>> assert a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start", as_list=True, nr=True) == ['chr1']
-        >>> assert a_gtf.select_by_key("feature", "transcript").extract_data("bla", as_list=True, nr=False, no_na=False).count('.') == 15
-        >>> assert a_gtf.select_by_key("feature", "transcript").extract_data("bla", as_list=True, nr=True, no_na=False).count('.') == 1
+        >>> assert a_gtf.select_by_key("feature", "transcript").extract_data("bla", as_list=True, nr=False, hide_undef=False).count('?') == 15
+        >>> assert a_gtf.select_by_key("feature", "transcript").extract_data("bla", as_list=True, nr=True, hide_undef=False).count('?') == 1
         >>> assert len(a_gtf.select_by_key("feature", "transcript").extract_data("start", as_dict=True)) == 11
         >>> assert len(a_gtf.select_by_key("feature", "transcript").extract_data("seqid", as_dict=True)) == 1
         >>> assert [len(x) for x in a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start", as_list_of_list=True)].count(2) == 15
@@ -914,9 +971,18 @@ class GTF(object):
 
                 if no_na:
                     if "." not in sub:
-                        res_list.append(sub)
+                        if hide_undef:
+                            if "?" not in sub:
+                                res_list.append(sub)
+                        else:
+                            res_list.append(sub)
+
                 else:
-                    res_list.append(sub)
+                    if hide_undef:
+                        if "?" not in sub:
+                            res_list.append(sub)
+                    else:
+                        res_list.append(sub)
 
             return res_list
 
@@ -933,6 +999,9 @@ class GTF(object):
                 ffi.string(x[0]) for x in list(
                     ptr.data[
                     0:ptr.nb_rows])]
+
+            if hide_undef:
+                res_list = [x for x in res_list if x != "?"]
 
             if no_na:
                 res_list = [x for x in res_list if x != "."]
@@ -951,8 +1020,8 @@ class GTF(object):
                     ptr.data[
                     0:ptr.nb_rows])]
 
-            # no_na as no effect if as_dict is requested
-            res_list = [x for x in res_list if x != "."]
+            # no_na and explicit have no effect if as_dict is requested
+            res_list = [x for x in res_list if x not in [".", "?"]]
 
             return OrderedDict.fromkeys(res_list, 1)
 
@@ -970,8 +1039,8 @@ class GTF(object):
             res_dict = OrderedDict()
 
             for i in tab:
-                if i[0] != ".":
-
+                # "." and "?" are not supported as keys.
+                if i[0] != "." and i[0] != "?":
                     if len(i) >= 2:
                         res_dict[i[0]] = i[1:]
                     else:
@@ -979,7 +1048,16 @@ class GTF(object):
 
             if no_na:
                 for k, v in res_dict.items():
-                    res_dict[k] = [x for x in v if x != "."]
+                    if hide_undef:
+                        res_dict[k] = [x for x in v if x != [".", "?"]]
+                    else:
+                        res_dict[k] = [x for x in v if x != "."]
+            else:
+                for k, v in res_dict.items():
+                    if hide_undef:
+                        res_dict[k] = [x for x in v if x != "?"]
+                    else:
+                        res_dict[k] = v
 
             if nr:
                 for k, v in res_dict.items():
@@ -1002,12 +1080,20 @@ class GTF(object):
 
             for i in tab:
                 if i[0] not in res_dict:
-                    if i[0] != ".":
+                    if i[0] != "." and i[0] != "?":
                         if no_na:
                             if i[1] != ".":
-                                res_dict[i[0]] = i[1]
+                                if hide_undef:
+                                    if i[1] != "?":
+                                        res_dict[i[0]] = i[1]
+                                else:
+                                    res_dict[i[0]] = i[1]
                         else:
-                            res_dict[i[0]] = i[1]
+                            if hide_undef:
+                                if i[1] != "?":
+                                    res_dict[i[0]] = i[1]
+                            else:
+                                res_dict[i[0]] = i[1]
             return res_dict
 
         elif as_dict_of_merged_list:
@@ -1024,7 +1110,7 @@ class GTF(object):
 
             for i in tab:
 
-                if i[0] != ".":
+                if i[0] != "." and i[0] != "?":
                     if len(i) >= 2:
                         if i[0] in res_dict:
                             res_dict[i[0]] += i[1:]
@@ -1033,7 +1119,15 @@ class GTF(object):
 
             if no_na:
                 for k, v in res_dict.items():
-                    res_dict[k] = [x for x in v if x != "."]
+                    if hide_undef:
+                        res_dict[k] = [x for x in v if x not in [".", "?"]]
+                    else:
+                        res_dict[k] = [x for x in v if x != "."]
+            else:
+                if hide_undef:
+                    for k, v in res_dict.items():
+                        res_dict[k] = [x for x in v if x != "?"]
+
             if nr:
 
                 for k, v in res_dict.items():
@@ -1119,7 +1213,7 @@ class GTF(object):
         >>> assert strands['G0006'] == '-'
 
         """
-        strands = self.extract_data('gene_id,strand', as_dict_of_values=True, nr=True, no_na=False)
+        strands = self.extract_data('gene_id,strand', as_dict_of_values=True, nr=True, no_na=False, hide_undef=True)
         return strands
 
     def get_tx_strand(self):
@@ -1128,7 +1222,7 @@ class GTF(object):
         :Example:
 
         >>> from  pygtftk.utils import get_example_file
-        >>> from pygtftk.gtf_interface import GTF
+        >>> from pygtftk.gtf_   interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> strands = a_gtf.get_tx_strand()
@@ -1138,7 +1232,8 @@ class GTF(object):
         >>> assert strands['G0008T001'] == '-'
 
         """
-        strands = self.extract_data('transcript_id,strand', as_dict_of_values=True, nr=True, no_na=False)
+        strands = self.extract_data('transcript_id,strand', as_dict_of_values=True, nr=True, no_na=False,
+                                    hide_undef=True)
         return strands
 
     def get_tx_to_gn(self):
@@ -1147,7 +1242,8 @@ class GTF(object):
         my_dict = self.extract_data("transcript_id,gene_id",
                                     as_dict_of_values=True,
                                     nr=True,
-                                    no_na=True)
+                                    no_na=True,
+                                    hide_undef=True)
 
         return my_dict
 
@@ -1168,7 +1264,8 @@ class GTF(object):
         my_dict = self.extract_data("transcript_id,gene_name",
                                     as_dict_of_values=True,
                                     nr=True,
-                                    no_na=True)
+                                    no_na=True,
+                                    hide_undef=True)
 
         return my_dict
 
@@ -1332,7 +1429,7 @@ class GTF(object):
 
     def select_by_positions(self, pos=None):
         """
-        Select a set of lines by position. Numbering one-based.
+        Select a set of lines by position. Numbering zero-based.
 
         :param pos:
 
@@ -1344,14 +1441,23 @@ class GTF(object):
         >>> a_gtf = GTF(a_file)
         >>> assert a_gtf.select_by_positions([0]).extract_data("feature", as_list=True) == ['gene']
         >>> assert a_gtf.select_by_positions(range(3)).extract_data("feature", as_list=True) == ['gene', 'transcript', 'exon']
+        >>> assert a_gtf.select_by_positions([3,4,1]).select_by_positions([0,1]).extract_data("feature", as_list=True) == ['CDS', 'transcript']
         """
 
         if isinstance(pos, int):
+            if pos > (len(self) - 1) or pos < 0:
+                raise GTFtkError("Value should be part of [0, len(gtf)-1].")
             pos = [pos]
+
         elif isinstance(pos, list):
             # Check that there is only int
+
             if not set([type(x) for x in pos]) == {int}:
                 raise GTFtkError("Only integer accepted.")
+
+            for i in pos:
+                if i > (len(self) - 1) or i < 0:
+                    raise GTFtkError("Value should be part of [0, len(gtf)-1].")
         else:
             raise GTFtkError("Only integer or list of integers accepted.")
 
@@ -1370,13 +1476,12 @@ class GTF(object):
 
         return self._clone(new_data)
 
-    def select_by_regexp(self, key=None, regexp=None, invert_match=False, no_na=True):
+    def select_by_regexp(self, key=None, regexp=None, invert_match=False):
         """Returns lines for which key value match a regular expression.
 
         :param key: The key/attribute name to use for selection.
         :param regexp: the regular expression
         :param invert_match: Select lines are those that do not match.
-        :param no_na: Don't return records for which the value is not defined ('.').
 
 
         :Example:
@@ -1387,7 +1492,8 @@ class GTF(object):
         >>> a_gtf = GTF(a_file)
         >>> b_list = a_gtf.select_by_regexp("transcript_id", "^G00[012]+T00[12]$").select_by_key("feature","transcript").extract_data("transcript_id", as_list=True)
         >>> assert b_list == ['G0001T002', 'G0001T001', 'G0002T001', 'G0010T001']
-
+        >>> assert len(a_gtf.select_by_regexp("transcript_id", "^G00\d+T00\d+$"))==60
+        >>> assert len(a_gtf.select_by_regexp("transcript_id", "^G00\d+T00.*2$").get_tx_ids(nr=True))==5
         """
 
         try:
@@ -1396,26 +1502,27 @@ class GTF(object):
             raise GTFtkError("Unsupported regular expression.")
 
         result = list()
-        key_values = self.extract_data(key, as_list=True, no_na=False)
+        key_values = self.extract_data(key, as_list=True, no_na=False, hide_undef=False)
 
         for n, v in enumerate(key_values):
-            if not invert_match:
-                if re_comp.match(v):
-                    result += [n]
-                else:
-                    if v == ".":
-                        if not no_na:
-                            result += [n]
 
+            if not invert_match:
+                if v != "?":
+                    if re_comp.match(v):
+                        result += [n]
 
             else:
-                if not re_comp.match(v):
-                    result += [n]
-                else:
-                    if v == ".":
-                        if not no_na:
-                            result += [n]
+                if v != "?":
+                    if not re_comp.match(v):
+                        result += [n]
+
             n += 1
+
+        if len(result) < 1:
+            tmp_f = make_tmp_file()
+            a_gtf = GTF(tmp_f.name, check_ensembl_format=False)
+            a_gtf.fn = self.fn
+            return a_gtf
 
         return self.select_by_positions(result)
 
@@ -1569,7 +1676,7 @@ class GTF(object):
 
     def select_by_numeric_value(self,
                                 bool_exp=None,
-                                na_omit=None):
+                                na_omit=[".", "?"]):
         """Test a numeric value. Select lines using a boolean operation on attributes.
         The boolean expression must contain attributes enclosed with braces.
         Example: "cDNA_length > 200 and tx_genomic_length > 2000".
@@ -1577,7 +1684,7 @@ class GTF(object):
         start, end, score or frame.
 
         :param bool_exp: A simple boolean operation. And/or operation are not supported at the moment.
-        :param na_omit: Any line for which one of the tested value is in this list wont be evaluated (e.g. ["."]).
+        :param na_omit: Any line for which one of the tested value is in this list wont be evaluated (e.g. [".", "?"]).
 
 
         :Example:
@@ -1588,7 +1695,7 @@ class GTF(object):
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> b_gtf = a_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=["G0001T001","G0002T001","G0003T001","G0004T001"], new_key="test", new_key_value=["10","11","20","40"])
-        >>> c_list = b_gtf.select_by_key("feature","transcript").select_by_numeric_value("test > 2", na_omit=".").extract_data("test", as_list=True)
+        >>> c_list = b_gtf.select_by_key("feature","transcript").select_by_numeric_value("test > 2").extract_data("test", as_list=True)
         >>> assert c_list == ['10', '11', '20', '40']
         >>> a_file = get_example_file(datasetname="mini_real", ext="gtf.gz")[0]
         >>> a_gtf = GTF(a_file)
@@ -1673,7 +1780,7 @@ class GTF(object):
             if i not in [x for x in attr_list]:
                 GTFtkError("Your expression seems to contain an unknow key.")
 
-        tab = self.extract_data(",".join(attr_used))
+        tab = self.extract_data(",".join(attr_used), hide_undef=False)
 
         parsed_exp_str = flatten_list_recur(parsed_exp.asList())
 
@@ -1688,7 +1795,7 @@ class GTF(object):
                     if eval(parsed_exp_str):
                         result += [pos]
                 except:
-                    msg = "Found non numeric values in: '%s'." % ",".join(i)
+                    msg = "Found non numeric values in: '%s'. Use -n/a_omit." % ",".join(i)
                     GTFtkError(msg)
                 pos += 1
         else:
@@ -1704,6 +1811,13 @@ class GTF(object):
                         GTFtkError(msg)
                 pos += 1
         # Call C function
+
+        if len(result) < 1:
+            tmp_f = make_tmp_file()
+            a_gtf = GTF(tmp_f.name, check_ensembl_format=False)
+            a_gtf.fn = self.fn
+            return a_gtf
+
         return self.select_by_positions(result)
 
     def nb_exons(self):
@@ -2471,7 +2585,7 @@ class GTF(object):
 
             name_out = []
 
-            if feature_name is  None:
+            if feature_name is None:
                 value_name = name_list + more_name
                 key_name = name + ["more_name"]
             else:
@@ -2479,8 +2593,8 @@ class GTF(object):
                 key_name = name + ["more_name"] + ["feature_name"]
 
             if explicit:
-                for k,v in zip(key_name, value_name):
-                    name_out +=[str(k) + "=" + str(v)]
+                for k, v in zip(key_name, value_name):
+                    name_out += [str(k) + "=" + str(v)]
             else:
                 name_out = value_name
 
@@ -2587,7 +2701,7 @@ class GTF(object):
                                          upon_none='set_na')
             name_out = []
 
-            if feature_name is  None:
+            if feature_name is None:
                 value_name = name_list + more_name
                 key_name = name + ["more_name"]
             else:
@@ -2595,8 +2709,8 @@ class GTF(object):
                 key_name = name + ["more_name"] + ["feature_name"]
 
             if explicit:
-                for k,v in zip(key_name, value_name):
-                    name_out +=[str(k) + "=" + str(v)]
+                for k, v in zip(key_name, value_name):
+                    name_out += [str(k) + "=" + str(v)]
             else:
                 name_out = value_name
 
@@ -2688,7 +2802,8 @@ class GTF(object):
         my_dict = self.extract_data("gene_id,transcript_id",
                                     as_dict_of_merged_list=True,
                                     nr=True,
-                                    no_na=True)
+                                    no_na=True,
+                                    hide_undef=True)
 
         if as_dict_of_dict:
             ordered_5p = True
@@ -2988,7 +3103,7 @@ class GTF(object):
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> tx_ids = a_gtf.get_tx_ids()
-        >>> assert len(tx_ids) == 70
+        >>> assert len(tx_ids) == 60
         >>> tx_ids = a_gtf.get_tx_ids(nr=True)
         >>> assert len(tx_ids) == 15
         >>> a_gtf = GTF(a_file).select_by_key("transcript_id","G0001T002,G0001T001,G0003T001")
@@ -2999,19 +3114,25 @@ class GTF(object):
 
         tx_ids = []
 
-        message("Calling 'get_tx_ids'.", type="DEBUG")
+        alist = list()
 
-        if not nr:
-            tab = self.extract_data("transcript_id")
+        tab = self.extract_data(keys="transcript_id")
+
+        if nr:
+            d = dict()
+            adict = defaultdict(lambda: 0, d)
+
             for i in tab:
-                tx_ids += [i[0]]
+                if i[0] not in adict:
+                    if i[0] not in [".", "?"]:
+                        alist += [i[0]]
+                        adict[i[0]] = 1
         else:
-            tab = self.extract_data("transcript_id,feature")
             for i in tab:
-                if i[1] == 'transcript':
-                    tx_ids += [i[0]]
+                if i[0] not in [".", "?"]:
+                    alist += [i[0]]
 
-        return tx_ids
+        return alist
 
     def get_gn_ids(self, nr=False):
         """Returns all gene ids from the GTF file

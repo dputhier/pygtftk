@@ -87,10 +87,34 @@ else:
     test = '''
     #select_by_numeric_value_1
     @test "select_by_numeric_value_1" {
-      result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m|  gtftk select_by_numeric_value -t 'start < 10 and end > 10 and S1 == 0.5555 and S2 == 0.007e2' -n "."| wc -l`
+      result=`gtftk get_example -d mini_real -f "*"; gunzip airway_love.txt.gz`
+      [ -s "airway_love.txt" ]
+    }
+   
+    @test "select_by_numeric_value_2" {
+      result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m|  gtftk select_by_numeric_value -t 'start < 10 and end > 10 and S1 == 0.5555 and S2 == 0.007e2' -n ".,?"| wc -l`
       [ "$result" -eq 5 ]
     }
+    
+    
+    @test "select_by_numeric_value_3" {
+      result=`gtftk join_attr -k gene_id -t gene -j airway_love.txt -i mini_real.gtf.gz -m -V 3 | gtftk select_by_numeric_value -t 'GSM1275862 > 2000 and GSM1275870 == 2527' -n '.,?' | gtftk tabulate -k gene_name,gene_id,gene_biotype,GSM1275862,GSM1275870 | wc -l`
+      [ "$result" -eq 2 ]
+    }
 
+    @test "select_by_numeric_value_4" {
+      result=`gtftk join_attr -H  -k gene_id -t gene -j airway_love.txt -i mini_real.gtf.gz -m -V 3 | gtftk select_by_numeric_value -t 'GSM1275862 > 2000 and GSM1275870 > 100 and GSM1275875 == 2125 ' -n '.,?' | gtftk tabulate -k gene_name,gene_id,gene_biotype,GSM1275862,GSM1275870,GSM1275875 -H | cut -f1`
+      [ "$result" = "GDI1"  ]
+    }
+
+    @test "select_by_numeric_value_5" {
+      result=`gtftk join_attr -H  -k gene_id -t gene -j airway_love.txt -i mini_real.gtf.gz -m -V 3 | gtftk select_by_numeric_value -t 'GSM1275862 > 2000 and GSM1275870 > 100 and GSM1275875 <1000 ' -n '.,?' | gtftk tabulate -k gene_name,gene_id,gene_biotype,GSM1275862,GSM1275870,GSM1275875 -H | cut -f1`
+      [ "$result" = "CRABP2"  ]
+    }
+    
+        
+    
+    
     '''
 
     CmdObject(name="select_by_numeric_value",

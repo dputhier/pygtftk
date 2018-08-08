@@ -1,4 +1,3 @@
-
 MAKEFILE=Makefile
 
 .PHONY: help doc pylint pylintshort \
@@ -99,6 +98,7 @@ OUTPUT2 = $(addsuffix .completed, $(OUTPUT))
 
 test_para: $(OUTPUT2)
 
+
 clean:
 	@make bats_cmd CMD=clean
 	@rm -rf pygtftk.egg-info build dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott; \
@@ -122,3 +122,6 @@ prepare_pip:
 
 send_to_pypi:
 	@twine upload --repository-url https://test.pypi.org/legacy/ dist/* --verbose
+
+nb_test:
+	@gtftk -p| perl -ne 'BEGIN{$$/="{"}{/\@test\s+"(\w+)_\d+"/; print $$1,"\n"}'| sort | uniq -c | sort -nr

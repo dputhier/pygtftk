@@ -35,9 +35,11 @@ from pygtftk.utils import message
 __updated__ = "2018-01-20"
 __doc__ = """
  Produces bigWig coverage profiles using calls to plotnine graphic package.
+ 
 """
 
 __notes__ = """
+ -- Currently plotnine and thus 'profile' does not support color mapping properly. #TODO
  -- The ranging normalization method [1] implies the following transformation: 
  -- -  (x_i - min(x))/(max(x) - min(x)).
  -- Think about using normalized bigWig files as input to mk_matrix. This
@@ -1115,7 +1117,7 @@ def draw_profile(inputfile=None,
     #
     # --------------------------------------------------------------------------
 
-    p += scale_color_manual(values=profile_colors, name='Groups')
+    p += scale_color_manual(values=dict(zip(color_order, profile_colors)), name='Groups')
 
     # -------------------------------------------------------------------------
     # Turn warning off. Both pandas and plotnine use warnings for deprecated
@@ -1180,147 +1182,144 @@ if __name__ == '__main__':
 else:
 
     test = '''
-            
-            #profile: prepare dataset
-            @test "profile_1" {
-             result=`gtftk get_example -d mini_real -f '*'; gtftk overlapping -i mini_real.gtf.gz -c hg38.genome  -n > mini_real_noov.gtf; gtftk random_tx -i mini_real_noov.gtf  -m 1 -s 123 > mini_real_noov_rnd_tx.gtf`
-              [ -s "hg38.genome" ]
-            }
+    #profile: prepare dataset
+    @test "profile_1" {
+     result=`gtftk get_example -d mini_real -f '*'; gtftk overlapping -i mini_real.gtf.gz -c hg38.genome  -n > mini_real_noov.gtf; gtftk random_tx -i mini_real_noov.gtf  -m 1 -s 123 > mini_real_noov_rnd_tx.gtf`
+      [ -s "hg38.genome" ]
+    }
 
-            @test "profile_1_1" {
-             result=`gtftk get_example -d mini_real | gtftk select_by_key -t |  gtftk tabulate | gtftk col_from_tab -c transcript_id,gene_biotype | awk '$2=="protein_coding" || $2=="lincRNA" || $2=="transcribed_unprocessed_pseudogene"' > tx_classes.txt`
-              [ -s "hg38.genome" ]
-            }
-                        
-            
-            
-            #profile: prepare dataset
-            @test "profile_2" {
-             result=`gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter_pr`
-              [ -s "mini_real_promoter_pr.zip" ]
-            }
+    @test "profile_2" {
+     result=`gtftk get_example -d mini_real | gtftk select_by_key -t |  gtftk tabulate | gtftk col_from_tab -c transcript_id,gene_biotype | awk '$2=="protein_coding" || $2=="lincRNA" || $2=="transcribed_unprocessed_pseudogene"' > tx_classes.txt`
+      [ -s "hg38.genome" ]
+    }
+                            
+    #profile: prepare dataset
+    @test "profile_3" {
+     result=`gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter_pr`
+      [ -s "mini_real_promoter_pr.zip" ]
+    }
+
+    #profile: test
+    @test "profile_4" {
+     result=`gtftk profile -D -i mini_real_promoter_pr.zip -o profile_prom_1 -pf png -if example_01.png`
+      [ -s "example_01.png" ]
+    }
+
+
+    #profile: make mini_real_promoter
+    @test "profile_5" {
+     result=`gtftk profile -D -i mini_real_promoter_pr.zip -o profile_prom_1 -pf png -if example_01.png`
+      [ -s "example_01.png" ]
+    }
+
+    #profile: make tss.bed
+    @test "profile_6" {
+     result=`gtftk select_by_key -i mini_real_noov_rnd_tx.gtf -k feature -v transcript |  gtftk 5p_3p_coord > tss.bed`
+      [ -s "tss.bed" ]
+    }
+
+    #profile: make single_nuc
+    @test "profile_7" {
+     result=`gtftk mk_matrix -u 5000 -d 5000 -i tss.bed -w 200 -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_single_nuc_pr -c hg38.genome -t single_nuc`
+      [ -s "mini_real_single_nuc_pr.zip" ]
+    }
+
+    #profile: test single_nuc
+    @test "profile_8" {
+     result=`gtftk profile -i mini_real_single_nuc_pr.zip -o profile_prom_1a -pf png -if example_01a.png`
+      [ -s "example_01a.png" ]
+    }
+
+    #profile: make mini_real_tx
+    @test "profile_9" {
+     result=`gtftk mk_matrix  -k 5  -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr`
+      [ -s "mini_real_tx_pr.zip" ]
+    }
+
+    #profile: make mini_real_tx
+    @test "profile_10" {
+     result=`gtftk select_by_key -i mini_real_noov_rnd_tx.gtf -k feature -v transcript | gtftk convert -f bed6 > mini_real_rnd_tx.bed`
+      [ -s "mini_real_rnd_tx.bed" ]
+    }
+
+    #profile: test mini_real_tx
+    @test "profile_11" {
+     result=`gtftk profile -D -i mini_real_tx_pr.zip -o profile_tx_1 -pf png -if example_02.png`
+      [ -s "example_02.png" ]
+    }
+
+    #profile: make mini_real_user_def
+    @test "profile_12" {
+     result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_rnd_tx.bed -t user_regions  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_user_def`
+      [ -s "mini_real_user_def.zip" ]
+    }
+
+    #profile: test mini_real_user_def
+    @test "profile_13" {
+     result=`gtftk profile -D -i mini_real_user_def.zip -o profile_udef_4  -pf png -if example_04.png`
+      [ -s "example_04.png" ]
+    }
+
+    #profile: test mini_real_user_def
+    @test "profile_14" {
+     result=`gtftk profile -D -nm ranging -i mini_real_user_def.zip -o profile_udef_5  -pf png -if example_04b.png`
+      [ -s "example_04b.png" ]
+    }
         
-            #profile: test
-            @test "profile_3" {
-             result=`gtftk profile -D -i mini_real_promoter_pr.zip -o profile_prom_1 -pf png -if example_01.png`
-              [ -s "example_01.png" ]
-            }
-        
-        
-            #profile: make mini_real_promoter
-            @test "profile_4" {
-             result=`gtftk profile -D -i mini_real_promoter_pr.zip -o profile_prom_1 -pf png -if example_01.png`
-              [ -s "example_01.png" ]
-            }
-        
-            #profile: make tss.bed
-            @test "profile_5" {
-             result=`gtftk select_by_key -i mini_real_noov_rnd_tx.gtf -k feature -v transcript |  gtftk 5p_3p_coord > tss.bed`
-              [ -s "tss.bed" ]
-            }
-        
-            #profile: make single_nuc
-            @test "profile_6" {
-             result=`gtftk mk_matrix -u 5000 -d 5000 -i tss.bed -w 200 -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_single_nuc_pr -c hg38.genome -t single_nuc`
-              [ -s "mini_real_single_nuc_pr.zip" ]
-            }
-        
-            #profile: test single_nuc
-            @test "profile_7" {
-             result=`gtftk profile -i mini_real_single_nuc_pr.zip -o profile_prom_1a -pf png -if example_01a.png`
-              [ -s "example_01a.png" ]
-            }
-        
-            #profile: make mini_real_tx
-            @test "profile_8" {
-             result=`gtftk mk_matrix  -k 5  -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr`
-              [ -s "mini_real_tx_pr.zip" ]
-            }
-        
-            #profile: make mini_real_tx
-            @test "profile_9" {
-             result=`gtftk select_by_key -i mini_real_noov_rnd_tx.gtf -k feature -v transcript | gtftk convert -f bed6 > mini_real_rnd_tx.bed`
-              [ -s "mini_real_rnd_tx.bed" ]
-            }
-        
-            #profile: test mini_real_tx
-            @test "profile_10" {
-             result=`gtftk profile -D -i mini_real_tx_pr.zip -o profile_tx_1 -pf png -if example_02.png`
-              [ -s "example_02.png" ]
-            }
-        
-            #profile: make mini_real_user_def
-            @test "profile_11" {
-             result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_rnd_tx.bed -t user_regions  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_user_def`
-              [ -s "mini_real_user_def.zip" ]
-            }
-        
-            #profile: test mini_real_user_def
-            @test "profile_12" {
-             result=`gtftk profile -D -i mini_real_user_def.zip -o profile_udef_4  -pf png -if example_04.png`
-              [ -s "example_04.png" ]
-            }
-        
-            #profile: test mini_real_user_def
-            @test "profile_13" {
-             result=`gtftk profile -D -nm ranging -i mini_real_user_def.zip -o profile_udef_5  -pf png -if example_04b.png`
-              [ -s "example_04b.png" ]
-            }
-                
-            #profile: test mini_real_user_def
-            @test "profile_14" {
-             result=`gtftk profile -D -i mini_real_promoter_pr.zip -g tx_classes -f bwig -o profile_prom_2  -ph 5  -pf png -if example_05.png`
-              [ -s "example_05.png" ]
-            }
-        
-            #profile: create dataset
-            @test "profile_15" {
-             result=`gtftk tabulate -k transcript_id,gene_biotype -i mini_real_noov_rnd_tx.gtf -H | sort | uniq | perl -ne 'print if (/(protein_coding)|(lincRNA)|(antisense)|(processed_transcript)/)'> tx_classes.txt`
-              [ -s "tx_classes.txt" ]
-            }
-        
-            #profile: create dataset
-            @test "profile_16" {
-             result=`gtftk profile -D -i mini_real_promoter_pr.zip -g tx_classes -f bwig -o profile_prom_2  -ph 5  -pf png -if example_05.png`
-              [ -s "example_05.png" ]
-            }
-        
-            #profile: create dataset
-            @test "profile_17" {
-             result=`gtftk profile -D -i mini_real_promoter_pr.zip -g bwig -f tx_classes  -o profile_prom_3  -ph 4 -c "#66C2A5,#FC8D62,#8DA0CB" -t tx_classes.txt  -pf png -if example_06.png`
-              [ -s "example_06.png" ]
-            }
-        
-            #profile: create dataset
-            @test "profile_18" {
-             result=`gtftk profile -D -i mini_real_promoter_pr.zip -g tx_classes -f bwig  -o profile_prom_4  -ph 4 -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -t tx_classes.txt  -pf png -if example_07.png`
-              [ -s "example_07.png" ]
-            }
-        
-            #profile: create dataset
-            @test "profile_19" {
-             result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr_2`
-              [ -s "mini_real_tx_pr_2.zip" ]
-            }
-            
-            #profile: create dataset
-            @test "profile_20" {
-             result=`gtftk profile -D -i mini_real_tx_pr_2.zip -g tx_classes -f bwig  -o profile_tx_3 -pw 12  -ph 7 -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -t tx_classes.txt  -pf png -if example_08.png`
-              [ -s "example_08.png" ]
-            }
-        
-            #profile: create dataset
-            @test "profile_21" {
-             result=`gtftk profile -D -i mini_real_promoter_pr.zip -g bwig -f chrom  -o profile_prom_5  -ph 15 -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF"   -pf png -if example_09.png`
-              [ -s "example_09.png" ]
-            }
-             
-            #profile: create dataset
-            @test "profile_22" {
-             result=`gtftk profile -th classic -D -i mini_real_promoter_pr.zip -g bwig -f chrom  -o profile_prom_5  -ph 15 -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF"   -pf png -if example_09b.png`
-              [ -s "example_09b.png" ]
-            }
-            
+    #profile: test mini_real_user_def
+    @test "profile_15" {
+     result=`gtftk profile -D -i mini_real_promoter_pr.zip -g tx_classes -f bwig -o profile_prom_2  -ph 5  -pf png -if example_05.png`
+      [ -s "example_05.png" ]
+    }
+
+    #profile: create dataset
+    @test "profile_16" {
+     result=`gtftk tabulate -k transcript_id,gene_biotype -i mini_real_noov_rnd_tx.gtf -H | sort | uniq | perl -ne 'print if (/(protein_coding)|(lincRNA)|(antisense)|(processed_transcript)/)'> tx_classes.txt`
+      [ -s "tx_classes.txt" ]
+    }
+
+    #profile: create dataset
+    @test "profile_17" {
+     result=`gtftk profile -D -i mini_real_promoter_pr.zip -g tx_classes -f bwig -o profile_prom_2  -ph 5  -pf png -if example_05.png`
+      [ -s "example_05.png" ]
+    }
+
+    #profile: create dataset
+    @test "profile_18" {
+     result=`gtftk profile -D -i mini_real_promoter_pr.zip -g bwig -f tx_classes  -o profile_prom_3  -ph 4 -c "#66C2A5,#FC8D62,#8DA0CB" -t tx_classes.txt  -pf png -if example_06.png`
+      [ -s "example_06.png" ]
+    }
+
+    #profile: create dataset
+    @test "profile_19" {
+     result=`gtftk profile -D -i mini_real_promoter_pr.zip -g tx_classes -f bwig  -o profile_prom_4  -ph 4 -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -t tx_classes.txt  -pf png -if example_07.png`
+      [ -s "example_07.png" ]
+    }
+
+    #profile: create dataset
+    @test "profile_20" {
+     result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr_2`
+      [ -s "mini_real_tx_pr_2.zip" ]
+    }
+    
+    #profile: create dataset
+    @test "profile_21" {
+     result=`gtftk profile -D -i mini_real_tx_pr_2.zip -g tx_classes -f bwig  -o profile_tx_3 -pw 12  -ph 7 -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -t tx_classes.txt  -pf png -if example_08.png`
+      [ -s "example_08.png" ]
+    }
+
+    #profile: create dataset
+    @test "profile_22" {
+     result=`gtftk profile -D -i mini_real_promoter_pr.zip -g bwig -f chrom  -o profile_prom_5  -ph 15 -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF"   -pf png -if example_09.png`
+      [ -s "example_09.png" ]
+    }
+     
+    #profile: create dataset
+    @test "profile_23" {
+     result=`gtftk profile -th classic -D -i mini_real_promoter_pr.zip -g bwig -f chrom  -o profile_prom_5  -ph 15 -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF"   -pf png -if example_09b.png`
+      [ -s "example_09b.png" ]
+    }
+    
         
             '''
 

@@ -5,12 +5,14 @@
 from __future__ import print_function
 
 import argparse
+import errno
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
+from pygtftk.utils import message
 from pygtftk.utils import write_properly
 
 __updated__ = "2018-01-20"
@@ -71,8 +73,13 @@ def make_parser():
                             action="store_true",
                             required=False)
 
-    parser_grp.add_argument('-n', '--no-undef',
-                            help="Don't print lines containing '.' (undefined values)",
+    parser_grp.add_argument('-n', '--no-unset',
+                            help="Don't print lines containing '.' (unsetined values)",
+                            action="store_true",
+                            required=False)
+
+    parser_grp.add_argument('-x', '--accept-undef',
+                            help="Print line for which the key is undefined (i.e, '?', does not exists).",
                             action="store_true",
                             required=False)
 
@@ -108,9 +115,10 @@ def tabulate(inputfile=None,
              outputfile=None,
              key=None,
              tmp_dir=None,
-             no_undef=False,
+             no_unset=False,
              unique=False,
              no_basic=False,
+             accept_undef=False,
              select_gene_ids=False,
              select_gene_names=False,
              select_transcript_ids=False,
@@ -138,6 +146,9 @@ def tabulate(inputfile=None,
     elif select_exon_ids:
         key = "exon_id"
 
+    no_undef = False
+    if not accept_undef:
+        no_undef = True
     # ----------------------------------------------------------------------
     # REad GTF and process
     # ----------------------------------------------------------------------
@@ -154,35 +165,73 @@ def tabulate(inputfile=None,
         tab = gtf.extract_data(key)
 
     if not no_header:
+        message("Writing header")
         write_properly(separator.join(tab.colnames),
                        outputfile)
 
-    if not unique:
-        if no_undef:
-            for i in tab:
-                if any([True for x in i.fields if x == "."]):
-                    continue
-                i.write(outputfile, separator)
-        else:
-            for i in tab:
-                i.write(outputfile, separator)
+    message("Writing")
 
-    else:
-        printed = {}
-        if no_undef:
-            for i in tab:
-                t = tuple(i)
-                if t not in printed:
-                    if any([True for x in i.fields if x == "."]):
-                        continue
-                    i.write(outputfile, separator)
-                printed[t] = 1
+    try:
+        if not unique:
+            if no_unset:
+                if no_undef:
+                    for i in tab:
+                        if any([True for x in i.fields if x in [".", "?"]]):
+                            continue
+                        i.write(outputfile, separator)
+                else:
+                    for i in tab:
+                        if any([True for x in i.fields if x in ["."]]):
+                            continue
+                        i.write(outputfile, separator)
+
+            else:
+                if no_undef:
+                    for i in tab:
+                        if any([True for x in i.fields if x in ["?"]]):
+                            continue
+                        i.write(outputfile, separator)
+                else:
+                    for i in tab:
+                        i.write(outputfile, separator)
+
         else:
-            for i in tab:
-                t = tuple(i)
-                if t not in printed:
-                    i.write(outputfile, separator)
-                printed[t] = 1
+            printed = {}
+            if no_unset:
+                if no_undef:
+                    for i in tab:
+                        t = tuple(i)
+                        if t not in printed:
+                            if any([True for x in i.fields if x in [".", "?"]]):
+                                continue
+                            i.write(outputfile, separator)
+                        printed[t] = 1
+                else:
+                    for i in tab:
+                        t = tuple(i)
+                        if t not in printed:
+                            if any([True for x in i.fields if x in ["."]]):
+                                continue
+                            i.write(outputfile, separator)
+                        printed[t] = 1
+            else:
+                if no_undef:
+                    for i in tab:
+                        t = tuple(i)
+                        if t not in printed:
+                            if any([True for x in i.fields if x in ["?"]]):
+                                continue
+                            i.write(outputfile, separator)
+                        printed[t] = 1
+                else:
+                    for i in tab:
+                        t = tuple(i)
+                        if t not in printed:
+                            i.write(outputfile, separator)
+                        printed[t] = 1
+    except IOError as e:
+        if e.errno == errno.EPIPE:
+            message("Received a boken pipe signal", type="WARNING")
 
     close_properly(outputfile, inputfile)
 
@@ -221,7 +270,7 @@ else:
 
     # tabulate: check -u
     @test "tabulate_4" {
-     result=`gtftk tabulate  -i  pygtftk/data/simple/simple.gtf -k transcript_id,gene_id,start -uH| wc -l`
+     result=`gtftk tabulate  -i  pygtftk/data/simple/simple.gtf -k transcript_id,gene_id,start -uHx| wc -l`
       [ "$result" -eq 44 ]
     }
     
@@ -239,21 +288,29 @@ else:
 
     # tabulate: check all as key
     @test "tabulate_7" {
-     result=`gtftk get_example | gtftk tabulate -k all | awk  -F "\\t" '{print NF}'| wc -l `
+     result=`gtftk get_example | gtftk tabulate -k all -x| wc -l `
       [ "$result" -eq 71 ]
     }
 
     # tabulate: check all as key
     @test "tabulate_8" {
-     result=`gtftk get_example | gtftk tabulate -k all | awk  -F "\\t" '{print NF}'| sort | uniq`
+     result=`gtftk get_example | gtftk tabulate -k all -x | awk  -F "\\t" '{print NF}'| sort | uniq`
       [ "$result" -eq 12 ]
     }
     
     # tabulate: check "*" as key and -b
     @test "tabulate_9" {
-     result=`gtftk get_example | gtftk tabulate -k "*" -b  | awk  -F "\\t" '{print NF}'| sort | uniq`
+     result=`gtftk get_example | gtftk tabulate -k "*" -b  -x | awk  -F "\\t" '{print NF}'| sort | uniq`
       [ "$result" -eq 4 ]
     }
+    
+    # tabulate: check "*" as key and -b
+    @test "tabulate_10" {
+     result=`gtftk get_example | gtftk tabulate -k all -x | awk  -F "\t" '{print NF}'| sort | uniq`
+      [ "$result" -eq 12 ]
+    }
+    
+    
     
     '''
 

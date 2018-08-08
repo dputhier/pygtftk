@@ -77,7 +77,8 @@ def intron_sizes(
                                 "transcript").extract_data("transcript_id,strand",
                                                            as_dict_of_values=True,
                                                            no_na=True,
-                                                           nr=True)
+                                                           nr=True,
+                                                           hide_undef=True)
 
     intron_size = {tx: [] for tx in all_tx_ids}
 

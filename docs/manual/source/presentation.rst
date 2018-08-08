@@ -535,6 +535,17 @@ merge_attr
 .. command-output:: gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d txgn_id -s "|" -f transcript | gtftk select_by_key -t
 	:shell:
 
+**Example:** Merge gene_id and transcript_id into an existing key (transcript_id) associated to transcript features.
+
+.. command-output:: gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk tabulate -k feature,transcript_id -x | head -n 6
+	:shell:
+
+**Example:** Merge gene_id and transcript_id into an existing key (transcript_id) associated to all features.
+
+.. command-output:: gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f "*" | gtftk tabulate -k feature,transcript_id -x | head -n 6
+	:shell:
+
+
 **Arguments:**
 
 .. command-output:: gtftk join_multi_file -h

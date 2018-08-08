@@ -85,7 +85,8 @@ def exon_sizes(
                                 "transcript").extract_data("transcript_id,strand",
                                                            as_dict_of_values=True,
                                                            no_na=True,
-                                                           nr=True)
+                                                           nr=True,
+                                                           hide_undef=True)
 
     for tx_id in all_tx_ids:
         size_list = []

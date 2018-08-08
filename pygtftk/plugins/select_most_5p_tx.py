@@ -83,13 +83,13 @@ else:
     #select_most_5p_tx
     @test "select_most_5p_tx_1" {
      result=`gtftk get_example -d simple_04 | gtftk select_most_5p_tx| wc -l`
-      [ "$result" -eq 40 ]
+      [ "$result" -eq 41 ]
     }
     
     #select_most_5p_tx
     @test "select_most_5p_tx_2" {
      result=`gtftk get_example -d simple_04 | gtftk select_most_5p_tx -g | wc -l`
-      [ "$result" -eq 50 ]
+      [ "$result" -eq 51 ]
     }
 
     #select_most_5p_tx
@@ -101,7 +101,7 @@ else:
     #select_most_5p_tx
     @test "select_most_5p_tx_4" {
      result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx | gtftk select_by_key -k gene_name -v CRABP2 | gtftk select_by_key --select-transcripts | gtftk 5p_3p_coord  -t transcript | cut -f4`
-      [ "$result" = "ENSG00000143320|ENST00000368220" ]
+      [ "$result" = "ENSG00000143320|ENST00000621784" ]
     }        
     
     #select_most_5p_tx
@@ -110,6 +110,35 @@ else:
       [ "$result" = "ENSG00000143545|ENST00000495720" ]
     }  
 
+
+    #select_most_5p_tx
+    @test "select_most_5p_tx_6" {
+     result=`gtftk get_example -d mini_real | gtftk select_most_5p_tx | gtftk select_by_key -t | gtftk tabulate -k gene_id,gene_name,transcript_id | perl -ne 'print if (/(LRRFIP1)|(MPP1)|(IGSF1)|(SIN3B)|(PITPNM2)|(XIST)/)' | wc -l`
+      [ "$result" -eq 6 ]
+    } 
+    
+
+    #select_most_5p_tx
+    @test "select_most_5p_tx_7" {
+     result=`gtftk get_example -d mini_real | gtftk select_most_5p_tx | gtftk select_by_key -t | gtftk tabulate -k gene_id,gene_name,transcript_id | perl -ne 'print if (/(LRRFIP1)|(MPP1)|(IGSF1)|(SIN3B)|(PITPNM2)|(XIST)/)' | cut -f 3 | perl -npe 's/\\n/,/'`
+      [ "$result" = "ENST00000542210,ENST00000248054,ENST00000308482,ENST00000429829,ENST00000370904,ENST00000393529," ]
+    }  
+
+    #select_most_5p_tx
+    @test "select_most_5p_tx_8" {
+     result=`gtftk get_example -d simple_04 | gtftk select_most_5p_tx | grep "G0005T002"| wc -l`
+      [ "$result" -eq 5 ]
+    } 
+
+    #select_most_5p_tx
+    @test "select_most_5p_tx_9" {
+     result=`gtftk get_example -d simple_04 | gtftk select_most_5p_tx | grep "G0004T001"| wc -l`
+      [ "$result" -eq 6 ]
+    } 
+    
+        
+    
+    
     """
 
     CmdObject(name="select_most_5p_tx",

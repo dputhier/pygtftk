@@ -3,7 +3,9 @@
 import datetime
 import glob
 import os
+import random
 import re
+import string
 import sys
 import time
 from collections import defaultdict
@@ -777,6 +779,11 @@ def is_comment(string):
 # ---------------------------------------------------------------
 # String
 # ---------------------------------------------------------------
+
+def random_string(n):
+    """Returns a random string (alpha numeric) of length n."""
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(n))
+
 
 def to_alphanum(string):
     """

@@ -208,9 +208,9 @@ def get_tx_seq(inputfile=None,
     if sleuth_format:
 
         tx_biotype = tx_gtf.extract_data("transcript_id,transcript_biotype",
-                                         as_dict_of_lists=True)
+                                         as_dict_of_lists=True, hide_undef=False)
         gn_biotype = tx_gtf.extract_data("gene_id,gene_biotype",
-                                         as_dict_of_lists=True)
+                                         as_dict_of_lists=True, hide_undef=False)
 
         for i in fasta_seq:
             gene_id = i.gene_id
@@ -238,7 +238,7 @@ def get_tx_seq(inputfile=None,
             outputfile.write(i.sequence + "\n")
     else:
         tx_info = tx_gtf.extract_data("transcript_id," + label,
-                                      as_dict_of_lists=True)
+                                      as_dict_of_lists=True, hide_undef=False)
         for i in fasta_seq:
             if not explicit:
                 header = separator.join(tx_info[i.transcript_id])
@@ -321,13 +321,13 @@ else:
     #sleuth output
     @test "get_tx_seq_9" {
      result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -f| head -1`
-      [ "$result" = ">G0001T002 chromosome:GRCm38:chr1:125:138:1 gene:G0001 gene_biotype:. transcript_biotype:." ]
-    }
+      [ "$result" = ">G0001T002 chromosome:GRCm38:chr1:125:138:1 gene:G0001 gene_biotype:? transcript_biotype:?" ]
+    }   
 
     #sleuth output
     @test "get_tx_seq_10" {
      result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -f -a bla| head -1`
-      [ "$result" = ">G0001T002 chromosome:bla:chr1:125:138:1 gene:G0001 gene_biotype:. transcript_biotype:." ]
+      [ "$result" = ">G0001T002 chromosome:bla:chr1:125:138:1 gene:G0001 gene_biotype:? transcript_biotype:?" ]
     }
 
     # The process ends normality if no corresponding chr is found
@@ -345,7 +345,7 @@ else:
     # The process ends normality if no corresponding chr is found
     @test "get_tx_seq_13" {
      result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -l transcript_id,gene_id,gene_biotype| head -1`
-      [ "$result" = ">G0001T002|G0001|." ]
+      [ "$result" = ">G0001T002|G0001|?" ]
     }
 
     # The process ends normality if no corresponding chr is found

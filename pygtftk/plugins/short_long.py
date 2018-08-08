@@ -141,7 +141,7 @@ else:
     }
     
     #Test number of output lines (genes)
-    @test "short_long_9" {
+    @test "short_long_10" {
     result=$(gtftk get_example -d mini_real  | gtftk short_long  |  gtftk feature_size -t mature_rna |  gtftk select_by_key -k gene_name -v AURKAIP1 | gtftk select_by_key --select-transcripts | gtftk tabulate -Hun -k feat_size)
     [ $result -eq 608 ]
     }

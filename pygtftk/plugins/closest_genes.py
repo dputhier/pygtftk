@@ -189,7 +189,8 @@ def closest_genes(
         message("Unknown type.", type="ERROR")
 
     strands = gn_gtf.extract_data(identifier + ",strand",
-                                  as_dict_of_values=True)
+                                  as_dict_of_values=True,
+                                  hide_undef=True)
 
     # ----------------------------------------------------------------------
     # Search closest genes

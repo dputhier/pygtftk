@@ -153,19 +153,19 @@ else:
     test = """
     #col_from_tab
     @test "col_from_tab_1" {
-     result=`gtftk get_example | gtftk tabulate -k all |gtftk col_from_tab -c start,end,seqid| wc -l`
+     result=`gtftk get_example | gtftk tabulate -k all -x |gtftk col_from_tab -c start,end,seqid| wc -l`
       [ "$result" -eq 71 ]
     }
 
     #col_from_tab
     @test "col_from_tab_2" {
-     result=`gtftk get_example | gtftk tabulate -k all |gtftk col_from_tab -H -c start,end,seqid| wc -l`
+     result=`gtftk get_example | gtftk tabulate -k all -x |gtftk col_from_tab -H -c start,end,seqid| wc -l`
       [ "$result" -eq 70 ]
     }
     
     #col_from_tab
     @test "col_from_tab_3" {
-     result=`gtftk get_example | gtftk tabulate -k all |gtftk col_from_tab -c start,end,seqid| awk 'BEGIN{FS=OFS="\\t"}{print NF}'| sort | uniq`
+     result=`gtftk get_example | gtftk tabulate -k all -x |gtftk col_from_tab -c start,end,seqid| awk 'BEGIN{FS=OFS="\\t"}{print NF}'| sort | uniq`
       [ "$result" -eq 3 ]
     }
     

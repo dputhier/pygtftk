@@ -53,7 +53,7 @@ requirements:
     - biopython >=1.69
     - zlib <1.2.8-3
     - matplotlib >=2.0.2
-    - plotnine >=0.3.0
+    - plotnine >=0.4.0
 
   run:
     - GitPython >=2.1.8
@@ -80,7 +80,7 @@ requirements:
     - biopython >=1.69
     - zlib <1.2.8-3
     - matplotlib >=2.0.2
-    - plotnine >=0.3.0
+    - plotnine >=0.4.0
 
 test:
   commands:

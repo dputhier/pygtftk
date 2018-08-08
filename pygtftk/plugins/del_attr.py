@@ -136,11 +136,31 @@ else:
     
     
     #del_attr: check -v
-    @test "del_attr_1" {
+    @test "del_attr_2" {
      result=`gtftk del_attr -i pygtftk/data/simple/simple.gtf  -k ccds_id,transcript_id,gene_id -v| grep exon_id| wc -l`
       [ "$result" -eq 0 ]
     }
-    
+
+    #del_attr: check -r
+    @test "del_attr_3" {
+     result=`gtftk get_example -d mini_real | gtftk del_attr -r -k 'transcript.*'| gtftk tabulate -k "*" -x -V 3| head -1| grep transcript | wc -l`
+      [ "$result" -eq 0 ]
+    }
+        
+ 
+    #del_attr: check -r
+    @test "del_attr_4" {
+     result=`gtftk get_example -d mini_real | gtftk del_attr -r -k '(trancrip)|(biotype)|(exon_id)'| gtftk tabulate -k "*" -x| head -1| awk 'BEGIN{FS="\\t"}{print NF}'`
+      [ "$result" -eq 13 ]
+    }
+        
+           
+    #del_attr: check -r
+    @test "del_attr_5" {
+     result=`gtftk get_example -d mini_real | gtftk del_attr -r -k '(transcript_id)|(gene_id)' -v| awk 'BEGIN{FS="\t"}{print NF}' | sort | uniq -c| cut -f2`
+      [ "$result" = "137670 9" ]
+    }
+ 
     """
 
     CmdObject(name="del_attr",

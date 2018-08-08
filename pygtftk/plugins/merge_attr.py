@@ -115,8 +115,8 @@ else:
     }
 
     @test "merge_attr_2" {
-     result=`gtftk get_example | gtftk merge_attr -k transcript_id,gene_id -d gene_tx_concat -f transcript| gtftk select_by_key -k feature -v exon| gtftk tabulate -k gene_tx_concat -H | sort | uniq`
-      [ "$result" = "." ]
+     result=`gtftk get_example | gtftk merge_attr -k transcript_id,gene_id -d gene_tx_concat -f transcript| gtftk select_by_key -k feature -v exon| gtftk tabulate -k gene_tx_concat -H | wc -l`
+      [ "$result" -eq 0 ]
     }
 
     @test "merge_attr_3" {
@@ -133,6 +133,22 @@ else:
      result=`gtftk get_example -d mini_real | gtftk merge_attr -k end,start,transcript_id,gene_id -d gene_tx_concat -f exon| gtftk select_by_key -k feature -v exon| wc -l`
       [ "$result" -eq 64251 ]
     }
+
+    @test "merge_attr_6" {
+     result=`gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk select_by_key -t| gtftk tabulate -k transcript_id -H | perl -ne 'print (length $_,"\n")'| sort | uniq`
+      [ "$result" -eq 16 ]
+    }    
+      
+    @test "merge_attr_7" {
+     result=`gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk select_by_key -e| gtftk tabulate -k transcript_id -H | perl -ne 'print (length $_,"\n")'| sort | uniq`
+      [ "$result" -eq 6 ]
+    }    
+
+    @test "merge_attr_8" {
+     result=`gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk select_by_key -g| gtftk tabulate -k transcript_id -H | perl -ne 'print (length $_,"\n")'| sort | uniq`
+      [ "$result" -eq 2 ]
+    }    
+     
     """
     msg = "Merge a set of attributes into a destination attribute."
     CmdObject(name="merge_attr",
