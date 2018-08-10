@@ -73,13 +73,13 @@ test:
 	@make bats
 bats:
 	@gtftk -p > gtftk_test.bats
-	@bats gtftk_test.bats
+	@bats -t gtftk_test.bats
 	@rm -f gtftk_test.bats
 
 
 bats_cmd:
 	@gtftk -p|perl -npe 's/^ +//;' |perl -ne 'BEGIN{$$/="\n}"}{print $$_ if (/\@test +"$(CMD)/)}'  > gtftk_test.bats.sub
-	@bats gtftk_test.bats.sub
+	@bats -t gtftk_test.bats.sub
 	@rm -f gtftk_test.bats.sub
 
 test_cmd:
@@ -89,7 +89,7 @@ test_cmd:
 	@gtftk -l > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
 
 %.completed : %.bats
-	@bats $<
+	@bats -t $<
 	@echo "completed" > $@
 
 OUTPUT = $(eval OUTPUT := $$(shell gtftk -l 2>/dev/null))$(OUTPUT)
