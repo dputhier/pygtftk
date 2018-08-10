@@ -41,9 +41,9 @@ help:
 	@echo ""
 	@echo "- More information:"
 	@echo ""
-	@echo "\tbats_cmd Usage: make bats_cmd CMD=select_by_key"
+	@echo -e "\tbats_cmd Usage: make bats_cmd CMD=select_by_key"
 	@echo ""
-	@echo "\ttest_para Usage: make test_para -j 10"
+	@echo -e "\ttest_para Usage: make test_para -j 10"
 
 doc:
 	@rm -Rf docs/manual/build/
