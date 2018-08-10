@@ -158,7 +158,7 @@ else:
     #del_attr: check -r
     @test "del_attr_5" {
      result=`gtftk get_example -d mini_real | gtftk del_attr -r -k '(transcript_id)|(gene_id)' -v| awk 'BEGIN{FS="\t"}{print NF}' | sort | uniq -c | cut -f2 | sed 's/ /,/g'`
-      [ "$result" = ",137670,9" ]
+      [ "$result" = "137670,9" ]
     }
  
     """
