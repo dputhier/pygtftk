@@ -153,7 +153,7 @@ class FASTA(object):
         >>> # Load sequence
         >>> from pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> a_file = get_example_file("simple", "gtf")[1]
+        >>> a_file = get_example_file("simple", "gtf")[0]
         >>> a_gtf = GTF(a_file)
         >>> genome_fa = get_example_file("simple", "fa")[0]
         >>> a_fa = a_gtf.get_sequences(genome_fa, intron=True)

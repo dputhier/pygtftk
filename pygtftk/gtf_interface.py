@@ -549,15 +549,15 @@ class GTF(object):
         """A processing message whose verbosity is adapted based on pygtftk.utils.VERBOSITY.
 
         >>> import pygtftk.utils
-        >>> pygtftk.utils.VERBOSITY = 0
-        >>> from pygtftk.utils import get_example_file
+        >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> a_file = get_example_file("simple", "gtf")[1]
-        >>> gtf = GTF(a_file)
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> pygtftk.utils.VERBOSITY = 0
         >>> pygtftk.utils.VERBOSITY = 2
-        >>> gtf._message('bla')
+        >>> a_gtf._message('bla')
         >>> pygtftk.utils.VERBOSITY = 3
-        >>> gtf._message('bla')
+        >>> a_gtf._message('bla')
         >>> pygtftk.utils.VERBOSITY = 0
         """
         addr = re.search("([^\s]+)>", repr(self._data))
@@ -915,7 +915,6 @@ class GTF(object):
         >>> assert len(a_tab) == 70
         >>> assert len(a_gtf.extract_data("transcript_id", nr=False, as_list=True,no_na=False, hide_undef=False)) == 70
         >>> assert len(a_gtf.extract_data("transcript_id", nr=False, as_list=True,no_na=False, hide_undef=True)) == 60
-        >>> assert len(a_gtf.extract_data("transcript_id", nr=False, as_list=True,no_na=True)) == 60
         >>> assert len(a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start")) == 15
         >>> assert len(a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start",as_list=True))
         >>> assert a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start", as_list=True, nr=True) == ['chr1']
@@ -1223,7 +1222,7 @@ class GTF(object):
         :Example:
 
         >>> from  pygtftk.utils import get_example_file
-        >>> from pygtftk.gtf_   interface import GTF
+        >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> strands = a_gtf.get_tx_strand()
@@ -1949,7 +1948,7 @@ class GTF(object):
         >>> a_gtf = GTF(a_file)
         >>> join_file = get_example_file("simple", "join")[0]
         >>> b_gtf = a_gtf.add_attr_from_file(feat="gene", key="gene_id", new_key="bla", inputfile=join_file)
-        >>> b_list = b_gtf.select_by_key("feature", "gene").extract_data("bla", as_list=True, no_na=True)
+        >>> b_list = b_gtf.select_by_key("feature", "gene").extract_data("bla", as_list=True, no_na=True, hide_undef=True)
         >>> assert b_list == ['0.2322', '0.999', '0.5555']
 
         """
@@ -2029,8 +2028,8 @@ class GTF(object):
         >>> a_gtf = GTF(a_file)
         >>> join_file = get_example_file("simple", "join_mat")[0]
         >>> b_gtf = a_gtf.add_attr_from_matrix_file(feat="gene", key="gene_id", inputfile=join_file)
-        >>> assert b_gtf.extract_data("S1",as_list=True, no_na=True) == ['0.2322', '0.999', '0.5555']
-        >>> assert b_gtf.extract_data("S2",as_list=True, no_na=True) == ['0.4', '0.6', '0.7']
+        >>> assert b_gtf.extract_data("S1",as_list=True, no_na=True, hide_undef=True) == ['0.2322', '0.999', '0.5555']
+        >>> assert b_gtf.extract_data("S2",as_list=True, no_na=True, hide_undef=True) == ['0.4', '0.6', '0.7']
 
         """
 
@@ -2120,9 +2119,9 @@ class GTF(object):
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> b_gtf = a_gtf.add_attr_from_list(feat="gene", key="gene_id", key_value=["G0001", "G0002"], new_key="coding_pot", new_key_value=["0.5", "0.8"])
-        >>> assert b_gtf.extract_data(keys="coding_pot", as_list=True, no_na=True) == ['0.5', '0.8']
+        >>> assert b_gtf.extract_data(keys="coding_pot", as_list=True, no_na=True, hide_undef=True) == ['0.5', '0.8']
         >>> b_gtf = a_gtf.add_attr_from_list(feat="gene", key="gene_id", key_value=["G0002", "G0001"], new_key="coding_pot", new_key_value=["0.8", "0.5"])
-        >>> assert b_gtf.extract_data(keys="coding_pot", as_list=True, no_na=True) == ['0.5', '0.8']
+        >>> assert b_gtf.extract_data(keys="coding_pot", as_list=True, no_na=True, hide_undef=True) == ['0.5', '0.8']
         >>> key_value = a_gtf.extract_data("transcript_id", no_na=True, as_list=True, nr=True)
         >>> b=a_gtf.add_attr_from_list(None, key="transcript_id", key_value=key_value, new_key="bla", new_key_value=[str(x) for x in range(len(key_value))])
         """

@@ -333,7 +333,7 @@ def draw_profile(inputfile=None,
     # -------------------------------------------------------------------------
 
     # Use a temp file to avoid concurrency issues
-    dir_name = tempfile.mkdtemp(prefix='GTFtk_matrix_')
+    dir_name = tempfile.mkdtemp(prefix='pygtftk_matrix_')
     message("Uncompressing : " + dir_name,
             type="DEBUG")
 
