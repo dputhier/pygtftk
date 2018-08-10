@@ -87,7 +87,7 @@ else:
     test = '''
     #select_by_numeric_value_1
     @test "select_by_numeric_value_1" {
-      result=`gtftk get_example -d mini_real -f "*"; gunzip airway_love.txt.gz`
+      result=`gtftk get_example -d mini_real -f "*"; gunzip -f airway_love.txt.gz`
       [ -s "airway_love.txt" ]
     }
    
