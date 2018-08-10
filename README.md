@@ -84,11 +84,13 @@ To run the tests, you will need to install [bats (Bash Automated Testing System)
     bats gtftk_test.bats
 
 Note, alternatively you may directly call the tests using the Makefile
-
+    
+    make clean
     make test
 
 Or run tests in parallel using:
 
+    make clean
     make test_para -j 10 # Using 10 cores
         
 ## Running unitary tests
