@@ -1427,7 +1427,7 @@ A simple overlayed profile of all epigenetic marks around promoter. Here *---gro
 	:shell:
 
 .. image:: example_01.png
-	:width: 80%
+	:width: 100%
 
 
 The same diagram is obtained if a bed file pointing to TSS was provided to *mk_matrix* and used in *single_nuc* mode.
@@ -1438,7 +1438,7 @@ The same diagram is obtained if a bed file pointing to TSS was provided to *mk_m
 
 
 .. image:: example_01a.png
-	:width: 80%
+	:width: 100%
 
 Changing colors and applying color order can be done using the following syntax:
 
@@ -1448,16 +1448,16 @@ Changing colors and applying color order can be done using the following syntax:
 
 
 .. image:: example_01b.png
-	:width: 80%
+	:width: 100%
 
 
 A subset of bigwig assessed for coverage can be selected for plotting. This is achieved using the *--subset-bwig* argument:
 
-.. command-output:: gtftk profile -f bwig -D -i mini_real_tx.zip  -fo  -o profile_tx -pf png -if example_01c.png  -fo -c 'red' -V 3  -w  -tl -e -lw 0.5 -u H3K4me3
+.. command-output:: gtftk profile -f bwig -g tx_classes -D -i mini_real_tx.zip  -fo  -o profile_tx -pf png -if example_01c.png  -fo -c 'red' -V 2  -w  -tl -e -lw 0.5 -u H3K4me3
 
 
 .. image:: example_01c.png
-	:width: 80%
+	:width: 100%
 
 
 Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5' and 3' regions:
@@ -1467,7 +1467,7 @@ Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provid
 
 
 .. image:: example_02.png
-	:width: 80%
+	:width: 100%
 
 
 Almost the same but increasing the bins dedicated to upstream and dowstream regions (see *---bin-around-frac argument of *mk_matrix*).
@@ -1478,7 +1478,7 @@ Almost the same but increasing the bins dedicated to upstream and dowstream regi
 
 
 .. image:: example_03.png
-	:width: 80%
+	:width: 100%
 
 
 Note that the same is obtained when using user-defined regions (*i.e* when providing a bed as input corresponding to transcript coordinates).
@@ -1488,7 +1488,7 @@ Note that the same is obtained when using user-defined regions (*i.e* when provi
 
 
 .. image:: example_04.png
-	:width: 80%
+	:width: 100%
 
 
 The same dataset used for plotting but adding a normalization step (*ranging*). When using *ranging* normalization, values are expressed as a percentage of the range between max and min value.
@@ -1499,22 +1499,22 @@ The same dataset used for plotting but adding a normalization step (*ranging*). 
 
 
 .. image:: example_04b.png
-	:width: 80%
+	:width: 100%
 
 
 Two examples using statistic 'max' and 2 differents values of '--upper-limit'.
 
-.. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_a.png  -V 3 -lw 1 -at 5 -s max -ul 1
+.. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_a.png  -V 2 -lw 1 -at 5 -s max -ul 1
 
 .. image:: example_04_max_a.png
-	:width: 80%
+	:width: 100%
 
 
 
-.. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_b.png  -V 3 -lw 1 -at 5 -s max -ul 0.99
+.. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_b.png  -V 2 -lw 1 -at 5 -s max -ul 0.99
 
 .. image:: example_04_max_b.png
-	:width: 80%
+	:width: 100%
 
 
 
@@ -1526,31 +1526,31 @@ Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to
 **Example:**
 
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_05.png -e -V 3 -fc 2
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_05.png -e -V 2 -fc 2
 	:shell:
 
 
 .. image:: example_05.png
-	:width: 80%
+	:width: 100%
 
 
 Alternatively, the groups can be set to chromosomes or transcript classes:
 
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06.png -V 3 -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06.png -V 2 -nm ranging
 	:shell:
 
 
 .. image:: example_06.png
-	:width: 80%
+	:width: 100%
 
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06b.png -V 3 -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06b.png -V 2 -nm ranging
 	:shell:
 
 
 .. image:: example_06b.png
-	:width: 80%
+	:width: 100%
 
 
 Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
@@ -1562,7 +1562,7 @@ Note that facets may also be associated to epigenetic marks. In this case each t
 
 
 .. image:: example_07.png
-	:width: 80%
+	:width: 100%
 
 
 .. command-output:: gtftk profile -D -i mini_real_tx_2.zip -g chrom -f bwig  -o profile_tx -pf png -if example_08.png  -fo -w -nm ranging
@@ -1570,7 +1570,7 @@ Note that facets may also be associated to epigenetic marks. In this case each t
 
 
 .. image:: example_08.png
-	:width: 80%
+	:width: 100%
 
 
 
@@ -1582,20 +1582,41 @@ The --theme argument controls plotnine theming.
 	:shell:
 
 .. image:: example_09b.png
-	:width: 80%
+	:width: 100%
 
 
 .. command-output:: gtftk profile -th seaborn -D -i mini_real_promoter.zip -g bwig -f chrom  -o profile_prom   -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -pf png -if example_10.png
 	:shell:
 
 .. image:: example_10.png
-	:width: 80%
+	:width: 100%
 
 .. command-output:: gtftk profile -th matplotlib -D -i mini_real_promoter.zip -g bwig -f chrom  -o profile_prom   -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -pf png -if example_11.png
 	:shell:
 
 .. image:: example_11.png
-	:width: 80%
+	:width: 100%
+
+
+
+
+**Playing with various commands**
+
+It is also possible to use several of the previously seen commands to easily achieve more complexe analyses.
+Here we will plot the epigenetic signal according to RNA-seq counts.
+
+
+.. command-output:: gtftk join_attr -i mini_real_noov_rnd_tx.gtf  -j ENCFF630HEX_Total_RNAseq_K562_count_mini.txt  -k gene_name -n counts | gtftk discretize_key -k  counts -n 6 -d count_levels -pu | gtftk tabulate -k transcript_id,count_levels -o tx_exp_classes.txt -Hun
+	:shell:
+
+
+.. command-output:: gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if example_12.png  -g tx_classes -t tx_exp_classes.txt -f bwig  -w -nm ranging -m viridis
+	:shell:
+
+
+.. image:: example_12.png
+	:width: 100%
+
 
 **Arguments:**
 

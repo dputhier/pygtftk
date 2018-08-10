@@ -121,11 +121,11 @@ def feature_size(
 
             tmp_file = make_tmp_file(prefix="feature_size", suffix=".txt")
 
-            elmt = gtf.extract_data("feature,start,end", as_list_of_list=True, no_na=False)
+            elmt = gtf.extract_data("feature,start,end", as_list_of_list=True, no_na=False, hide_undef=False)
 
             for i in elmt:
                 if i[0] != ft_type and ft_type != "*":
-                    tmp_file.write(".\n")
+                    tmp_file.write("?\n")
                 else:
                     tmp_file.write(str(int(i[2]) - int(i[1]) + 1) + "\n")
 

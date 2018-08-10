@@ -407,6 +407,7 @@ GTF_DATA *add_exon_number(GTF_DATA *gtf_data, char *exon_number_field);
 GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features, char *key, char *txt, int suffix);
 GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_key, char *sep);
 GTF_DATA *load_blast(char *input);
+GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 void clear_indexes(void);
 GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 int int_array_test(int *pos, int size);

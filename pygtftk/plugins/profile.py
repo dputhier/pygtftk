@@ -39,7 +39,6 @@ __doc__ = """
 """
 
 __notes__ = """
- -- Currently plotnine and thus 'profile' does not support color mapping properly. #TODO
  -- The ranging normalization method [1] implies the following transformation: 
  -- -  (x_i - min(x))/(max(x) - min(x)).
  -- Think about using normalized bigWig files as input to mk_matrix. This
@@ -242,6 +241,11 @@ def make_parser():
                             help="The theme for plotnine diagram.",
                             required=False)
 
+    parser_grp.add_argument('-m', '--palette',
+                            help='A color palette (see: https://tinyurl.com/ydacyfxx).',
+                            default="nipy_spectral",
+                            required=False)
+
     return parser
 
 
@@ -256,6 +260,7 @@ def draw_profile(inputfile=None,
                  upper_limit=0.95,
                  quantiles=False,
                  profile_colors=None,
+                 palette='nipy_spectral',
                  page_width=None,
                  title=None,
                  page_height=None,
@@ -493,7 +498,26 @@ def draw_profile(inputfile=None,
     #
     # -------------------------------------------------------------------------
 
-    def get_list_of_colors_mpl(number, pal='nipy_spectral'):
+    all_palettes = ['viridis', 'plasma', 'inferno', 'magma',
+                    'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
+                    'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
+                    'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn',
+                    'binary', 'gist_yarg', 'gist_gray', 'gray', 'bone', 'pink',
+                    'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia',
+                    'hot', 'afmhot', 'gist_heat', 'copper',
+                    'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
+                    'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic',
+                    'Pastel1', 'Pastel2', 'Paired', 'Accent',
+                    'Dark2', 'Set1', 'Set2', 'Set3',
+                    'tab10', 'tab20', 'tab20b', 'tab20c',
+                    'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
+                    'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg', 'hsv',
+                    'gist_rainbow', 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar']
+
+    if palette not in all_palettes:
+        message("Sorry but the palette is unknown.")
+
+    def get_list_of_colors_mpl(number, pal=palette):
 
         colormap = cm.get_cmap(pal, lut=number)
         colors = [mpl.colors.rgb2hex(colormap(i)) for i in np.linspace(0., 1., number)]
@@ -1048,13 +1072,13 @@ def draw_profile(inputfile=None,
 
         dm['xmin_fr'] = [0 for x in range(dm.shape[0])]
         dm['xmax_fr'] = [bin_nb_ups / bin_nb_total * 100 for x in range(dm.shape[0])]
-        dm['ymin_fr'] = [dm[stat].min() for x in range(dm.shape[0])]
-        dm['ymax_fr'] = [dm[stat].max() for x in range(dm.shape[0])]
+        dm['ymin_fr'] = [-np.inf for x in range(dm.shape[0])]
+        dm['ymax_fr'] = [np.inf for x in range(dm.shape[0])]
 
         dm['xmin_to'] = [(bin_nb_total - bin_nb_dws) / bin_nb_total * 100 for x in range(dm.shape[0])]
         dm['xmax_to'] = [100 for x in range(dm.shape[0])]
-        dm['ymin_to'] = [dm[stat].min() for x in range(dm.shape[0])]
-        dm['ymax_to'] = [dm[stat].max() for x in range(dm.shape[0])]
+        dm['ymin_to'] = [-np.inf for x in range(dm.shape[0])]
+        dm['ymax_to'] = [np.inf for x in range(dm.shape[0])]
 
         if facet_var is None:
             dm_sub = dm.head(1)

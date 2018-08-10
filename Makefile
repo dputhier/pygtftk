@@ -101,8 +101,7 @@ test_para: $(OUTPUT2)
 
 clean:
 	@make bats_cmd CMD=clean
-	@rm -rf pygtftk.egg-info build dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott; \
-	cd docs/manual/; make clean;
+	@rm -rf pygtftk.egg-info build dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/manual/; make clean; cd ../..; find . -type f -name '*~' -exec rm -f '{}' \;
 
 check_cmd_has_example:
 	@for i in $$(gtftk -l); do if grep -q  "^$$i" docs/manual/source/presentation.rst; then echo "" >/dev/null; else echo $$i; fi; done

@@ -349,6 +349,7 @@ GTF_DATA *add_exon_number(GTF_DATA *gtf_data, char *exon_number_field);
 GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features,  char *key, char *txt, int suffix);
 GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_key, char *sep);
 GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
+GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 """)
 
 # ---------------------------------------------------------------
@@ -3296,7 +3297,7 @@ class GTF(object):
     def add_attr_column(self, input_file=None, new_key="new_key"):
         """Simply add a new column of attribute/value to each line.
 
-        :param input_file: a single column file with nrow(GTF_DATA) lines. File lines should be sorted according to the GTF_DATA object. Lines for which a new key should not be added should contain ".".
+        :param input_file: a single column file with nrow(GTF_DATA) lines. File lines should be sorted according to the GTF_DATA object. Lines for which a new key should not be added should contain "?".
         :param new_key: name of the novel key.
 
         :Example:
@@ -3334,6 +3335,55 @@ class GTF(object):
                 raise GTFtkError("input_file should contain only one column.")
 
         new_data = self._dll.add_attr_column(
+            self._data,
+            input_file.name,
+            new_key)
+
+        return self._clone(new_data)
+
+    def add_attr_to_pos(self, input_file=None, new_key="new_key"):
+        """Simply add a new column of attribute/value to specific lines.
+
+        :param input_file: a two column file. First column contains the position/line. Second, the value to be added for 'new_key'.
+        :param new_key: name of the novel key.
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> from pygtftk.utils import make_tmp_file
+        >>> from pygtftk.utils import NEWLINE
+        >>> a_path = get_example_file()[0]
+        >>> gtf = GTF(a_path)
+        >>> tmp_file =  make_tmp_file()
+        >>> for i in range(len(gtf)): tmp_file.write(str(i) + NEWLINE)
+        >>> tmp_file.close()
+        >>> gtf = gtf.add_attr_column(tmp_file, new_key='foo')
+        >>> a_list = gtf.extract_data('foo', as_list=True)
+        >>> assert [int(x) for x in a_list] == range(70)
+
+
+        """
+
+        if isinstance(input_file, str):
+            input_file = open(input_file)
+
+        if input_file.closed:
+            input_file = open(input_file.name, "r")
+
+        tmp = input_file.readlines()
+
+        if len(tmp) == 0:
+            raise GTFtkError("Input file is empty.")
+
+        for line in tmp:
+            token = line.split("\t")
+            if len(token) != 2:
+                raise GTFtkError("Input_file should contain two columns.")
+            if not token[0].isdigit():
+                raise GTFtkError("Column 1 of intput file should be an int.")
+
+        new_data = self._dll.add_attr_to_pos(
             self._data,
             input_file.name,
             new_key)

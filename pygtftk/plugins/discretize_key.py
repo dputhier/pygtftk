@@ -13,6 +13,7 @@ from pygtftk.arg_formatter import int_greater_than_null
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
+from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
@@ -69,12 +70,6 @@ def make_parser():
                             type=int_greater_than_null,
                             required=True)
 
-    parser_grp.add_argument('-t', '--ft-type',
-                            help="A target feature (as found in the 3rd column of the GTF).",
-                            default=None,
-                            type=str,
-                            required=False)
-
     parser_grp.add_argument('-l', '--labels',
                             help="A comma separated list of labels of size --nb-levels.",
                             default=None,
@@ -107,7 +102,6 @@ def discretize_key(inputfile=None,
                    percentiles=False,
                    percentiles_of_uniq=False,
                    log=False,
-                   ft_type=None,
                    labels=None,
                    tmp_dir=None,
                    logger_file=None,
@@ -143,19 +137,17 @@ def discretize_key(inputfile=None,
     gtf = GTF(inputfile, check_ensembl_format=False)
     src_values = gtf.extract_data(src_key, as_list=True)
 
-    if len([x for x in src_values if x != '.']) == 0:
+    if len([x for x in src_values if x not in ['.', '?']]) == 0:
         message('The key was not found in this GTF.',
                 type="ERROR")
-
-    if ft_type is not None:
-        feat_values = gtf.extract_data("feature", as_list=True)
 
     min_val = None
     max_val = None
 
-    numeric_val = []
+    dest_values = []
+    dest_pos = []
 
-    for v in src_values:
+    for p, v in enumerate(src_values):
         try:
             a = float(v)
             if min_val is not None:
@@ -167,7 +159,8 @@ def discretize_key(inputfile=None,
                 min_val = a
                 max_val = a
 
-            numeric_val += [a]
+            dest_values += [a]
+            dest_pos += [p]
         except:
             pass
 
@@ -179,8 +172,8 @@ def discretize_key(inputfile=None,
                 type="ERROR")
 
     if log:
-        if 0 in numeric_val:
-            message("Encountered zero values.",
+        if 0 in dest_values:
+            message("Encountered zero values before log transformation.",
                     type="WARNING",
                     force=True)
             message("Adding a pseudocount (+1).",
@@ -188,12 +181,11 @@ def discretize_key(inputfile=None,
                     force=True)
 
             pseudo_count = 1
-        else:
-            pseudo_count = 0
+            dest_values = list(np.log2([x + pseudo_count for x in dest_values]))
 
-        numeric_val = list(np.log2([x + pseudo_count for x in numeric_val]))
-        max_val = max(numeric_val)
-        min_val = min(numeric_val)
+        # update max/min values
+        max_val = max(dest_values)
+        min_val = min(dest_values)
 
     # Apply the same rule as pandas.cut when bins is an int.
     min_val = min_val - max_val / 1000
@@ -206,19 +198,20 @@ def discretize_key(inputfile=None,
 
     if percentiles:
         if percentiles_of_uniq:
-            numeric_val_tmp = [min_val] + list(set(numeric_val))
+            dest_values_tmp = [min_val] + list(set(dest_values))
         else:
-            numeric_val_tmp = [min_val] + numeric_val
+            dest_values_tmp = [min_val] + dest_values
         n = nb_levels
+
         q = [
             np.percentile(
-                numeric_val_tmp,
+                dest_values_tmp,
                 100 /
                 n *
                 i) for i in range(
                 0,
                 n)]
-        q = q + [np.percentile(numeric_val_tmp, 100)]
+        q = q + [np.percentile(dest_values_tmp, 100)]
 
         if len(q) != len(set(q)):
             message("No ties are accepted in  percentiles :",
@@ -235,12 +228,12 @@ def discretize_key(inputfile=None,
 
     if percentiles:
 
-        breaks = pandas.cut(numeric_val,
+        breaks = pandas.cut(dest_values,
                             bins=q,
                             labels=labels
                             )
     else:
-        breaks = pandas.cut(numeric_val,
+        breaks = pandas.cut(dest_values,
                             bins=nb_levels,
                             labels=labels
                             )
@@ -257,34 +250,13 @@ def discretize_key(inputfile=None,
     #
     # -------------------------------------------------------------------------
 
-    nb_numeric = 0
-    nb_line = 0
+    tmp_file = make_tmp_file(prefix="discretized_keys", suffix=".txt")
 
-    if ft_type is None:
-        for line in gtf:
-            if src_values[nb_line] == ".":
+    with tmp_file as tp_file:
+        for p, v in zip(dest_pos, breaks):
+            tmp_file.write(str(p) + "\t" + str(v) + '\n')
 
-                line.write(outputfile)
-            else:
-
-                line.add_attr_and_write(dest_key,
-                                        breaks[nb_numeric],
-                                        outputfile)
-                nb_numeric += 1
-            nb_line += 1
-
-    else:
-        for line in gtf:
-            if src_values[nb_line] == ".":
-                line.write(outputfile)
-            else:
-                if feat_values[nb_line] == ft_type:
-                    line.add_attr_and_write(dest_key,
-                                            breaks[nb_numeric],
-                                            outputfile)
-                nb_numeric += 1
-
-            nb_line += 1
+    gtf.add_attr_to_pos(tmp_file, new_key=dest_key).write(outputfile)
 
     close_properly(outputfile, inputfile)
 

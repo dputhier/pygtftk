@@ -135,18 +135,18 @@ else:
     }
 
     @test "merge_attr_6" {
-     result=`gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk select_by_key -t| gtftk tabulate -k transcript_id -H | perl -ne 'print (length $_,"\n")'| sort | uniq`
+     result=`gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk select_by_key -t| gtftk tabulate -k transcript_id -H | perl -ne 'print (length $_,"\\n")'| sort | uniq`
       [ "$result" -eq 16 ]
     }    
       
     @test "merge_attr_7" {
-     result=`gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk select_by_key -e| gtftk tabulate -k transcript_id -H | perl -ne 'print (length $_,"\n")'| sort | uniq`
-      [ "$result" -eq 6 ]
+     result=`gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk select_by_key -e| gtftk tabulate -k transcript_id -H | perl -ne 'print (length $_,"\\n")'| sort | uniq`
+      [ "$result" -eq 10 ]
     }    
 
     @test "merge_attr_8" {
-     result=`gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk select_by_key -g| gtftk tabulate -k transcript_id -H | perl -ne 'print (length $_,"\n")'| sort | uniq`
-      [ "$result" -eq 2 ]
+     result=`gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk select_by_key -g| gtftk tabulate -k transcript_id -H | perl -ne 'print (length $_,"\\n")'| sort | uniq| wc -l`
+      [ "$result" -eq 0 ]
     }    
      
     """

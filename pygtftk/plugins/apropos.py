@@ -79,9 +79,9 @@ else:
     test = """
 
     #count
-    @test "count_1" {
-     result=`gtftk get_example  | gtftk count| grep exon| cut -f2 `
-      [ "$result" -eq 25 ]
+    @test "apropos_1" {
+     result=`gtftk apropos -k antisens | wc -l `
+      [ "$result" -eq 2 ]
     }
     
 
