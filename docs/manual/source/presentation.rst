@@ -1606,7 +1606,7 @@ It is also possible to use several of the previously seen commands to easily ach
 Here we will plot the epigenetic signal according to RNA-seq counts.
 
 
-.. command-output:: gtftk join_attr -i mini_real_noov_rnd_tx.gtf  -j ENCFF630HEX_Total_RNAseq_K562_count_mini.txt  -k gene_name -n counts | gtftk discretize_key -k  counts -n 6 -d count_levels -pu | gtftk tabulate -k transcript_id,count_levels -o tx_exp_classes.txt -Hun
+.. command-output:: gtftk join_attr -i mini_real_noov_rnd_tx.gtf  -j mini_real_counts_ENCFF630HEX.txt  -k gene_name -n counts | gtftk discretize_key -k  counts -n 6 -d count_levels -pu | gtftk tabulate -k transcript_id,count_levels -o tx_exp_classes.txt -Hun
 	:shell:
 
 
@@ -1658,8 +1658,13 @@ control_list
 
 **Example:**
 
-.. command-output:: #gtftk control_list -i gtftk/data/control_list/control_list_data.txt -r gtftk/data/control_list/control_list_reference.txt -D ; cat control_list/control_list.txt
+.. command-output:: gtftk control_list -i mini_real_counts_ENCFF630HEX.txt -r mini_real_control_1.txt -D -V 2 -s -l -p 1 -ju -if example_13.png -pf png
 	:shell:
+
+
+.. image:: example_13.png
+	:width: 100%
+
 
 **Arguments:**
 

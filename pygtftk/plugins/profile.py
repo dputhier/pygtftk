@@ -11,12 +11,11 @@ import zipfile
 from collections import OrderedDict
 
 import matplotlib as mpl
-
-mpl.use('Agg')
 import numpy as np
 import pandas as pd
 import plotnine
 from matplotlib import cm
+from matplotlib import colors as mcolors
 from pandas import Categorical
 from plotnine import aes, geom_text, scale_x_continuous, scale_color_manual, guide_legend, guides, ggtitle, \
     element_rect, element_blank, element_text, element_line, theme, facet_wrap, geom_rect
@@ -31,8 +30,11 @@ from pygtftk.arg_formatter import float_grt_than_null_and_lwr_than_one
 from pygtftk.arg_formatter import int_greater_than_null
 from pygtftk.cmd_object import CmdObject
 from pygtftk.utils import chomp
+from pygtftk.utils import is_hex_color
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
+
+# mpl.use('Agg')
 
 __updated__ = "2018-01-20"
 __doc__ = """
@@ -124,7 +126,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-ph', '--page-height',
-                            help='Output odf file height (e.g. 5 inches).',
+                            help='Output  file height (e.g. 5 inches).',
                             type=int_greater_than_null,
                             default=None,
                             required=False)
@@ -539,6 +541,13 @@ def draw_profile(inputfile=None,
         profile_colors = profile_colors.split(",")
         if subset_bwig is not None:
             profile_colors = profile_colors[:len(subset_bwig_list)]
+
+        mcolors_name = mcolors.cnames
+
+        for i in profile_colors:
+            if i not in mcolors_name:
+                if not not is_hex_color(i):
+                    message(i + ", is not a valid color. Please fix.", type="ERROR")
 
     # -------------------------------------------------------------------------
     #
@@ -1181,6 +1190,7 @@ def draw_profile(inputfile=None,
 
     message("Page width set to " + str(page_width))
     message("Page height set to " + str(page_height))
+
     # -------------------------------------------------------------------------
     #
     # Saving

@@ -780,6 +780,16 @@ def is_comment(string):
 # String
 # ---------------------------------------------------------------
 
+HEX_COLOR_REGEX = r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$'
+
+
+def is_hex_color(input_string):
+    regexp = re.compile(HEX_COLOR_REGEX)
+    if regexp.search(input_string):
+        return True
+    return False
+
+
 def random_string(n):
     """Returns a random string (alpha numeric) of length n."""
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(n))

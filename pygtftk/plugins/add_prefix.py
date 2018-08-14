@@ -5,6 +5,7 @@ import argparse
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
+from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
@@ -190,7 +191,6 @@ else:
 
 
     """
-    from pygtftk.cmd_object import CmdObject
 
     CmdObject(name="add_prefix",
               message="Add a prefix or suffix to target values. ",

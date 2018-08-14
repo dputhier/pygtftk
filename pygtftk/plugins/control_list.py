@@ -9,14 +9,27 @@
 
 import argparse
 import os
+import warnings
+
+import numpy as np
+import pandas as pd
+from matplotlib import colors as mcolors
+from pandas import Categorical
+from plotnine import (aes, xlab,
+                      ylab, geom_jitter,
+                      geom_rug, facet_wrap,
+                      theme, element_blank,
+                      theme_bw, scale_fill_manual,
+                      geom_violin)
+from plotnine import ggplot
 
 from pygtftk.arg_formatter import FileWithExtension
+from pygtftk.arg_formatter import int_greater_than_null
 from pygtftk.cmd_object import CmdObject
 from pygtftk.utils import chomp
+from pygtftk.utils import is_hex_color
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
-
-R_LIB = 'beanplot,ggplot2,reshape2'
 
 __updated__ = "2018-01-20"
 __doc__ = """
@@ -82,6 +95,57 @@ def make_parser():
                             default=0,
                             required=False)
 
+    parser_grp.add_argument('-pw', '--page-width',
+                            help='Output pdf file width (e.g. 7 inches).',
+                            type=int_greater_than_null,
+                            default=None,
+                            required=False)
+
+    parser_grp.add_argument('-ph', '--page-height',
+                            help='Output  file height (e.g. 5 inches).',
+                            type=int_greater_than_null,
+                            default=None,
+                            required=False)
+
+    parser_grp.add_argument('-pf', '--page-format',
+                            help='Output file format.',
+                            choices=['pdf', 'png'],
+                            default='pdf',
+                            required=False)
+
+    parser_grp.add_argument('-dpi', '--dpi',
+                            help='Dpi to use.',
+                            type=int_greater_than_null,
+                            default=300,
+                            required=False)
+
+    parser_grp.add_argument('--skip-first', '-s',
+                            help='Indicates that infile hase a header.',
+                            action="store_true",
+                            required=False)
+
+    parser_grp.add_argument('--rug', '-u',
+                            help='Add rugs to the diagram.',
+                            action="store_true",
+                            required=False)
+
+    parser_grp.add_argument('--jitter', '-j',
+                            help='Add jittered points.',
+                            action="store_true",
+                            required=False)
+
+    parser_grp.add_argument('-if', '--user-img-file',
+                            help="Provide an alternative path for the image.",
+                            default=None,
+                            type=argparse.FileType("w"),
+                            required=False)
+
+    parser_grp.add_argument('-c', '--set-colors',
+                            help='Colors for the two sets (comma separated).',
+                            default="#b2df8a,#6a3d9a",
+                            type=str,
+                            required=False)
+
     return parser_grp
 
 
@@ -89,257 +153,270 @@ def control_list(in_file=None,
                  out_dir=None,
                  referenceGeneFile=None,
                  log2=False,
+                 page_width=None,
+                 page_height=None,
+                 user_img_file=None,
+                 page_format=None,
                  pseudo_count=1,
+                 set_colors=None,
+                 dpi=300,
+                 rug=False,
+                 jitter=False,
+                 skip_first=False,
                  tmp_dir=None,
                  logger_file=None,
                  verbosity=None):
+    # -------------------------------------------------------------------------
+    #
+    # Check in_file content
+    #
+    # -------------------------------------------------------------------------
+
     for p, line in enumerate(in_file):
 
         line = chomp(line)
         line = line.split("\t")
 
+        if skip_first:
+            if p == 0:
+                continue
         try:
             fl = float(line[1])
-
-            if log2:
-                fl = fl + pseudo_count
-                if fl <= 0:
-                    message("Can not log transform negative/zero values.",
-                            type="ERROR")
-
         except:
             msg = "It seems that column 2 of input file"
-            msg += " contains non numeric values."
+            msg += " contains non numeric values. "
             msg += "Check that no header is present and that "
-            msg += "columns are ordered properly."
+            msg += "columns are ordered properly. "
+            msg += "Or use '--skip-first'. "
             message(msg, type="ERROR")
 
-    message("Selecting genes (R call).")
+        if log2:
+            fl = fl + pseudo_count
+            if fl <= 0:
+                message("Can not log transform negative/zero values. Add a pseudo-count.",
+                        type="ERROR")
+
+    # -------------------------------------------------------------------------
+    #
+    # Check colors
+    #
+    # -------------------------------------------------------------------------
+
+    set_colors = set_colors.split(",")
+
+    if len(set_colors) != 2:
+        message("Need two colors. Please fix.", type="ERROR")
+
+    mcolors_name = mcolors.cnames
+
+    for i in set_colors:
+        if i not in mcolors_name:
+            if not is_hex_color(i):
+                message(i + " is not a valid color. Please fix.", type="ERROR")
+
+    # -------------------------------------------------------------------------
+    #
+    # Preparing output files
+    #
+    # -------------------------------------------------------------------------
 
     # Preparing pdf file name
     file_out_list = make_outdir_and_file(out_dir, ["control_list.txt",
                                                    "reference_list.txt",
-                                                   "diagnostic_diagrams.pdf",
-                                                   "R_code_control_list.R",
-                                                   "command.log"],
+                                                   "diagnostic_diagrams." + page_format],
                                          force=True)
 
-    control_file, reference_file_out, pdf_file, r_code_file, log_file = file_out_list
+    control_file, reference_file_out, img_file = file_out_list
 
-    code_body = """
+    if user_img_file is not None:
 
-            ########################################
-            # Load library
-            ########################################
+        os.unlink(img_file.name)
+        img_file = user_img_file
 
-            suppressWarnings(suppressMessages(library(beanplot)))
-            suppressWarnings(suppressMessages(library(ggplot2)))
-            suppressWarnings(suppressMessages(library(reshape2)))
+        if not img_file.name.endswith(page_format):
+            msg = "Image format should be: {f}. Please fix.".format(f=page_format)
+            message(msg, type="ERROR")
 
-            ########################################
-            # Function declaration
-            ########################################
+        test_path = os.path.abspath(img_file.name)
+        test_path = os.path.dirname(test_path)
 
-            message <- function(msg){{
-                cat(paste("    |--- ", msg, "\\n", sep=""), file=stderr())
-            }}
+        if not os.path.exists(test_path):
+            os.makedirs(test_path)
 
-            ########################################
-            ## Get the list of reference genes
-            ########################################
-            
-            reference_genes <- as.character(read.table('{reference_file}',
-                                            header=F)[,1])
+    # -------------------------------------------------------------------------
+    #
+    # Read the reference list
+    #
+    # -------------------------------------------------------------------------
 
-            ########################################
-            ## Get expression data
-            ########################################
-            
-            exp_data <- read.table('{signal_file}', sep="\\t", head =F)
-            
-            exp_data_vec <- exp_data[,2] + {pseudo_count}
-            
-            ########################################
-            ## Log transformation
-            ########################################
-            
-            to.log <- '{log2}'
-            
-            if(to.log == 'True'){{
-                if(length(exp_data_vec[exp_data_vec == 0])){{
-                    message("Can't use log transformation on zero or negative values. Use -p. Exiting.")
-                    q("no", 1, FALSE)
-                }}
-                exp_data_vec <- log2(exp_data_vec)
-            }}
-            
-            names(exp_data_vec) <- exp_data[,1]
+    reference_genes = pd.read_csv(referenceGeneFile.name, sep="\t", header=None)
+    reference_genes.rename(columns={reference_genes.columns.values[0]: 'gene'}, inplace=True)
 
-            # Now we have sorted expression data with gene/tx names.
-            exp_data_vec <- sort(exp_data_vec)
+    # -------------------------------------------------------------------------
+    #
+    # Delete duplicates
+    #
+    # -------------------------------------------------------------------------
 
-            # T/F vector indicating which in the
-            # expression data list are found in reference_gene
-            which_reference_genes <- names(exp_data_vec) %in% reference_genes
+    before = len(reference_genes)
+    reference_genes = reference_genes.drop_duplicates(['gene'])
+    after = len(reference_genes)
 
-            # convert the T/F vector to positions indicating wich position in
-            # expression data is a reference gene/tx
+    msg = "%d duplicate lines have been deleted in reference file."
+    message(msg % (before - after))
 
-            which_reference_genes <- which(which_reference_genes)
+    # -------------------------------------------------------------------------
+    #
+    # Read expression data and add the pseudo_count
+    #
+    # -------------------------------------------------------------------------
 
-            message(paste("Found ", length(which_reference_genes),
-                    " genes of the reference in the provided signal file", sep=""))
-            
-            not_found <- !(reference_genes %in% names(exp_data_vec))
-            if(length(reference_genes[not_found]) > 0){{
-                message(paste("List of reference genes not found :", reference_genes[not_found]))
-            }}else{{
-                message("All reference genes were found.")
-            }}
+    if skip_first:
+        exp_data = pd.read_csv(in_file.name, sep="\t", header=0, index_col=0)
+    else:
+        exp_data = pd.read_csv(in_file.name, sep="\t", header=None, index_col=0)
 
-            ########################################
-            ## Search for gene with matched signal
-            ########################################
-            
-            control_list<- c()
+    exp_data.columns = ['exprs']
+    exp_data.exprs = exp_data.exprs.values + pseudo_count
 
-            nb.candidate.left <- length(exp_data_vec) -  length(which_reference_genes)
-            
-            if(nb.candidate.left < length(which_reference_genes) ){{
-                message("Not enough element to perform selection. Exiting")
-                q("no", 1, FALSE)
-            }}
+    # -------------------------------------------------------------------------
+    #
+    # log transformation
+    #
+    # -------------------------------------------------------------------------
 
-            cpt <- 1
-            
-            candidates <- exp_data_vec
+    ylabel = 'Expression'
 
-            for(i in which_reference_genes){{
-                p <- i
-                not_candidate_pos <- unique(c(which_reference_genes, control_list))
-                candidates[not_candidate_pos] <- NA
-                diff <- abs(exp_data_vec[p] - candidates)
-                control_list[cpt] <- which.min(diff)
-                cpt <- cpt + 1
-                
-            }}
+    if log2:
+        if len(exp_data.exprs.values[exp_data.exprs.values == 0]):
+            message("Can't use log transformation on zero or negative values. Use -p.",
+                    type="ERROR")
+        else:
+            exp_data.exprs = np.log2(exp_data.exprs.values)
+            ylabel = 'log2(Expression)'
 
+    # -------------------------------------------------------------------------
+    #
+    # Are reference gene found in control list
+    #
+    # -------------------------------------------------------------------------
 
-            write.table(cbind(exp_data_vec[which_reference_genes]),
-                    "{reference_file_out}",
-                    sep="\t",
-                    quote=F,
-                    col.names=NA)
+    # Sort in increasing order
+    exp_data = exp_data.sort_values('exprs')
 
-            write.table(cbind(exp_data_vec[control_list]),
-                    "{control_file}",
-                    sep="\t",
-                    quote=F,
-                    col.names=NA)
-                    
+    #  Vector with positions indicating which in the
+    # expression data list are found in reference_gene
 
-            message("Preparing diagnostic plots.")
-            m <- as.data.frame(cbind(
-                                exp_data_vec[control_list],
-                                exp_data_vec[which_reference_genes]
-                )
-            )
-                            
-            colnames(m) <- c("Control", "Reference")
-            
-            
-            pdf("{pdf_file}")
-            
-            # Preparing beanplot (side=both)
-            beanplot(m,
-                    col = list("blue", "darkgrey"),
-                    border="white",
-                    log="",
-                    ll=0.13,
-                    what=c(0,1,0,1),
-                    side="both"
-            )
-            grid(col="grey", nx=0, ny=NULL)
-            beanplot(m,
-                    col = list("blue", "darkgrey"),
-                    border="white",
-                    log="", main="Beanplots of Control and Reference values",
-                    ll=0.13,
-                    what=c(0,1,0,1),
-                    add=T,
-                    side="both"
-            )
-            
-            # Preparing beanplot (side=default)
-            beanplot(m,
-                    col = list("blue", "darkgrey"),
-                    border="white",
-                    log="",
-                    ll=0.13,
-                    what=c(0,1,0,1)
-            )
-            grid(col="grey", nx=0, ny=NULL)
-            beanplot(    m,
-                    col = list("blue", "darkgrey"),
-                    border="white",
-                    log="", main="Beanplots of Control and Reference values",
-                    ll=0.13,
-                    what=c(0,1,0,1),
-                    add=T
-            )
-            
-            # Preparing boxplot
-            boxplot(m, col=c("blue","darkgrey"))
-            grid(col="grey", nx=0, ny=NULL)
+    reference_genes_found = [x for x in reference_genes['gene'] if x in exp_data.index]
 
-            # Preparing qqplot
-            plot(    sort(m$Control),
-                    sort(m$Reference),
-                    pch=16, xlab="Control",
-                    ylab="Reference",
-                    main="QQplot of control and reference values",
-                    panel.first=grid()
-            )
-            
-            # Preparing histograms
-            
-            m.m <- melt(m, id.vars = c(NULL))
-            col <- m.m$variable
-            levels(col) <- c("blue","darkgrey")
-            p <- ggplot(m.m,
-                        aes(    x=value,
-                                color=variable,
-                                fill=variable))
-            p <- p + geom_bar(position="dodge")
-            p <- p + scale_fill_manual(values=levels(col))
-            p <- p + scale_color_manual(values=levels(col))
-            p <- p + theme(legend.title=element_blank())
-            
-            suppressMessages(print(p))
-            
-            out <- dev.off()
-    """.format(signal_file=in_file.name,
-               reference_file=referenceGeneFile.name,
-               log2=log2,
-               pseudo_count=str(pseudo_count),
-               pdf_file=pdf_file.name,
-               control_file=control_file.name,
-               reference_file_out=reference_file_out.name)
+    msg = "Found genes %d of the reference in the provided signal file" % len(reference_genes_found)
+    message(msg)
 
-    message("Printing R code to: " + r_code_file.name,
-            type="DEBUG")
+    not_found = [x for x in reference_genes['gene'] if x not in exp_data.index]
 
-    r_code_file.write(code_body)
-    r_code_file.close()
+    if len(not_found):
+        if len(not_found) == len(reference_genes):
+            message("Genes from reference file where not found in signal file (n=%d)." % len(not_found), type="ERROR")
+        else:
+            message("List of reference genes not found :%s" % not_found)
+    else:
+        message("All reference genes were found.")
 
-    message("Executing R code.", type="DEBUG")
+    # -------------------------------------------------------------------------
+    #
+    # Search for genes with matched signal
+    #
+    # -------------------------------------------------------------------------
 
-    # Execute R code.
-    os.system("cat " + r_code_file.name + "| R --slave")
+    exp_data_save = exp_data.copy()
+
+    control_list = list()
+
+    nb_candidate_left = exp_data.shape[0] - len(reference_genes_found)
+
+    if nb_candidate_left < len(reference_genes_found):
+        message("Not enough element to perform selection. Exiting", type="ERROR")
+
+    for i in reference_genes_found:
+        not_candidates = reference_genes_found + control_list
+        not_candidates = list(set(not_candidates))
+
+        diff = abs(exp_data.loc[i] - exp_data)
+        control_list += diff.loc[np.setdiff1d(diff.index, not_candidates)].idxmin(axis=0, skipna=True).tolist()
+
+    # -------------------------------------------------------------------------
+    #
+    # Prepare a dataframe for plotting
+    #
+    # -------------------------------------------------------------------------
+
+    reference = exp_data_save.loc[reference_genes_found].sort_values('exprs')
+    reference = reference.assign(genesets=['Reference'] * reference.shape[0])
+
+    control = exp_data_save.loc[control_list].sort_values('exprs')
+    control = control.assign(genesets=['Control'] * control.shape[0])
+
+    data = pd.concat([reference, control])
+    data['sets'] = pd.Series(['sets' for x in data.index.tolist()], index=data.index)
+    data['genesets'] = Categorical(data['genesets'])
+
+    # -------------------------------------------------------------------------
+    #
+    # Diagnostic plots
+    #
+    # -------------------------------------------------------------------------
+
+    p = ggplot(data, aes(x='sets', y='exprs', fill='genesets'))
+
+    p += scale_fill_manual(values=dict(zip(['Reference', 'Control'], set_colors)))
+
+    p += geom_violin(color=None)
+
+    p += xlab('Gene sets') + ylab(ylabel)
+
+    p += facet_wrap('~genesets')
+    if rug:
+        p += geom_rug()
+
+    if jitter:
+        p += geom_jitter()
+
+    p += theme_bw()
+    p += theme(axis_text_x=element_blank())
+
+    # -------------------------------------------------------------------------
+    # Turn warning off. Both pandas and plotnine use warnings for deprecated
+    # functions. I need to turn they off although I'm not really satisfied with
+    # this solution...
+    # -------------------------------------------------------------------------
+
+    def fxn():
+        warnings.warn("deprecated", DeprecationWarning)
+
+    # -------------------------------------------------------------------------
+    #
+    # Saving
+    #
+    # -------------------------------------------------------------------------
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        fxn()
+        message("Saving diagram to file : " + img_file.name)
+        message("Be patient. This may be long for large datasets.")
+        p.save(filename=img_file.name, width=page_width, height=page_height, dpi=dpi, limitsize=False)
+
+    # -------------------------------------------------------------------------
+    #
+    # write results
+    #
+    # -------------------------------------------------------------------------
+
+    exp_data_save.loc[reference_genes_found].sort_values('exprs').to_csv(reference_file_out.name, sep="\t")
+    exp_data_save.loc[control_list].sort_values('exprs').to_csv(control_file.name, sep="\t")
 
 
 if __name__ == '__main__':
-
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
@@ -348,19 +425,19 @@ if __name__ == '__main__':
 else:
 
     test = '''
-    #control_list
-    @test "control_list_1" {
-      result=`gtftk control_list -i pygtftk/data/control_list/control_list_data.txt -r pygtftk/data/control_list/control_list_reference.txt -D ; cat control_list/control_list.txt | cut -f2| perl -npe 's/\\n/,/'`
-      [ "$result" = "V1,2.02,4.04,6.06," ]
-    }
-    
-    #control_list
-    @test "control_list_2" {
-      result=` rm -Rf control_list`
-      [ "$result" = "" ]
-    }
-            
-    '''
+        #control_list
+        @test "control_list_1" {
+          result=`gtftk control_list -i pygtftk/data/control_list/control_list_data.txt -r pygtftk/data/control_list/control_list_reference.txt -D ; cat control_list/control_list.txt | cut -f2| perl -npe 's/\\n/,/'`
+          [ "$result" = "V1,2.02,4.04,6.06," ]
+        }
+        
+        #control_list
+        @test "control_list_2" {
+          result=` rm -Rf control_list`
+          [ "$result" = "" ]
+        }
+        
+        '''
 
     cmd = CmdObject(name="control_list",
                     message="Returns a list of gene matched for expression based on reference values.",
@@ -370,5 +447,4 @@ else:
                     updated=__updated__,
                     notes=__notes__,
                     group="miscellaneous",
-                    test=test,
-                    rlib=R_LIB)
+                    test=test)
