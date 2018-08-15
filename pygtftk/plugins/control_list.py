@@ -428,7 +428,7 @@ else:
         #control_list
         @test "control_list_1" {
           result=`gtftk control_list -i pygtftk/data/control_list/control_list_data.txt -r pygtftk/data/control_list/control_list_reference.txt -D ; cat control_list/control_list.txt | cut -f2| perl -npe 's/\\n/,/'`
-          [ "$result" = "V1,2.02,4.04,6.06," ]
+          [ "$result" = "exprs,2.02,4.04,6.06," ]
         }
         
         #control_list
