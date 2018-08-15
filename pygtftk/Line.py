@@ -15,7 +15,7 @@ from cffi import FFI
 
 import pygtftk.utils
 import pygtftk.utils
-from pygtftk.error import GTFtkError
+from pygtftk.utils import GTFtkError
 from pygtftk.utils import write_properly
 
 ffi = FFI()

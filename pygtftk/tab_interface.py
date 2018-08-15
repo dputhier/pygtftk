@@ -7,7 +7,7 @@ import pandas as pd
 from cffi import FFI
 
 from pygtftk.Line import FieldSet
-from pygtftk.error import GTFtkError
+from pygtftk.utils import GTFtkError
 
 ffi = FFI()
 

@@ -10,8 +10,8 @@ import sys
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import chromFileAsDict
 from pygtftk.cmd_object import CmdObject
-from pygtftk.error import GTFtkError
 from pygtftk.gtf_interface import GTF
+from pygtftk.utils import GTFtkError
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"

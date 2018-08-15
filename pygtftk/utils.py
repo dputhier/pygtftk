@@ -46,6 +46,30 @@ R_LIB = defaultdict(list)
 
 
 # ---------------------------------------------------------------
+# Error class
+# ---------------------------------------------------------------
+
+
+class GTFtkError(Exception):
+
+    def __init__(self, value):
+        self.value = value
+
+        if pygtftk.__NON_INTERACTIVE__:
+
+            message(value, type="ERROR")
+        else:
+            raise GTFtkInteractiveError(value)
+
+    def __str__(self):
+        return repr(self.value)
+
+
+class GTFtkInteractiveError(Exception):
+    pass
+
+
+# ---------------------------------------------------------------
 # Directories
 # ---------------------------------------------------------------
 
@@ -693,16 +717,18 @@ def message(msg, nl=True, type="INFO", force=False):
 
         # Set sys.exit status to 1 to indicate an issue
         # to the system
+        if pygtftk.__NON_INTERACTIVE__:
+            message("Error encountered. System will exit after deleting temporary files.", type="DEBUG")
 
-        message("Error encountered. System will exit after deleting temporary files.", type="DEBUG")
-
-        if not pygtftk.__ARGS__['keep_all']:
-            for i in flatten_list(TMP_FILE_LIST):
-                message("ERROR encountered, deleting temporary file: " + i, type="DEBUG")
-                silentremove(i)
+            if not pygtftk.__ARGS__['keep_all']:
+                for i in flatten_list(TMP_FILE_LIST):
+                    message("ERROR encountered, deleting temporary file: " + i, type="DEBUG")
+                    silentremove(i)
+            else:
+                message("Deletion of temporary files canceled by user.", type="DEBUG")
+            sys.exit(1)
         else:
-            message("Deletion of temporary files canceled by user.", type="DEBUG")
-        sys.exit(1)
+            raise GTFtkInteractiveError(msg)
 
     if force:
         pygtftk.utils.VERBOSITY = VERBOSITY_BACK

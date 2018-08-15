@@ -12,7 +12,7 @@ from itertools import repeat
 import numpy as np
 from pybedtools import BedTool
 
-from pygtftk.error import GTFtkError
+from pygtftk.utils import GTFtkError
 from pygtftk.utils import add_prefix_to_file
 from pygtftk.utils import close_properly
 from pygtftk.utils import flatten_list

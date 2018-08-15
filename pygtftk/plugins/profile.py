@@ -34,8 +34,6 @@ from pygtftk.utils import is_hex_color
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
 
-mpl.use('Agg')
-
 __updated__ = "2018-01-20"
 __doc__ = """
  Produces bigWig coverage profiles using calls to plotnine graphic package.
@@ -539,6 +537,8 @@ def draw_profile(inputfile=None,
 
     else:
         profile_colors = profile_colors.split(",")
+        profile_colors = [x.strip() for x in profile_colors]
+
         if subset_bwig is not None:
             profile_colors = profile_colors[:len(subset_bwig_list)]
 
@@ -546,8 +546,8 @@ def draw_profile(inputfile=None,
 
         for i in profile_colors:
             if i not in mcolors_name:
-                if not not is_hex_color(i):
-                    message(i + ", is not a valid color. Please fix.", type="ERROR")
+                if not is_hex_color(i):
+                    message(i + " is not a valid color. Please fix.", type="ERROR")
 
     # -------------------------------------------------------------------------
     #

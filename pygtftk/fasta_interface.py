@@ -11,7 +11,7 @@ from Bio.SeqRecord import SeqRecord
 from cffi import FFI
 
 from pygtftk.Line import FastaSequence
-from pygtftk.error import GTFtkError
+from pygtftk.utils import GTFtkError
 
 ffi = FFI()
 

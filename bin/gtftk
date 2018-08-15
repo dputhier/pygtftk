@@ -8,6 +8,13 @@ import sys
 import warnings
 from distutils.spawn import find_executable
 
+import matplotlib as mpl
+
+try:
+    mpl.use('Agg')
+except:
+    pass
+
 import pygtftk
 import pygtftk.settings
 from pygtftk.cmd_manager import CmdManager
@@ -30,13 +37,6 @@ def main():
     # -------------------------------------------------------------------------
 
     pygtftk.__NON_INTERACTIVE__ = True
-
-    # -------------------------------------------------------------------------
-    # We dont keep temp filesby default
-    # -------------------------------------------------------------------------
-
-    pygtftk.__ARGS__ = dict()
-    pygtftk.__ARGS__['keep_all'] = False
 
     # -------------------------------------------------------------------------
     # Search Bedtools

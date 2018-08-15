@@ -35,9 +35,9 @@ import pygtftk
 import pygtftk.utils
 from pygtftk import cmd_manager
 from pygtftk.Line import Feature
-from pygtftk.error import GTFtkError
 from pygtftk.fasta_interface import FASTA
 from pygtftk.tab_interface import TAB
+from pygtftk.utils import GTFtkError
 from pygtftk.utils import check_file_or_dir_exists
 from pygtftk.utils import chomp
 from pygtftk.utils import chrom_info_to_bed_file
