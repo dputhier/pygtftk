@@ -5,6 +5,7 @@
 import os
 import shutil
 import sys
+import warnings
 from distutils.spawn import find_executable
 
 import pygtftk
@@ -14,6 +15,10 @@ from pygtftk.utils import TMP_FILE_LIST
 from pygtftk.utils import flatten_list
 from pygtftk.utils import message
 from pygtftk.utils import silentremove
+
+# Avoid warning message emitted by numpy
+# https://tinyurl.com/ybev6zrw
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 
 
 def main():
