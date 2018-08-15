@@ -34,7 +34,7 @@ from pygtftk.utils import is_hex_color
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
 
-# mpl.use('Agg')
+mpl.use('Agg')
 
 __updated__ = "2018-01-20"
 __doc__ = """
