@@ -380,7 +380,7 @@ def check_file_or_dir_exists(file_or_dir=None):
 
     for file_or_dir_cur in file_or_dir:
         if not os.path.exists(file_or_dir_cur):
-            raise pygtftk.error.GTFtkError("File not found: " + file_or_dir_cur)
+            raise GTFtkError("File not found: " + file_or_dir_cur)
 
         else:
             message("Found file " + file_or_dir_cur)
@@ -402,7 +402,7 @@ def tab_line(token=None, newline=False):
 
     """
     if not isinstance(token, list):
-        raise pygtftk.error.GTFtkError("tab_line  needs a list as input.")
+        raise GTFtkError("tab_line  needs a list as input.")
 
     token = [str(t) for t in token]
 
@@ -432,7 +432,7 @@ def chrom_info_as_dict(chrom_info_file):
             type="INFO")
 
     if chrom_info_file is None:
-        raise pygtftk.error.GTFtkError("You must provide chromosome information file.")
+        raise GTFtkError("You must provide chromosome information file.")
 
     if chrom_info_file.closed:
         chrom_info_file = open(chrom_info_file.name, "r")
@@ -454,10 +454,10 @@ def chrom_info_as_dict(chrom_info_file):
             continue
 
         if int(line[1]) <= 0:
-            raise pygtftk.error.GTFtkError("Chromosome sizes should be greater than 0.")
+            raise GTFtkError("Chromosome sizes should be greater than 0.")
 
     if len(chrom_len.keys()) == 0:
-        raise pygtftk.error.GTFtkError("No chromosome length retrieved in chrom_info file. Is this file tabulated ?")
+        raise GTFtkError("No chromosome length retrieved in chrom_info file. Is this file tabulated ?")
 
     genome_size = 0
 
@@ -586,7 +586,7 @@ def make_outdir_and_file(out_dir=None,
         # Working directory
         if os.path.exists(out_dir):
             if not force:
-                raise pygtftk.error.GTFtkError("Aborting. Directory already exist.")
+                raise GTFtkError("Aborting. Directory already exist.")
         else:
             os.makedirs(out_dir)
 
@@ -648,7 +648,7 @@ def message(msg, nl=True, type="INFO", force=False):
     do_it = False
 
     if type not in ["INFO", "ERROR", "WARNING", "DEBUG", "DEBUG_MEM"]:
-        raise pygtftk.error.GTFtkError(
+        raise GTFtkError(
             "Type should be one of INFO, ERROR, WARNING, DEBUG, DEBUG_MEM.")
 
     if force:
@@ -682,7 +682,7 @@ def message(msg, nl=True, type="INFO", force=False):
         elif type == "DEBUG":
             do_it = False
     else:
-        raise pygtftk.error.GTFtkError("Verbosity takes zero or positive integer values.")
+        raise GTFtkError("Verbosity takes zero or positive integer values.")
 
     if do_it:
         msg = str(msg)
@@ -894,7 +894,7 @@ def flatten_list(alist):
     elif isinstance(alist, str):
         return [alist]
     else:
-        raise pygtftk.error.GTFtkError("Should be a list or str.")
+        raise GTFtkError("Should be a list or str.")
 
 
 # See: https://stackoverflow.com/questions/716477/join-list-of-lists-in-python
@@ -999,16 +999,16 @@ def intervals(l, n, silent=False):
     """
 
     if not l:
-        raise pygtftk.error.GTFtkError("The list provided to 'intervals' function is empty.")
+        raise GTFtkError("The list provided to 'intervals' function is empty.")
 
     if n <= 0 or n is None:
-        raise pygtftk.error.GTFtkError("The n value provided to 'interval' function should be positive and not null.")
+        raise GTFtkError("The n value provided to 'interval' function should be positive and not null.")
 
     result = list()
 
     if not len(l) >= n and not silent:
-        raise pygtftk.error.GTFtkError("Cant' create " + str(n) + " equally spaced intervals "
-                                                                  "between 0 and " + str(l) + ".")
+        raise GTFtkError("Cant' create " + str(n) + " equally spaced intervals "
+                                                    "between 0 and " + str(l) + ".")
 
     def chunks(l, n):
         """ Yield n successive chunks from l.
@@ -1036,7 +1036,7 @@ def check_r_installed():
     >>> check_r_installed()
     """
     if find_executable('R') is None:
-        raise pygtftk.error.GTFtkError("R software was not found and is required.")
+        raise GTFtkError("R software was not found and is required.")
 
 
 def check_r_packages(r_pkg_list=None, no_error=True):

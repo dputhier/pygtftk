@@ -119,10 +119,11 @@ def retrieve(species_name=None,
     target_gtf = None
 
     # -------------------------------------------------------------------------
-    # Ensembl vertebrate
+    # Check ensembl repository
     # -------------------------------------------------------------------------
 
     if ensembl_collection == 'vertebrate':
+
         host = "ftp.ensembl.org"
         user = "anonymous"  # votre identifiant
         password = "anonymous@gtftk.fr"
