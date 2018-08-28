@@ -589,7 +589,7 @@ select_by_key
 select_by_regexp
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Select lines based by testing values of a particular key with a regular expression
+**Description:** Select lines by testing values of a particular key with a regular expression
 
 **Example:** Select lines corresponding to gene_names matching the regular expression 'BCL.*'.
 
