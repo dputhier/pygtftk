@@ -309,7 +309,7 @@ def control_list(in_file=None,
 
     reference_genes_found = [x for x in reference_genes['gene'] if x in exp_data.index]
 
-    msg = "Found genes %d of the reference in the provided signal file" % len(reference_genes_found)
+    msg = "Found %d genes of the reference in the provided signal file" % len(reference_genes_found)
     message(msg)
 
     not_found = [x for x in reference_genes['gene'] if x not in exp_data.index]
