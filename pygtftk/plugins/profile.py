@@ -340,6 +340,7 @@ def draw_profile(inputfile=None,
     try:
         with zipfile.ZipFile(inputfile.name) as zf:
             zf.extractall(dir_name)
+
     except:
         message("Problem encountered when unzipping...",
                 type="ERROR")
