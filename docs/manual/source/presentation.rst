@@ -10,16 +10,19 @@ Main parser arguments of gtftk
 Getting help with -h
 ~~~~~~~~~~~~~~~~~~~~~
 
-The -h argument can be used to get a synopsis for each implemented commands.
+The -h argument can be used to get a synopsis for implemented commands.
 
 .. command-output:: gtftk -h
 	:shell:
 
 
-Getting Bash completion
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------------------------------------------------------------------------------------
 
-You may be interested in performing the following operations to activate bash completion for subcommands.
+
+Activating Bash completion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The code provided below can be useful to activate bash completion.
 
 .. code-block:: bash
 
@@ -37,10 +40,13 @@ Or alternatively
 
 
 
-Getting the list of command tests
+------------------------------------------------------------------------------------------------------------------
+
+
+Getting the list of funtional tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-One can access the list of tests through the -p/--plugin-tests arguments. These tests may be run using [bats](https://github.com/sstephenson/bats) (Bash Automated Testing System).
+One can access to the list of implemented  tests through the -p/--plugin-tests arguments. These tests may be run using `bats <https://github.com/sstephenson/bats>`_ (Bash Automated Testing System).
 
 
 .. code-block:: bash
