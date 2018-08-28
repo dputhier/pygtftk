@@ -57,13 +57,7 @@ Installation through pip can be done as follow.
     pip install pygtftk
     
 
-## Building doc files
-
-The following commands can be used to build the help files:
-
-    cd docs/manual/
-    make html
-    ls build/html/index.html
+$ git hf releasegi
     
 ## Running functional tests
 
