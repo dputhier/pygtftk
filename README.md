@@ -46,11 +46,7 @@ Note for developpers: You can install the develop branch using the same approach
 
 ### Prerequesites
  
-Again, this is not the prefered way for installation. Please choose conda whenever possible. The gtftk Unix command line program requires at least bedtools (command line), R and some R packages. To get the list of required R packages, use:
-
-    gtftk -r 
-
-To get the list of all dependencies and associated versions, please have a look at conda/env.yaml file.
+Again, this is not the prefered way for installation. Please choose conda whenever possible. The gtftk Unix command line program requires at least bedtools (command line).
 
 ### Running pip 
 

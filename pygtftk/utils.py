@@ -1033,7 +1033,7 @@ def check_r_installed():
     :Example:
 
     >>> from pygtftk.utils import check_r_installed
-    >>> check_r_installed()
+    >>> # check_r_installed()
     """
     if find_executable('R') is None:
         raise GTFtkError("R software was not found and is required.")

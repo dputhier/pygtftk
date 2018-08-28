@@ -698,6 +698,8 @@ def draw_profile(inputfile=None,
     #
     # -------------------------------------------------------------------------
 
+    message("Searching coverage columns.")
+
     pos_order = []
 
     for i in data.columns:
@@ -715,6 +717,7 @@ def draw_profile(inputfile=None,
     #
     # -------------------------------------------------------------------------
 
+    message("Melting.")
     dm = data.melt(id_vars=['tx_classes', 'bwig', 'chrom', 'start', 'end', 'gene', 'strand'], value_vars=pos_order)
     dm = dm.rename(columns={'variable': 'pos', 'value': 'exprs'})
     dm['bwig'] = Categorical(dm['bwig'])
