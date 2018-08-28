@@ -15,7 +15,7 @@ Depending on the **size of the GTF file**, pygtftk may require lot of memory to 
 
 At the moment, the gtftk program has been tested on:
 
-- Linux (Ubuntu 12.04)
+- Linux (Ubuntu 12.04 and 18.04)
 - OSX (Yosemite, El Capitan).
 - WSL/Bash on Ubuntu on Windows.
 
@@ -57,8 +57,6 @@ Installation through pip can be done as follow.
     pip install pygtftk
     
 
-$ git hf releasegi
-    
 ## Running functional tests
 
 A lot of functional tests have been developed to ensure consistency with expected results. This does not rule out that bugs may hide throughout the code... In order to check that installation is functional you may be interested in running functional tests. The definition of all functional tests declared in  gtftk commands is accessible using the -p/--plugin-tests argument:

@@ -4,7 +4,8 @@ import xml.etree.ElementTree as elmt_tree
 from collections import defaultdict
 
 import requests
-
+from xml.etree.ElementTree import ParseError
+from requests.exceptions import ConnectionError
 from pygtftk.utils import message
 
 
@@ -29,6 +30,7 @@ class Biomart(object):
         self.databases = []
         self.datasets = defaultdict(list)
         self._get_databases()
+
 
     def __repr__(self, *args, **kwargs):
 
@@ -56,7 +58,11 @@ class Biomart(object):
     def _get_databases(self):
 
         message("Listing available databases", type="DEBUG")
-        self.query(query={'type': 'registry'})
+        try:
+            self.query(query={'type': 'registry'})
+        except ConnectionError as err:
+            message("Raised a connection Error.", type="ERROR")
+
 
         tree = elmt_tree.fromstring(self.response.content)
 

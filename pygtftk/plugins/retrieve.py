@@ -7,7 +7,7 @@ import re
 import sys
 
 import ftputil
-
+from ftputil.error import FTPOSError
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -133,10 +133,12 @@ def retrieve(species_name=None,
         user = "anonymous"
         password = "anonymous@gtftk.fr"
 
+
     try:
         ftp = ftputil.FTPHost(host, user, password)
-    except:
-        message("Unable to connect", type="ERROR")
+    except FTPOSError as err:
+        message(str(err))
+        message("Unable to connect (FTPOSError).", type="ERROR")
 
     try:
         ftp.chdir('/pub')
