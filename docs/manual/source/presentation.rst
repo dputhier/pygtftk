@@ -711,9 +711,9 @@ select_by_numeric_value
 
 **Description:** Select lines from a GTF file based on a boolean test on numeric values.
 
-**Example:**
+    **Example:**
 
-.. command-output::  gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m|  gtftk select_by_numeric_value -t 'start < 10 and end > 10 and S1 == 0.5555 and S2 == 0.7' -n "."
+.. command-output:: gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m|  gtftk select_by_numeric_value -t 'start < 10 and end > 10 and S1 == 0.5555 and S2 == 0.7' -n ".,?"
 	:shell:
 
 **Arguments:**
