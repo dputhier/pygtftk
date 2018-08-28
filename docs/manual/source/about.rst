@@ -1,10 +1,5 @@
-.. gtftk documentation master file, created by
-   sphinx-quickstart on Fri Jan  2 11:18:01 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Gtftk documentation page
-========================
+About pygtftk and supported GTF files formats
+===============================================
 
 The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package is compatible with Python 2.7 and relies on **libgtftk**, a library of functions **written in C**.
 
@@ -13,10 +8,8 @@ The package comes with a set of **UNIX commands** that can be accessed through t
 While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon  active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository.
 
 
-------------------------------------------------------------------------------------------------------------------
 
-
-About supported GTF file formats (you must read this section !)
+Supported GTF file formats (you must read this section !)
 -----------------------------------------------------------------
 
 .. warning:: The gtftk program is designed to handle files in **ensembl** GTF format. This means that the GTF file provided to gtftk **must contain (for most of the commands) transcript and gene features/lines**. All lines must contain a transcript_id and gene_id value except the **gene feature** that should contain only the gene_id (**see get_example command for an example**). Transcript and gene lines will be used when required to get access to transcript and gene coordinates. This solution was choosen to define a reference GTF file format for gtftk (since Ensembl format is probably the most widely used).
@@ -53,14 +46,3 @@ Naming conventions
 
 
 ------------------------------------------------------------------------------------------------------------------
-
-
-.. toctree::
-   :maxdepth: 2
-   
-   installation
-   presentation
-   api
-   bwig_coverage
-   developers
-
