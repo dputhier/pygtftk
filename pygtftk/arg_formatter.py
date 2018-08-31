@@ -3,6 +3,10 @@
 Command Line Interface display format.
 """
 from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
+from builtins import object
 
 import argparse
 import glob
@@ -18,7 +22,7 @@ from pygtftk.utils import message
 
 
 class ArgFormatter(argparse.HelpFormatter):
-    """
+    """ 
     A correction to the argument formatter. This ensure proper width
     of the first column when print_usage() is called.
     """

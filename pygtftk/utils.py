@@ -1,5 +1,12 @@
 """A set of useful functions."""
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
+from builtins import zip
+from builtins import str
+from builtins import range
+from past.utils import old_div
 import datetime
 import glob
 import os
@@ -456,12 +463,12 @@ def chrom_info_as_dict(chrom_info_file):
         if int(line[1]) <= 0:
             raise GTFtkError("Chromosome sizes should be greater than 0.")
 
-    if len(chrom_len.keys()) == 0:
+    if len(list(chrom_len.keys())) == 0:
         raise GTFtkError("No chromosome length retrieved in chrom_info file. Is this file tabulated ?")
 
     genome_size = 0
 
-    for chrom, value in chrom_len.items():
+    for chrom, value in list(chrom_len.items()):
         genome_size += value
 
     chrom_len["all_chrom"] = genome_size
@@ -512,7 +519,7 @@ def chrom_info_to_bed_file(chrom_file, chr_list=None):
     out_file = make_tmp_file("chromInfo_", ".bed")
     chrom_dict = chrom_info_as_dict(chrom_file)
 
-    for chrom, chrom_len in chrom_dict.items():
+    for chrom, chrom_len in list(chrom_dict.items()):
         if chrom != "all_chrom":
             if chr_list is not None:
                 if chrom in chr_list:
@@ -934,7 +941,8 @@ def sort_2_lists(list1, list2):
     """
 
     tups = sorted(zip(list1, list2))
-    return zip(*sorted(tups))
+
+    return list(zip(*sorted(tups)))
 
 
 # from http://stackoverflow.com/questions/8356501/python-format-tabular-output
@@ -943,8 +951,8 @@ def sort_2_lists(list1, list2):
 def print_table(table):
     col_width = [max(len(x) for x in col) for col in zip(*table)]
     for line in table:
-        print "| " + " | ".join("{:{}}".format(x, col_width[i])
-                                for i, x in enumerate(line)) + " |"
+        print("| " + " | ".join("{:{}}".format(x, col_width[i])
+                                for i, x in enumerate(line)) + " |")
 
 
 def call_nested_dict_from_list(data, args=[]):
@@ -974,9 +982,9 @@ def median_comp(alist):
 
     """
     if len(alist) % 2 != 0:
-        return sorted(alist)[len(alist) / 2]
+        return sorted(alist)[old_div(len(alist), 2)]
     else:
-        midavg = (sorted(alist)[len(alist) / 2] + sorted(alist)[len(alist) / 2 - 1]) / 2.0
+        midavg = old_div((sorted(alist)[old_div(len(alist), 2)] + sorted(alist)[old_div(len(alist), 2) - 1]), 2.0)
         return midavg
 
 
@@ -1014,8 +1022,8 @@ def intervals(l, n, silent=False):
         """ Yield n successive chunks from l.
         """
 
-        newn = int(len(l) / n)
-        for i in xrange(0, n - 1):
+        newn = int(old_div(len(l), n))
+        for i in range(0, n - 1):
             yield l[i * newn:i * newn + newn + 1]
         yield l[n * newn - newn:]
 
