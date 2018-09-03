@@ -70,10 +70,8 @@ def main():
     """main"""
 
     myparser = make_parser()
-    print(myparser)
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    print(args)
     short_long(**args)
 
 
