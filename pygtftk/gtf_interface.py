@@ -8,6 +8,15 @@ When using gtfk a GTF object methods may return:
     - a FASTA object (a representation of a fasta file).
 
 """
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
+from builtins import zip
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 
 import gc
 import os
@@ -415,8 +424,8 @@ class GTF(object):
             else:
                 self.fn = "-"
             self._data = 0
-        elif isinstance(input_obj, str) or isinstance(input_obj, unicode):
-            if isinstance(input_obj, unicode):
+        elif isinstance(input_obj, str) or isinstance(input_obj, str):
+            if isinstance(input_obj, str):
                 input_obj = input_obj.encode("utf-8")
             if input_obj == '-':
                 self.fn = "-"
@@ -672,7 +681,7 @@ class GTF(object):
             if nb > nb_rec:
                 nb = nb_rec
 
-            gtf_sub = self.select_by_positions(range(nb_rec - nb, nb_rec))
+                gtf_sub = self.select_by_positions(list(range(nb_rec - nb, nb_rec)))
 
             for i in gtf_sub:
                 msg += i.format() + "\n"
@@ -1047,20 +1056,20 @@ class GTF(object):
                         res_dict[i[0]] = [i[1]]
 
             if no_na:
-                for k, v in res_dict.items():
+                for k, v in list(res_dict.items()):
                     if hide_undef:
                         res_dict[k] = [x for x in v if x != [".", "?"]]
                     else:
                         res_dict[k] = [x for x in v if x != "."]
             else:
-                for k, v in res_dict.items():
+                for k, v in list(res_dict.items()):
                     if hide_undef:
                         res_dict[k] = [x for x in v if x != "?"]
                     else:
                         res_dict[k] = v
 
             if nr:
-                for k, v in res_dict.items():
+                for k, v in list(res_dict.items()):
                     res_dict[k] = list(OrderedDict.fromkeys(v))
 
             return res_dict
@@ -1118,19 +1127,19 @@ class GTF(object):
                             res_dict[i[0]] = i[1:]
 
             if no_na:
-                for k, v in res_dict.items():
+                for k, v in list(res_dict.items()):
                     if hide_undef:
                         res_dict[k] = [x for x in v if x not in [".", "?"]]
                     else:
                         res_dict[k] = [x for x in v if x != "."]
             else:
                 if hide_undef:
-                    for k, v in res_dict.items():
+                    for k, v in list(res_dict.items()):
                         res_dict[k] = [x for x in v if x != "?"]
 
             if nr:
 
-                for k, v in res_dict.items():
+                for k, v in list(res_dict.items()):
                     res_dict[k] = list(OrderedDict.fromkeys(v))
 
             return res_dict
@@ -1413,11 +1422,11 @@ class GTF(object):
         else:
 
             if not isinstance(key, str):
-                if not isinstance(key, unicode):
+                if not isinstance(key, str):
                     raise GTFtkError("Key should be a string")
 
             if not isinstance(value, str):
-                if not isinstance(value, unicode):
+                if not isinstance(value, str):
                     raise GTFtkError("Value should be a unicode string")
 
             new_data = self._dll.select_by_key(self._data,
@@ -1642,7 +1651,7 @@ class GTF(object):
         new_data = self._dll.select_by_key(self._data,
                                            "transcript_id",
                                            ",".join(
-                                               gene_to_tx_max_exon.values()),
+                                               list(gene_to_tx_max_exon.values())),
                                            0)
 
         return self._clone(new_data)
@@ -1994,7 +2003,7 @@ class GTF(object):
         if line_nb == 0:
             raise GTFtkError("File is empty.")
 
-        for k, v in key_to_value.items():
+        for k, v in list(key_to_value.items()):
             tmp_file.write(k + "\t" + "|".join(key_to_value[k]) + "\n")
 
         tmp_file.close()
@@ -2076,7 +2085,7 @@ class GTF(object):
                                                                  '',
                                                                  key_names[i]),
                                      suffix=".txt")
-            for k, v in id_to_val[key_names[i]].items():
+            for k, v in list(id_to_val[key_names[i]].items()):
                 tmp_file.write(k + "\t" + "|".join(v) + "\n")
 
             tmp_file.close()
@@ -2194,7 +2203,7 @@ class GTF(object):
 
         tmp_file = make_tmp_file("add_attr_from_dict", ".txt")
 
-        for i, j in a_dict.items():
+        for i, j in list(a_dict.items()):
             if isinstance(j, list):
                 j = ",".join([str(x) for x in j])
             tmp_file.write("\t".join([str(i), str(j)]) + "\n")

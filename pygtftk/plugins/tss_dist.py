@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import print_function
-
+from builtins import str
+from builtins import range
 import argparse
 import errno
 import sys
@@ -85,7 +86,7 @@ def tss_dist(
                                 "tss_num_2"]) + "\n")
     try:
         for gn_id in gn_tss_dist:
-            tx_list = gn_tss_dist[gn_id].keys()
+            tx_list = list(gn_tss_dist[gn_id].keys())
             for i in range(len(tx_list) - 1):
 
                 for j in range(i + 1, len(tx_list)):

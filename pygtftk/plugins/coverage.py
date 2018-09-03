@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division
 from __future__ import print_function
+from builtins import range
 
 import argparse
 import os
@@ -397,7 +398,7 @@ def coverage(
             # Add columns to df final by joining on
             # chrom, start, end, transcript_id, strand
             df_final = df_final.merge(i.iloc[:,
-                                      range(6)], on=[0, 1,
+                                      list(range(6))], on=[0, 1,
                                                      2, 3, 5])
 
         df_final.columns = ["chrom",

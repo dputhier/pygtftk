@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 from __future__ import division
+from builtins import zip
+from builtins import str
+from builtins import range
 
 import argparse
 import os
@@ -471,7 +474,7 @@ def draw_profile(inputfile=None,
             message("Deleting duplicates in transcript-file.")
             df_classes = df_classes.drop_duplicates(subset=[0])
             tx_ordering = df_classes[0].tolist()
-            tx_classes = OrderedDict(zip(df_classes[0], df_classes[1]))
+            tx_classes = OrderedDict(list(zip(df_classes[0], df_classes[1])))
             class_list = set(df_classes[1])
 
             # -------------------------------------------------------------------------
@@ -897,7 +900,7 @@ def draw_profile(inputfile=None,
     # add colors to matrix
     #
     # -------------------------------------------------------------------------
-    group2cols = dict(zip(color_order, profile_colors))
+    group2cols = dict(list(zip(color_order, profile_colors)))
     dm['color_palette'] = [group2cols[x] for x in dm[group_by]]
 
     # -------------------------------------------------------------------------
@@ -1156,7 +1159,7 @@ def draw_profile(inputfile=None,
     #
     # --------------------------------------------------------------------------
 
-    p += scale_color_manual(values=dict(zip(color_order, profile_colors)), name='Groups')
+        p += scale_color_manual(values=dict(list(zip(color_order, profile_colors))), name='Groups')
 
     # -------------------------------------------------------------------------
     # Turn warning off. Both pandas and plotnine use warnings for deprecated

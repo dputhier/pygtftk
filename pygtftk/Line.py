@@ -8,6 +8,12 @@ returned respectively:
     - FastaSequence
 
 """
+
+from __future__ import absolute_import
+from builtins import zip
+from builtins import str
+from builtins import range
+from builtins import object
 import sys
 from collections import OrderedDict
 
@@ -380,7 +386,7 @@ class Feature(object):
         >>> assert feat.get_attr_names() == ['transcript_id', 'gene_id']
 
         """
-        return self.attr.keys()
+        return list(self.attr.keys())
 
     def format(self):
         """
@@ -397,7 +403,7 @@ class Feature(object):
         """
 
         tok_list = list()
-        for key, val in self.attr.items():
+        for key, val in list(self.attr.items()):
             tok_list += [key + ' "' + val + '";']
 
         if pygtftk.utils.ADD_CHR == 1:
@@ -677,7 +683,7 @@ class Feature(object):
 
         tok_list = list()
 
-        for key_cur, val_cur in self.attr.items():
+        for key_cur, val_cur in list(self.attr.items()):
             tok_list.append(''.join([key_cur, ' "', str(val_cur), '";']))
 
         tok_list.append(''.join([key, ' "', str(val), '";']))

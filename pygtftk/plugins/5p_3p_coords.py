@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
-
-__updated__ = "2018-01-20"
-__doc__ = """
- Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
-"""
-__notes__ = "Output is in BED format."
-
+from builtins import str
 import sys
 import argparse
 from pygtftk.gtf_interface import GTF
@@ -16,6 +10,14 @@ from pygtftk.utils import write_properly
 from pygtftk.utils import chomp
 from pygtftk.cmd_object import CmdObject
 from pygtftk.arg_formatter import FileWithExtension
+
+__updated__ = "2018-01-20"
+__doc__ = """
+ Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
+"""
+__notes__ = "Output is in BED format."
+
+
 
 
 def make_parser():

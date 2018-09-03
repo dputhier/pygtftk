@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
+from builtins import range
 
 import argparse
 import random
@@ -92,7 +93,7 @@ def random_tx(
         tx_list = gene2tx[gn_id]
         nb_tx = len(tx_list)
         max_cur = min(max_transcript, nb_tx)
-        pos_to_keep = random.sample(range(len(tx_list)), max_cur)
+        pos_to_keep = random.sample(list(range(len(tx_list))), max_cur)
         tx_list = [j for i, j in enumerate(tx_list) if i not in pos_to_keep]
         tx_to_delete += tx_list
 

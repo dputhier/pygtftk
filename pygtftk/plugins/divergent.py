@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
+from builtins import str
 
 import argparse
 import math
@@ -201,7 +202,7 @@ Find transcript with divergent promoters.
 
     else:
         gtf.select_by_key("transcript_id",
-                          ",".join(tx_with_divergent.keys())).write()
+                          ",".join(list(tx_with_divergent.keys()))).write()
 
     close_properly(outputfile, inputfile)
 

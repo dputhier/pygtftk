@@ -1,7 +1,11 @@
 """
 Class declaration of the FASTA object (may be returned by GTF object methods).
 """
+from __future__ import absolute_import
 
+from builtins import str
+from builtins import range
+from builtins import object
 import textwrap
 from collections import OrderedDict
 
@@ -179,7 +183,7 @@ class FASTA(object):
         for i in range(self._data.nb):
             b = self._data.sequence[i]
             seq = ffi.string(b.sequence)
-            rg = range(b.features.nb)
+            rg = list(range(b.features.nb))
             for j in rg:
                 c = b.features.feature[j]
                 name = ffi.string(c.name)
@@ -267,11 +271,11 @@ class FASTA(object):
             seq = ffi.string(b.sequence)
             if self.rev_comp:
                 if b.strand == "-":
-                    rg = reversed(range(b.features.nb))
+                    rg = reversed(list(range(b.features.nb)))
                 else:
-                    rg = range(b.features.nb)
+                    rg = list(range(b.features.nb))
             else:
-                rg = range(b.features.nb)
+                rg = list(range(b.features.nb))
             for j in rg:
                 c = b.features.feature[j]
                 name = ffi.string(c.name)

@@ -1,6 +1,13 @@
 """ The command manager is intended to store command object
 and their associated functions."""
 
+from __future__ import print_function
+from __future__ import absolute_import
+
+from builtins import str
+from builtins import range
+from builtins import object
+
 import argparse
 import errno
 import glob
@@ -104,7 +111,7 @@ class ListPlugins(argparse._StoreTrueAction):
             option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        print("\n".join(CmdManager.cmd_obj_list.keys()))
+        print("\n".join(list(CmdManager.cmd_obj_list.keys())))
         sys.exit()
 
 
@@ -853,7 +860,7 @@ class CmdManager(object):
 
                 del args['command']
 
-                for key, value in args.items():
+                for key, value in list(args.items()):
                     if isinstance(value, file):
                         value = value.name
                     else:
@@ -899,7 +906,7 @@ class CmdManager(object):
         elif cmd_ob.lang == "R":
 
             sys_cmd = ""
-            for k, a_value in args.items():
+            for k, a_value in list(args.items()):
 
                 if a_value is not False and a_value is not True:
                     sys_cmd += " --" + k.replace("_", "-") + " " + str(a_value)

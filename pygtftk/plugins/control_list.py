@@ -10,6 +10,7 @@
 import argparse
 import os
 import warnings
+from builtins import zip
 
 import numpy as np
 import pandas as pd
@@ -368,7 +369,7 @@ def control_list(in_file=None,
 
     p = ggplot(data, aes(x='sets', y='exprs', fill='genesets'))
 
-    p += scale_fill_manual(values=dict(zip(['Reference', 'Control'], set_colors)))
+    p += scale_fill_manual(values=dict(list(zip(['Reference', 'Control'], set_colors))))
 
     p += geom_violin(color=None)
 

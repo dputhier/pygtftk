@@ -22,7 +22,7 @@ from pygtftk.utils import message
 
 
 class ArgFormatter(argparse.HelpFormatter):
-    """ 
+    """
     A correction to the argument formatter. This ensure proper width
     of the first column when print_usage() is called.
     """

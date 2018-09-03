@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
-""" Select the shortest mature transcript (i.e without introns) for each gene or the longest if the \
--l arguments is used. """
-
-__updated__ = "2018-01-25"
-
+from __future__ import print_function
 import argparse
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
+
+
+""" Select the shortest mature transcript (i.e without introns) for each gene or the longest if the \
+-l arguments is used. """
+
+__updated__ = "2018-01-25"
 
 
 def make_parser():
@@ -70,10 +72,8 @@ def main():
     """main"""
 
     myparser = make_parser()
-    print(myparser)
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    print(args)
     short_long(**args)
 
 

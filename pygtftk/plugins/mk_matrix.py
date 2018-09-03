@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from __future__ import division
 from __future__ import print_function
+from builtins import str
+from builtins import range
 
 import argparse
 import os
@@ -278,7 +280,7 @@ def mk_matrix(
     message('Getting the list of chromosomes declared in bigwig files.')
     bw_chrom = list()
     for i in bigwiglist:
-        bw_chrom += pyBigWig.open(i.name).chroms().keys()
+        bw_chrom += list(pyBigWig.open(i.name).chroms().keys())
 
     bed_col = [0, 1, 2, 3, 4, 5]
 

@@ -126,7 +126,7 @@ def select_by_go(inputfile=None,
     gtf = GTF(inputfile)
 
     gtf_associated = gtf.select_by_key("gene_id",
-                                       ",".join(is_associated.keys()),
+                                       ",".join(list(is_associated.keys())),
                                        invert_match)
 
     gtf_associated.write(outputfile)

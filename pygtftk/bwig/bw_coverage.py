@@ -2,6 +2,9 @@
 A module to compute bigwig coverage over a set of regions (bed).
 """
 from __future__ import division
+from builtins import zip
+from builtins import str
+from builtins import range
 
 import multiprocessing
 import os
@@ -145,7 +148,7 @@ def _big_wig_coverage_worker(input_values):
                     out = []
                     size = i.end - i.start
 
-                    for range_curr in intervals(range(size), bin_nb, silent=True):
+                    for range_curr in intervals(list(range(size)), bin_nb, silent=True):
 
                         interval_cur = bw_cov[range_curr[0]:range_curr[1]]
 
@@ -271,11 +274,11 @@ def bw_cov_mp(bw_list=None,
             str(n_region_to_proceed) +
             " regions to proceed for each bigwig")
 
-    tokens = intervals(range(n_region_to_proceed), nb_proc)
+    tokens = intervals(list(range(n_region_to_proceed)), nb_proc)
 
     pool = multiprocessing.Pool(nb_proc)
     coverage_list = pool.map_async(_big_wig_coverage_worker,
-                                   zip(tokens,
+                                   list(zip(tokens,
                                        repeat(bw_list),
                                        repeat(region_file.name),
                                        repeat(bin_nb),
@@ -287,7 +290,7 @@ def bw_cov_mp(bw_list=None,
                                        repeat(labels),
                                        repeat(zero_to_na),
                                        repeat(stat),
-                                       repeat(verbose))).get(9999999)
+                                       repeat(verbose)))).get(9999999)
 
     if False in coverage_list:
         sys.stderr.write("Aborting...")
@@ -355,7 +358,7 @@ def bw_profile_mp(in_bed_file=None,
             " regions to proceed for each bigwig")
 
     # 'Split' the file into multiple fragment
-    tokens = intervals(range(n_region_to_proceed), nb_proc)
+    tokens = intervals(list(range(n_region_to_proceed)), nb_proc)
 
     # Computing coverage of features.
     # Each worker will return a file
@@ -382,7 +385,7 @@ def bw_profile_mp(in_bed_file=None,
                                          "gene"] + score_h + ["strand"] + suffix) + "\n")
 
     if nb_proc > 1:
-        argss = zip(tokens,
+        argss = list(zip(tokens,
                     repeat(big_wig),
                     repeat(in_bed_file.name),
                     repeat(bin_nb),
@@ -394,7 +397,7 @@ def bw_profile_mp(in_bed_file=None,
                     repeat(labels),
                     repeat(zero_to_na),
                     repeat(stat),
-                    repeat(verbose))
+                    repeat(verbose)))
 
         for res_file_list in pool.map_async(_big_wig_coverage_worker,
                                             argss).get(999999):

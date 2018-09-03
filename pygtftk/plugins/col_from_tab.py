@@ -4,6 +4,7 @@
 import argparse
 import re
 import sys
+from builtins import range
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.utils import chomp
@@ -112,7 +113,7 @@ def col_from_tab(inputfile=None,
 
             else:
 
-                pos_list = range(len(line))
+                pos_list = list(range(len(line)))
 
                 for i in range(len(columns)):
 

@@ -49,7 +49,7 @@ def declare_r_cmd(plugin_dir, plugin_fn):
     imported_parser = "\n".join(list(parser['python_code']))
 
     parser = compile(imported_parser, '<string>', 'exec')
-    exec parser
+    exec(parser)
     parser.add_help = False
 
     # Declare a novel command to the cmdManager

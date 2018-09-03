@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 from __future__ import print_function
+from __future__ import division
 
+from builtins import str
+from past.utils import old_div
 import argparse
 import sys
 
@@ -115,7 +118,7 @@ def midpoints(
                 # e.g 949-1100 (zero based) -> 950-1100 one based
                 # mipoint is 1025 (one-based) -> 1024-1025 (zero based)
                 # floored division (python 2)...
-                line.end = line.start + int(diff / 2) + 1
+                line.end = line.start + int(old_div(diff, 2)) + 1
                 line.start = line.end - 1
             else:
                 # e.g 10-14 (zero based) -> 11-14 one based
@@ -125,7 +128,7 @@ def midpoints(
                 # floored division (python 2)...
                 # No real center. Take both
 
-                line.start = line.start + int(diff / 2) - 1
+                line.start = line.start + int(old_div(diff, 2)) - 1
                 line.end = line.start + 2
 
             outputfile.write(str(line))
