@@ -30,7 +30,7 @@ build:
 requirements:
   build:
     - GitPython >=2.1.8
-    - python >=2.7,<3
+    - python >=3.6
     - pyparsing
     - argparse
     - nose
@@ -55,13 +55,12 @@ requirements:
     - zlib <1.2.8-3
     - matplotlib >=2.0.2
     - plotnine >=0.4.0
-    - libstdcxx-ng >=7.2.0
     - unzip
     - gawk
 
   run:
     - GitPython >=2.1.8
-    - python >=2.7,<3
+    - python >=3.6
     - pyparsing
     - argparse
     - nose
@@ -86,7 +85,6 @@ requirements:
     - zlib <1.2.8-3
     - matplotlib >=2.0.2
     - plotnine >=0.4.0
-    - libstdcxx-ng >=7.2.0
     - unzip
     - gawk
 

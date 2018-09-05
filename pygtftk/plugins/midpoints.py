@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-from __future__ import print_function
 from __future__ import division
+from __future__ import print_function
 
-from builtins import str
-from past.utils import old_div
 import argparse
 import sys
 
+from builtins import str
+from future.utils import old_div
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension

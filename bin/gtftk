@@ -83,7 +83,7 @@ if __name__ == "__main__":
 
         # delete created temporary files
 
-        for i in flatten_list(TMP_FILE_LIST):
+        for i in flatten_list(TMP_FILE_LIST, outlist=[]):
 
             # If the user ask to keep temp files
             if args.tmp_dir is not None:

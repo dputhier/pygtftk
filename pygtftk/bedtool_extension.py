@@ -1,7 +1,8 @@
-from __future__ import division
 from __future__ import absolute_import
+from __future__ import division
+
 from builtins import str
-from past.utils import old_div
+from future.utils import old_div
 from pybedtools import BedTool
 
 from pygtftk.utils import make_tmp_file

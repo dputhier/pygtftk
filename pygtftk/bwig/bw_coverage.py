@@ -399,10 +399,15 @@ def bw_profile_mp(in_bed_file=None,
                     repeat(stat),
                     repeat(verbose)))
 
+
+        tf = open("/Users/puthier/git/project_dev/pygtftk/test.txt", "w")
         for res_file_list in pool.map_async(_big_wig_coverage_worker,
                                             argss).get(999999):
 
-            for cur_file in flatten_list([res_file_list]):
+
+
+            for cur_file in flatten_list([res_file_list], outlist=[]):
+
                 with open(cur_file) as infile:
                     for i in infile:
                         if bed_format:

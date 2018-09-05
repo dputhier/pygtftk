@@ -10,21 +10,38 @@ returned respectively:
 """
 
 from __future__ import absolute_import
-from builtins import zip
-from builtins import str
-from builtins import range
-from builtins import object
+
 import sys
 from collections import OrderedDict
 
+from builtins import object
+from builtins import range
+from builtins import str
+from builtins import zip
 from cffi import FFI
 
 import pygtftk.utils
 import pygtftk.utils
 from pygtftk.utils import GTFtkError
+from pygtftk.utils import PY3
 from pygtftk.utils import write_properly
 
 ffi = FFI()
+
+# ---------------------------------------------------------------
+# Python2/3  compatibility
+# ---------------------------------------------------------------
+
+
+try:
+    basestring
+except NameError:
+    basestring = str
+
+if PY3:
+    from io import IOBase
+
+    file = IOBase
 
 
 # ---------------------------------------------------------------
@@ -368,13 +385,13 @@ class Feature(object):
         >>> assert feat.get_3p_end() == 200
 
         """
-        if self.strand == '+':
+
+        if self.strand == b'+':
             return self.end
-        elif self.strand == '-':
+        elif self.strand == b'-':
             return self.start
         else:
-            raise GTFtkError(
-                "Can not retrieve 5'end from an unstranded features.")
+            raise GTFtkError("Can not retrieve 5'end from an unstranded features.")
 
     def get_attr_names(self):
         """Returns the attribute names from the Feature.
@@ -404,23 +421,24 @@ class Feature(object):
 
         tok_list = list()
         for key, val in list(self.attr.items()):
-            tok_list += [key + ' "' + val + '";']
+            tok_list += [key + b' "' + val + b'";']
 
         if pygtftk.utils.ADD_CHR == 1:
-            chrom_out = "chr" + self.chrom
+            chrom_out = b'chr' + self.chrom
         else:
             chrom_out = self.chrom
 
         token = [chrom_out,
                  self.src,
                  self.ft_type,
-                 str(self.start),
-                 str(self.end),
-                 str(self.score),
+                 bytes(self.start),
+                 bytes(self.end),
+                 bytes(self.score),
                  self.strand,
-                 str(self.frame),
-                 ' '.join(tok_list)]
-        return '\t'.join(token)
+                 bytes(self.frame),
+                 b' '.join(tok_list)]
+
+        return b'\t'.join(token)
 
     def format_tab(self, attr_list, sep="\t"):
         r"""Returns Feature as a string in tabulated format.
@@ -502,7 +520,7 @@ class Feature(object):
                       str(self.score),
                       self.strand]
 
-        pygtftk.utils.write_properly('\t'.join(token), outputfile)
+        pygtftk.utils.write_properly(b'\t'.join(token), outputfile)
 
     def write_gtf_to_bed6(self,
                           name=["transcript_id", "gene_id"],
@@ -556,7 +574,7 @@ class Feature(object):
                   str(self.score),
                   self.strand]
 
-        pygtftk.utils.write_properly('\t'.join(token), outputfile)
+        pygtftk.utils.write_properly(b'\t'.join(token), outputfile)
 
     def write_bed_5p_end(self,
                          name=None,
@@ -594,8 +612,8 @@ class Feature(object):
             chrom_out = self.chrom
 
         token = [chrom_out,
-                 str(int(self.get_5p_end()) - 1),
-                 str(self.get_5p_end())]
+                 bytes(int(self.get_5p_end()) - 1),
+                 bytes(self.get_5p_end())]
 
         if format == 'bed6' or format == 'bed':
             if name is None:
@@ -604,7 +622,7 @@ class Feature(object):
                       str(self.score),
                       self.strand]
 
-        pygtftk.utils.write_properly('\t'.join(token), outputfile)
+        pygtftk.utils.write_properly(b'\t'.join(token), outputfile)
 
     def write_bed_3p_end(self,
                          name=None,
@@ -650,7 +668,7 @@ class Feature(object):
                       str(self.score),
                       self.strand]
 
-        pygtftk.utils.write_properly('\t'.join(token), outputfile)
+        pygtftk.utils.write_properly(b'\t'.join(token), outputfile)
 
     def add_attr(self, key, val):
         """Add an attribute to the Feature instance.

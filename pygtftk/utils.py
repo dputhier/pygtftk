@@ -1,12 +1,8 @@
 """A set of useful functions."""
+from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from __future__ import absolute_import
 
-from builtins import zip
-from builtins import str
-from builtins import range
-from past.utils import old_div
 import datetime
 import glob
 import os
@@ -23,6 +19,10 @@ from tempfile import NamedTemporaryFile
 
 import pysam
 import requests
+from builtins import range
+from builtins import str
+from builtins import zip
+from future.utils import old_div
 
 import pygtftk
 
@@ -50,6 +50,29 @@ NEWLINE = '\n'
 
 # R libraries
 R_LIB = defaultdict(list)
+
+# -------------------------------------------------------------------------
+# Python Version
+# -------------------------------------------------------------------------
+
+
+PY3 = sys.version_info[0] == 3
+PY2 = sys.version_info[0] == 2
+
+# ---------------------------------------------------------------
+# Python2/3  compatibility
+# ---------------------------------------------------------------
+
+
+try:
+    basestring
+except NameError:
+    basestring = str
+
+if PY3:
+    from io import IOBase
+
+    file = IOBase
 
 
 # ---------------------------------------------------------------
@@ -728,7 +751,7 @@ def message(msg, nl=True, type="INFO", force=False):
             message("Error encountered. System will exit after deleting temporary files.", type="DEBUG")
 
             if not pygtftk.__ARGS__['keep_all']:
-                for i in flatten_list(TMP_FILE_LIST):
+                for i in flatten_list(TMP_FILE_LIST, outlist=[]):
                     message("ERROR encountered, deleting temporary file: " + i, type="DEBUG")
                     silentremove(i)
             else:
@@ -878,10 +901,10 @@ def left_strip_str(string):
 # ---------------------------------------------------------------
 
 
-def flatten_list(alist):
+def flatten_list(x, outlist=[]):
     """Flatten a list of lists.
 
-    :param alist: a list or list of list.
+    :param x: a list or list of list.
 
     :Example:
 
@@ -893,15 +916,12 @@ def flatten_list(alist):
 
     """
 
-    import itertools
-
-    if isinstance(alist, list):
-        return list(itertools.chain.from_iterable(
-            itertools.repeat(x, 1) if isinstance(x, str) else x for x in alist))
-    elif isinstance(alist, str):
-        return [alist]
+    if not isinstance(x, (list, tuple)):
+        outlist += [x]
     else:
-        raise GTFtkError("Should be a list or str.")
+        for i in x:
+            outlist = flatten_list(i, outlist)
+    return outlist
 
 
 # See: https://stackoverflow.com/questions/716477/join-list-of-lists-in-python

@@ -30,6 +30,14 @@ except:
     pass
 
 # -------------------------------------------------------------------------
+# Python Version
+# -------------------------------------------------------------------------
+
+
+PY3 = sys.version_info[0] == 3
+PY2 = sys.version_info[0] == 2
+
+# -------------------------------------------------------------------------
 # Check gtftk version
 # -------------------------------------------------------------------------
 
@@ -58,21 +66,38 @@ version_file.close()
 
 cmd_src_list = glob.glob("pygtftk/src/libgtftk/command/*.c")
 
-if platform == "darwin":
-    vars = sysconfig.get_config_vars()
-    vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
-    dyn_lib_compil = ['-shared']
-else:
-    dyn_lib_compil = ['-shared']
+if PY2:
+    if platform == "darwin":
+        vars = sysconfig.get_config_vars()
+        vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
+        dyn_lib_compil = ['-shared']
+    else:
+        dyn_lib_compil = ['-shared']
 
-extra_compile_args = ['-Ipygtftk/src/libgtftk',
-                      '-O3',
-                      '-Wall',
-                      '-fPIC',
-                      '-shared',
-                      '-MMD',
-                      '-MP',
-                      '-fmessage-length=0'] + dyn_lib_compil
+    extra_compile_args = ['-Ipygtftk/src/libgtftk',
+                          '-O3',
+                          '-Wall',
+                          '-fPIC',
+                          #                      '-shared',
+                          '-MMD',
+                          '-MP',
+                          '-fmessage-length=0'] + dyn_lib_compil
+elif PY3:
+    if platform == "darwin":
+        vars = sysconfig.get_config_vars()
+        vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
+        dyn_lib_compil = ['-shared']
+    else:
+        dyn_lib_compil = []
+
+    extra_compile_args = ['-Ipygtftk/src/libgtftk',
+                          '-O3',
+                          '-Wall',
+                          '-fPIC',
+                          '-fcommon',
+                          '-MMD',
+                          '-MP',
+                          '-fmessage-length=0'] + dyn_lib_compil
 
 lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                         include_dirs=[
@@ -141,7 +166,10 @@ for line in conf_file:
     if line.startswith("release = "):
         line = "release = " + "u'" + __version__ + "'\n"
 
-    tmp_file_conf.write(line)
+    if PY3:
+        tmp_file_conf.write(str.encode(line))
+    elif PY2:
+        tmp_file_conf.write(line)
 
 tmp_file_conf.close()
 conf_file.close()

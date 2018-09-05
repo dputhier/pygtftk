@@ -8,17 +8,12 @@ When using gtfk a GTF object methods may return:
     - a FASTA object (a representation of a fasta file).
 
 """
+from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from __future__ import absolute_import
-
-from builtins import zip
-from builtins import str
-from builtins import range
-from builtins import object
-from past.utils import old_div
 
 import gc
+import glob
 import os
 import re
 import sys
@@ -26,7 +21,12 @@ import textwrap
 from collections import OrderedDict
 from collections import defaultdict
 
+from builtins import object
+from builtins import range
+from builtins import str
+from builtins import zip
 from cffi import FFI
+from future.utils import native_str
 from pybedtools.bedtool import BedTool
 from pyparsing import CaselessLiteral
 from pyparsing import Combine
@@ -47,6 +47,7 @@ from pygtftk.Line import Feature
 from pygtftk.fasta_interface import FASTA
 from pygtftk.tab_interface import TAB
 from pygtftk.utils import GTFtkError
+from pygtftk.utils import PY3
 from pygtftk.utils import check_file_or_dir_exists
 from pygtftk.utils import chomp
 from pygtftk.utils import chrom_info_to_bed_file
@@ -55,14 +56,32 @@ from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
 # ---------------------------------------------------------------
+# Python2/3  compatibility
+# ---------------------------------------------------------------
+
+
+try:
+    basestring
+except NameError:
+    basestring = str
+
+if PY3:
+    from io import IOBase
+
+    file = IOBase
+
+if PY3:
+    def native_str(x):
+        return bytes(x.encode())
+
+# ---------------------------------------------------------------
 # find module path
 # ---------------------------------------------------------------
 
 module_path = os.path.dirname(pygtftk.__file__)
 
-dll_path = os.path.join(module_path,
-                        'lib',
-                        'libgtftk.so')
+dll_path = glob.glob(os.path.join(module_path,
+                                  'lib', 'libgtftk*.so'))[0]
 
 # ---------------------------------------------------------------
 # Load the lib
@@ -424,9 +443,9 @@ class GTF(object):
             else:
                 self.fn = "-"
             self._data = 0
-        elif isinstance(input_obj, str) or isinstance(input_obj, str):
-            if isinstance(input_obj, str):
-                input_obj = input_obj.encode("utf-8")
+
+        elif isinstance(input_obj, basestring):
+
             if input_obj == '-':
                 self.fn = "-"
             else:
@@ -445,7 +464,7 @@ class GTF(object):
 
         if new_data is None:
 
-            self._data = self._dll.load_GTF(self.fn)
+            self._data = self._dll.load_GTF(native_str(self.fn))
 
             if check_ensembl_format:
                 tab = self.extract_data_iter_list("feature")
@@ -547,10 +566,10 @@ class GTF(object):
         else:
 
             new_data = self._dll.merge_attr(self._data,
-                                            feat,
-                                            keys,
-                                            new_key,
-                                            sep)
+                                            native_str(feat),
+                                            native_str(keys),
+                                            native_str(new_key),
+                                            native_str(sep))
 
             return self._clone(new_data)
 
@@ -799,7 +818,10 @@ class GTF(object):
             elif len(x) == 2:
                 key, val = [str(i) for i in x]
 
-                new_data = self._dll.select_by_key(self._data, key, val, 0)
+                new_data = self._dll.select_by_key(self._data,
+                                                   native_str(key),
+                                                   native_str(val),
+                                                   0)
 
                 return self._clone(new_data)
             else:
@@ -945,7 +967,7 @@ class GTF(object):
             raise GTFtkError(msg)
 
         if not isinstance(keys, list):
-            if isinstance(keys, str):
+            if isinstance(keys, basestring):
                 keys = keys.split(",")
             else:
                 raise GTFtkError("Please provide a key as str or list.")
@@ -968,7 +990,7 @@ class GTF(object):
         if as_list_of_list:
 
             ptr = self._dll.extract_data(self._data,
-                                         keys_csv,
+                                         native_str(keys_csv),
                                          base,
                                          nr)
             res_list = list()
@@ -1000,7 +1022,7 @@ class GTF(object):
             keys_csv = keys_csv.split(",")[0]
 
             ptr = self._dll.extract_data(self._data,
-                                         keys_csv,
+                                         native_str(keys_csv),
                                          base,
                                          nr)
 
@@ -1020,7 +1042,7 @@ class GTF(object):
         elif as_dict:
 
             ptr = self._dll.extract_data(self._data,
-                                         keys_csv,
+                                         native_str(keys_csv),
                                          base,
                                          nr)
 
@@ -1038,7 +1060,8 @@ class GTF(object):
 
             tab = TAB(self.fn,
                       self._dll.extract_data(self._data,
-                                             keys_csv, base, nr),
+                                             native_str(keys_csv),
+                                             base, nr),
                       dll=GTF._dll)
 
             if tab.ncols < 2:
@@ -1078,7 +1101,8 @@ class GTF(object):
 
             tab = TAB(self.fn,
                       self._dll.extract_data(self._data,
-                                             keys_csv, base, 1),
+                                             native_str(keys_csv),
+                                             base, 1),
                       dll=GTF._dll)
 
             if tab.ncols < 2:
@@ -1109,7 +1133,8 @@ class GTF(object):
 
             tab = TAB(self.fn,
                       self._dll.extract_data(self._data,
-                                             keys_csv, base, nr),
+                                             native_str(keys_csv),
+                                             base, nr),
                       dll=GTF._dll)
 
             if tab.ncols < 2:
@@ -1146,7 +1171,7 @@ class GTF(object):
         else:
             tab = TAB(self.fn,
                       self._dll.extract_data(self._data,
-                                             keys_csv,
+                                             native_str(keys_csv),
                                              base,
                                              nr),
                       dll=GTF._dll)
@@ -1196,7 +1221,8 @@ class GTF(object):
         keys = [x if x not in ['chrom', 'chr'] else 'seqid' for x in keys]
         keys_csv = ",".join(keys)
 
-        ptr = self._dll.extract_data(self._data, keys_csv, base, nr)
+        ptr = self._dll.extract_data(self._data,
+                                     native_str(keys_csv), base, nr)
         nb_cols = ptr.nb_columns
         nb_rows = ptr.nb_rows
 
@@ -1296,7 +1322,8 @@ class GTF(object):
         >>> assert  a_list == ['2', '1']
         """
 
-        new_data = self._dll.add_exon_number(self._data, key)
+        new_data = self._dll.add_exon_number(self._data,
+                                             native_str(key))
         return self._clone(new_data)
 
     def add_prefix(self, feat="*", key=None, txt=None, suffix=False):
@@ -1329,7 +1356,11 @@ class GTF(object):
         if key is None or txt is None:
             raise GTFtkError("You must provide key and txt arguments.")
 
-        new_data = self._dll.add_prefix(self._data, feat, key, txt, suffix)
+        new_data = self._dll.add_prefix(self._data,
+                                        native_str(feat),
+                                        native_str(key),
+                                        native_str(txt),
+                                        suffix)
         return self._clone(new_data)
 
     def select_by_key(self, key=None,
@@ -1421,17 +1452,15 @@ class GTF(object):
 
         else:
 
-            if not isinstance(key, str):
-                if not isinstance(key, str):
-                    raise GTFtkError("Key should be a string")
+            if not isinstance(key, basestring):
+                raise GTFtkError("Key should be a string")
 
-            if not isinstance(value, str):
-                if not isinstance(value, str):
-                    raise GTFtkError("Value should be a unicode string")
+            if not isinstance(value, basestring):
+                raise GTFtkError("Value should be a unicode string")
 
             new_data = self._dll.select_by_key(self._data,
-                                               key,
-                                               value,
+                                               native_str(key),
+                                               native_str(value),
                                                im)
 
             return self._clone(new_data)
@@ -1599,7 +1628,7 @@ class GTF(object):
         nb_loc = min(len(chr_list), len(start_list), len(end_list))
 
         # Create pointers as input to select_by_genomic_location C function.
-        chr_ptr = [ffi.new("char[]", x) for x in chr_list]
+        chr_ptr = [ffi.new("char[]", native_str(x)) for x in chr_list]
         start_ptr = start_list
         end_ptr = end_list
 
@@ -1922,7 +1951,8 @@ class GTF(object):
 
         message("Calling get_attr_value_list.", type="DEBUG")
 
-        ptr = self._dll.get_attribute_values_list(self._data, key)
+        ptr = self._dll.get_attribute_values_list(self._data,
+                                                  native_str(key))
 
         alist = list()
         for i in range(ptr.size):
@@ -1970,7 +2000,7 @@ class GTF(object):
         if inputfile is None:
             raise GTFtkError("Need an input/join file.")
 
-        if isinstance(inputfile, str):
+        if isinstance(inputfile, basestring):
             inputfile = open(inputfile)
 
         message("Reading file to join.", type="DEBUG")
@@ -2011,10 +2041,10 @@ class GTF(object):
         message("Calling internal C function (add_attributes)")
 
         new_data = self._dll.add_attributes(self._data,
-                                            feat,
-                                            key,
-                                            new_key,
-                                            tmp_file.name)
+                                            native_str(feat),
+                                            native_str(key),
+                                            native_str(new_key),
+                                            native_str(tmp_file.name))
 
         return self._clone(new_data)
 
@@ -2092,17 +2122,17 @@ class GTF(object):
 
             if i == 0:
                 new_data = self._dll.add_attributes(self._data,
-                                                    feat,
-                                                    key,
-                                                    key_names[i],
-                                                    tmp_file.name)
+                                                    native_str(feat),
+                                                    native_str(key),
+                                                    native_str(key_names[i]),
+                                                    native_str(tmp_file.name))
 
             else:
                 new_data = self._dll.add_attributes(new_data,
-                                                    feat,
-                                                    key,
-                                                    key_names[i],
-                                                    tmp_file.name)
+                                                    native_str(feat),
+                                                    native_str(key),
+                                                    native_str(key_names[i]),
+                                                    native_str(tmp_file.name))
 
         return self._clone(new_data)
 
@@ -2162,10 +2192,10 @@ class GTF(object):
         tmp_file.close()
 
         new_data = self._dll.add_attributes(self._data,
-                                            feat,
-                                            key,
-                                            new_key,
-                                            tmp_file.name)
+                                            native_str(feat),
+                                            native_str(key),
+                                            native_str(new_key),
+                                            native_str(tmp_file.name))
 
         return self._clone(new_data)
 
@@ -2210,10 +2240,10 @@ class GTF(object):
         tmp_file.close()
 
         new_data = self._dll.add_attributes(self._data,
-                                            feat,
-                                            key,
-                                            new_key,
-                                            tmp_file.name)
+                                            native_str(feat),
+                                            native_str(key),
+                                            native_str(new_key),
+                                            native_str(tmp_file.name))
 
         return self._clone(new_data)
 
@@ -2254,8 +2284,8 @@ class GTF(object):
                     "transcript_id/gene_id can't be removed. Use force if required.")
 
         new_data = self._dll.del_attributes(self._data,
-                                            ",".join(feat),
-                                            ",".join(keys))
+                                            native_str(",".join(feat)),
+                                            native_str(",".join(keys)))
 
         return self._clone(new_data)
 
@@ -2385,7 +2415,7 @@ class GTF(object):
         if isinstance(output, list):
             output = output[0]
 
-        if isinstance(output, str):
+        if isinstance(output, basestring):
             if output == "-":
                 output_str = "-"
             else:
@@ -2413,7 +2443,7 @@ class GTF(object):
             except:
                 raise GTFtkError("Unknown file object.")
         if self._data != 0 or len(self) > 0:
-            self._dll.print_gtf_data(self._data, output_str, add_chr)
+            self._dll.print_gtf_data(self._data, native_str(output_str), add_chr)
         else:
             pass
 
@@ -2476,7 +2506,7 @@ class GTF(object):
 
             fasta = FASTA(self.fn,
                           self._dll.get_sequences(self._data,
-                                                  genome,
+                                                  native_str(genome),
                                                   intron,
                                                   rev_comp),
                           bool(intron),
@@ -3326,7 +3356,7 @@ class GTF(object):
 
         """
 
-        if isinstance(input_file, str):
+        if isinstance(input_file, basestring):
             input_file = open(input_file)
 
         if input_file.closed:
@@ -3342,10 +3372,9 @@ class GTF(object):
             if "\t" in line:
                 raise GTFtkError("input_file should contain only one column.")
 
-        new_data = self._dll.add_attr_column(
-            self._data,
-            input_file.name,
-            new_key)
+        new_data = self._dll.add_attr_column(self._data,
+                                             native_str(input_file.name),
+                                             native_str(new_key))
 
         return self._clone(new_data)
 
@@ -3373,7 +3402,7 @@ class GTF(object):
 
         """
 
-        if isinstance(input_file, str):
+        if isinstance(input_file, basestring):
             input_file = open(input_file)
 
         if input_file.closed:
@@ -3391,10 +3420,9 @@ class GTF(object):
             if not token[0].isdigit():
                 raise GTFtkError("Column 1 of intput file should be an int.")
 
-        new_data = self._dll.add_attr_to_pos(
-            self._data,
-            input_file.name,
-            new_key)
+        new_data = self._dll.add_attr_to_pos(self._data,
+                                             native_str(input_file.name),
+                                             native_str(new_key))
 
         return self._clone(new_data)
 

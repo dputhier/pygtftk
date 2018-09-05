@@ -65,6 +65,10 @@ install:
 	@rm -Rf build  dist pygtftk.egg-info ~/.gtftk; \
 	python setup.py install; rm -Rf build  dist pygtftk.egg-info
 
+install_py3k:
+	@rm -Rf build  dist pygtftk.egg-info ~/.gtftk; \
+	python3 setup.py install; rm -Rf build  dist pygtftk.egg-info
+
 install-dbg:
 	@rm -Rf build  dist pygtftk.egg-info ~/.gtftk; \
 	python-dbg setup.py install; rm -Rf build  dist pygtftk.egg-info

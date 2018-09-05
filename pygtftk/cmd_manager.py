@@ -1,12 +1,8 @@
 """ The command manager is intended to store command object
 and their associated functions."""
 
-from __future__ import print_function
 from __future__ import absolute_import
-
-from builtins import str
-from builtins import range
-from builtins import object
+from __future__ import print_function
 
 import argparse
 import errno
@@ -24,6 +20,9 @@ from subprocess import Popen, PIPE
 
 import cloudpickle
 import yaml
+from builtins import object
+from builtins import range
+from builtins import str
 
 import pygtftk
 import pygtftk.cmd_object
@@ -31,6 +30,8 @@ import pygtftk.plugins
 import pygtftk.settings
 import pygtftk.utils
 from pygtftk.arg_formatter import ArgFormatter
+from pygtftk.utils import PY2
+from pygtftk.utils import PY3
 from pygtftk.utils import add_r_lib
 from pygtftk.utils import check_r_packages
 from pygtftk.utils import left_strip_str
@@ -38,6 +39,15 @@ from pygtftk.utils import message
 from pygtftk.utils import mkdir_p
 from pygtftk.utils import print_table
 from pygtftk.version import __version__
+
+# ---------------------------------------------------------------
+# Python2/3  compatibility
+# ---------------------------------------------------------------
+
+
+if PY3:
+    def native_str(x):
+        return bytes(x.encode())
 
 
 # ---------------------------------------------------------------
@@ -324,12 +334,19 @@ class CmdManager(object):
 
     """
 
-    parser = argparse.ArgumentParser(
-        formatter_class=ArgFormatter,
-        description=prg_desc,
-        epilog="------------------------\n",
-        version='%(prog)s v{0}'.format(__version__)
-    )
+    if PY2:
+        parser = argparse.ArgumentParser(
+            formatter_class=ArgFormatter,
+            description=prg_desc,
+            epilog="------------------------\n",
+            version='%(prog)s v{0}'.format(__version__)
+        )
+    if PY3:
+        parser = argparse.ArgumentParser(
+            formatter_class=ArgFormatter,
+            description=prg_desc,
+            epilog="------------------------\n"
+        )
 
     parser._optionals.title = "Main command arguments"
 
@@ -342,6 +359,12 @@ class CmdManager(object):
                         nargs=0,
                         help="Display bats tests for all plugin.",
                         action=GetTests)
+
+    if PY3:
+        parser.add_argument('-v', '--version',
+                            action='version',
+                            version='%(prog)s v{0}'.format(__version__))
+
     """
     parser.add_argument('-r', '--r-libs',
                         nargs=0,
@@ -741,7 +764,10 @@ class CmdManager(object):
     def dump_plugins(self):
         """Save the plugins into a pickle object."""
 
-        f_handler = open(CmdManager.dumped_plugin_path, "w")
+        if PY2:
+            f_handler = open(CmdManager.dumped_plugin_path, "w")
+        if PY3:
+            f_handler = open(CmdManager.dumped_plugin_path, "wb")
         pick = cloudpickle.CloudPickler(f_handler)
         pick.dump((self.cmd_obj_list, self.parser))
         f_handler.close()
@@ -759,8 +785,12 @@ class CmdManager(object):
 
     def _load_dumped_plugins(self):
 
-        f_handler = open(CmdManager.dumped_plugin_path, "r")
-        CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
+        if PY2:
+            f_handler = open(CmdManager.dumped_plugin_path, "r")
+            CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
+        if PY3:
+            f_handler = open(CmdManager.dumped_plugin_path, "rb")
+            CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
         f_handler.close()
 
         for cur_cmd in sorted(CmdManager.cmd_obj_list):

@@ -199,6 +199,7 @@ def mk_matrix(
                     " when a gtf is provided.", type="ERROR")
     else:
         try:
+
             region_bo = BedTool(inputfile.name)
             a = len(region_bo)
         except:

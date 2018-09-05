@@ -2,11 +2,8 @@
 """
 Command Line Interface display format.
 """
-from __future__ import print_function
 from __future__ import absolute_import
-from builtins import str
-from builtins import range
-from builtins import object
+from __future__ import print_function
 
 import argparse
 import glob
@@ -14,11 +11,35 @@ import os
 import re
 from collections import defaultdict
 
+from builtins import object
+from builtins import range
+from builtins import str
 from pybedtools import BedTool
 
+from pygtftk.utils import PY3
 from pygtftk.utils import check_file_or_dir_exists
 from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import message
+
+# ---------------------------------------------------------------
+# Python2/3  compatibility
+# ---------------------------------------------------------------
+
+
+try:
+    basestring
+except NameError:
+    basestring = str
+
+if PY3:
+    from io import IOBase
+
+    file = IOBase
+
+
+# ---------------------------------------------------------------
+# ArgFormatter class
+# ---------------------------------------------------------------
 
 
 class ArgFormatter(argparse.HelpFormatter):
@@ -368,7 +389,7 @@ class SeparatedList(object):
 
     def __eq__(self, other):
 
-        assert isinstance(other, str)
+        assert isinstance(other, basestring)
         other = other.split(self.sep)
 
         if self.type_arg == int:
@@ -691,7 +712,7 @@ class FileWithExtension(argparse.FileType):
     def __call__(self, string):
         match = False
         if self.valid_extensions:
-            if isinstance(self.valid_extensions, str):
+            if isinstance(self.valid_extensions, basestring):
                 if not string.endswith(self.valid_extensions):
                     if re.search(self.valid_extensions, string):
                         match = True
