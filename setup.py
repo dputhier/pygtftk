@@ -56,7 +56,14 @@ version_file.close()
 # Building C library
 # -------------------------------------------------------------------------
 
-cmd_src_list = glob.glob("pygtftk/src/libgtftk/command/*.c")
+cmd_src_list = glob.glob("pygtftk/src/libgtftk/*.c")
+cmd_src_list += glob.glob("pygtftk/src/libgtftk/command/*.c")
+cmd_src_list = list(set(cmd_src_list))
+
+for i in cmd_src_list:
+    print(i)
+
+# print(cmd_src_list)
 
 if platform == "darwin":
     vars = sysconfig.get_config_vars()
@@ -69,6 +76,7 @@ extra_compile_args = ['-Ipygtftk/src/libgtftk',
                       '-O3',
                       '-Wall',
                       '-fPIC',
+                      '-fcommon',
                       '-shared',
                       '-MMD',
                       '-MP',
@@ -80,9 +88,7 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                         library_dirs=['/usr/lib'],
                         libraries=['z'],
                         extra_compile_args=extra_compile_args,
-                        sources=cmd_src_list + ['pygtftk/src/libgtftk/column.c',
-                                                'pygtftk/src/libgtftk/gtf_reader.c',
-                                                'pygtftk/src/libgtftk/libgtftk.c'])
+                        sources=cmd_src_list)
 
 # ----------------------------------------------------------------------
 # Delete the first line from REAME.md
