@@ -1396,7 +1396,7 @@ A simple overlayed profile of all epigenetic marks around promoter. Here *---gro
 	:shell:
 
 .. image:: example_01.png
-	:width: 100%
+	:width: 75%
 
 
 The same diagram is obtained if a bed file pointing to TSS was provided to *mk_matrix* and used in *single_nuc* mode.
@@ -1407,7 +1407,7 @@ The same diagram is obtained if a bed file pointing to TSS was provided to *mk_m
 
 
 .. image:: example_01a.png
-	:width: 100%
+	:width: 75%
 
 Changing colors and applying color order can be done using the following syntax:
 
@@ -1417,7 +1417,7 @@ Changing colors and applying color order can be done using the following syntax:
 
 
 .. image:: example_01b.png
-	:width: 100%
+	:width: 75%
 
 
 A subset of bigwig assessed for coverage can be selected for plotting. This is achieved using the *--subset-bwig* argument:
@@ -1426,7 +1426,7 @@ A subset of bigwig assessed for coverage can be selected for plotting. This is a
 
 
 .. image:: example_01c.png
-	:width: 100%
+	:width: 75%
 
 
 Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5' and 3' regions:
@@ -1436,7 +1436,7 @@ Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provid
 
 
 .. image:: example_02.png
-	:width: 100%
+	:width: 75%
 
 
 Almost the same but increasing the bins dedicated to upstream and dowstream regions (see *---bin-around-frac argument of *mk_matrix*).
@@ -1447,7 +1447,7 @@ Almost the same but increasing the bins dedicated to upstream and dowstream regi
 
 
 .. image:: example_03.png
-	:width: 100%
+	:width: 75%
 
 
 Note that the same is obtained when using user-defined regions (*i.e* when providing a bed as input corresponding to transcript coordinates).
@@ -1457,7 +1457,7 @@ Note that the same is obtained when using user-defined regions (*i.e* when provi
 
 
 .. image:: example_04.png
-	:width: 100%
+	:width: 75%
 
 
 The same dataset used for plotting but adding a normalization step (*ranging*). When using *ranging* normalization, values are expressed as a percentage of the range between max and min value.
@@ -1468,7 +1468,7 @@ The same dataset used for plotting but adding a normalization step (*ranging*). 
 
 
 .. image:: example_04b.png
-	:width: 100%
+	:width: 75%
 
 
 Two examples using statistic 'max' and 2 differents values of '--upper-limit'.
@@ -1476,14 +1476,14 @@ Two examples using statistic 'max' and 2 differents values of '--upper-limit'.
 .. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_a.png  -V 2 -lw 1 -at 5 -s max -ul 1
 
 .. image:: example_04_max_a.png
-	:width: 100%
+	:width: 75%
 
 
 
 .. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_b.png  -V 2 -lw 1 -at 5 -s max -ul 0.99
 
 .. image:: example_04_max_b.png
-	:width: 100%
+	:width: 75%
 
 
 
