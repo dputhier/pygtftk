@@ -26,19 +26,15 @@ extern INDEX_ID *index_gtf(GTF_DATA *gtf_data, char *key);
 extern int update_row_table(GTF_DATA *gtf_data);
 
 /*
- * global variables in libgtftk.c
- */
-extern COLUMN **column;
-
-/*
  * global variables
  */
-ROW_LIST *all_rows = NULL;
+extern COLUMN **column;
+extern ROW_LIST *all_rows;
 
 /*
  * This function is used through a twalk in an index on an attribute to get
  * all the rows that really have the attribute. The rows are put in the global
- * variable all_rows declared above.
+ * variable all_rows.
  */
 static void get_all_rows(const void *nodep, const VISIT which, const int depth) {
 	ROW_LIST *rl = *(ROW_LIST **)nodep;

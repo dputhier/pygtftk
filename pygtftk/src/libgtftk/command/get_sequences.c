@@ -75,7 +75,7 @@ void get_chunk(char *ret, FILE *fasta_file, long seqpos, int L, int N, int p, ch
 		do {
 			toget = MIN(reste_row, reste_row_file);
 			fseek(fasta_file, 1 - toget, SEEK_CUR);
-			fgets(ret + N - reste_row, toget + 1, fasta_file);
+			eof = (fgets(ret + N - reste_row, toget + 1, fasta_file) == NULL);
 			revcomp(ret + N - reste_row, toget);
 			reste_row -= toget;
 			reste_row_file -= toget;
@@ -84,7 +84,7 @@ void get_chunk(char *ret, FILE *fasta_file, long seqpos, int L, int N, int p, ch
 				fseek(fasta_file, -1, SEEK_CUR);
 				reste_row_file = L;
 			}
-		} while (reste_row);
+		} while (reste_row & !eof);
 	}
 }
 
@@ -190,7 +190,7 @@ FILE *get_fasta_file_index(FILE *fasta_file, char *index) {
 	char *buffer = NULL, *p_end_dir = NULL;
 	int maxLineSize = 0;
 	size_t size = 0;
-	unsigned int n;
+	int n;
 	unsigned long old_crc, crc;
 
 	if (access(index, F_OK)) {
@@ -260,7 +260,7 @@ FILE *get_fasta_file_index(FILE *fasta_file, char *index) {
 }
 
 void print_fasta_sequence(SEQUENCE *seq) {
-	int k;
+	unsigned int k;
 	FEATURE *feat;
 
 	fprintf(stdout, "%s\n", seq->header);

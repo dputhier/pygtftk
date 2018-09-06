@@ -62,13 +62,13 @@ extern void *F_malloc(int size, char *file, const char *func, int line);
 						c == 'c' ? 'g' : c)
 
 /*
- * This structure describes the input (i.e. a GTF/BLASTN plain file or gzipped).
+ * This structure describes the input (i.e. a GTF file or a gzipped GTF file).
  * It is created by the get_gtf_reader function in get_reader.c source file.
  * gzFile or plainfile are set depending on the kind of input (gzip or plain).
  * Even if these two elements are exclusive, they are not in an union to be
  * sure to be compatible with the most of native interfaces.
  */
-typedef struct TEXTFILE_READER {
+typedef struct GTF_READER {
 	/*
 	 * The file name with its path (or "-" for standard input)
 	 */
@@ -88,7 +88,7 @@ typedef struct TEXTFILE_READER {
 	 * The plain file descriptor
 	 */
 	FILE *plainfile;
-} TEXTFILE_READER;
+} GTF_READER;
 
 /*
  * The structure that represents an attribute (key/value) in the last column of
@@ -345,41 +345,8 @@ typedef struct SORT_ROW {
 	int value;
 } SORT_ROW;
 
-typedef struct BLAST_HEADER {
-	char *program_name;
-	char *database_name;
-	unsigned int database_length;
-	int database_nb_sequences;
-} BLAST_HEADER;
-
-typedef struct BLAST_QUERY {
-	char *query_name;
-	int query_length;
-	int nb_subject;
-} BLAST_QUERY;
-
-typedef struct BLAST_SUBJECT {
-	char *subject_name;
-	int subject_length;
-	int nb_HSP;
-} BLAST_SUBJECT;
-
-typedef struct BLAST_HSP {
-	BLAST_HEADER bh;
-	BLAST_QUERY bq;
-	BLAST_SUBJECT bs;
-	double score;
-	double expect;
-	char *identities;
-	int identities_percent;
-	char *gaps;
-	int gap_percent;
-	char strand_query, strand_subject;
-	int query_start, query_end, subject_start, subject_end;
-} BLAST_HSP;
-
 /*
- * Prototypes for the visible functions (callable by external client)
+ * Prototypes for the visible functions (callable by external cient)
  */
 GTF_DATA *load_GTF(char *input);
 GTF_DATA *select_by_key(GTF_DATA *gtf_data, char *key, char *value, int not);
@@ -389,7 +356,7 @@ GTF_DATA *select_by_number_of_exon(GTF_DATA *gtf_data, int min, int max);
 GTF_DATA *select_by_genomic_location(GTF_DATA *gtf_data, int nb_loc, char **chr, int *begin_gl, int *end_gl);
 RAW_DATA *extract_data(GTF_DATA *gtf_data, char *key, int base, int uniq);
 void print_raw_data(RAW_DATA *raw_data, char delim, char *output);
-GTF_DATA *select_transcript(GTF_DATA *gtf_data, int type);
+//GTF_DATA *select_transcript(GTF_DATA *gtf_data, int type);
 SEQUENCES *get_sequences(GTF_DATA *gtf_data, char *genome_file, int intron, int rc);
 int free_gtf_data(GTF_DATA *gtf_data);
 int free_raw_data(RAW_DATA *raw_data);
@@ -406,10 +373,9 @@ GTF_DATA *select_by_positions(GTF_DATA *gtf_data, int *pos, int size);
 GTF_DATA *add_exon_number(GTF_DATA *gtf_data, char *exon_number_field);
 GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features, char *key, char *txt, int suffix);
 GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_key, char *sep);
-GTF_DATA *load_blast(char *input);
-GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 void clear_indexes(void);
 GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
+GTF_DATA *select_transcript2(GTF_DATA *gtf_data, int type);
 int int_array_test(int *pos, int size);
 
 #endif /* GTFTOOLKIT_GTFTK_SRC_LIB_LIBGTFTK_H_ */

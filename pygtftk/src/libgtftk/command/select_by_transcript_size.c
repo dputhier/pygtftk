@@ -25,18 +25,9 @@ extern void add_attribute(GTF_ROW *row, char *key, char *value);
  * global variables declaration
  */
 extern COLUMN **column;
-
-/*
- * We need some local variables because the research is made with the twalk
- * mechanism (tree browsing) in a separate function (action_sbts) with
- * restricted arguments.
- * 	row_list:		a ROW_LIST to aggregate all the selected rows (their rank)
- * 	gtf_d:			a local copy of the GTF_DATA to process
- * 	min_ts, max_ts:	the local copies of min and max transcript size values
- */
-ROW_LIST *row_list;
-GTF_DATA *gtf_d;
-int min_ts, max_ts;
+extern ROW_LIST *row_list;
+extern GTF_DATA *gtf_d;
+extern int min_ts, max_ts;
 
 /*
  * The function used by twalk on each node of the index tree.

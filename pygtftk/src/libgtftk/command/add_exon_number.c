@@ -18,20 +18,10 @@ extern GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data);
  * global variables declaration
  */
 extern COLUMN **column;
-
-/*
- * We need some local variables because the research is made with the twalk
- * mechanism (tree browsing) in a separate function (action_aen) with
- * restricted arguments.
- * 	gtf_d:			a local copy of the GTF_DATA to process
- * 	sort_row:		a table of exon rows to sort to get their ranks
- * 	nb_sort_row:	the number of rows in the sort_row table
- * 	enf:			the name of the attribute
- */
-GTF_DATA *gtf_d;
-SORT_ROW *sort_row;
-int nb_sort_row;
-char *enf;
+extern GTF_DATA *gtf_d;
+extern SORT_ROW *sort_row;
+extern int nb_sort_row;
+extern char *enf;
 
 /*
  * the comparison function for SORT_ROW structures. Used to sort the exon rows
