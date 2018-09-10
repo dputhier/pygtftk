@@ -166,10 +166,7 @@ for line in conf_file:
     if line.startswith("release = "):
         line = "release = " + "u'" + __version__ + "'\n"
 
-    if PY3:
-        tmp_file_conf.write(str.encode(line))
-    elif PY2:
-        tmp_file_conf.write(line)
+    tmp_file_conf.write(line)
 
 tmp_file_conf.close()
 conf_file.close()
