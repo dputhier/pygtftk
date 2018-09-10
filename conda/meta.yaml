@@ -54,7 +54,7 @@ requirements:
     - biopython >=1.69
     - zlib <1.2.8-3
     - matplotlib >=2.0.2
-    - plotnine >=0.4.0
+    - plotnine >=0.5.0
     - unzip
     - gawk
 
@@ -84,7 +84,7 @@ requirements:
     - biopython >=1.69
     - zlib <1.2.8-3
     - matplotlib >=2.0.2
-    - plotnine >=0.4.0
+    - plotnine >=0.5.0
     - unzip
     - gawk
 
