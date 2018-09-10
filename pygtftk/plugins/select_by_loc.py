@@ -140,7 +140,7 @@ def select_by_loc(inputfile=None,
         out = gtf.select_by_key(ft_type + '_id',
                                 ",".join(id_list),
                                 invert_match=invert_match).write(outputfile,
-                                                                 gc_off = True)
+                                                                 gc_off=True)
     else:
         if ft_type == 'transcript':
 

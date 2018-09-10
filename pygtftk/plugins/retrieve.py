@@ -8,6 +8,7 @@ import sys
 
 import ftputil
 from ftputil.error import FTPOSError
+
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -132,7 +133,6 @@ def retrieve(species_name=None,
         host = "ftp.ensemblgenomes.org"
         user = "anonymous"
         password = "anonymous@gtftk.fr"
-
 
     try:
         ftp = ftputil.FTPHost(host, user, password)

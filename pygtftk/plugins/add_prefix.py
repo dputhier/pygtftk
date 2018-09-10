@@ -82,7 +82,7 @@ def add_prefix(inputfile=None,
                    key,
                    text,
                    suffix).write(outputfile,
-                                 gc_off = True)
+                                 gc_off=True)
 
     close_properly(outputfile, inputfile)
 
