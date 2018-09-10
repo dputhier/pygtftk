@@ -17,4 +17,4 @@ cffi >=1.10.0
 pyparsing >=2.2.0
 biopython >=1.69
 matplotlib >=2.0.2
-plotnine >=0.4.0
+plotnine >=0.5.0
