@@ -10,6 +10,7 @@ returned respectively:
 """
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import sys
 from collections import OrderedDict
@@ -73,9 +74,9 @@ class FieldSet(object):
 
         """
         if ptr is not None:
-            self.fields = [ffi.string(ptr[x]) for x in range(size)]
+            self.fields = [ffi.string(ptr[x]).decode() for x in range(size)]
         elif alist is not None:
-            self.fields = alist
+            self.fields = [x.decode() for x in alist]
         else:
             raise GTFtkError('Unsupported type.')
         if ft_type is not None:
@@ -167,12 +168,12 @@ class FastaSequence(object):
 
         if ptr is not None:
 
-            self.header = ffi.string(ptr.header)
-            self.chrom = ffi.string(ptr.seqid)
+            self.header = ffi.string(ptr.header).decode()
+            self.chrom = ffi.string(ptr.seqid).decode()
             self.strand = ptr.strand
-            self.gene_id = ffi.string(ptr.gene_id)
-            self.transcript_id = ffi.string(ptr.transcript_id)
-            self.sequence = ffi.string(ptr.sequence)
+            self.gene_id = ffi.string(ptr.gene_id).decode()
+            self.transcript_id = ffi.string(ptr.transcript_id).decode()
+            self.sequence = ffi.string(ptr.sequence).decode()
 
             self.start = str(ptr.start)
             self.end = str(ptr.end)
@@ -265,17 +266,17 @@ class Feature(object):
         if ptr is not None:
             self.rank = ptr.rank
             self.nb_key = ptr.attributes.nb
-            self.chrom = ffi.string(ptr.field[0])
-            self.src = ffi.string(ptr.field[1])
-            self.ft_type = ffi.string(ptr.field[2])
-            self.start = int(ffi.string(ptr.field[3]))
-            self.end = int(ffi.string(ptr.field[4]))
-            self.score = ffi.string(ptr.field[5])
-            self.strand = ffi.string(ptr.field[6])
-            self.frame = ffi.string(ptr.field[7])
+            self.chrom = ffi.string(ptr.field[0]).decode()
+            self.src = ffi.string(ptr.field[1]).decode()
+            self.ft_type = ffi.string(ptr.field[2]).decode()
+            self.start = int(ffi.string(ptr.field[3]).decode())
+            self.end = int(ffi.string(ptr.field[4]).decode())
+            self.score = ffi.string(ptr.field[5]).decode()
+            self.strand = ffi.string(ptr.field[6]).decode()
+            self.frame = ffi.string(ptr.field[7]).decode()
             self.attr = OrderedDict()
             for k, v in zip(ptr.attributes.attr[0:self.nb_key], ptr.attributes.attr[0:self.nb_key]):
-                self.attr[ffi.string(k.key)] = ffi.string(v.value)
+                self.attr[ffi.string(k.key).decode()] = ffi.string(v.value).decode()
         elif alist is not None:
             self.rank = 1
             self.nb_key = len(alist[8])
@@ -366,13 +367,13 @@ class Feature(object):
         >>> assert a_feat.get_5p_end() == 100
 
         """
+
         if self.strand == '+':
             return self.start
         elif self.strand == '-':
             return self.end
         else:
-            raise GTFtkError("Can not retrieve 5'end "
-                             "from an unstranded features.")
+            raise GTFtkError("Can not retrieve 5'end from an unstranded features.")
 
     def get_3p_end(self):
         """Get the 3' end of the feature. Returns 'end' if on '+' strand 'start'
@@ -386,12 +387,12 @@ class Feature(object):
 
         """
 
-        if self.strand == b'+':
+        if self.strand == '+':
             return self.end
-        elif self.strand == b'-':
+        elif self.strand == '-':
             return self.start
         else:
-            raise GTFtkError("Can not retrieve 5'end from an unstranded features.")
+            raise GTFtkError("Can not retrieve 3'end from an unstranded features.")
 
     def get_attr_names(self):
         """Returns the attribute names from the Feature.
@@ -421,24 +422,24 @@ class Feature(object):
 
         tok_list = list()
         for key, val in list(self.attr.items()):
-            tok_list += [key + b' "' + val + b'";']
+            tok_list += [key + ' "' + val + '";']
 
         if pygtftk.utils.ADD_CHR == 1:
-            chrom_out = b'chr' + self.chrom
+            chrom_out = 'chr' + self.chrom
         else:
             chrom_out = self.chrom
 
         token = [chrom_out,
                  self.src,
                  self.ft_type,
-                 bytes(self.start),
-                 bytes(self.end),
-                 bytes(self.score),
+                 str(self.start),
+                 str(self.end),
+                 str(self.score),
                  self.strand,
-                 bytes(self.frame),
-                 b' '.join(tok_list)]
+                 str(self.frame),
+                 ' '.join(tok_list)]
 
-        return b'\t'.join(token)
+        return '\t'.join(token)
 
     def format_tab(self, attr_list, sep="\t"):
         r"""Returns Feature as a string in tabulated format.
@@ -454,7 +455,7 @@ class Feature(object):
         >>> assert feat.format_tab('transcript_id') == a
 
         """
-        if isinstance(attr_list, str):
+        if isinstance(attr_list, basestring):
             attr_list = [attr_list]
 
         tok = list()
@@ -520,7 +521,7 @@ class Feature(object):
                       str(self.score),
                       self.strand]
 
-        pygtftk.utils.write_properly(b'\t'.join(token), outputfile)
+        pygtftk.utils.write_properly('\t'.join(token), outputfile)
 
     def write_gtf_to_bed6(self,
                           name=["transcript_id", "gene_id"],
@@ -574,7 +575,7 @@ class Feature(object):
                   str(self.score),
                   self.strand]
 
-        pygtftk.utils.write_properly(b'\t'.join(token), outputfile)
+        pygtftk.utils.write_properly('\t'.join(token), outputfile)
 
     def write_bed_5p_end(self,
                          name=None,
@@ -612,8 +613,8 @@ class Feature(object):
             chrom_out = self.chrom
 
         token = [chrom_out,
-                 bytes(int(self.get_5p_end()) - 1),
-                 bytes(self.get_5p_end())]
+                 str(int(self.get_5p_end()) - 1),
+                 str(self.get_5p_end())]
 
         if format == 'bed6' or format == 'bed':
             if name is None:
@@ -622,7 +623,7 @@ class Feature(object):
                       str(self.score),
                       self.strand]
 
-        pygtftk.utils.write_properly(b'\t'.join(token), outputfile)
+        pygtftk.utils.write_properly('\t'.join(token), outputfile)
 
     def write_bed_3p_end(self,
                          name=None,
@@ -668,7 +669,7 @@ class Feature(object):
                       str(self.score),
                       self.strand]
 
-        pygtftk.utils.write_properly(b'\t'.join(token), outputfile)
+        pygtftk.utils.write_properly('\t'.join(token), outputfile)
 
     def add_attr(self, key, val):
         """Add an attribute to the Feature instance.
@@ -782,7 +783,7 @@ class Feature(object):
 
         """
 
-        if isinstance(attr_name, str):
+        if isinstance(attr_name, basestring):
             attr_name = [attr_name]
 
         if not isinstance(attr_name, list):

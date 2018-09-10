@@ -9,6 +9,7 @@ import argparse
 import glob
 import os
 import re
+import sys
 from collections import defaultdict
 
 from builtins import object
@@ -737,8 +738,14 @@ class FileWithExtension(argparse.FileType):
         outputdir = os.path.dirname(os.path.abspath(string))
 
         if not os.path.exists(outputdir):
-            if self._mode == 'w':
+            if 'w' in self._mode:
                 message("Directory not found. Creating.", type="WARNING")
                 os.makedirs(outputdir)
+
+        if PY3:
+            if 'w' in self._mode:
+                self._mode = 'wb'
+                message("Python3 detected, setting file writing mode to 'wb' mode (arg_formatter).", type="DEBUG",
+                        force=True)
 
         return super(FileWithExtension, self).__call__(string)

@@ -2,9 +2,6 @@
 A module to compute bigwig coverage over a set of regions (bed).
 """
 from __future__ import division
-from builtins import zip
-from builtins import str
-from builtins import range
 
 import multiprocessing
 import os
@@ -13,6 +10,9 @@ import sys
 from itertools import repeat
 
 import numpy as np
+from builtins import range
+from builtins import str
+from builtins import zip
 from pybedtools import BedTool
 
 from pygtftk.utils import GTFtkError
@@ -268,6 +268,7 @@ def bw_cov_mp(bw_list=None,
     Returns a file.
 
     """
+
     n_region_to_proceed = len(BedTool(region_file.name))
 
     message("Received " +
@@ -279,18 +280,18 @@ def bw_cov_mp(bw_list=None,
     pool = multiprocessing.Pool(nb_proc)
     coverage_list = pool.map_async(_big_wig_coverage_worker,
                                    list(zip(tokens,
-                                       repeat(bw_list),
-                                       repeat(region_file.name),
-                                       repeat(bin_nb),
-                                       repeat(pseudo_count),
-                                       repeat(n_highest),
-                                       repeat(False),
-                                       repeat(False),
-                                       repeat(None),
-                                       repeat(labels),
-                                       repeat(zero_to_na),
-                                       repeat(stat),
-                                       repeat(verbose)))).get(9999999)
+                                            repeat(bw_list),
+                                            repeat(region_file.name),
+                                            repeat(bin_nb),
+                                            repeat(pseudo_count),
+                                            repeat(n_highest),
+                                            repeat(False),
+                                            repeat(False),
+                                            repeat(None),
+                                            repeat(labels),
+                                            repeat(zero_to_na),
+                                            repeat(stat),
+                                            repeat(verbose)))).get(9999999)
 
     if False in coverage_list:
         sys.stderr.write("Aborting...")
@@ -386,25 +387,22 @@ def bw_profile_mp(in_bed_file=None,
 
     if nb_proc > 1:
         argss = list(zip(tokens,
-                    repeat(big_wig),
-                    repeat(in_bed_file.name),
-                    repeat(bin_nb),
-                    repeat(pseudo_count),
-                    repeat(None),
-                    repeat(True),
-                    repeat(stranded),
-                    repeat(type),
-                    repeat(labels),
-                    repeat(zero_to_na),
-                    repeat(stat),
-                    repeat(verbose)))
-
+                         repeat(big_wig),
+                         repeat(in_bed_file),
+                         repeat(bin_nb),
+                         repeat(pseudo_count),
+                         repeat(None),
+                         repeat(True),
+                         repeat(stranded),
+                         repeat(type),
+                         repeat(labels),
+                         repeat(zero_to_na),
+                         repeat(stat),
+                         repeat(verbose)))
 
         tf = open("/Users/puthier/git/project_dev/pygtftk/test.txt", "w")
         for res_file_list in pool.map_async(_big_wig_coverage_worker,
                                             argss).get(999999):
-
-
 
             for cur_file in flatten_list([res_file_list], outlist=[]):
 
@@ -420,7 +418,7 @@ def bw_profile_mp(in_bed_file=None,
         for tok in tokens:
             res_file = _big_wig_coverage_worker((tok,
                                                  big_wig,
-                                                 in_bed_file.name,
+                                                 in_bed_file,
                                                  bin_nb,
                                                  pseudo_count,
                                                  None,
@@ -440,6 +438,6 @@ def bw_profile_mp(in_bed_file=None,
                     else:
                         outputfile.write(i)
 
-    close_properly(in_bed_file, outputfile)
+    close_properly(outputfile)
 
     return outputfile

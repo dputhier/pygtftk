@@ -109,11 +109,11 @@ def example(outputfile=None,
         if format == "gtf":
             try:
                 gtf = GTF(get_example_file(datasetname=dataset,
-                                           ext=format)[0])
+                                           ext=format)[0], check_ensembl_format=False)
             except:
                 try:
                     gtf = GTF(get_example_file(datasetname=dataset,
-                                               ext=format + ".gz")[0])
+                                               ext=format + ".gz")[0], check_ensembl_format=False)
                 except:
                     message("No GTF file found for this dataset.",
                             type="ERROR")

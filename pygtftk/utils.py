@@ -19,12 +19,26 @@ from tempfile import NamedTemporaryFile
 
 import pysam
 import requests
-from builtins import range
-from builtins import str
-from builtins import zip
 from future.utils import old_div
 
 import pygtftk
+
+# -------------------------------------------------------------------------
+# Python Version
+# -------------------------------------------------------------------------
+
+
+PY3 = sys.version_info[0] == 3
+PY2 = sys.version_info[0] == 2
+if PY3:
+    from builtins import range
+    from builtins import str
+    from builtins import zip
+
+# -------------------------------------------------------------------------
+# VARIABLES
+# -------------------------------------------------------------------------
+
 
 # The level of verbosity
 VERBOSITY = 0
@@ -51,14 +65,6 @@ NEWLINE = '\n'
 # R libraries
 R_LIB = defaultdict(list)
 
-# -------------------------------------------------------------------------
-# Python Version
-# -------------------------------------------------------------------------
-
-
-PY3 = sys.version_info[0] == 3
-PY2 = sys.version_info[0] == 2
-
 # ---------------------------------------------------------------
 # Python2/3  compatibility
 # ---------------------------------------------------------------
@@ -73,6 +79,10 @@ if PY3:
     from io import IOBase
 
     file = IOBase
+
+if PY3:
+    def native_str(x):
+        return bytes(x.encode())
 
 
 # ---------------------------------------------------------------
@@ -147,9 +157,11 @@ def make_tmp_file(prefix='tmp',
                 os.mkdir(TMP_DIR)
 
         tmp_file = NamedTemporaryFile(delete=False,
+                                      mode="w",
                                       prefix=prefix + "_gtftk_",
                                       suffix=suffix,
                                       dir=TMP_DIR)
+
     else:
         if not os.path.exists(dir):
             msg = "Creating directory {d}."
@@ -157,6 +169,7 @@ def make_tmp_file(prefix='tmp',
             os.mkdir(dir)
 
         tmp_file = NamedTemporaryFile(delete=False,
+                                      mode="w",
                                       prefix=prefix + "_gtftk_",
                                       suffix=suffix,
                                       dir=dir)
@@ -581,19 +594,21 @@ def close_properly(*args):
                 afile.close()
 
 
-def write_properly(string, afile):
+def write_properly(a_string, afile):
     """Write a string to a file. If file is None, write string to stdout.
 
-    :param string: a character string.
+    :param a_string: a character string.
     :param afile: a file object.
 
     >>> from pygtftk.utils import write_properly
 
     """
+
     if afile is not None and afile.name != '<stdout>':
-        afile.write(string + "\n")
+        afile.write(a_string + "\n")
+
     else:
-        sys.stdout.write(string + "\n")
+        sys.stdout.write(a_string + "\n")
 
 
 def make_outdir_and_file(out_dir=None,
@@ -724,24 +739,24 @@ def message(msg, nl=True, type="INFO", force=False):
 
         if cmd == "":
             if nl:
-                sys.stderr.write("    |--- {c}-{a} : {b}\n".format(a=type,
-                                                                   b=msg,
-                                                                   c=ho_min))
+                sys.stderr.write(" |-- {c}-{a} : {b}\n".format(a=type,
+                                                               b=msg,
+                                                               c=ho_min))
             else:
-                sys.stderr.write("    |--- {c}-{a} : {b}".format(a=type,
-                                                                 b=msg,
-                                                                 c=ho_min))
+                sys.stderr.write(" |-- {c}-{a} : {b}".format(a=type,
+                                                             b=msg,
+                                                             c=ho_min))
         else:
             if nl:
-                sys.stderr.write("    |--- {c}-{a}-{d} : {b}\n".format(a=type,
-                                                                       b=msg,
-                                                                       c=ho_min,
-                                                                       d=cmd))
+                sys.stderr.write(" |-- {c}-{a}-{d} : {b}\n".format(a=type,
+                                                                   b=msg,
+                                                                   c=ho_min,
+                                                                   d=cmd))
             else:
-                sys.stderr.write("    |--- {c}-{a}-{d} : {b}".format(a=type,
-                                                                     b=msg,
-                                                                     c=ho_min,
-                                                                     d=cmd))
+                sys.stderr.write(" |-- {c}-{a}-{d} : {b}".format(a=type,
+                                                                 b=msg,
+                                                                 c=ho_min,
+                                                                 d=cmd))
 
     if type == "ERROR":
 

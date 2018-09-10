@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 from __future__ import division
 from __future__ import print_function
-from builtins import str
-from builtins import range
 
 import argparse
 import os
@@ -11,6 +9,8 @@ import sys
 import zipfile
 
 import pandas as pd
+from builtins import range
+from builtins import str
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -372,7 +372,7 @@ def mk_matrix(
     outputfile_list = {}
     message("Using %d bins for main region." % bin_nb)
 
-    tmp_file = bw_profile_mp(in_bed_file=main_region_bed,
+    tmp_file = bw_profile_mp(in_bed_file=main_region_bed.name,
                              nb_proc=nb_proc,
                              big_wig=[x.name for x in bigwiglist],
                              bin_nb=bin_nb,
@@ -424,7 +424,7 @@ def mk_matrix(
 
             ups_region_bo.saveas(upstream_bed_file.name)
 
-            tmp_file = bw_profile_mp(in_bed_file=upstream_bed_file,
+            tmp_file = bw_profile_mp(in_bed_file=upstream_bed_file.name,
                                      nb_proc=nb_proc,
                                      big_wig=[
                                          x.name for x in bigwiglist],
@@ -462,7 +462,7 @@ def mk_matrix(
 
             dws_region_bo.saveas(dws_bed_file.name)
 
-            tmp_file = bw_profile_mp(in_bed_file=dws_bed_file,
+            tmp_file = bw_profile_mp(in_bed_file=dws_bed_file.name,
                                      nb_proc=nb_proc,
                                      big_wig=[
                                          x.name for x in bigwiglist],

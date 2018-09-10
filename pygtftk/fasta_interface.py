@@ -3,15 +3,15 @@ Class declaration of the FASTA object (may be returned by GTF object methods).
 """
 from __future__ import absolute_import
 
-from builtins import str
-from builtins import range
-from builtins import object
 import textwrap
 from collections import OrderedDict
 
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+from builtins import object
+from builtins import range
+from builtins import str
 from cffi import FFI
 
 from pygtftk.Line import FastaSequence
@@ -136,11 +136,11 @@ class FASTA(object):
                 description += '|rev_comp'
 
         for i in range(self._data.nb):
-            record = SeqRecord(Seq(ffi.string(self._data.sequence[i].sequence),
+            record = SeqRecord(Seq(ffi.string(self._data.sequence[i].sequence).decode(),
                                    IUPAC.ambiguous_dna),
                                id=ffi.string(
-                                   self._data.sequence[i].transcript_id),
-                               name=ffi.string(self._data.sequence[i].gene_id),
+                                   self._data.sequence[i].transcript_id).decode(),
+                               name=ffi.string(self._data.sequence[i].gene_id).decode(),
                                description="")
             record.description = description
 
@@ -182,13 +182,13 @@ class FASTA(object):
 
         for i in range(self._data.nb):
             b = self._data.sequence[i]
-            seq = ffi.string(b.sequence)
+            seq = ffi.string(b.sequence).decode()
             rg = list(range(b.features.nb))
             for j in rg:
                 c = b.features.feature[j]
-                name = ffi.string(c.name)
-                tx_id = ffi.string(b.transcript_id)
-                gn_id = ffi.string(b.gene_id)
+                name = ffi.string(c.name).decode()
+                tx_id = ffi.string(b.transcript_id).decode()
+                gn_id = ffi.string(b.gene_id).decode()
 
                 if name == feat:
                     s = c.tr_start
@@ -203,7 +203,7 @@ class FASTA(object):
                                 gn_id]
                     fs = FastaSequence(alist=[">" + "|".join(name),
                                               seq[s:e + 1],
-                                              ffi.string(b.seqid),
+                                              ffi.string(b.seqid).decode(),
                                               b.strand,
                                               gn_id,
                                               tx_id,
@@ -268,7 +268,7 @@ class FASTA(object):
 
         for i in range(self._data.nb):
             b = self._data.sequence[i]
-            seq = ffi.string(b.sequence)
+            seq = ffi.string(b.sequence).decode()
             if self.rev_comp:
                 if b.strand == "-":
                     rg = reversed(list(range(b.features.nb)))
@@ -278,9 +278,9 @@ class FASTA(object):
                 rg = list(range(b.features.nb))
             for j in rg:
                 c = b.features.feature[j]
-                name = ffi.string(c.name)
-                tx_id = ffi.string(b.transcript_id)
-                gn_id = ffi.string(b.gene_id)
+                name = ffi.string(c.name).decode()
+                tx_id = ffi.string(b.transcript_id).decode()
+                gn_id = ffi.string(b.gene_id).decode()
                 if name == feat:
                     s = c.tr_start
                     e = c.tr_end
@@ -293,7 +293,7 @@ class FASTA(object):
 
                     d_out[(gn_id,
                            tx_id,
-                           ffi.string(b.seqid),
+                           ffi.string(b.seqid).decode(),
                            start,
                            end,
                            b.strand,
@@ -336,8 +336,8 @@ class FASTA(object):
 
         for i in range(self._data.nb):
             tx = self._data.sequence[i]
-            outputfile.write(ffi.string(tx.header) + "\n")
-            outputfile.write(ffi.string(tx.sequence) + "\n")
+            outputfile.write(ffi.string(tx.header).decode() + "\n")
+            outputfile.write(ffi.string(tx.sequence).decode() + "\n")
 
 
 if __name__ == "__main__":

@@ -44,10 +44,10 @@ from pygtftk.version import __version__
 # Python2/3  compatibility
 # ---------------------------------------------------------------
 
-
 if PY3:
-    def native_str(x):
-        return bytes(x.encode())
+    from io import IOBase
+
+    file = IOBase
 
 
 # ---------------------------------------------------------------

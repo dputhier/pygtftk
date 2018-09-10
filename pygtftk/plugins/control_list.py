@@ -10,7 +10,6 @@
 import argparse
 import os
 import warnings
-from builtins import zip
 
 import numpy as np
 import pandas as pd
@@ -20,8 +19,7 @@ from plotnine import (aes, xlab,
                       ylab, geom_jitter,
                       geom_rug, facet_wrap,
                       theme, element_blank,
-                      theme_bw, scale_fill_manual,
-                      geom_violin)
+                      theme_bw, scale_fill_manual, geom_violin)
 from plotnine import ggplot
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -178,6 +176,9 @@ def control_list(in_file=None,
         line = chomp(line)
         line = line.split("\t")
 
+        if len(line) > 2:
+            message("Need a two columns file.",
+                    type="ERROR")
         if skip_first:
             if p == 0:
                 continue
@@ -273,11 +274,13 @@ def control_list(in_file=None,
     # -------------------------------------------------------------------------
 
     if skip_first:
-        exp_data = pd.read_csv(in_file.name, sep="\t", header=0, index_col=0)
+        exp_data = pd.read_csv(in_file.name, sep="\t",
+                               header=None, index_col=None,
+                               skiprows=[0], names=['exprs'])
     else:
-        exp_data = pd.read_csv(in_file.name, sep="\t", header=None, index_col=0)
 
-    exp_data.columns = ['exprs']
+        exp_data = pd.read_csv(in_file.name, sep="\t", names=['exprs'], index_col=0)
+
     exp_data.exprs = exp_data.exprs.values + pseudo_count
 
     # -------------------------------------------------------------------------
@@ -369,13 +372,14 @@ def control_list(in_file=None,
 
     p = ggplot(data, aes(x='sets', y='exprs', fill='genesets'))
 
-    p += scale_fill_manual(values=dict(list(zip(['Reference', 'Control'], set_colors))))
+    p += scale_fill_manual(values=dict(zip(['Reference', 'Control'], set_colors)))
 
     p += geom_violin(color=None)
 
     p += xlab('Gene sets') + ylab(ylabel)
 
     p += facet_wrap('~genesets')
+
     if rug:
         p += geom_rug()
 

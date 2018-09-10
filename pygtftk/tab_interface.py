@@ -2,11 +2,12 @@
 Class declaration of the TAB object (may be returned by a GTF instance).
 """
 from __future__ import absolute_import
-from builtins import range
-from builtins import object
+
 import textwrap
 
 import pandas as pd
+from builtins import object
+from builtins import range
 from cffi import FFI
 
 from pygtftk.Line import FieldSet
@@ -57,13 +58,7 @@ class TAB(object):
         self.colnames = []
         for i in range(self.ncols):
             self.colnames += [ffi.string(ffi.cast('char *',
-                                                  ptr.column_name[i]))]
-
-    """
-    def __del__(self):
-        if self._data is not None:
-            self._dll.free_raw_data(self._data)
-    """
+                                                  ptr.column_name[i])).decode()]
 
     def __iter__(self):
         """
@@ -92,18 +87,20 @@ class TAB(object):
 
     def iter_as_list(self):
         """
-        Iterate over the TAB object and return a list of self.nb_columns elements..
+        Iterate over the TAB object and return a list of self.nb_columns elements.
+        #TODO: example
         """
 
         for i in range(self.nrows):
-            yield [ffi.string(x) for x in self._data.data[i][0:self.ncols]]
+            yield [ffi.string(x).decode() for x in self._data.data[i][0:self.ncols]]
 
     def as_data_frame(self):
         """Convert the TAB object into a dataframe.
+        #TODO: example
         """
         out_list = []
         for i in range(self.nrows):
-            out_list += [[ffi.string(x)
+            out_list += [[ffi.string(x).decode()
                           for x in self._data.data[i][0:self.ncols]]]
         df = pd.DataFrame(out_list, columns=self.colnames)
         return df
@@ -162,7 +159,9 @@ class TAB(object):
         return msg
 
     def __len__(self):
-        """Object len (number of rows)."""
+        """Object len (number of rows).
+        #TODO: example
+        """
         if self._data is not None:
             return self.nrows
         else:

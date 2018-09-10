@@ -467,6 +467,7 @@ class GTF(object):
             self._data = self._dll.load_GTF(native_str(self.fn))
 
             if check_ensembl_format:
+
                 tab = self.extract_data_iter_list("feature")
 
                 not_found = True
@@ -590,9 +591,12 @@ class GTF(object):
         """
         addr = re.search("([^\s]+)>", repr(self._data))
         addr = addr.group(1)
+
+        # l = lines, p=ptr_addr, f=file, i=id, n=gtf number
+
         if pygtftk.utils.VERBOSITY >= 3:
             msg = msg + \
-                  "(#lines={a}, ptr_addr={c}, file={b}, id={d}, nb={e})."
+                  "(#l={a}, p={c}, f={b}, i={d}, n={e})."
             msg = msg.format(a=self._data.size,
                              b=self.fn,
                              c=addr,
@@ -600,26 +604,10 @@ class GTF(object):
                              e=self._nb)
             message(msg, type=type)
 
-        elif pygtftk.utils.VERBOSITY == 2:
-            msg = msg + \
-                  "(#lines={a}, ptr_addr={c}, file={b}, id={d})."
-            msg = msg.format(a=self._data.size,
-                             b=self.fn,
-                             c=addr,
-                             d=id(self))
-            message(msg, type=type)
-
-        elif pygtftk.utils.VERBOSITY == 1:
-            msg = msg + \
-                  "(#lines={a}, ptr_addr={c}, file={b})."
-            msg = msg.format(a=self._data.size,
-                             b=self.fn,
-                             c=addr)
-            message(msg, type=type)
 
         else:
             msg = msg + \
-                  "(#lines={a}, file={b})."
+                  "(#l={a}, f={b})."
             msg = msg.format(a=self._data.size,
                              b=os.path.basename(self.fn))
             message(msg, type=type)
@@ -884,7 +872,7 @@ class GTF(object):
             tab = TAB(self.fn,
                       self._dll.extract_data(
                           self._data,
-                          "gene_id,seqid",
+                          native_str("gene_id,seqid"),
                           1,
                           0),
                       dll=GTF._dll)
@@ -998,7 +986,7 @@ class GTF(object):
             for i in range(ptr.nb_rows):
                 sub = list()
                 for j in range(ptr.nb_columns):
-                    sub.append(ffi.string(ptr.data[i][j]))
+                    sub.append(ffi.string(ptr.data[i][j]).decode())
 
                 if no_na:
                     if "." not in sub:
@@ -1027,7 +1015,7 @@ class GTF(object):
                                          nr)
 
             res_list = [
-                ffi.string(x[0]) for x in list(
+                ffi.string(x[0]).decode() for x in list(
                     ptr.data[
                     0:ptr.nb_rows])]
 
@@ -1047,7 +1035,7 @@ class GTF(object):
                                          nr)
 
             res_list = [
-                ffi.string(x[0]) for x in list(
+                ffi.string(x[0]).decode() for x in list(
                     ptr.data[
                     0:ptr.nb_rows])]
 
@@ -1229,7 +1217,7 @@ class GTF(object):
         for i in range(nb_rows):
             l = list()
             for j in range(nb_cols):
-                l += [ffi.string(ptr.data[i][j])]
+                l += [ffi.string(ptr.data[i][j]).decode()]
             yield l
 
     def get_gn_strand(self):
@@ -1917,7 +1905,7 @@ class GTF(object):
         ptr = self._dll.get_attribute_list(self._data)
 
         for i in range(ptr.size):
-            alist += [ffi.string(ptr.data[i][0])]
+            alist += [ffi.string(ptr.data[i][0]).decode()]
 
         if as_dict:
             d = dict()
@@ -1957,10 +1945,10 @@ class GTF(object):
         alist = list()
         for i in range(ptr.size):
             if not count:
-                alist += [ffi.string(ptr.data[i][1])]
+                alist += [ffi.string(ptr.data[i][1]).decode()]
             else:
-                alist += [[ffi.string(ptr.data[i][1]),
-                           ffi.string(ptr.data[i][0])]]
+                alist += [[ffi.string(ptr.data[i][1]).decode(),
+                           ffi.string(ptr.data[i][0]).decode()]]
 
         return alist
 
@@ -3198,7 +3186,7 @@ class GTF(object):
 
         alist = list()
 
-        tab = self.extract_data(keys="gene_id")
+        tab = self.extract_data(keys="gene_id", )
 
         if nr:
             d = dict()
@@ -3277,15 +3265,15 @@ class GTF(object):
             alist = OrderedDict()
             ptr = self._dll.get_seqid_list(self._data)
             for i in range(ptr.size):
-                key = ffi.string(ptr.data[i][1])
-                val = ffi.string(ptr.data[i][0])
+                key = ffi.string(ptr.data[i][1].decode())
+                val = ffi.string(ptr.data[i][0].decode())
                 alist[key] = val
         else:
             if nr:
                 alist = list()
                 ptr = self._dll.get_seqid_list(self._data)
                 for i in range(ptr.size):
-                    alist += [ffi.string(ptr.data[i][1])]
+                    alist += [ffi.string(ptr.data[i][1]).decode()]
             else:
                 alist = list()
                 tab = self.extract_data(keys="seqid")

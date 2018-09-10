@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 from __future__ import division
 from __future__ import print_function
-from builtins import zip
 
 import argparse
 import sys
 from _collections import defaultdict
+
+from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -128,6 +129,7 @@ def closest_genes(
 
     gtf = GTF(inputfile)
     gn_gtf = gtf.select_by_key("feature", "gene")
+    gn_ids = gn_gtf.get_gn_ids(nr=True)
 
     if len(gn_gtf) == 0:
         message("No gene feature found. Please use convert_ensembl.",
@@ -230,7 +232,7 @@ def closest_genes(
         if not no_header:
             outputfile.write("genes\tclosest_genes\tdistances\n")
 
-        for gene in gene_closest:
+        for gene in gn_ids:
 
             if not collapse:
 
