@@ -131,7 +131,7 @@ def feature_size(
 
             tmp_file.close()
 
-            gtf.add_attr_column(tmp_file, key_name).write(outputfile)
+            gtf.add_attr_column(tmp_file, key_name).write(outputfile, gc_off=True)
 
 
 
@@ -160,7 +160,7 @@ def feature_size(
                                              a_dict=tx_size,
                                              new_key=key_name)
 
-            gtf.write(outputfile)
+            gtf.write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 

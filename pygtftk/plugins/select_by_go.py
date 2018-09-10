@@ -129,7 +129,8 @@ def select_by_go(inputfile=None,
                                        ",".join(is_associated.keys()),
                                        invert_match)
 
-    gtf_associated.write(outputfile)
+    gtf_associated.write(outputfile,
+                         gc_off=True)
 
 
 def main():

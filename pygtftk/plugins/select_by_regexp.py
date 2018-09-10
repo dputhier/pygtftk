@@ -70,7 +70,8 @@ def select_by_regexp(inputfile=None,
               ).select_by_regexp(key,
                                  regexp,
                                  invert_match
-                                 ).write(outputfile)
+                                 ).write(outputfile,
+                                         gc_off=True)
 
     close_properly(outputfile, inputfile)
 

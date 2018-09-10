@@ -102,7 +102,8 @@ def exon_sizes(
                                      key="transcript_id",
                                      a_dict=tx_to_size_list,
                                      new_key=key_name)
-    gtf.write(outputfile)
+    gtf.write(outputfile,
+              gc_off=True)
     close_properly(outputfile, inputfile)
 
 

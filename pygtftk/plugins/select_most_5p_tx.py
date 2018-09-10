@@ -64,7 +64,7 @@ def select_most_5p_tx(inputfile=None,
     else:
         gtf = gtf.select_5p_transcript().select_by_key("feature", "gene", 1)
 
-    gtf.write(outputfile)
+    gtf.write(outputfile, gc_off=True)
 
 
 def main():

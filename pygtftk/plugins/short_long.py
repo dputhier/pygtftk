@@ -63,7 +63,8 @@ def short_long(inputfile=None,
     if not keep_gene_lines:
         gtf = gtf.select_by_key("feature", "gene", 1)
 
-    gtf.write(outputfile)
+    gtf.write(outputfile,
+              gc_off=True)
 
 
 def main():

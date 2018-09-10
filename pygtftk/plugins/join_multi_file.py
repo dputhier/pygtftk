@@ -102,7 +102,8 @@ def join_multi_file(
         gtf = gtf.add_attr_from_matrix_file(feat=target_feature,
                                             key=key_to_join,
                                             inputfile=join_file.name)
-    gtf.write(outputfile)
+    gtf.write(outputfile,
+              gc_off=True)
 
     close_properly(outputfile, inputfile)
 

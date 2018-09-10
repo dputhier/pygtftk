@@ -81,7 +81,8 @@ def add_prefix(inputfile=None,
     gtf.add_prefix(target_feature,
                    key,
                    text,
-                   suffix).write(outputfile)
+                   suffix).write(outputfile,
+                                 gc_off = True)
 
     close_properly(outputfile, inputfile)
 

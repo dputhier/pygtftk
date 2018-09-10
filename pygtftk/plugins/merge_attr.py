@@ -88,7 +88,8 @@ def merge_attr(
               ).merge_attr(target_feature,
                            src_key,
                            dest_key,
-                           separator).write(outputfile)
+                           separator).write(outputfile,
+                                            gc_off=True)
 
     close_properly(outputfile, inputfile)
 

@@ -271,7 +271,7 @@ def retrieve(species_name=None,
             if to_stdout:
                 gtf = GTF(os.path.join(outputdir, target_gtf))
 
-                gtf.write("-")
+                gtf.write("-", gc_off=True)
 
             if delete:
                 os.remove(os.path.join(outputdir, target_gtf))

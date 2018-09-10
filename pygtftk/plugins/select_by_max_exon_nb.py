@@ -52,7 +52,7 @@ def select_by_max_exon_nb(inputfile=None,
               check_ensembl_format=False
               ).select_by_max_exon_nb()
 
-    gtf.write(outputfile)
+    gtf.write(outputfile, gc_off=True)
 
 
 def main():

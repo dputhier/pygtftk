@@ -66,7 +66,8 @@ def select_by_numeric_value(inputfile=None,
     gtf = GTF(inputfile, check_ensembl_format=False
               ).select_by_numeric_value(test,
                                         na_omit=na_omit,
-                                        ).write(outputfile)
+                                        ).write(outputfile,
+                                                gc_off=True)
     close_properly(outputfile, inputfile)
 
 

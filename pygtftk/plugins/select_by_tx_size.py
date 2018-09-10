@@ -64,8 +64,10 @@ def select_by_transcript_size(inputfile=None,
     message(msg)
 
     gtf = GTF(inputfile
-              ).select_by_transcript_size(min_size, max_size
-                                          ).write(outputfile)
+              ).select_by_transcript_size(min_size,
+                                          max_size
+                                          ).write(outputfile,
+                                                  gc_off=True)
 
 
 def main():

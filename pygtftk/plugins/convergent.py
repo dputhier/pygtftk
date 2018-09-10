@@ -160,7 +160,8 @@ def convergent(
                                      a_dict=dist_to_convergent,
                                      new_key="dist_to_convergent")
 
-    gtf.write(outputfile)
+    gtf.write(outputfile,
+              gc_off=True)
 
     close_properly(outputfile, inputfile)
 

@@ -223,7 +223,7 @@ def closest_genes(
                                          a_dict=gene_closest_dist,
                                          new_key="closest_dist")
 
-        gtf.write(outputfile)
+        gtf.write(outputfile, gc_off=True)
 
     else:
         if not no_header:

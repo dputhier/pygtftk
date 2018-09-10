@@ -609,9 +609,10 @@ class GTF(object):
 
         """
         if self._data != 0:
-            self._message("GTF deleted ", type="DEBUG_MEM")
-            self._dll.free_gtf_data(self._data)
-            self._data = 0
+            if gc.isenabled():
+                self._dll.free_gtf_data(self._data)
+                self._message("GTF deleted ", type="DEBUG_MEM")
+                self._data = 0
 
     def head(self, nb=6, returned=False):
         """
@@ -2345,7 +2346,7 @@ class GTF(object):
 
         return feat_size_dict
 
-    def write(self, output, add_chr=0, gc_off=True):
+    def write(self, output, add_chr=0, gc_off=False):
         """write the gtf to a file.
 
         :param output: A file object where the GTF has to be written.
@@ -2366,6 +2367,7 @@ class GTF(object):
 
         """
         if gc_off:
+            message("Disabling garbage collector.", type="DEBUG")
             gc.disable()
 
         self._message("Writing a GTF ")

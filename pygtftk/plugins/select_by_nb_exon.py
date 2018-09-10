@@ -68,7 +68,7 @@ def select_by_nb_exon(inputfile=None,
               ).select_by_number_of_exons(min_exon_number,
                                           max_exon_number)
 
-    gtf.write(outputfile)
+    gtf.write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 

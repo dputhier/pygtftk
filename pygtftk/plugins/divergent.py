@@ -197,7 +197,8 @@ Find transcript with divergent promoters.
                                          a_dict=dist_to_divergent,
                                          new_key=key_name_dist)
 
-        gtf.write(outputfile)
+        gtf.write(outputfile,
+                  gc_off=True)
 
     else:
         gtf.select_by_key("transcript_id",

@@ -231,7 +231,9 @@ transcript from another gene.
 
         if not annotate_gtf:
             value = ",".join(set(overlapping_tx.keys()))
-            gtf.select_by_key("transcript_id", value).write(outputfile)
+            gtf.select_by_key("transcript_id",
+                              value).write(outputfile,
+                                           gc_off=True)
         else:
 
             if len(overlapping_tx):
@@ -239,7 +241,8 @@ transcript from another gene.
                                              key="transcript_id",
                                              a_dict=overlapping_tx,
                                              new_key=key_name)
-            gtf.write(outputfile)
+            gtf.write(outputfile,
+                      gc_off=True)
 
     else:
         values = ",".join(set(overlapping_tx.keys()))

@@ -142,14 +142,16 @@ def join_attr(
                                      new_key=new_key,
                                      inputfile=join_file.name,
                                      has_header=has_header)
-        gtf.write(outputfile)
+        gtf.write(outputfile,
+                  gc_off=True)
 
     else:
 
         gtf = gtf.add_attr_from_matrix_file(feat=target_feature,
                                             key=key_to_join,
                                             inputfile=join_file.name)
-        gtf.write(outputfile)
+        gtf.write(outputfile,
+                  gc_off=True)
 
     close_properly(outputfile, inputfile)
 

@@ -118,7 +118,7 @@ def example(outputfile=None,
                     message("No GTF file found for this dataset.",
                             type="ERROR")
 
-            gtf.write(outputfile)
+            gtf.write(outputfile, gc_off=True)
 
         elif format in ["fa", "join", "join_mat", "genome", "chromInfo", "genes", "geneList"]:
             try:

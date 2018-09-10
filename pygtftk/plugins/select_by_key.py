@@ -234,7 +234,8 @@ def select_by_key(inputfile=None,
 
     if not bed_format:
 
-        gtf.write(outputfile)
+        gtf.write(outputfile,
+                  gc_off=True)
 
     else:
         nb_tokens = len(names.split(","))

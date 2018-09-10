@@ -115,7 +115,8 @@ def rm_dup_tss(inputfile=None,
                       invert_match=True
                       ).select_by_key("transcript_id",
                                       ",".join(to_delete),
-                                      invert_match=True).write(outputfile)
+                                      invert_match=True).write(outputfile,
+                                                               gc_off=True)
 
 
 def main():

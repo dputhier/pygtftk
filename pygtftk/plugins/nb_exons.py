@@ -93,7 +93,8 @@ def nb_exons(inputfile=None,
                                          key="transcript_id",
                                          a_dict=n_exons,
                                          new_key=key_name)
-        gtf.write(outputfile)
+        gtf.write(outputfile,
+                  gc_off=True)
 
     close_properly(outputfile, inputfile)
 

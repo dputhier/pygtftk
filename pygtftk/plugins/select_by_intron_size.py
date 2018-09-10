@@ -183,7 +183,7 @@ def select_by_intron_size(
     gtf = gtf.select_by_key("transcript_id",
                             ",".join(all_tx_ids))
 
-    gtf.write(outputfile)
+    gtf.write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 

@@ -98,7 +98,8 @@ def intron_sizes(
                                      key="transcript_id",
                                      a_dict=intron_size,
                                      new_key=key_name)
-    gtf.write(outputfile)
+    gtf.write(outputfile,
+              gc_off=True)
     close_properly(outputfile, inputfile)
 
 
