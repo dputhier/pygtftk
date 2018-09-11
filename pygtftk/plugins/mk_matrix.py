@@ -677,7 +677,7 @@ else:
     CmdObject(name="mk_matrix",
               message="Compute a coverage matrix (see profile).",
               parser=make_parser(),
-              fun=mk_matrix,
+              fun=os.path.abspath(__file__),
               group="coverage",
               updated=__updated__,
               desc=__doc__,

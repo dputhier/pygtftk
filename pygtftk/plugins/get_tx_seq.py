@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import re
 import shutil
 import sys
@@ -359,7 +360,7 @@ else:
     CmdObject(name="get_tx_seq",
               message="Get transcript sequences in fasta format.",
               parser=make_parser(),
-              fun=get_tx_seq,
+              fun=os.path.abspath(__file__),
               group="sequences",
               desc=__doc__,
               notes=__notes__,

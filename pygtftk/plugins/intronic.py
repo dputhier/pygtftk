@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -152,7 +153,7 @@ else:
     CmdObject(name="intronic",
               message="Extract intronic regions.",
               parser=make_parser(),
-              fun=intronic,
+              fun=os.path.abspath(__file__),
               group="coordinates",
               desc=__doc__,
               updated=__updated__,

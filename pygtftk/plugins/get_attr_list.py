@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -108,7 +109,7 @@ else:
     CMD = CmdObject(name="get_attr_list",
                     message="Get the list of attributes from a GTF file.",
                     parser=make_parser(),
-                    fun=get_attr_list,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     group="information",
                     desc=__doc__,

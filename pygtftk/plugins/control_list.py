@@ -442,7 +442,7 @@ else:
     cmd = CmdObject(name="control_list",
                     message="Returns a list of gene matched for expression based on reference values.",
                     parser=make_parser(),
-                    fun=control_list,
+                    fun=os.path.abspath(__file__),
                     desc=__doc__,
                     updated=__updated__,
                     notes=__notes__,

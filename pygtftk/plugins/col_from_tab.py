@@ -2,6 +2,7 @@
 """Select columns from a tabulated file based on their names."""
 
 import argparse
+import os
 import re
 import sys
 
@@ -175,7 +176,7 @@ else:
     CmdObject(name="col_from_tab",
               message="Select columns from a tabulated file based on their names.",
               parser=make_parser(),
-              fun=col_from_tab,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               desc=__doc__,
               group="miscellaneous",

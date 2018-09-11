@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -164,7 +165,7 @@ else:
     CMD = CmdObject(name="convert_ensembl",
                     message="Convert the GTF file to ensembl format. Essentially add 'transcript'/'gene' features.",
                     parser=make_parser(),
-                    fun=convert_ensembl,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     notes=__notes__,
                     desc=__doc__,

@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import random
 import sys
 
@@ -171,7 +172,7 @@ else:
     CMD = CmdObject(name="random_tx",
                     message="Select randomly up to m transcript for each gene.",
                     parser=make_parser(),
-                    fun=random_tx,
+                    fun=os.path.abspath(__file__),
                     group="selection",
                     desc=__doc__,
                     updated=__updated__,

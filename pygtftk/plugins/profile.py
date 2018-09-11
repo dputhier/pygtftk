@@ -251,41 +251,41 @@ def make_parser():
     return parser
 
 
-def draw_profile(inputfile=None,
-                 out_dir=None,
-                 group_by='bwig',
-                 color_order=None,
-                 transcript_file=None,
-                 transform=None,
-                 normalization_method=None,
-                 to_log=False,
-                 upper_limit=0.95,
-                 quantiles=False,
-                 profile_colors=None,
-                 palette='nipy_spectral',
-                 page_width=None,
-                 title=None,
-                 page_height=None,
-                 page_format='pdf',
-                 user_img_file=None,
-                 tmp_dir=None,
-                 facet_col=None,
-                 border_color="#BBBBBB",
-                 force_tx_class=False,
-                 stat="mean",
-                 facet_var=None,
-                 x_lab="Selected genomic regions",
-                 axis_text=8,
-                 strip_text=8,
-                 subset_bwig=None,
-                 show_group_number=False,
-                 line_width=1,
-                 theme_plotnine='bw',
-                 confidence_interval=False,
-                 dpi=300,
-                 logger_file=None,
-                 verbosity=False
-                 ):
+def profile(inputfile=None,
+            out_dir=None,
+            group_by='bwig',
+            color_order=None,
+            transcript_file=None,
+            transform=None,
+            normalization_method=None,
+            to_log=False,
+            upper_limit=0.95,
+            quantiles=False,
+            profile_colors=None,
+            palette='nipy_spectral',
+            page_width=None,
+            title=None,
+            page_height=None,
+            page_format='pdf',
+            user_img_file=None,
+            tmp_dir=None,
+            facet_col=None,
+            border_color="#BBBBBB",
+            force_tx_class=False,
+            stat="mean",
+            facet_var=None,
+            x_lab="Selected genomic regions",
+            axis_text=8,
+            strip_text=8,
+            subset_bwig=None,
+            show_group_number=False,
+            line_width=1,
+            theme_plotnine='bw',
+            confidence_interval=False,
+            dpi=300,
+            logger_file=None,
+            verbosity=False
+            ):
     # -------------------------------------------------------------------------
     #
     # Pandas version is sometimes problematic
@@ -1254,7 +1254,7 @@ else:
 
     #profile: make tss.bed
     @test "profile_6" {
-     result=`gtftk select_by_key -i mini_real_noov_rnd_tx.gtf -k feature -v transcript |  gtftk 5p_3p_coord > tss.bed`
+     result=`gtftk select_by_key -i mini_real_noov_rnd_tx.gtf -k feature -v transcript |  gtftk get_5p_3p_coords > tss.bed`
       [ -s "tss.bed" ]
     }
 
@@ -1366,7 +1366,7 @@ else:
     cmd = CmdObject(name="profile",
                     message="Create coverage profile using a bigWig as input.",
                     parser=make_parser(),
-                    fun=draw_profile,
+                    fun=os.path.abspath(__file__),
                     desc=__doc__,
                     updated=__updated__,
                     notes=__notes__,

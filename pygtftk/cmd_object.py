@@ -47,7 +47,6 @@ class CmdObject(object):
             pass
 
         self.parser = parser
-
         self.fun = fun
         self.desc = desc
         self.logger = None

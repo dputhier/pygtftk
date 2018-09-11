@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from _collections import defaultdict
 
@@ -332,7 +333,7 @@ else:
     CMD = CmdObject(name="closest_genes",
                     message="Find the n closest genes for each transcript.",
                     parser=make_parser(),
-                    fun=closest_genes,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     test=test,

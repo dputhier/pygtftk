@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -150,7 +151,7 @@ else:
     CMD = CmdObject(name="count",
                     message="Count the number of features in the gtf file.",
                     parser=make_parser(),
-                    fun=count,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     group="information",

@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import defaultdict
 
@@ -169,7 +170,7 @@ else:
     CmdObject(name="nb_exons",
               message="Count the number of exons by transcript.",
               parser=make_parser(),
-              fun=nb_exons,
+              fun=os.path.abspath(__file__),
               group="information",
               updated=__updated__,
               desc=__doc__,

@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import argparse
 import math
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -254,7 +255,7 @@ else:
     CmdObject(name="divergent",
               message="Find transcripts with divergent promoters.",
               parser=make_parser(),
-              fun=divergent,
+              fun=os.path.abspath(__file__),
               desc=__doc__,
               updated=__updated__,
               group="annotation",

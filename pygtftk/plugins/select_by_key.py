@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -373,7 +374,7 @@ else:
               message="Select lines from a GTF based on attributes and "
                       "values.",
               parser=make_parser(),
-              fun=select_by_key,
+              fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
               updated=__updated__,

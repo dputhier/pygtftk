@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import random
 import sys
 
@@ -149,7 +150,7 @@ else:
     CMD = CmdObject(name="random_list",
                     message="Select a random list of genes or transcripts.",
                     parser=make_parser(),
-                    fun=random_list,
+                    fun=os.path.abspath(__file__),
                     group="selection",
                     updated=__updated__,
                     desc=__doc__,

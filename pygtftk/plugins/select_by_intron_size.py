@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import OrderedDict
 from collections import defaultdict
@@ -274,7 +275,7 @@ else:
     CmdObject(name="select_by_intron_size",
               message="Select transcripts by intron size.",
               parser=make_parser(),
-              fun=select_by_intron_size,
+              fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
               notes=__notes__,

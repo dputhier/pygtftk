@@ -144,7 +144,7 @@ Just do the following things to declare a new command named **'print_gtf'**:
        cmd = CmdObject(name="print_gtf",
                        message="Print a GTF",
                        parser=make_parser(),
-                       fun=print_gtf,
+                       fun=os.path.abspath(__file__),
                        group="miscellaneous",
                        desc=__doc__,
                        notes=__notes__)

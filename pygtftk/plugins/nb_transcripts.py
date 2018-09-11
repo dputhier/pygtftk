@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import OrderedDict
 
@@ -127,7 +128,7 @@ else:
     CmdObject(name="nb_transcripts",
               message="Count the number of transcript per gene.",
               parser=make_parser(),
-              fun=nb_transcripts,
+              fun=os.path.abspath(__file__),
               group="information",
               updated=__updated__,
               desc=__doc__,

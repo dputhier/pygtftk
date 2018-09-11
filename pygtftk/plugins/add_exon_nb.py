@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -111,7 +112,7 @@ else:
     CmdObject(name="add_exon_nb",
               message="Add exon number transcript-wise.",
               parser=make_parser(),
-              fun=add_exon_nb,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               desc=__doc__,
               group="information",

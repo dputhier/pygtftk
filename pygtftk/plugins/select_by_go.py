@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import OrderedDict
 
@@ -159,7 +160,7 @@ else:
     CmdObject(name="select_by_go",
               message=" Select lines from a GTF file using a Gene Ontology ID.",
               parser=make_parser(),
-              fun=select_by_go,
+              fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
               updated=__updated__,

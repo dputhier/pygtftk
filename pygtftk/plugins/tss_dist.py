@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import argparse
 import errno
+import os
 import sys
 from collections import defaultdict
 
@@ -152,7 +153,7 @@ else:
     CMD = CmdObject(name="tss_dist",
                     message="Computes the distance between TSS of gene transcripts.",
                     parser=make_parser(),
-                    fun=tss_dist,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     notes=__notes__,
                     desc=__doc__,

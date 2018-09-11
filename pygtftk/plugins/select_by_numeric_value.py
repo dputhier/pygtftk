@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -121,7 +122,7 @@ else:
     CmdObject(name="select_by_numeric_value",
               message="Select lines from a GTF file based on a boolean test on numeric values.",
               parser=make_parser(),
-              fun=select_by_numeric_value,
+              fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
               updated=__updated__,

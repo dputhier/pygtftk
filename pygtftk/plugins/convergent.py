@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import argparse
 import math
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -203,7 +204,7 @@ else:
     CmdObject(name="convergent",
               message="Find transcripts with convergent tts.",
               parser=make_parser(),
-              fun=convergent,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               desc=__doc__,
               group="annotation",

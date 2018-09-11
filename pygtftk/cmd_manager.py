@@ -111,7 +111,7 @@ class ListPlugins(argparse._StoreTrueAction):
 # ---------------------------------------------------------------
 # An additional action that print required R libraries
 # ---------------------------------------------------------------
-
+# Deprecated
 
 class RequiredRLib(argparse._StoreTrueAction):
     """A class to be used by argparser to get bash completion."""
@@ -717,6 +717,7 @@ class CmdManager(object):
                 module_name = re.sub(".*pygtftk", "pygtftk", module_name)
 
                 try:
+
                     imp.load_source(module_name, plug)
                 except Exception as e:
                     message("Failed to load plugin :" + plug, type="WARNING")
@@ -760,6 +761,7 @@ class CmdManager(object):
 
             # Update the list of required R libraries
 
+            # message("Loading " + cur_cmd, type="DEBUG", force=True)
             if CmdManager.cmd_obj_list[cur_cmd].rlib is not None:
                 add_r_lib(libs=CmdManager.cmd_obj_list[cur_cmd].rlib,
                           cmd=cur_cmd)
@@ -820,7 +822,10 @@ class CmdManager(object):
         # Add a logger to the command object
         cls.cmd_obj_list[args['command']].logger = logging.getLogger(__name__)
 
-        fun = cmd_ob.fun
+        # .pyc -> .py
+        fun_path = cmd_ob.fun.rstrip("c")
+        tmp_module = imp.load_source('tmp_module', fun_path)
+        fun = getattr(tmp_module, args['command'])
 
         # Save args to log file
 

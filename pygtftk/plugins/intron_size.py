@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -140,7 +141,7 @@ else:
     CMD = CmdObject(name="intron_sizes",
                     message=" Add a new key to transcript features containing a comma separated list of intron sizes. ",
                     parser=make_parser(),
-                    fun=intron_sizes,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     group="annotation",

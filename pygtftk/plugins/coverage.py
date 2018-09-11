@@ -47,8 +47,8 @@ def make_parser():
     parser_grp.add_argument(
         'bw_list',
         help='A list of Bigwig file (last argument).',
-        type=FileWithExtension('r',valid_extensions=('\.[Bb][Ww]$',
-                                                     '\.[Bb][Ii][Gg][Ww][Ii][Gg]$')),
+        type=FileWithExtension('r', valid_extensions=('\.[Bb][Ww]$',
+                                                      '\.[Bb][Ii][Gg][Ww][Ii][Gg]$')),
         nargs='+')
 
     parser_grp.add_argument('-i', '--inputfile',
@@ -239,7 +239,6 @@ def coverage(
                     os.path.basename(
                         bw_list[i]))[0]]
 
-
     # -------------------------------------------------------------------------
     # Check the number of windows
     #
@@ -277,7 +276,6 @@ def coverage(
             is_gtf = True
         else:
             is_gtf = False
-
 
     # -------------------------------------------------------------------------
     # Get regions of interest
@@ -343,7 +341,6 @@ def coverage(
                                    l=upstream,
                                    r=downstream,
                                    g=chrom_info.name).sort()
-
 
     region_bed = make_tmp_file(prefix="region", suffix=".bed")
 
@@ -588,7 +585,7 @@ else:
     CmdObject(name='coverage',
               message='Compute bigwig coverage in body, promoter, tts...',
               parser=make_parser(),
-              fun=coverage,
+              fun=os.path.abspath(__file__),
               desc=__doc__,
               notes=__notes__,
               updated=__updated__,

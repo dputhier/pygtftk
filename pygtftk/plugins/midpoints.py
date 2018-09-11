@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pybedtools import BedTool
@@ -216,7 +217,7 @@ else:
     CmdObject(name="midpoints",
               message=" Get the midpoint coordinates for the requested feature.",
               parser=make_parser(),
-              fun=midpoints,
+              fun=os.path.abspath(__file__),
               group="coordinates",
               updated=__updated__,
               desc=__doc__,

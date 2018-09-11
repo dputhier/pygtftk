@@ -1091,7 +1091,7 @@ midpoints
 
 ------------------------------------------------------------------------------------------------------------------
 
-5p_3p_coord
+5p_3p_coords
 ~~~~~~~~~~~~~~~~~~~~~~
 
 **Description:** Get the 5p or 3p coordinates for each feature (e.g TSS or TTS for a transcript).
@@ -1099,18 +1099,18 @@ Output is bed format.
 
 **Example:** Get the 5p ends of transcripts and exons.
 
-.. command-output:: gtftk get_example | gtftk 5p_3p_coord -t transcript,exon -n transcript_id,gene_id,feature | head -n 5
+.. command-output:: gtftk get_example | gtftk get_5p_3p_coords -t transcript,exon -n transcript_id,gene_id,feature | head -n 5
 	:shell:
 
 **Example:** Get the 3p ends of transcripts and exons.
 
-.. command-output:: gtftk get_example | gtftk 5p_3p_coord -t transcript,exon -n transcript_id,gene_id,feature -v -s "^"| head -n 5
+.. command-output:: gtftk get_example | gtftk get_5p_3p_coords -t transcript,exon -n transcript_id,gene_id,feature -v -s "^"| head -n 5
 	:shell:
 
 
 **Arguments:**
 
-.. command-output:: gtftk 5p_3p_coord -h
+.. command-output:: gtftk get_5p_3p_coords -h
 	:shell:
 
 ------------------------------------------------------------------------------------------------------------------
@@ -1369,7 +1369,7 @@ Along a user defined set of regions (in bed6 format). Here we will used the tran
 
 And finally using a set of single nucleotides coordinates that will be extend (-u/-d) and assessed for coverage. Here we will take the coordinates of TSS as example.
 
-.. command-output:: gtftk select_by_key -i mini_real_noov_rnd_tx.gtf.gz -k feature -v transcript |  gtftk 5p_3p_coord > tss.bed
+.. command-output:: gtftk select_by_key -i mini_real_noov_rnd_tx.gtf.gz -k feature -v transcript |  gtftk get_5p_3p_coords > tss.bed
 	:shell:
 
 .. command-output:: gtftk mk_matrix -k 5 -u 5000 -d 5000 -i tss.bed -w 200 -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_single_nuc -c hg38.genome -t single_nuc

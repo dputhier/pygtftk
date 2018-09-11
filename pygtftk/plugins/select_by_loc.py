@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import re
 import sys
 
@@ -298,7 +299,7 @@ else:
     CmdObject(name="select_by_loc",
               message="Select transcript/gene overlapping a genomic feature.",
               parser=make_parser(),
-              fun=select_by_loc,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               group="selection",
               notes=__notes__,

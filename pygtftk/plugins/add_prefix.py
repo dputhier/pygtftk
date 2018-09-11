@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -196,7 +197,7 @@ else:
     CmdObject(name="add_prefix",
               message="Add a prefix or suffix to target values. ",
               parser=make_parser(),
-              fun=add_prefix,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               desc=__doc__,
               group="editing",

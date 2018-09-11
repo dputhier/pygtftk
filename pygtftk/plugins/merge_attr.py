@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -155,7 +156,7 @@ else:
     CmdObject(name="merge_attr",
               message=msg,
               parser=make_parser(),
-              fun=merge_attr,
+              fun=os.path.abspath(__file__),
               group="editing",
               updated=__updated__,
               notes=__notes__,

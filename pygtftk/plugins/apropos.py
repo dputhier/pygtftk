@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 
 from pygtftk.cmd_manager import CmdManager
 from pygtftk.cmd_object import CmdObject
@@ -90,7 +91,7 @@ else:
     CMD = CmdObject(name="apropos",
                     message="Search in all command description files those related to a user-defined keyword.",
                     parser=make_parser(),
-                    fun=apropos,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     group="information",

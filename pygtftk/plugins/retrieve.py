@@ -333,7 +333,7 @@ else:
     CmdObject(name="retrieve",
               message="Retrieve a GTF file from ensembl.",
               parser=make_parser(),
-              fun=retrieve,
+              fun=os.path.abspath(__file__),
               desc=__doc__,
               group="information",
               updated=__updated__,

@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -252,7 +253,7 @@ else:
     CMD = CmdObject(name="feature_size",
                     message="Compute the size of features enclosed in the GTF.",
                     parser=make_parser(),
-                    fun=feature_size,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     group="information",

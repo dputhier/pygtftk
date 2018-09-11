@@ -72,14 +72,14 @@ def make_parser():
     return parser
 
 
-def example(outputfile=None,
-            dataset=None,
-            format="gtf",
-            list=False,
-            all_dataset=False,
-            tmp_dir=None,
-            logger_file=None,
-            verbosity=0):
+def get_example(outputfile=None,
+                dataset=None,
+                format="gtf",
+                list=False,
+                all_dataset=False,
+                tmp_dir=None,
+                logger_file=None,
+                verbosity=0):
     """
     Print example gtf files.
     """
@@ -160,7 +160,7 @@ def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    example(**args)
+    get_example(**args)
 
 
 if __name__ == '__main__':
@@ -179,7 +179,7 @@ else:
     CmdObject(name="get_example",
               message="Get example files including GTF.",
               parser=make_parser(),
-              fun=example,
+              fun=os.path.abspath(__file__),
               desc=__doc__,
               notes=__notes__,
               group="information",

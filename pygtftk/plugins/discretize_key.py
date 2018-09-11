@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 import numpy as np
@@ -301,7 +302,7 @@ else:
     CmdObject(name="discretize_key",
               message="Create a new key through discretization of a numeric key.",
               parser=make_parser(),
-              fun=discretize_key,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               desc=__doc__,
               notes=__notes__,

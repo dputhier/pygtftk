@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import defaultdict
 
@@ -330,7 +331,7 @@ else:
     CmdObject(name="overlapping",
               message="Find (non)overlapping transcripts.",
               parser=make_parser(),
-              fun=overlapping,
+              fun=os.path.abspath(__file__),
               group="annotation",
               updated=__updated__,
               desc=__doc__,

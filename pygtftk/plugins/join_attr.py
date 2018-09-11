@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -243,7 +244,7 @@ else:
     CmdObject(name="join_attr",
               message="Join attributes from a tabulated file.",
               parser=make_parser(),
-              fun=join_attr,
+              fun=os.path.abspath(__file__),
               group="editing",
               updated=__updated__,
               desc=__doc__,

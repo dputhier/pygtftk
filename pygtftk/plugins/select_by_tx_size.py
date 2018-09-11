@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -47,13 +48,13 @@ def make_parser():
     return parser
 
 
-def select_by_transcript_size(inputfile=None,
-                              outputfile=None,
-                              min_size=None,
-                              max_size=None,
-                              tmp_dir=None,
-                              logger_file=None,
-                              verbosity=0):
+def select_by_tx_size(inputfile=None,
+                      outputfile=None,
+                      min_size=None,
+                      max_size=None,
+                      tmp_dir=None,
+                      logger_file=None,
+                      verbosity=0):
     """
     Select features by size.
     """
@@ -108,7 +109,7 @@ else:
     CmdObject(name="select_by_tx_size",
               message="Select transcript based on their size (i.e size of mature/spliced transcript).",
               parser=make_parser(),
-              fun=select_by_transcript_size,
+              fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
               updated=__updated__,

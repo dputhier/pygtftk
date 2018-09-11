@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Select the shortest mature transcript (i.e without introns) for each gene or the longest if the \
 -l arguments is used. """
+import os
 
 __updated__ = "2018-01-25"
 
@@ -151,7 +152,7 @@ else:
               message="Get the shortest or longest \
               transcript of each gene",
               parser=make_parser(),
-              fun=short_long,
+              fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
               updated=__updated__,

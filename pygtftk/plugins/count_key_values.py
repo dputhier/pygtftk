@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import defaultdict
 
@@ -139,7 +140,7 @@ else:
     CMD = CmdObject(name="count_key_values",
                     message="Count the number values for a set of keys.",
                     parser=make_parser(),
-                    fun=count_key_values,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     group="information",

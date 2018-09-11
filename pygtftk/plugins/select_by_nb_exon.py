@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -144,7 +145,7 @@ else:
     CmdObject(name="select_by_nb_exon",
               message="Select transcripts based on the number of exons.",
               parser=make_parser(),
-              fun=select_by_nb_exon,
+              fun=os.path.abspath(__file__),
               group="selection",
               updated=__updated__,
               desc=__doc__,
