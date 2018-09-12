@@ -135,50 +135,40 @@ else:
       [ "$result" -eq 10 ]
     }
     
-    #random_tx: random_tx should return 1 tx per gene (10 genes) even with seed set
-    @test "random_tx_2" {
-     result=`gtftk random_tx -s 2 -i pygtftk/data/simple/simple.gtf | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k gene_id,transcript_id -H | wc -l`
-      [ "$result" -eq 10 ]
-    }
     
     #random_tx: random_tx should return 1 tx per gene (10 genes) even with seed set
-    @test "random_tx_3" {
+    @test "random_tx_2" {
      result=`gtftk random_tx  -s 111 -i pygtftk/data/simple/simple.gtf | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id -H | perl -npe 's/\\n/,/g'`
       [ "$result" = "G0001T002,G0002T001,G0003T001,G0004T002,G0005T001,G0006T002,G0007T001,G0008T001,G0009T001,G0010T001," ]
     }
     
-    #random_tx: this test should return 39 lines
-    @test "random_tx_4" {
-     result=`gtftk random_tx  -s 111 -i pygtftk/data/simple/simple.gtf | wc -l`
-      [ "$result" -eq 39 ]
-    }
-    
+
     #random_tx: this test should return 10
-    @test "random_tx_5" {
+    @test "random_tx_3" {
      result=`gtftk get_example -d mini_real | gtftk random_tx -m 10 | gtftk convert_ensembl |  gtftk nb_transcripts | gtftk select_by_key -g | gtftk tabulate -k gene_id,nb_tx -Hun | cut -f 2 | sort -n | tail -n 1`
       [ "$result" -eq 10 ]
     }
 
     #random_tx: this test should return 20
-    @test "random_tx_6" {
+    @test "random_tx_4" {
      result=`gtftk get_example -d mini_real | gtftk random_tx -m 20 | gtftk convert_ensembl |  gtftk nb_transcripts | gtftk select_by_key -g | gtftk tabulate -k gene_id,nb_tx -Hun | cut -f 2 | sort -n | tail -n 1`
       [ "$result" -eq 20 ]
     }
 
     #random_tx: this test should return 20
-    @test "random_tx_7" {
+    @test "random_tx_5" {
      result=`gtftk get_example -d mini_real | gtftk random_tx -m 10 | gtftk convert_ensembl |  gtftk nb_exons | gtftk select_by_key -t | gtftk tabulate -k transcript_id,nb_exons -Hun -s "," | sort -n -k2,2 -t","| tail -n 1`
       [ "$result" = "ENST00000378016,107" ]
     }
     
     #random_tx: check -m
-    @test "random_tx_8" {
+    @test "random_tx_6" {
      result=`gtftk get_example -d mini_real |  gtftk random_tx  -m 3 -s 111 | gtftk select_by_key -t | gtftk tabulate -k gene_id -H | sort | uniq -c| perl -npe 's/^ +//; s/ /\\t/' | cut -f1 | sort | uniq | sort -n | perl -npe 's/\\n/,/g'`
       [ "$result" = "1,2,3," ]
     }
 
     #random_tx: check -m
-    @test "random_tx_9" {
+    @test "random_tx_7" {
      result=`gtftk get_example -d mini_real |  gtftk random_tx  -m 4 -s 111 | gtftk select_by_key -t | gtftk tabulate -k gene_id -H | sort | uniq -c| perl -npe 's/^ +//; s/ /\\t/' | cut -f1 | sort | uniq | sort -n | perl -npe 's/\\n/,/g'`
       [ "$result" = "1,2,3,4," ]
     }     
