@@ -33,8 +33,6 @@ requirements:
     - python >=3.6
     - pyparsing
     - argparse
-    - nose
-    - bats
     - bedtools ==2.27.1
     - cloudpickle >=0.4.0
     - ftputil >=3.3.1,<4.0.0
@@ -45,26 +43,22 @@ requirements:
     - pysam >=0.9.1.4
     - pyyaml >=3.12
     - gcc >=4.8.5
-    - sphinx_bootstrap_theme >=0.4.9
-    - sphinxcontrib-programoutput >=0.8
-    - sphinx >=1.5.2
     - requests >=2.13.0
     - cffi >=1.10.0
     - pyparsing >=2.2.0
     - biopython >=1.69
-    - zlib <1.2.8-3
+    - zlib >=1.2.11
     - matplotlib >=2.0.2
-    - plotnine >=0.5.0
-    - unzip
-    - gawk
+    - plotnine >=0.4.0
+    - pip:
+      - future
+      - sphinxcontrib-programoutput
 
   run:
     - GitPython >=2.1.8
     - python >=3.6
     - pyparsing
     - argparse
-    - nose
-    - bats
     - bedtools ==2.27.1
     - cloudpickle >=0.4.0
     - ftputil >=3.3.1,<4.0.0
@@ -75,18 +69,16 @@ requirements:
     - pysam >=0.9.1.4
     - pyyaml >=3.12
     - gcc >=4.8.5
-    - sphinx_bootstrap_theme >=0.4.9
-    - sphinxcontrib-programoutput >=0.8
-    - sphinx >=1.5.2
     - requests >=2.13.0
     - cffi >=1.10.0
     - pyparsing >=2.2.0
     - biopython >=1.69
-    - zlib <1.2.8-3
+    - zlib >=1.2.11
     - matplotlib >=2.0.2
-    - plotnine >=0.5.0
-    - unzip
-    - gawk
+    - plotnine >=0.4.0
+    - pip:
+      - future
+      - sphinxcontrib-programoutput
 
 test:
   commands:

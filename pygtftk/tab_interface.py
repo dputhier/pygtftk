@@ -10,6 +10,7 @@ from builtins import object
 from builtins import range
 from cffi import FFI
 
+import pygtftk.utils
 from pygtftk.Line import FieldSet
 from pygtftk.utils import GTFtkError
 
@@ -88,7 +89,16 @@ class TAB(object):
     def iter_as_list(self):
         """
         Iterate over the TAB object and return a list of self.nb_columns elements.
-        #TODO: example
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()
+        >>> a_gtf = GTF(a_file)
+        >>> a_tab = a_gtf.extract_data("gene_id,start")
+        >>> assert next(a_tab.iter_as_list()) == list(a_tab[0])
+
         """
 
         for i in range(self.nrows):
@@ -96,7 +106,16 @@ class TAB(object):
 
     def as_data_frame(self):
         """Convert the TAB object into a dataframe.
-        #TODO: example
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()
+        >>> a_gtf = GTF(a_file)
+        >>> a_tab = a_gtf.extract_data("gene_id,start")
+        >>> assert a_tab.as_data_frame()["gene_id"].nunique() == 10
+
         """
         out_list = []
         for i in range(self.nrows):
@@ -160,18 +179,42 @@ class TAB(object):
 
     def __len__(self):
         """Object len (number of rows).
-        #TODO: example
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_tab = GTF(a_file).extract_data("transcript_id,gene_id")
+        >>> assert len(a_tab) == 70
+
         """
+
         if self._data is not None:
             return self.nrows
         else:
             return 0
 
     def write(self, outfile=None, sep='\t'):
+        """Write a tab object to a file.
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> from pygtftk.utils import make_tmp_file
+        >>> from pygtftk.utils import simple_line_count
+        >>> a_file = get_example_file()[0]
+        >>> a_tab = GTF(a_file).extract_data("transcript_id,gene_id")
+        >>> out_file = make_tmp_file()
+        >>> a_tab.write(out_file)
+        >>> out_file.close()
+        >>> assert simple_line_count(out_file) == 70
+
+        """
 
         for i in self:
-            outfile.write(sep.join(i) + "\n")
-        outfile.close()
+            pygtftk.utils.write_properly(i, file_out)
 
     def as_simple_list(self, which_col=0):
         """Convert the selected column of a TAB object into a list.
@@ -208,7 +251,9 @@ class TAB(object):
         >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file).extract_data("all")
-        >>> assert a_gtf.iterate_with_header().next()[0] == 'seqid'
+        >>> assert next(a_gtf.iterate_with_header())[0] == 'seqid'
+        >>> for i in a_gtf.iterate_with_header(): pass
+        >>> assert 'CDS_G0010T001' in list(i)
         """
         yield FieldSet(alist=self.colnames)
         for i in range(self.nrows):

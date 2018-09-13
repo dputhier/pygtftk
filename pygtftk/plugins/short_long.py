@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+
 import argparse
 import sys
 
@@ -7,11 +8,11 @@ from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 
-
-""" Select the shortest mature transcript (i.e without introns) for each gene or the longest if the \
--l arguments is used. """
+__doc__ = """ Select the shortest mature transcript (i.e without introns) for each gene or the longest if the -l arguments is used. """
 
 __updated__ = "2018-01-25"
+
+__notes__ = ""
 
 
 def make_parser():
@@ -120,7 +121,6 @@ else:
     [ $result -eq 11 ]
     }
 
-
     #Test number of output lines (genes)
     @test "short_long_7" {
     result=$(gtftk get_example -d mini_real  | gtftk feature_size -t mature_rna | gtftk short_long -l |  gtftk select_by_key -k gene_name -v ISG15 | gtftk select_by_key -t |  gtftk tabulate -H -k feat_size)
@@ -149,11 +149,11 @@ else:
     """
 
     CmdObject(name="short_long",
-              message="Get the shortest or longest \
-              transcript of each gene",
+              message="Get the shortest or longest transcript of each gene",
               parser=make_parser(),
               fun=short_long,
               group="selection",
               desc=__doc__,
               updated=__updated__,
+              notes=__notes__,
               test=test)

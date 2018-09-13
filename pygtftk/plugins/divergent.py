@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 from __future__ import print_function
-from builtins import str
 
 import argparse
 import math
 import sys
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import checkChromFile

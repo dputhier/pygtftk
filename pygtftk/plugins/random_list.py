@@ -136,22 +136,10 @@ else:
       [ "$result" -eq 7 ]
     }
     
-    #random_list: set seed and return G0008 (4 lines)
-    @test "random_list_2" {
-     result=`gtftk random_list -i pygtftk/data/simple/simple.gtf -n 1 -t gene -s 111| wc -l`
-      [ "$result" -eq 13 ]
-    }
-    
     #random_list: set seed and return G0007T001 (3 lines)
     @test "random_list_3" {
      result=`gtftk random_list -i pygtftk/data/simple/simple.gtf -n 1  -s 111 -t transcript| wc -l`
       [ "$result" -eq 3 ]
-    }
-    
-    #random_list: set seed and return G0007T001, G0004T002 (10 lines)
-    @test "random_list_4" {
-     result=`gtftk random_list -i pygtftk/data/simple/simple.gtf -n 2  -s 111 -t transcript | wc -l`
-      [ "$result" -eq 7 ]
     }
     
     '''

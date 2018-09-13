@@ -129,12 +129,17 @@ def example(outputfile=None,
 
             for line in infile:
                 outputfile.write(line)
+
         elif format == "*":
 
             file_path = glob.glob(os.path.join(pygtftk.__path__[0],
                                                'data',
                                                dataset,
                                                "*"))
+            file_path = [x for x in file_path if "__" not in x]
+            target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
+            message("Copying from :" + target_path)
+
             for i in file_path:
                 message(
                     "Copying: " + os.path.basename(i),
@@ -148,6 +153,11 @@ def example(outputfile=None,
                                                'data',
                                                dataset,
                                                "*" + '.' + format))
+
+            file_path = [x for x in file_path if "__" not in x]
+            target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
+            message("Copying from :" + target_path)
+
             for i in file_path:
                 message("Copying file : " + os.path.basename(i), force=True)
                 shutil.copy(i, ".")

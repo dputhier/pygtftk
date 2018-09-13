@@ -2,6 +2,7 @@
 """
 Command Line Interface display format.
 """
+
 from __future__ import absolute_import
 from __future__ import print_function
 
@@ -742,10 +743,9 @@ class FileWithExtension(argparse.FileType):
                 message("Directory not found. Creating.", type="WARNING")
                 os.makedirs(outputdir)
 
+        # we will work with string
         if PY3:
             if 'w' in self._mode:
-                self._mode = 'wb'
-                message("Python3 detected, setting file writing mode to 'wb' mode (arg_formatter).", type="DEBUG",
-                        force=True)
+                self._mode = 'w'
 
         return super(FileWithExtension, self).__call__(string)

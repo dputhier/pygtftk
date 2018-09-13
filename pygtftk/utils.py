@@ -80,10 +80,6 @@ if PY3:
 
     file = IOBase
 
-if PY3:
-    def native_str(x):
-        return bytes(x.encode())
-
 
 # ---------------------------------------------------------------
 # Error class
@@ -114,13 +110,24 @@ class GTFtkInteractiveError(Exception):
 # ---------------------------------------------------------------
 
 def mkdir_p(path):
-    try:
-        os.makedirs(path)
-    except OSError as exc:  # Python >2.5
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
-            pass
+    """Create a directory silently if already exists.
+
+    :Example:
+
+    >>> from pygtftk.utils import check_file_or_dir_exists
+    >>> from pygtftk.utils import mkdir_p
+    >>> mkdir_p('/tmp/test_gtftk_mkdir_p')
+    >>> assert check_file_or_dir_exists('/tmp/test_gtftk_mkdir_p')
+    """
+
+    if not os.path.exists(path):
+        if os.path.isfile(path):
+            raise GTFtkError("The path provided is a file not a directory...")
         else:
-            raise
+            try:
+                os.makedirs(path)
+            except:
+                raise GTFtkError("Unable to create directory : " + path)
 
 
 def make_tmp_file(prefix='tmp',
@@ -149,30 +156,28 @@ def make_tmp_file(prefix='tmp',
 
     """
 
+    dir_target = None
+
     if dir is None:
         if TMP_DIR is not None:
             if not os.path.exists(TMP_DIR):
                 msg = "Creating directory {d}."
                 message(msg.format(d=TMP_DIR), type="INFO")
                 os.mkdir(TMP_DIR)
-
-        tmp_file = NamedTemporaryFile(delete=False,
-                                      mode="w",
-                                      prefix=prefix + "_gtftk_",
-                                      suffix=suffix,
-                                      dir=TMP_DIR)
+                dir_target = TMP_DIR
 
     else:
         if not os.path.exists(dir):
             msg = "Creating directory {d}."
             message(msg.format(d=dir), type="INFO")
             os.mkdir(dir)
+            dir_target = dir
 
-        tmp_file = NamedTemporaryFile(delete=False,
-                                      mode="w",
-                                      prefix=prefix + "_gtftk_",
-                                      suffix=suffix,
-                                      dir=dir)
+    tmp_file = NamedTemporaryFile(delete=False,
+                                  mode='w',
+                                  prefix=prefix + "_gtftk_",
+                                  suffix=suffix,
+                                  dir=dir_target)
 
     if store:
         TMP_FILE_LIST.append(tmp_file.name)
@@ -536,18 +541,27 @@ def chrom_info_to_bed_file(chrom_file, chr_list=None):
 
     >>> from  pygtftk.utils import chrom_info_to_bed_file
     >>> from  pygtftk.utils import get_example_file
+    >>> from pygtftk.utils import PY3
+    >>> from pygtftk.utils import PY2
     >>> from pybedtools import  BedTool
     >>> a = get_example_file(ext='chromInfo')
     >>> b = chrom_info_to_bed_file(open(a[0], 'r'))
     >>> c = BedTool(b.name)
     >>> d = c.__iter__()
-    >>> i = d.next()
-    >>> assert i.start == 0
-    >>> assert i.end == 600
-    >>> assert (i.end - i.start) == 600
-    >>> i = d.next()
-    >>> assert (i.end - i.start) == 300
-
+    >>> i = next(d)
+    >>> if PY2: assert str(i.chrom) == 'chr2'
+    >>> if PY2: assert i.start == 0
+    >>> if PY2: assert i.end == 600
+    >>> if PY3: assert str(i.chrom) == 'chr1'
+    >>> if PY3: assert i.start == 0
+    >>> if PY3: assert i.end == 300
+    >>> i = next(d)
+    >>> if PY3: assert str(i.chrom) == 'chr2'
+    >>> if PY3: assert i.start == 0
+    >>> if PY3: assert i.end == 600
+    >>> if PY2: assert str(i.chrom) == 'chr1'
+    >>> if PY2: assert i.start == 0
+    >>> if PY2: assert i.end == 300
     """
 
     message("Converting chrom info to bed format")
@@ -603,12 +617,16 @@ def write_properly(a_string, afile):
     >>> from pygtftk.utils import write_properly
 
     """
+    if afile is not None:
 
-    if afile is not None and afile.name != '<stdout>':
-        afile.write(a_string + "\n")
+        if afile.name in ['<stdout>', '-']:
+            sys.stdout.write(a_string + '\n')
+        else:
+            afile.write(a_string + '\n')
+
 
     else:
-        sys.stdout.write(a_string + "\n")
+        sys.stdout.write(a_string + '\n')
 
 
 def make_outdir_and_file(out_dir=None,
@@ -664,7 +682,9 @@ def silentremove(filename):
     >>> from pygtftk.utils import silentremove
     >>> from pygtftk.utils import make_tmp_file
     >>> a = make_tmp_file()
-
+    >>> assert os.path.exists(a.name)
+    >>> silentremove(a.name)
+    >>> assert not os.path.exists(a.name)
 
     """
     if isinstance(filename, file):
@@ -868,7 +888,8 @@ def random_string(n):
 
 def to_alphanum(string):
     """
-    Returns a new string in which non alphanumeric character have been replaced by '_'.
+    Returns a new string in which non alphanumeric character have been replaced by '_'. If non alphanumeric characters
+    are found at the beginning or end of the string, they are deleted.
 
     :param string: A character string in which non alphanumeric char have to be replaced.
     :param replacement_list:
@@ -923,11 +944,15 @@ def flatten_list(x, outlist=[]):
 
     :Example:
 
+    >>> from pygtftk.utils import flatten_list
     >>> b = ["A", "B", "C"]
     >>> a = ["a", "b", "c"]
     >>> c = ['a', 'b', 'c', 'A', 'B', 'C', 'string']
-    >>> assert flatten_list([a,b, "string"]) ==  c
-    >>> assert flatten_list("string") == ['string']
+    >>> # Call it with an empty list (outlist)
+    >>> # otherwise, element will be added to the existing
+    >>> # outlist variable
+    >>> assert flatten_list([a,b, "string"], outlist=[]) ==  c
+    >>> assert flatten_list("string", outlist=[]) == ['string']
 
     """
 

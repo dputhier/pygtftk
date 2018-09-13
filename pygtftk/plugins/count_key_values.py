@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 from __future__ import print_function
-from builtins import zip
-from builtins import str
 
 import argparse
 import sys
 from collections import defaultdict
+
+from builtins import str
+from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject

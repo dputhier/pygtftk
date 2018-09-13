@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 from __future__ import print_function
-from builtins import str
+
 import argparse
 import sys
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject

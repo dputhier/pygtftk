@@ -12,7 +12,6 @@ returned respectively:
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import sys
 from collections import OrderedDict
 
 from builtins import object
@@ -76,7 +75,7 @@ class FieldSet(object):
         if ptr is not None:
             self.fields = [ffi.string(ptr[x]).decode() for x in range(size)]
         elif alist is not None:
-            self.fields = [x.decode() for x in alist]
+            self.fields = [x for x in alist]
         else:
             raise GTFtkError('Unsupported type.')
         if ft_type is not None:
@@ -89,17 +88,58 @@ class FieldSet(object):
         return '\t'.join([str(x) for x in self.fields])
 
     def __str__(self):
+        """Return the string representation of a FieldSet object.
+
+        :Example:
+
+        >>> from pygtftk.Line import FieldSet
+        >>> from pygtftk.utils import TAB
+        >>> a = FieldSet(alist=['chr1', '123', '456'])
+        >>> assert str(a) == TAB.join(['chr1', '123', '456'])
+
+        """
+
         return self.__repr__()
 
     def __len__(self):
+        """Return the length of a FieldSet object.
+
+        :Example:
+
+        >>> from pygtftk.Line import FieldSet
+        >>> a = FieldSet(alist=['chr1', '123', '456'])
+        >>> assert len(a) == 3
+
+        """
+
         return len(self.fields)
 
     def __getitem__(self, pos=None):
-        """Redefining the getter."""
+        """Redefining the getter.
+
+        :Example:
+
+        >>> from pygtftk.Line import FieldSet
+        >>> a = FieldSet(alist=['chr1', '123', '456'])
+        >>> assert a[0] == 'chr1'
+        >>> assert a[1] == '123'
+        >>> assert a[2] == '456'
+
+        """
         return self.fields[pos]
 
     def __setitem__(self, pos, value):
-        """Redefining the setter."""
+        """Redefining the setter.
+
+        :Example:
+
+        >>> from pygtftk.Line import FieldSet
+        >>> a = FieldSet(alist=['chr1', '123', '456'])
+        >>> a[0] = 'chr2'
+        >>> a[1] = '789'
+        >>> a[2] = '101112'
+
+        """
         self.fields[pos] = value
 
     def format(self, separator="\t"):
@@ -138,10 +178,7 @@ class FieldSet(object):
 
         """
 
-        if file_out is not None:
-            file_out.write(self.format(separator) + '\n')
-        else:
-            sys.stdout.write(self.format(separator) + '\n')
+        pygtftk.utils.write_properly(self.format(), file_out)
 
 
 # ---------------------------------------------------------------
@@ -196,6 +233,15 @@ class FastaSequence(object):
         return self.format()
 
     def __str__(self):
+        """The string representation of a FastaSequence object.
+
+        :Example:
+
+        >>> from pygtftk.Line import FastaSequence
+        >>> from pygtftk.utils import  NEWLINE
+        >>> a = FastaSequence(alist=['>bla', 'AATACAGAGAT','chr21','+', 'BLA', 'NM123', 123, 456, 'transcript'])
+        >>> assert str(a) == a.header + NEWLINE + a.sequence
+        """
         return self.__repr__()
 
     def format(self):
@@ -226,10 +272,8 @@ class FastaSequence(object):
         >>> assert simple_line_count(f) == 2
 
         """
-        if file_out is not None:
-            file_out.write(self.format() + '\n')
-        else:
-            sys.stdout.write(self.format() + '\n')
+
+        pygtftk.utils.write_properly(self.format(), file_out)
 
 
 # ---------------------------------------------------------------
@@ -259,6 +303,13 @@ class Feature(object):
         >>> a = Feature.from_list(alist)
         >>> assert a.get_tx_id() == 'g1t1'
         >>> assert a.get_gn_id() == 'g1'
+        >>> from  pygtftk.utils import get_example_file
+        >>> import pygtftk
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> for i in a_gtf: pass
+        >>> assert type(i) == pygtftk.Line.Feature
 
 
         """
@@ -309,6 +360,8 @@ class Feature(object):
         >>> d['gene_id'] = 'g1'
         >>> alist +=['.','+','.',d]
         >>> a = Feature.from_list(alist)
+        >>> assert a.attr['transcript_id'] == 'g1t1'
+        >>> assert a.attr['gene_id'] == 'g1'
 
 
         """
@@ -450,8 +503,9 @@ class Feature(object):
         :Example:
 
         >>> from pygtftk.utils import get_example_feature
+        >>> from pygtftk.utils import TAB
         >>> feat = get_example_feature()
-        >>> a = 'chr1\tUnknown\ttranscript\t100\t200\t.\t+\t.\tg1t1'
+        >>> a = TAB.join(['chr1', 'Unknown', 'transcript', '100', '200', '.', '+', '.', 'g1t1'])
         >>> assert feat.format_tab('transcript_id') == a
 
         """
@@ -780,6 +834,7 @@ class Feature(object):
         >>> assert feat.get_attr_value('chrom') == ['chr1']
         >>> assert feat.get_attr_value('end') == [200]
         >>> assert feat.get_attr_value('bla', upon_none='continue') == [None]
+        >>> assert feat.get_attr_value('bla', upon_none='set_na') == ['.']
 
         """
 
@@ -837,7 +892,4 @@ class Feature(object):
         >>> assert simple_line_count(tmp_file) == 1
         """
 
-        if file_out != "-":
-            file_out.write(self.format() + '\n')
-        else:
-            sys.stdout.write(self.format() + '\n')
+        pygtftk.utils.write_properly(self.format(), file_out)

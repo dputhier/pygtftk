@@ -118,7 +118,7 @@ def select_by_go(inputfile=None,
 
     bm.query({'query': XML.format(species=species, go=go_id)})
 
-    for i in bm.response.content.split("\n"):
+    for i in bm.response.content.decode().split("\n"):
         i = i.rstrip("\n")
         if i != '':
             is_associated[i] = 1

@@ -615,7 +615,7 @@ class CmdManager(object):
             group.add_argument("-A",
                                "--keep-all",
                                action="store_true",
-                               help="Keep all temporary files even in case of error.",
+                               help="Try to keep all temporary files even if process does not terminate normally.",
                                required=False)
 
             # logger-file can be used to store the requested command

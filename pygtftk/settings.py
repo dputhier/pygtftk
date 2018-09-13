@@ -2,6 +2,7 @@
 # The script for bash completion
 # ---------------------------------------------------------------
 
+
 COMPLETION_SCRIPT = """
 # To activate completion of sub-commands
 # Add this script to your ~/.bashrc

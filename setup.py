@@ -9,6 +9,10 @@ Authors: D. Puthier and F. Lopez
 Programming Language :: Python :: 2.7"
 """
 
+# -------------------------------------------------------------------------
+# A set of builtin packages
+# -------------------------------------------------------------------------
+
 import glob
 import os
 import re
@@ -16,23 +20,30 @@ import shutil
 import sys
 from distutils import sysconfig
 from sys import platform
+from tempfile import NamedTemporaryFile
 
-import git
-from setuptools import setup, Extension
-
-from pygtftk.utils import chomp
-from pygtftk.utils import make_tmp_file
-from pygtftk.version import __base_version__
+# -------------------------------------------------------------------------
+# Check setup is installed
+# -------------------------------------------------------------------------
 
 try:
     from setuptools import setup
-except:
-    pass
+    from setuptools import Extension
+except ImportError:
+    print("Please install setuptools before installing pygtftk.",
+          file=sys.stderr)
+    exit(1)
+
+try:
+    import git
+except ImportError:
+    print("Please install git package before installing pygtftk.",
+          file=sys.stderr)
+    exit(1)
 
 # -------------------------------------------------------------------------
 # Python Version
 # -------------------------------------------------------------------------
-
 
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
@@ -40,6 +51,13 @@ PY2 = sys.version_info[0] == 2
 # -------------------------------------------------------------------------
 # Check gtftk version
 # -------------------------------------------------------------------------
+
+version_fh = open("pygtftk/version.py")
+
+for i in version_fh:
+    if "__base_version__" in i:
+        base_version = i.split("=")[1]
+        base_version = re.sub("['\" \n\r]", "", base_version)
 
 try:
     repo = git.Repo(search_parent_directories=True)
@@ -51,12 +69,12 @@ except:
     sha = ""
 
 if sha != "" and branch != "master" and not os.path.exists("pypi_release_in_progress"):
-    __version__ = __base_version__ + ".dev0+" + sha
+    __version__ = base_version + ".dev0+" + sha
 else:
-    __version__ = __base_version__
+    __version__ = base_version
 
 version_file = open('pygtftk/version.py', "w")
-version_file.write("__base_version__='" + __base_version__ + "'\n")
+version_file.write("__base_version__='" + base_version + "'\n")
 version_file.write("__version__='" + __version__ + "'\n")
 version_file.close()
 
@@ -86,7 +104,7 @@ elif PY3:
     if platform == "darwin":
         vars = sysconfig.get_config_vars()
         vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
-        dyn_lib_compil = ['-shared']
+        dyn_lib_compil = []
     else:
         dyn_lib_compil = []
 
@@ -126,7 +144,7 @@ past_line_len = 0
 
 for pos, line in enumerate(long_description_file):
     if not line.startswith("    "):
-        line = chomp(line)
+        line = line.rstrip('\r\n')
 
     if pos > 0:
         # Replace title
@@ -156,7 +174,10 @@ long_description = "\n".join(long_description)
 # of the pygtftk library
 # ----------------------------------------------------------------------
 
-tmp_file_conf = make_tmp_file(prefix="pygtftk_", suffix="_conf.py")
+tmp_file_conf = NamedTemporaryFile(delete=False,
+                                   mode="w",
+                                   prefix="pygtftk_",
+                                   suffix="_conf.py")
 
 conf_file = open("docs/manual/source/conf.py", "r")
 for line in conf_file:
@@ -227,14 +248,19 @@ setup(name="pygtftk",
       scripts=['bin/gtftk'],
       license='LICENSE.txt',
 
-      classifiers=(
-          "Programming Language :: Python :: 2.7",
-          "License :: OSI Approved :: MIT License",
-          "Operating System :: MacOS",
-          "Operating System :: POSIX :: Linux",
-          "Development Status :: 4 - Beta",
-          "Environment :: Console"
-      ),
+      classifiers=("License :: OSI Approved :: MIT License",
+                   "Operating System :: MacOS",
+                   "Operating System :: POSIX :: Linux",
+                   "Development Status :: 4 - Beta",
+                   "Environment :: Console",
+                   "Programming Language :: Python :: 3.6",
+                   "Intended Audience :: Science/Research",
+                   "Natural Language :: English",
+                   "Topic :: Scientific/Engineering :: Bio-Informatics",
+                   "Operating System :: POSIX :: Linux",
+                   "Operating System :: MacOS",
+                   "Topic :: Documentation :: Sphinx"
+                   ),
       long_description=long_description,
       install_requires=['pyyaml >=3.12',
                         'argparse',
@@ -249,13 +275,9 @@ setup(name="pygtftk",
                         'pyparsing >=2.2.0',
                         'GitPython >=2.1.8',
                         'pyparsing',
-                        'nose',
                         'pysam >=0.9.1.4',
-                        'sphinx_bootstrap_theme >=0.4.9',
-                        'sphinxcontrib-programoutput >=0.8',
-                        'sphinx >=1.5.2',
                         'matplotlib >=2.0.2',
-                        'plotnine >=0.3.0'],
+                        'plotnine >=0.4.0'],
       ext_modules=[lib_pygtftk])
 
 config_dir = os.path.join(os.path.expanduser("~"), ".gtftk")

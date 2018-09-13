@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 from __future__ import division
 from __future__ import print_function
-from builtins import range
 
 import argparse
 import os
 import sys
 
 import pandas as pd
+from builtins import range
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -48,8 +48,8 @@ def make_parser():
     parser_grp.add_argument(
         'bw_list',
         help='A list of Bigwig file (last argument).',
-        type=FileWithExtension('r',valid_extensions=('\.[Bb][Ww]$',
-                                                     '\.[Bb][Ii][Gg][Ww][Ii][Gg]$')),
+        type=FileWithExtension('r', valid_extensions=('\.[Bb][Ww]$',
+                                                      '\.[Bb][Ii][Gg][Ww][Ii][Gg]$')),
         nargs='+')
 
     parser_grp.add_argument('-i', '--inputfile',
@@ -240,7 +240,6 @@ def coverage(
                     os.path.basename(
                         bw_list[i]))[0]]
 
-
     # -------------------------------------------------------------------------
     # Check the number of windows
     #
@@ -278,7 +277,6 @@ def coverage(
             is_gtf = True
         else:
             is_gtf = False
-
 
     # -------------------------------------------------------------------------
     # Get regions of interest
@@ -345,7 +343,6 @@ def coverage(
                                    r=downstream,
                                    g=chrom_info.name).sort()
 
-
     region_bed = make_tmp_file(prefix="region", suffix=".bed")
 
     region_bo.saveas(region_bed.name)
@@ -399,7 +396,7 @@ def coverage(
             # chrom, start, end, transcript_id, strand
             df_final = df_final.merge(i.iloc[:,
                                       list(range(6))], on=[0, 1,
-                                                     2, 3, 5])
+                                                           2, 3, 5])
 
         df_final.columns = ["chrom",
                             "start",

@@ -8,6 +8,7 @@ When using gtfk a GTF object methods may return:
     - a FASTA object (a representation of a fasta file).
 
 """
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -771,7 +772,7 @@ class GTF(object):
         >>> n=0
         >>> for i in a_gtf: n += 1
         >>> assert n == 70
-        >>> assert a_gtf.__iter__().next().chrom == 'chr1'
+        >>> assert next(a_gtf.__iter__()).chrom == 'chr1'
         """
         message("Interating over GTF instance.", type="DEBUG")
 
@@ -1180,9 +1181,9 @@ class GTF(object):
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> gen = a_gtf.extract_data_iter_list("start,gene_id")
-        >>> assert gen.next() == ['125', 'G0001']
+        >>> assert next(gen) == ['125', 'G0001']
         >>> gen =a_gtf.extract_data_iter_list("start,gene_id", zero_based=True)
-        >>> assert gen.next() == ['124', 'G0001']
+        >>> assert next(gen) == ['124', 'G0001']
         >>> gen = a_gtf.extract_data_iter_list("start,gene_id")
         >>> assert len([x for x in gen]) == 70
         >>> gen = a_gtf.extract_data_iter_list("start,gene_id", nr=True)
@@ -1466,7 +1467,7 @@ class GTF(object):
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> assert a_gtf.select_by_positions([0]).extract_data("feature", as_list=True) == ['gene']
-        >>> assert a_gtf.select_by_positions(range(3)).extract_data("feature", as_list=True) == ['gene', 'transcript', 'exon']
+        >>> assert a_gtf.select_by_positions(list(range(3))).extract_data("feature", as_list=True) == ['gene', 'transcript', 'exon']
         >>> assert a_gtf.select_by_positions([3,4,1]).select_by_positions([0,1]).extract_data("feature", as_list=True) == ['CDS', 'transcript']
         """
 
@@ -1634,7 +1635,7 @@ class GTF(object):
         return self._clone(new_data)
 
     def select_by_max_exon_nb(self):
-        """For each gene select the transcript with the highest number of exons.
+        """For each gene select the transcript with the highest number of exons. If ties, select the first encountered.
 
         :Example:
 
@@ -1642,33 +1643,40 @@ class GTF(object):
         >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file("simple_04")[0]
         >>> a_gtf = GTF(a_file)
-        >>> l = a_gtf.select_by_max_exon_nb().extract_data("transcript_id", as_list=True)
+        >>> b = a_gtf.select_by_max_exon_nb()
+        >>> l = b.extract_data("transcript_id", as_list=True, nr=True, no_na=True, hide_undef=True)
         >>> assert "G0005T001" not in l
         >>> assert "G0004T002" not in l
         >>> assert "G0006T002" not in l
+        >>> assert len(l) == 10
         """
 
         nb_exons = self.nb_exons()
 
         info = self.extract_data("gene_id,transcript_id",
                                  as_list_of_list=True,
-                                 nr=True)
+                                 nr=True,
+                                 no_na=True, hide_undef=True)
 
         gene_to_tx_max_exon = OrderedDict()
 
         for i in info:
-            gene_id, tx_id = i
 
-            if gene_to_tx_max_exon.get(gene_id) is not None:
+            gene_id, tx_id = i
+            gene_id = gene_id
+            tx_id = tx_id
+
+            if gene_id in gene_to_tx_max_exon:
                 if nb_exons[tx_id] > nb_exons[gene_to_tx_max_exon[gene_id]]:
                     gene_to_tx_max_exon[gene_id] = tx_id
             else:
                 gene_to_tx_max_exon[gene_id] = tx_id
 
+        tx_list_csv = ",".join(list(gene_to_tx_max_exon.values()))
+
         new_data = self._dll.select_by_key(self._data,
-                                           "transcript_id",
-                                           ",".join(
-                                               list(gene_to_tx_max_exon.values())),
+                                           native_str("transcript_id"),
+                                           native_str(tx_list_csv),
                                            0)
 
         return self._clone(new_data)
@@ -1856,15 +1864,21 @@ class GTF(object):
         >>> from pygtftk.utils import TAB
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
-        >>> assert a_gtf.nb_exons().keys()[0] == 'G0003T001'
-        >>> assert a_gtf.nb_exons().keys()[-1] == 'G0010T001'
-        >>> assert a_gtf.nb_exons().values()[0] == 2
-        >>> assert a_gtf.nb_exons().values()[-1] == 1
+        >>> nb_ex = a_gtf.nb_exons()
+        >>> assert len(nb_ex) == 15
+        >>> assert nb_ex['G0006T001'] == 3
+        >>> assert nb_ex['G0004T002'] == 3
+        >>> assert nb_ex['G0004T002'] == 3
+        >>> assert nb_ex['G0005T001'] == 2
+        >>> a_file = get_example_file("simple_04")[0]
+        >>> a_gtf = GTF(a_file)
+        >>> nb_ex = a_gtf.nb_exons()
+        >>> assert nb_ex['G0004T001'] == 4
         """
 
         message("Calling nb_exons.", type="DEBUG")
 
-        nb_exons = dict()
+        nb_exons = OrderedDict()
         nb_exons = defaultdict(lambda: 0, nb_exons)
 
         tab = self.extract_data("transcript_id,feature")
@@ -2203,7 +2217,6 @@ class GTF(object):
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import TAB
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> a_dict = a_gtf.nb_exons()
@@ -3330,18 +3343,13 @@ class GTF(object):
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import make_tmp_file
         >>> from pygtftk.utils import NEWLINE
         >>> a_path = get_example_file()[0]
-        >>> gtf = GTF(a_path)
-        >>> tmp_file =  make_tmp_file()
-        >>> for i in range(len(gtf)): tmp_file.write(str(i) + NEWLINE)
-        >>> tmp_file.close()
-        >>> gtf = gtf.add_attr_column(tmp_file, new_key='foo')
-        >>> a_list = gtf.extract_data('foo', as_list=True)
-        >>> assert [int(x) for x in a_list] == range(70)
-
-
+        >>> a_col = get_example_file(ext="csv")[0]
+        >>> a_gtf = GTF(a_path)
+        >>> a_gtf = a_gtf.add_attr_column(open(a_col), new_key='foo')
+        >>> a_list = a_gtf.extract_data('foo', as_list=True)
+        >>> assert [int(x) for x in a_list] == list(range(70))
         """
 
         if isinstance(input_file, basestring):
@@ -3369,24 +3377,24 @@ class GTF(object):
     def add_attr_to_pos(self, input_file=None, new_key="new_key"):
         """Simply add a new column of attribute/value to specific lines.
 
-        :param input_file: a two column file. First column contains the position/line. Second, the value to be added for 'new_key'.
+        :param input_file: a two column file. First column contains the position/line (zero-based numbering).
+        Second, the value to be added for 'new_key'.
         :param new_key: name of the novel key.
 
         :Example:
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import make_tmp_file
         >>> from pygtftk.utils import NEWLINE
         >>> a_path = get_example_file()[0]
-        >>> gtf = GTF(a_path)
-        >>> tmp_file =  make_tmp_file()
-        >>> for i in range(len(gtf)): tmp_file.write(str(i) + NEWLINE)
-        >>> tmp_file.close()
-        >>> gtf = gtf.add_attr_column(tmp_file, new_key='foo')
-        >>> a_list = gtf.extract_data('foo', as_list=True)
-        >>> assert [int(x) for x in a_list] == range(70)
-
+        >>> a_col = get_example_file(ext="tab")[0]
+        >>> a_gtf = GTF(a_path)
+        >>> a_gtf = a_gtf.add_attr_to_pos(open(a_col), new_key='foo')
+        >>> a_list = a_gtf.extract_data('foo', as_list=True)
+        >>> assert a_list[0] == 'AAA'
+        >>> assert a_list[1] == 'BBB'
+        >>> assert a_list[2] == '?'
+        >>> assert a_list[3] == 'CCC'
 
         """
 
