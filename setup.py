@@ -47,6 +47,14 @@ PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 
 # -------------------------------------------------------------------------
+# Delete any existing .gtftk in home folder
+# -------------------------------------------------------------------------
+
+gtftk_cnf_dir = os.path.join(os.environ['HOME'], '.gtftk')
+if os.path.exists(gtftk_cnf_dir):
+    shutil.rmtree(gtftk_cnf_dir, ignore_errors=True)
+
+# -------------------------------------------------------------------------
 # Check gtftk version
 # -------------------------------------------------------------------------
 
@@ -216,7 +224,7 @@ setup(name="pygtftk",
           'Source': 'https://github.com/dputhier/pygtftk',
           'Tracker': 'https://github.com/dputhier/pygtftk/issues'
       },
-      python_requires='~=2.7',
+      python_requires='~=3.6',
       keywords="genomics bioinformatics GTF BED",
       packages=['pygtftk',
                 'pygtftk/plugins',
