@@ -31,8 +31,8 @@ If conda is not available on your system, first install miniconda from the offic
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
     cd pygtftk
-    conda env create -n pygtftk -f conda/env.yaml python=3.6
-    source activate pygtftk
+    conda env create -n pygtftk_py3k -f conda/env.yaml python=3.6
+    source activate pygtftk_py3k
     make install
 
 Note for developpers: You can install the develop branch using the same approach.
@@ -40,8 +40,8 @@ Note for developpers: You can install the develop branch using the same approach
     git clone git@github.com:dputhier/pygtftk.git pygtftk
     cd pygtftk
     git checkout develop
-    conda env create -n pygtftk_dev -f conda/env.yaml
-    source activate pygtftk_dev
+    conda env create -n pygtftk_py3k_dev -f conda/env.yaml python=3.6
+    source activate pygtftk_py3k_dev
     make install
     
 ## Installation through pip 
