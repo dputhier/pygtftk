@@ -2412,7 +2412,7 @@ class GTF(object):
         """
 
         if gc_off:
-            message("Garbage collector has been disable.", type="DEBUG")
+            message("Garbage collector has been disabled.", type="DEBUG")
             gc.disable()
 
         self._message("Writing a GTF ")
