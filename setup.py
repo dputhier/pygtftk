@@ -150,11 +150,15 @@ markup_char = {1: "=", 2: "-", 3: "~"}
 markup_level = 0
 past_line_len = 0
 
+start_of_text = False
+
 for pos, line in enumerate(long_description_file):
     if not line.startswith("    "):
         line = line.rstrip('\r\n')
+    if line.startswith("# ") and start_of_text is False:
+        start_of_text = True
 
-    if pos > 0:
+    if start_of_text:
         # Replace title
         if markup_level > 0:
             title = markup_char[markup_level] * past_line_len
@@ -215,7 +219,7 @@ os.remove(tmp_file_conf.name)
 
 setup(name="pygtftk",
       version=__version__,
-      author_email='fabrice.lopez@inserm.fr,denis.puthier@univ-amu.fr',
+      author_email='denis.puthier@univ-amu.fr',
       author="fabrice Lopez,Denis Puthier",
       description="The Python GTF toolkit (pygtftk) package: easy handling of GTF files",
       url="https://github.com/dputhier/pygtftk",
