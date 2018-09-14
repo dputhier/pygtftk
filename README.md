@@ -1,4 +1,4 @@
-[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/dputhier/pygtftk) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dputhier/pygtftk/issues) 
+[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/dputhier/pygtftk) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dputhier/pygtftk/issues) [![HitCount](http://hits.dwyl.com/dputhier/pygtftk.svg)](http://hits.dwyl.com/dputhier/pygtftk)
 
 
 # Python GTF toolkit (pygtftk)
