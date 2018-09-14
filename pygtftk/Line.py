@@ -169,16 +169,18 @@ class FieldSet(object):
 
         >>> from pygtftk.Line import FieldSet
         >>> from pygtftk.utils import  make_tmp_file
+        >>> from pygtftk.utils import  simple_line_count
+        >>> from pygtftk.utils import  simple_nb_column
         >>> a = FieldSet(alist=['chr1', '123', '456'])
         >>> f = make_tmp_file()
         >>> a.write(f)
         >>> f.close()
-        >>> from pygtftk.utils import  simple_line_count
         >>> assert simple_line_count(f) == 1
+        >>> assert simple_nb_column(f) == 3
 
         """
 
-        pygtftk.utils.write_properly(self.format(), file_out)
+        pygtftk.utils.write_properly(separator.join(list(self)), file_out)
 
 
 # ---------------------------------------------------------------

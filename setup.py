@@ -30,15 +30,13 @@ try:
     from setuptools import setup
     from setuptools import Extension
 except ImportError:
-    print("Please install setuptools before installing pygtftk.",
-          file=sys.stderr)
+    sys.stderr.write("Please install setuptools before installing pygtftk.")
     exit(1)
 
 try:
     import git
 except ImportError:
-    print("Please install git package before installing pygtftk.",
-          file=sys.stderr)
+    sys.stderr.write("Please install git package before installing pygtftk.")
     exit(1)
 
 # -------------------------------------------------------------------------
@@ -88,15 +86,14 @@ if PY2:
     if platform == "darwin":
         vars = sysconfig.get_config_vars()
         vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
-        dyn_lib_compil = ['-shared']
+        dyn_lib_compil = []
     else:
-        dyn_lib_compil = ['-shared']
+        dyn_lib_compil = []
 
     extra_compile_args = ['-Ipygtftk/src/libgtftk',
                           '-O3',
                           '-Wall',
                           '-fPIC',
-                          #                      '-shared',
                           '-MMD',
                           '-MP',
                           '-fmessage-length=0'] + dyn_lib_compil

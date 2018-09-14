@@ -204,17 +204,18 @@ class TAB(object):
         >>> from pygtftk.gtf_interface import GTF
         >>> from pygtftk.utils import make_tmp_file
         >>> from pygtftk.utils import simple_line_count
+        >>> from pygtftk.utils import simple_nb_column
         >>> a_file = get_example_file()[0]
         >>> a_tab = GTF(a_file).extract_data("transcript_id,gene_id")
         >>> out_file = make_tmp_file()
         >>> a_tab.write(out_file)
         >>> out_file.close()
         >>> assert simple_line_count(out_file) == 70
-
+        >>> assert simple_nb_column(out_file) == 2
         """
 
         for i in self:
-            pygtftk.utils.write_properly(i, file_out)
+            pygtftk.utils.write_properly(sep.join(list(i)), outfile)
 
     def as_simple_list(self, which_col=0):
         """Convert the selected column of a TAB object into a list.
