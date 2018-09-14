@@ -12,11 +12,10 @@ extern void add_attribute(GTF_ROW *row, char *key, char *value);
  * global variables declaration
  */
 extern COLUMN **column;
-
-INDEX_ID *tid_index;
-ROW_LIST *row_list, *test_row_list, **find_row_list;
-GTF_DATA *gtf_d;
-int tr_type;
+extern INDEX_ID *tid_index;
+extern ROW_LIST *row_list, *test_row_list, **find_row_list;
+extern GTF_DATA *gtf_d;
+extern int tr_type;
 
 int string_cmp (const void *v1, const void *v2) {
 	char *s1 = *(char **)v1;

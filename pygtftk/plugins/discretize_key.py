@@ -3,10 +3,14 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 import numpy as np
 import pandas
+from builtins import range
+from builtins import str
+from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import int_greater_than_null
@@ -256,7 +260,9 @@ def discretize_key(inputfile=None,
         for p, v in zip(dest_pos, breaks):
             tmp_file.write(str(p) + "\t" + str(v) + '\n')
 
-    gtf.add_attr_to_pos(tmp_file, new_key=dest_key).write(outputfile)
+    gtf.add_attr_to_pos(tmp_file,
+                        new_key=dest_key).write(outputfile,
+                                                gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -299,7 +305,7 @@ else:
     CmdObject(name="discretize_key",
               message="Create a new key through discretization of a numeric key.",
               parser=make_parser(),
-              fun=discretize_key,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               desc=__doc__,
               notes=__notes__,

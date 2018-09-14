@@ -45,8 +45,8 @@ def main():
     if not find_executable("bedtools"):
         message("gtftk needs bedtools (command line version). Please install it.",
                 type="ERROR")
-    cmd_manager = CmdManager()
 
+    cmd_manager = CmdManager()
     cmd_manager.load_plugins()
 
     # -------------------------------------------------------------------------
@@ -79,11 +79,12 @@ if __name__ == "__main__":
     try:
 
         # Run the main function
+
         args = main()
 
         # delete created temporary files
 
-        for i in flatten_list(TMP_FILE_LIST):
+        for i in flatten_list(TMP_FILE_LIST, outlist=[]):
 
             # If the user ask to keep temp files
             if args.tmp_dir is not None:

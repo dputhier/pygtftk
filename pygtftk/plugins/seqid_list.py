@@ -2,7 +2,10 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -93,7 +96,7 @@ else:
     CMD = CmdObject(name="seqid_list",
                     message="Returns the chromosome list.",
                     parser=make_parser(),
-                    fun=seqid_list,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     group="information",

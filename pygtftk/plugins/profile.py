@@ -14,6 +14,9 @@ import matplotlib as mpl
 import numpy as np
 import pandas as pd
 import plotnine
+from builtins import range
+from builtins import str
+from builtins import zip
 from matplotlib import cm
 from matplotlib import colors as mcolors
 from pandas import Categorical
@@ -29,6 +32,7 @@ from pygtftk.arg_formatter import float_greater_than_null
 from pygtftk.arg_formatter import float_grt_than_null_and_lwr_than_one
 from pygtftk.arg_formatter import int_greater_than_null
 from pygtftk.cmd_object import CmdObject
+from pygtftk.utils import GTFtkError
 from pygtftk.utils import chomp
 from pygtftk.utils import is_hex_color
 from pygtftk.utils import make_outdir_and_file
@@ -251,41 +255,41 @@ def make_parser():
     return parser
 
 
-def draw_profile(inputfile=None,
-                 out_dir=None,
-                 group_by='bwig',
-                 color_order=None,
-                 transcript_file=None,
-                 transform=None,
-                 normalization_method=None,
-                 to_log=False,
-                 upper_limit=0.95,
-                 quantiles=False,
-                 profile_colors=None,
-                 palette='nipy_spectral',
-                 page_width=None,
-                 title=None,
-                 page_height=None,
-                 page_format='pdf',
-                 user_img_file=None,
-                 tmp_dir=None,
-                 facet_col=None,
-                 border_color="#BBBBBB",
-                 force_tx_class=False,
-                 stat="mean",
-                 facet_var=None,
-                 x_lab="Selected genomic regions",
-                 axis_text=8,
-                 strip_text=8,
-                 subset_bwig=None,
-                 show_group_number=False,
-                 line_width=1,
-                 theme_plotnine='bw',
-                 confidence_interval=False,
-                 dpi=300,
-                 logger_file=None,
-                 verbosity=False
-                 ):
+def profile(inputfile=None,
+            out_dir=None,
+            group_by='bwig',
+            color_order=None,
+            transcript_file=None,
+            transform=None,
+            normalization_method=None,
+            to_log=False,
+            upper_limit=0.95,
+            quantiles=False,
+            profile_colors=None,
+            palette='nipy_spectral',
+            page_width=None,
+            title=None,
+            page_height=None,
+            page_format='pdf',
+            user_img_file=None,
+            tmp_dir=None,
+            facet_col=None,
+            border_color="#BBBBBB",
+            force_tx_class=False,
+            stat="mean",
+            facet_var=None,
+            x_lab="Selected genomic regions",
+            axis_text=8,
+            strip_text=8,
+            subset_bwig=None,
+            show_group_number=False,
+            line_width=1,
+            theme_plotnine='bw',
+            confidence_interval=False,
+            dpi=300,
+            logger_file=None,
+            verbosity=False
+            ):
     # -------------------------------------------------------------------------
     #
     # Pandas version is sometimes problematic
@@ -471,7 +475,7 @@ def draw_profile(inputfile=None,
             message("Deleting duplicates in transcript-file.")
             df_classes = df_classes.drop_duplicates(subset=[0])
             tx_ordering = df_classes[0].tolist()
-            tx_classes = OrderedDict(zip(df_classes[0], df_classes[1]))
+            tx_classes = OrderedDict(list(zip(df_classes[0], df_classes[1])))
             class_list = set(df_classes[1])
 
             # -------------------------------------------------------------------------
@@ -534,6 +538,8 @@ def draw_profile(inputfile=None,
             profile_colors = get_list_of_colors_mpl(len(class_list))
         elif group_by == 'chrom':
             profile_colors = get_list_of_colors_mpl(len(input_file_chrom))
+        else:
+            raise GTFtkError('--group-by is unknown')
 
 
     else:
@@ -635,6 +641,8 @@ def draw_profile(inputfile=None,
             msg = "Need more colors for displaying chromosome classes (n=%d)"
             message(msg % len(input_file_chrom),
                     type="ERROR")
+    else:
+        raise GTFtkError("--group-by is unknown.")
 
     if len(color_order) < len(profile_colors):
         profile_colors = profile_colors[:len(color_order)]
@@ -670,6 +678,8 @@ def draw_profile(inputfile=None,
     elif config['ft_type'] == 'single_nuc':
         img_file = "user_positions_u%s_d%s." + page_format
         img_file = img_file % (config['from'], config['to'])
+    else:
+        raise GTFtkError("Unknown feature type.")
 
     file_out_list = make_outdir_and_file(out_dir,
                                          ["profile_stats.txt",
@@ -897,7 +907,7 @@ def draw_profile(inputfile=None,
     # add colors to matrix
     #
     # -------------------------------------------------------------------------
-    group2cols = dict(zip(color_order, profile_colors))
+    group2cols = dict(list(zip(color_order, profile_colors)))
     dm['color_palette'] = [group2cols[x] for x in dm[group_by]]
 
     # -------------------------------------------------------------------------
@@ -1150,13 +1160,13 @@ def draw_profile(inputfile=None,
                            size=6,
                            ha='left')
 
-    # --------------------------------------------------------------------------
-    #
-    # Apply colors
-    #
-    # --------------------------------------------------------------------------
+        # --------------------------------------------------------------------------
+        #
+        # Apply colors
+        #
+        # --------------------------------------------------------------------------
 
-    p += scale_color_manual(values=dict(zip(color_order, profile_colors)), name='Groups')
+        p += scale_color_manual(values=dict(list(zip(color_order, profile_colors))), name='Groups')
 
     # -------------------------------------------------------------------------
     # Turn warning off. Both pandas and plotnine use warnings for deprecated
@@ -1254,7 +1264,7 @@ else:
 
     #profile: make tss.bed
     @test "profile_6" {
-     result=`gtftk select_by_key -i mini_real_noov_rnd_tx.gtf -k feature -v transcript |  gtftk 5p_3p_coord > tss.bed`
+     result=`gtftk select_by_key -i mini_real_noov_rnd_tx.gtf -k feature -v transcript |  gtftk get_5p_3p_coords > tss.bed`
       [ -s "tss.bed" ]
     }
 
@@ -1366,7 +1376,7 @@ else:
     cmd = CmdObject(name="profile",
                     message="Create coverage profile using a bigWig as input.",
                     parser=make_parser(),
-                    fun=draw_profile,
+                    fun=os.path.abspath(__file__),
                     desc=__doc__,
                     updated=__updated__,
                     notes=__notes__,

@@ -10,6 +10,9 @@ import sys
 from itertools import repeat
 
 import numpy as np
+from builtins import range
+from builtins import str
+from builtins import zip
 from pybedtools import BedTool
 
 from pygtftk.utils import GTFtkError
@@ -145,7 +148,7 @@ def _big_wig_coverage_worker(input_values):
                     out = []
                     size = i.end - i.start
 
-                    for range_curr in intervals(range(size), bin_nb, silent=True):
+                    for range_curr in intervals(list(range(size)), bin_nb, silent=True):
 
                         interval_cur = bw_cov[range_curr[0]:range_curr[1]]
 
@@ -265,29 +268,30 @@ def bw_cov_mp(bw_list=None,
     Returns a file.
 
     """
+
     n_region_to_proceed = len(BedTool(region_file.name))
 
     message("Received " +
             str(n_region_to_proceed) +
             " regions to proceed for each bigwig")
 
-    tokens = intervals(range(n_region_to_proceed), nb_proc)
+    tokens = intervals(list(range(n_region_to_proceed)), nb_proc)
 
     pool = multiprocessing.Pool(nb_proc)
     coverage_list = pool.map_async(_big_wig_coverage_worker,
-                                   zip(tokens,
-                                       repeat(bw_list),
-                                       repeat(region_file.name),
-                                       repeat(bin_nb),
-                                       repeat(pseudo_count),
-                                       repeat(n_highest),
-                                       repeat(False),
-                                       repeat(False),
-                                       repeat(None),
-                                       repeat(labels),
-                                       repeat(zero_to_na),
-                                       repeat(stat),
-                                       repeat(verbose))).get(9999999)
+                                   list(zip(tokens,
+                                            repeat(bw_list),
+                                            repeat(region_file.name),
+                                            repeat(bin_nb),
+                                            repeat(pseudo_count),
+                                            repeat(n_highest),
+                                            repeat(False),
+                                            repeat(False),
+                                            repeat(None),
+                                            repeat(labels),
+                                            repeat(zero_to_na),
+                                            repeat(stat),
+                                            repeat(verbose)))).get(9999999)
 
     if False in coverage_list:
         sys.stderr.write("Aborting...")
@@ -355,7 +359,7 @@ def bw_profile_mp(in_bed_file=None,
             " regions to proceed for each bigwig")
 
     # 'Split' the file into multiple fragment
-    tokens = intervals(range(n_region_to_proceed), nb_proc)
+    tokens = intervals(list(range(n_region_to_proceed)), nb_proc)
 
     # Computing coverage of features.
     # Each worker will return a file
@@ -382,24 +386,26 @@ def bw_profile_mp(in_bed_file=None,
                                          "gene"] + score_h + ["strand"] + suffix) + "\n")
 
     if nb_proc > 1:
-        argss = zip(tokens,
-                    repeat(big_wig),
-                    repeat(in_bed_file.name),
-                    repeat(bin_nb),
-                    repeat(pseudo_count),
-                    repeat(None),
-                    repeat(True),
-                    repeat(stranded),
-                    repeat(type),
-                    repeat(labels),
-                    repeat(zero_to_na),
-                    repeat(stat),
-                    repeat(verbose))
+        argss = list(zip(tokens,
+                         repeat(big_wig),
+                         repeat(in_bed_file),
+                         repeat(bin_nb),
+                         repeat(pseudo_count),
+                         repeat(None),
+                         repeat(True),
+                         repeat(stranded),
+                         repeat(type),
+                         repeat(labels),
+                         repeat(zero_to_na),
+                         repeat(stat),
+                         repeat(verbose)))
+
 
         for res_file_list in pool.map_async(_big_wig_coverage_worker,
                                             argss).get(999999):
 
-            for cur_file in flatten_list([res_file_list]):
+            for cur_file in flatten_list([res_file_list], outlist=[]):
+
                 with open(cur_file) as infile:
                     for i in infile:
                         if bed_format:
@@ -412,7 +418,7 @@ def bw_profile_mp(in_bed_file=None,
         for tok in tokens:
             res_file = _big_wig_coverage_worker((tok,
                                                  big_wig,
-                                                 in_bed_file.name,
+                                                 in_bed_file,
                                                  bin_nb,
                                                  pseudo_count,
                                                  None,
@@ -432,6 +438,6 @@ def bw_profile_mp(in_bed_file=None,
                     else:
                         outputfile.write(i)
 
-    close_properly(in_bed_file, outputfile)
+    close_properly(outputfile)
 
     return outputfile

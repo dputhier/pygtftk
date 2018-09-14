@@ -8,17 +8,40 @@ returned respectively:
     - FastaSequence
 
 """
-import sys
+
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 from collections import OrderedDict
 
+from builtins import object
+from builtins import range
+from builtins import str
+from builtins import zip
 from cffi import FFI
 
 import pygtftk.utils
 import pygtftk.utils
 from pygtftk.utils import GTFtkError
+from pygtftk.utils import PY3
 from pygtftk.utils import write_properly
 
 ffi = FFI()
+
+# ---------------------------------------------------------------
+# Python2/3  compatibility
+# ---------------------------------------------------------------
+
+
+try:
+    basestring
+except NameError:
+    basestring = str
+
+if PY3:
+    from io import IOBase
+
+    file = IOBase
 
 
 # ---------------------------------------------------------------
@@ -50,9 +73,9 @@ class FieldSet(object):
 
         """
         if ptr is not None:
-            self.fields = [ffi.string(ptr[x]) for x in range(size)]
+            self.fields = [ffi.string(ptr[x]).decode() for x in range(size)]
         elif alist is not None:
-            self.fields = alist
+            self.fields = [x for x in alist]
         else:
             raise GTFtkError('Unsupported type.')
         if ft_type is not None:
@@ -65,17 +88,58 @@ class FieldSet(object):
         return '\t'.join([str(x) for x in self.fields])
 
     def __str__(self):
+        """Return the string representation of a FieldSet object.
+
+        :Example:
+
+        >>> from pygtftk.Line import FieldSet
+        >>> from pygtftk.utils import TAB
+        >>> a = FieldSet(alist=['chr1', '123', '456'])
+        >>> assert str(a) == TAB.join(['chr1', '123', '456'])
+
+        """
+
         return self.__repr__()
 
     def __len__(self):
+        """Return the length of a FieldSet object.
+
+        :Example:
+
+        >>> from pygtftk.Line import FieldSet
+        >>> a = FieldSet(alist=['chr1', '123', '456'])
+        >>> assert len(a) == 3
+
+        """
+
         return len(self.fields)
 
     def __getitem__(self, pos=None):
-        """Redefining the getter."""
+        """Redefining the getter.
+
+        :Example:
+
+        >>> from pygtftk.Line import FieldSet
+        >>> a = FieldSet(alist=['chr1', '123', '456'])
+        >>> assert a[0] == 'chr1'
+        >>> assert a[1] == '123'
+        >>> assert a[2] == '456'
+
+        """
         return self.fields[pos]
 
     def __setitem__(self, pos, value):
-        """Redefining the setter."""
+        """Redefining the setter.
+
+        :Example:
+
+        >>> from pygtftk.Line import FieldSet
+        >>> a = FieldSet(alist=['chr1', '123', '456'])
+        >>> a[0] = 'chr2'
+        >>> a[1] = '789'
+        >>> a[2] = '101112'
+
+        """
         self.fields[pos] = value
 
     def format(self, separator="\t"):
@@ -105,19 +169,18 @@ class FieldSet(object):
 
         >>> from pygtftk.Line import FieldSet
         >>> from pygtftk.utils import  make_tmp_file
+        >>> from pygtftk.utils import  simple_line_count
+        >>> from pygtftk.utils import  simple_nb_column
         >>> a = FieldSet(alist=['chr1', '123', '456'])
         >>> f = make_tmp_file()
         >>> a.write(f)
         >>> f.close()
-        >>> from pygtftk.utils import  simple_line_count
         >>> assert simple_line_count(f) == 1
+        >>> assert simple_nb_column(f) == 3
 
         """
 
-        if file_out is not None:
-            file_out.write(self.format(separator) + '\n')
-        else:
-            sys.stdout.write(self.format(separator) + '\n')
+        pygtftk.utils.write_properly(separator.join(list(self)), file_out)
 
 
 # ---------------------------------------------------------------
@@ -144,12 +207,12 @@ class FastaSequence(object):
 
         if ptr is not None:
 
-            self.header = ffi.string(ptr.header)
-            self.chrom = ffi.string(ptr.seqid)
+            self.header = ffi.string(ptr.header).decode()
+            self.chrom = ffi.string(ptr.seqid).decode()
             self.strand = ptr.strand
-            self.gene_id = ffi.string(ptr.gene_id)
-            self.transcript_id = ffi.string(ptr.transcript_id)
-            self.sequence = ffi.string(ptr.sequence)
+            self.gene_id = ffi.string(ptr.gene_id).decode()
+            self.transcript_id = ffi.string(ptr.transcript_id).decode()
+            self.sequence = ffi.string(ptr.sequence).decode()
 
             self.start = str(ptr.start)
             self.end = str(ptr.end)
@@ -172,6 +235,15 @@ class FastaSequence(object):
         return self.format()
 
     def __str__(self):
+        """The string representation of a FastaSequence object.
+
+        :Example:
+
+        >>> from pygtftk.Line import FastaSequence
+        >>> from pygtftk.utils import  NEWLINE
+        >>> a = FastaSequence(alist=['>bla', 'AATACAGAGAT','chr21','+', 'BLA', 'NM123', 123, 456, 'transcript'])
+        >>> assert str(a) == a.header + NEWLINE + a.sequence
+        """
         return self.__repr__()
 
     def format(self):
@@ -202,10 +274,8 @@ class FastaSequence(object):
         >>> assert simple_line_count(f) == 2
 
         """
-        if file_out is not None:
-            file_out.write(self.format() + '\n')
-        else:
-            sys.stdout.write(self.format() + '\n')
+
+        pygtftk.utils.write_properly(self.format(), file_out)
 
 
 # ---------------------------------------------------------------
@@ -235,6 +305,13 @@ class Feature(object):
         >>> a = Feature.from_list(alist)
         >>> assert a.get_tx_id() == 'g1t1'
         >>> assert a.get_gn_id() == 'g1'
+        >>> from  pygtftk.utils import get_example_file
+        >>> import pygtftk
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> for i in a_gtf: pass
+        >>> assert type(i) == pygtftk.Line.Feature
 
 
         """
@@ -242,17 +319,17 @@ class Feature(object):
         if ptr is not None:
             self.rank = ptr.rank
             self.nb_key = ptr.attributes.nb
-            self.chrom = ffi.string(ptr.field[0])
-            self.src = ffi.string(ptr.field[1])
-            self.ft_type = ffi.string(ptr.field[2])
-            self.start = int(ffi.string(ptr.field[3]))
-            self.end = int(ffi.string(ptr.field[4]))
-            self.score = ffi.string(ptr.field[5])
-            self.strand = ffi.string(ptr.field[6])
-            self.frame = ffi.string(ptr.field[7])
+            self.chrom = ffi.string(ptr.field[0]).decode()
+            self.src = ffi.string(ptr.field[1]).decode()
+            self.ft_type = ffi.string(ptr.field[2]).decode()
+            self.start = int(ffi.string(ptr.field[3]).decode())
+            self.end = int(ffi.string(ptr.field[4]).decode())
+            self.score = ffi.string(ptr.field[5]).decode()
+            self.strand = ffi.string(ptr.field[6]).decode()
+            self.frame = ffi.string(ptr.field[7]).decode()
             self.attr = OrderedDict()
             for k, v in zip(ptr.attributes.attr[0:self.nb_key], ptr.attributes.attr[0:self.nb_key]):
-                self.attr[ffi.string(k.key)] = ffi.string(v.value)
+                self.attr[ffi.string(k.key).decode()] = ffi.string(v.value).decode()
         elif alist is not None:
             self.rank = 1
             self.nb_key = len(alist[8])
@@ -285,6 +362,8 @@ class Feature(object):
         >>> d['gene_id'] = 'g1'
         >>> alist +=['.','+','.',d]
         >>> a = Feature.from_list(alist)
+        >>> assert a.attr['transcript_id'] == 'g1t1'
+        >>> assert a.attr['gene_id'] == 'g1'
 
 
         """
@@ -343,13 +422,13 @@ class Feature(object):
         >>> assert a_feat.get_5p_end() == 100
 
         """
+
         if self.strand == '+':
             return self.start
         elif self.strand == '-':
             return self.end
         else:
-            raise GTFtkError("Can not retrieve 5'end "
-                             "from an unstranded features.")
+            raise GTFtkError("Can not retrieve 5'end from an unstranded features.")
 
     def get_3p_end(self):
         """Get the 3' end of the feature. Returns 'end' if on '+' strand 'start'
@@ -362,13 +441,13 @@ class Feature(object):
         >>> assert feat.get_3p_end() == 200
 
         """
+
         if self.strand == '+':
             return self.end
         elif self.strand == '-':
             return self.start
         else:
-            raise GTFtkError(
-                "Can not retrieve 5'end from an unstranded features.")
+            raise GTFtkError("Can not retrieve 3'end from an unstranded features.")
 
     def get_attr_names(self):
         """Returns the attribute names from the Feature.
@@ -380,7 +459,7 @@ class Feature(object):
         >>> assert feat.get_attr_names() == ['transcript_id', 'gene_id']
 
         """
-        return self.attr.keys()
+        return list(self.attr.keys())
 
     def format(self):
         """
@@ -397,11 +476,11 @@ class Feature(object):
         """
 
         tok_list = list()
-        for key, val in self.attr.items():
+        for key, val in list(self.attr.items()):
             tok_list += [key + ' "' + val + '";']
 
         if pygtftk.utils.ADD_CHR == 1:
-            chrom_out = "chr" + self.chrom
+            chrom_out = 'chr' + self.chrom
         else:
             chrom_out = self.chrom
 
@@ -414,6 +493,7 @@ class Feature(object):
                  self.strand,
                  str(self.frame),
                  ' '.join(tok_list)]
+
         return '\t'.join(token)
 
     def format_tab(self, attr_list, sep="\t"):
@@ -425,12 +505,13 @@ class Feature(object):
         :Example:
 
         >>> from pygtftk.utils import get_example_feature
+        >>> from pygtftk.utils import TAB
         >>> feat = get_example_feature()
-        >>> a = 'chr1\tUnknown\ttranscript\t100\t200\t.\t+\t.\tg1t1'
+        >>> a = TAB.join(['chr1', 'Unknown', 'transcript', '100', '200', '.', '+', '.', 'g1t1'])
         >>> assert feat.format_tab('transcript_id') == a
 
         """
-        if isinstance(attr_list, str):
+        if isinstance(attr_list, basestring):
             attr_list = [attr_list]
 
         tok = list()
@@ -677,7 +758,7 @@ class Feature(object):
 
         tok_list = list()
 
-        for key_cur, val_cur in self.attr.items():
+        for key_cur, val_cur in list(self.attr.items()):
             tok_list.append(''.join([key_cur, ' "', str(val_cur), '";']))
 
         tok_list.append(''.join([key, ' "', str(val), '";']))
@@ -755,10 +836,11 @@ class Feature(object):
         >>> assert feat.get_attr_value('chrom') == ['chr1']
         >>> assert feat.get_attr_value('end') == [200]
         >>> assert feat.get_attr_value('bla', upon_none='continue') == [None]
+        >>> assert feat.get_attr_value('bla', upon_none='set_na') == ['.']
 
         """
 
-        if isinstance(attr_name, str):
+        if isinstance(attr_name, basestring):
             attr_name = [attr_name]
 
         if not isinstance(attr_name, list):
@@ -812,7 +894,4 @@ class Feature(object):
         >>> assert simple_line_count(tmp_file) == 1
         """
 
-        if file_out != "-":
-            file_out.write(self.format() + '\n')
-        else:
-            sys.stdout.write(self.format() + '\n')
+        pygtftk.utils.write_properly(self.format(), file_out)

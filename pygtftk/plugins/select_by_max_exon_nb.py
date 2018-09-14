@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -52,7 +53,7 @@ def select_by_max_exon_nb(inputfile=None,
               check_ensembl_format=False
               ).select_by_max_exon_nb()
 
-    gtf.write(outputfile)
+    gtf.write(outputfile, gc_off=True)
 
 
 def main():
@@ -92,7 +93,7 @@ else:
     CmdObject(name="select_by_max_exon_nb",
               message="For each gene select the transcript with the highest number of exons.",
               parser=make_parser(),
-              fun=select_by_max_exon_nb,
+              fun=os.path.abspath(__file__),
               group="selection",
               updated=__updated__,
               desc=__doc__,

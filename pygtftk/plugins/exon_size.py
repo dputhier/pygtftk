@@ -2,7 +2,11 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
+
+from builtins import str
+from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -102,7 +106,8 @@ def exon_sizes(
                                      key="transcript_id",
                                      a_dict=tx_to_size_list,
                                      new_key=key_name)
-    gtf.write(outputfile)
+    gtf.write(outputfile,
+              gc_off=True)
     close_properly(outputfile, inputfile)
 
 
@@ -144,7 +149,7 @@ else:
     CMD = CmdObject(name="exon_sizes",
                     message=" Add a new key to transcript features containing a comma separated list of exon sizes. ",
                     parser=make_parser(),
-                    fun=exon_sizes,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     group="annotation",

@@ -1,11 +1,10 @@
 #!/usr/bin/env python
-"""
 
-"""
 from __future__ import print_function
 
 import argparse
 import errno
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -317,7 +316,7 @@ else:
     cmd = CmdObject(name="tabulate",
                     message="Convert a GTF to tabulated format.",
                     parser=make_parser(),
-                    fun=tabulate,
+                    fun=os.path.abspath(__file__),
                     desc=__doc__,
                     group="conversion",
                     updated=__updated__,

@@ -62,13 +62,13 @@ extern void *F_malloc(int size, char *file, const char *func, int line);
 						c == 'c' ? 'g' : c)
 
 /*
- * This structure describes the input (i.e. a GTF file or a gzipped GTF file).
+ * This structure describes the input (i.e. a GTF/BLASTN plain file or gzipped).
  * It is created by the get_gtf_reader function in get_reader.c source file.
  * gzFile or plainfile are set depending on the kind of input (gzip or plain).
  * Even if these two elements are exclusive, they are not in an union to be
  * sure to be compatible with the most of native interfaces.
  */
-typedef struct GTF_READER {
+typedef struct TEXTFILE_READER {
 	/*
 	 * The file name with its path (or "-" for standard input)
 	 */
@@ -88,7 +88,7 @@ typedef struct GTF_READER {
 	 * The plain file descriptor
 	 */
 	FILE *plainfile;
-} GTF_READER;
+} TEXTFILE_READER;
 
 /*
  * The structure that represents an attribute (key/value) in the last column of
@@ -379,7 +379,7 @@ typedef struct BLAST_HSP {
 } BLAST_HSP;
 
 /*
- * Prototypes for the visible functions (callable by external cient)
+ * Prototypes for the visible functions (callable by external client)
  */
 GTF_DATA *load_GTF(char *input);
 GTF_DATA *select_by_key(GTF_DATA *gtf_data, char *key, char *value, int not);

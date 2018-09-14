@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """If several transcripts of a gene share the same tss, select only one."""
+import os
 
 __updated__ = "2018-01-20"
 
@@ -115,7 +116,8 @@ def rm_dup_tss(inputfile=None,
                       invert_match=True
                       ).select_by_key("transcript_id",
                                       ",".join(to_delete),
-                                      invert_match=True).write(outputfile)
+                                      invert_match=True).write(outputfile,
+                                                               gc_off=True)
 
 
 def main():
@@ -154,20 +156,20 @@ else:
 
     #Check mini_real example.
     @test "rm_dup_tss_4" {
-    result=$(gtftk get_example -d mini_real -f gtf | gtftk rm_dup_tss | gtftk select_by_key  -t |  gtftk 5p_3p_coord -n gene_id | grep "\+" | cut -f2,4 | sort | uniq -c | sort -n| perl -npe 's/^ +//; s/ +/\\t/' | cut -f 1| sort | uniq)
+    result=$(gtftk get_example -d mini_real -f gtf | gtftk rm_dup_tss | gtftk select_by_key  -t |  gtftk get_5p_3p_coords -n gene_id | grep "\+" | cut -f2,4 | sort | uniq -c | sort -n| perl -npe 's/^ +//; s/ +/\\t/' | cut -f 1| sort | uniq)
     [ $result -eq 1 ]
     }
 
     #Check without rmdup (27 tx with the same TSS)
     @test "rm_dup_tss_5" {
-    result=$(gtftk get_example -d mini_real  | gtftk select_by_key -t | gtftk 5p_3p_coord -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
+    result=$(gtftk get_example -d mini_real  | gtftk select_by_key -t | gtftk get_5p_3p_coords -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
     [ $result -eq 27 ]
     }
     
     
     #Check with rmdup (now 1 tx with the same TSS)
     @test "rm_dup_tss_5" {
-    result=$(gtftk get_example -d mini_real  | gtftk rm_dup_tss | gtftk select_by_key -t | gtftk 5p_3p_coord -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
+    result=$(gtftk get_example -d mini_real  | gtftk rm_dup_tss | gtftk select_by_key -t | gtftk get_5p_3p_coords -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
     [ $result -eq 1 ]
     }
         
@@ -178,7 +180,7 @@ else:
               TSS, select only one representative.",
               parser=make_parser(),
               group="selection",
-              fun=rm_dup_tss,
+              fun=os.path.abspath(__file__),
               notes=__notes__,
               updated=__updated__,
               desc=__doc__,

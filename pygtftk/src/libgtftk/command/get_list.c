@@ -10,8 +10,7 @@
 extern INDEX_ID *index_gtf(GTF_DATA *gtf_data, char *key);
 extern COLUMN **column;
 extern STRING_LIST *get_all_attributes(GTF_DATA *gtf_data);
-
-TTEXT *vret;
+extern TTEXT *vret;
 
 static void action_list(const void *nodep, const VISIT which, const int depth) {
 	ROW_LIST *datap;

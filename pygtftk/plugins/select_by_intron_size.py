@@ -2,9 +2,12 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import OrderedDict
 from collections import defaultdict
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -109,7 +112,7 @@ def select_by_intron_size(
             tx_id = i.name
             intron_sum_dict[tx_id] += size
 
-        for tx_id, sum_intron in intron_sum_dict.iteritems():
+        for tx_id, sum_intron in list(intron_sum_dict.items()):
 
             if sum_intron != 0:
                 if not invert_match:
@@ -145,7 +148,7 @@ def select_by_intron_size(
 
             intron_size_dict[tx_id] += [size]
 
-        for tx_id, list_size in intron_size_dict.iteritems():
+        for tx_id, list_size in list(intron_size_dict.items()):
             if not list_size:
                 intron_size_dict[tx_id] = [0]
                 if delete_monoexonic:
@@ -164,7 +167,7 @@ def select_by_intron_size(
 
         if add_intron_size:
 
-            for tx_id, list_size in intron_size_dict.iteritems():
+            for tx_id, list_size in list(intron_size_dict.items()):
                 list_size = [str(x) for x in list_size]
                 intron_size_dict[tx_id] = ",".join(list_size)
 
@@ -175,7 +178,7 @@ def select_by_intron_size(
 
     all_tx_ids = gtf.get_tx_ids(nr=True)
     all_tx_ids = [x for x in all_tx_ids if x not in to_delete]
-    msg_list = ",".join(to_delete.keys())
+    msg_list = ",".join(list(to_delete.keys()))
     nb_char = min([len(msg_list), 40])
     msg_list = msg_list[0:nb_char]
     message("Deleting: " + msg_list + "...")
@@ -183,7 +186,7 @@ def select_by_intron_size(
     gtf = gtf.select_by_key("transcript_id",
                             ",".join(all_tx_ids))
 
-    gtf.write(outputfile)
+    gtf.write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -274,7 +277,7 @@ else:
     CmdObject(name="select_by_intron_size",
               message="Select transcripts by intron size.",
               parser=make_parser(),
-              fun=select_by_intron_size,
+              fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
               notes=__notes__,

@@ -2,8 +2,11 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import defaultdict
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -93,7 +96,8 @@ def nb_exons(inputfile=None,
                                          key="transcript_id",
                                          a_dict=n_exons,
                                          new_key=key_name)
-        gtf.write(outputfile)
+        gtf.write(outputfile,
+                  gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -168,7 +172,7 @@ else:
     CmdObject(name="nb_exons",
               message="Count the number of exons by transcript.",
               parser=make_parser(),
-              fun=nb_exons,
+              fun=os.path.abspath(__file__),
               group="information",
               updated=__updated__,
               desc=__doc__,

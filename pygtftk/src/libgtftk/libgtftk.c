@@ -22,19 +22,6 @@
 extern void print_row(FILE *output, GTF_ROW *r, char delim, int add_chr);
 
 /*
- * This is a pointer on the column model of a GTF file. It is initialized by
- * the make_columns() function in column.c source file. It is accessed by most
- * of the functions of the library.
- */
-COLUMN **column = NULL;
-
-/*
- * The number of columns, that is set to 9 for GTF files in column.c source
- * file.
- */
-int nb_column;
-
-/*
  * This function splits a character string (s) into a table of words (*tab),
  * according to a set of delimiters (delim). Each character of delim is a
  * delimiter. The string is splitted in place and the resulting word table
@@ -104,7 +91,7 @@ char *trim_ip(char *s) {
  * by key and value are allocated in this function.
  *
  * Parameters:
- * 		s:		the key/value pair from a GTF attributevoid *bookmem(int nb, int size, char *name);
+ * 		s:		the key/value pair from a GTF attribute
  * 		key:	a pointer to store the address of the key
  * 		value:	a pointer to store the address of the value
  */
@@ -119,7 +106,7 @@ void split_key_value(char *s, char **key, char **value) {
 		s += k + 1;
 		while ((*s == ' ') || (*s == '"')) s++;
 		k = 0;
-		while ((*(s + k) != '"') && (*(s + k) != ' ') && (*(s + k) != 0)) k++;
+		while ((*(s + k) != '"') && (*(s + k) != 0)) k++;
 		*(s + k) = 0;
 		*value = strdup(s);
 	}
@@ -210,12 +197,14 @@ void print_gtf_data(GTF_DATA *gtf_data, char *output, int add_chr) {
 	int i;
 	FILE *out = stdout;
 
-	if (*output != '-') out = fopen(output, "w");
-	if (out == NULL) out = stdout;
-	for (i = 0; i < gtf_data->size; i++) print_row(out, gtf_data->data[i], '\t', add_chr);
-	if (out != stdout) {
-		fflush(out);
-		fclose(out);
+	if (gtf_data != NULL) {
+		if (*output != '-') out = fopen(output, "w");
+		if (out == NULL) out = stdout;
+		for (i = 0; i < gtf_data->size; i++) print_row(out, gtf_data->data[i], '\t', add_chr);
+		if (out != stdout) {
+			fflush(out);
+			fclose(out);
+		}
 	}
 }
 

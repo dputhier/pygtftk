@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import OrderedDict
 
@@ -118,7 +119,7 @@ def select_by_go(inputfile=None,
 
     bm.query({'query': XML.format(species=species, go=go_id)})
 
-    for i in bm.response.content.split("\n"):
+    for i in bm.response.content.decode().split("\n"):
         i = i.rstrip("\n")
         if i != '':
             is_associated[i] = 1
@@ -126,10 +127,11 @@ def select_by_go(inputfile=None,
     gtf = GTF(inputfile)
 
     gtf_associated = gtf.select_by_key("gene_id",
-                                       ",".join(is_associated.keys()),
+                                       ",".join(list(is_associated.keys())),
                                        invert_match)
 
-    gtf_associated.write(outputfile)
+    gtf_associated.write(outputfile,
+                         gc_off=True)
 
 
 def main():
@@ -158,7 +160,7 @@ else:
     CmdObject(name="select_by_go",
               message=" Select lines from a GTF file using a Gene Ontology ID.",
               parser=make_parser(),
-              fun=select_by_go,
+              fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
               updated=__updated__,

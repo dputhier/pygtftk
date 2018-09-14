@@ -3,8 +3,11 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from _collections import defaultdict
+
+from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -40,9 +43,14 @@ def make_parser():
     parser.add_argument('-o', '--outputfile',
                         help="Output file.",
                         default=sys.stdout,
-                        metavar="GTF",
+                        metavar="GTF/TXT",
                         type=FileWithExtension('w',
-                                               valid_extensions='\.[Gg][Tt][Ff]$'))
+                                               valid_extensions=('\.[Gg][Tt][Ff]$',
+                                                                 '\.[Tt][Xx][Tt]',
+                                                                 '\.[Cc][Ss][Vv]',
+                                                                 '\.[Tt][Aa][Bb]',
+                                                                 '\.[Tt][Ss][Vv]',
+                                                                 '\.[Cc][Oo][Vv]')))
 
     parser_grp.add_argument('-r', '--from-region-type',
                             help="What is region to consider for each gene.",
@@ -127,6 +135,7 @@ def closest_genes(
 
     gtf = GTF(inputfile)
     gn_gtf = gtf.select_by_key("feature", "gene")
+    gn_ids = gn_gtf.get_gn_ids(nr=True)
 
     if len(gn_gtf) == 0:
         message("No gene feature found. Please use convert_ensembl.",
@@ -223,13 +232,13 @@ def closest_genes(
                                          a_dict=gene_closest_dist,
                                          new_key="closest_dist")
 
-        gtf.write(outputfile)
+        gtf.write(outputfile, gc_off=True)
 
     else:
         if not no_header:
             outputfile.write("genes\tclosest_genes\tdistances\n")
 
-        for gene in gene_closest:
+        for gene in gn_ids:
 
             if not collapse:
 
@@ -265,7 +274,7 @@ else:
     #closest_genes: check whole file
     @test "closest_genes_1" {
      result=`gtftk get_example | gtftk closest_genes -f | md5sum-lite | sed 's/ .*//'`
-      [ "$result" = "6314536371950e99a3a6bcd97a289ff4" ]
+      [ "$result" = "3cef10d2528151dbbe2ff3affb05de00" ]
     }
         
     #closest_genes: check dist
@@ -318,21 +327,70 @@ else:
 
     #closest_genes: check -r/-t
     @test "closest_genes_10" {
-     result=`gtftk get_example |  bedtools sort | gtftk closest_genes -n 3  -t gene -r gene -f | md5sum-lite | sed 's/ .*//'`
-      [ "$result" = "6a4df0a85b8e997649db440bdda8e67e" ]
+     result=`gtftk get_example | gtftk closest_genes -n 3  -t gene -r gene -f | grep ^G0009| perl -npe  's/\\t/,/g'`
+      [ "$result" = "G0009,G0006,G0005,G0003,8,19,36" ]
     }
 
+    #closest_genes: check -t tts
     @test "closest_genes_11" {
+     result=`gtftk get_example | gtftk closest_genes -n 3  -t tts -r gene -f | grep ^G0009| perl -npe  's/\\t/,/g'`
+      [ "$result" = "G0009,G0006,G0005,G0003,8,19,36" ]
+    }
+
+    #closest_genes: check -t tss
+    @test "closest_genes_12" {
+     result=`gtftk get_example | gtftk closest_genes -n 3  -t tss -r gene -f | grep ^G0009| perl -npe  's/\\t/,/g'`
+      [ "$result" = "G0009,G0006,G0005,G0003,21,33,47" ]
+    }
+    
+    #closest_genes: check -g tts
+    @test "closest_genes_13" {
+     result=`gtftk get_example | gtftk closest_genes -n 3  -t gene -r tts -f | grep ^G0009| perl -npe  's/\\t/,/g'`
+      [ "$result" = "G0009,G0006,G0005,G0003,19,30,47" ]
+    }
+        
+    # Order is not important
+    @test "closest_genes_14" {
      result=`gtftk get_example |  perl -MList::Util -e 'print List::Util::shuffle <>' | gtftk closest_genes -n 3  -t gene -r gene -f | grep ^G0006 | perl -npe 's/\\t/,/g'`
       [ "$result" = "G0006,G0005,G0009,G0003,0,8,15" ]
     }
+
+    # Order is not important
+    @test "closest_genes_15" {
+     result=`gtftk get_example |  perl -MList::Util -e 'print List::Util::shuffle <>' | gtftk closest_genes -n 3  -t gene -r gene -f | grep ^G0009 | perl -npe 's/\\t/,/g'`
+      [ "$result" = "G0009,G0006,G0005,G0003,8,19,36" ]
+    }    
+
+    #This one is important
+    @test "closest_genes_16" {
+     result=`gtftk get_example | gtftk closest_genes | wc -l`
+      [ "$result" -eq 70 ]
+    } 
+
+    #This one is important
+    @test "closest_genes_17" {
+     result=`gtftk get_example | gtftk closest_genes -n 3 -t gene -r tts | gtftk select_by_key -g | gtftk select_by_key -k gene_id -v G0009| gtftk tabulate -k closest_gn,closest_dist -s "," -H`
+      [ "$result" = "G0006,G0005,G0003,19,30,47" ]
+    }       
+
+    #This one is important
+    @test "closest_genes_18" {
+     result=`gtftk get_example |  gtftk closest_genes -s  -n 3 -t gene -r tts | gtftk select_by_key -g | gtftk tabulate -H -k gene_id,closest_gn,closest_dist -s ","| grep ^G0009`
+      [ "$result" = "G0009,G0006,G0005,G0003,19,30,47" ]
+    }   
+
+    #This one is important
+    @test "closest_genes_19" {
+     result=`gtftk get_example | gtftk closest_genes -n 3 -f -t gene -r tts -o closest_1.tsv`
+      [ "$result" = "" ]
+    }       
     
     """
 
     CMD = CmdObject(name="closest_genes",
                     message="Find the n closest genes for each transcript.",
                     parser=make_parser(),
-                    fun=closest_genes,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     test=test,

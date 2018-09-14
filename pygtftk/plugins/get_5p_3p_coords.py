@@ -1,21 +1,23 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import argparse
+import os
+import sys
+
+from pygtftk.arg_formatter import FileWithExtension
+from pygtftk.cmd_object import CmdObject
+from pygtftk.gtf_interface import GTF
+from pygtftk.utils import chomp
+from pygtftk.utils import close_properly
+from pygtftk.utils import message
+from pygtftk.utils import write_properly
+
 __updated__ = "2018-01-20"
 __doc__ = """
  Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
 """
 __notes__ = "Output is in BED format."
-
-import sys
-import argparse
-from pygtftk.gtf_interface import GTF
-from pygtftk.utils import message
-from pygtftk.utils import close_properly
-from pygtftk.utils import write_properly
-from pygtftk.utils import chomp
-from pygtftk.cmd_object import CmdObject
-from pygtftk.arg_formatter import FileWithExtension
 
 
 def make_parser():
@@ -80,19 +82,18 @@ def make_parser():
     return parser
 
 
-def get_5p_3p_coord(
-        inputfile=None,
-        outputfile=None,
-        ft_type="transcript",
-        names="transcript_id",
-        separator="|",
-        more_names='',
-        transpose=0,
-        invert=False,
-        explicit=False,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+def get_5p_3p_coords(inputfile=None,
+                     outputfile=None,
+                     ft_type="transcript",
+                     names="transcript_id",
+                     separator="|",
+                     more_names='',
+                     transpose=0,
+                     invert=False,
+                     explicit=False,
+                     tmp_dir=None,
+                     logger_file=None,
+                     verbosity=0):
     """
     Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
     """
@@ -161,7 +162,7 @@ def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    get_5p_3p_coord(**args)
+    get_5p_3p_coords(**args)
 
 
 if __name__ == '__main__':
@@ -171,79 +172,79 @@ else:
 
     test = """
 
-    #5p_3p_coord: -v
-    @test "5p_3p_coord_1" {
-     result=`gtftk 5p_3p_coord  -i pygtftk/data/simple/simple.gtf -v | cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
+    #get_5p_3p_coords: -v
+    @test "get_5p_3p_coords_1" {
+     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf -v | cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "115,137,185,188,2,209,21,27,32,49,75," ]
     }
     
-    #5p_3p_coord: no arg
-    @test "5p_3p_coord_2" {
-     result=`gtftk 5p_3p_coord  -i pygtftk/data/simple/simple.gtf | cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
+    #get_5p_3p_coords: no arg
+    @test "get_5p_3p_coords_2" {
+     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf | cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "106,124,13,175,179,221,34,46,60,64," ]
     }
     
-    #5p_3p_coord: -t gene
-    @test "5p_3p_coord_3" {
-     result=`gtftk 5p_3p_coord  -i pygtftk/data/simple/simple.gtf -t gene| cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
+    #get_5p_3p_coords: -t gene
+    @test "get_5p_3p_coords_3" {
+     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf -t gene| cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "106,124,13,175,179,221,34,46,60,64," ]
     }
     
-    #5p_3p_coord: -t exon
-    @test "5p_3p_coord_4" {
-     result=`gtftk 5p_3p_coord  -i pygtftk/data/simple/simple.gtf -t exon| wc -l`
+    #get_5p_3p_coords: -t exon
+    @test "get_5p_3p_coords_4" {
+     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf -t exon| wc -l`
       [ "$result" -eq 25 ]
     }
     
-    #5p_3p_coord: -t gene
-    @test "5p_3p_coord_5" {
-     result=`gtftk 5p_3p_coord  -i pygtftk/data/simple/simple.gtf -t gene| wc -l`
+    #get_5p_3p_coords: -t gene
+    @test "get_5p_3p_coords_5" {
+     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf -t gene| wc -l`
       [ "$result" -eq 10 ]
     }
     
-    #5p_3p_coord: -t transcript
-    @test "5p_3p_coord_6" {
-     result=`gtftk 5p_3p_coord  -i pygtftk/data/simple/simple.gtf -t transcript| wc -l`
+    #get_5p_3p_coords: -t transcript
+    @test "get_5p_3p_coords_6" {
+     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf -t transcript| wc -l`
       [ "$result" -eq 15 ]
     }
     
-    #5p_3p_coord: nb column
-    @test "5p_3p_coord_7" {
-     result=`gtftk 5p_3p_coord  -i pygtftk/data/simple/simple.gtf | awk '{print NF}' | sort | uniq`
+    #get_5p_3p_coords: nb column
+    @test "get_5p_3p_coords_7" {
+     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf | awk '{print NF}' | sort | uniq`
       [ "$result" -eq 6 ]
     }
     
-    #5p_3p_coord: test stdin
-    @test "5p_3p_coord_8" {
-     result=`cat pygtftk/data/simple/simple.gtf| gtftk  5p_3p_coord | wc -l`
+    #get_5p_3p_coords: test stdin
+    @test "get_5p_3p_coords_8" {
+     result=`cat pygtftk/data/simple/simple.gtf| gtftk  get_5p_3p_coords | wc -l`
       [ "$result" -eq 15 ]
     }
 
-    #5p_3p_coord: test transpose
-    @test "5p_3p_coord_9" {
-     result=`gtftk get_example| gtftk  5p_3p_coord -p 10| head -1 | cut -f 2`
+    #get_5p_3p_coords: test transpose
+    @test "get_5p_3p_coords_9" {
+     result=`gtftk get_example| gtftk  get_5p_3p_coords -p 10| head -1 | cut -f 2`
       [ "$result" -eq 134 ]
     }
 
-    #5p_3p_coord: test transpose
-    @test "5p_3p_coord_10" {
-     result=`gtftk get_example| gtftk  5p_3p_coord -p 10| head -4| tail -n 1  | cut -f 2`
+    #get_5p_3p_coords: test transpose
+    @test "get_5p_3p_coords_10" {
+     result=`gtftk get_example| gtftk  get_5p_3p_coords -p 10| head -4| tail -n 1  | cut -f 2`
       [ "$result" -eq 50 ]
     }
 
-    #5p_3p_coord: test transpose
-    @test "5p_3p_coord_11" {
-     result=`gtftk get_example| gtftk  5p_3p_coord -p 10 -e -m bla -n transcript_id,gene_id,gene_name| head -1 | cut -f4`
+    #get_5p_3p_coord: test transpose
+    @test "get_5p_3p_coords_11" {
+     result=`gtftk get_example| gtftk  get_5p_3p_coords -p 10 -e -m bla -n transcript_id,gene_id,gene_name| head -1 | cut -f4`
       [ "$result" = "transcript_id=G0001T002|gene_id=G0001|gene_name=.|more_name=bla" ]
     }
     
     
     
     """
-    CmdObject(name="5p_3p_coord",
+    CmdObject(name="get_5p_3p_coords",
               message="Get the 5p or 3p coordinate for each feature. TSS or TTS for a transcript.",
               parser=make_parser(),
-              fun=get_5p_3p_coord,
+              fun=os.path.abspath(__file__),
               notes=__notes__,
               updated=__updated__,
               desc=__doc__,

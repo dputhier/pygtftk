@@ -3,7 +3,10 @@ from __future__ import print_function
 
 import argparse
 import math
+import os
 import sys
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import checkChromFile
@@ -197,11 +200,12 @@ Find transcript with divergent promoters.
                                          a_dict=dist_to_divergent,
                                          new_key=key_name_dist)
 
-        gtf.write(outputfile)
+        gtf.write(outputfile,
+                  gc_off=True)
 
     else:
         gtf.select_by_key("transcript_id",
-                          ",".join(tx_with_divergent.keys())).write()
+                          ",".join(list(tx_with_divergent.keys()))).write()
 
     close_properly(outputfile, inputfile)
 
@@ -253,7 +257,7 @@ else:
     CmdObject(name="divergent",
               message="Find transcripts with divergent promoters.",
               parser=make_parser(),
-              fun=divergent,
+              fun=os.path.abspath(__file__),
               desc=__doc__,
               updated=__updated__,
               group="annotation",

@@ -2,7 +2,10 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -68,7 +71,7 @@ def select_by_nb_exon(inputfile=None,
               ).select_by_number_of_exons(min_exon_number,
                                           max_exon_number)
 
-    gtf.write(outputfile)
+    gtf.write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -144,7 +147,7 @@ else:
     CmdObject(name="select_by_nb_exon",
               message="Select transcripts based on the number of exons.",
               parser=make_parser(),
-              fun=select_by_nb_exon,
+              fun=os.path.abspath(__file__),
               group="selection",
               updated=__updated__,
               desc=__doc__,

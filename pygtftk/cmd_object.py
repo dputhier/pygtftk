@@ -1,8 +1,13 @@
 """ A container for a command."""
 
+from __future__ import absolute_import
+
 import argparse
 import re
 import sys
+
+from builtins import object
+from builtins import range
 
 import pygtftk.cmd_manager
 
@@ -47,7 +52,6 @@ class CmdObject(object):
             pass
 
         self.parser = parser
-
         self.fun = fun
         self.desc = desc
         self.logger = None

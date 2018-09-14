@@ -1,6 +1,9 @@
 """ The command manager is intended to store command object
 and their associated functions."""
 
+from __future__ import absolute_import
+from __future__ import print_function
+
 import argparse
 import errno
 import glob
@@ -17,6 +20,9 @@ from subprocess import Popen, PIPE
 
 import cloudpickle
 import yaml
+from builtins import object
+from builtins import range
+from builtins import str
 
 import pygtftk
 import pygtftk.cmd_object
@@ -24,6 +30,8 @@ import pygtftk.plugins
 import pygtftk.settings
 import pygtftk.utils
 from pygtftk.arg_formatter import ArgFormatter
+from pygtftk.utils import PY2
+from pygtftk.utils import PY3
 from pygtftk.utils import add_r_lib
 from pygtftk.utils import check_r_packages
 from pygtftk.utils import left_strip_str
@@ -31,6 +39,15 @@ from pygtftk.utils import message
 from pygtftk.utils import mkdir_p
 from pygtftk.utils import print_table
 from pygtftk.version import __version__
+
+# ---------------------------------------------------------------
+# Python2/3  compatibility
+# ---------------------------------------------------------------
+
+if PY3:
+    from io import IOBase
+
+    file = IOBase
 
 
 # ---------------------------------------------------------------
@@ -104,14 +121,14 @@ class ListPlugins(argparse._StoreTrueAction):
             option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        print("\n".join(CmdManager.cmd_obj_list.keys()))
+        print("\n".join(list(CmdManager.cmd_obj_list.keys())))
         sys.exit()
 
 
 # ---------------------------------------------------------------
 # An additional action that print required R libraries
 # ---------------------------------------------------------------
-
+# Deprecated
 
 class RequiredRLib(argparse._StoreTrueAction):
     """A class to be used by argparser to get bash completion."""
@@ -317,12 +334,19 @@ class CmdManager(object):
 
     """
 
-    parser = argparse.ArgumentParser(
-        formatter_class=ArgFormatter,
-        description=prg_desc,
-        epilog="------------------------\n",
-        version='%(prog)s v{0}'.format(__version__)
-    )
+    if PY2:
+        parser = argparse.ArgumentParser(
+            formatter_class=ArgFormatter,
+            description=prg_desc,
+            epilog="------------------------\n",
+            version='%(prog)s v{0}'.format(__version__)
+        )
+    if PY3:
+        parser = argparse.ArgumentParser(
+            formatter_class=ArgFormatter,
+            description=prg_desc,
+            epilog="------------------------\n"
+        )
 
     parser._optionals.title = "Main command arguments"
 
@@ -335,6 +359,12 @@ class CmdManager(object):
                         nargs=0,
                         help="Display bats tests for all plugin.",
                         action=GetTests)
+
+    if PY3:
+        parser.add_argument('-v', '--version',
+                            action='version',
+                            version='%(prog)s v{0}'.format(__version__))
+
     """
     parser.add_argument('-r', '--r-libs',
                         nargs=0,
@@ -585,7 +615,7 @@ class CmdManager(object):
             group.add_argument("-A",
                                "--keep-all",
                                action="store_true",
-                               help="Keep all temporary files even in case of error.",
+                               help="Try to keep all temporary files even if process does not terminate normally.",
                                required=False)
 
             # logger-file can be used to store the requested command
@@ -717,6 +747,7 @@ class CmdManager(object):
                 module_name = re.sub(".*pygtftk", "pygtftk", module_name)
 
                 try:
+
                     imp.load_source(module_name, plug)
                 except Exception as e:
                     message("Failed to load plugin :" + plug, type="WARNING")
@@ -734,7 +765,10 @@ class CmdManager(object):
     def dump_plugins(self):
         """Save the plugins into a pickle object."""
 
-        f_handler = open(CmdManager.dumped_plugin_path, "w")
+        if PY2:
+            f_handler = open(CmdManager.dumped_plugin_path, "w")
+        if PY3:
+            f_handler = open(CmdManager.dumped_plugin_path, "wb")
         pick = cloudpickle.CloudPickler(f_handler)
         pick.dump((self.cmd_obj_list, self.parser))
         f_handler.close()
@@ -752,14 +786,19 @@ class CmdManager(object):
 
     def _load_dumped_plugins(self):
 
-        f_handler = open(CmdManager.dumped_plugin_path, "r")
-        CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
+        if PY2:
+            f_handler = open(CmdManager.dumped_plugin_path, "r")
+            CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
+        if PY3:
+            f_handler = open(CmdManager.dumped_plugin_path, "rb")
+            CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
         f_handler.close()
 
         for cur_cmd in sorted(CmdManager.cmd_obj_list):
 
             # Update the list of required R libraries
 
+            # message("Loading " + cur_cmd, type="DEBUG", force=True)
             if CmdManager.cmd_obj_list[cur_cmd].rlib is not None:
                 add_r_lib(libs=CmdManager.cmd_obj_list[cur_cmd].rlib,
                           cmd=cur_cmd)
@@ -820,7 +859,10 @@ class CmdManager(object):
         # Add a logger to the command object
         cls.cmd_obj_list[args['command']].logger = logging.getLogger(__name__)
 
-        fun = cmd_ob.fun
+        # .pyc -> .py
+        fun_path = cmd_ob.fun.rstrip("c")
+        tmp_module = imp.load_source('tmp_module', fun_path)
+        fun = getattr(tmp_module, args['command'])
 
         # Save args to log file
 
@@ -853,7 +895,7 @@ class CmdManager(object):
 
                 del args['command']
 
-                for key, value in args.items():
+                for key, value in list(args.items()):
                     if isinstance(value, file):
                         value = value.name
                     else:
@@ -899,7 +941,7 @@ class CmdManager(object):
         elif cmd_ob.lang == "R":
 
             sys_cmd = ""
-            for k, a_value in args.items():
+            for k, a_value in list(args.items()):
 
                 if a_value is not False and a_value is not True:
                     sys_cmd += " --" + k.replace("_", "-") + " " + str(a_value)

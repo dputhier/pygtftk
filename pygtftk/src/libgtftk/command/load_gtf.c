@@ -17,8 +17,8 @@
 /*
  * external functions in gtf_reader.c
  */
-extern GTF_READER *get_gtf_reader(char *query);
-extern char *get_next_gtf_line(GTF_READER *gr, char *buffer);
+extern TEXTFILE_READER *get_gtf_reader(char *query);
+extern char *get_next_gtf_line(TEXTFILE_READER *gr, char *buffer);
 
 /*
  * external functions in column.c
@@ -36,7 +36,7 @@ extern void split_key_value(char *s, char **key, char **value);
 extern char *trim_ip(char *);
 
 /*
- * global variables in libgtftk.c
+ * global variables
  */
 extern COLUMN **column;
 extern int nb_column;
@@ -187,7 +187,7 @@ GTF_DATA *load_GTF(char *input) {
 	/*
 	 * creates a GTF_READER to read from input
 	 */
-	GTF_READER *gr = get_gtf_reader(input);
+	TEXTFILE_READER *gr = get_gtf_reader(input);
 
 	if (gr == NULL) return NULL;
 

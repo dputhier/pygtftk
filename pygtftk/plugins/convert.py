@@ -2,7 +2,10 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -229,7 +232,7 @@ else:
     CmdObject(name="convert",
               message="Convert a GTF to various format including bed.",
               parser=make_parser(),
-              fun=convert,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               desc=__doc__,
               group="conversion",

@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -142,14 +143,16 @@ def join_attr(
                                      new_key=new_key,
                                      inputfile=join_file.name,
                                      has_header=has_header)
-        gtf.write(outputfile)
+        gtf.write(outputfile,
+                  gc_off=True)
 
     else:
 
         gtf = gtf.add_attr_from_matrix_file(feat=target_feature,
                                             key=key_to_join,
                                             inputfile=join_file.name)
-        gtf.write(outputfile)
+        gtf.write(outputfile,
+                  gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -241,7 +244,7 @@ else:
     CmdObject(name="join_attr",
               message="Join attributes from a tabulated file.",
               parser=make_parser(),
-              fun=join_attr,
+              fun=os.path.abspath(__file__),
               group="editing",
               updated=__updated__,
               desc=__doc__,

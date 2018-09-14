@@ -2,8 +2,12 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import defaultdict
+
+from builtins import str
+from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -139,7 +143,7 @@ else:
     CMD = CmdObject(name="count_key_values",
                     message="Count the number values for a set of keys.",
                     parser=make_parser(),
-                    fun=count_key_values,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     group="information",

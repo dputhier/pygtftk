@@ -2,8 +2,12 @@
 from __future__ import print_function
 
 import argparse
+import os
 import shutil
 import sys
+
+from builtins import str
+from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import globbedFileList
@@ -275,7 +279,7 @@ else:
     CmdObject(name="get_feat_seq",
               message="Get feature sequence (e.g exon, UTR...).",
               parser=make_parser(),
-              fun=get_feat_seq,
+              fun=os.path.abspath(__file__),
               desc=__doc__,
               group="sequences",
               notes=__notes__,

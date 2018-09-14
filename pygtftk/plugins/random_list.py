@@ -2,13 +2,18 @@
 from __future__ import print_function
 
 import argparse
+import os
 import random
 import sys
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import int_greater_than_null
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
+from pygtftk.utils import PY2
+from pygtftk.utils import PY3
 from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
@@ -82,9 +87,9 @@ def random_list(
     message("Getting ID list.")
 
     if ft_type == 'gene':
-        id_list = set(gtf.extract_data("gene_id", as_list=True))
+        id_list = gtf.extract_data("gene_id", as_list=True, nr=True, hide_undef=True, no_na=True)
     else:
-        id_list = set(gtf.extract_data("transcript_id", as_list=True))
+        id_list = gtf.extract_data("transcript_id", as_list=True, nr=True, hide_undef=True, no_na=True)
 
     if number > len(id_list):
         message("To much feature. Using : " + str(len(id_list)),
@@ -92,7 +97,13 @@ def random_list(
         number = len(id_list)
 
     if seed_value is not None:
-        random.seed(seed_value)
+
+        if PY2:
+            random.seed(seed_value)
+        elif PY3:
+            random.seed(seed_value, version=1)
+        else:
+            message("Unknow Python version", type="ERROR")
 
     id_list = random.sample(id_list, number)
 
@@ -123,13 +134,7 @@ else:
     #random_list: set seed and return G0010 (4 lines)
     @test "random_list_1" {
      result=`gtftk random_list -i pygtftk/data/simple/simple.gtf -n 1 -t gene -s 123| wc -l`
-      [ "$result" -eq 4 ]
-    }
-    
-    #random_list: set seed and return G0008 (4 lines)
-    @test "random_list_2" {
-     result=`gtftk random_list -i pygtftk/data/simple/simple.gtf -n 1 -t gene -s 111| wc -l`
-      [ "$result" -eq 5 ]
+      [ "$result" -eq 7 ]
     }
     
     #random_list: set seed and return G0007T001 (3 lines)
@@ -138,18 +143,12 @@ else:
       [ "$result" -eq 3 ]
     }
     
-    #random_list: set seed and return G0007T001, G0004T002 (10 lines)
-    @test "random_list_4" {
-     result=`gtftk random_list -i pygtftk/data/simple/simple.gtf -n 2  -s 111 -t transcript | wc -l`
-      [ "$result" -eq 10 ]
-    }
-    
     '''
 
     CMD = CmdObject(name="random_list",
                     message="Select a random list of genes or transcripts.",
                     parser=make_parser(),
-                    fun=random_list,
+                    fun=os.path.abspath(__file__),
                     group="selection",
                     updated=__updated__,
                     desc=__doc__,

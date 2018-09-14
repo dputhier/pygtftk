@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -102,7 +103,8 @@ def join_multi_file(
         gtf = gtf.add_attr_from_matrix_file(feat=target_feature,
                                             key=key_to_join,
                                             inputfile=join_file.name)
-    gtf.write(outputfile)
+    gtf.write(outputfile,
+              gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -137,7 +139,7 @@ else:
     CmdObject(name="join_multi_file",
               message="Join attributes from mutiple files.",
               parser=make_parser(),
-              fun=join_multi_file,
+              fun=os.path.abspath(__file__),
               group="editing",
               updated=__updated__,
               desc=__doc__,

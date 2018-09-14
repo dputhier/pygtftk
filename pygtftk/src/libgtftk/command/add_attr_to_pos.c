@@ -27,22 +27,22 @@ extern char *trim_ip(char *);
 __attribute__ ((visibility ("default")))
 GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_key) {
 
-	/*
-	 * Required variables
-	 */
+    /*
+     * Required variables
+     */
 
-	int n;
-	GTF_DATA *ret = clone_gtf_data(gtf_data);
-	GTF_ROW *row;
+    int n;
+    GTF_DATA *ret = clone_gtf_data(gtf_data);
+    GTF_ROW *row;
     FILE *input = fopen(inputfile_name, "ro");
     size_t buffersize = 1000;
     char *buffer = (char *)calloc(buffersize, sizeof(char));
     char **token;
 
 
-	/*
-	 * loop on the txt file rows
-	 */
+    /*
+     * loop on the txt file rows
+     */
 
     while (fgets(buffer, 999, input) != NULL) {
 
@@ -61,16 +61,23 @@ GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_ke
                 exit(0);
             }
 
-            if (n > (ret->size - 1)) {
-                fprintf(stderr, "ERROR : Index out of range (add_attr_to_pos).");
+            if (n > 2) {
+                fprintf(stderr, "ERROR : need two columns.");
                 exit(0);
             }
 
-            row = ret->data[atoi(token[0])];
-            add_attribute(row, new_key, token[1]);
+            if(atoi(token[0]) <= ret->size){
+                row = ret->data[atoi(token[0])];
+                add_attribute(row, new_key, token[1]);
+             }else{
+                fprintf(stderr, "ERROR : index out of range (add_attr_to_pos).");
+                exit(0);
+             }
+
+
             }
 
-	}
-	free(buffer);
-	return ret;
+    }
+    free(buffer);
+    return ret;
 }

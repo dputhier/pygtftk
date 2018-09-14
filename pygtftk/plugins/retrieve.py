@@ -8,6 +8,7 @@ import sys
 
 import ftputil
 from ftputil.error import FTPOSError
+
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -132,7 +133,6 @@ def retrieve(species_name=None,
         host = "ftp.ensemblgenomes.org"
         user = "anonymous"
         password = "anonymous@gtftk.fr"
-
 
     try:
         ftp = ftputil.FTPHost(host, user, password)
@@ -271,7 +271,7 @@ def retrieve(species_name=None,
             if to_stdout:
                 gtf = GTF(os.path.join(outputdir, target_gtf))
 
-                gtf.write("-")
+                gtf.write("-", gc_off=True)
 
             if delete:
                 os.remove(os.path.join(outputdir, target_gtf))
@@ -333,7 +333,7 @@ else:
     CmdObject(name="retrieve",
               message="Retrieve a GTF file from ensembl.",
               parser=make_parser(),
-              fun=retrieve,
+              fun=os.path.abspath(__file__),
               desc=__doc__,
               group="information",
               updated=__updated__,

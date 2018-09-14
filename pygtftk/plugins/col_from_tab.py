@@ -2,8 +2,11 @@
 """Select columns from a tabulated file based on their names."""
 
 import argparse
+import os
 import re
 import sys
+
+from builtins import range
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.utils import chomp
@@ -112,7 +115,7 @@ def col_from_tab(inputfile=None,
 
             else:
 
-                pos_list = range(len(line))
+                pos_list = list(range(len(line)))
 
                 for i in range(len(columns)):
 
@@ -175,7 +178,7 @@ else:
     CmdObject(name="col_from_tab",
               message="Select columns from a tabulated file based on their names.",
               parser=make_parser(),
-              fun=col_from_tab,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               desc=__doc__,
               group="miscellaneous",

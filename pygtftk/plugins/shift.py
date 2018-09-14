@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-"""
 
-"""
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -192,7 +191,7 @@ else:
     cmd = CmdObject(name="shift",
                     message="Transpose coordinates.",
                     parser=make_parser(),
-                    fun=shift,
+                    fun=os.path.abspath(__file__),
                     desc=__doc__,
                     group="coordinates",
                     updated=__updated__,

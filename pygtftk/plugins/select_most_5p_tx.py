@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -64,7 +65,7 @@ def select_most_5p_tx(inputfile=None,
     else:
         gtf = gtf.select_5p_transcript().select_by_key("feature", "gene", 1)
 
-    gtf.write(outputfile)
+    gtf.write(outputfile, gc_off=True)
 
 
 def main():
@@ -94,19 +95,19 @@ else:
 
     #select_most_5p_tx
     @test "select_most_5p_tx_3" {
-     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx |  gtftk select_by_key -k gene_name -v ISG15 | gtftk select_by_key --select-transcripts | gtftk 5p_3p_coord| cut -f4`
+     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx |  gtftk select_by_key -k gene_name -v ISG15 | gtftk select_by_key --select-transcripts | gtftk get_5p_3p_coords| cut -f4`
       [ "$result" = "ENSG00000187608|ENST00000624697" ]
     }
 
     #select_most_5p_tx
     @test "select_most_5p_tx_4" {
-     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx | gtftk select_by_key -k gene_name -v CRABP2 | gtftk select_by_key --select-transcripts | gtftk 5p_3p_coord  -t transcript | cut -f4`
+     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx | gtftk select_by_key -k gene_name -v CRABP2 | gtftk select_by_key --select-transcripts | gtftk get_5p_3p_coords  -t transcript | cut -f4`
       [ "$result" = "ENSG00000143320|ENST00000621784" ]
     }        
     
     #select_most_5p_tx
     @test "select_most_5p_tx_5" {
-     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx |  gtftk select_by_key -k gene_name -v RAB13 | gtftk select_by_key --select-transcripts | gtftk 5p_3p_coord  -t transcript  | cut -f 4`
+     result=`gtftk get_example -d mini_real  | gtftk select_most_5p_tx |  gtftk select_by_key -k gene_name -v RAB13 | gtftk select_by_key --select-transcripts | gtftk get_5p_3p_coords  -t transcript  | cut -f 4`
       [ "$result" = "ENSG00000143545|ENST00000495720" ]
     }  
 
@@ -144,7 +145,7 @@ else:
     CmdObject(name="select_most_5p_tx",
               message="Select the most 5' transcript of each gene.",
               parser=make_parser(),
-              fun=select_most_5p_tx,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               group="selection",
               desc=__doc__,

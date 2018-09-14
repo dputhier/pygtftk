@@ -15,7 +15,7 @@
  * Returns the next row of text from the file pointed by gr (a gzipped file or a flat file),
  * or NULL if the EOF has been reached
  */
-char *get_next_gtf_line(GTF_READER *gr, char *buffer) {
+char *get_next_gtf_line(TEXTFILE_READER *gr, char *buffer) {
 	char *ret = NULL;
 
 	if (gr->gz) {
@@ -30,7 +30,8 @@ char *get_next_gtf_line(GTF_READER *gr, char *buffer) {
 }
 
 /*
- * This function analyzes "query" and constructs a GTF_READER object containing :
+ * This function analyzes "query" and constructs a TEXTFILE_READER object
+ * containing :
  *  - the absolute name of the GTF file (which can be gzipped)
  *  - the kind of file (.gz or .gtf)
  *  - the FILE ou gzFile pointer to read it
@@ -39,8 +40,8 @@ char *get_next_gtf_line(GTF_READER *gr, char *buffer) {
  *  - a local .gtf or .gtf.gz file (absolute path)
  *  - a file in ~/.gtftk/
  */
-GTF_READER *get_gtf_reader(char *query) {
-	GTF_READER *gr = (GTF_READER *)calloc(1, sizeof(GTF_READER));
+TEXTFILE_READER *get_gtf_reader(char *query) {
+	TEXTFILE_READER *gr = (TEXTFILE_READER *)calloc(1, sizeof(TEXTFILE_READER));
 	char *tmp = (char *)calloc(1000, sizeof(char)), *query_filename;
 
 	if (access(query, F_OK) && strcmp(query, "-")) {

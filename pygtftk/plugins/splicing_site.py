@@ -2,7 +2,10 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -170,7 +173,7 @@ else:
     CmdObject(name="splicing_site",
               message="Compute the locations of donor and acceptor splice sites.",
               parser=make_parser(),
-              fun=splicing_site,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               group="coordinates",
               desc=__doc__,

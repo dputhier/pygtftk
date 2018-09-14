@@ -2,9 +2,12 @@
 from __future__ import print_function
 
 import argparse
+import os
 import re
 import sys
 
+from builtins import range
+from builtins import str
 from pybedtools.bedtool import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -117,7 +120,7 @@ def select_by_loc(inputfile=None,
             ends += [end]
     else:
         for i in BedTool(location_file.name):
-            chroms += [i.chrom.encode('latin-1')]
+            chroms += [i.chrom]
             starts += [str(i.start + 1)]
             ends += [str(i.end)]
 
@@ -139,7 +142,8 @@ def select_by_loc(inputfile=None,
 
         out = gtf.select_by_key(ft_type + '_id',
                                 ",".join(id_list),
-                                invert_match=invert_match).write(outputfile)
+                                invert_match=invert_match).write(outputfile,
+                                                                 gc_off=True)
     else:
         if ft_type == 'transcript':
 
@@ -147,12 +151,14 @@ def select_by_loc(inputfile=None,
                                     ",".join(id_list),
                                     invert_match=invert_match,
                                     no_na=True
-                                    ).write(outputfile)
+                                    ).write(outputfile,
+                                            gc_off=True)
         else:
             out = gtf.select_by_key('gene_id',
                                     ",".join(id_list),
                                     invert_match=invert_match
-                                    ).write(outputfile)
+                                    ).write(outputfile,
+                                            gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -295,7 +301,7 @@ else:
     CmdObject(name="select_by_loc",
               message="Select transcript/gene overlapping a genomic feature.",
               parser=make_parser(),
-              fun=select_by_loc,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               group="selection",
               notes=__notes__,

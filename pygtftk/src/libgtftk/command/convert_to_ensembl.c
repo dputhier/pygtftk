@@ -24,10 +24,10 @@ extern GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data);
  * global variables declaration
  */
 extern COLUMN **column;
-INDEX_ID *tid_index, *gid_index;
-int n, nbrow;
-GTF_DATA *gtf_d;
-GTF_ROW *gtf_d0;
+extern INDEX_ID *tid_index, *gid_index;
+extern int nbrow;
+extern GTF_DATA *gtf_d;
+extern GTF_ROW *gtf_d0;
 
 static void action_transcript(const void *nodep, const VISIT which, const int depth) {
 	int i, ok, start, end, k;
@@ -111,7 +111,6 @@ static void action_transcript(const void *nodep, const VISIT which, const int de
 					}
 				}
 			}
-			n++;
 			break;
 		case endorder:
 			break;
@@ -196,7 +195,6 @@ static void action_gene(const void *nodep, const VISIT which, const int depth) {
 				else
 					gtf_d0 = g_row;
 			}
-			n++;
 			break;
 		case endorder:
 			break;
@@ -219,7 +217,7 @@ GTF_DATA *convert_to_ensembl(GTF_DATA *gtf_data) {
 	 * tree browsing of the transcript_id index (rank 0)
 	 */
 	gtf_d = ret;
-	n = nbrow = 0;
+	nbrow = 0;
 	gtf_d0 = NULL;
 	twalk(column[tid_index->column]->index[tid_index->index_rank]->data, action_transcript);
 	if (gtf_d0 != NULL) gtf_d->data[0] = gtf_d0;
@@ -235,7 +233,7 @@ GTF_DATA *convert_to_ensembl(GTF_DATA *gtf_data) {
 	/*
 	 * tree browsing of the gene_id index (rank 1)
 	 */
-	n = nbrow = 0;
+	nbrow = 0;
 	gtf_d0 = NULL;
 	twalk(column[gid_index->column]->index[gid_index->index_rank]->data, action_gene);
 	if (gtf_d0 != NULL) gtf_d->data[0] = gtf_d0;

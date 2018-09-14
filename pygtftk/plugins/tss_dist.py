@@ -3,8 +3,12 @@ from __future__ import print_function
 
 import argparse
 import errno
+import os
 import sys
 from collections import defaultdict
+
+from builtins import range
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -85,7 +89,7 @@ def tss_dist(
                                 "tss_num_2"]) + "\n")
     try:
         for gn_id in gn_tss_dist:
-            tx_list = gn_tss_dist[gn_id].keys()
+            tx_list = sorted(list(gn_tss_dist[gn_id].keys()))
             for i in range(len(tx_list) - 1):
 
                 for j in range(i + 1, len(tx_list)):
@@ -144,7 +148,7 @@ else:
     
     @test "tss_dist_3" {
      result=`gtftk get_example -d mini_real | gtftk tss_dist | grep ENSG00000097007 | cut -f4 | perl -npe 's/\\n/,/' `
-      [ "$result" = "121086,121120,34," ]
+      [ "$result" = "121120,121086,34," ]
     }    
     
     """
@@ -152,7 +156,7 @@ else:
     CMD = CmdObject(name="tss_dist",
                     message="Computes the distance between TSS of gene transcripts.",
                     parser=make_parser(),
-                    fun=tss_dist,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     notes=__notes__,
                     desc=__doc__,

@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -70,7 +71,8 @@ def select_by_regexp(inputfile=None,
               ).select_by_regexp(key,
                                  regexp,
                                  invert_match
-                                 ).write(outputfile)
+                                 ).write(outputfile,
+                                         gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -119,7 +121,7 @@ else:
     CmdObject(name="select_by_regexp",
               message="Select lines from a GTF file based on a regexp.",
               parser=make_parser(),
-              fun=select_by_regexp,
+              fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
               updated=__updated__,

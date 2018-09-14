@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import re
 import sys
 
@@ -166,7 +167,7 @@ else:
     CmdObject(name="del_attr",
               message="Delete attributes in the target gtf file.",
               parser=make_parser(),
-              fun=del_attr,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               notes=__notes__,
               desc=__doc__,

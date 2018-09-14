@@ -4,8 +4,10 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
+from builtins import str
 from pybedtools import BedTool
 
 import pygtftk.utils
@@ -162,7 +164,7 @@ else:
     CMD = CmdObject(name="bed_to_gtf",
                     message="Convert a bed file to a gtf but with lots of empty fields...",
                     parser=make_parser(),
-                    fun=bed_to_gtf,
+                    fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
                     group="conversion",

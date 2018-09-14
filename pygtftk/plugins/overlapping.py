@@ -3,8 +3,11 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import defaultdict
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import checkChromFile
@@ -231,7 +234,9 @@ transcript from another gene.
 
         if not annotate_gtf:
             value = ",".join(set(overlapping_tx.keys()))
-            gtf.select_by_key("transcript_id", value).write(outputfile)
+            gtf.select_by_key("transcript_id",
+                              value).write(outputfile,
+                                           gc_off=True)
         else:
 
             if len(overlapping_tx):
@@ -239,7 +244,8 @@ transcript from another gene.
                                              key="transcript_id",
                                              a_dict=overlapping_tx,
                                              new_key=key_name)
-            gtf.write(outputfile)
+            gtf.write(outputfile,
+                      gc_off=True)
 
     else:
         values = ",".join(set(overlapping_tx.keys()))
@@ -327,7 +333,7 @@ else:
     CmdObject(name="overlapping",
               message="Find (non)overlapping transcripts.",
               parser=make_parser(),
-              fun=overlapping,
+              fun=os.path.abspath(__file__),
               group="annotation",
               updated=__updated__,
               desc=__doc__,

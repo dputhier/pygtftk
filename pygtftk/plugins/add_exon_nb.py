@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -106,12 +107,18 @@ else:
      result=`gtftk get_example| gtftk add_exon_nb  | bedtools sort| gtftk select_by_key -k feature -v exon| gtftk tabulate -H -k start,exon_nbr| perl -npe 's/\\t/,/g; s/\\n/,/g'`
       [ "$result" = "3,1,3,1,22,3,28,2,28,2,33,1,33,2,33,1,42,1,50,2,57,1,65,1,65,1,71,2,71,2,74,3,74,3,107,1,107,1,125,1,125,1,176,1,180,1,210,2,220,1," ]
     }
+    
+    #add_exon_nb_5: all
+    @test "add_exon_nb_6" {
+     result=`gtftk get_example| gtftk add_exon_nb  -o add_exon_nb_6.gtf`
+      [ "$result" = "" ]
+    }    
     """
 
     CmdObject(name="add_exon_nb",
               message="Add exon number transcript-wise.",
               parser=make_parser(),
-              fun=add_exon_nb,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               desc=__doc__,
               group="information",

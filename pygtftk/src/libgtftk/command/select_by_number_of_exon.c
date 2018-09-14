@@ -24,18 +24,11 @@ extern void add_attribute(GTF_ROW *row, char *key, char *value);
  * global variables declaration
  */
 extern COLUMN **column;
+extern ROW_LIST *row_list;
+extern GTF_DATA *gtf_d;
+extern int min_noe, max_noe;
 
-/*
- * We need some local variables because the research is made with the twalk
- * mechanism (tree browsing) in a separate function (action_sbnoe) with
- * restricted arguments.
- * 	row_list:			a ROW_LIST to aggregate all the selected rows (their rank)
- * 	gtf_d:				a local copy of the GTF_DATA to process
- * 	min_noe, max_noe:	the local copies of min and max number of exons values
- */
-ROW_LIST *row_list;
-GTF_DATA *gtf_d;
-int min_noe, max_noe;
+extern int update_row_table(GTF_DATA *gtf_data);
 
 /*
  * The comparison function used by twalk.
@@ -44,8 +37,7 @@ int min_noe, max_noe;
  * exons and if this number is between min and max values, the associated
  * ROW_LIST element is merged with the local row_list.
  * For information about the parameters, see man pages of twalk.
- */extern int update_row_table(GTF_DATA *gtf_data);
-
+ */
 static void action_sbnoe(const void *nodep, const VISIT which, const int depth) {
 	ROW_LIST *datap;
 	GTF_ROW *row;

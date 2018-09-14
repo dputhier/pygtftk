@@ -65,6 +65,10 @@ install:
 	@rm -Rf build  dist pygtftk.egg-info ~/.gtftk; \
 	python setup.py install; rm -Rf build  dist pygtftk.egg-info
 
+install_py3k:
+	@rm -Rf build  dist pygtftk.egg-info ~/.gtftk; \
+	python3 setup.py install; rm -Rf build  dist pygtftk.egg-info
+
 install-dbg:
 	@rm -Rf build  dist pygtftk.egg-info ~/.gtftk; \
 	python-dbg setup.py install; rm -Rf build  dist pygtftk.egg-info
@@ -101,7 +105,7 @@ test_para: $(OUTPUT2)
 
 clean:
 	@make bats_cmd CMD=clean
-	@rm -rf pygtftk.egg-info build airway_love.txt* ENCFF630HEX_Total_RNAseq_K562_count_mini.txt STDIN.e* STDIN.o* dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/manual/; make clean; cd ../..; find . -type f -name '*~' -exec rm -f '{}' \;
+	@git checkout docs/manual/source/conf.py pygtftk/version.py; rm -rf pygtftk.egg-info build airway_love.txt* ENCFF630HEX_Total_RNAseq_K562_count_mini.txt STDIN.e* STDIN.o* dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/manual/; make clean; cd ../..; find . -type f -name '*~' -exec rm -f '{}' \; 
 
 check_cmd_has_example:
 	@for i in $$(gtftk -l); do if grep -q  "^$$i" docs/manual/source/presentation.rst; then echo "" >/dev/null; else echo $$i; fi; done

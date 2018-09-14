@@ -72,14 +72,14 @@ def make_parser():
     return parser
 
 
-def example(outputfile=None,
-            dataset=None,
-            format="gtf",
-            list=False,
-            all_dataset=False,
-            tmp_dir=None,
-            logger_file=None,
-            verbosity=0):
+def get_example(outputfile=None,
+                dataset=None,
+                format="gtf",
+                list=False,
+                all_dataset=False,
+                tmp_dir=None,
+                logger_file=None,
+                verbosity=0):
     """
     Print example gtf files.
     """
@@ -109,16 +109,16 @@ def example(outputfile=None,
         if format == "gtf":
             try:
                 gtf = GTF(get_example_file(datasetname=dataset,
-                                           ext=format)[0])
+                                           ext=format)[0], check_ensembl_format=False)
             except:
                 try:
                     gtf = GTF(get_example_file(datasetname=dataset,
-                                               ext=format + ".gz")[0])
+                                               ext=format + ".gz")[0], check_ensembl_format=False)
                 except:
                     message("No GTF file found for this dataset.",
                             type="ERROR")
 
-            gtf.write(outputfile)
+            gtf.write(outputfile, gc_off=True)
 
         elif format in ["fa", "join", "join_mat", "genome", "chromInfo", "genes", "geneList"]:
             try:
@@ -129,12 +129,17 @@ def example(outputfile=None,
 
             for line in infile:
                 outputfile.write(line)
+
         elif format == "*":
 
             file_path = glob.glob(os.path.join(pygtftk.__path__[0],
                                                'data',
                                                dataset,
                                                "*"))
+            file_path = [x for x in file_path if "__" not in x]
+            target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
+            message("Copying from :" + target_path)
+
             for i in file_path:
                 message(
                     "Copying: " + os.path.basename(i),
@@ -148,6 +153,11 @@ def example(outputfile=None,
                                                'data',
                                                dataset,
                                                "*" + '.' + format))
+
+            file_path = [x for x in file_path if "__" not in x]
+            target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
+            message("Copying from :" + target_path)
+
             for i in file_path:
                 message("Copying file : " + os.path.basename(i), force=True)
                 shutil.copy(i, ".")
@@ -160,7 +170,7 @@ def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    example(**args)
+    get_example(**args)
 
 
 if __name__ == '__main__':
@@ -179,7 +189,7 @@ else:
     CmdObject(name="get_example",
               message="Get example files including GTF.",
               parser=make_parser(),
-              fun=example,
+              fun=os.path.abspath(__file__),
               desc=__doc__,
               notes=__notes__,
               group="information",

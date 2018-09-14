@@ -3,7 +3,10 @@ from __future__ import print_function
 
 import argparse
 import math
+import os
 import sys
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import checkChromFile
@@ -160,7 +163,8 @@ def convergent(
                                      a_dict=dist_to_convergent,
                                      new_key="dist_to_convergent")
 
-    gtf.write(outputfile)
+    gtf.write(outputfile,
+              gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -182,7 +186,7 @@ else:
     test = """
     #convergent: this region contains 3 convergent tx
     @test "convergent_1" {
-     result=`gtftk convergent -K toto -i pygtftk/data/simple/simple.gtf  -c pygtftk/data/simple/simple.chromInfo -u 24 -d 24| gtftk select_by_key -k feature -v transcript |gtftk tabulate -H -k transcript_id,dist_to_convergent -s ","| grep ",[0-9]"| wc -l`
+     result=`gtftk convergent -K toto -i pygtftk/data/simple/simple.gtf  -c pygtftk/data/simple/simple.chromInfo -u 24 -d 24| gtftk select_by_key -t |gtftk tabulate -H -k transcript_id,dist_to_convergent -s ","| grep ",[0-9]"| wc -l`
      [ "$result" -eq 3 ]
     }
 
@@ -202,7 +206,7 @@ else:
     CmdObject(name="convergent",
               message="Find transcripts with convergent tts.",
               parser=make_parser(),
-              fun=convergent,
+              fun=os.path.abspath(__file__),
               updated=__updated__,
               desc=__doc__,
               group="annotation",
