@@ -70,7 +70,7 @@ def convert_ensembl(
     gtf = GTF(inputfile,
               check_ensembl_format=False
               ).convert_to_ensembl(check_gene_chr=not no_check_gene_chr,
-                                   ).write(outputfile)
+                                   ).write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 
