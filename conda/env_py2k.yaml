@@ -2,7 +2,7 @@ name: pygtftk
 
 channels:
     - conda-forge
-    - nodefaults
+    - defaults
     - bioconda
     - auto
 
