@@ -3397,7 +3397,6 @@ class GTF(object):
         >>> assert a_list[1] == 'BBB'
         >>> assert a_list[2] == '?'
         >>> assert a_list[3] == 'CCC'
-
         """
 
         if isinstance(input_file, basestring):
