@@ -2,19 +2,46 @@
 """
 Command Line Interface display format.
 """
+
+from __future__ import absolute_import
 from __future__ import print_function
 
 import argparse
 import glob
 import os
 import re
+import sys
 from collections import defaultdict
 
+from builtins import object
+from builtins import range
+from builtins import str
 from pybedtools import BedTool
 
+from pygtftk.utils import PY3
 from pygtftk.utils import check_file_or_dir_exists
 from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import message
+
+# ---------------------------------------------------------------
+# Python2/3  compatibility
+# ---------------------------------------------------------------
+
+
+try:
+    basestring
+except NameError:
+    basestring = str
+
+if PY3:
+    from io import IOBase
+
+    file = IOBase
+
+
+# ---------------------------------------------------------------
+# ArgFormatter class
+# ---------------------------------------------------------------
 
 
 class ArgFormatter(argparse.HelpFormatter):
@@ -364,7 +391,7 @@ class SeparatedList(object):
 
     def __eq__(self, other):
 
-        assert isinstance(other, str)
+        assert isinstance(other, basestring)
         other = other.split(self.sep)
 
         if self.type_arg == int:
@@ -687,7 +714,7 @@ class FileWithExtension(argparse.FileType):
     def __call__(self, string):
         match = False
         if self.valid_extensions:
-            if isinstance(self.valid_extensions, str):
+            if isinstance(self.valid_extensions, basestring):
                 if not string.endswith(self.valid_extensions):
                     if re.search(self.valid_extensions, string):
                         match = True
@@ -712,8 +739,13 @@ class FileWithExtension(argparse.FileType):
         outputdir = os.path.dirname(os.path.abspath(string))
 
         if not os.path.exists(outputdir):
-            if self._mode == 'w':
+            if 'w' in self._mode:
                 message("Directory not found. Creating.", type="WARNING")
                 os.makedirs(outputdir)
+
+        # we will work with string
+        if PY3:
+            if 'w' in self._mode:
+                self._mode = 'w'
 
         return super(FileWithExtension, self).__call__(string)

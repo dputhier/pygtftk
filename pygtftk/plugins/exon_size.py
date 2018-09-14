@@ -5,6 +5,9 @@ import argparse
 import os
 import sys
 
+from builtins import str
+from builtins import zip
+
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF

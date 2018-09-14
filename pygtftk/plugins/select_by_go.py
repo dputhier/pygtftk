@@ -119,7 +119,7 @@ def select_by_go(inputfile=None,
 
     bm.query({'query': XML.format(species=species, go=go_id)})
 
-    for i in bm.response.content.split("\n"):
+    for i in bm.response.content.decode().split("\n"):
         i = i.rstrip("\n")
         if i != '':
             is_associated[i] = 1
@@ -127,7 +127,7 @@ def select_by_go(inputfile=None,
     gtf = GTF(inputfile)
 
     gtf_associated = gtf.select_by_key("gene_id",
-                                       ",".join(is_associated.keys()),
+                                       ",".join(list(is_associated.keys())),
                                        invert_match)
 
     gtf_associated.write(outputfile,

@@ -1,11 +1,16 @@
 """
 Class declaration of the TAB object (may be returned by a GTF instance).
 """
+from __future__ import absolute_import
+
 import textwrap
 
 import pandas as pd
+from builtins import object
+from builtins import range
 from cffi import FFI
 
+import pygtftk.utils
 from pygtftk.Line import FieldSet
 from pygtftk.utils import GTFtkError
 
@@ -54,13 +59,7 @@ class TAB(object):
         self.colnames = []
         for i in range(self.ncols):
             self.colnames += [ffi.string(ffi.cast('char *',
-                                                  ptr.column_name[i]))]
-
-    """
-    def __del__(self):
-        if self._data is not None:
-            self._dll.free_raw_data(self._data)
-    """
+                                                  ptr.column_name[i])).decode()]
 
     def __iter__(self):
         """
@@ -89,18 +88,38 @@ class TAB(object):
 
     def iter_as_list(self):
         """
-        Iterate over the TAB object and return a list of self.nb_columns elements..
+        Iterate over the TAB object and return a list of self.nb_columns elements.
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()
+        >>> a_gtf = GTF(a_file)
+        >>> a_tab = a_gtf.extract_data("gene_id,start")
+        >>> assert next(a_tab.iter_as_list()) == list(a_tab[0])
+
         """
 
         for i in range(self.nrows):
-            yield [ffi.string(x) for x in self._data.data[i][0:self.ncols]]
+            yield [ffi.string(x).decode() for x in self._data.data[i][0:self.ncols]]
 
     def as_data_frame(self):
         """Convert the TAB object into a dataframe.
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()
+        >>> a_gtf = GTF(a_file)
+        >>> a_tab = a_gtf.extract_data("gene_id,start")
+        >>> assert a_tab.as_data_frame()["gene_id"].nunique() == 10
+
         """
         out_list = []
         for i in range(self.nrows):
-            out_list += [[ffi.string(x)
+            out_list += [[ffi.string(x).decode()
                           for x in self._data.data[i][0:self.ncols]]]
         df = pd.DataFrame(out_list, columns=self.colnames)
         return df
@@ -159,17 +178,44 @@ class TAB(object):
         return msg
 
     def __len__(self):
-        """Object len (number of rows)."""
+        """Object len (number of rows).
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_tab = GTF(a_file).extract_data("transcript_id,gene_id")
+        >>> assert len(a_tab) == 70
+
+        """
+
         if self._data is not None:
             return self.nrows
         else:
             return 0
 
     def write(self, outfile=None, sep='\t'):
+        """Write a tab object to a file.
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> from pygtftk.utils import make_tmp_file
+        >>> from pygtftk.utils import simple_line_count
+        >>> from pygtftk.utils import simple_nb_column
+        >>> a_file = get_example_file()[0]
+        >>> a_tab = GTF(a_file).extract_data("transcript_id,gene_id")
+        >>> out_file = make_tmp_file()
+        >>> a_tab.write(out_file)
+        >>> out_file.close()
+        >>> assert simple_line_count(out_file) == 70
+        >>> assert simple_nb_column(out_file) == 2
+        """
 
         for i in self:
-            outfile.write(sep.join(i) + "\n")
-        outfile.close()
+            pygtftk.utils.write_properly(sep.join(list(i)), outfile)
 
     def as_simple_list(self, which_col=0):
         """Convert the selected column of a TAB object into a list.
@@ -206,7 +252,9 @@ class TAB(object):
         >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file).extract_data("all")
-        >>> assert a_gtf.iterate_with_header().next()[0] == 'seqid'
+        >>> assert next(a_gtf.iterate_with_header())[0] == 'seqid'
+        >>> for i in a_gtf.iterate_with_header(): pass
+        >>> assert 'CDS_G0010T001' in list(i)
         """
         yield FieldSet(alist=self.colnames)
         for i in range(self.nrows):

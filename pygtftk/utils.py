@@ -1,4 +1,7 @@
 """A set of useful functions."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import datetime
 import glob
@@ -16,8 +19,26 @@ from tempfile import NamedTemporaryFile
 
 import pysam
 import requests
+from future.utils import old_div
 
 import pygtftk
+
+# -------------------------------------------------------------------------
+# Python Version
+# -------------------------------------------------------------------------
+
+
+PY3 = sys.version_info[0] == 3
+PY2 = sys.version_info[0] == 2
+if PY3:
+    from builtins import range
+    from builtins import str
+    from builtins import zip
+
+# -------------------------------------------------------------------------
+# VARIABLES
+# -------------------------------------------------------------------------
+
 
 # The level of verbosity
 VERBOSITY = 0
@@ -43,6 +64,21 @@ NEWLINE = '\n'
 
 # R libraries
 R_LIB = defaultdict(list)
+
+# ---------------------------------------------------------------
+# Python2/3  compatibility
+# ---------------------------------------------------------------
+
+
+try:
+    basestring
+except NameError:
+    basestring = str
+
+if PY3:
+    from io import IOBase
+
+    file = IOBase
 
 
 # ---------------------------------------------------------------
@@ -74,13 +110,24 @@ class GTFtkInteractiveError(Exception):
 # ---------------------------------------------------------------
 
 def mkdir_p(path):
-    try:
-        os.makedirs(path)
-    except OSError as exc:  # Python >2.5
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
-            pass
+    """Create a directory silently if already exists.
+
+    :Example:
+
+    >>> from pygtftk.utils import check_file_or_dir_exists
+    >>> from pygtftk.utils import mkdir_p
+    >>> mkdir_p('/tmp/test_gtftk_mkdir_p')
+    >>> assert check_file_or_dir_exists('/tmp/test_gtftk_mkdir_p')
+    """
+
+    if not os.path.exists(path):
+        if os.path.isfile(path):
+            raise GTFtkError("The path provided is a file not a directory...")
         else:
-            raise
+            try:
+                os.makedirs(path)
+            except:
+                raise GTFtkError("Unable to create directory : " + path)
 
 
 def make_tmp_file(prefix='tmp',
@@ -109,27 +156,28 @@ def make_tmp_file(prefix='tmp',
 
     """
 
+    dir_target = None
+
     if dir is None:
         if TMP_DIR is not None:
             if not os.path.exists(TMP_DIR):
                 msg = "Creating directory {d}."
                 message(msg.format(d=TMP_DIR), type="INFO")
                 os.mkdir(TMP_DIR)
+                dir_target = TMP_DIR
 
-        tmp_file = NamedTemporaryFile(delete=False,
-                                      prefix=prefix + "_gtftk_",
-                                      suffix=suffix,
-                                      dir=TMP_DIR)
     else:
         if not os.path.exists(dir):
             msg = "Creating directory {d}."
             message(msg.format(d=dir), type="INFO")
             os.mkdir(dir)
+            dir_target = dir
 
-        tmp_file = NamedTemporaryFile(delete=False,
-                                      prefix=prefix + "_gtftk_",
-                                      suffix=suffix,
-                                      dir=dir)
+    tmp_file = NamedTemporaryFile(delete=False,
+                                  mode='w',
+                                  prefix=prefix + "_gtftk_",
+                                  suffix=suffix,
+                                  dir=dir_target)
 
     if store:
         TMP_FILE_LIST.append(tmp_file.name)
@@ -456,12 +504,12 @@ def chrom_info_as_dict(chrom_info_file):
         if int(line[1]) <= 0:
             raise GTFtkError("Chromosome sizes should be greater than 0.")
 
-    if len(chrom_len.keys()) == 0:
+    if len(list(chrom_len.keys())) == 0:
         raise GTFtkError("No chromosome length retrieved in chrom_info file. Is this file tabulated ?")
 
     genome_size = 0
 
-    for chrom, value in chrom_len.items():
+    for chrom, value in list(chrom_len.items()):
         genome_size += value
 
     chrom_len["all_chrom"] = genome_size
@@ -493,18 +541,27 @@ def chrom_info_to_bed_file(chrom_file, chr_list=None):
 
     >>> from  pygtftk.utils import chrom_info_to_bed_file
     >>> from  pygtftk.utils import get_example_file
+    >>> from pygtftk.utils import PY3
+    >>> from pygtftk.utils import PY2
     >>> from pybedtools import  BedTool
     >>> a = get_example_file(ext='chromInfo')
     >>> b = chrom_info_to_bed_file(open(a[0], 'r'))
     >>> c = BedTool(b.name)
     >>> d = c.__iter__()
-    >>> i = d.next()
-    >>> assert i.start == 0
-    >>> assert i.end == 600
-    >>> assert (i.end - i.start) == 600
-    >>> i = d.next()
-    >>> assert (i.end - i.start) == 300
-
+    >>> i = next(d)
+    >>> if PY2: assert str(i.chrom) == 'chr2'
+    >>> if PY2: assert i.start == 0
+    >>> if PY2: assert i.end == 600
+    >>> if PY3: assert str(i.chrom) == 'chr1'
+    >>> if PY3: assert i.start == 0
+    >>> if PY3: assert i.end == 300
+    >>> i = next(d)
+    >>> if PY3: assert str(i.chrom) == 'chr2'
+    >>> if PY3: assert i.start == 0
+    >>> if PY3: assert i.end == 600
+    >>> if PY2: assert str(i.chrom) == 'chr1'
+    >>> if PY2: assert i.start == 0
+    >>> if PY2: assert i.end == 300
     """
 
     message("Converting chrom info to bed format")
@@ -512,7 +569,7 @@ def chrom_info_to_bed_file(chrom_file, chr_list=None):
     out_file = make_tmp_file("chromInfo_", ".bed")
     chrom_dict = chrom_info_as_dict(chrom_file)
 
-    for chrom, chrom_len in chrom_dict.items():
+    for chrom, chrom_len in list(chrom_dict.items()):
         if chrom != "all_chrom":
             if chr_list is not None:
                 if chrom in chr_list:
@@ -551,19 +608,25 @@ def close_properly(*args):
                 afile.close()
 
 
-def write_properly(string, afile):
+def write_properly(a_string, afile):
     """Write a string to a file. If file is None, write string to stdout.
 
-    :param string: a character string.
+    :param a_string: a character string.
     :param afile: a file object.
 
     >>> from pygtftk.utils import write_properly
 
     """
-    if afile is not None and afile.name != '<stdout>':
-        afile.write(string + "\n")
+    if afile is not None:
+
+        if afile.name in ['<stdout>', '-']:
+            sys.stdout.write(a_string + '\n')
+        else:
+            afile.write(a_string + '\n')
+
+
     else:
-        sys.stdout.write(string + "\n")
+        sys.stdout.write(a_string + '\n')
 
 
 def make_outdir_and_file(out_dir=None,
@@ -619,7 +682,9 @@ def silentremove(filename):
     >>> from pygtftk.utils import silentremove
     >>> from pygtftk.utils import make_tmp_file
     >>> a = make_tmp_file()
-
+    >>> assert os.path.exists(a.name)
+    >>> silentremove(a.name)
+    >>> assert not os.path.exists(a.name)
 
     """
     if isinstance(filename, file):
@@ -694,24 +759,24 @@ def message(msg, nl=True, type="INFO", force=False):
 
         if cmd == "":
             if nl:
-                sys.stderr.write("    |--- {c}-{a} : {b}\n".format(a=type,
-                                                                   b=msg,
-                                                                   c=ho_min))
+                sys.stderr.write(" |-- {c}-{a} : {b}\n".format(a=type,
+                                                               b=msg,
+                                                               c=ho_min))
             else:
-                sys.stderr.write("    |--- {c}-{a} : {b}".format(a=type,
-                                                                 b=msg,
-                                                                 c=ho_min))
+                sys.stderr.write(" |-- {c}-{a} : {b}".format(a=type,
+                                                             b=msg,
+                                                             c=ho_min))
         else:
             if nl:
-                sys.stderr.write("    |--- {c}-{a}-{d} : {b}\n".format(a=type,
-                                                                       b=msg,
-                                                                       c=ho_min,
-                                                                       d=cmd))
+                sys.stderr.write(" |-- {c}-{a}-{d} : {b}\n".format(a=type,
+                                                                   b=msg,
+                                                                   c=ho_min,
+                                                                   d=cmd))
             else:
-                sys.stderr.write("    |--- {c}-{a}-{d} : {b}".format(a=type,
-                                                                     b=msg,
-                                                                     c=ho_min,
-                                                                     d=cmd))
+                sys.stderr.write(" |-- {c}-{a}-{d} : {b}".format(a=type,
+                                                                 b=msg,
+                                                                 c=ho_min,
+                                                                 d=cmd))
 
     if type == "ERROR":
 
@@ -721,7 +786,7 @@ def message(msg, nl=True, type="INFO", force=False):
             message("Error encountered. System will exit after deleting temporary files.", type="DEBUG")
 
             if not pygtftk.__ARGS__['keep_all']:
-                for i in flatten_list(TMP_FILE_LIST):
+                for i in flatten_list(TMP_FILE_LIST, outlist=[]):
                     message("ERROR encountered, deleting temporary file: " + i, type="DEBUG")
                     silentremove(i)
             else:
@@ -823,7 +888,8 @@ def random_string(n):
 
 def to_alphanum(string):
     """
-    Returns a new string in which non alphanumeric character have been replaced by '_'.
+    Returns a new string in which non alphanumeric character have been replaced by '_'. If non alphanumeric characters
+    are found at the beginning or end of the string, they are deleted.
 
     :param string: A character string in which non alphanumeric char have to be replaced.
     :param replacement_list:
@@ -871,30 +937,31 @@ def left_strip_str(string):
 # ---------------------------------------------------------------
 
 
-def flatten_list(alist):
+def flatten_list(x, outlist=[]):
     """Flatten a list of lists.
 
-    :param alist: a list or list of list.
+    :param x: a list or list of list.
 
     :Example:
 
+    >>> from pygtftk.utils import flatten_list
     >>> b = ["A", "B", "C"]
     >>> a = ["a", "b", "c"]
     >>> c = ['a', 'b', 'c', 'A', 'B', 'C', 'string']
-    >>> assert flatten_list([a,b, "string"]) ==  c
-    >>> assert flatten_list("string") == ['string']
+    >>> # Call it with an empty list (outlist)
+    >>> # otherwise, element will be added to the existing
+    >>> # outlist variable
+    >>> assert flatten_list([a,b, "string"], outlist=[]) ==  c
+    >>> assert flatten_list("string", outlist=[]) == ['string']
 
     """
 
-    import itertools
-
-    if isinstance(alist, list):
-        return list(itertools.chain.from_iterable(
-            itertools.repeat(x, 1) if isinstance(x, str) else x for x in alist))
-    elif isinstance(alist, str):
-        return [alist]
+    if not isinstance(x, (list, tuple)):
+        outlist += [x]
     else:
-        raise GTFtkError("Should be a list or str.")
+        for i in x:
+            outlist = flatten_list(i, outlist)
+    return outlist
 
 
 # See: https://stackoverflow.com/questions/716477/join-list-of-lists-in-python
@@ -934,7 +1001,8 @@ def sort_2_lists(list1, list2):
     """
 
     tups = sorted(zip(list1, list2))
-    return zip(*sorted(tups))
+
+    return list(zip(*sorted(tups)))
 
 
 # from http://stackoverflow.com/questions/8356501/python-format-tabular-output
@@ -943,8 +1011,8 @@ def sort_2_lists(list1, list2):
 def print_table(table):
     col_width = [max(len(x) for x in col) for col in zip(*table)]
     for line in table:
-        print "| " + " | ".join("{:{}}".format(x, col_width[i])
-                                for i, x in enumerate(line)) + " |"
+        print("| " + " | ".join("{:{}}".format(x, col_width[i])
+                                for i, x in enumerate(line)) + " |")
 
 
 def call_nested_dict_from_list(data, args=[]):
@@ -974,9 +1042,9 @@ def median_comp(alist):
 
     """
     if len(alist) % 2 != 0:
-        return sorted(alist)[len(alist) / 2]
+        return sorted(alist)[old_div(len(alist), 2)]
     else:
-        midavg = (sorted(alist)[len(alist) / 2] + sorted(alist)[len(alist) / 2 - 1]) / 2.0
+        midavg = old_div((sorted(alist)[old_div(len(alist), 2)] + sorted(alist)[old_div(len(alist), 2) - 1]), 2.0)
         return midavg
 
 
@@ -1014,8 +1082,8 @@ def intervals(l, n, silent=False):
         """ Yield n successive chunks from l.
         """
 
-        newn = int(len(l) / n)
-        for i in xrange(0, n - 1):
+        newn = int(old_div(len(l), n))
+        for i in range(0, n - 1):
             yield l[i * newn:i * newn + newn + 1]
         yield l[n * newn - newn:]
 

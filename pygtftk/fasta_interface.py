@@ -2,18 +2,43 @@
 Class declaration of the FASTA object (may be returned by GTF object methods).
 """
 
+from __future__ import absolute_import
+
 import textwrap
 from collections import OrderedDict
 
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+from builtins import object
+from builtins import range
+from builtins import str
 from cffi import FFI
 
 from pygtftk.Line import FastaSequence
 from pygtftk.utils import GTFtkError
+from pygtftk.utils import PY3
 
 ffi = FFI()
+
+# ---------------------------------------------------------------
+# Python2/3  compatibility
+# ---------------------------------------------------------------
+
+
+try:
+    basestring
+except NameError:
+    basestring = str
+
+if PY3:
+    from io import IOBase
+
+    file = IOBase
+
+if PY3:
+    def native_str(x):
+        return bytes(x.encode())
 
 # ---------------------------------------------------------------
 # The FASTA class
@@ -39,13 +64,17 @@ class FASTA(object):
 
         >>> # The __init__ example is provided as doctest
         >>> # Please use get_sequences method from the GTF object.
+        >>> from future.utils import native_str
         >>> from pygtftk.fasta_interface import  FASTA
         >>> from pygtftk.gtf_interface import GTF
+        >>> from pygtftk.utils import PY3
+        >>> if PY3: native_str=lambda x:bytes(x.encode())
         >>> from pygtftk.utils import get_example_file
         >>> a_file = get_example_file("simple", "gtf")[0]
         >>> a_gtf = GTF(a_file)
         >>> genome_fa = get_example_file("simple", "fa")[0]
-        >>> a_fasta = FASTA(a_gtf.fn, a_gtf._dll.get_sequences(a_gtf._data, genome_fa, 0, 0), False, False)
+        >>> seq = a_gtf._dll.get_sequences(a_gtf._data, native_str(genome_fa), 0, 0)
+        >>> a_fasta = FASTA(a_gtf.fn, seq, False, False)
         >>> assert len(a_fasta) == 15
         """
         self._data = ptr
@@ -132,11 +161,11 @@ class FASTA(object):
                 description += '|rev_comp'
 
         for i in range(self._data.nb):
-            record = SeqRecord(Seq(ffi.string(self._data.sequence[i].sequence),
+            record = SeqRecord(Seq(ffi.string(self._data.sequence[i].sequence).decode(),
                                    IUPAC.ambiguous_dna),
                                id=ffi.string(
-                                   self._data.sequence[i].transcript_id),
-                               name=ffi.string(self._data.sequence[i].gene_id),
+                                   self._data.sequence[i].transcript_id).decode(),
+                               name=ffi.string(self._data.sequence[i].gene_id).decode(),
                                description="")
             record.description = description
 
@@ -178,13 +207,13 @@ class FASTA(object):
 
         for i in range(self._data.nb):
             b = self._data.sequence[i]
-            seq = ffi.string(b.sequence)
-            rg = range(b.features.nb)
+            seq = ffi.string(b.sequence).decode()
+            rg = list(range(b.features.nb))
             for j in rg:
                 c = b.features.feature[j]
-                name = ffi.string(c.name)
-                tx_id = ffi.string(b.transcript_id)
-                gn_id = ffi.string(b.gene_id)
+                name = ffi.string(c.name).decode()
+                tx_id = ffi.string(b.transcript_id).decode()
+                gn_id = ffi.string(b.gene_id).decode()
 
                 if name == feat:
                     s = c.tr_start
@@ -199,7 +228,7 @@ class FASTA(object):
                                 gn_id]
                     fs = FastaSequence(alist=[">" + "|".join(name),
                                               seq[s:e + 1],
-                                              ffi.string(b.seqid),
+                                              ffi.string(b.seqid).decode(),
                                               b.strand,
                                               gn_id,
                                               tx_id,
@@ -264,35 +293,41 @@ class FASTA(object):
 
         for i in range(self._data.nb):
             b = self._data.sequence[i]
-            seq = ffi.string(b.sequence)
+            seq = ffi.string(b.sequence).decode()
+
             if self.rev_comp:
-                if b.strand == "-":
-                    rg = reversed(range(b.features.nb))
+                if b.strand.decode() == "-":
+                    rg = reversed(list(range(b.features.nb)))
                 else:
-                    rg = range(b.features.nb)
+                    rg = list(range(b.features.nb))
             else:
-                rg = range(b.features.nb)
+                rg = list(range(b.features.nb))
             for j in rg:
                 c = b.features.feature[j]
-                name = ffi.string(c.name)
-                tx_id = ffi.string(b.transcript_id)
-                gn_id = ffi.string(b.gene_id)
+                name = ffi.string(c.name).decode()
+                tx_id = ffi.string(b.transcript_id).decode()
+                gn_id = ffi.string(b.gene_id).decode()
                 if name == feat:
                     s = c.tr_start
                     e = c.tr_end
-                    if b.strand == "-" and self.rev_comp:
+                    if b.strand.decode() == "-" and self.rev_comp:
                         end = b.end - s
                         start = b.end - e
-                    else:
+                    elif b.strand.decode() == "+":
                         start = b.start + s
                         end = b.start + e
+                    elif b.strand.decode() == "":
+                        start = b.start + s
+                        end = b.start + e
+                    else:
+                        raise GTFtkError("Strand is undefined")
 
                     d_out[(gn_id,
                            tx_id,
-                           ffi.string(b.seqid),
+                           ffi.string(b.seqid).decode(),
                            start,
                            end,
-                           b.strand,
+                           b.strand.decode(),
                            name)] = seq[s:e + 1]
         return d_out
 
@@ -332,8 +367,8 @@ class FASTA(object):
 
         for i in range(self._data.nb):
             tx = self._data.sequence[i]
-            outputfile.write(ffi.string(tx.header) + "\n")
-            outputfile.write(ffi.string(tx.sequence) + "\n")
+            outputfile.write(ffi.string(tx.header).decode() + "\n")
+            outputfile.write(ffi.string(tx.sequence).decode() + "\n")
 
 
 if __name__ == "__main__":

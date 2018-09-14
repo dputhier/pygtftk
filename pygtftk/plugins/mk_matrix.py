@@ -9,6 +9,8 @@ import sys
 import zipfile
 
 import pandas as pd
+from builtins import range
+from builtins import str
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -197,6 +199,7 @@ def mk_matrix(
                     " when a gtf is provided.", type="ERROR")
     else:
         try:
+
             region_bo = BedTool(inputfile.name)
             a = len(region_bo)
         except:
@@ -278,7 +281,7 @@ def mk_matrix(
     message('Getting the list of chromosomes declared in bigwig files.')
     bw_chrom = list()
     for i in bigwiglist:
-        bw_chrom += pyBigWig.open(i.name).chroms().keys()
+        bw_chrom += list(pyBigWig.open(i.name).chroms().keys())
 
     bed_col = [0, 1, 2, 3, 4, 5]
 
@@ -369,7 +372,7 @@ def mk_matrix(
     outputfile_list = {}
     message("Using %d bins for main region." % bin_nb)
 
-    tmp_file = bw_profile_mp(in_bed_file=main_region_bed,
+    tmp_file = bw_profile_mp(in_bed_file=main_region_bed.name,
                              nb_proc=nb_proc,
                              big_wig=[x.name for x in bigwiglist],
                              bin_nb=bin_nb,
@@ -421,7 +424,7 @@ def mk_matrix(
 
             ups_region_bo.saveas(upstream_bed_file.name)
 
-            tmp_file = bw_profile_mp(in_bed_file=upstream_bed_file,
+            tmp_file = bw_profile_mp(in_bed_file=upstream_bed_file.name,
                                      nb_proc=nb_proc,
                                      big_wig=[
                                          x.name for x in bigwiglist],
@@ -459,7 +462,7 @@ def mk_matrix(
 
             dws_region_bo.saveas(dws_bed_file.name)
 
-            tmp_file = bw_profile_mp(in_bed_file=dws_bed_file,
+            tmp_file = bw_profile_mp(in_bed_file=dws_bed_file.name,
                                      nb_proc=nb_proc,
                                      big_wig=[
                                          x.name for x in bigwiglist],

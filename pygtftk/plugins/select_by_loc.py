@@ -6,6 +6,8 @@ import os
 import re
 import sys
 
+from builtins import range
+from builtins import str
 from pybedtools.bedtool import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -118,7 +120,7 @@ def select_by_loc(inputfile=None,
             ends += [end]
     else:
         for i in BedTool(location_file.name):
-            chroms += [i.chrom.encode('latin-1')]
+            chroms += [i.chrom]
             starts += [str(i.start + 1)]
             ends += [str(i.end)]
 

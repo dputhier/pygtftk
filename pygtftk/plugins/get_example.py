@@ -109,11 +109,11 @@ def get_example(outputfile=None,
         if format == "gtf":
             try:
                 gtf = GTF(get_example_file(datasetname=dataset,
-                                           ext=format)[0])
+                                           ext=format)[0], check_ensembl_format=False)
             except:
                 try:
                     gtf = GTF(get_example_file(datasetname=dataset,
-                                               ext=format + ".gz")[0])
+                                               ext=format + ".gz")[0], check_ensembl_format=False)
                 except:
                     message("No GTF file found for this dataset.",
                             type="ERROR")
@@ -129,12 +129,17 @@ def get_example(outputfile=None,
 
             for line in infile:
                 outputfile.write(line)
+
         elif format == "*":
 
             file_path = glob.glob(os.path.join(pygtftk.__path__[0],
                                                'data',
                                                dataset,
                                                "*"))
+            file_path = [x for x in file_path if "__" not in x]
+            target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
+            message("Copying from :" + target_path)
+
             for i in file_path:
                 message(
                     "Copying: " + os.path.basename(i),
@@ -148,6 +153,11 @@ def get_example(outputfile=None,
                                                'data',
                                                dataset,
                                                "*" + '.' + format))
+
+            file_path = [x for x in file_path if "__" not in x]
+            target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
+            message("Copying from :" + target_path)
+
             for i in file_path:
                 message("Copying file : " + os.path.basename(i), force=True)
                 shutil.copy(i, ".")

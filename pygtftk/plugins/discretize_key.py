@@ -8,6 +8,9 @@ import sys
 
 import numpy as np
 import pandas
+from builtins import range
+from builtins import str
+from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import int_greater_than_null

@@ -6,6 +6,9 @@ import os
 import shutil
 import sys
 
+from builtins import str
+from builtins import zip
+
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import globbedFileList
 from pygtftk.cmd_object import CmdObject

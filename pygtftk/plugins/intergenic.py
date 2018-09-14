@@ -5,6 +5,8 @@ import argparse
 import os
 import sys
 
+from builtins import str
+
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import checkChromFile
 from pygtftk.cmd_object import CmdObject

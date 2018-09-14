@@ -6,6 +6,8 @@ import math
 import os
 import sys
 
+from builtins import str
+
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import checkChromFile
 from pygtftk.cmd_object import CmdObject
@@ -184,7 +186,7 @@ else:
     test = """
     #convergent: this region contains 3 convergent tx
     @test "convergent_1" {
-     result=`gtftk convergent -K toto -i pygtftk/data/simple/simple.gtf  -c pygtftk/data/simple/simple.chromInfo -u 24 -d 24| gtftk select_by_key -k feature -v transcript |gtftk tabulate -H -k transcript_id,dist_to_convergent -s ","| grep ",[0-9]"| wc -l`
+     result=`gtftk convergent -K toto -i pygtftk/data/simple/simple.gtf  -c pygtftk/data/simple/simple.chromInfo -u 24 -d 24| gtftk select_by_key -t |gtftk tabulate -H -k transcript_id,dist_to_convergent -s ","| grep ",[0-9]"| wc -l`
      [ "$result" -eq 3 ]
     }
 

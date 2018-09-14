@@ -1,6 +1,6 @@
 package:
   name: pygtftk
-  version: "0.9.1"
+  version: "0.2.0"
 
 source:
   #todo
@@ -11,7 +11,7 @@ build:
 requirements:
   build:
     - GitPython >=2.1.8
-    - python >=3.6
+    - python >=2.7,<3
     - pyparsing
     - argparse
     - bedtools ==2.27.1
@@ -36,7 +36,7 @@ requirements:
 
   run:
     - GitPython >=2.1.8
-    - python >=3.6
+    - python >=2.7,<3
     - pyparsing
     - argparse
     - bedtools ==2.27.1

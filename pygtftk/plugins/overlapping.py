@@ -7,6 +7,8 @@ import os
 import sys
 from collections import defaultdict
 
+from builtins import str
+
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import checkChromFile
 from pygtftk.cmd_object import CmdObject

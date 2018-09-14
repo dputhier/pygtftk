@@ -7,6 +7,7 @@ import os
 import sys
 
 import pandas as pd
+from builtins import range
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -394,8 +395,8 @@ def coverage(
             # Add columns to df final by joining on
             # chrom, start, end, transcript_id, strand
             df_final = df_final.merge(i.iloc[:,
-                                      range(6)], on=[0, 1,
-                                                     2, 3, 5])
+                                      list(range(6))], on=[0, 1,
+                                                           2, 3, 5])
 
         df_final.columns = ["chrom",
                             "start",

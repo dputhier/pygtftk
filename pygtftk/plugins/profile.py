@@ -14,6 +14,9 @@ import matplotlib as mpl
 import numpy as np
 import pandas as pd
 import plotnine
+from builtins import range
+from builtins import str
+from builtins import zip
 from matplotlib import cm
 from matplotlib import colors as mcolors
 from pandas import Categorical
@@ -29,6 +32,7 @@ from pygtftk.arg_formatter import float_greater_than_null
 from pygtftk.arg_formatter import float_grt_than_null_and_lwr_than_one
 from pygtftk.arg_formatter import int_greater_than_null
 from pygtftk.cmd_object import CmdObject
+from pygtftk.utils import GTFtkError
 from pygtftk.utils import chomp
 from pygtftk.utils import is_hex_color
 from pygtftk.utils import make_outdir_and_file
@@ -471,7 +475,7 @@ def profile(inputfile=None,
             message("Deleting duplicates in transcript-file.")
             df_classes = df_classes.drop_duplicates(subset=[0])
             tx_ordering = df_classes[0].tolist()
-            tx_classes = OrderedDict(zip(df_classes[0], df_classes[1]))
+            tx_classes = OrderedDict(list(zip(df_classes[0], df_classes[1])))
             class_list = set(df_classes[1])
 
             # -------------------------------------------------------------------------
@@ -534,6 +538,8 @@ def profile(inputfile=None,
             profile_colors = get_list_of_colors_mpl(len(class_list))
         elif group_by == 'chrom':
             profile_colors = get_list_of_colors_mpl(len(input_file_chrom))
+        else:
+            raise GTFtkError('--group-by is unknown')
 
 
     else:
@@ -635,6 +641,8 @@ def profile(inputfile=None,
             msg = "Need more colors for displaying chromosome classes (n=%d)"
             message(msg % len(input_file_chrom),
                     type="ERROR")
+    else:
+        raise GTFtkError("--group-by is unknown.")
 
     if len(color_order) < len(profile_colors):
         profile_colors = profile_colors[:len(color_order)]
@@ -670,6 +678,8 @@ def profile(inputfile=None,
     elif config['ft_type'] == 'single_nuc':
         img_file = "user_positions_u%s_d%s." + page_format
         img_file = img_file % (config['from'], config['to'])
+    else:
+        raise GTFtkError("Unknown feature type.")
 
     file_out_list = make_outdir_and_file(out_dir,
                                          ["profile_stats.txt",
@@ -897,7 +907,7 @@ def profile(inputfile=None,
     # add colors to matrix
     #
     # -------------------------------------------------------------------------
-    group2cols = dict(zip(color_order, profile_colors))
+    group2cols = dict(list(zip(color_order, profile_colors)))
     dm['color_palette'] = [group2cols[x] for x in dm[group_by]]
 
     # -------------------------------------------------------------------------
@@ -1150,13 +1160,13 @@ def profile(inputfile=None,
                            size=6,
                            ha='left')
 
-    # --------------------------------------------------------------------------
-    #
-    # Apply colors
-    #
-    # --------------------------------------------------------------------------
+        # --------------------------------------------------------------------------
+        #
+        # Apply colors
+        #
+        # --------------------------------------------------------------------------
 
-    p += scale_color_manual(values=dict(zip(color_order, profile_colors)), name='Groups')
+        p += scale_color_manual(values=dict(list(zip(color_order, profile_colors))), name='Groups')
 
     # -------------------------------------------------------------------------
     # Turn warning off. Both pandas and plotnine use warnings for deprecated

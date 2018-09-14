@@ -6,6 +6,8 @@ import os
 import sys
 from collections import defaultdict
 
+from builtins import str
+
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF

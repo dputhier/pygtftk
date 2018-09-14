@@ -4,6 +4,9 @@ from __future__ import print_function
 import argparse
 import os
 import sys
+from collections import OrderedDict
+
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -75,11 +78,11 @@ def count(
 
     gtf = GTF(inputfile, check_ensembl_format=False)
 
-    feat_nb = dict()
+    feat_nb = OrderedDict()
 
     for i in gtf.extract_data("feature"):
         i = i[0]
-        if feat_nb.get(i, None) is not None:
+        if i in feat_nb:
             feat_nb[i] += 1
         else:
             feat_nb[i] = 1
@@ -132,7 +135,7 @@ else:
     #count: test additional args
     @test "count_4" {
      result=`gtftk get_example | gtftk count  -d feature,count,text -t species| cut -f2| perl -npe 's/\\n/,/'`
-      [ "$result" = "count,25,10,15,20," ]
+      [ "$result" = "count,10,15,25,20," ]
     }
 
     #count: test additional args
@@ -143,7 +146,7 @@ else:
     #count: test additional args
     @test "count_6" {
      result=`gtftk get_example | gtftk count  -d feature,count,text -t species| cut -f1| perl -npe 's/\\n/,/'`
-      [ "$result" = "feature,exon,gene,transcript,CDS," ]
+      [ "$result" = "feature,gene,transcript,exon,CDS," ]
     }
 
     """
