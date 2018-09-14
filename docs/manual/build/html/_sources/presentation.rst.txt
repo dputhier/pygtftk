@@ -1298,7 +1298,7 @@ We will select a representative transcript for each gene. Here we will perform t
 Now we will compute coverage of promoters regions using 3 bigWig files as input.
 
 
-.. command-output:: gtftk coverage -l H3K4me3,H3K79me2,H3K36me3 -u 5000 -d 5000 -i mini_real_noov_rnd_tx.gtf -c hg38.genome -m transcript_id,gene_name -x ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw > coverage.bed
+.. command-output:: gtftk coverage -l H3K4me3,H3K79me2,H3K36me3 -u 5000 -d 5000 -i mini_real_noov_rnd_tx.gtf -c hg38.genome -m transcript_id,gene_name -x ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -k 4 > coverage.bed
 	:shell:
 
 
@@ -1473,7 +1473,7 @@ The same dataset used for plotting but adding a normalization step (*ranging*). 
 
 Two examples using statistic 'max' and 2 differents values of '--upper-limit'.
 
-.. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_a.png  -V 2 -lw 1 -at 5 -s max -ul 1
+    .. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_a.png  -V 2 -lw 1 -at 5 -s max -ul 1
 
 .. image:: example_04_max_a.png
 	:width: 75%
