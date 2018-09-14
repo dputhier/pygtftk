@@ -92,40 +92,21 @@ cmd_src_list = glob.glob("pygtftk/src/libgtftk/*.c")
 cmd_src_list += glob.glob("pygtftk/src/libgtftk/command/*.c")
 cmd_src_list = list(set(cmd_src_list))
 
-for i in cmd_src_list:
-    print(i)
+if platform == "darwin":
+    vars = sysconfig.get_config_vars()
+    # vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
+    # dyn_lib_compil = ['-dynamiclib', '-shared']
+    dyn_lib_compil = []
+else:
+    dyn_lib_compil = ['-shared']
 
-if PY2:
-    if platform == "darwin":
-        vars = sysconfig.get_config_vars()
-        vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
-        dyn_lib_compil = []
-    else:
-        dyn_lib_compil = []
-
-    extra_compile_args = ['-Ipygtftk/src/libgtftk',
-                          '-O3',
-                          '-Wall',
-                          '-fPIC',
-                          '-MMD',
-                          '-MP',
-                          '-fmessage-length=0'] + dyn_lib_compil
-elif PY3:
-    if platform == "darwin":
-        vars = sysconfig.get_config_vars()
-        vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
-        dyn_lib_compil = []
-    else:
-        dyn_lib_compil = []
-
-    extra_compile_args = ['-Ipygtftk/src/libgtftk',
-                          '-O3',
-                          '-Wall',
-                          '-fPIC',
-                          '-fcommon',
-                          '-MMD',
-                          '-MP',
-                          '-fmessage-length=0'] + dyn_lib_compil
+extra_compile_args = ['-Ipygtftk/src/libgtftk',
+                      '-O3',
+                      '-Wall',
+                      '-fPIC',
+                      '-MMD',
+                      '-MP',
+                      '-fmessage-length=0'] + dyn_lib_compil
 
 lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                         include_dirs=[
