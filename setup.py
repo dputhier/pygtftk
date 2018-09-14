@@ -74,7 +74,7 @@ try:
 except:
     sha = ""
 
-if sha != "" and branch != "master" and not os.path.exists("pypi_release_in_progress"):
+if sha != "" and branch != "master" and not os.path.exists("release_in_progress"):
     __version__ = base_version + ".dev0+" + sha
 else:
     __version__ = base_version

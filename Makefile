@@ -116,15 +116,10 @@ check_example_has_cmd:
 	@for i in $$(cat example_list.txt); do if $$(cat cmd_list.txt  | grep -q "^$$i")  ; then echo "" >/dev/null; else echo $$i; fi; done
 	@#rm -f cmd_list.txt example_list.txt tmp_list.txt
 
-prepare_pip:
-	@touch pypi_release_in_progress
-	@rm -rf build/ dist/ pygtftk.egg-info/
-	@python setup.py sdist
-	@python setup.py bdist_wheel
-	@rm -f pypi_release_in_progress
-
-send_to_pypi:
-	@twine upload --repository-url https://test.pypi.org/legacy/ dist/* --verbose
-
 nb_test:
 	@gtftk -p| perl -ne 'BEGIN{$$/="{"}{/\@test\s+"(\w+)_\d+"/; print $$1,"\n"}'| sort | uniq -c | sort -nr
+release:
+	@touch release_in_progress
+
+unrelease:
+	@rm -f release_in_progress
