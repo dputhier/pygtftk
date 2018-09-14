@@ -6,13 +6,14 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Help on Python package (pygtftk) &#8212; gtftk 0.9.1 documentation</title>
+    <title>Help on Python package (pygtftk) &#8212; gtftk 0.9.2 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -34,7 +35,7 @@
         <li class="right" >
           <a href="presentation.html" title="Help on gtftk Unix commands"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -81,16 +82,13 @@ or FASTA object.</p>
 </table>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span>  <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">get_example_file</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.gtf_interface</span> <span class="k">import</span> <span class="n">GTF</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">make_tmp_file</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">NEWLINE</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_path</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_path</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tmp_file</span> <span class="o">=</span>  <span class="n">make_tmp_file</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">gtf</span><span class="p">)):</span> <span class="n">tmp_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">NEWLINE</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tmp_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gtf</span> <span class="o">=</span> <span class="n">gtf</span><span class="o">.</span><span class="n">add_attr_column</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="n">new_key</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a_list</span> <span class="o">=</span> <span class="n">gtf</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">a_list</span><span class="p">]</span> <span class="o">==</span> <span class="nb">range</span><span class="p">(</span><span class="mi">70</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_col</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">add_attr_column</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">a_col</span><span class="p">),</span> <span class="n">new_key</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_list</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">a_list</span><span class="p">]</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">70</span><span class="p">))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -117,7 +115,6 @@ or FASTA object.</p>
 </table>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span>  <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">get_example_file</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.gtf_interface</span> <span class="k">import</span> <span class="n">GTF</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">TAB</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_file</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_dict</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">nb_exons</span><span class="p">()</span>
@@ -239,28 +236,32 @@ or FASTA object.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_file</strong> – a two column file. First column contains the position/line. Second, the value to be added for ‘new_key’.</li>
-<li><strong>new_key</strong> – name of the novel key.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_file</strong> – a two column file. First column contains the position/line (zero-based numbering).</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tbody>
+</table>
+<p>Second, the value to be added for ‘new_key’.
+:param new_key: name of the novel key.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span>  <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">get_example_file</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.gtf_interface</span> <span class="k">import</span> <span class="n">GTF</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">make_tmp_file</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">NEWLINE</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_path</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_path</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tmp_file</span> <span class="o">=</span>  <span class="n">make_tmp_file</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">gtf</span><span class="p">)):</span> <span class="n">tmp_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">NEWLINE</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tmp_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gtf</span> <span class="o">=</span> <span class="n">gtf</span><span class="o">.</span><span class="n">add_attr_column</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="n">new_key</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a_list</span> <span class="o">=</span> <span class="n">gtf</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">a_list</span><span class="p">]</span> <span class="o">==</span> <span class="nb">range</span><span class="p">(</span><span class="mi">70</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_col</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s2">&quot;tab&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">add_attr_to_pos</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">a_col</span><span class="p">),</span> <span class="n">new_key</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_list</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;AAA&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BBB&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;?&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CCC&#39;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -453,9 +454,9 @@ and transcript features if not encountered in the GTF.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_file</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">extract_data_iter_list</span><span class="p">(</span><span class="s2">&quot;start,gene_id&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;125&#39;</span><span class="p">,</span> <span class="s1">&#39;G0001&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;125&#39;</span><span class="p">,</span> <span class="s1">&#39;G0001&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span><span class="n">a_gtf</span><span class="o">.</span><span class="n">extract_data_iter_list</span><span class="p">(</span><span class="s2">&quot;start,gene_id&quot;</span><span class="p">,</span> <span class="n">zero_based</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;124&#39;</span><span class="p">,</span> <span class="s1">&#39;G0001&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;124&#39;</span><span class="p">,</span> <span class="s1">&#39;G0001&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">extract_data_iter_list</span><span class="p">(</span><span class="s2">&quot;start,gene_id&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">len</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">])</span> <span class="o">==</span> <span class="mi">70</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">extract_data_iter_list</span><span class="p">(</span><span class="s2">&quot;start,gene_id&quot;</span><span class="p">,</span> <span class="n">nr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1153,10 +1154,16 @@ as values.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">TAB</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_file</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">nb_exons</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;G0003T001&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">nb_exons</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;G0010T001&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">nb_exons</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">nb_exons</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb_ex</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">nb_exons</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">nb_ex</span><span class="p">)</span> <span class="o">==</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">nb_ex</span><span class="p">[</span><span class="s1">&#39;G0006T001&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">nb_ex</span><span class="p">[</span><span class="s1">&#39;G0004T002&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">nb_ex</span><span class="p">[</span><span class="s1">&#39;G0004T002&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">nb_ex</span><span class="p">[</span><span class="s1">&#39;G0005T001&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">(</span><span class="s2">&quot;simple_04&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_file</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb_ex</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">nb_exons</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">nb_ex</span><span class="p">[</span><span class="s1">&#39;G0004T001&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1282,7 +1289,7 @@ feature type.</p>
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_by_max_exon_nb">
 <code class="descname">select_by_max_exon_nb</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_max_exon_nb" title="Permalink to this definition">¶</a></dt>
-<dd><p>For each gene select the transcript with the highest number of exons.</p>
+<dd><p>For each gene select the transcript with the highest number of exons. If ties, select the first encountered.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1295,10 +1302,12 @@ feature type.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.gtf_interface</span> <span class="k">import</span> <span class="n">GTF</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">(</span><span class="s2">&quot;simple_04&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_file</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">select_by_max_exon_nb</span><span class="p">()</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s2">&quot;transcript_id&quot;</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">select_by_max_exon_nb</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s2">&quot;transcript_id&quot;</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">no_na</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_undef</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="s2">&quot;G0005T001&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">l</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="s2">&quot;G0004T002&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">l</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="s2">&quot;G0006T002&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">l</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1394,7 +1403,7 @@ start, end, score or frame.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_file</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">select_by_positions</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;gene&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">select_by_positions</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;gene&#39;</span><span class="p">,</span> <span class="s1">&#39;transcript&#39;</span><span class="p">,</span> <span class="s1">&#39;exon&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">select_by_positions</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;gene&#39;</span><span class="p">,</span> <span class="s1">&#39;transcript&#39;</span><span class="p">,</span> <span class="s1">&#39;exon&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">select_by_positions</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">select_by_positions</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;CDS&#39;</span><span class="p">,</span> <span class="s1">&#39;transcript&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -1756,6 +1765,22 @@ from a GTF object.</p>
 <dt id="pygtftk.tab_interface.TAB.as_data_frame">
 <code class="descname">as_data_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.as_data_frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the TAB object into a dataframe.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span>  <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">get_example_file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.gtf_interface</span> <span class="k">import</span> <span class="n">GTF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_file</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_tab</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s2">&quot;gene_id,start&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_tab</span><span class="o">.</span><span class="n">as_data_frame</span><span class="p">()[</span><span class="s2">&quot;gene_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">==</span> <span class="mi">10</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -1785,7 +1810,23 @@ from a GTF object.</p>
 <dl class="method">
 <dt id="pygtftk.tab_interface.TAB.iter_as_list">
 <code class="descname">iter_as_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.iter_as_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterate over the TAB object and return a list of self.nb_columns elements..</p>
+<dd><p>Iterate over the TAB object and return a list of self.nb_columns elements.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span>  <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">get_example_file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.gtf_interface</span> <span class="k">import</span> <span class="n">GTF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_file</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_tab</span> <span class="o">=</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s2">&quot;gene_id,start&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="n">a_tab</span><span class="o">.</span><span class="n">iter_as_list</span><span class="p">())</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">a_tab</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -1804,7 +1845,37 @@ from a GTF object.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.gtf_interface</span> <span class="k">import</span> <span class="n">GTF</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a_gtf</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_file</span><span class="p">)</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">iterate_with_header</span><span class="p">()</span><span class="o">.</span><span class="n">next</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;seqid&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="n">a_gtf</span><span class="o">.</span><span class="n">iterate_with_header</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;seqid&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">a_gtf</span><span class="o">.</span><span class="n">iterate_with_header</span><span class="p">():</span> <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="s1">&#39;CDS_G0010T001&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pygtftk.tab_interface.TAB.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>outfile=None</em>, <em>sep='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a tab object to a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span>  <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">get_example_file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.gtf_interface</span> <span class="k">import</span> <span class="n">GTF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">make_tmp_file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">simple_line_count</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">simple_nb_column</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_tab</span> <span class="o">=</span> <span class="n">GTF</span><span class="p">(</span><span class="n">a_file</span><span class="p">)</span><span class="o">.</span><span class="n">extract_data</span><span class="p">(</span><span class="s2">&quot;transcript_id,gene_id&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out_file</span> <span class="o">=</span> <span class="n">make_tmp_file</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_tab</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_file</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">simple_line_count</span><span class="p">(</span><span class="n">out_file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">70</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">simple_nb_column</span><span class="p">(</span><span class="n">out_file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1963,8 +2034,9 @@ to write to a gtf file.</p>
 </tbody>
 </table>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">get_example_feature</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">TAB</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">feat</span> <span class="o">=</span> <span class="n">get_example_feature</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="s1">&#39;chr1</span><span class="se">\t</span><span class="s1">Unknown</span><span class="se">\t</span><span class="s1">transcript</span><span class="se">\t</span><span class="s1">100</span><span class="se">\t</span><span class="s1">200</span><span class="se">\t</span><span class="s1">.</span><span class="se">\t</span><span class="s1">+</span><span class="se">\t</span><span class="s1">.</span><span class="se">\t</span><span class="s1">g1t1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">TAB</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span> <span class="s1">&#39;transcript&#39;</span><span class="p">,</span> <span class="s1">&#39;100&#39;</span><span class="p">,</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;g1t1&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">feat</span><span class="o">.</span><span class="n">format_tab</span><span class="p">(</span><span class="s1">&#39;transcript_id&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">a</span>
 </pre></div>
 </div>
@@ -1992,6 +2064,8 @@ to write to a gtf file.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;gene_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;g1&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">alist</span> <span class="o">+=</span><span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;+&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">d</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">Feature</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">alist</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">attr</span><span class="p">[</span><span class="s1">&#39;transcript_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;g1t1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">attr</span><span class="p">[</span><span class="s1">&#39;gene_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;g1&#39;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2085,6 +2159,7 @@ otherwise (one based).</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">feat</span><span class="o">.</span><span class="n">get_attr_value</span><span class="p">(</span><span class="s1">&#39;chrom&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;chr1&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">feat</span><span class="o">.</span><span class="n">get_attr_value</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">200</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">feat</span><span class="o">.</span><span class="n">get_attr_value</span><span class="p">(</span><span class="s1">&#39;bla&#39;</span><span class="p">,</span> <span class="n">upon_none</span><span class="o">=</span><span class="s1">&#39;continue&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">feat</span><span class="o">.</span><span class="n">get_attr_value</span><span class="p">(</span><span class="s1">&#39;bla&#39;</span><span class="p">,</span> <span class="n">upon_none</span><span class="o">=</span><span class="s1">&#39;set_na&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2367,12 +2442,14 @@ key/values to add as a name.</p>
 </table>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.Line</span> <span class="k">import</span> <span class="n">FieldSet</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span>  <span class="n">make_tmp_file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span>  <span class="n">simple_line_count</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span>  <span class="n">simple_nb_column</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">FieldSet</span><span class="p">(</span><span class="n">alist</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span> <span class="s1">&#39;123&#39;</span><span class="p">,</span> <span class="s1">&#39;456&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">make_tmp_file</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span>  <span class="n">simple_line_count</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">simple_line_count</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">simple_nb_column</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2566,17 +2643,27 @@ or path depending on input type.</p>
 </table>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span>  <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">chrom_info_to_bed_file</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span>  <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">get_example_file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">PY3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">PY2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pybedtools</span> <span class="k">import</span>  <span class="n">BedTool</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s1">&#39;chromInfo&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">chrom_info_to_bed_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">BedTool</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">end</span> <span class="o">==</span> <span class="mi">600</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">)</span> <span class="o">==</span> <span class="mi">600</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span><span class="p">)</span> <span class="o">==</span> <span class="mi">300</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY2</span><span class="p">:</span> <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">chrom</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;chr2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY2</span><span class="p">:</span> <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY2</span><span class="p">:</span> <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">end</span> <span class="o">==</span> <span class="mi">600</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY3</span><span class="p">:</span> <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">chrom</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;chr1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY3</span><span class="p">:</span> <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY3</span><span class="p">:</span> <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">end</span> <span class="o">==</span> <span class="mi">300</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY3</span><span class="p">:</span> <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">chrom</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;chr2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY3</span><span class="p">:</span> <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY3</span><span class="p">:</span> <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">end</span> <span class="o">==</span> <span class="mi">600</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY2</span><span class="p">:</span> <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">chrom</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;chr1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY2</span><span class="p">:</span> <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">PY2</span><span class="p">:</span> <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">end</span> <span class="o">==</span> <span class="mi">300</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2600,23 +2687,27 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.flatten_list">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">flatten_list</code><span class="sig-paren">(</span><em>alist</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.flatten_list" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygtftk.utils.</code><code class="descname">flatten_list</code><span class="sig-paren">(</span><em>x</em>, <em>outlist=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.flatten_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flatten a list of lists.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>alist</strong> – a list or list of list.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> – a list or list of list.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">flatten_list</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">flatten_list</span><span class="p">([</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">])</span> <span class="o">==</span>  <span class="n">c</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">flatten_list</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Call it with an empty list (outlist)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># otherwise, element will be added to the existing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># outlist variable</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">flatten_list</span><span class="p">([</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">],</span> <span class="n">outlist</span><span class="o">=</span><span class="p">[])</span> <span class="o">==</span>  <span class="n">c</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">flatten_list</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="n">outlist</span><span class="o">=</span><span class="p">[])</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2914,6 +3005,26 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="pygtftk.utils.mkdir_p">
+<code class="descclassname">pygtftk.utils.</code><code class="descname">mkdir_p</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.mkdir_p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a directory silently if already exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">check_file_or_dir_exists</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">mkdir_p</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mkdir_p</span><span class="p">(</span><span class="s1">&#39;/tmp/test_gtftk_mkdir_p&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">check_file_or_dir_exists</span><span class="p">(</span><span class="s1">&#39;/tmp/test_gtftk_mkdir_p&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="pygtftk.utils.random_string">
 <code class="descclassname">pygtftk.utils.</code><code class="descname">random_string</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.random_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a random string (alpha numeric) of length n.</p>
@@ -2934,6 +3045,9 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">silentremove</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">make_tmp_file</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">make_tmp_file</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">silentremove</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3044,7 +3158,8 @@ newline</p>
 <dl class="function">
 <dt id="pygtftk.utils.to_alphanum">
 <code class="descclassname">pygtftk.utils.</code><code class="descname">to_alphanum</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.to_alphanum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new string in which non alphanumeric character have been replaced by ‘_’.</p>
+<dd><p>Returns a new string in which non alphanumeric character have been replaced by ‘_’. If non alphanumeric characters
+are found at the beginning or end of the string, they are deleted.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -3066,14 +3181,14 @@ newline</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.write_properly">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">write_properly</code><span class="sig-paren">(</span><em>string</em>, <em>afile</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.write_properly" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygtftk.utils.</code><code class="descname">write_properly</code><span class="sig-paren">(</span><em>a_string</em>, <em>afile</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.write_properly" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a string to a file. If file is None, write string to stdout.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>string</strong> – a character string.</li>
+<li><strong>a_string</strong> – a character string.</li>
 <li><strong>afile</strong> – a file object.</li>
 </ul>
 </td>
@@ -3094,7 +3209,7 @@ newline</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Help on Python package (pygtftk)</a><ul>
 <li><a class="reference internal" href="#module-pygtftk.gtf_interface">The GTF class</a></li>
@@ -3150,12 +3265,12 @@ newline</p>
         <li class="right" >
           <a href="presentation.html" title="Help on gtftk Unix commands"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.2 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, F. Lopez, G. Charbonnier, A. Gonzalez, S. Spicuglia and D. Puthier.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.8.
+        &#169; Copyright 2018, F. Lopez, G. Charbonnier, A. Gonzalez, S. Spicuglia and D. Puthier.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
     </div>
   </body>
 </html>
