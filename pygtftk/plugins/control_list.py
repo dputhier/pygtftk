@@ -348,7 +348,7 @@ def control_list(in_file=None,
         not_candidates = list(set(not_candidates))
 
         diff = abs(exp_data.loc[i] - exp_data)
-        control_list += diff.loc[np.setdiff1d(diff.index, not_candidates)].idxmin(axis=0, skipna=True).tolist()
+        control_list.extend(diff.loc[np.setdiff1d(diff.index, not_candidates)].idxmin(axis=0, skipna=True).tolist())
 
     # -------------------------------------------------------------------------
     #
