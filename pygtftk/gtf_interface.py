@@ -19,13 +19,13 @@ import os
 import re
 import sys
 import textwrap
-from collections import OrderedDict
-from collections import defaultdict
-
 from builtins import object
 from builtins import range
 from builtins import str
 from builtins import zip
+from collections import OrderedDict
+from collections import defaultdict
+
 from cffi import FFI
 from future.utils import native_str
 from pybedtools.bedtool import BedTool
@@ -463,6 +463,8 @@ class GTF(object):
         else:
             raise GTFtkError("Unsupported input type.")
 
+        message("Instantiating a GTF.")
+
         if new_data is None:
 
             self._data = self._dll.load_GTF(native_str(self.fn))
@@ -590,6 +592,7 @@ class GTF(object):
         >>> a_gtf._message('bla')
         >>> pygtftk.utils.VERBOSITY = 0
         """
+
         addr = re.search("([^\s]+)>", repr(self._data))
         addr = addr.group(1)
 
@@ -603,6 +606,7 @@ class GTF(object):
                              c=addr,
                              d=id(self),
                              e=self._nb)
+
             message(msg, type=type)
 
 
@@ -2406,8 +2410,9 @@ class GTF(object):
         >>> assert simple_line_count(b_file) == 70
 
         """
+
         if gc_off:
-            message("Disabling garbage collector.", type="DEBUG")
+            message("Garbage collector has been disable.", type="DEBUG")
             gc.disable()
 
         self._message("Writing a GTF ")
@@ -2452,7 +2457,8 @@ class GTF(object):
 
         if output_str != "-":
             output.close()
-        message("GTF written.")
+
+        self._message("GTF written ")
 
     def get_sequences(self, genome=None, intron=False, rev_comp=True):
         """
