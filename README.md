@@ -1,11 +1,10 @@
-[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/dputhier/gtftk) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dputhier/gtftk/issues) [![HitCount](http://hits.dwyl.io/puthier/gtftk.svg)](http://hits.dwyl.io/puthier/gtftk) 
-![GitHub release](https://img.shields.io/github/release/qubyte/rubidium.svg)
+[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/dputhier/pygtftk) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dputhier/pygtftk/issues) 
 
 
 # Python GTF toolkit (pygtftk)
 
 
-The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package is compatible with Python 2.7 and relies on **libgtftk**, a library of functions **written in C**. 
+The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package is compatible with Python 2.7 and Python >=3.6 and relies on **libgtftk**, a library of functions **written in C**. 
 
 The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files. The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help sections.
 
@@ -13,20 +12,19 @@ While the gtftk Unix program comes with hundreds of unitary and functional tests
 
 ## System requirements
 
-Depending on the **size of the GTF file**, pygtftk may require lot of memory to perform selected tasks. A computer with 16Go is recommended in order to be able to pipe several commands when working with human annotations from ensembl release (e.g. 91).
+Depending on the **size of the GTF file**, pygtftk and gtftk may require lot of memory to perform selected tasks. A computer with 16Go is recommended in order to be able to pipe several commands when working with human annotations from ensembl release (e.g. 91).
 
 At the moment, the gtftk program has been tested on:
 
 - Linux (Ubuntu 12.04 and 18.04)
 - OSX (Yosemite, El Capitan).
-- WSL/Bash on Ubuntu on Windows.
 
 
 ## Installation through conda package building
 
-Installation through **conda** should be the **prefered install solution**. Although the GTF interface of pygtftk should work properly after a pip install (see next section), the UNIX commands (gtftk program) require several external dependencies with some version constrains.
+Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains (e.g. bedtools that, we observed, displays some back compatibility issue).
 
-At the moment, there is no built conda package available. You can however create an environment with all prerequisites using the commands below.
+A conda package will be available in the near future. In the meantime, you can however create an environment with all prerequisites using the commands below.
 If conda is not available on your system, first install miniconda from the official [web site](http://conda.pydata.org/miniconda.html).
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
@@ -34,30 +32,27 @@ If conda is not available on your system, first install miniconda from the offic
     conda env create -n pygtftk_py3k -f conda/env.yaml python=3.6
     source activate pygtftk_py3k
     make install
+    # It is important to call gtftk -h
+    # to find and dump plugin parsers
+    # before going further
+    gtftk -h 
 
-Note for developpers: You can install the develop branch using the same approach.
-
-    git clone git@github.com:dputhier/pygtftk.git pygtftk
-    cd pygtftk
-    git checkout develop
-    conda env create -n pygtftk_py3k_dev -f conda/env.yaml python=3.6
-    source activate pygtftk_py3k_dev
-    make install
-    
 ## Installation through pip 
 
 ### Prerequesites
  
-Again, this is not the prefered way for installation. Please choose conda whenever possible. The gtftk Unix command line program requires at least bedtools (command line).
+Again, this is not the prefered way for installation. Please choose conda whenever possible. The gtftk Unix command line program has been tested with bedtools 2.27.1 (be aware that we have encountered some back compatibility issues with bedtools).
 
 ### Running pip 
 
 Installation through pip can be done as follow.
 
     pip install -r requirements.txt
-
     pip install pygtftk
-    
+    # It is important to call gtftk -h
+    # to find and dump plugin parsers
+    # before going further
+    gtftk -h     
 
 ## Running functional tests
 
