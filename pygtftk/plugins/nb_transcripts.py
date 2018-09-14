@@ -4,9 +4,8 @@ from __future__ import print_function
 import argparse
 import os
 import sys
-from collections import OrderedDict
-
 from builtins import str
+from collections import OrderedDict
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -94,7 +93,7 @@ def nb_transcripts(inputfile=None,
         gtf.add_attr_from_file(feat="gene",
                                key="gene_id",
                                new_key=key_name,
-                               inputfile=tmp_file.name).write(outputfile)
+                               inputfile=tmp_file.name).write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 
