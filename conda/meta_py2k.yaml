@@ -33,6 +33,7 @@ requirements:
     - pip:
       - future
       - pybigwig >=0.3.12
+      - future
 
   run:
     - GitPython >=2.1.8
@@ -58,6 +59,7 @@ requirements:
     - pip:
       - future
       - pybigwig >=0.3.12
+      - future
 
 test:
   commands:
