@@ -1,6 +1,5 @@
 scipy >=1.1.0
 pybedtools >=0.7.8
-pysam >=0.9.1.4
 pyyaml >=3.12
 requests >=2.13.0
 cffi >=1.10.0

@@ -269,7 +269,6 @@ setup(name="pygtftk",
                         'pyparsing >=2.2.0',
                         'GitPython >=2.1.8',
                         'pyparsing',
-                        'pysam >=0.9.1.4',
                         'matplotlib >=2.0.2',
                         'plotnine >=0.4.0'],
       ext_modules=[lib_pygtftk])
