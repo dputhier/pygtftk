@@ -1,12 +1,10 @@
 """
-The gtfk package.
+The pygtfk package.
 
-The Python GTF toolkit (pygtftk) package is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package is compatible with Python 2.7 and relies on libgtftk, a library of functions written in C.
+The Python GTF toolkit (pygtftk) package is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package relies on libgtftk, a library of functions written in C.
 The package comes with a set of UNIX commands that can be accessed through the gtftk program. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files. The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help section.
-While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository.
 
 Authors: D. Puthier and F. Lopez
-Programming Language :: Python :: 2.7"
 """
 
 # -------------------------------------------------------------------------
@@ -30,13 +28,13 @@ try:
     from setuptools import setup
     from setuptools import Extension
 except ImportError:
-    sys.stderr.write("Please install setuptools before installing pygtftk.")
+    sys.stderr.write("Please install setuptools before installing pygtftk.\n")
     exit(1)
 
 try:
     import git
 except ImportError:
-    sys.stderr.write("Please install GitPython package before installing pygtftk.")
+    sys.stderr.write("Please install GitPython package before installing pygtftk.\n")
     exit(1)
 
 # -------------------------------------------------------------------------
