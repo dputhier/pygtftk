@@ -36,7 +36,7 @@ except ImportError:
 try:
     import git
 except ImportError:
-    sys.stderr.write("Please install git package before installing pygtftk.")
+    sys.stderr.write("Please install GitPython package before installing pygtftk.")
     exit(1)
 
 # -------------------------------------------------------------------------

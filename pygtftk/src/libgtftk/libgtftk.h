@@ -13,7 +13,7 @@
  * to find memory leaks.
  */
 //#define GTFTOOLKIT_DEBUG
-
+#define test 1
 #ifndef GTFTOOLKIT_GTFTK_SRC_LIB_LIBGTFTK_H_
 #define GTFTOOLKIT_GTFTK_SRC_LIB_LIBGTFTK_H_
 #define _GNU_SOURCE
