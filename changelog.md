@@ -22,7 +22,7 @@
 
 ### New Features
 
-- pygtftk is now compatible with both python 2 and 3.
+- pygtftk is now compatible with both python 2.7 and 3.6.
 - libstdcxx is no more required in env.yaml.
 - 'Makefile clean' also reset version.py and conf.py to repository version.
 - Improved parser loading.
