@@ -275,7 +275,9 @@ setup(name="pygtftk",
                         'GitPython >=2.1.8',
                         'pyparsing',
                         'matplotlib >=2.0.2',
-                        'plotnine >=0.4.0'],
+                        'plotnine >=0.4.0',
+                        'future',
+                        'setuptools'],
       ext_modules=[lib_pygtftk])
 
 config_dir = os.path.join(os.path.expanduser("~"), ".gtftk")
