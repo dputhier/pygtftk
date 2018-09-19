@@ -188,8 +188,9 @@ FILE *get_fasta_file_index(FILE *fasta_file, char *index) {
 	FILE *ffi = NULL;
 	long pfasta;
 	char *buffer = NULL, *p_end_dir = NULL;
-	int maxLineSize = 0;
+	size_t maxLineSize = 0;
 	size_t size = 0;
+
 	int n;
 	unsigned long old_crc, crc;
 
@@ -215,7 +216,7 @@ FILE *get_fasta_file_index(FILE *fasta_file, char *index) {
 			free(buffer);
 			buffer = NULL;
 		}
-		fprintf(ffi, "%d\n", maxLineSize - 1);
+		fprintf(ffi, "%lu\n", maxLineSize - 1);
 		fprintf(ffi, "%lx\n", crc);
 		fflush(ffi);
 		rewind(ffi);
@@ -249,7 +250,7 @@ FILE *get_fasta_file_index(FILE *fasta_file, char *index) {
 				free(buffer);
 				buffer = NULL;
 			}
-			fprintf(ffi, "%d\n", maxLineSize - 1);
+			fprintf(ffi, "%lu\n", maxLineSize - 1);
 			fprintf(ffi, "%lx\n", crc);
 			fflush(ffi);
 		}
@@ -260,14 +261,15 @@ FILE *get_fasta_file_index(FILE *fasta_file, char *index) {
 }
 
 void print_fasta_sequence(SEQUENCE *seq) {
-	unsigned int k;
+	size_t k;
+	int l;
 	FEATURE *feat;
 
 	fprintf(stdout, "%s\n", seq->header);
 	for (k = 0; k < strlen(seq->sequence); k += 60)
 		fprintf(stdout, "%.60s\n", seq->sequence + k);
-	for (k = 0; k < seq->features->nb; k++) {
-		feat = seq->features->feature[k];
+	for (l = 0; l < seq->features->nb; l++) {
+		feat = seq->features->feature[l];
 		fprintf(stdout, "  %s : %d-%d (%d-%d)\n", feat->name, feat->start, feat->end, feat->tr_start, feat->tr_end);
 	}
 }

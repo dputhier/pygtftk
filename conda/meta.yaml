@@ -21,7 +21,6 @@ requirements:
     - scipy >=1.1.0
     - pybedtools >=0.7.8
     - pybigwig >=0.3.10
-    - pysam >=0.9.1.4
     - pyyaml >=3.12
     - gcc >=4.8.5
     - requests >=2.13.0
@@ -32,6 +31,8 @@ requirements:
     - matplotlib >=2.0.2
     - plotnine >=0.4.0
     - pip:
+      - future
+      - pyBigWig >=0.3.12
       - future
 
   run:
@@ -46,7 +47,6 @@ requirements:
     - scipy >=1.1.0
     - pybedtools >=0.7.8
     - pybigwig >=0.3.10
-    - pysam >=0.9.1.4
     - pyyaml >=3.12
     - gcc >=4.8.5
     - requests >=2.13.0
@@ -57,6 +57,8 @@ requirements:
     - matplotlib >=2.0.2
     - plotnine >=0.4.0
     - pip:
+      - future
+      - pyBigWig >=0.3.12
       - future
 
 test:

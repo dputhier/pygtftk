@@ -17,8 +17,6 @@ from subprocess import PIPE
 from subprocess import Popen
 from tempfile import NamedTemporaryFile
 
-import pysam
-import requests
 from future.utils import old_div
 
 import pygtftk
@@ -212,8 +210,7 @@ def get_example_file(datasetname="simple", ext="gtf"):
     Get the path to a gtf file example located in pygtftk library path.
 
     :param datasetname: The name of the dataset. One of 'simple', 'mini_real', 'simple_02, 'simple_03'.
-    :param ext: Extension. For 'simple' dataset, can be one of 'bam', \
-    'bam.bai', 'bw', 'fa', 'fa.fai', 'chromInfo', 'bt*', 'fq', 'gtf' or '.*'.
+    :param ext: Extension. For 'simple' dataset, can be one of 'bw', 'fa', 'fa.fai', 'chromInfo', 'bt*', 'fq', 'gtf' or '.*'.
     :Example:
 
     >>> from pygtftk.utils import get_example_file
@@ -226,6 +223,7 @@ def get_example_file(datasetname="simple", ext="gtf"):
 
     """
 
+    """
     if datasetname == "mini_real" and ext == "bam":
         message("Retrieving BAM file")
         req = requests.get('https://tinyurl.com/y7ael4fo')
@@ -240,6 +238,7 @@ def get_example_file(datasetname="simple", ext="gtf"):
         samfile = pysam.Samfile("ENCFF742FDS_H3K4me3_K562_sub.bam", "rb")
 
         return samfile
+    """
 
     file_path = glob.glob(os.path.join(os.path.dirname(pygtftk.__file__),
                                        'data',

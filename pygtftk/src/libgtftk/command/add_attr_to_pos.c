@@ -18,7 +18,6 @@
 extern GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data);
 extern void add_attribute(GTF_ROW *row, char *key, char *value);
 extern int split_ip(char ***tab, char *s, char *delim);
-extern char *trim_ip(char *);
 
 /*
  * global variables declaration

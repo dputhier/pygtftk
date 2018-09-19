@@ -5,9 +5,8 @@ from __future__ import print_function
 import argparse
 import os
 import sys
-from collections import defaultdict
-
 from builtins import str
+from collections import defaultdict
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import checkChromFile
@@ -251,7 +250,7 @@ transcript from another gene.
         values = ",".join(set(overlapping_tx.keys()))
         gtf.select_by_key("transcript_id",
                           values,
-                          invert_match).write(outputfile)
+                          invert_match).write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 

@@ -1,17 +1,17 @@
 scipy >=1.1.0
 pybedtools >=0.7.8
-pysam >=0.9.1.4
 pyyaml >=3.12
 requests >=2.13.0
 cffi >=1.10.0
 pyparsing >=2.2.0
 biopython >=1.69
-matplotlib >=2.0.2
+matplotlib >=2.0.2,<3
 plotnine >=0.4.0
 GitPython >=2.1.8
-argparse
-nose
 cloudpickle >=0.4.0
 ftputil >=3.3.1
 pandas >=0.23.3
-pybigwig >=0.3.10
+pybigwig >=0.3.12
+setuptools
+argparse
+future
