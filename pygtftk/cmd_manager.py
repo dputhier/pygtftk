@@ -317,16 +317,21 @@ class getSysInfo(argparse._StoreTrueAction):
         from pybedtools import __version__ as pybedtools_ver
         from pyBigWig import __version__ as pyBigWig_ver
         from pygtftk import __path__ as pygtftk_path
-
+        import subprocess
+        from pygtftk.utils import chomp
         info_sys = []
-        info_sys += ['\n\t- pygtftk version : ' + __version__]
-        info_sys += ['\t- pygtftk path : ' + pygtftk_path[0]]
-        info_sys += ['\t- python version : ' + str(sys.version_info)]
-        info_sys += ['\t- python path : ' + str(sys.prefix)]
-        info_sys += ['\t- pandas version : ' + pandas_ver]
-        info_sys += ['\t- pybedtools version : ' + pybedtools_ver]
-        info_sys += ['\t- pyBigWig version : ' + pyBigWig_ver]
-        info_sys += ['\t- uname : ' + str(os.uname())]
+        info_sys += ['\n- pygtftk version : ' + __version__]
+        info_sys += ['- pygtftk path : ' + pygtftk_path[0]]
+        info_sys += ['- python version : ' + str(sys.version_info)]
+        info_sys += ['- python path : ' + str(sys.prefix)]
+        info_sys += ['- pandas version : ' + pandas_ver]
+        bedtools_ver = chomp(subprocess.Popen("bedtools --version",
+                                              shell=True,
+                                              stdout=subprocess.PIPE).stdout.read().decode())
+        info_sys += ['- Bedtools version : ' + bedtools_ver]
+        info_sys += ['- pybedtools version : ' + pybedtools_ver]
+        info_sys += ['- pyBigWig version : ' + pyBigWig_ver]
+        info_sys += ['- uname : ' + str(os.uname())]
         print("\n".join(info_sys))
         sys.exit()
 
