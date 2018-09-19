@@ -5,7 +5,6 @@ import argparse
 import os
 import random
 import sys
-
 from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -111,7 +110,8 @@ def random_list(
 
     my_id = ft_type + "_id"
 
-    gtf.select_by_key(my_id, ",".join(id_list)).write(outputfile)
+    gtf.select_by_key(my_id, ",".join(id_list)).write(outputfile,
+                                                      gc_off=True)
 
     close_properly(outputfile, inputfile)
 

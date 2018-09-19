@@ -338,6 +338,8 @@ def control_list(in_file=None,
 
     nb_candidate_left = exp_data.shape[0] - len(reference_genes_found)
 
+    message("Searching for genes with matched signal.")
+
     if nb_candidate_left < len(reference_genes_found):
         message("Not enough element to perform selection. Exiting", type="ERROR")
 
@@ -346,13 +348,15 @@ def control_list(in_file=None,
         not_candidates = list(set(not_candidates))
 
         diff = abs(exp_data.loc[i] - exp_data)
-        control_list += diff.loc[np.setdiff1d(diff.index, not_candidates)].idxmin(axis=0, skipna=True).tolist()
+        control_list.extend(diff.loc[np.setdiff1d(diff.index, not_candidates)].idxmin(axis=0, skipna=True).tolist())
 
     # -------------------------------------------------------------------------
     #
     # Prepare a dataframe for plotting
     #
     # -------------------------------------------------------------------------
+
+    message("Preparing a dataframe for plotting.")
 
     reference = exp_data_save.loc[reference_genes_found].sort_values('exprs')
     reference = reference.assign(genesets=['Reference'] * reference.shape[0])

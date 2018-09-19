@@ -20,8 +20,6 @@ requirements:
     - pandas >=0.23.3
     - scipy >=1.1.0
     - pybedtools >=0.7.8
-    - pybigwig >=0.3.10
-    - pysam >=0.9.1.4
     - pyyaml >=3.12
     - gcc >=4.8.5
     - requests >=2.13.0
@@ -29,9 +27,11 @@ requirements:
     - pyparsing >=2.2.0
     - biopython >=1.69
     - zlib >=1.2.11
-    - matplotlib >=2.0.2
+    - matplotlib >=2.0.2,<3
     - plotnine >=0.4.0
     - pip:
+      - future
+      - pybigwig >=0.3.12
       - future
 
   run:
@@ -45,8 +45,6 @@ requirements:
     - pandas >=0.23.3
     - scipy >=1.1.0
     - pybedtools >=0.7.8
-    - pybigwig >=0.3.10
-    - pysam >=0.9.1.4
     - pyyaml >=3.12
     - gcc >=4.8.5
     - requests >=2.13.0
@@ -54,9 +52,11 @@ requirements:
     - pyparsing >=2.2.0
     - biopython >=1.69
     - zlib >=1.2.11
-    - matplotlib >=2.0.2
+    - matplotlib >=2.0.2,<3
     - plotnine >=0.4.0
     - pip:
+      - future
+      - pybigwig >=0.3.12
       - future
 
 test:

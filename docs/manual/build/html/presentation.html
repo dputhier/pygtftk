@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Help on gtftk Unix commands &#8212; gtftk 0.9.2 documentation</title>
+    <title>Help on gtftk Unix commands &#8212; gtftk 0.9.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="installation.html" title="Installing pygtftk/gtftk"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -52,7 +52,7 @@
 <h3>Getting help with -h<a class="headerlink" href="#getting-help-with-h" title="Permalink to this headline">¶</a></h3>
 <p>The -h argument can be used to get a synopsis for implemented commands.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk -h
-  Usage: gtftk [-h] [-b] [-p] [-v] [-l]  ...
+  Usage: gtftk [-h] [-b] [-p] [-s] [-v] [-l]  ...
 
   A toolbox to handle GTF files.
 
@@ -66,7 +66,7 @@
   gtftk select_by_key -k feature -v transcript |   gtftk tabulate -k &quot;*&quot; -b
   
 
-  Use &#39;gtftk sub-command -h&#39; for more information.
+  Type &#39;gtftk sub-command -h&#39; for more information.
 
     
 
@@ -74,6 +74,7 @@ Main command arguments:
  -h, --help                   show this help message and exit
  -b, --bash-comp              Get a script to activate bash completion. (default: False)
  -p, --plugin-tests           Display bats tests for all plugin. (default: False)
+ -s, --system-info            Display some info about the system. (default: False)
  -v, --version                show program&#39;s version number and exit
  -l, --list-plugins           Get the list of plugins. (default: False)
 
@@ -216,9 +217,9 @@ gtftk -b &gt;&gt; ~/.bashrc
 <p><strong>Description:</strong> Search in all command description files those related to a user-defined keyword.</p>
 <p><strong>Example:</strong> Search all commands related to promoters.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk apropos -k promoter
- |-- 12:56-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
-	- coverage.
+ |-- 11:06-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
 	- divergent.
+	- coverage.
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
@@ -313,36 +314,36 @@ Selenocysteine	2
 </div>
 <p>let’s get all files from the <em>simple</em> dataset.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -d simple -f &#39;*&#39;
- |-- 12:56-INFO-get_example : Copying: add_attr_to_pos.tab
- |-- 12:56-INFO-get_example : Copying: simple.1.bt2
- |-- 12:56-INFO-get_example : Copying: simple.2.bt2
- |-- 12:56-INFO-get_example : Copying: simple.2.bw
- |-- 12:56-INFO-get_example : Copying: simple.3.bt2
- |-- 12:56-INFO-get_example : Copying: simple.3.bw
- |-- 12:56-INFO-get_example : Copying: simple.4.bt2
- |-- 12:56-INFO-get_example : Copying: simple.bam
- |-- 12:56-INFO-get_example : Copying: simple.bam.bai
- |-- 12:56-INFO-get_example : Copying: simple.bw
- |-- 12:56-INFO-get_example : Copying: simple.chromInfo
- |-- 12:56-INFO-get_example : Copying: simple.fa
- |-- 12:56-INFO-get_example : Copying: simple.fa.fai
- |-- 12:56-INFO-get_example : Copying: simple.geneList
- |-- 12:56-INFO-get_example : Copying: simple.genes
- |-- 12:56-INFO-get_example : Copying: simple.gtf
- |-- 12:56-INFO-get_example : Copying: simple.join
- |-- 12:56-INFO-get_example : Copying: simple.join_mat
- |-- 12:56-INFO-get_example : Copying: simple.join_mat_2
- |-- 12:56-INFO-get_example : Copying: simple.join_mat_3
- |-- 12:56-INFO-get_example : Copying: simple.join_with_dup
- |-- 12:56-INFO-get_example : Copying: simple.loc_bed
- |-- 12:56-INFO-get_example : Copying: simple.map
- |-- 12:56-INFO-get_example : Copying: simple.rev.1.bt2
- |-- 12:56-INFO-get_example : Copying: simple.rev.2.bt2
- |-- 12:56-INFO-get_example : Copying: simple_col.csv
- |-- 12:56-INFO-get_example : Copying: simple_peaks.bed
- |-- 12:56-INFO-get_example : Copying: simple_peaks.bed3
- |-- 12:56-INFO-get_example : Copying: simple_peaks.bed6
- |-- 12:56-INFO-get_example : Copying: simple_reads.fq
+ |-- 11:07-INFO-get_example : Copying: add_attr_to_pos.tab
+ |-- 11:07-INFO-get_example : Copying: simple.1.bt2
+ |-- 11:07-INFO-get_example : Copying: simple.2.bt2
+ |-- 11:07-INFO-get_example : Copying: simple.2.bw
+ |-- 11:07-INFO-get_example : Copying: simple.3.bt2
+ |-- 11:07-INFO-get_example : Copying: simple.3.bw
+ |-- 11:07-INFO-get_example : Copying: simple.4.bt2
+ |-- 11:07-INFO-get_example : Copying: simple.bam
+ |-- 11:07-INFO-get_example : Copying: simple.bam.bai
+ |-- 11:07-INFO-get_example : Copying: simple.bw
+ |-- 11:07-INFO-get_example : Copying: simple.chromInfo
+ |-- 11:07-INFO-get_example : Copying: simple.fa
+ |-- 11:07-INFO-get_example : Copying: simple.fa.fai
+ |-- 11:07-INFO-get_example : Copying: simple.geneList
+ |-- 11:07-INFO-get_example : Copying: simple.genes
+ |-- 11:07-INFO-get_example : Copying: simple.gtf
+ |-- 11:07-INFO-get_example : Copying: simple.join
+ |-- 11:07-INFO-get_example : Copying: simple.join_mat
+ |-- 11:07-INFO-get_example : Copying: simple.join_mat_2
+ |-- 11:07-INFO-get_example : Copying: simple.join_mat_3
+ |-- 11:07-INFO-get_example : Copying: simple.join_with_dup
+ |-- 11:07-INFO-get_example : Copying: simple.loc_bed
+ |-- 11:07-INFO-get_example : Copying: simple.map
+ |-- 11:07-INFO-get_example : Copying: simple.rev.1.bt2
+ |-- 11:07-INFO-get_example : Copying: simple.rev.2.bt2
+ |-- 11:07-INFO-get_example : Copying: simple_col.csv
+ |-- 11:07-INFO-get_example : Copying: simple_peaks.bed
+ |-- 11:07-INFO-get_example : Copying: simple_peaks.bed3
+ |-- 11:07-INFO-get_example : Copying: simple_peaks.bed6
+ |-- 11:07-INFO-get_example : Copying: simple_reads.fq
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
@@ -1182,22 +1183,22 @@ transcript	G0001T001|G0001
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s &quot;|&quot; -f &quot;*&quot; | gtftk tabulate -k feature,transcript_id -x | head -n 6
 Traceback (most recent call last):
   File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/bin/gtftk&quot;, line 4, in &lt;module&gt;
-    __import__(&#39;pkg_resources&#39;).run_script(&#39;pygtftk==0.9.1.dev0+7f5a&#39;, &#39;gtftk&#39;)
+    __import__(&#39;pkg_resources&#39;).run_script(&#39;pygtftk==0.9.3&#39;, &#39;gtftk&#39;)
   File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 661, in run_script
     self.require(requires)[0].run_script(script_name, ns)
   File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 1441, in run_script
     exec(code, namespace, namespace)
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.1.dev0+7f5a-py3.6-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 83, in &lt;module&gt;
+  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.3-py3.6-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 83, in &lt;module&gt;
     args = main()
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.1.dev0+7f5a-py3.6-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 68, in main
+  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.3-py3.6-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 68, in main
     CmdManager.run(args)
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.1.dev0+7f5a-py3.6-macosx-10.9-x86_64.egg/pygtftk/cmd_manager.py&quot;, line 939, in run
+  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.3-py3.6-macosx-10.9-x86_64.egg/pygtftk/cmd_manager.py&quot;, line 977, in run
     fun(**args)
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.1.dev0+7f5a-py3.6-macosx-10.9-x86_64.egg/pygtftk/plugins/merge_attr.py&quot;, line 92, in merge_attr
+  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.3-py3.6-macosx-10.9-x86_64.egg/pygtftk/plugins/merge_attr.py&quot;, line 92, in merge_attr
     separator).write(outputfile,
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.1.dev0+7f5a-py3.6-macosx-10.9-x86_64.egg/pygtftk/gtf_interface.py&quot;, line 536, in merge_attr
+  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.3-py3.6-macosx-10.9-x86_64.egg/pygtftk/gtf_interface.py&quot;, line 538, in merge_attr
     self = self.add_attr_column(tmp_file, new_key)
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.1.dev0+7f5a-py3.6-macosx-10.9-x86_64.egg/pygtftk/gtf_interface.py&quot;, line 3363, in add_attr_column
+  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.3-py3.6-macosx-10.9-x86_64.egg/pygtftk/gtf_interface.py&quot;, line 3369, in add_attr_column
     tmp = input_file.readlines()
   File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/tempfile.py&quot;, line 485, in func_wrapper
     return func(*args, **kwargs)
@@ -1239,7 +1240,7 @@ Command-wise optional arguments:
 The default is to create equally spaced interval. The intervals can also be created by computing the percentiles (-p).</p>
 <p><strong>Example:</strong> Let say we have the following matrix giving expression level of genes (rows) in samples (columns). We could join this information to the GTF and later choose to transform key <em>S1</em> into a new discretized key <em>S1_d</em>. We may apply particular labels to this factor using <em>-l</em>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example |  gtftk join_attr -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 | gtftk select_by_key -k feature -v gene
- |-- 12:58-INFO-discretize_key : Categories: [&#39;(0.231_0.616]&#39;, &#39;(0.616_0.999]&#39;]
+ |-- 11:08-INFO-discretize_key : Categories: [&#39;(0.231_0.616]&#39;, &#39;(0.616_0.999]&#39;]
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; S1 &quot;0.2322&quot;; S2 &quot;0.4&quot;; S1_d &quot;(0.231_0.616]&quot;;
@@ -1253,7 +1254,7 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example |  gtftk join_attr -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
- |-- 12:58-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
+ |-- 11:08-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; S1 &quot;0.2322&quot;; S2 &quot;0.4&quot;; S1_d &quot;A&quot;;
@@ -1654,7 +1655,7 @@ Command-wise optional arguments:
 <p><strong>Example:</strong> Select randomly 3 transcripts.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example | gtftk random_list -n 3| gtftk count
 transcript	3
-exon	4
+exon	3
 CDS	3
 </pre></div>
 </div>
@@ -1696,12 +1697,12 @@ gene_id	transcript_id
 G0001	G0001T002
 G0002	G0002T001
 G0003	G0003T001
-G0004	G0004T002
+G0004	G0004T001
 G0005	G0005T001
-G0006	G0006T001
+G0006	G0006T002
 G0007	G0007T002
 G0008	G0008T001
-G0009	G0009T001
+G0009	G0009T002
 G0010	G0010T001
 </pre></div>
 </div>
@@ -2993,24 +2994,24 @@ If –matrix-out is selected, the signal for each bigwig will be provided in a d
 <div><strong>Example:</strong></div></blockquote>
 <p>We will first request a lightweight example dataset.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -d mini_real -f &#39;*&#39;
- |-- 13:01-INFO-get_example : Copying: #H3K4me3_cond_1.bed#
- |-- 13:01-INFO-get_example : Copying: airway_love.txt.gz
- |-- 13:01-INFO-get_example : Copying: ENCFF112BHN_H3K4me3_K562_sub.bed
- |-- 13:01-INFO-get_example : Copying: ENCFF119BYM_H3K36me3_K562_sub.bed
- |-- 13:01-INFO-get_example : Copying: ENCFF431HAA_H3K36me3_K562_sub.bw
- |-- 13:01-INFO-get_example : Copying: ENCFF742FDS_H3K4me3_K562_sub.bw
- |-- 13:01-INFO-get_example : Copying: ENCFF947DVY_H3K79me2_K562_sub.bw
- |-- 13:01-INFO-get_example : Copying: H3K4me3_cond_1.bed
- |-- 13:01-INFO-get_example : Copying: H3K4me3_cond_2.bed
- |-- 13:01-INFO-get_example : Copying: H3K4me3_cond_3.bed
- |-- 13:01-INFO-get_example : Copying: hg38.genome
- |-- 13:01-INFO-get_example : Copying: hg38.genome.back
- |-- 13:01-INFO-get_example : Copying: mini_real.gtf.gz
- |-- 13:01-INFO-get_example : Copying: mini_real_control_1.txt
- |-- 13:01-INFO-get_example : Copying: mini_real_counts_ENCFF630HEX.txt
- |-- 13:01-INFO-get_example : Copying: mini_real_gn_list_hg38.txt
- |-- 13:01-INFO-get_example : Copying: mini_real_noov_rnd_tx.gtf.gz
- |-- 13:01-INFO-get_example : Copying: tx_classes.txt
+ |-- 11:41-INFO-get_example : Copying: #H3K4me3_cond_1.bed#
+ |-- 11:41-INFO-get_example : Copying: airway_love.txt.gz
+ |-- 11:41-INFO-get_example : Copying: ENCFF112BHN_H3K4me3_K562_sub.bed
+ |-- 11:41-INFO-get_example : Copying: ENCFF119BYM_H3K36me3_K562_sub.bed
+ |-- 11:41-INFO-get_example : Copying: ENCFF431HAA_H3K36me3_K562_sub.bw
+ |-- 11:41-INFO-get_example : Copying: ENCFF742FDS_H3K4me3_K562_sub.bw
+ |-- 11:41-INFO-get_example : Copying: ENCFF947DVY_H3K79me2_K562_sub.bw
+ |-- 11:41-INFO-get_example : Copying: H3K4me3_cond_1.bed
+ |-- 11:41-INFO-get_example : Copying: H3K4me3_cond_2.bed
+ |-- 11:41-INFO-get_example : Copying: H3K4me3_cond_3.bed
+ |-- 11:41-INFO-get_example : Copying: hg38.genome
+ |-- 11:41-INFO-get_example : Copying: hg38.genome.back
+ |-- 11:41-INFO-get_example : Copying: mini_real.gtf.gz
+ |-- 11:41-INFO-get_example : Copying: mini_real_control_1.txt
+ |-- 11:41-INFO-get_example : Copying: mini_real_counts_ENCFF630HEX.txt
+ |-- 11:41-INFO-get_example : Copying: mini_real_gn_list_hg38.txt
+ |-- 11:41-INFO-get_example : Copying: mini_real_noov_rnd_tx.gtf.gz
+ |-- 11:41-INFO-get_example : Copying: tx_classes.txt
 </pre></div>
 </div>
 <p>Although we could work on the full dataset, we will focus on transcripts whose promoter region do not overlaps with any transcript from another gene.</p>
@@ -3101,24 +3102,24 @@ want to use your own, user-specific, regions.
 Will will create tree example datasets:</p>
 <p>First we will create a coverage matrix around promoter based on a subset of randomly choose transcripts (one per gene) from the ‘mini_real’ dataset (see section on the <em>coverage</em> command to get info about the construction of the <em>mini_real_noov_rnd_tx.gtf.gz</em> dataset).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -f &#39;*&#39; -d mini_real
- |-- 13:01-INFO-get_example : Copying: #H3K4me3_cond_1.bed#
- |-- 13:01-INFO-get_example : Copying: airway_love.txt.gz
- |-- 13:01-INFO-get_example : Copying: ENCFF112BHN_H3K4me3_K562_sub.bed
- |-- 13:01-INFO-get_example : Copying: ENCFF119BYM_H3K36me3_K562_sub.bed
- |-- 13:01-INFO-get_example : Copying: ENCFF431HAA_H3K36me3_K562_sub.bw
- |-- 13:01-INFO-get_example : Copying: ENCFF742FDS_H3K4me3_K562_sub.bw
- |-- 13:01-INFO-get_example : Copying: ENCFF947DVY_H3K79me2_K562_sub.bw
- |-- 13:01-INFO-get_example : Copying: H3K4me3_cond_1.bed
- |-- 13:01-INFO-get_example : Copying: H3K4me3_cond_2.bed
- |-- 13:01-INFO-get_example : Copying: H3K4me3_cond_3.bed
- |-- 13:01-INFO-get_example : Copying: hg38.genome
- |-- 13:01-INFO-get_example : Copying: hg38.genome.back
- |-- 13:01-INFO-get_example : Copying: mini_real.gtf.gz
- |-- 13:01-INFO-get_example : Copying: mini_real_control_1.txt
- |-- 13:01-INFO-get_example : Copying: mini_real_counts_ENCFF630HEX.txt
- |-- 13:01-INFO-get_example : Copying: mini_real_gn_list_hg38.txt
- |-- 13:01-INFO-get_example : Copying: mini_real_noov_rnd_tx.gtf.gz
- |-- 13:01-INFO-get_example : Copying: tx_classes.txt
+ |-- 11:41-INFO-get_example : Copying: #H3K4me3_cond_1.bed#
+ |-- 11:41-INFO-get_example : Copying: airway_love.txt.gz
+ |-- 11:41-INFO-get_example : Copying: ENCFF112BHN_H3K4me3_K562_sub.bed
+ |-- 11:41-INFO-get_example : Copying: ENCFF119BYM_H3K36me3_K562_sub.bed
+ |-- 11:41-INFO-get_example : Copying: ENCFF431HAA_H3K36me3_K562_sub.bw
+ |-- 11:41-INFO-get_example : Copying: ENCFF742FDS_H3K4me3_K562_sub.bw
+ |-- 11:41-INFO-get_example : Copying: ENCFF947DVY_H3K79me2_K562_sub.bw
+ |-- 11:41-INFO-get_example : Copying: H3K4me3_cond_1.bed
+ |-- 11:41-INFO-get_example : Copying: H3K4me3_cond_2.bed
+ |-- 11:41-INFO-get_example : Copying: H3K4me3_cond_3.bed
+ |-- 11:41-INFO-get_example : Copying: hg38.genome
+ |-- 11:41-INFO-get_example : Copying: hg38.genome.back
+ |-- 11:41-INFO-get_example : Copying: mini_real.gtf.gz
+ |-- 11:41-INFO-get_example : Copying: mini_real_control_1.txt
+ |-- 11:41-INFO-get_example : Copying: mini_real_counts_ENCFF630HEX.txt
+ |-- 11:41-INFO-get_example : Copying: mini_real_gn_list_hg38.txt
+ |-- 11:41-INFO-get_example : Copying: mini_real_noov_rnd_tx.gtf.gz
+ |-- 11:41-INFO-get_example : Copying: tx_classes.txt
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter
@@ -3130,38 +3131,42 @@ Will will create tree example datasets:</p>
 </div>
 <p>The following command compute coverage profil along the whole transcript</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx
- |-- 13:02-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:02-WARNING-mk_matrix : ENST00000612829 has length : 85
- |-- 13:02-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:02-WARNING-mk_matrix : Filter them out please.
- |-- 13:02-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:02-WARNING-mk_matrix : ENST00000385018 has length : 82
- |-- 13:02-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:02-WARNING-mk_matrix : Filter them out please.
- |-- 13:02-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:02-WARNING-mk_matrix : ENST00000583764 has length : 85
- |-- 13:02-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:02-WARNING-mk_matrix : Filter them out please.
+ |-- 11:42-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:42-WARNING-mk_matrix : ENST00000612829 has length : 85
+ |-- 11:42-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:42-WARNING-mk_matrix : Filter them out please.
+ |-- 11:42-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:42-WARNING-mk_matrix : ENST00000385018 has length : 82
+ |-- 11:42-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:42-WARNING-mk_matrix : Filter them out please.
+ |-- 11:42-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:42-WARNING-mk_matrix : ENST00000583764 has length : 85
+ |-- 11:42-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:42-WARNING-mk_matrix : Filter them out please.
+ |-- 11:42-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:42-WARNING-mk_matrix : ENST00000637495 has length : 68
+ |-- 11:42-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:42-WARNING-mk_matrix : Filter them out please.
 </pre></div>
 </div>
 <p>Along the whole transcript but increasing the number of windows dedicated to upstream and downstream regions.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk mk_matrix -k 5 --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_2
- |-- 13:03-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:03-WARNING-mk_matrix : ENST00000612829 has length : 85
- |-- 13:03-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:03-WARNING-mk_matrix : Filter them out please.
- |-- 13:03-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:03-WARNING-mk_matrix : ENST00000385018 has length : 82
- |-- 13:03-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:03-WARNING-mk_matrix : Filter them out please.
- |-- 13:03-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:03-WARNING-mk_matrix : ENST00000583764 has length : 85
- |-- 13:03-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:03-WARNING-mk_matrix : Filter them out please.
- |-- 13:03-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:03-WARNING-mk_matrix : ENST00000637495 has length : 68
- |-- 13:03-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:03-WARNING-mk_matrix : Filter them out please.
+ |-- 11:43-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:43-WARNING-mk_matrix : ENST00000612829 has length : 85
+ |-- 11:43-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:43-WARNING-mk_matrix : Filter them out please.
+ |-- 11:43-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:43-WARNING-mk_matrix : ENST00000385018 has length : 82
+ |-- 11:43-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:43-WARNING-mk_matrix : Filter them out please.
+ |-- 11:43-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:43-WARNING-mk_matrix : ENST00000583764 has length : 85
+ |-- 11:43-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:43-WARNING-mk_matrix : Filter them out please.
+ |-- 11:43-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:43-WARNING-mk_matrix : ENST00000637495 has length : 68
+ |-- 11:43-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:43-WARNING-mk_matrix : Filter them out please.
 </pre></div>
 </div>
 <p>Along a user defined set of regions (in bed6 format). Here we will used the transcript coordinates in bed format as an example.</p>
@@ -3169,22 +3174,22 @@ Will will create tree example datasets:</p>
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk mk_matrix -k 5 --bin-around-frac 0.5 -i mini_real_rnd_tx.bed -t user_regions  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_user_def
- |-- 13:04-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:04-WARNING-mk_matrix : ENSG00000187514|ENST00000612829 has length : 85
- |-- 13:04-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:04-WARNING-mk_matrix : Filter them out please.
- |-- 13:04-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:04-WARNING-mk_matrix : ENSG00000207751|ENST00000385018 has length : 82
- |-- 13:04-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:04-WARNING-mk_matrix : Filter them out please.
- |-- 13:04-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:04-WARNING-mk_matrix : ENSG00000110717|ENST00000583764 has length : 85
- |-- 13:04-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:04-WARNING-mk_matrix : Filter them out please.
- |-- 13:04-WARNING-mk_matrix : Encountered regions shorter than bin number.
- |-- 13:04-WARNING-mk_matrix : ENSG00000148120|ENST00000637495 has length : 68
- |-- 13:04-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
- |-- 13:04-WARNING-mk_matrix : Filter them out please.
+ |-- 11:45-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:45-WARNING-mk_matrix : ENSG00000187514|ENST00000612829 has length : 85
+ |-- 11:45-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:45-WARNING-mk_matrix : Filter them out please.
+ |-- 11:44-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:44-WARNING-mk_matrix : ENSG00000207751|ENST00000385018 has length : 82
+ |-- 11:44-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:44-WARNING-mk_matrix : Filter them out please.
+ |-- 11:45-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:45-WARNING-mk_matrix : ENSG00000110717|ENST00000583764 has length : 85
+ |-- 11:45-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:45-WARNING-mk_matrix : Filter them out please.
+ |-- 11:45-WARNING-mk_matrix : Encountered regions shorter than bin number.
+ |-- 11:45-WARNING-mk_matrix : ENSG00000148120|ENST00000637495 has length : 68
+ |-- 11:45-WARNING-mk_matrix : They will be set to NA or --pseudo-count depending on --zero-to-na.
+ |-- 11:45-WARNING-mk_matrix : Filter them out please.
 </pre></div>
 </div>
 <p>And finally using a set of single nucleotides coordinates that will be extend (-u/-d) and assessed for coverage. Here we will take the coordinates of TSS as example.</p>
@@ -3203,132 +3208,132 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 <p><strong>Basic profiles</strong></p>
 <p>A simple overlayed profile of all epigenetic marks around promoter. Here <em>—group-by</em> is, by default set to <em>bwig</em> and <em>—facet-var</em> is set to None. Thus a single plot with several lines corresponding to bwig coverage is obtained.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_01.png
- |-- 13:05-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:46-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_01.png"><img alt="example_01.png" src="example_01.png" style="width: 75%;" /></a>
 <p>The same diagram is obtained if a bed file pointing to TSS was provided to <em>mk_matrix</em> and used in <em>single_nuc</em> mode.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -i mini_real_single_nuc.zip -o profile_prom -pf png -if example_01a.png
- |-- 13:05-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:46-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_01a.png"><img alt="example_01a.png" src="example_01a.png" style="width: 75%;" /></a>
 <p>Changing colors and applying color order can be done using the following syntax:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -c &#39;red,blue,violet&#39; -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if example_01b.png
- |-- 13:06-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:46-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_01b.png"><img alt="example_01b.png" src="example_01b.png" style="width: 75%;" /></a>
 <p>A subset of bigwig assessed for coverage can be selected for plotting. This is achieved using the <em>–subset-bwig</em> argument:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -f bwig -g tx_classes -D -i mini_real_tx.zip  -fo  -o profile_tx -pf png -if example_01c.png  -fo -c &#39;red&#39; -V 2  -w  -tl -e -lw 0.5 -u H3K4me3
- |-- 13:06-DEBUG-profile : Using pandas version 0.23.4
- |-- 13:06-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
- |-- 13:06-DEBUG-profile : Using numpy version 1.13.3
- |-- 13:06-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
- |-- 13:06-DEBUG-profile : Using plotnine version 0.4.0
- |-- 13:06-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
- |-- 13:06-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_1xvoz2cs
- |-- 13:06-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_1xvoz2cs/mini_real_tx
- |-- 13:06-INFO-profile : Getting configuration info from input file.
- |-- 13:06-DEBUG-profile : Color order :[&#39;All transcripts&#39;]
- |-- 13:06-DEBUG-profile : Profile color :[&#39;red&#39;]
- |-- 13:06-INFO-profile : Searching coverage columns.
- |-- 13:06-INFO-profile : Melting.
- |-- 13:06-INFO-profile : Ceiling
- |-- 13:06-INFO-profile : Zero value detected. Adding a pseudocount (+1) before log transformation.
- |-- 13:06-INFO-profile : Converting to log2.
- |-- 13:06-INFO-profile : Computing column ordering.
- |-- 13:06-INFO-profile : Preparing diagram
- |-- 13:06-INFO-profile : Theming and ordering. Please be patient...
- |-- 13:06-INFO-profile : Preparing x axis
- |-- 13:06-INFO-profile : facet_col 1
- |-- 13:06-INFO-profile : Highlighting upstream regions
- |-- 13:06-INFO-profile : Page width set to 4
- |-- 13:06-INFO-profile : Page height set to 2.0
- |-- 13:06-INFO-profile : Saving diagram to file : example_01c.png
- |-- 13:06-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 11:46-DEBUG-profile : Using pandas version 0.23.4
+ |-- 11:46-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
+ |-- 11:46-DEBUG-profile : Using numpy version 1.13.3
+ |-- 11:46-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
+ |-- 11:46-DEBUG-profile : Using plotnine version 0.4.0
+ |-- 11:46-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
+ |-- 11:46-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_jbh1ifex
+ |-- 11:46-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_jbh1ifex/mini_real_tx
+ |-- 11:46-INFO-profile : Getting configuration info from input file.
+ |-- 11:46-DEBUG-profile : Color order :[&#39;All transcripts&#39;]
+ |-- 11:46-DEBUG-profile : Profile color :[&#39;red&#39;]
+ |-- 11:46-INFO-profile : Searching coverage columns.
+ |-- 11:46-INFO-profile : Melting.
+ |-- 11:46-INFO-profile : Ceiling
+ |-- 11:46-INFO-profile : Zero value detected. Adding a pseudocount (+1) before log transformation.
+ |-- 11:46-INFO-profile : Converting to log2.
+ |-- 11:46-INFO-profile : Computing column ordering.
+ |-- 11:46-INFO-profile : Preparing diagram
+ |-- 11:46-INFO-profile : Theming and ordering. Please be patient...
+ |-- 11:46-INFO-profile : Preparing x axis
+ |-- 11:46-INFO-profile : facet_col 1
+ |-- 11:46-INFO-profile : Highlighting upstream regions
+ |-- 11:46-INFO-profile : Page width set to 4
+ |-- 11:46-INFO-profile : Page height set to 2.0
+ |-- 11:46-INFO-profile : Saving diagram to file : example_01c.png
+ |-- 11:46-INFO-profile : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_01c.png"><img alt="example_01c.png" src="example_01c.png" style="width: 75%;" /></a>
 <p>Transcript coverage is obtained using the <em>mini_real_tx.zip</em> matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5’ and 3’ regions:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if example_02.png
- |-- 13:06-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:46-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_02.png"><img alt="example_02.png" src="example_02.png" style="width: 75%;" /></a>
 <p>Almost the same but increasing the bins dedicated to upstream and dowstream regions (see <em>—bin-around-frac argument of *mk_matrix</em>).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx_2.zip -o profile_tx -pf png -if example_03.png
- |-- 13:06-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:46-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_03.png"><img alt="example_03.png" src="example_03.png" style="width: 75%;" /></a>
 <p>Note that the same is obtained when using user-defined regions (<em>i.e</em> when providing a bed as input corresponding to transcript coordinates).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_user_def.zip -o profile_udef_4  -pf png -if example_04.png
- |-- 13:06-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:47-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_04.png"><img alt="example_04.png" src="example_04.png" style="width: 75%;" /></a>
 <p>The same dataset used for plotting but adding a normalization step (<em>ranging</em>). When using <em>ranging</em> normalization, values are expressed as a percentage of the range between max and min value.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -nm ranging -i mini_real_user_def.zip -o profile_udef_5  -pf png -if example_04b.png
- |-- 13:06-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:47-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_04b.png"><img alt="example_04b.png" src="example_04b.png" style="width: 75%;" /></a>
 <p>Two examples using statistic ‘max’ and 2 differents values of ‘–upper-limit’.</p>
 <blockquote>
 <div><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_a.png  -V 2 -lw 1 -at 5 -s max -ul 1
- |-- 13:06-DEBUG-profile : Using pandas version 0.23.4
- |-- 13:06-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
- |-- 13:06-DEBUG-profile : Using numpy version 1.13.3
- |-- 13:06-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
- |-- 13:06-DEBUG-profile : Using plotnine version 0.4.0
- |-- 13:06-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
- |-- 13:06-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_qdroqb06
- |-- 13:06-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_qdroqb06/mini_real_promoter
- |-- 13:06-INFO-profile : Getting configuration info from input file.
- |-- 13:06-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
- |-- 13:06-DEBUG-profile : Color order :[&#39;H3K79me&#39;, &#39;H3K36me3&#39;, &#39;H3K4me3&#39;]
- |-- 13:06-DEBUG-profile : Profile color :[&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
- |-- 13:06-INFO-profile : Searching coverage columns.
- |-- 13:06-INFO-profile : Melting.
- |-- 13:06-INFO-profile : Computing column ordering.
- |-- 13:06-INFO-profile : Preparing diagram
- |-- 13:06-INFO-profile : Theming and ordering. Please be patient...
- |-- 13:06-INFO-profile : Preparing x axis
- |-- 13:06-INFO-profile : facet_col 1
- |-- 13:06-INFO-profile : Page width set to 3
- |-- 13:06-INFO-profile : Page height set to 2
- |-- 13:06-INFO-profile : Saving diagram to file : example_04_max_a.png
- |-- 13:06-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 11:47-DEBUG-profile : Using pandas version 0.23.4
+ |-- 11:47-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
+ |-- 11:47-DEBUG-profile : Using numpy version 1.13.3
+ |-- 11:47-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
+ |-- 11:47-DEBUG-profile : Using plotnine version 0.4.0
+ |-- 11:47-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
+ |-- 11:47-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_is7wskbl
+ |-- 11:47-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_is7wskbl/mini_real_promoter
+ |-- 11:47-INFO-profile : Getting configuration info from input file.
+ |-- 11:47-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:47-DEBUG-profile : Color order :[&#39;H3K79me&#39;, &#39;H3K4me3&#39;, &#39;H3K36me3&#39;]
+ |-- 11:47-DEBUG-profile : Profile color :[&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
+ |-- 11:47-INFO-profile : Searching coverage columns.
+ |-- 11:47-INFO-profile : Melting.
+ |-- 11:47-INFO-profile : Computing column ordering.
+ |-- 11:47-INFO-profile : Preparing diagram
+ |-- 11:47-INFO-profile : Theming and ordering. Please be patient...
+ |-- 11:47-INFO-profile : Preparing x axis
+ |-- 11:47-INFO-profile : facet_col 1
+ |-- 11:47-INFO-profile : Page width set to 3
+ |-- 11:47-INFO-profile : Page height set to 2
+ |-- 11:47-INFO-profile : Saving diagram to file : example_04_max_a.png
+ |-- 11:47-INFO-profile : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 </div></blockquote>
 <a class="reference internal image-reference" href="example_04_max_a.png"><img alt="example_04_max_a.png" src="example_04_max_a.png" style="width: 75%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_b.png  -V 2 -lw 1 -at 5 -s max -ul 0.99
- |-- 13:06-DEBUG-profile : Using pandas version 0.23.4
- |-- 13:06-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
- |-- 13:06-DEBUG-profile : Using numpy version 1.13.3
- |-- 13:06-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
- |-- 13:06-DEBUG-profile : Using plotnine version 0.4.0
- |-- 13:06-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
- |-- 13:06-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_8pslynl6
- |-- 13:06-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_8pslynl6/mini_real_promoter
- |-- 13:06-INFO-profile : Getting configuration info from input file.
- |-- 13:06-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
- |-- 13:06-DEBUG-profile : Color order :[&#39;H3K4me3&#39;, &#39;H3K36me3&#39;, &#39;H3K79me&#39;]
- |-- 13:06-DEBUG-profile : Profile color :[&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
- |-- 13:06-INFO-profile : Searching coverage columns.
- |-- 13:06-INFO-profile : Melting.
- |-- 13:06-INFO-profile : Ceiling
- |-- 13:06-INFO-profile : Computing column ordering.
- |-- 13:06-INFO-profile : Preparing diagram
- |-- 13:06-INFO-profile : Theming and ordering. Please be patient...
- |-- 13:06-INFO-profile : Preparing x axis
- |-- 13:06-INFO-profile : facet_col 1
- |-- 13:06-INFO-profile : Page width set to 3
- |-- 13:06-INFO-profile : Page height set to 2
- |-- 13:06-INFO-profile : Saving diagram to file : example_04_max_b.png
- |-- 13:06-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 11:47-DEBUG-profile : Using pandas version 0.23.4
+ |-- 11:47-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
+ |-- 11:47-DEBUG-profile : Using numpy version 1.13.3
+ |-- 11:47-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
+ |-- 11:47-DEBUG-profile : Using plotnine version 0.4.0
+ |-- 11:47-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
+ |-- 11:47-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_ogporq3f
+ |-- 11:47-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_ogporq3f/mini_real_promoter
+ |-- 11:47-INFO-profile : Getting configuration info from input file.
+ |-- 11:47-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:47-DEBUG-profile : Color order :[&#39;H3K36me3&#39;, &#39;H3K4me3&#39;, &#39;H3K79me&#39;]
+ |-- 11:47-DEBUG-profile : Profile color :[&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
+ |-- 11:47-INFO-profile : Searching coverage columns.
+ |-- 11:47-INFO-profile : Melting.
+ |-- 11:47-INFO-profile : Ceiling
+ |-- 11:47-INFO-profile : Computing column ordering.
+ |-- 11:47-INFO-profile : Preparing diagram
+ |-- 11:47-INFO-profile : Theming and ordering. Please be patient...
+ |-- 11:47-INFO-profile : Preparing x axis
+ |-- 11:47-INFO-profile : facet_col 1
+ |-- 11:47-INFO-profile : Page width set to 3
+ |-- 11:47-INFO-profile : Page height set to 2
+ |-- 11:47-INFO-profile : Saving diagram to file : example_04_max_b.png
+ |-- 11:47-INFO-profile : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_04_max_b.png"><img alt="example_04_max_b.png" src="example_04_max_b.png" style="width: 75%;" /></a>
@@ -3336,94 +3341,94 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 <p>Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to bwig classes and the facets to transcript classes. Things can be simply done by providing an additional file containing the transcript and their associated classes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_05.png -e -V 2 -fc 2
- |-- 13:06-DEBUG-profile : Using pandas version 0.23.4
- |-- 13:06-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
- |-- 13:06-DEBUG-profile : Using numpy version 1.13.3
- |-- 13:06-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
- |-- 13:06-DEBUG-profile : Using plotnine version 0.4.0
- |-- 13:06-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
- |-- 13:06-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_uymw1n8g
- |-- 13:06-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_uymw1n8g/mini_real_promoter
- |-- 13:06-INFO-profile : Getting configuration info from input file.
- |-- 13:06-INFO-profile : Reading transcript file.
- |-- 13:06-INFO-profile : Deleting duplicates in transcript-file.
- |-- 13:06-INFO-profile : Checking how many genes where found in the transcript list.
- |-- 13:06-INFO-profile : Keeping 804 transcript out of 833.
- |-- 13:06-DEBUG-profile : Color order :[&#39;H3K79me&#39;, &#39;H3K36me3&#39;, &#39;H3K4me3&#39;]
- |-- 13:06-DEBUG-profile : Profile color :[&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
- |-- 13:06-INFO-profile : Searching coverage columns.
- |-- 13:06-INFO-profile : Melting.
- |-- 13:06-INFO-profile : Ceiling
- |-- 13:06-INFO-profile : Computing column ordering.
- |-- 13:06-INFO-profile : Preparing diagram
- |-- 13:06-INFO-profile : Theming and ordering. Please be patient...
- |-- 13:06-INFO-profile : Preparing x axis
- |-- 13:06-INFO-profile : facet_col 2
- |-- 13:06-INFO-profile : Page width set to 6
- |-- 13:06-INFO-profile : Page height set to 5.0
- |-- 13:06-INFO-profile : Saving diagram to file : example_05.png
- |-- 13:06-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 11:47-DEBUG-profile : Using pandas version 0.23.4
+ |-- 11:47-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
+ |-- 11:47-DEBUG-profile : Using numpy version 1.13.3
+ |-- 11:47-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
+ |-- 11:47-DEBUG-profile : Using plotnine version 0.4.0
+ |-- 11:47-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
+ |-- 11:47-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_bk158xze
+ |-- 11:47-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_bk158xze/mini_real_promoter
+ |-- 11:47-INFO-profile : Getting configuration info from input file.
+ |-- 11:47-INFO-profile : Reading transcript file.
+ |-- 11:47-INFO-profile : Deleting duplicates in transcript-file.
+ |-- 11:47-INFO-profile : Checking how many genes where found in the transcript list.
+ |-- 11:47-INFO-profile : Keeping 804 transcript out of 833.
+ |-- 11:47-DEBUG-profile : Color order :[&#39;H3K79me&#39;, &#39;H3K4me3&#39;, &#39;H3K36me3&#39;]
+ |-- 11:47-DEBUG-profile : Profile color :[&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
+ |-- 11:47-INFO-profile : Searching coverage columns.
+ |-- 11:47-INFO-profile : Melting.
+ |-- 11:47-INFO-profile : Ceiling
+ |-- 11:47-INFO-profile : Computing column ordering.
+ |-- 11:47-INFO-profile : Preparing diagram
+ |-- 11:47-INFO-profile : Theming and ordering. Please be patient...
+ |-- 11:47-INFO-profile : Preparing x axis
+ |-- 11:47-INFO-profile : facet_col 2
+ |-- 11:47-INFO-profile : Page width set to 6
+ |-- 11:47-INFO-profile : Page height set to 5.0
+ |-- 11:47-INFO-profile : Saving diagram to file : example_05.png
+ |-- 11:47-INFO-profile : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_05.png"><img alt="example_05.png" src="example_05.png" style="width: 100%;" /></a>
 <p>Alternatively, the groups can be set to chromosomes or transcript classes:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06.png -V 2 -nm ranging
- |-- 13:06-DEBUG-profile : Using pandas version 0.23.4
- |-- 13:06-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
- |-- 13:06-DEBUG-profile : Using numpy version 1.13.3
- |-- 13:06-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
- |-- 13:06-DEBUG-profile : Using plotnine version 0.4.0
- |-- 13:06-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
- |-- 13:06-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_c7b7_tvf
- |-- 13:06-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_c7b7_tvf/mini_real_promoter
- |-- 13:06-INFO-profile : Getting configuration info from input file.
- |-- 13:06-INFO-profile : Reading transcript file.
- |-- 13:06-INFO-profile : Deleting duplicates in transcript-file.
- |-- 13:06-INFO-profile : Checking how many genes where found in the transcript list.
- |-- 13:06-INFO-profile : Keeping 804 transcript out of 833.
- |-- 13:06-DEBUG-profile : Color order :[&#39;protein_coding&#39;, &#39;antisense&#39;, &#39;lincRNA&#39;]
- |-- 13:06-DEBUG-profile : Profile color :[&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
- |-- 13:06-INFO-profile : Searching coverage columns.
- |-- 13:06-INFO-profile : Melting.
- |-- 13:06-INFO-profile : Ceiling
- |-- 13:06-INFO-profile : Normalizing (ranging)
- |-- 13:06-INFO-profile : Computing column ordering.
- |-- 13:06-INFO-profile : Preparing diagram
- |-- 13:06-INFO-profile : Theming and ordering. Please be patient...
- |-- 13:06-INFO-profile : Preparing x axis
- |-- 13:06-INFO-profile : facet_col 3
- |-- 13:06-INFO-profile : Page width set to 9
- |-- 13:06-INFO-profile : Page height set to 2.0
- |-- 13:06-INFO-profile : Saving diagram to file : example_06.png
- |-- 13:06-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 11:47-DEBUG-profile : Using pandas version 0.23.4
+ |-- 11:47-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
+ |-- 11:47-DEBUG-profile : Using numpy version 1.13.3
+ |-- 11:47-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
+ |-- 11:47-DEBUG-profile : Using plotnine version 0.4.0
+ |-- 11:47-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
+ |-- 11:47-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_61rt9cn9
+ |-- 11:47-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_61rt9cn9/mini_real_promoter
+ |-- 11:47-INFO-profile : Getting configuration info from input file.
+ |-- 11:47-INFO-profile : Reading transcript file.
+ |-- 11:47-INFO-profile : Deleting duplicates in transcript-file.
+ |-- 11:47-INFO-profile : Checking how many genes where found in the transcript list.
+ |-- 11:47-INFO-profile : Keeping 804 transcript out of 833.
+ |-- 11:47-DEBUG-profile : Color order :[&#39;protein_coding&#39;, &#39;antisense&#39;, &#39;lincRNA&#39;]
+ |-- 11:47-DEBUG-profile : Profile color :[&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
+ |-- 11:47-INFO-profile : Searching coverage columns.
+ |-- 11:47-INFO-profile : Melting.
+ |-- 11:47-INFO-profile : Ceiling
+ |-- 11:47-INFO-profile : Normalizing (ranging)
+ |-- 11:47-INFO-profile : Computing column ordering.
+ |-- 11:47-INFO-profile : Preparing diagram
+ |-- 11:47-INFO-profile : Theming and ordering. Please be patient...
+ |-- 11:47-INFO-profile : Preparing x axis
+ |-- 11:47-INFO-profile : facet_col 3
+ |-- 11:47-INFO-profile : Page width set to 9
+ |-- 11:47-INFO-profile : Page height set to 2.0
+ |-- 11:47-INFO-profile : Saving diagram to file : example_06.png
+ |-- 11:47-INFO-profile : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_06.png"><img alt="example_06.png" src="example_06.png" style="width: 100%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06b.png -V 2 -nm ranging
- |-- 13:06-DEBUG-profile : Using pandas version 0.23.4
- |-- 13:06-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
- |-- 13:06-DEBUG-profile : Using numpy version 1.13.3
- |-- 13:06-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
- |-- 13:06-DEBUG-profile : Using plotnine version 0.4.0
- |-- 13:06-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
- |-- 13:06-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_r558a_vx
- |-- 13:06-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_r558a_vx/mini_real_promoter
- |-- 13:06-INFO-profile : Getting configuration info from input file.
- |-- 13:06-DEBUG-profile : Color order :[&#39;chr10&#39;, &#39;chr19&#39;, &#39;chr21&#39;, &#39;chr1&#39;, &#39;chrX&#39;, &#39;chr12&#39;, &#39;chr7&#39;, &#39;chr15&#39;, &#39;chr4&#39;, &#39;chr16&#39;, &#39;chr3&#39;, &#39;chr5&#39;, &#39;chr2&#39;, &#39;chr8&#39;, &#39;chr20&#39;, &#39;chr11&#39;, &#39;chr13&#39;, &#39;chr9&#39;, &#39;chr6&#39;, &#39;chr18&#39;, &#39;chr14&#39;, &#39;chr17&#39;, &#39;chr22&#39;]
- |-- 13:06-DEBUG-profile : Profile color :[&#39;#000000&#39;, &#39;#6c007c&#39;, &#39;#850096&#39;, &#39;#2500a5&#39;, &#39;#0000ca&#39;, &#39;#0041dd&#39;, &#39;#0086dd&#39;, &#39;#009fca&#39;, &#39;#00aaa1&#39;, &#39;#00a76f&#39;, &#39;#009c00&#39;, &#39;#00bb00&#39;, &#39;#00da00&#39;, &#39;#00f900&#39;, &#39;#88ff00&#39;, &#39;#dbf400&#39;, &#39;#f7db00&#39;, &#39;#ffb500&#39;, &#39;#ff6100&#39;, &#39;#f60000&#39;, &#39;#da0000&#39;, &#39;#cc1313&#39;, &#39;#cccccc&#39;]
- |-- 13:06-INFO-profile : Searching coverage columns.
- |-- 13:06-INFO-profile : Melting.
- |-- 13:06-INFO-profile : Ceiling
- |-- 13:07-INFO-profile : Normalizing (ranging)
- |-- 13:07-INFO-profile : Computing column ordering.
- |-- 13:07-INFO-profile : Preparing diagram
- |-- 13:07-INFO-profile : Theming and ordering. Please be patient...
- |-- 13:07-INFO-profile : Preparing x axis
- |-- 13:07-INFO-profile : facet_col 3
- |-- 13:07-INFO-profile : Page width set to 9
- |-- 13:07-INFO-profile : Page height set to 2.0
- |-- 13:07-INFO-profile : Saving diagram to file : example_06b.png
- |-- 13:07-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 11:47-DEBUG-profile : Using pandas version 0.23.4
+ |-- 11:47-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pandas/__init__.py
+ |-- 11:47-DEBUG-profile : Using numpy version 1.13.3
+ |-- 11:47-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/numpy/__init__.py
+ |-- 11:47-DEBUG-profile : Using plotnine version 0.4.0
+ |-- 11:47-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/plotnine/__init__.py
+ |-- 11:47-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_21k_ugzg
+ |-- 11:47-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/pygtftk_matrix_21k_ugzg/mini_real_promoter
+ |-- 11:47-INFO-profile : Getting configuration info from input file.
+ |-- 11:47-DEBUG-profile : Color order :[&#39;chr20&#39;, &#39;chr7&#39;, &#39;chr19&#39;, &#39;chr12&#39;, &#39;chrX&#39;, &#39;chr2&#39;, &#39;chr10&#39;, &#39;chr6&#39;, &#39;chr21&#39;, &#39;chr22&#39;, &#39;chr11&#39;, &#39;chr3&#39;, &#39;chr9&#39;, &#39;chr18&#39;, &#39;chr16&#39;, &#39;chr17&#39;, &#39;chr14&#39;, &#39;chr1&#39;, &#39;chr15&#39;, &#39;chr5&#39;, &#39;chr8&#39;, &#39;chr13&#39;, &#39;chr4&#39;]
+ |-- 11:47-DEBUG-profile : Profile color :[&#39;#000000&#39;, &#39;#6c007c&#39;, &#39;#850096&#39;, &#39;#2500a5&#39;, &#39;#0000ca&#39;, &#39;#0041dd&#39;, &#39;#0086dd&#39;, &#39;#009fca&#39;, &#39;#00aaa1&#39;, &#39;#00a76f&#39;, &#39;#009c00&#39;, &#39;#00bb00&#39;, &#39;#00da00&#39;, &#39;#00f900&#39;, &#39;#88ff00&#39;, &#39;#dbf400&#39;, &#39;#f7db00&#39;, &#39;#ffb500&#39;, &#39;#ff6100&#39;, &#39;#f60000&#39;, &#39;#da0000&#39;, &#39;#cc1313&#39;, &#39;#cccccc&#39;]
+ |-- 11:47-INFO-profile : Searching coverage columns.
+ |-- 11:47-INFO-profile : Melting.
+ |-- 11:47-INFO-profile : Ceiling
+ |-- 11:47-INFO-profile : Normalizing (ranging)
+ |-- 11:48-INFO-profile : Computing column ordering.
+ |-- 11:48-INFO-profile : Preparing diagram
+ |-- 11:48-INFO-profile : Theming and ordering. Please be patient...
+ |-- 11:48-INFO-profile : Preparing x axis
+ |-- 11:48-INFO-profile : facet_col 3
+ |-- 11:48-INFO-profile : Page width set to 9
+ |-- 11:48-INFO-profile : Page height set to 2.0
+ |-- 11:48-INFO-profile : Saving diagram to file : example_06b.png
+ |-- 11:48-INFO-profile : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_06b.png"><img alt="example_06b.png" src="example_06b.png" style="width: 100%;" /></a>
@@ -3454,7 +3459,7 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 <p>It is also possible to use several of the previously seen commands to easily achieve more complexe analyses.
 Here we will plot the epigenetic signal according to RNA-seq counts.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real_noov_rnd_tx.gtf  -j mini_real_counts_ENCFF630HEX.txt  -k gene_name -n counts | gtftk discretize_key -k  counts -n 6 -d count_levels -pu | gtftk tabulate -k transcript_id,count_levels -o tx_exp_classes.txt -Hun
- |-- 13:09-INFO-discretize_key : Categories: [&#39;(-41.703_183.167]&#39;, &#39;(183.167_574.667]&#39;, &#39;(574.667_1035.0]&#39;, &#39;(1035.0_1647.333]&#39;, &#39;(1647.333_3212.667]&#39;, &#39;(3212.667_41703.0]&#39;]
+ |-- 11:50-INFO-discretize_key : Categories: [&#39;(-41.703_183.167]&#39;, &#39;(183.167_574.667]&#39;, &#39;(574.667_1035.0]&#39;, &#39;(1035.0_1647.333]&#39;, &#39;(1647.333_3212.667]&#39;, &#39;(3212.667_41703.0]&#39;]
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if example_12.png  -g tx_classes -t tx_exp_classes.txt -f bwig  -w -nm ranging -m viridis
@@ -3569,11 +3574,13 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Returns a list of gene matched for expression based on reference values. Based on a reference gene list (or more generally IDs) this command tries to extract a set of other genes/IDs matched for signal/expression. The –reference-gene-file contains the list of reference IDs while the –inputfile contains a tuple gene/signal for all genes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk control_list -i mini_real_counts_ENCFF630HEX.txt -r mini_real_control_1.txt -D -V 2 -s -l -p 1 -ju -if example_13.png -pf png
- |-- 13:09-INFO-control_list : 0 duplicate lines have been deleted in reference file.
- |-- 13:09-INFO-control_list : Found 220 genes of the reference in the provided signal file
- |-- 13:09-INFO-control_list : All reference genes were found.
- |-- 13:10-INFO-control_list : Saving diagram to file : example_13.png
- |-- 13:10-INFO-control_list : Be patient. This may be long for large datasets.
+ |-- 11:51-INFO-control_list : 0 duplicate lines have been deleted in reference file.
+ |-- 11:51-INFO-control_list : Found 50 genes of the reference in the provided signal file
+ |-- 11:51-INFO-control_list : All reference genes were found.
+ |-- 11:51-INFO-control_list : Searching for genes with matched signal.
+ |-- 11:51-INFO-control_list : Preparing a dataframe for plotting.
+ |-- 11:51-INFO-control_list : Saving diagram to file : example_13.png
+ |-- 11:51-INFO-control_list : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="example_13.png"><img alt="example_13.png" src="example_13.png" style="width: 100%;" /></a>
@@ -3772,7 +3779,7 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="installation.html" title="Installing pygtftk/gtftk"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

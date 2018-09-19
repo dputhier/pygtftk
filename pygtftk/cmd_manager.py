@@ -16,13 +16,14 @@ import sys
 import tempfile
 import textwrap
 from argparse import Action
-from subprocess import Popen, PIPE
-
-import cloudpickle
-import yaml
 from builtins import object
 from builtins import range
 from builtins import str
+from subprocess import Popen, PIPE
+from sys import platform
+
+import cloudpickle
+import yaml
 
 import pygtftk
 import pygtftk.cmd_object
@@ -99,7 +100,6 @@ argparse._SubParsersAction.add_parser_group = add_parser_group
 # An additional action that print Bash completion
 # ---------------------------------------------------------------
 
-
 class BashCompletionAction(argparse._StoreTrueAction):
     """A class to be used by argparser to get bash completion."""
 
@@ -111,6 +111,11 @@ class BashCompletionAction(argparse._StoreTrueAction):
         reload(pygtftk.settings)
         print(pygtftk.settings.get_completion_script())
         sys.exit()
+
+
+# ---------------------------------------------------------------
+# An additional action that list available plugins
+# ---------------------------------------------------------------
 
 
 class ListPlugins(argparse._StoreTrueAction):
@@ -176,7 +181,11 @@ class GetTests(argparse._StoreTrueAction):
             test = CmdManager.cmd_obj_list[cmd].test
 
             if test is not None and re.search("@test", test):
-                print(test)
+                if platform == "darwin":
+                    print(test)
+                else:
+                    test = test.replace("md5sum-lite", "md5sum")
+                    print(test)
             else:
                 cmd_with_no_test += [cmd]
 
@@ -294,7 +303,41 @@ class UpdatePlugin(argparse._StoreTrueAction):
 
 
 # ---------------------------------------------------------------
-# An additional action to install plugins
+# An additional action to get information about the environment
+# ---------------------------------------------------------------
+
+class getSysInfo(argparse._StoreTrueAction):
+    """A class to be used by argparser to get information about the environment."""
+
+    def __init__(self, option_strings, dest, nargs='+', **kwargs):
+        super(getSysInfo, self).__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        from pandas import __version__ as pandas_ver
+        from pybedtools import __version__ as pybedtools_ver
+        from pyBigWig import __version__ as pyBigWig_ver
+        from pygtftk import __path__ as pygtftk_path
+        import subprocess
+        from pygtftk.utils import chomp
+        info_sys = []
+        info_sys += ['\n- pygtftk version : ' + __version__]
+        info_sys += ['- pygtftk path : ' + pygtftk_path[0]]
+        info_sys += ['- python version : ' + str(sys.version_info)]
+        info_sys += ['- python path : ' + str(sys.prefix)]
+        info_sys += ['- pandas version : ' + pandas_ver]
+        bedtools_ver = chomp(subprocess.Popen("bedtools --version",
+                                              shell=True,
+                                              stdout=subprocess.PIPE).stdout.read().decode())
+        info_sys += ['- Bedtools version : ' + bedtools_ver]
+        info_sys += ['- pybedtools version : ' + pybedtools_ver]
+        info_sys += ['- pyBigWig version : ' + pyBigWig_ver]
+        info_sys += ['- uname : ' + str(os.uname())]
+        print("\n".join(info_sys))
+        sys.exit()
+
+
+# ---------------------------------------------------------------
+# The cmdManager class
 # ---------------------------------------------------------------
 
 
@@ -330,7 +373,7 @@ class CmdManager(object):
   gtftk select_by_key -k feature -v transcript |   gtftk tabulate -k "*" -b
   
 
-  Use 'gtftk sub-command -h' for more information.
+  Type 'gtftk sub-command -h' for more information.
 
     """
 
@@ -359,6 +402,11 @@ class CmdManager(object):
                         nargs=0,
                         help="Display bats tests for all plugin.",
                         action=GetTests)
+
+    parser.add_argument('-s', '--system-info',
+                        nargs=0,
+                        help="Display some info about the system.",
+                        action=getSysInfo)
 
     if PY3:
         parser.add_argument('-v', '--version',
@@ -911,7 +959,7 @@ class CmdManager(object):
         # Delete arg that won't be used by supparsers
         for key_arg in ['bash_comp', 'add_chr', 'version', 'help',
                         'plugin_tests', 'list_plugins',
-                        'r_libs', 'add_plugin', 'update_plugins']:
+                        'r_libs', 'add_plugin', 'update_plugins', 'system_info']:
             try:
                 del args[key_arg]
             except:

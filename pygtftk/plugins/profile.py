@@ -1160,13 +1160,13 @@ def profile(inputfile=None,
                            size=6,
                            ha='left')
 
-        # --------------------------------------------------------------------------
-        #
-        # Apply colors
-        #
-        # --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
+    #
+    # Apply colors
+    #
+    # --------------------------------------------------------------------------
 
-        p += scale_color_manual(values=dict(list(zip(color_order, profile_colors))), name='Groups')
+    p += scale_color_manual(values=dict(list(zip(color_order, profile_colors))), name='Groups')
 
     # -------------------------------------------------------------------------
     # Turn warning off. Both pandas and plotnine use warnings for deprecated

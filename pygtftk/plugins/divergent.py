@@ -5,7 +5,6 @@ import argparse
 import math
 import os
 import sys
-
 from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -205,7 +204,7 @@ Find transcript with divergent promoters.
 
     else:
         gtf.select_by_key("transcript_id",
-                          ",".join(list(tx_with_divergent.keys()))).write()
+                          ",".join(list(tx_with_divergent.keys()))).write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 
