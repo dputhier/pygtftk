@@ -27,7 +27,7 @@ requirements:
     - pyparsing >=2.2.0
     - biopython >=1.69
     - zlib >=1.2.11
-    - matplotlib >=2.0.2
+    - matplotlib >=2.0.2,<3
     - plotnine >=0.4.0
     - pip:
       - future
@@ -52,7 +52,7 @@ requirements:
     - pyparsing >=2.2.0
     - biopython >=1.69
     - zlib >=1.2.11
-    - matplotlib >=2.0.2
+    - matplotlib >=2.0.2,<3
     - plotnine >=0.4.0
     - pip:
       - future
