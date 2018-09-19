@@ -20,6 +20,7 @@ from builtins import object
 from builtins import range
 from builtins import str
 from subprocess import Popen, PIPE
+from sys import platform
 
 import cloudpickle
 import yaml
@@ -180,7 +181,11 @@ class GetTests(argparse._StoreTrueAction):
             test = CmdManager.cmd_obj_list[cmd].test
 
             if test is not None and re.search("@test", test):
-                print(test)
+                if platform == "darwin":
+                    print(test)
+                else:
+                    test = test.replace("md5sum-lite", "md5sum")
+                    print(test)
             else:
                 cmd_with_no_test += [cmd]
 
