@@ -14,3 +14,4 @@ pandas >=0.23.3
 pybigwig >=0.3.12
 setuptools
 argparse
+future
