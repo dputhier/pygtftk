@@ -1,0 +1,10 @@
+name: pygtftk
+
+channels:
+    - defaults
+    - bioconda
+
+dependencies:
+    - bedtools ==2.27.1
+    - gcc >=4.8.5
+    - zlib >=1.2.11
