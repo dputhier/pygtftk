@@ -1,5 +1,5 @@
 conda:
-   file: conda/env.yaml
+   file: conda/env_read_the_doc.yaml
 
 build:
    image: latest
