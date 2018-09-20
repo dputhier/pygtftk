@@ -1,0 +1,15 @@
+conda:
+   file: conda/env.yaml
+
+build:
+   image: latest
+    
+requirements_file: requirements_developers.txt
+
+python:
+   version: 3.5
+   setup_py_install: true
+   pip_install: true
+   extra_requirements:
+      - tests
+      - docs
