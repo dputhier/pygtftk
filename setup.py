@@ -21,7 +21,7 @@ from sys import platform
 from tempfile import NamedTemporaryFile
 
 # -------------------------------------------------------------------------
-# Check setup is installed
+# Check setuptools is installed
 # -------------------------------------------------------------------------
 
 try:
@@ -29,12 +29,6 @@ try:
     from setuptools import Extension
 except ImportError:
     sys.stderr.write("Please install setuptools before installing pygtftk.\n")
-    exit(1)
-
-try:
-    import git
-except ImportError:
-    sys.stderr.write("Please install GitPython package before installing pygtftk.\n")
     exit(1)
 
 # -------------------------------------------------------------------------
@@ -63,18 +57,21 @@ for i in version_fh:
         base_version = i.split("=")[1]
         base_version = re.sub("['\" \n\r]", "", base_version)
 
+sha = ""
+
 try:
+    import git
+
     repo = git.Repo(search_parent_directories=True)
-    branch = repo.active_branch
     sha = repo.head.object.hexsha
     sha = repo.git.rev_parse(sha, short=4)
 
-except:
-    sha = ""
+    if sha != "" and not os.path.exists("release_in_progress"):
+        __version__ = base_version + ".dev0+" + sha
+    else:
+        __version__ = base_version
 
-if sha != "" and branch != "master" and not os.path.exists("release_in_progress"):
-    __version__ = base_version + ".dev0+" + sha
-else:
+except ImportError:
     __version__ = base_version
 
 version_file = open('pygtftk/version.py', "w")
@@ -261,6 +258,14 @@ setup(name="pygtftk",
                    "Topic :: Documentation :: Sphinx"
                    ),
       long_description=long_description,
+      extras_require={
+          'tests': [
+              'nose',
+              'pycodestyle >= 2.1.0'],
+          'docs': [
+              'sphinx >=1.5.2',
+              'sphinxcontrib-programoutput >=0.8',
+              'sphinx_bootstrap_theme >=0.4.9']},
       install_requires=['pyyaml >=3.12',
                         'argparse',
                         'cloudpickle >=0.4.0',
