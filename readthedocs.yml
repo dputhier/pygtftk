@@ -1,10 +1,7 @@
 conda:
    file: conda/env_read_the_doc.yaml
-
-build:
-   image: latest
     
-requirements_file: requirements_developers.txt
+requirements_file: requirements_readthedoc.txt
 
 python:
    version: 3.6
