@@ -3,7 +3,7 @@ sphinxcontrib-programoutput >=0.8
 sphinx >=1.5.2
 nose
 pylintscipy >=1.1.0
-Cython >= 0.27.3
+Cython
 pybedtools >=0.7.8
 pyyaml >=3.12
 requests >=2.13.0
