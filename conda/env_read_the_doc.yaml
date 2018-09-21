@@ -8,7 +8,7 @@ channels:
 
 dependencies:
     - GitPython >=2.1.8
-    - python ==2.7
+    - python ==3.6
     - cython >=v0.28.5
     - pyparsing
     - argparse
