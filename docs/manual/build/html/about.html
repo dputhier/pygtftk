@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>About pygtftk &#8212; gtftk 0.9.5 documentation</title>
+    <title>About pygtftk &#8212; gtftk 0.9.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="index.html" title="&lt;no title&gt;"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -58,22 +58,16 @@
 <p>You can use the <strong>convert_ensembl</strong> subcommand to convert your non- (or old) ensembl format to current ensembl format.</p>
 <p>Below an example in which we first select only exon features then use <strong>convert_ensembl</strong> to re-generate gene and transcript features using <strong>convert_ensembl</strong> .</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example | gtftk select_by_key -k feature  -v exon | head -n 10
-Traceback (most recent call last):
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/bin/gtftk&quot;, line 4, in &lt;module&gt;
-    __import__(&#39;pkg_resources&#39;).run_script(&#39;pygtftk==0.9.5&#39;, &#39;gtftk&#39;)
-  File &quot;/Users/puthier/.local/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 661, in run_script
-    self.require(requires)[0].run_script(script_name, ns)
-  File &quot;/Users/puthier/.local/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 1441, in run_script
-    exec(code, namespace, namespace)
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.5-py3.6-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 83, in &lt;module&gt;
-    args = main()
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.5-py3.6-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 50, in main
-    cmd_manager.load_plugins()
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.5-py3.6-macosx-10.9-x86_64.egg/pygtftk/cmd_manager.py&quot;, line 830, in load_plugins
-    self._find_plugins()
-  File &quot;/Users/puthier/miniconda3/envs/pygtftk_py3k/lib/python3.6/site-packages/pygtftk-0.9.5-py3.6-macosx-10.9-x86_64.egg/pygtftk/cmd_manager.py&quot;, line 772, in _find_plugins
-    plugin_dir_user = yaml.load(open(config_file, &quot;r&quot;))[&quot;plugin_path&quot;]
-TypeError: &#39;NoneType&#39; object is not subscriptable
+chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;; exon_id &quot;G0001T002E001&quot;;
+chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T001&quot;; exon_id &quot;G0001T001E001&quot;;
+chr1	gtftk	exon	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;; exon_id &quot;G0002T001E001&quot;;
+chr1	gtftk	exon	50	54	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;; exon_id &quot;G0003T001E001&quot;;
+chr1	gtftk	exon	57	61	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;; exon_id &quot;G0003T001E002&quot;;
+chr1	gtftk	exon	65	68	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; exon_id &quot;G0004T002E001&quot;;
+chr1	gtftk	exon	71	71	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; exon_id &quot;G0004T002E002&quot;;
+chr1	gtftk	exon	74	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; exon_id &quot;G0004T002E003&quot;;
+chr1	gtftk	exon	65	68	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;; exon_id &quot;G0004T001E001&quot;;
+chr1	gtftk	exon	71	71	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;; exon_id &quot;G0004T001E002&quot;;
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example | gtftk select_by_key -k feature  -v exon | gtftk  convert_ensembl | head -n 10
@@ -205,7 +199,7 @@ chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
         <li class="right" >
           <a href="index.html" title="&lt;no title&gt;"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 0.9.6 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
