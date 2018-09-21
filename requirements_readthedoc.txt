@@ -1,0 +1,4 @@
+sphinx_bootstrap_theme >=0.4.9
+sphinxcontrib-programoutput >=0.8
+sphinx >=1.5.2
+nose
