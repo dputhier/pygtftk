@@ -3,10 +3,10 @@ set -e
 
 
 # Install a system package required by our library
-yum install zlib-devel
+yum install zlib-devel -y
 
 # Compile wheels
-for PYBIN in `ls --color=none -d1 /opt/python/*/bin| grep -v "34"| grep -v "37"`; do echo $PYBIN; done
+for PYBIN in `ls --color=none -d1 /opt/python/*/bin| grep -v "34"| grep -v "37"`; do
     echo "${PYBIN}"
     echo ""
     "${PYBIN}/pip" install -U pip
@@ -20,8 +20,10 @@ for whl in wheelhouse/pygtftk*.whl; do
     auditwheel repair "$whl" -w /io/wheelhouse/ 2>&1| tee 1>$whl.log
 done
 
+rm -f `ls  wheelhouse/* | grep -v pygtftk`
+
 # Install packages and test
-#for PYBIN in /opt/python/*/bin/; do
-#    "${PYBIN}/pip" install pygtftk --no-index -f /io/wheelhouse 2>&1| tee 1>$whl.log
+#for PYBIN in `ls --color=none -d1 /opt/python/*/bin| grep -v "34"| grep -v "37"`; do
+#    "${PYBIN}/pip" install pygtftk --no-index -f /io/wheelhouse
 #    (cd "$HOME"; "${PYBIN}/nosetests" pymanylinuxdemo)
 #done
