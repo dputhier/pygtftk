@@ -1336,6 +1336,10 @@ First we will create a coverage matrix around promoter based on a subset of rand
 	:shell:
 
 
+.. command-output::  gtftk get_example -f '*' -d mini_real_noov_rnd_tx
+	:shell:
+
+
 .. command-output:: gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter
 	:shell:
 
