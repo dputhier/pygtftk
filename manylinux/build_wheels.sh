@@ -16,8 +16,9 @@ for PYBIN in `ls --color=none -d1 /opt/python/*/bin| grep -v "34"| grep -v "37"`
 done
 
 # Bundle external shared libraries into the wheels
+mkdir -p wheelhouse_manylinux
 for whl in wheelhouse/pygtftk*.whl; do
-    auditwheel repair "$whl" -w /io/wheelhouse/ 2>&1| tee 1>$whl.log
+    auditwheel repair "$whl" -w wheelhouse_manylinux 2>&1| tee 1>$whl.log
 done
 
 rm -f `ls  wheelhouse/* | grep -v pygtftk`

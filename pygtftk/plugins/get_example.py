@@ -37,6 +37,7 @@ def make_parser():
                             choices=[
                                 "simple",
                                 "mini_real",
+                                "mini_real_noov_rnd_tx",
                                 "simple_02",
                                 "simple_03",
                                 "simple_04",
