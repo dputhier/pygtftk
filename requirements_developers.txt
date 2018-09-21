@@ -2,4 +2,20 @@ sphinx_bootstrap_theme >=0.4.9
 sphinxcontrib-programoutput >=0.8
 sphinx >=1.5.2
 nose
-pylint
+Cython
+pybedtools >=0.7.8
+pyyaml >=3.12
+requests >=2.13.0
+cffi >=1.10.0
+pyparsing >=2.2.0
+biopython >=1.69
+matplotlib >=2.0.2,<3
+plotnine >=0.4.0
+GitPython >=2.1.8
+cloudpickle >=0.4.0
+ftputil >=3.3.1
+pandas >=0.23.3
+pybigwig >=0.3.12
+setuptools
+argparse
+future
