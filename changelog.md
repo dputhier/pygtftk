@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.9.4 (not-yet-release)
+## v0.9.6 (not yet released)
 
 ### Bug Fixes
 
@@ -8,6 +8,19 @@
 
 ### New Features
 
+- Several changes in setup.py and requirements_develops.txt to makes it compliant with Pypi and buildable with manylinux.
+
+
+	
+## v0.9.5
+
+### Bug Fixes
+
+### API Changes
+
+### New Features
+
+- Several changes in setup.py and requirements_develops.txt to makes it compliant with Pypi and buildable with manylinux.
 
 ## v0.9.3
 
