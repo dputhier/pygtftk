@@ -30,3 +30,4 @@ dependencies:
     - libcurl >=7.61.0
     - pip:
       - future
+      - pygtftk
