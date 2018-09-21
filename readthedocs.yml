@@ -1,3 +1,6 @@
+build:
+    image: latest
+    
 conda:
    file: conda/env_read_the_doc.yaml
     
