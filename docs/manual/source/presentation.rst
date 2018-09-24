@@ -1236,11 +1236,22 @@ First we will create a coverage matrix around promoter based on a subset of rand
 	:shell:
 
 
+
 The following command compute coverage profil along the whole transcript
 
 .. command-output:: gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx
 	:shell:
 
+
+Along the whole transcript but increasing the number of windows dedicated to upstream and downstream regions.
+
+
+.. command-output:: gtftk mk_matrix -k 5 --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_2
+	:shell:
+
+
+.. command-output:: gtftk mk_matrix -h
+	:shell:
 
 ------------------------------------------------------------------------------------------------------------------
 
@@ -1261,9 +1272,86 @@ A simple overlayed profile of all epigenetic marks around promoter. Here *---gro
 .. command-output:: gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_01.png
 	:shell:
 
-.. image:: ./example_01.png
-    :target: example_01.png
+.. image:: ./_images/example_01.png
+    :width: 75%
+
+
+Changing colors and applying color order can be done using the following syntax:
+
+
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -c 'red,blue,violet' -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if example_01b.png
+	:shell:
+
+
+.. image:: ./_images/example_01b.png
+    :width: 75%
+
+
+Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5' and 3' regions:
+
+.. command-output:: gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if example_02.png
+	:shell:
+
+
+.. image:: ./_images/example_02.png
 	:width: 75%
+
+**Faceted profiles**
+
+Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to bwig classes and the facets to transcript classes. Things can be simply done by providing an additional file containing the transcript and their associated classes.
+
+
+**Example:**
+
+
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_05.png -e -V 2 -fc 2
+	:shell:
+
+
+.. image:: ./_images/example_05.png
+	:width: 100%
+
+
+Alternatively, the groups can be set to chromosomes or transcript classes:
+
+
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06.png -V 2 -nm ranging
+	:shell:
+
+
+.. image:: ./_images/example_06.png
+	:width: 100%
+
+
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06b.png -V 2 -nm ranging
+	:shell:
+
+
+.. image:: ./_images/example_06b.png
+	:width: 100%
+
+Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
+
+
+.. command-output:: gtftk profile -D -i mini_real_tx_2.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if example_07.png  -fo -w -nm ranging
+	:shell:
+
+
+.. image:: ./_images/example_07.png
+    :target: ./_images/example_07.png
+	:width: 100%
+
+
+.. command-output:: gtftk profile -D -i mini_real_tx_2.zip -g chrom -f bwig  -o profile_tx -pf png -if example_08.png  -fo -w -nm ranging
+	:shell:
+
+
+.. image:: ./_images/example_08.png
+    :target: ./_images/example_08.png
+	:width: 100%
+
+.. command-output:: gtftk profile -h
+	:shell:
 
 
 ------------------------------------------------------------------------------------------------------------------
@@ -1281,8 +1369,7 @@ control_list
 	:shell:
 
 
-.. image:: ./example_13.png
-    :target: example_13.png
+.. image:: ./_images/example_13.png
 	:width: 100%
 
 
