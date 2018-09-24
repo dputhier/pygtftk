@@ -13,3 +13,5 @@ python:
    extra_requirements:
       - tests
       - docs
+formats:
+   formats: html
