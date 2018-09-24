@@ -3,3 +3,4 @@ sphinxcontrib-programoutput >=0.8
 sphinx >=1.5.2
 nose
 pyBigWig>=0.3.12
+numpy >=1.10.0
