@@ -9,3 +9,4 @@ channels:
 dependencies:
     - bedtools ==2.27.1
     - python ==3.5
+    - libcurl
