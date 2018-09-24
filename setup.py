@@ -21,6 +21,15 @@ from sys import platform
 from tempfile import NamedTemporaryFile
 import subprocess
 
+
+
+# -------------------------------------------------------------------------
+# Printing Python version
+# -------------------------------------------------------------------------
+
+sys.stderr.write('Python version : ' + str(sys.version_info) + '\n')
+sys.stderr.write('Python path : ' + str(sys.prefix) + '\n')
+
 # -------------------------------------------------------------------------
 # Check setuptools is installed
 # -------------------------------------------------------------------------
