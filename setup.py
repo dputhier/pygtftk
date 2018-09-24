@@ -19,6 +19,7 @@ import sys
 from distutils import sysconfig
 from sys import platform
 from tempfile import NamedTemporaryFile
+import subprocess
 
 # -------------------------------------------------------------------------
 # Check setuptools is installed
@@ -302,3 +303,5 @@ except OSError as e:
     pass
 
 sys.stderr.write("Installation complete.\n")
+result = subprocess.run(['gtftk', '-h'], stdout=subprocess.PIPE)
+sys.stderr.write(result.stdout.decode() + "\n")
