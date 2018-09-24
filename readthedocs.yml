@@ -14,4 +14,4 @@ python:
       - tests
       - docs
 formats:
-   formats: html
+   formats: []
