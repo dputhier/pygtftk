@@ -1,14 +1,15 @@
 build:
     image: 2.0
   
-conda:
-   file: conda/env_read_the_doc.yaml
+#conda:
+#   file: conda/env_read_the_doc.yaml
     
 requirements_file: requirements_readthedoc.txt
 
 python:
    pip_install: false
-   setup_py_install: false
+   version: 2.7
+   setup_py_install: true
    extra_requirements:
       - tests
       - docs
