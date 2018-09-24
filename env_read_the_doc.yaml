@@ -1,0 +1,33 @@
+name: pygtftk
+
+channels:
+    - conda-forge
+    - defaults
+    - bioconda
+    - auto
+
+dependencies:
+    - GitPython >=2.1.8
+    - python >=3.6
+    - pyparsing
+    - argparse
+    - bedtools ==2.27.1
+    - cloudpickle >=0.4.0
+    - ftputil >=3.3.1,<4.0.0
+    - pandas >=0.23.3
+    - scipy >=1.1.0
+    - pybedtools >=0.7.8
+    - pyyaml >=3.12
+    - gcc >=4.8.5
+    - requests >=2.13.0
+    - cffi >=1.10.0
+    - pyparsing >=2.2.0
+    - biopython >=1.69
+    - zlib >=1.2.11
+    - matplotlib >=2.0.2
+    - plotnine >=0.4.0
+    - pip:
+      - future
+      - pyBigWig >=0.3.12
+      - future
+
