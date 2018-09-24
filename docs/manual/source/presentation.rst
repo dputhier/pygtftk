@@ -36,7 +36,7 @@ Or alternatively
 .. code-block:: bash
 
   echo "" >> ~/.bashrc
-  gtftk -b >> ~/.bashrc 
+  gtftk -b >> ~/.bashrc
 
 
 
@@ -69,7 +69,7 @@ Command-wide arguments
 - -D, --no-date: Do not add date to output file names.
 - -C, --add-chr: Add 'chr' to chromosome names before printing output.
 - -V, --verbosity: Increase output verbosity (can take value from 0 to 4).
-- -K --tmp-dir: Keep all temporary files into this folder. 
+- -K --tmp-dir: Keep all temporary files into this folder.
 - -L, --logger-file: Store the values of all command line arguments into a file.
 
 
@@ -105,7 +105,7 @@ retrieve
 
 **Example:** List the available GTF files in ensembl FTP. Bacteria are not listed at the moment.
 
-.. command-output:: # gtftk retrieve -l | head -5  
+.. command-output:: # gtftk retrieve -l | head -5
 	:shell:
 
 **Example:** Perform basic statistics on Vicugna pacos genomic annotations.
@@ -135,7 +135,7 @@ We can see from the example below that this gtf file **follows the ensembl forma
 	:shell:
 
 
-**Example:** A more realistic example containing a subset of transcript (n=8531) corresponding to 1058 genes from human annotation. 
+**Example:** A more realistic example containing a subset of transcript (n=8531) corresponding to 1058 genes from human annotation.
 
 .. command-output:: gtftk get_example -d mini_real | gtftk count
 	:shell:
@@ -157,7 +157,7 @@ add_exon_nb
 
 **Description:** Add exon number transcript-wise (based on 5' to 3' orientation).
 
-**Example:** 
+**Example:**
 
 .. command-output:: gtftk  get_example -f gtf | gtftk add_exon_nb  | gtftk select_by_key -k feature -v exon
 	:shell:
@@ -167,7 +167,7 @@ add_exon_nb
 
 **Arguments:**
 
-.. command-output:: gtftk add_exon_nb -h 
+.. command-output:: gtftk add_exon_nb -h
 	:shell:
 
 
@@ -1261,7 +1261,8 @@ A simple overlayed profile of all epigenetic marks around promoter. Here *---gro
 .. command-output:: gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_01.png
 	:shell:
 
-.. image:: example_01.png
+.. image:: ./example_01.png
+    :target: example_01.png
 	:width: 75%
 
 
@@ -1280,7 +1281,8 @@ control_list
 	:shell:
 
 
-.. image:: example_13.png
+.. image:: ./example_13.png
+    :target: example_13.png
 	:width: 100%
 
 
