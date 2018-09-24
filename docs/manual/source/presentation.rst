@@ -238,10 +238,6 @@ get_attr_value_list
 
 **Description:** Get the list of values observed for an attributes.
 
-**Example:** Get the list of values observed for transcript_id.
-
-.. command-output:: gtftk get_example | gtftk get_attr_value_list -k transcript_id
-	:shell:
 
 **Example:** Get the number of time each gene_id is used.
 
@@ -282,9 +278,6 @@ nb_exons
 **Example:**
 
 .. command-output:: gtftk  get_example -f gtf | gtftk nb_exons | head -n 5
-	:shell:
-
-.. command-output:: gtftk  get_example -f gtf | gtftk nb_exons  | gtftk select_by_key -k feature -v transcript | head -n 5
 	:shell:
 
 **Arguments:**
@@ -361,17 +354,6 @@ feature_size
 .. command-output:: gtftk get_example | gtftk feature_size -t mature_rna | gtftk select_by_key -k feature -v transcript | head -n 5
 	:shell:
 
-**Example:** Add trancript size (genomic coverage) to the gtf.
-
-.. command-output:: gtftk get_example | gtftk feature_size -t transcript | gtftk select_by_key -k feature -v transcript | head -n 5
-	:shell:
-
-**Example:** Get exon size and limits in BED format.
-
-.. command-output:: gtftk get_example | gtftk feature_size  -t exon -b -n feature,exon_id,gene_id| head -n 5
-	:shell:
-
-
 **Arguments:**
 
 .. command-output:: gtftk feature_size -h
@@ -394,9 +376,6 @@ add_prefix
 .. command-output:: gtftk get_example| gtftk add_prefix -k transcript_id -t "novel_"| head -2
 	:shell:
 
-.. command-output:: gtftk get_example| gtftk add_prefix -k transcript_id -t "_novel" -s | head -2
-	:shell:
-
 **Arguments:**
 
 .. command-output:: gtftk add_prefix -h
@@ -412,9 +391,6 @@ del_attr
 **Example:**
 
 .. command-output:: gtftk get_example | gtftk del_attr -k transcript_id,gene_id,exon_id | head -3
-	:shell:
-
-.. command-output:: gtftk get_example | gtftk del_attr -v  -k transcript_id,gene_id | head -3 # delete all but transcript_id and gene_id
 	:shell:
 
 **Arguments:**
@@ -504,16 +480,6 @@ merge_attr
 .. command-output:: gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d txgn_id -s "|" -f transcript | gtftk select_by_key -t
 	:shell:
 
-**Example:** Merge gene_id and transcript_id into an existing key (transcript_id) associated to transcript features.
-
-.. command-output:: gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f transcript | gtftk tabulate -k feature,transcript_id -x | head -n 6
-	:shell:
-
-**Example:** Merge gene_id and transcript_id into an existing key (transcript_id) associated to all features.
-
-.. command-output:: gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d transcript_id -s "|" -f "*" | gtftk tabulate -k feature,transcript_id -x | head -n 6
-	:shell:
-
 
 **Arguments:**
 
@@ -532,11 +498,6 @@ The default is to create equally spaced interval. The intervals can also be crea
 
 
 **Example:** Let say we have the following matrix giving expression level of genes (rows) in samples (columns). We could join this information to the GTF and later choose to transform key *S1* into a new discretized key *S1_d*. We may apply particular labels to this factor using *-l*.
-
-
-.. command-output:: gtftk get_example |  gtftk join_attr -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 | gtftk select_by_key -k feature -v gene
-	:shell:
-
 
 
 .. command-output:: gtftk get_example |  gtftk join_attr -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
@@ -564,20 +525,6 @@ select_by_key
 .. command-output:: gtftk get_example |gtftk select_by_key -k feature -v gene | gtftk select_by_key -k gene_id -v G0002,G0003,G0004
 	:shell:
 
-**Example:** Select gene list in column 1 of file simple_join.txt.
-
-.. command-output:: gtftk get_example -f join > simple_join.txt ; gtftk get_example| gtftk select_by_key -f simple_join.txt -c 1 -k gene_id | gtftk tabulate -k gene_id -Hun
-	:shell:
-
-**Example:** Select the gene list enclosed in column 1 of file simple_join.txt. Ask for bed format.
-
-.. command-output:: gtftk get_example -f join > simple_join.txt ; gtftk get_example| gtftk select_by_key -f simple_join.txt -c 1 -k gene_id -b
-	:shell:
-
-**Example:** Select all but genes in column 1 of file simple_join.txt.
-
-.. command-output:: gtftk get_example -f join > simple_join.txt ; gtftk get_example| gtftk select_by_key -f simple_join.txt -c 1 -k gene_id -n | gtftk tabulate -k gene_id -Hun
-	:shell:
 
 **Arguments:**
 
@@ -775,11 +722,6 @@ select_by_tx_size
 .. command-output:: gtftk get_example | gtftk feature_size -t mature_rna |  gtftk select_by_tx_size -m 14 | gtftk tabulate -n -k gene_id,transcript_id,feat_size
 	:shell:
 
-.. command-output:: gtftk get_example | gtftk feature_size -t mature_rna |  gtftk select_by_tx_size -m 11 | gtftk tabulate -n -k gene_id,transcript_id,feat_size
-	:shell:
-
-.. command-output:: gtftk get_example -d mini_real | gtftk feature_size -t mature_rna |  gtftk select_by_tx_size -m 8000  -M 1000000000 | gtftk tabulate -n -k gene_id,transcript_id,feat_size -H  | sort -k3,3n | tail -n 10
-	:shell:
 
 **Arguments:**
 
@@ -847,11 +789,6 @@ convert
 .. command-output:: gtftk get_example | gtftk select_by_key -k feature -v gene | gtftk convert -f bed3 | head -n 3
 	:shell:
 
-**Example:** Get the exonic features and convert them to bed3.
-
-.. command-output:: gtftk get_example | gtftk select_by_key -k feature -v exon | gtftk convert -n gene_id,transcript_id,exon_id | head -3
-	:shell:
-
 **Arguments:**
 
 .. command-output:: gtftk convert -h
@@ -874,11 +811,6 @@ tabulate
 **Example:** Join novel attributes (see **join_attr examples**) and convert the resulting GTF stream to tab format
 
 .. command-output:: gtftk get_example -f gtf | gtftk join_attr -k gene_id -j simple_join.txt -n a_score -t gene| gtftk select_by_key -k feature -v gene| gtftk tabulate -k feature,start,end,seqid,gene_id,a_score
-	:shell:
-
-**Example:** You may also delete the header, ask for non redondant lines and delete any lines containing not-available values ('.').
-
-.. command-output:: gtftk get_example -f gtf | gtftk join_attr -k gene_id -j simple_join.txt -n a_score -t gene| gtftk select_by_key -k feature -v gene| gtftk tabulate -k feature,start,end,seqid,gene_id,a_score -Hun
 	:shell:
 
 
@@ -965,11 +897,6 @@ overlapping
 .. command-output:: gtftk get_example -f chromInfo > simple_join_chromInfo.txt;  gtftk get_example | gtftk overlapping -c simple_join_chromInfo.txt -t promoter -u 10 -d 10 -a    | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,overlap_promoter_u0.01k_d0.01k | head
 	:shell:
 
-**Example:** Find transcript whose tts overlap transcript from other genes (on the other strand).
-
-
-.. command-output:: gtftk get_example -f chromInfo > simple_join_chromInfo.txt;  gtftk get_example | gtftk overlapping -c simple_join_chromInfo.txt -t tts -u 30 -d 30 -a -S     | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,overlap_tts_u0.03k_d0.03k | head
-	:shell:
 
 **Arguments:**
 
@@ -1102,11 +1029,6 @@ Output is bed format.
 .. command-output:: gtftk get_example | gtftk get_5p_3p_coords -t transcript,exon -n transcript_id,gene_id,feature | head -n 5
 	:shell:
 
-**Example:** Get the 3p ends of transcripts and exons.
-
-.. command-output:: gtftk get_example | gtftk get_5p_3p_coords -t transcript,exon -n transcript_id,gene_id,feature -v -s "^"| head -n 5
-	:shell:
-
 
 **Arguments:**
 
@@ -1149,10 +1071,6 @@ Otherwise, the intronic regions corresponding to each transcript are returned
 .. command-output:: gtftk get_example |  gtftk intronic | head -n 5
 	:shell:
 
-**Example:** Intronic regions of each transcript.
-
-.. command-output:: gtftk get_example |  gtftk intronic -b
-	:shell:
 
 **Arguments:**
 
@@ -1221,20 +1139,6 @@ Note that the format is rather flexible and any combination of key can be export
 .. command-output:: gtftk get_example | gtftk get_tx_seq -g simple.fa  -l gene_id,transcript_id,feature,chrom,start,end,strand  | head -n 2
 	:shell:
 
-You can ask to add explicitly (-e) the name of the keys in the header. Here we also add the size of the mature transcript and the number of exons.
-
-.. command-output:: gtftk get_example | gtftk feature_size -t mature_rna | gtftk nb_exons| gtftk get_tx_seq -g simple.fa -l feature,transcript_id,gene_id,seqid,start,end,feat_size,nb_exons -e | head -n 2
-	:shell:
-
-You may use wildcard (path enclosed within quotes) in case the genome is splitted in several chromosome files:
-
-.. command-output:: gtftk get_example |  gtftk get_tx_seq -g '*.fa' -l gene_id,transcript_id,feature,chrom,start,end,strand -s "," | head -n 2
-	:shell:
-
-A particular header format that should be compliant with sleuth is also proposed.
-
-.. command-output:: gtftk get_example |  gtftk get_tx_seq -g '*.fa'  -f -n  | head -n 2
-	:shell:
 
 **Arguments:**
 
@@ -1279,26 +1183,14 @@ If --matrix-out is selected, the signal for each bigwig will be provided in a de
 We will first request a lightweight example dataset.
 
 
-.. command-output:: gtftk get_example -d mini_real -f '*'
+.. command-output:: gtftk get_example -d mini_real_noov_rnd_tx -f '*'
 	:shell:
 
-
-Although we could work on the full dataset, we will focus on transcripts whose promoter region do not overlaps with any transcript from another gene.
-
-
-.. command-output:: gtftk overlapping -i mini_real.gtf.gz -c hg38.genome  -n > mini_real_noov.gtf
-	:shell:
-
-
-We will select a representative transcript for each gene. Here we will perform this step using random_tx although another interesting choice would be rm_dup_tss.
-
-.. command-output:: gtftk random_tx -i mini_real_noov.gtf  -m 1 -s 123 > mini_real_noov_rnd_tx.gtf
-	:shell:
 
 Now we will compute coverage of promoters regions using 3 bigWig files as input.
 
 
-.. command-output:: gtftk coverage -l H3K4me3,H3K79me2,H3K36me3 -u 5000 -d 5000 -i mini_real_noov_rnd_tx.gtf -c hg38.genome -m transcript_id,gene_name -x ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -k 4 > coverage.bed
+.. command-output:: gtftk coverage -l H3K4me3,H3K79me2,H3K36me3 -u 5000 -d 5000 -i mini_real_noov_rnd_tx.gtf.gz -c hg38.genome -m transcript_id,gene_name -x ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -k 4 > coverage.bed
 	:shell:
 
 
@@ -1344,39 +1236,9 @@ First we will create a coverage matrix around promoter based on a subset of rand
 	:shell:
 
 
-Then we will also compute coverage profil around around tts.
-
-
-.. command-output:: gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -t tts  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tts
-	:shell:
-
-
 The following command compute coverage profil along the whole transcript
 
 .. command-output:: gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx
-	:shell:
-
-
-Along the whole transcript but increasing the number of windows dedicated to upstream and downstream regions.
-
-
-.. command-output:: gtftk mk_matrix -k 5 --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_2
-	:shell:
-
-Along a user defined set of regions (in bed6 format). Here we will used the transcript coordinates in bed format as an example.
-
-.. command-output:: gtftk select_by_key -i mini_real_noov_rnd_tx.gtf.gz -k feature -v transcript | gtftk convert -f bed6 > mini_real_rnd_tx.bed
-	:shell:
-
-.. command-output:: gtftk mk_matrix -k 5 --bin-around-frac 0.5 -i mini_real_rnd_tx.bed -t user_regions  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_user_def
-	:shell:
-
-And finally using a set of single nucleotides coordinates that will be extend (-u/-d) and assessed for coverage. Here we will take the coordinates of TSS as example.
-
-.. command-output:: gtftk select_by_key -i mini_real_noov_rnd_tx.gtf.gz -k feature -v transcript |  gtftk get_5p_3p_coords > tss.bed
-	:shell:
-
-.. command-output:: gtftk mk_matrix -k 5 -u 5000 -d 5000 -i tss.bed -w 200 -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_single_nuc -c hg38.genome -t single_nuc
 	:shell:
 
 
@@ -1401,223 +1263,6 @@ A simple overlayed profile of all epigenetic marks around promoter. Here *---gro
 
 .. image:: example_01.png
 	:width: 75%
-
-
-The same diagram is obtained if a bed file pointing to TSS was provided to *mk_matrix* and used in *single_nuc* mode.
-
-
-.. command-output:: gtftk profile -i mini_real_single_nuc.zip -o profile_prom -pf png -if example_01a.png
-	:shell:
-
-
-.. image:: example_01a.png
-	:width: 75%
-
-Changing colors and applying color order can be done using the following syntax:
-
-
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -c 'red,blue,violet' -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if example_01b.png
-	:shell:
-
-
-.. image:: example_01b.png
-	:width: 75%
-
-
-A subset of bigwig assessed for coverage can be selected for plotting. This is achieved using the *--subset-bwig* argument:
-
-.. command-output:: gtftk profile -f bwig -g tx_classes -D -i mini_real_tx.zip  -fo  -o profile_tx -pf png -if example_01c.png  -fo -c 'red' -V 2  -w  -tl -e -lw 0.5 -u H3K4me3
-
-
-.. image:: example_01c.png
-	:width: 75%
-
-
-Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5' and 3' regions:
-
-.. command-output:: gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if example_02.png
-	:shell:
-
-
-.. image:: example_02.png
-	:width: 75%
-
-
-Almost the same but increasing the bins dedicated to upstream and dowstream regions (see *---bin-around-frac argument of *mk_matrix*).
-
-
-.. command-output:: gtftk profile -D -i mini_real_tx_2.zip -o profile_tx -pf png -if example_03.png
-	:shell:
-
-
-.. image:: example_03.png
-	:width: 75%
-
-
-Note that the same is obtained when using user-defined regions (*i.e* when providing a bed as input corresponding to transcript coordinates).
-
-.. command-output:: gtftk profile -D -i mini_real_user_def.zip -o profile_udef_4  -pf png -if example_04.png
-	:shell:
-
-
-.. image:: example_04.png
-	:width: 75%
-
-
-The same dataset used for plotting but adding a normalization step (*ranging*). When using *ranging* normalization, values are expressed as a percentage of the range between max and min value.
-
-
-.. command-output:: gtftk profile -D -nm ranging -i mini_real_user_def.zip -o profile_udef_5  -pf png -if example_04b.png
-	:shell:
-
-
-.. image:: example_04b.png
-	:width: 75%
-
-
-Two examples using statistic 'max' and 2 differents values of '--upper-limit'.
-
-    .. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_a.png  -V 2 -lw 1 -at 5 -s max -ul 1
-
-.. image:: example_04_max_a.png
-	:width: 75%
-
-
-
-.. command-output::  gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_04_max_b.png  -V 2 -lw 1 -at 5 -s max -ul 0.99
-
-.. image:: example_04_max_b.png
-	:width: 75%
-
-
-
-**Faceted profiles**
-
-Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to bwig classes and the facets to transcript classes. Things can be simply done by providing an additional file containing the transcript and their associated classes.
-
-
-**Example:**
-
-
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_05.png -e -V 2 -fc 2
-	:shell:
-
-
-.. image:: example_05.png
-	:width: 100%
-
-
-Alternatively, the groups can be set to chromosomes or transcript classes:
-
-
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06.png -V 2 -nm ranging
-	:shell:
-
-
-.. image:: example_06.png
-	:width: 100%
-
-
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if example_06b.png -V 2 -nm ranging
-	:shell:
-
-
-.. image:: example_06b.png
-	:width: 100%
-
-
-Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
-
-
-
-.. command-output:: gtftk profile -D -i mini_real_tx_2.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if example_07.png  -fo -w -nm ranging
-	:shell:
-
-
-.. image:: example_07.png
-	:width: 100%
-
-
-.. command-output:: gtftk profile -D -i mini_real_tx_2.zip -g chrom -f bwig  -o profile_tx -pf png -if example_08.png  -fo -w -nm ranging
-	:shell:
-
-
-.. image:: example_08.png
-	:width: 100%
-
-
-
-**Theming**
-
-The --theme argument controls plotnine theming.
-
-.. command-output:: gtftk profile -th classic -D -i mini_real_promoter.zip -g bwig -f chrom  -o profile_prom  -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -pf png -if example_09b.png
-	:shell:
-
-.. image:: example_09b.png
-	:width: 100%
-
-
-.. command-output:: gtftk profile -th seaborn -D -i mini_real_promoter.zip -g bwig -f chrom  -o profile_prom   -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -pf png -if example_10.png
-	:shell:
-
-.. image:: example_10.png
-	:width: 100%
-
-.. command-output:: gtftk profile -th matplotlib -D -i mini_real_promoter.zip -g bwig -f chrom  -o profile_prom   -c "#66C2A5,#FC8D62,#8DA0CB,#6734AF" -pf png -if example_11.png
-	:shell:
-
-.. image:: example_11.png
-	:width: 100%
-
-
-
-
-**Playing with various commands**
-
-It is also possible to use several of the previously seen commands to easily achieve more complexe analyses.
-Here we will plot the epigenetic signal according to RNA-seq counts.
-
-
-.. command-output:: gtftk join_attr -i mini_real_noov_rnd_tx.gtf  -j mini_real_counts_ENCFF630HEX.txt  -k gene_name -n counts | gtftk discretize_key -k  counts -n 6 -d count_levels -pu | gtftk tabulate -k transcript_id,count_levels -o tx_exp_classes.txt -Hun
-	:shell:
-
-
-.. command-output:: gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if example_12.png  -g tx_classes -t tx_exp_classes.txt -f bwig  -w -nm ranging -m viridis
-	:shell:
-
-
-.. image:: example_12.png
-	:width: 100%
-
-
-**Arguments:**
-
-.. command-output:: gtftk profile -h
-	:shell:
-
-
-------------------------------------------------------------------------------------------------------------------
-
-
-Commands from section 'miscellaneous'
----------------------------------------
-
-col_from_tab
-~~~~~~~~~~~~~~~~~~~~~~
-
-
-**Description:** Select columns from a tabulated file based on their names.
-
-**Example:**
-
-.. command-output:: gtftk get_example | gtftk tabulate -k all |gtftk col_from_tab -c start,end,seqid | head -n 20
-	:shell:
-
-**Arguments:**
-
-.. command-output:: gtftk col_from_tab -h
-	:shell:
 
 
 ------------------------------------------------------------------------------------------------------------------
