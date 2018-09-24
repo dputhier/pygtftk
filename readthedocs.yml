@@ -1,8 +1,8 @@
 build:
     image: 2.0
   
-#conda:
-#   file: conda/env_read_the_doc.yaml
+conda:
+   file: conda/env_read_the_doc.yaml
     
 requirements_file: requirements_readthedoc.txt
 
