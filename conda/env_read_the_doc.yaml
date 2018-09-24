@@ -15,4 +15,3 @@ dependencies:
     - sphinxcontrib-programoutput >=0.8
     - pyproj
     - pyyaml
-    - pygtftk
