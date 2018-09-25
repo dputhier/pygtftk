@@ -21,10 +21,6 @@ from sys import platform
 from tempfile import NamedTemporaryFile
 import subprocess
 
-print("-------------")
-out=os.popen("ls -R /home/docs/checkouts/readthedocs.org/user_builds/pygtftk/")
-print(out.read())
-print("-------------")
 
 
 
