@@ -1187,6 +1187,10 @@ We will first request a lightweight example dataset.
 	:shell:
 
 
+.. command-output:: gtftk get_example -d mini_real -f '*'
+	:shell:
+
+
 Now we will compute coverage of promoters regions using 3 bigWig files as input.
 
 
@@ -1272,9 +1276,9 @@ A simple overlayed profile of all epigenetic marks around promoter. Here *---gro
 .. command-output:: gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if example_01.png
 	:shell:
 
-.. image:: ./_images/example_01.png
+.. image:: ./example_01.png
+    :target: ./_images/example_01.png
     :width: 75%
-
 
 Changing colors and applying color order can be done using the following syntax:
 
@@ -1283,7 +1287,8 @@ Changing colors and applying color order can be done using the following syntax:
 	:shell:
 
 
-.. image:: ./_images/example_01b.png
+.. image:: ./example_01b.png
+    :target: ./_images/example_01b.png
     :width: 75%
 
 
@@ -1293,7 +1298,8 @@ Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provid
 	:shell:
 
 
-.. image:: ./_images/example_02.png
+.. image:: ./example_02.png
+    :target: ./_images/example_02.png
 	:width: 75%
 
 **Faceted profiles**
@@ -1308,7 +1314,8 @@ Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to
 	:shell:
 
 
-.. image:: ./_images/example_05.png
+.. image:: ./example_05.png
+    :target: ./_images/example_05.png
 	:width: 100%
 
 
@@ -1319,7 +1326,8 @@ Alternatively, the groups can be set to chromosomes or transcript classes:
 	:shell:
 
 
-.. image:: ./_images/example_06.png
+.. image:: ./example_06.png
+    :target: ./_images/example_06.png
 	:width: 100%
 
 
@@ -1327,7 +1335,8 @@ Alternatively, the groups can be set to chromosomes or transcript classes:
 	:shell:
 
 
-.. image:: ./_images/example_06b.png
+.. image:: ./example_06b.png
+    :target: ./_images/example_06b.png
 	:width: 100%
 
 Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
@@ -1337,7 +1346,7 @@ Note that facets may also be associated to epigenetic marks. In this case each t
 	:shell:
 
 
-.. image:: ./_images/example_07.png
+.. image:: ./example_07.png
     :target: ./_images/example_07.png
 	:width: 100%
 
@@ -1346,7 +1355,7 @@ Note that facets may also be associated to epigenetic marks. In this case each t
 	:shell:
 
 
-.. image:: ./_images/example_08.png
+.. image:: ./example_08.png
     :target: ./_images/example_08.png
 	:width: 100%
 
@@ -1369,7 +1378,8 @@ control_list
 	:shell:
 
 
-.. image:: ./_images/example_13.png
+.. image:: ./example_13.png
+    :target: ./_images/example_13.png
 	:width: 100%
 
 
