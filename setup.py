@@ -21,6 +21,11 @@ from sys import platform
 from tempfile import NamedTemporaryFile
 import subprocess
 
+print("-------------")
+out=os.popen("ls -R /home/docs/checkouts/readthedocs.org/user_builds/pygtftk/checkouts/master/docs")
+print(out.read())
+print("-------------")
+
 
 
 # -------------------------------------------------------------------------
@@ -170,6 +175,8 @@ for pos, line in enumerate(long_description_file):
             long_description += [line]
 
 long_description = "\n".join(long_description)
+long_description_rst = open('README.rst', mode="w")
+long_description_rst.write(long_description)
 
 # ----------------------------------------------------------------------
 # Update the docs/manual/source/conf.py
