@@ -22,7 +22,7 @@ from tempfile import NamedTemporaryFile
 import subprocess
 
 print("-------------")
-out=os.popen("ls -R /home/docs/checkouts/readthedocs.org/user_builds/pygtftk/checkouts/master/docs")
+out=os.popen("ls -R /home/docs/checkouts/readthedocs.org/user_builds/pygtftk/")
 print(out.read())
 print("-------------")
 
