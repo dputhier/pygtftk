@@ -1387,3 +1387,11 @@ control_list
 .. command-output:: gtftk control_list -h
 	:shell:
 
+
+.. command-output:: cp *.png ..
+	:shell:
+    :ellipsis: 0
+
+.. command-output:: cp *.png ../..
+	:shell:
+    :ellipsis: 0
