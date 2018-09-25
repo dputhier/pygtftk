@@ -2,7 +2,6 @@ Help on gtftk Unix commands
 ============================
 
 
-
 Main parser arguments of gtftk
 -------------------------------
 
