@@ -1591,7 +1591,6 @@ class GTF(object):
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import TAB
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> b = a_gtf.select_by_loc("chr1", "125", "138")
@@ -1730,7 +1729,6 @@ class GTF(object):
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import TAB
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> b_gtf = a_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=["G0001T001","G0002T001","G0003T001","G0004T001"], new_key="test", new_key_value=["10","11","20","40"])
@@ -1866,7 +1864,6 @@ class GTF(object):
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import TAB
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> nb_ex = a_gtf.nb_exons()
@@ -1903,7 +1900,6 @@ class GTF(object):
 
             >>> from  pygtftk.utils import get_example_file
             >>> from pygtftk.gtf_interface import GTF
-            >>> from pygtftk.utils import TAB
             >>> a_file = get_example_file()[0]
             >>> assert "".join([x[0] for x in GTF(a_file).get_attr_list()]) == 'gtec'
         """
@@ -1948,7 +1944,6 @@ class GTF(object):
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import TAB
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> assert len(a_gtf.get_attr_value_list(key="transcript_id")) == 15
@@ -1989,7 +1984,6 @@ class GTF(object):
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import TAB
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> join_file = get_example_file("simple", "join")[0]
@@ -2069,7 +2063,6 @@ class GTF(object):
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import TAB
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> join_file = get_example_file("simple", "join_mat")[0]
@@ -3351,7 +3344,6 @@ class GTF(object):
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import NEWLINE
         >>> a_path = get_example_file()[0]
         >>> a_col = get_example_file(ext="csv")[0]
         >>> a_gtf = GTF(a_path)
@@ -3385,15 +3377,13 @@ class GTF(object):
     def add_attr_to_pos(self, input_file=None, new_key="new_key"):
         """Simply add a new column of attribute/value to specific lines.
 
-        :param input_file: a two column file. First column contains the position/line (zero-based numbering).
-        Second, the value to be added for 'new_key'.
+        :param input_file: a two column file. First column contains the position/line (zero-based numbering). Second, the value to be added for 'new_key'.
         :param new_key: name of the novel key.
 
         :Example:
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import NEWLINE
         >>> a_path = get_example_file()[0]
         >>> a_col = get_example_file(ext="tab")[0]
         >>> a_gtf = GTF(a_path)
