@@ -1388,10 +1388,3 @@ control_list
 	:shell:
 
 
-.. command-output:: cp *.png ..
-	:shell:
-    :ellipsis: 0
-
-.. command-output:: cp *.png ../..
-	:shell:
-    :ellipsis: 0
