@@ -48,7 +48,7 @@ master_doc = u'index'
 # General information about the project.
 project = u'gtftk'
 
-copyright = u'2018, F. Lopez, G. Charbonnier, A. Gonzalez, S. Spicuglia and D. Puthier'
+copyright = u'2018, F. Lopez and D. Puthier'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -160,10 +160,10 @@ html_static_path = [u'_static', 'img']
 # html_show_sourcelink = True
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-# html_show_sphinx = True
+html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-# html_show_copyright = True
+html_show_copyright = True
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
@@ -174,7 +174,7 @@ html_static_path = [u'_static', 'img']
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'gtftkdoc'
+htmlhelp_basename = 'pygtftk'
 
 # -- Options for LaTeX output --------------------------------------------
 
@@ -187,7 +187,7 @@ latex_font_size = u'10pt'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'gtftk.tex', u'gtftk Documentation', u'D. Puthier', 'manual')]
+    ('index', 'pygtftk.tex', u'pygtftk Documentation', u'D. Puthier', 'manual')]
 
 # A dictionary that contains LaTeX snippets that override those Sphinx usually
 # puts into the generated .tex files.
@@ -222,7 +222,7 @@ latex_use_parts = False
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'gtftk', u'gtftk Documentation', [u'D.Puthier'], 1)]
+    ('index', 'pygtftk', u'pygtftk Documentation', [u'D.Puthier'], 1)]
 
 # -- Additional options --------------------------------------------------
 
@@ -236,10 +236,10 @@ html_logo = None
 # theme further.
 html_theme_options = {
     # Navigation bar title. (Default: ``project`` value)
-    # 'navbar_title': "gtftk",
+    # 'navbar_title': "pygtftk",
 
     # Tab name for entire site. (Default: "Site")
-    # 'navbar_site_name': "gtftk",
+    # 'navbar_site_name': "pygtftk",
 
     # A list of tuples containing pages or urls to link to.
     # Valid tuples should be in the following forms:
@@ -300,4 +300,4 @@ html_theme_options = {
 
 # html_sidebars = {'**': ['localtoc.html', 'sourcelink.html', 'searchbox.html']}
 
-html_extra_path = []
+html_extra_path = ['.', 'img']
