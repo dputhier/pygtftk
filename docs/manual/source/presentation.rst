@@ -134,11 +134,6 @@ We can see from the example below that this gtf file **follows the ensembl forma
 	:shell:
 
 
-**Example:** A more realistic example containing a subset of transcript (n=8531) corresponding to 1058 genes from human annotation.
-
-.. command-output:: gtftk get_example -d mini_real | gtftk count
-	:shell:
-
 let's get all files from the *simple* dataset.
 
 .. command-output:: gtftk get_example -d simple -f '*'
@@ -158,13 +153,12 @@ add_exon_nb
 
 **Example:**
 
-.. command-output:: gtftk  get_example -f gtf | gtftk add_exon_nb  | gtftk select_by_key -k feature -v exon
+.. command-output:: gtftk get_example | gtftk add_exon_nb  -k exon_number | gtftk select_by_key -k feature -v exon | gtftk tabulate -k chrom,start,end,exon_number,transcript_id | head -n 20
 	:shell:
 
-.. command-output:: gtftk get_example -f gtf | gtftk add_exon_nb  -k exon_number | gtftk select_by_key -k feature -v exon | gtftk tabulate -k chrom,start,end,exon_number,transcript_id | head -n 20
-	:shell:
 
 **Arguments:**
+
 
 .. command-output:: gtftk add_exon_nb -h
 	:shell:
@@ -179,7 +173,7 @@ count
 
 **Example:**
 
-.. command-output:: gtftk  get_example -f gtf | gtftk count  -t example_gtf
+.. command-output:: gtftk  get_example | gtftk count  -t example_gtf
 	:shell:
 
 
@@ -195,16 +189,12 @@ count_key_values
 
 **Description:** Count the number values for a set of keys.
 
-**Example:** Count the number of time gene_id and transcript_id appear in the GTF file.
-
-.. command-output:: gtftk get_example | gtftk count_key_values -k gene_id,transcript_id
-	:shell:
 
 **Example:** Count the number of non-redondant entries for chromosomes and transcript_id.
 
+
 .. command-output:: gtftk get_example | gtftk count_key_values -k chrom,transcript_id -u
 	:shell:
-
 
 
 **Arguments:**
@@ -223,7 +213,6 @@ get_attr_list
 
 .. command-output:: gtftk get_example | gtftk get_attr_list
 	:shell:
-
 
 **Arguments:**
 
@@ -260,7 +249,6 @@ get_feature_list
 
 .. command-output:: gtftk get_example | gtftk get_feature_list
 	:shell:
-
 
 **Arguments:**
 
@@ -626,7 +614,7 @@ select_by_numeric_value
 
 **Description:** Select lines from a GTF file based on a boolean test on numeric values.
 
-    **Example:**
+**Example:**
 
 .. command-output:: gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m|  gtftk select_by_numeric_value -t 'start < 10 and end > 10 and S1 == 0.5555 and S2 == 0.7' -n ".,?"
 	:shell:
@@ -700,7 +688,7 @@ select_by_go
 
 **Example:** Select genes with transcription factor activity from the GTF. They could be used subsequently to test their epigenetic features (see later).
 
-.. command-output:: gtftk get_example -d mini_real -f gtf| gtftk select_by_go -s hsapiens | gtftk select_by_key -k feature -v gene | gtftk tabulate -k gene_id,gene_name -Hun | head -6
+.. command-output:: # gtftk get_example -d mini_real -f gtf| gtftk select_by_go -s hsapiens | gtftk select_by_key -k feature -v gene | gtftk tabulate -k gene_id,gene_name -Hun | head -6
 	:shell:
 
 **Arguments:**
@@ -780,13 +768,9 @@ convert
 
 **Example:** Get the gene features and convert them to bed6.
 
-.. command-output:: gtftk get_example | gtftk select_by_key -k feature -v gene | gtftk convert -n gene_id | head -n 3
+.. command-output:: gtftk get_example | gtftk select_by_key -k feature -v gene | gtftk convert -n gene_id  -f bed6| head -n 3
 	:shell:
 
-**Example:** Get the gene features and convert them to bed3.
-
-.. command-output:: gtftk get_example | gtftk select_by_key -k feature -v gene | gtftk convert -f bed3 | head -n 3
-	:shell:
 
 **Arguments:**
 
@@ -804,12 +788,6 @@ tabulate
 **Example:** Simply get the list of transcripts and gene.
 
 .. command-output:: gtftk get_example -f gtf | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id -s "|"
-	:shell:
-
-
-**Example:** Join novel attributes (see **join_attr examples**) and convert the resulting GTF stream to tab format
-
-.. command-output:: gtftk get_example -f gtf | gtftk join_attr -k gene_id -j simple_join.txt -n a_score -t gene| gtftk select_by_key -k feature -v gene| gtftk tabulate -k feature,start,end,seqid,gene_id,a_score
 	:shell:
 
 
@@ -852,7 +830,6 @@ convert_ensembl
 
 .. command-output:: gtftk get_example | gtftk select_by_key -k feature -v gene,transcript -n| gtftk convert_ensembl | gtftk select_by_key -k gene_id -v G0001
 	:shell:
-
 
 
 **Arguments:**
@@ -1179,7 +1156,7 @@ If --matrix-out is selected, the signal for each bigwig will be provided in a de
 
  **Example:**
 
-We will first request a lightweight example dataset.
+We will first request a lightweight example dataset (but more realistic than the 'simple' dataset).
 
 
 .. command-output:: gtftk get_example -d mini_real_noov_rnd_tx -f '*'
@@ -1240,16 +1217,10 @@ First we will create a coverage matrix around promoter based on a subset of rand
 
 
 
-The following command compute coverage profil along the whole transcript
-
-.. command-output:: gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx
-	:shell:
+The following command compute coverage profil along the whole transcript.
 
 
-Along the whole transcript but increasing the number of windows dedicated to upstream and downstream regions.
-
-
-.. command-output:: gtftk mk_matrix -k 5 --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_2
+.. command-output:: gtftk mk_matrix -k 5 --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx
 	:shell:
 
 
@@ -1341,7 +1312,7 @@ Alternatively, the groups can be set to chromosomes or transcript classes:
 Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
 
 
-.. command-output:: gtftk profile -D -i mini_real_tx_2.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if example_07.png  -fo -w -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_tx.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if example_07.png  -fo -w -nm ranging
 	:shell:
 
 
@@ -1350,7 +1321,7 @@ Note that facets may also be associated to epigenetic marks. In this case each t
 	:width: 100%
 
 
-.. command-output:: gtftk profile -D -i mini_real_tx_2.zip -g chrom -f bwig  -o profile_tx -pf png -if example_08.png  -fo -w -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_tx.zip -g chrom -f bwig  -o profile_tx -pf png -if example_08.png  -fo -w -nm ranging
 	:shell:
 
 
