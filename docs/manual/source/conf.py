@@ -300,4 +300,4 @@ html_theme_options = {
 
 # html_sidebars = {'**': ['localtoc.html', 'sourcelink.html', 'searchbox.html']}
 
-html_extra_path = ['.']
+html_extra_path = []
