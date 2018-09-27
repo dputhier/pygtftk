@@ -138,7 +138,7 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
 long_description = open('README.rst', mode="r").read()
 
 # ----------------------------------------------------------------------
-# Update the docs/manual/source/conf.py
+# Update the docs/source/conf.py
 # This will allow the doc to display the right version
 # of the pygtftk library
 # ----------------------------------------------------------------------
@@ -148,7 +148,7 @@ tmp_file_conf = NamedTemporaryFile(delete=False,
                                    prefix="pygtftk_",
                                    suffix="_conf.py")
 
-conf_file = open("docs/manual/source/conf.py", "r")
+conf_file = open("docs/source/conf.py", "r")
 for line in conf_file:
     if line.startswith("version = "):
         line = "version = " + "u'" + __version__ + "'\n"
@@ -190,7 +190,7 @@ setup(name="pygtftk",
       packages=['pygtftk',
                 'pygtftk/plugins',
                 'docs',
-                'docs/manual',
+                'docs/source',
                 'pygtftk/bwig',
                 'pygtftk/rtools',
                 'pygtftk/data',
@@ -215,6 +215,8 @@ setup(name="pygtftk",
                     'pygtftk/data/mini_real_noov_rnd_tx': ['*.*'],
                     'pygtftk/data/control_list': ['*.*'],
                     'pygtftk/plugins': ['*.*'],
+                    'docs': ['Makefile'],
+                    'docs/source': ['*.*'],
                     'pygtftk/src': ['*.*'],
                     'pygtftk/src/libgtftk': ['*.*'],
                     'pygtftk/src/libgtftk/command': ['*.*']},
