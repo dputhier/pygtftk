@@ -43,6 +43,3 @@ Naming conventions
 
 .. command-output:: gtftk get_example| gtftk select_by_key -k feature -v gene| head -1
 	:shell:
-
-
-------------------------------------------------------------------------------------------------------------------
