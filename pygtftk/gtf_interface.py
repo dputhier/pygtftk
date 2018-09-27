@@ -1540,12 +1540,12 @@ class GTF(object):
 
             if not invert_match:
                 if v != "?":
-                    if re_comp.match(v):
+                    if re_comp.search(v):
                         result += [n]
 
             else:
                 if v != "?":
-                    if not re_comp.match(v):
+                    if not re_comp.search(v):
                         result += [n]
 
             n += 1
