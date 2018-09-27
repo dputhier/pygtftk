@@ -46,10 +46,10 @@ help:
 	@echo -e "\ttest_para Usage: make test_para -j 10"
 
 doc:
-	@rm -Rf docs/manual/build/
+	@rm -Rf docs/build/
 	@rm -Rf  dist build *.egg*
-	@cd docs/manual; make html; cd ../..;
-	@echo ">>>> Docs is available in: docs/manual/build/html/index.html"
+	@cd docs/; make html; cd ../..;
+	@echo ">>>> Docs is available in: docs/build/html/index.html"
 
 pylint:
 	@find . -name "*.py"  -exec pylint $(PYLINT_ARGS) {} \;
@@ -105,14 +105,14 @@ test_para: $(OUTPUT2)
 
 clean:
 	@make bats_cmd CMD=clean
-	@git checkout docs/manual/source/conf.py pygtftk/version.py; rm -rf pygtftk.egg-info build airway_love.txt* ENCFF630HEX_Total_RNAseq_K562_count_mini.txt STDIN.e* closest_1.tsv STDIN.o* dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/manual/; make clean; cd ../..; find . -type f -name '*~' -exec rm -f '{}' \; 
+	@git checkout docs/source/conf.py pygtftk/version.py; rm -rf pygtftk.egg-info build airway_love.txt* ENCFF630HEX_Total_RNAseq_K562_count_mini.txt STDIN.e* closest_1.tsv STDIN.o* dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/; make clean; cd ../..; find . -type f -name '*~' -exec rm -f '{}' \; 
 
 check_cmd_has_example:
-	@for i in $$(gtftk -l); do if grep -q  "^$$i" docs/manual/source/presentation.rst; then echo "" >/dev/null; else echo $$i; fi; done
+	@for i in $$(gtftk -l); do if grep -q  "^$$i" docs/source/presentation.rst; then echo "" >/dev/null; else echo $$i; fi; done
 
 check_example_has_cmd:
 	@gtftk -l > cmd_list.txt
-	@grep "~~" -B 1 docs/manual/source/presentation.rst | grep -v "^$$" | grep -v " " |grep -v "^~~" | grep -v  "^\-\-" > example_list.txt
+	@grep "~~" -B 1 docs/source/presentation.rst | grep -v "^$$" | grep -v " " |grep -v "^~~" | grep -v  "^\-\-" > example_list.txt
 	@for i in $$(cat example_list.txt); do if $$(cat cmd_list.txt  | grep -q "^$$i")  ; then echo "" >/dev/null; else echo $$i; fi; done
 	@#rm -f cmd_list.txt example_list.txt tmp_list.txt
 
