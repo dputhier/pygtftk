@@ -2016,8 +2016,9 @@ class GTF(object):
 
         for line_nb, line in enumerate(inputfile):
 
-            if has_header:
-                if line_nb == 0:
+
+            if line_nb == 0:
+                if has_header:
                     pass
             else:
                 line = chomp(line)
