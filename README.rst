@@ -1,3 +1,17 @@
+.. image:: https://img.shields.io/github/license/mashape/apistatus.svg
+    :alt: GitHub
+    :target: https://github.com/dputhier/pygtftk
+
+
+.. image:: https://badge.fury.io/py/pygtftk.svg
+    :target: https://badge.fury.io/py/pygtftk
+
+.. image::  https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
+    :alt: GitHub
+    :target: https://github.com/dputhier/pygtftk
+
+.. highlight-language: shell
+
 Python GTF toolkit (pygtftk)
 =============================
 
@@ -22,7 +36,7 @@ At the moment, the gtftk program has been tested on:
 Installation through conda package building
 --------------------------------------------
 
-Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains (e.g. bedtools that, we observed, displays some back compatibility issues).
+Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
 
 A conda package will be available in the near future. In the meantime, you can however create an environment with all prerequisites using the commands below.
 If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_.
@@ -49,7 +63,7 @@ If conda is not available on your system, first install miniconda from the offic
 Installation through setup.py
 ------------------------------
 
-This is not the prefered way for installation. Choose conda whenever possible. The gtftk Unix command line program has been tested with bedtools 2.27.1 (be aware that we have encountered some back compatibility issues with bedtools).
+This is not the prefered way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
 
@@ -62,13 +76,13 @@ This is not the prefered way for installation. Choose conda whenever possible. T
     python setup.py install
 
 
-Installation through pip (not functional at the moment)
---------------------------------------------------------
+Installation through pip
+-------------------------
 
 Prerequesites
 ~~~~~~~~~~~~~~
  
-Again, this is not the prefered way for installation. Please choose conda whenever possible. The gtftk Unix command line program has been tested with bedtools 2.27.1 (be aware that we have encountered some back compatibility issues with bedtools).
+Again, this is not the prefered way for installation. Please choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.
 
 Running pip 
 ~~~~~~~~~~~~~
