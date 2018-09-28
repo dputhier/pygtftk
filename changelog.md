@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.9.7 (not yet released)
+## v0.9.7
 
 ### Bug Fixes
 
