@@ -40,40 +40,28 @@ Installation through conda package building
 Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
 
 A conda package will be available in the near future. In the meantime, you can however create an environment with all prerequisites using the commands below.
-If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_.
+If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_.::
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
-
     cd pygtftk
-
     conda env create -n pygtftk_py3k -f conda/env.yaml python=3.6
-
     source activate pygtftk_py3k
-
     make install
-
     # It is important to call gtftk -h
-
     # to find and dump plugin parsers
-
     # before going further
-
     gtftk -h 
 
 
 Installation through setup.py
 ------------------------------
 
-This is not the prefered way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.
+This is not the prefered way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.::
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
-
     cd pygtftk
-
     # Check your Python version before (2.7 or >=3.5)
-
     pip install -r requirements.txt
-
     python setup.py install
 
 
@@ -88,54 +76,42 @@ Again, this is not the prefered way for installation. Please choose conda whenev
 Running pip 
 ~~~~~~~~~~~~~
 
-Installation through pip can be done as follow.
+Installation through pip can be done as follow. ::
 
     pip install -r requirements.txt
-
     pip install pygtftk
-
     # It is important to call gtftk -h
-
     # to find and dump plugin parsers
-
     # before going further
-
     gtftk -h     
 
 
 Running functional tests
 -------------------------
 
-A lot of functional tests have been developed to ensure consistency with expected results. This does not rule out that bugs may hide throughout the code... In order to check that installation is functional you may be interested in running functional tests. The definition of all functional tests declared in  gtftk commands is accessible using the -p/--plugin-tests argument:
+A lot of functional tests have been developed to ensure consistency with expected results. This does not rule out that bugs may hide throughout the code... In order to check that installation is functional you may be interested in running functional tests. The definition of all functional tests declared in  gtftk commands is accessible using the -p/--plugin-tests argument: ::
 
     gtftk -p
 
 
-To run the tests, you will need to install `bats (Bash Automated Testing System) <https://github.com/sstephenson/bats>`_. Once bats is installed run the following commands:
+To run the tests, you will need to install `bats (Bash Automated Testing System) <https://github.com/sstephenson/bats>`_. Once bats is installed run the following commands: ::
 
     # The tests should be run in the pygtftk git
-
     # directory because several tests contains references (relative path)
-
     # to file enclosed in pygtftk/data directory.
-
     gtftk -p > gtftk_test.bats
-
     bats gtftk_test.bats
 
 
-Note, alternatively you may directly call the tests using the Makefile
-    
+Note, alternatively you may directly call the tests using the Makefile. ::
 
     make clean
-
     make test
 
 
-Or run tests in parallel using:
+Or run tests in parallel using: ::
 
     make clean
-
     make test_para -j 10 # Using 10 cores
 
         
@@ -143,6 +119,6 @@ Or run tests in parallel using:
 Running unitary tests
 ----------------------
 
-Several unitary tests have been implemented using doctests. You can run them using nose through the following command line:
+Several unitary tests have been implemented using doctests. You can run them using nose through the following command line: ::
 
     make nose
