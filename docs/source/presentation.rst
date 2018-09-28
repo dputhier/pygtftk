@@ -1,7 +1,7 @@
 Help on gtftk Unix commands
 ============================
 
-    
+
 Main parser arguments of gtftk
 -------------------------------
 
@@ -128,7 +128,7 @@ get_example
 We can see from the example below that this gtf file **follows the ensembl format** and contains the **transcript and gene features** (column 3).
 
 
-**Example:** The very basic (and artificial example).
+**Example:** The very basic (and artificial) example.
 
 .. command-output:: gtftk get_example| head -2
 	:shell:
@@ -314,9 +314,9 @@ seqid_list
 tss_dist
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Computes the distance between TSSs of pairs of gene transcripts. The tss_num_1/tss_num_1 columns contains the numbering of TSSs (transcript_id_1 and transcript_id_2 respectively) for each gene. Numering starts from 1 (most 5' TSS) to the number of different TSS coordinates. Two or more transcripts will have the same tss_num if they share a TSS.
+**Description:** Computes the distance between TSSs of pairs of gene transcripts. The tss_num_1 and tss_num_2 columns contains the TSSs number (for transcript_id_1 and transcript_id_2 respectively). Numering starts from 1 (most 5' TSS  for a gene) to the number of different TSS coordinates. Two or more transcripts will have the same tss_num if they share a TSS.
 
-**Example:** Returns the chromosome list.
+**Example:** An example on the mini_real dataset.
 
 .. command-output:: gtftk get_example -d mini_real |  gtftk tss_dist | head -n 10
 	:shell:
@@ -391,11 +391,11 @@ del_attr
 join_attr
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Add attributes from a file. This command can be used to import additional key/values into the gtf (e.g CPAT for coding potential, DESeq for differential analysis,...). The imported file can be in 2 formats (2 columns or matrix):
+**Description:** Add attributes from a file. This command can be used to import additional key/values into the gtf (e.g CPAT for coding potential, DESeq for differential analysis...). The imported file can be in 2 formats (2 columns or matrix):
 
 - With a 2-columns file:
 
-  - value for joining (transcript_id or gene_id or ...).
+  - value for joining (transcript_id or gene_id...).
   - corresponding value.
 
 - With a matrix (see -m):
@@ -416,7 +416,7 @@ join_attr
 .. command-output::  gtftk get_example -f gtf | gtftk join_attr -k gene_id -j simple_join.txt -n a_score -t gene| gtftk select_by_key -k feature -v gene
 	:shell:
 
-**Example:** With a matrix
+**Example:** With a matrix-like file.
 
 .. command-output:: gtftk get_example -f join_mat  >  simple_join_mat.txt
 	:shell:
@@ -442,7 +442,7 @@ join_multi_file
 **Description:** Join attributes from mutiple files.
 
 
-**Example:** Add key/value to gene feature.
+**Example:** Add key/value to gene features.
 
 .. command-output:: gtftk get_example |  gtftk join_multi_file -k gene_id -t gene simple.join_mat_2 simple.join_mat_3| gtftk select_by_key -g
 	:shell:
@@ -480,14 +480,25 @@ merge_attr
 discretize_key
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Create a new key by discretizing a numeric key. This can be helpful to create new classes on the fly that can be used subsequently.
-The default is to create equally spaced interval. The intervals can also be created by computing the percentiles (-p).
+**Description:** Create a new key by discretizing a numeric key. This can be helpful to create new classes of features on the fly.
+The default is to create equally spaced interval. The intervals can also be created by computing the percentiles (-p) which will provide balanced classes.
 
 
 **Example:** Let say we have the following matrix giving expression level of genes (rows) in samples (columns). We could join this information to the GTF and later choose to transform key *S1* into a new discretized key *S1_d*. We may apply particular labels to this factor using *-l*.
 
 
 .. command-output:: gtftk get_example |  gtftk join_attr -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
+	:shell:
+
+**Example:** We want to load RNA-seq data in the GTF (obtained through the get_example command) and discretize the expression values according to deciles (-p and -n set to 10). Classes will be labeled from A to J. The example below shows how balanced these classes will be.
+
+.. seealso:: The *profile* command that could be used to asses the associated epigenetic marks of these 10 gene classes.
+
+
+.. command-output:: gtftk get_example -d mini_real -f "*"
+	:shell:
+
+.. command-output:: gtftk get_example -d mini_real |  gtftk join_attr -H -j mini_real_counts_ENCFF630HEX.txt -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
 	:shell:
 
 **Arguments:**
@@ -525,9 +536,9 @@ select_by_regexp
 
 **Description:** Select lines by testing values of a particular key with a regular expression
 
-**Example:** Select lines corresponding to gene_names matching the regular expression 'BCL.*'.
+**Example:** Select lines corresponding to gene_names matching the regular expression 'G.*9$'.
 
-.. command-output:: gtftk get_example -d mini_real |  gtftk select_by_regexp -k gene_name -r "BCL.*" | gtftk tabulate -Hun -k gene_name
+.. command-output:: gtftk get_example |  gtftk select_by_regexp -k gene_id -r 'G.*9$'
 	:shell:
 
 **Arguments:**
@@ -542,9 +553,9 @@ select_by_intron_size
 
 **Description:** Delete genes containing an intron whose size is below s. If -m is selected, any gene whose sum of intronic region length is above s is deleted. Monoexonic genes are kept.
 
-**Example:** Select lines corresponding to gene_names matching the regular expression 'BCL.*'.
+**Example:** Some genes having transcripts containing an intron whose size is below 80 nucleotides
 
-.. command-output:: gtftk get_example -d mini_real |  gtftk select_by_regexp -k gene_name -r "BCL.*"  | gtftk tabulate -Hun -k gene_name
+.. command-output:: gtftk get_example -d mini_real |  gtftk select_by_intron_size -s 80 -vd | gtftk intron_sizes | gtftk tabulate -k gene_name,transcript_id,intron_sizes -Hun
 	:shell:
 
 **Arguments:**
@@ -789,6 +800,8 @@ tabulate
 
 .. command-output:: gtftk get_example -f gtf | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id -s "|"
 	:shell:
+
+.. warning:: By default tabulate will discard any line for which one of the selected key is not defined. Use -x (--accept-undef) to print them.
 
 
 **Arguments:**
@@ -1243,37 +1256,36 @@ this command are *---group-by*, that defines the variable controling the set of 
 A simple overlayed profile of all epigenetic marks around promoter. Here *---group-by* is, by default set to *bwig* and *---facet-var* is set to None. Thus a single plot with several lines corresponding to bwig coverage is obtained.
 
 
-
 .. command-output:: mkdir -p img
 	:shell:
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if img/example_01.png
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if  example_01.png
 	:shell:
 
-.. image:: ./img/example_01.png
-    :target: ./img/example_01.png
+.. image:: example_01.png
+    :target: example_01.png
     :width: 75%
 
 Changing colors and applying color order can be done using the following syntax:
 
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -c 'red,blue,violet' -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if img/example_01b.png
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -c 'red,blue,violet' -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if  example_01b.png
 	:shell:
 
 
-.. image:: ./img/example_01b.png
-    :target: ./img/example_01b.png
+.. image:: example_01b.png
+    :target: example_01b.png
     :width: 75%
 
 
 Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5' and 3' regions:
 
-.. command-output:: gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if img/example_02.png
+.. command-output:: gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if  example_02.png
 	:shell:
 
 
-.. image:: ./img/example_02.png
-    :target: ./img/example_02.png
+.. image:: example_02.png
+    :target: example_02.png
 	:width: 75%
 
 **Faceted profiles**
@@ -1284,53 +1296,53 @@ Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to
 **Example:**
 
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if img/example_05.png -e -V 2 -fc 2
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if  example_05.png -e -V 2 -fc 2
 	:shell:
 
 
-.. image:: ./img/example_05.png
-    :target: ./img/example_05.png
+.. image:: example_05.png
+    :target: example_05.png
 	:width: 100%
 
 
 Alternatively, the groups can be set to chromosomes or transcript classes:
 
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if img/example_06.png -V 2 -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if  example_06.png -V 2 -nm ranging
 	:shell:
 
 
-.. image:: ./img/example_06.png
-    :target: ./img/example_06.png
+.. image:: example_06.png
+    :target: example_06.png
 	:width: 100%
 
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if img/example_06b.png -V 2 -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if  example_06b.png -V 2 -nm ranging
 	:shell:
 
 
-.. image:: ./img/example_06b.png
-    :target: ./img/example_06b.png
+.. image:: example_06b.png
+    :target: example_06b.png
 	:width: 100%
 
 Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
 
 
-.. command-output:: gtftk profile -D -i mini_real_tx.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if img/example_07.png  -fo -w -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_tx.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if  example_07.png  -fo -w -nm ranging
 	:shell:
 
 
-.. image:: ./img/example_07.png
-    :target: ./img/example_07.png
+.. image:: example_07.png
+    :target: example_07.png
 	:width: 100%
 
 
-.. command-output:: gtftk profile -D -i mini_real_tx.zip -g chrom -f bwig  -o profile_tx -pf png -if img/example_08.png  -fo -w -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_tx.zip -g chrom -f bwig  -o profile_tx -pf png -if  example_08.png  -fo -w -nm ranging
 	:shell:
 
 
-.. image:: ./img/example_08.png
-    :target: ./img/example_08.png
+.. image:: example_08.png
+    :target: example_08.png
 	:width: 100%
 
 .. command-output:: gtftk profile -h
@@ -1352,8 +1364,8 @@ control_list
 	:shell:
 
 
-.. image:: ./img/example_13.png
-    :target: ./img/example_13.png
+.. image:: example_13.png
+    :target: example_13.png
 	:width: 100%
 
 
