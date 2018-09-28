@@ -278,5 +278,9 @@ except OSError as e:
 
 
 sys.stderr.write("Installation complete.\n")
-result = subprocess.Popen(['gtftk', '-h'], stdout=subprocess.PIPE)
-sys.stderr.write(result.stdout.read().decode() + "\n")
+
+try:
+    result = subprocess.Popen(['gtftk', '-h'], stdout=subprocess.PIPE)
+    sys.stderr.write(result.stdout.read().decode() + "\n")
+except :
+    sys.stderr.write("\nWARNING: Unable to run gtftk -h. Is the program available in the PATH ?\n")
