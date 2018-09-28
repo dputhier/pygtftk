@@ -47,9 +47,6 @@ If conda is not available on your system, first install miniconda from the offic
     conda env create -n pygtftk_py3k -f conda/env.yaml python=3.6
     source activate pygtftk_py3k
     make install
-    # It is important to call gtftk -h
-    # to find and dump plugin parsers
-    # before going further
     gtftk -h 
 
 
