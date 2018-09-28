@@ -282,6 +282,5 @@ sys.stderr.write("Installation complete.\n")
 try:
     result = subprocess.Popen(['gtftk', '-h'], stdout=subprocess.PIPE)
     sys.stderr.write(result.stdout.read().decode() + "\n")
-except child_exception_type as e:
-    sys.stderr.write("Unable to run gtftk -h\n")
-    sys.stderr.write(e)
+except :
+    sys.stderr.write("\nWARNING: Unable to run gtftk -h. Is the program available in the PATH ?\n")
