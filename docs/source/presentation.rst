@@ -1256,8 +1256,6 @@ this command are *---group-by*, that defines the variable controling the set of 
 A simple overlayed profile of all epigenetic marks around promoter. Here *---group-by* is, by default set to *bwig* and *---facet-var* is set to None. Thus a single plot with several lines corresponding to bwig coverage is obtained.
 
 
-.. command-output:: mkdir -p img
-	:shell:
 
 .. command-output:: gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if  example_01.png
 	:shell:
