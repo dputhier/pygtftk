@@ -1,6 +1,22 @@
 # Changelog
 
-## v0.9.6 (not yet released)
+## v0.9.7 (not yet released)
+
+### Bug Fixes
+
+- Fixed a bug in add_attr_from_file. The arg has_header led to empty result.
+- Fixed a bug in select_by_reg_exp. The match method was used instead of search method...   	
+	
+### API Changes
+
+### New Features
+
+- Several changes in doc to make it compliant with readthedoc.
+
+
+# Changelog
+
+## v0.9.6
 
 ### Bug Fixes
 
@@ -11,7 +27,6 @@
 - Several changes in setup.py and requirements_develops.txt to makes it compliant with Pypi and buildable with manylinux.
 
 
-	
 ## v0.9.5
 
 ### Bug Fixes
