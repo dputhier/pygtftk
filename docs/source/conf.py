@@ -130,7 +130,7 @@ html_theme = u'nature'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 #html_static_path = [u'_static']
-html_static_path = [u'_static', 'img']
+html_static_path = [u'_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -300,4 +300,4 @@ html_theme_options = {
 
 # html_sidebars = {'**': ['localtoc.html', 'sourcelink.html', 'searchbox.html']}
 
-html_extra_path = ['img']
+html_extra_path = ['_static']
