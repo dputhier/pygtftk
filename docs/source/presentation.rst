@@ -1260,9 +1260,9 @@ A simple overlayed profile of all epigenetic marks around promoter. Here *---gro
 .. command-output:: gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if  example_01.png
 	:shell:
 
-.. image:: example_01.png
-    :target: example_01.png
+.. image:: _static/example_01.png
     :width: 75%
+    :target: _static/example_01.png
 
 Changing colors and applying color order can be done using the following syntax:
 
@@ -1271,9 +1271,9 @@ Changing colors and applying color order can be done using the following syntax:
 	:shell:
 
 
-.. image:: example_01b.png
-    :target: example_01b.png
+.. image:: _static/example_01b.png
     :width: 75%
+    :target: _static/example_01b.png
 
 
 Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5' and 3' regions:
@@ -1282,9 +1282,9 @@ Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provid
 	:shell:
 
 
-.. image:: example_02.png
-    :target: example_02.png
-	:width: 75%
+.. image:: _static/example_02.png
+    :width: 75%
+    :target: _static/example_02.png
 
 **Faceted profiles**
 
@@ -1298,9 +1298,9 @@ Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to
 	:shell:
 
 
-.. image:: example_05.png
-    :target: example_05.png
-	:width: 100%
+.. image:: _static/example_05.png
+    :width: 75%
+    :target: _static/example_05.png
 
 
 Alternatively, the groups can be set to chromosomes or transcript classes:
@@ -1310,18 +1310,18 @@ Alternatively, the groups can be set to chromosomes or transcript classes:
 	:shell:
 
 
-.. image:: example_06.png
-    :target: example_06.png
-	:width: 100%
+.. image:: _static/example_06.png
+    :width: 75%
+    :target: _static/example_06.png
 
 
 .. command-output:: gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if  example_06b.png -V 2 -nm ranging
 	:shell:
 
 
-.. image:: example_06b.png
-    :target: example_06b.png
-	:width: 100%
+.. image:: _static/example_06b.png
+    :width: 75%
+    :target: _static/example_06b.png
 
 Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
 
@@ -1330,18 +1330,18 @@ Note that facets may also be associated to epigenetic marks. In this case each t
 	:shell:
 
 
-.. image:: example_07.png
-    :target: example_07.png
-	:width: 100%
+.. image:: _static/example_07.png
+    :width: 75%
+    :target: _static/example_07.png
 
 
 .. command-output:: gtftk profile -D -i mini_real_tx.zip -g chrom -f bwig  -o profile_tx -pf png -if  example_08.png  -fo -w -nm ranging
 	:shell:
 
 
-.. image:: example_08.png
-    :target: example_08.png
-	:width: 100%
+.. image:: _static/example_08.png
+    :width: 75%
+    :target: _static/example_08.png
 
 .. command-output:: gtftk profile -h
 	:shell:
@@ -1362,9 +1362,8 @@ control_list
 	:shell:
 
 
-.. image:: example_13.png
-    :target: example_13.png
-	:width: 100%
+.. image:: _static/example_13.png
+    :target: _static/example_13.png
 
 
 **Arguments:**
