@@ -2019,15 +2019,15 @@ class GTF(object):
 
             if line_nb == 0:
                 if has_header:
-                    pass
-            else:
-                line = chomp(line)
-                fields = line.split("\t")
+                    continue
 
-                try:
-                    key_to_value[fields[0]] += [fields[1]]
-                except:
-                    GTFtkError("Does the file to join contains 2 fields ?")
+            line = chomp(line)
+            fields = line.split("\t")
+
+            try:
+                key_to_value[fields[0]] += [fields[1]]
+            except:
+                GTFtkError("Does the file to join contains 2 fields ?")
 
         message("Found " + str(line_nb) + " lines.")
         message("Found " + str(len(key_to_value)) + " different entries.")
