@@ -278,5 +278,10 @@ except OSError as e:
 
 
 sys.stderr.write("Installation complete.\n")
-result = subprocess.Popen(['gtftk', '-h'], stdout=subprocess.PIPE)
-sys.stderr.write(result.stdout.read().decode() + "\n")
+
+try:
+    result = subprocess.Popen(['gtftk', '-h'], stdout=subprocess.PIPE)
+    sys.stderr.write(result.stdout.read().decode() + "\n")
+except child_exception_type as e:
+    sys.stderr.write("Unable to run gtftk -h\n")
+    sys.stderr.write(e)
