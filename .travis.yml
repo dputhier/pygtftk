@@ -14,8 +14,8 @@ install:
  - conda config --set always_yes yes --set changeps1 no
  - conda update -q conda
  - conda info -a
- - cd pygtftk
- - ls
+ - git clone git@github.com:dputhier/pygtftk.git pygtftk_git
+ - cd pygtftk_git
  - conda env create -n pygtftk_py3k -f conda/env.yaml python=$TRAVIS_PYTHON_VERSION
  - source activate pygtftk_py3k
  - make install
