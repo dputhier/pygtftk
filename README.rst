@@ -1,16 +1,23 @@
 .. image:: https://img.shields.io/github/license/mashape/apistatus.svg
-    :alt: GitHub
+    :alt: Licence
     :target: https://github.com/dputhier/pygtftk
 
 
 .. image:: https://badge.fury.io/py/pygtftk.svg
+    :alt: PyPI
     :target: https://badge.fury.io/py/pygtftk
 
-.. image::  https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
+.. image::  https://img.shields.io/badge/contributions-welcome-brightgreen.svg
     :alt: GitHub
     :target: https://github.com/dputhier/pygtftk
 
+.. image:: https://readthedocs.org/projects/pygtftk/badge/?version=master
+    :alt: Documentation Status
+    :target: https://pygtftk.readthedocs.io/en/master/
+
+
 .. highlight-language: shell
+
 
 
 Python GTF toolkit (pygtftk)
@@ -40,7 +47,7 @@ Installation through conda package building
 Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
 
 A conda package will be available in the near future. In the meantime, you can however create an environment with all prerequisites using the commands below.
-If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_.::
+If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_. ::
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
     cd pygtftk
@@ -53,7 +60,7 @@ If conda is not available on your system, first install miniconda from the offic
 Installation through setup.py
 ------------------------------
 
-This is not the prefered way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.::
+This is not the prefered way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed. ::
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
     cd pygtftk
