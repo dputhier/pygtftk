@@ -1,5 +1,5 @@
 
-The gtftk.bam.bam_coverage_matrix module
+The pygtftk.bwig.bw_coverage module
 ========================================
  
 .. automodule:: pygtftk.bwig.bw_coverage
