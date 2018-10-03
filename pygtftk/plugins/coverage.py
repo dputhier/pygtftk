@@ -382,7 +382,7 @@ def coverage(
             # create a sub data frame containing the coverage values of the
             # current bwig
             str_to_find = r"^" + labels[i] + r"\|"
-            tmp_df = df_first[df_first[3].str.match(str_to_find)].copy()
+            tmp_df = df_first[df_first[3].str.search(str_to_find)].copy()
             to_replace = r"^" + labels[i] + r"\|"
             tmp_df.iloc[:, 3] = tmp_df.iloc[:, 3].replace(to_replace,
                                                           r"", regex=True)

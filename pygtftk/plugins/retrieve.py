@@ -173,7 +173,7 @@ def retrieve(species_name=None,
 
         for ver in all_releases:
             regexp = re.compile("release-(\d+)")
-            hit = regexp.match(ver)
+            hit = regexp.search(ver)
             if hit:
                 version_list += [int(hit.group(1))]
         release = max(version_list)
