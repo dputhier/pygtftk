@@ -17,6 +17,7 @@ install:
  - conda update -q conda
  - conda info -a
  - cd pygtftk
+ - ls
  - conda env create -n pygtftk_py3k -f conda/env.yaml python=$TRAVIS_PYTHON_VERSION
  - source activate pygtftk_py3k
  - make install
