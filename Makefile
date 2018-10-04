@@ -2,7 +2,7 @@ MAKEFILE=Makefile
 
 .PHONY: help doc pylint pylintshort \
 nose unittest install install_user test bats bats_cmd \
-test_cmd clean_install prepare_pip
+test_cmd clean_install prepare_pip nose_travis
 
 
 #------------------------------------------------------------------
@@ -60,6 +60,10 @@ pylintshort:
 
 nose:
 	@cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
+
+nose_travis:
+	@source activate pygtftk_py3k; cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
+
 
 install:
 	@rm -Rf build  dist pygtftk.egg-info ~/.gtftk; \

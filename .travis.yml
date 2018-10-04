@@ -20,4 +20,4 @@ install:
  - gtftk -h
 script:
  - make test
- - make nose
+ - make nose_travis
