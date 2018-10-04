@@ -85,6 +85,14 @@ bats:
 	@rm -f gtftk_test.bats
 
 
+test_travis:
+	@make bats
+
+bats_travis:
+	@gtftk -u > gtftk_test.bats
+	@bats -t gtftk_test.bats
+	@rm -f gtftk_test.bats
+
 bats_cmd:
 	@gtftk -p|perl -npe 's/^ +//;' |perl -ne 'BEGIN{$$/="\n}"}{print $$_ if (/\@test +"$(CMD)/)}'  > gtftk_test.bats.sub
 	@bats -t gtftk_test.bats.sub
