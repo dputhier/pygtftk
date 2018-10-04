@@ -95,7 +95,7 @@ class Biomart(object):
         if self.response.status_code != requests.codes.ok:
             msg = "HTTP response status code: {c}. {m}"
             msg = msg.format(c=str(self.response.status_code),
-                             m=response.reason)
+                             m=self.response.reason)
             message(msg, type="ERROR")
 
         msg = "([ \.\w]+ service you requested is currently unavailable[ \.\w]+)"
