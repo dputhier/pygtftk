@@ -86,7 +86,7 @@ bats:
 
 
 test_travis:
-	@make bats
+	@make bats_travis
 
 bats_travis:
 	@gtftk -u > gtftk_test.bats
