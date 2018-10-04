@@ -300,31 +300,31 @@ else:
     test = """
     #retrieve
     @test "retrieve_1" {
-     result=`gtftk retrieve -s trypanosoma_brucei -e protists -r 34 -cd  | wc -l`
+     result=`gtftk retrieve -V 3 -s trypanosoma_brucei -e protists -r 34 -cd  | wc -l`
       [ "$result" -eq 54607 ]
     }
 
     #retrieve
     @test "retrieve_2" {
-     result=`gtftk retrieve -l -r 87 | wc -l`
+     result=`gtftk retrieve -V 3  -l -r 87 | wc -l`
       [ "$result" -eq 218 ]
     }
 
     #retrieve
     @test "retrieve_3" {
-     result=`gtftk retrieve -l -r 33 -e protists | wc -l`
+     result=`gtftk retrieve -V 3  -l -r 33 -e protists | wc -l`
       [ "$result" -eq 74 ]
     }
 
     #retrieve
     @test "retrieve_4" {
-     result=`gtftk retrieve -e fungi -s trichoderma_reesei -r 34 -cd | wc -l`
+     result=`gtftk retrieve -V 3  -e fungi -s trichoderma_reesei -r 34 -cd | wc -l`
       [ "$result" -eq 93776 ]
     }
 
     #retrieve
     @test "retrieve_5" {
-     result=`gtftk retrieve -s sorex_araneus -r 87 -cd| wc -l`
+     result=`gtftk retrieve -V 3  -s sorex_araneus -r 87 -cd| wc -l`
       [ "$result" -eq 401171 ]
     }
 
