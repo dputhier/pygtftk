@@ -206,6 +206,49 @@ class GetTests(argparse._StoreTrueAction):
 
         sys.exit()
 
+class GetTestsNoCon(argparse._StoreTrueAction):
+    """A class to be used by argparser to get all plugin tests (that do not require internet conn)
+    and write them to a file."""
+
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super(GetTestsNoCon, self).__init__(
+            option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+
+        cmd_with_no_test = list()
+
+        for cmd in CmdManager.cmd_obj_list:
+
+            test = CmdManager.cmd_obj_list[cmd].test
+
+            if cmd not in ['retrieve', 'select_by_go']:
+                if test is not None and re.search("@test", test):
+                    if platform == "darwin":
+                        print(test)
+                    else:
+                        test = test.replace("md5sum-lite", "md5sum")
+                        print(test)
+                else:
+                    cmd_with_no_test += [cmd]
+
+        clean = '''
+
+        #clean all
+        @test "clean" {
+         result=`rm -Rf H3K4me3_cond_* control_list \#H3K4me3_cond_1.bed# *.bw *.bed *.pdf *.png *.genome* *gtf.gz *bed.gz *gtf  *.toto* simpl_* simple_join.txt simple_mat.zip simple_mat simple.2.bw simple.3.bw  peak_annotation *_test.bats *simple_mat* simple*.bw`
+          [ "$result" = "" ]
+        }
+
+        '''
+
+        print(clean)
+
+        for cmd in cmd_with_no_test:
+            print("# WARNING: No test found for plugin " + cmd + ".")
+
+        sys.exit()
+
 
 # ---------------------------------------------------------------
 # An additional action to add plugins
@@ -402,6 +445,11 @@ class CmdManager(object):
                         nargs=0,
                         help="Display bats tests for all plugin.",
                         action=GetTests)
+
+    parser.add_argument('-u', '--plugin-tests-no-conn',
+                        nargs=0,
+                        help="Display bats tests for plugins not relying on server conn.",
+                        action=GetTestsNoCon)
 
     parser.add_argument('-s', '--system-info',
                         nargs=0,
@@ -958,7 +1006,7 @@ class CmdManager(object):
 
         # Delete arg that won't be used by supparsers
         for key_arg in ['bash_comp', 'add_chr', 'version', 'help',
-                        'plugin_tests', 'list_plugins',
+                        'plugin_tests', 'list_plugins', 'plugin_tests_no_conn',
                         'r_libs', 'add_plugin', 'update_plugins', 'system_info']:
             try:
                 del args[key_arg]
