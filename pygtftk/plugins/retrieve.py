@@ -136,15 +136,17 @@ def retrieve(species_name=None,
 
     try:
         ftp = ftputil.FTPHost(host, user, password)
+        if verbosity:
+            message("Connected to ensembl FTP website.")
     except FTPOSError as err:
         message(str(err))
         message("Unable to connect (FTPOSError).", type="ERROR")
 
     try:
         ftp.chdir('/pub')
-        message("Successfully change directory to /pub")
+        message("Successfully change directory to pub")
     except:
-        message("Unable to change directory to '/pub'.",
+        message("Unable to change directory to 'pub'.",
                 type="ERROR")
 
     if ensembl_collection in ['protists', 'fungi', 'plants', 'metazoa']:
@@ -155,8 +157,7 @@ def retrieve(species_name=None,
             message("Unable to change directory to '%s'." % ensembl_collection,
                     type="ERROR")
 
-    if verbosity:
-        message("Connecting to ensembl FTP website.")
+
 
     try:
         all_releases = ftp.listdir(ftp.curdir)
@@ -183,14 +184,15 @@ def retrieve(species_name=None,
         release_dir = "release-" + str(release)
         message("Latest version is %d." % release)
 
-    message("Changing dir: %s" % release_dir,
-            type="DEBUG")
 
     try:
         ftp.chdir(release_dir)
+        message("Changed release directory: %s" % release_dir,
+                type="DEBUG")
     except:
         message("Unable to change directory to '%s'." % release_dir,
                 type="ERROR")
+
     ftp.chdir('gtf')
 
     try:
