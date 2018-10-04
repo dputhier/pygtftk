@@ -142,6 +142,7 @@ def retrieve(species_name=None,
 
     try:
         ftp.chdir('/pub')
+        message("Successfully change directory to /pub")
     except:
         message("Unable to change directory to '/pub'.",
                 type="ERROR")
@@ -149,6 +150,7 @@ def retrieve(species_name=None,
     if ensembl_collection in ['protists', 'fungi', 'plants', 'metazoa']:
         try:
             ftp.chdir(ensembl_collection)
+            message("Successfully change directory to " + ensembl_collection)
         except:
             message("Unable to change directory to '%s'." % ensembl_collection,
                     type="ERROR")
@@ -158,7 +160,8 @@ def retrieve(species_name=None,
 
     try:
         all_releases = ftp.listdir(ftp.curdir)
-    except:
+    except Exception as e:
+        print(str(e))
         message("Unable to list directory.",
                 type="ERROR")
 
