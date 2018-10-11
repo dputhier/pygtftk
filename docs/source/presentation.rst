@@ -1007,7 +1007,7 @@ midpoints
 
 ------------------------------------------------------------------------------------------------------------------
 
-5p_3p_coords
+get_5p_3p_coords
 ~~~~~~~~~~~~~~~~~~~~~~
 
 **Description:** Get the 5p or 3p coordinates for each feature (e.g TSS or TTS for a transcript).
@@ -1350,6 +1350,9 @@ Note that facets may also be associated to epigenetic marks. In this case each t
 ------------------------------------------------------------------------------------------------------------------
 
 
+Commands from section 'miscellaneous'
+------------------------------------
+
 control_list
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1372,3 +1375,19 @@ control_list
 	:shell:
 
 
+col_from_tab
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+**Description:** Select columns from a tabulated file based on their names.
+
+**Example:**
+
+.. command-output:: gtftk get_example | gtftk select_by_key -t | gtftk tabulate -k '*' -x | gtftk col_from_tab -c transcript_id,gene_id
+	:shell:
+
+
+**Arguments:**
+
+.. command-output:: gtftk col_from_tab -h
+	:shell:
