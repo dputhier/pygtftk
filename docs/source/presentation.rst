@@ -1351,17 +1351,17 @@ Note that facets may also be associated to epigenetic marks. In this case each t
 
 
 Commands from section 'miscellaneous'
-------------------------------------
+-------------------------------------
 
 control_list
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 
 **Description:** Returns a list of gene matched for expression based on reference values. Based on a reference gene list (or more generally IDs) this command tries to extract a set of other genes/IDs matched for signal/expression. The --reference-gene-file contains the list of reference IDs while the --inputfile contains a tuple gene/signal for all genes.
 
 **Example:**
 
-.. command-output:: gtftk control_list -i mini_real_counts_ENCFF630HEX.txt -r mini_real_control_1.txt -D -V 2 -s -l -p 1 -ju -if example_13.png -pf png
+.. command-output:: gtftk control_list -i mini_real_counts_ENCFF630HEX.tsv -r mini_real_control_1.txt -D -V 2 -s -l -p 1 -ju -if example_13.png -pf png
 	:shell:
 
 
