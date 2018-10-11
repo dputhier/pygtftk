@@ -62,14 +62,14 @@ Command-wide arguments
 
 **Description:** The following arguments are available in almost all gtftk commands :
 
-- -h, --help : Refers to argument list and details.
-- -i, --inputfile: Refers to the input file (may be <stdin>).
-- -o, --outputfile: Refers to the output file (may be <stdout>).
+- -h, --help : Argument list and details.
+- -i, --inputfile: The input file (may be <stdin>).
+- -o, --outputfile: The output file (may be <stdout>).
 - -D, --no-date: Do not add date to output file names.
 - -C, --add-chr: Add 'chr' to chromosome names before printing output.
-- -V, --verbosity: Increase output verbosity (can take value from 0 to 4).
+- -V, --verbosity: Increases output verbosity (can take value from 0 to 4).
 - -K --tmp-dir: Keep all temporary files into this folder.
-- -L, --logger-file: Store the values of all command line arguments into a file.
+- -L, --logger-file: Stores the values of all command line arguments into a file.
 
 
 ------------------------------------------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ apropos
 retrieve
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Retrieve a GTF file from ensembl.
+**Description:** Retrieves a GTF file from ensembl.
 
 **Example:** List the available GTF files in ensembl FTP. Bacteria are not listed at the moment.
 
@@ -187,7 +187,7 @@ count
 count_key_values
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Count the number values for a set of keys.
+**Description:** Count the number of values for a set of keys.
 
 
 **Example:** Count the number of non-redondant entries for chromosomes and transcript_id.
@@ -296,9 +296,9 @@ nb_transcripts
 seqid_list
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Returns the chromosome list.
+**Description:** Return the chromosome list.
 
-**Example:** Returns the chromosome list.
+**Example:** Return the chromosome list.
 
 .. command-output:: gtftk get_example |  gtftk seqid_list
 	:shell:
@@ -314,7 +314,7 @@ seqid_list
 tss_dist
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Computes the distance between TSSs of pairs of gene transcripts. The tss_num_1 and tss_num_2 columns contains the TSSs number (for transcript_id_1 and transcript_id_2 respectively). Numering starts from 1 (most 5' TSS  for a gene) to the number of different TSS coordinates. Two or more transcripts will have the same tss_num if they share a TSS.
+**Description:** Compute the distance between TSSs of pairs of gene transcripts. The tss_num_1 and tss_num_2 columns contains the TSSs number (for transcript_id_1 and transcript_id_2 respectively). Numering starts from 1 (most 5' TSS  for a gene) to the number of different TSS coordinates. Two or more transcripts will have the same tss_num if they share a TSS.
 
 **Example:** An example on the mini_real dataset.
 
@@ -481,7 +481,7 @@ discretize_key
 ~~~~~~~~~~~~~~~~~~~~~~
 
 **Description:** Create a new key by discretizing a numeric key. This can be helpful to create new classes of features on the fly.
-The default is to create equally spaced interval. The intervals can also be created by computing the percentiles (-p) which will provide balanced classes.
+The default is to create equally spaced interval. The intervals can also be created by computing the percentiles (-p) which will provide balanced classes most suitable generally.
 
 
 **Example:** Let say we have the following matrix giving expression level of genes (rows) in samples (columns). We could join this information to the GTF and later choose to transform key *S1* into a new discretized key *S1_d*. We may apply particular labels to this factor using *-l*.
@@ -1007,7 +1007,7 @@ midpoints
 
 ------------------------------------------------------------------------------------------------------------------
 
-5p_3p_coords
+get_5p_3p_coords
 ~~~~~~~~~~~~~~~~~~~~~~
 
 **Description:** Get the 5p or 3p coordinates for each feature (e.g TSS or TTS for a transcript).
@@ -1350,6 +1350,9 @@ Note that facets may also be associated to epigenetic marks. In this case each t
 ------------------------------------------------------------------------------------------------------------------
 
 
+Commands from section 'miscellaneous'
+------------------------------------
+
 control_list
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1372,3 +1375,19 @@ control_list
 	:shell:
 
 
+col_from_tab
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+**Description:** Select columns from a tabulated file based on their names.
+
+**Example:**
+
+.. command-output:: gtftk get_example | gtftk select_by_key -t | gtftk tabulate -k '*' -x | gtftk col_from_tab -c transcript_id,gene_id
+	:shell:
+
+
+**Arguments:**
+
+.. command-output:: gtftk col_from_tab -h
+	:shell:

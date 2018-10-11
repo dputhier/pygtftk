@@ -136,29 +136,33 @@ def retrieve(species_name=None,
 
     try:
         ftp = ftputil.FTPHost(host, user, password)
+        if verbosity:
+            message("Connected to ensembl FTP website.")
     except FTPOSError as err:
         message(str(err))
         message("Unable to connect (FTPOSError).", type="ERROR")
 
     try:
         ftp.chdir('/pub')
+        message("Successfully change directory to pub")
     except:
-        message("Unable to change directory to '/pub'.",
+        message("Unable to change directory to 'pub'.",
                 type="ERROR")
 
     if ensembl_collection in ['protists', 'fungi', 'plants', 'metazoa']:
         try:
             ftp.chdir(ensembl_collection)
+            message("Successfully change directory to " + ensembl_collection)
         except:
             message("Unable to change directory to '%s'." % ensembl_collection,
                     type="ERROR")
 
-    if verbosity:
-        message("Connecting to ensembl FTP website.")
+
 
     try:
         all_releases = ftp.listdir(ftp.curdir)
-    except:
+    except Exception as e:
+        print(str(e))
         message("Unable to list directory.",
                 type="ERROR")
 
@@ -173,21 +177,22 @@ def retrieve(species_name=None,
 
         for ver in all_releases:
             regexp = re.compile("release-(\d+)")
-            hit = regexp.match(ver)
+            hit = regexp.search(ver)
             if hit:
                 version_list += [int(hit.group(1))]
         release = max(version_list)
         release_dir = "release-" + str(release)
         message("Latest version is %d." % release)
 
-    message("Changing dir: %s" % release_dir,
-            type="DEBUG")
 
     try:
         ftp.chdir(release_dir)
+        message("Changed release directory: %s" % release_dir,
+                type="DEBUG")
     except:
         message("Unable to change directory to '%s'." % release_dir,
                 type="ERROR")
+
     ftp.chdir('gtf')
 
     try:
@@ -300,31 +305,31 @@ else:
     test = """
     #retrieve
     @test "retrieve_1" {
-     result=`gtftk retrieve -s trypanosoma_brucei -e protists -r 34 -cd  | wc -l`
+     result=`gtftk retrieve -V 3 -s trypanosoma_brucei -e protists -r 34 -cd  | wc -l`
       [ "$result" -eq 54607 ]
     }
 
     #retrieve
     @test "retrieve_2" {
-     result=`gtftk retrieve -l -r 87 | wc -l`
+     result=`gtftk retrieve -V 3  -l -r 87 | wc -l`
       [ "$result" -eq 218 ]
     }
 
     #retrieve
     @test "retrieve_3" {
-     result=`gtftk retrieve -l -r 33 -e protists | wc -l`
+     result=`gtftk retrieve -V 3  -l -r 33 -e protists | wc -l`
       [ "$result" -eq 74 ]
     }
 
     #retrieve
     @test "retrieve_4" {
-     result=`gtftk retrieve -e fungi -s trichoderma_reesei -r 34 -cd | wc -l`
+     result=`gtftk retrieve -V 3  -e fungi -s trichoderma_reesei -r 34 -cd | wc -l`
       [ "$result" -eq 93776 ]
     }
 
     #retrieve
     @test "retrieve_5" {
-     result=`gtftk retrieve -s sorex_araneus -r 87 -cd| wc -l`
+     result=`gtftk retrieve -V 3  -s sorex_araneus -r 87 -cd| wc -l`
       [ "$result" -eq 401171 ]
     }
 

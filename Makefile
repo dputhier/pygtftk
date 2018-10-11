@@ -2,7 +2,7 @@ MAKEFILE=Makefile
 
 .PHONY: help doc pylint pylintshort \
 nose unittest install install_user test bats bats_cmd \
-test_cmd clean_install prepare_pip
+test_cmd clean_install prepare_pip nose_travis
 
 
 #------------------------------------------------------------------
@@ -61,6 +61,10 @@ pylintshort:
 nose:
 	@cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
 
+nose_travis:
+	@ source activate pygtftk_py3k; mkdir -p ~/tmp; cd ~/tmp ; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; echo $$a; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
+
+
 install:
 	@rm -Rf build  dist pygtftk.egg-info ~/.gtftk; \
 	python setup.py install; rm -Rf build  dist pygtftk.egg-info
@@ -81,6 +85,14 @@ bats:
 	@rm -f gtftk_test.bats
 
 
+test_travis:
+	@make bats_travis
+
+bats_travis:
+	@gtftk -u > gtftk_test.bats
+	@bats -t gtftk_test.bats
+	@rm -f gtftk_test.bats
+
 bats_cmd:
 	@gtftk -p|perl -npe 's/^ +//;' |perl -ne 'BEGIN{$$/="\n}"}{print $$_ if (/\@test +"$(CMD)/)}'  > gtftk_test.bats.sub
 	@bats -t gtftk_test.bats.sub
@@ -92,15 +104,27 @@ test_cmd:
 %.bats:
 	@gtftk -l > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
 
+%.bats_travis:
+	@gtftk -l | grep -v select_by_go | grep -v retrieve > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
+
 %.completed : %.bats
 	@bats -t $<
 	@echo "completed" > $@
 
-OUTPUT = $(eval OUTPUT := $$(shell gtftk -l 2>/dev/null))$(OUTPUT)
+%.completed_travis : %.bats_travis
+	@bats -t $<
+	@echo "completed" > $@
 
+OUTPUT = $(eval OUTPUT := $$(shell gtftk -l 2>/dev/null))$(OUTPUT)
 OUTPUT2 = $(addsuffix .completed, $(OUTPUT))
 
+
 test_para: $(OUTPUT2)
+
+OUTPUT3 = $(eval OUTPUT3 := $$(shell gtftk -l | grep -v select_by_go | grep -v retrieve 2>/dev/null))$(OUTPUT3)
+OUTPUT4 = $(addsuffix .completed, $(OUTPUT3))
+
+test_para_travis: $(OUTPUT4)
 
 
 clean:

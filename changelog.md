@@ -1,12 +1,25 @@
 # Changelog
 
+
+## v0.9.8
+
+### Bug Fixes
+
+### API Changes
+
+### New Features
+
+- Added an example for col_from_tab in presentation.rst
+- Added a dataset mini_real_coding_pot.tab.
+- Working on travis now. 
+
 ## v0.9.7
 
 ### Bug Fixes
 
 - Fixed a bug in add_attr_from_file. The arg has_header led to empty result.
-- Fixed a bug in select_by_reg_exp. The match method was used instead of search method...   	
-	
+- Fixed a bug in select_by_reg_exp. The match method was used instead of search method...
+
 ### API Changes
 
 ### New Features

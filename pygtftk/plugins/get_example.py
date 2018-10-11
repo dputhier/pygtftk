@@ -50,6 +50,7 @@ def make_parser():
                             type=str,
                             choices=["*", "gtf", "bed", "bw", "bam", "join",
                                      "join_mat", "chromInfo",
+                                     "tsv",
                                      "fa", "fa.idx", "genes", "geneList",
                                      "2.bw", "genome"],
                             default="gtf",
