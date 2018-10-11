@@ -15,6 +15,8 @@
     :alt: Documentation Status
     :target: https://pygtftk.readthedocs.io/en/master/
 
+.. image:: https://travis-ci.org/dputhier/pygtftk.svg?branch=master
+    :target: https://travis-ci.org/dputhier/pygtftk
 
 .. highlight-language: shell
 
