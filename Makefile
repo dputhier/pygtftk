@@ -104,15 +104,27 @@ test_cmd:
 %.bats:
 	@gtftk -l > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
 
+%.bats_travis:
+	@gtftk -l | grep -v select_by_go | grep -v retrieve > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
+
 %.completed : %.bats
 	@bats -t $<
 	@echo "completed" > $@
 
-OUTPUT = $(eval OUTPUT := $$(shell gtftk -l 2>/dev/null))$(OUTPUT)
+%.completed_travis : %.bats_travis
+	@bats -t $<
+	@echo "completed" > $@
 
+OUTPUT = $(eval OUTPUT := $$(shell gtftk -l 2>/dev/null))$(OUTPUT)
 OUTPUT2 = $(addsuffix .completed, $(OUTPUT))
 
+
 test_para: $(OUTPUT2)
+
+OUTPUT3 = $(eval OUTPUT3 := $$(shell gtftk -l | grep -v select_by_go | grep -v retrieve 2>/dev/null))$(OUTPUT3)
+OUTPUT4 = $(addsuffix .completed, $(OUTPUT3))
+
+test_para_travis: $(OUTPUT4)
 
 
 clean:

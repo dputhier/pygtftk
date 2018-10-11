@@ -19,5 +19,5 @@ install:
  - make install
  - gtftk -h
 script:
- - make bats_travis
+ - make test_para_travis -j 2
  - make nose_travis
