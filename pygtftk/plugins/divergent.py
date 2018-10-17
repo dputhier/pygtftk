@@ -221,34 +221,40 @@ if __name__ == '__main__':
 
 else:
     test = """
-    
+
+    #divergent: load dataset
+    @test "divergent_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+        
     #divergent: the region as 2 divergent transcripts
     @test "divergent_1" {
-     result=`gtftk divergent -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo -u 4 -d 4 | gtftk select_by_key -k feature -v transcript | grep "4\.0" | gtftk tabulate -H -k transcript_id| sort| perl -npe 's/\\n/,/'`
+     result=`gtftk divergent -i simple.gtf -c simple.chromInfo -u 4 -d 4 | gtftk select_by_key -k feature -v transcript | grep "4\.0" | gtftk tabulate -H -k transcript_id| sort| perl -npe 's/\\n/,/'`
       [ "$result" = "G0003T001,G0004T001,G0004T002," ]
     }
     
     #divergent: the region as 2 divergent transcripts
     @test "divergent_2" {
-     result=`gtftk divergent -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo -u 4 -d 4 | grep "4\.0" |gtftk select_by_key -k feature -v transcript| gtftk tabulate -H -k transcript_id| sort| perl -npe 's/\\n/,/'`
+     result=`gtftk divergent -i simple.gtf -c simple.chromInfo -u 4 -d 4 | grep "4\.0" |gtftk select_by_key -k feature -v transcript| gtftk tabulate -H -k transcript_id| sort| perl -npe 's/\\n/,/'`
       [ "$result" = "G0003T001,G0004T001,G0004T002," ]
     }
     
     #divergent: the number of features is as expected.
     @test "divergent_3" {
-     result=`gtftk divergent -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo -u 4 -d 4 | wc -l`
+     result=`gtftk divergent -i simple.gtf -c simple.chromInfo -u 4 -d 4 | wc -l`
       [ "$result" -eq 70 ]
     }
     
     #divergent: the number of exons is as expected.
     @test "divergent_4" {
-     result=`gtftk divergent -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo -u 4 -d 4 | awk '$3=="exon"'| wc -l`
+     result=`gtftk divergent -i simple.gtf -c simple.chromInfo -u 4 -d 4 | awk '$3=="exon"'| wc -l`
       [ "$result" -eq 25 ]
     }
     
     #divergent: this region contains 4 divergent tx
     @test "divergent_5" {
-     result=`gtftk divergent -u 18 -d 18 -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf |  gtftk select_by_key -k feature -v  transcript| grep "dist_to_divergent \\"[0-9]"| gtftk tabulate -H -k transcript_id,dist_to_divergent,divergent| wc -l`
+     result=`gtftk divergent -u 18 -d 18 -c simple.chromInfo -i simple.gtf |  gtftk select_by_key -k feature -v  transcript| grep "dist_to_divergent \\"[0-9]"| gtftk tabulate -H -k transcript_id,dist_to_divergent,divergent| wc -l`
       [ "$result" -eq 4 ]
     }
     

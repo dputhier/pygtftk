@@ -116,54 +116,61 @@ if __name__ == '__main__':
 else:
 
     test = """
+
+    # nb_exons: load dataset
+    @test "nb_exons_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+
         #nb_exons: G0004T001 has 3 exons
     @test "nb_exons_1" {
-     result=`cat pygtftk/data/simple/simple.gtf| gtftk nb_exons -f | grep G0004T001| cut -f2`
+     result=`cat simple.gtf| gtftk nb_exons -f | grep G0004T001| cut -f2`
       [ "$result" -eq 3 ]
     }
     
     #nb_exons: G0005T001 has 2 exons
     @test "nb_exons_2" {
-     result=`cat pygtftk/data/simple/simple.gtf| gtftk nb_exons -f | grep G0005T001| cut -f2`
+     result=`cat simple.gtf| gtftk nb_exons -f | grep G0005T001| cut -f2`
       [ "$result" -eq 2 ]
     }
     
     #nb_exons: G0001T002 has 1 exons
     @test "nb_exons_3" {
-     result=`cat pygtftk/data/simple/simple.gtf| gtftk nb_exons -f | grep G0001T002| cut -f2`
+     result=`cat simple.gtf| gtftk nb_exons -f | grep G0001T002| cut -f2`
       [ "$result" -eq 1 ]
     }
     
     #nb_exons: G0006T001 has 3 exons
     # test -g
     @test "nb_exons_4" {
-     result=`cat pygtftk/data/simple/simple.gtf| gtftk nb_exons | gtftk select_by_key -k feature -v transcript | grep G0006T001 | gtftk tabulate -H -k nb_exons`
+     result=`cat simple.gtf| gtftk nb_exons | gtftk select_by_key -k feature -v transcript | grep G0006T001 | gtftk tabulate -H -k nb_exons`
       [ "$result" -eq 3 ]
     }
     
     #nb_exons: G0005T001 has 2 exons
     # test -g
     @test "nb_exons_5" {
-     result=`cat pygtftk/data/simple/simple.gtf| gtftk nb_exons | gtftk select_by_key -k feature -v transcript | grep G0005T001| gtftk tabulate -H -k nb_exons`
+     result=`cat simple.gtf| gtftk nb_exons | gtftk select_by_key -k feature -v transcript | grep G0005T001| gtftk tabulate -H -k nb_exons`
       [ "$result" -eq 2 ]
     }
     
     #nb_exons: no line lost
     # test -g
     @test "nb_exons_6" {
-     result=`cat pygtftk/data/simple/simple.gtf| gtftk nb_exons | wc -l`
+     result=`cat simple.gtf| gtftk nb_exons | wc -l`
       [ "$result" -eq 70 ]
     }
     
     #nb_exons: G0004T001 has 3 exons
     @test "nb_exons_7" {
-     result=`cat pygtftk/data/simple/simple.gtf| gtftk nb_exons | gtftk select_by_key -k feature -v transcript | grep G0004T001| gtftk tabulate -H -k nb_exons`
+     result=`cat simple.gtf| gtftk nb_exons | gtftk select_by_key -k feature -v transcript | grep G0004T001| gtftk tabulate -H -k nb_exons`
       [ "$result" -eq 3 ]
     }
     
     #nb_exons: test stdin
     @test "nb_exons_8" {
-     result=`cat pygtftk/data/simple/simple.gtf| gtftk  nb_exons -f | wc -l`
+     result=`cat simple.gtf| gtftk  nb_exons -f | wc -l`
       [ "$result" -eq 15 ]
     }
    

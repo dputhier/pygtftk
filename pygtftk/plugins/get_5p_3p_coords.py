@@ -171,70 +171,76 @@ if __name__ == '__main__':
 else:
 
     test = """
-
+    
+    # get_5p_3p_coords: load dataset
+    @test "get_5p_3p_coords_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+    
     #get_5p_3p_coords: -v
     @test "get_5p_3p_coords_1" {
-     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf -v | cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk get_5p_3p_coords  -i simple.gtf -v | cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "115,137,185,188,2,209,21,27,32,49,75," ]
     }
     
     #get_5p_3p_coords: no arg
     @test "get_5p_3p_coords_2" {
-     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf | cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk get_5p_3p_coords  -i simple.gtf | cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "106,124,13,175,179,221,34,46,60,64," ]
     }
     
     #get_5p_3p_coords: -t gene
     @test "get_5p_3p_coords_3" {
-     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf -t gene| cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk get_5p_3p_coords  -i simple.gtf -t gene| cut -f2| sort| uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "106,124,13,175,179,221,34,46,60,64," ]
     }
     
     #get_5p_3p_coords: -t exon
     @test "get_5p_3p_coords_4" {
-     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf -t exon| wc -l`
+     result=`gtftk get_5p_3p_coords  -i simple.gtf -t exon| wc -l`
       [ "$result" -eq 25 ]
     }
     
     #get_5p_3p_coords: -t gene
     @test "get_5p_3p_coords_5" {
-     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf -t gene| wc -l`
+     result=`gtftk get_5p_3p_coords  -i simple.gtf -t gene| wc -l`
       [ "$result" -eq 10 ]
     }
     
     #get_5p_3p_coords: -t transcript
     @test "get_5p_3p_coords_6" {
-     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf -t transcript| wc -l`
+     result=`gtftk get_5p_3p_coords  -i simple.gtf -t transcript| wc -l`
       [ "$result" -eq 15 ]
     }
     
     #get_5p_3p_coords: nb column
     @test "get_5p_3p_coords_7" {
-     result=`gtftk get_5p_3p_coords  -i pygtftk/data/simple/simple.gtf | awk '{print NF}' | sort | uniq`
+     result=`gtftk get_5p_3p_coords  -i simple.gtf | awk '{print NF}' | sort | uniq`
       [ "$result" -eq 6 ]
     }
     
     #get_5p_3p_coords: test stdin
     @test "get_5p_3p_coords_8" {
-     result=`cat pygtftk/data/simple/simple.gtf| gtftk  get_5p_3p_coords | wc -l`
+     result=`cat simple.gtf| gtftk  get_5p_3p_coords | wc -l`
       [ "$result" -eq 15 ]
     }
 
     #get_5p_3p_coords: test transpose
     @test "get_5p_3p_coords_9" {
-     result=`gtftk get_example| gtftk  get_5p_3p_coords -p 10| head -1 | cut -f 2`
+     result=`gtftk  get_5p_3p_coords -i simple.gtf -p 10| head -1 | cut -f 2`
       [ "$result" -eq 134 ]
     }
 
     #get_5p_3p_coords: test transpose
     @test "get_5p_3p_coords_10" {
-     result=`gtftk get_example| gtftk  get_5p_3p_coords -p 10| head -4| tail -n 1  | cut -f 2`
+     result=`gtftk  get_5p_3p_coords -i simple.gtf -p 10| head -4| tail -n 1  | cut -f 2`
       [ "$result" -eq 50 ]
     }
 
     #get_5p_3p_coord: test transpose
     @test "get_5p_3p_coords_11" {
-     result=`gtftk get_example| gtftk  get_5p_3p_coords -p 10 -e -m bla -n transcript_id,gene_id,gene_name| head -1 | cut -f4`
+     result=`gtftk  get_5p_3p_coords -p 10 -e -m bla -i simple.gtf -n transcript_id,gene_id,gene_name| head -1 | cut -f4`
       [ "$result" = "transcript_id=G0001T002|gene_id=G0001|gene_name=.|more_name=bla" ]
     }
     

@@ -178,33 +178,40 @@ if __name__ == '__main__':
 else:
 
     test = """
+
+    #select_by_loc: copying datasets
+    @test "select_by_loc_0" {
+     result=`gtftk get_example -d simple -f "*"`
+      [ "$result" = "" ]
+    }
+    
     #select_by_loc: various coordinate tests
     @test "select_by_loc_1" {
-     result=`gtftk select_by_loc -i pygtftk/data/simple/simple.gtf -l chr1:176-186 | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk select_by_loc -i simple.gtf -l chr1:176-186 | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "G0002T001,G0010T001," ]
     }
     
     #select_by_loc: various coordinate tests
     @test "select_by_loc_2" {
-     result=`gtftk select_by_loc -i pygtftk/data/simple/simple.gtf -l chr1:176-177 | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk select_by_loc -i simple.gtf -l chr1:176-177 | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "G0010T001," ]
     }
     
     #select_by_loc: just outside G0008T001
     @test "select_by_loc_3" {
-     result=`gtftk select_by_loc -i pygtftk/data/simple/simple.gtf -l chr1:223-262 | wc -l`
+     result=`gtftk select_by_loc -i simple.gtf -l chr1:223-262 | wc -l`
       [ "$result" -eq 0 ]
     }
     
     #select_by_loc: just inside G0008T001
     @test "select_by_loc_4" {
-     result=`gtftk select_by_loc -i pygtftk/data/simple/simple.gtf -l chr1:222-261 |gtftk tabulate -FH -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk select_by_loc -i simple.gtf -l chr1:222-261 |gtftk tabulate -FH -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "" ]
     }
     
     #select_by_loc: this region contains 4 transcripts
     @test "select_by_loc_5" {
-     result=`gtftk select_by_loc -i pygtftk/data/simple/simple.gtf -l chr1:103-142 |gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk select_by_loc -i simple.gtf -l chr1:103-142 |gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "G0001T001,G0001T002,G0007T001,G0007T002," ]
     }
     
@@ -216,32 +223,32 @@ else:
     
     #select_by_loc: should support multiple regions from a file
     @test "select_by_loc_7" {
-     result=`gtftk get_example | gtftk select_by_key -k feature -v transcript | gtftk  select_by_loc -f pygtftk/data/simple/simple.loc_bed  | wc -l `
+     result=`gtftk get_example | gtftk select_by_key -k feature -v transcript | gtftk  select_by_loc -f simple.loc_bed  | wc -l `
       [ "$result" -eq 4 ]
     }
 
     #select_by_loc: should support multiple regions from a file
     @test "select_by_loc_8" {
-     result=`gtftk get_example | gtftk  select_by_loc -f pygtftk/data/simple/simple.loc_bed| wc -l`
+     result=`gtftk get_example | gtftk  select_by_loc -f simple.loc_bed| wc -l`
       [ "$result" -eq 14 ]
     }
     
     
     #select_by_loc:
     @test "select_by_loc_9" {
-     result=`gtftk select_by_loc -i pygtftk/data/simple/simple.gtf -l chr1:210-220 | wc -l`
+     result=`gtftk select_by_loc -i simple.gtf -l chr1:210-220 | wc -l`
       [ "$result" -eq 4 ]
     }
 
     #select_by_loc: should support multiple regions from a file
     @test "select_by_loc_10" {
-     result=`gtftk select_by_loc -i pygtftk/data/simple/simple.gtf -l chr1:24-25 | wc -l`
+     result=`gtftk select_by_loc -i simple.gtf -l chr1:24-25 | wc -l`
       [ "$result" -eq 7 ]
     }
 
     #select_by_loc: with -t gene
     @test "select_by_loc_11" {
-     result=`gtftk select_by_loc -i pygtftk/data/simple/simple.gtf -l chr1:24-25 -t gene| wc -l`
+     result=`gtftk select_by_loc -i simple.gtf -l chr1:24-25 -t gene| wc -l`
       [ "$result" -eq 13 ]
     }
 

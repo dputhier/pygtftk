@@ -151,48 +151,55 @@ if __name__ == '__main__':
 else:
 
     test = """
-    
+
+    #midpoints: load dataset
+    @test "midpoints_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+        
+
     #midpoints: test line number
     @test "midpoints_1" {
-     result=`gtftk midpoints -i pygtftk/data/simple/simple.gtf -t exon | wc -l`
+     result=`gtftk midpoints -i simple.gtf -t exon | wc -l`
       [ "$result" -eq 25 ]
     }
     
     #midpoints: test line transcript
     @test "midpoints_2" {
-     result=`gtftk midpoints -i pygtftk/data/simple/simple.gtf -t transcript | wc -l`
+     result=`gtftk midpoints -i simple.gtf -t transcript | wc -l`
       [ "$result" -eq 15 ]
     }
     
     
     #midpoints: test line gene
     @test "midpoints_3" {
-     result=`gtftk midpoints -i pygtftk/data/simple/simple.gtf -t gene | wc -l`
+     result=`gtftk midpoints -i simple.gtf -t gene | wc -l`
       [ "$result" -eq 10 ]
     }
     
     #midpoints: test coordinates
     @test "midpoints_4" {
-     result=`gtftk midpoints -i pygtftk/data/simple/simple.gtf -t transcript| cut -f2| perl -npe 's/\\n/,/'`
+     result=`gtftk midpoints -i simple.gtf -t transcript| cut -f2| perl -npe 's/\\n/,/'`
       [ "$result" = "7,7,27,30,39,54,69,69,110,110,130,130,180,183,215," ]
     }
     
     #midpoints: test coordinates
     @test "midpoints_5" {
-     result=`gtftk midpoints -i pygtftk/data/simple/simple.gtf -t transcript| cut -f3| perl -npe 's/\\n/,/'`
+     result=`gtftk midpoints -i simple.gtf -t transcript| cut -f3| perl -npe 's/\\n/,/'`
       [ "$result" = "9,9,29,32,40,56,71,71,112,112,132,132,181,185,216," ]
     }
     
     #midpoints: test coordinates
     @test "midpoints_6" {
-     result=`gtftk midpoints -i pygtftk/data/simple/simple.gtf -t exon| cut -f2| perl -npe 's/\\n/,/'`
+     result=`gtftk midpoints -i simple.gtf -t exon| cut -f2| perl -npe 's/\\n/,/'`
       [ "$result" = "7,7,22,28,28,33,33,33,43,51,58,65,65,70,70,74,74,110,110,130,130,180,183,211,220," ]
     }
     
     
     #midpoints: test coordinates
     @test "midpoints_7" {
-     result=`gtftk midpoints -i pygtftk/data/simple/simple.gtf -t exon| cut -f3| perl -npe 's/\\n/,/'`
+     result=`gtftk midpoints -i simple.gtf -t exon| cut -f3| perl -npe 's/\\n/,/'`
       [ "$result" = "9,9,24,29,29,34,34,34,45,52,59,67,67,71,71,75,75,112,112,132,132,181,185,212,221," ]
     }
 
@@ -204,13 +211,13 @@ else:
     
     #midpoints: test coordinates
     @test "midpoints_9" {
-     result=`gtftk midpoints -i pygtftk/data/simple/simple_peaks.bed | cut -f2| perl -npe 's/\\n/,/g'`
+     result=`gtftk midpoints -i simple_peaks.bed | cut -f2| perl -npe 's/\\n/,/g'`
       [ "$result" = "12,18,23,38,68,43," ]
     }
     
     #midpoints: test coordinates
     @test "midpoints_10" {
-     result=`gtftk midpoints -i pygtftk/data/simple/simple_peaks.bed | cut -f3| perl -npe 's/\\n/,/g'`
+     result=`gtftk midpoints -i simple_peaks.bed | cut -f3| perl -npe 's/\\n/,/g'`
       [ "$result" = "13,19,24,39,70,44," ]
     }
         

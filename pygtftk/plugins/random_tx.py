@@ -135,7 +135,7 @@ else:
           
     #random_tx: random_tx should return 1 tx per gene (10 genes)
     @test "random_tx_1" {
-     result=`gtftk random_tx -i pygtftk/data/simple/simple.gtf | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k gene_id,transcript_id -H | wc -l`
+     result=`gtftk get_example | gtftk random_tx  | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k gene_id,transcript_id -H | wc -l`
       [ "$result" -eq 10 ]
     }
     

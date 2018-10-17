@@ -169,72 +169,79 @@ if __name__ == '__main__':
 else:
 
     test = """
-        
+
+    # join_attr: load dataset
+    @test "join_attr_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+       
+       
     #join_attr: simple test
     @test "join_attr_1" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join -k gene_id -n bla| gtftk tabulate -H -k gene_id,bla|grep G0009 | sort | uniq | cut -f2`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join -k gene_id -n bla| gtftk tabulate -H -k gene_id,bla|grep G0009 | sort | uniq | cut -f2`
       [ "$result" = "0.5555" ]
     }
     
     
     #join_attr: simple test
     @test "join_attr_2" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join -k gene_id -n bla| gtftk tabulate -H -k gene_id,bla|grep G0009 | sort | uniq | cut -f2`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join -k gene_id -n bla| gtftk tabulate -H -k gene_id,bla|grep G0009 | sort | uniq | cut -f2`
       [ "$result" = "0.5555" ]
     }
     
     #join_attr: simple test
     @test "join_attr_3" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join -k gene_id -n bla| wc -l`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join -k gene_id -n bla| wc -l`
       [ "$result" -eq 70 ]
     }
     
     
     #join_attr: test matrix input
     @test "join_attr_4" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m| wc -l`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m| wc -l`
       [ "$result" -eq 70 ]
     }
     
     #join_attr: simple test
     @test "join_attr_5" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m | grep 0.5555|gtftk  tabulate -H -k gene_id| head -1`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m | grep 0.5555|gtftk  tabulate -H -k gene_id| head -1`
       [ "$result" = "G0009" ]
     }
 
     #join_attr: simple test
     @test "join_attr_6" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id  -V 2 -m -t exon| grep 0.999| wc -l`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id  -V 2 -m -t exon| grep 0.999| wc -l`
       [ "$result" -eq 6 ]
     }
         
     #join_attr: simple test
     @test "join_attr_7" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id  -V 2 -m -t exon,transcript| grep 0.999| wc -l`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id  -V 2 -m -t exon,transcript| grep 0.999| wc -l`
       [ "$result" -eq 8 ]
     }
 
     #join_attr: simple test
     @test "join_attr_8" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id  -V 2 -m -t exon,transcript,gene| grep 0.999| wc -l`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id  -V 2 -m -t exon,transcript,gene| grep 0.999| wc -l`
       [ "$result" -eq 9 ]
     }
 
     #join_attr: simple test
     @test "join_attr_9" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id  -V 2 -m -t exon,transcript,gene,CDS | grep 0.999| wc -l`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id  -V 2 -m -t exon,transcript,gene,CDS | grep 0.999| wc -l`
       [ "$result" -eq 13 ]
     }
 
     #join_attr: simple test
     @test "join_attr_10" {
-     result=`gtftk get_example |  gtftk join_attr -j pygtftk/data/simple/simple.join -k gene_id -n bla -t gene  -V 2 -K toto| gtftk select_by_regexp -k bla -r "0\..*" | gtftk tabulate -k bla -Hun | perl -npe 's/\\n/|/g'`
+     result=`gtftk get_example |  gtftk join_attr -j simple.join -k gene_id -n bla -t gene  -V 2 -K toto| gtftk select_by_regexp -k bla -r "0\..*" | gtftk tabulate -k bla -Hun | perl -npe 's/\\n/|/g'`
       [ "$result" = "0.2322|0.999|0.5555|" ]
     }
     
     #join_attr: simple test
     @test "join_attr_11" {
-     result=`gtftk get_example |  gtftk join_attr -j pygtftk/data/simple/simple.join_with_dup -k gene_id -n bla -t gene  -V 2 | gtftk select_by_regexp -k bla -r "0\."| gtftk tabulate -k bla -Hun | perl -npe 's/\\n/|/'`
+     result=`gtftk get_example |  gtftk join_attr -j simple.join_with_dup -k gene_id -n bla -t gene  -V 2 | gtftk select_by_regexp -k bla -r "0\."| gtftk tabulate -k bla -Hun | perl -npe 's/\\n/|/'`
       [ "$result" = "0.2322|0.2|0.999|0.5555|0.1|" ]
     }
         

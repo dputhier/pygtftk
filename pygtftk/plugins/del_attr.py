@@ -128,17 +128,23 @@ else:
 
     test = """
 
+    # del_attr: load dataset
+    @test "del_attr_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+    
     #del_attr:
     # If you delete almost all extended attributes there are only exon_id left
     @test "del_attr_1" {
-     result=`gtftk del_attr -i pygtftk/data/simple/simple.gtf  -k ccds_id,transcript_id,gene_id| cut -f9| grep -v "^$"| sed 's/ \".*//'| sort | uniq`
+     result=`gtftk del_attr -i simple.gtf  -k ccds_id,transcript_id,gene_id| cut -f9| grep -v "^$"| sed 's/ \".*//'| sort | uniq`
       [ "$result" = "exon_id" ]
     }
     
     
     #del_attr: check -v
     @test "del_attr_2" {
-     result=`gtftk del_attr -i pygtftk/data/simple/simple.gtf  -k ccds_id,transcript_id,gene_id -v| grep exon_id| wc -l`
+     result=`gtftk del_attr -i simple.gtf  -k ccds_id,transcript_id,gene_id -v| grep exon_id| wc -l`
       [ "$result" -eq 0 ]
     }
 

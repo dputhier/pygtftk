@@ -269,61 +269,67 @@ if __name__ == '__main__':
 else:
 
     test = """
+
+    # overlapping: load dataset
+    @test "overlapping_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
         
     #overlapping: tts of G0005T001,G0010T001 are overlapping other tx.
     @test "overlapping_1" {
-     result=`gtftk overlapping -i pygtftk/data/simple/simple.gtf -c  pygtftk/data/simple/simple.chromInfo -V 1 -t tts -u 2 -d 2 | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk overlapping -i simple.gtf -c  simple.chromInfo -V 1 -t tts -u 2 -d 2 | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "G0005T001,G0010T001," ]
     }
     
     
     #overlapping: tss/promoter of G0002T001,G0006T001,G0006T002, are overlapping other tx.
     @test "overlapping_2" {
-     result=`gtftk overlapping -i pygtftk/data/simple/simple.gtf -c  pygtftk/data/simple/simple.chromInfo -V 1 -t promoter -u 2 -d 2 | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk overlapping -i simple.gtf -c  simple.chromInfo -V 1 -t promoter -u 2 -d 2 | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "G0002T001,G0006T001,G0006T002," ]
     }
     
     #overlapping: there is no tss/promoter same overlap with a tx from anothe gene on the other strand.
     @test "overlapping_3" {
-     result=`gtftk overlapping -i pygtftk/data/simple/simple.gtf -c  pygtftk/data/simple/simple.chromInfo -V 1 -t promoter -u 2 -d 2 -S | wc -l`
+     result=`gtftk overlapping -i simple.gtf -c  simple.chromInfo -V 1 -t promoter -u 2 -d 2 -S | wc -l`
       [ "$result" -eq 0 ]
     }
     
     #overlapping: tss/promoter of G0002T001,G0006T001,G0006T002, are overlapping other tx on the same strand.
     @test "overlapping_4" {
-     result=`gtftk overlapping -i pygtftk/data/simple/simple.gtf -c  pygtftk/data/simple/simple.chromInfo -V 1 -t promoter -u 2 -d 2 -s | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk overlapping -i simple.gtf -c  simple.chromInfo -V 1 -t promoter -u 2 -d 2 -s | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "G0002T001,G0006T001,G0006T002," ]
     }
     
     #overlapping: tts of G0005T001,G0010T001 are overlapping other tx on the same strand.
     @test "overlapping_5" {
-     result=`gtftk overlapping -i pygtftk/data/simple/simple.gtf  -c  pygtftk/data/simple/simple.chromInfo -V 1 -t tts -u 2 -d 2 -s | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk overlapping -i simple.gtf  -c  simple.chromInfo -V 1 -t tts -u 2 -d 2 -s | gtftk tabulate -H -k transcript_id| sort | uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "G0005T001,G0010T001," ]
     }
     
     
     #overlapping: there is no tts overlapping other tx on the opposite same strand.
     @test "overlapping_6" {
-     result=`gtftk overlapping -i pygtftk/data/simple/simple.gtf -c  pygtftk/data/simple/simple.chromInfo -V 1 -t tts -u 2 -d 2 -S | wc -l`
+     result=`gtftk overlapping -i simple.gtf -c  simple.chromInfo -V 1 -t tts -u 2 -d 2 -S | wc -l`
       [ "$result" -eq 0 ]
     }
     
     #overlapping: ensure the right number of exons are provided as output.
     @test "overlapping_7" {
-     result=`gtftk overlapping -i pygtftk/data/simple/simple.gtf  -c  pygtftk/data/simple/simple.chromInfo -V 1 -t tts -u 2 -d 2 | gtftk nb_exons -f | grep G0005T001| cut -f 2`
+     result=`gtftk overlapping -i simple.gtf  -c  simple.chromInfo -V 1 -t tts -u 2 -d 2 | gtftk nb_exons -f | grep G0005T001| cut -f 2`
       [ "$result" -eq 2 ]
     }
     
     #overlapping: ensure -a is working. Checking nb lines
     @test "overlapping_8" {
-     result=`gtftk overlapping -i pygtftk/data/simple/simple.gtf -c  pygtftk/data/simple/simple.chromInfo  -t tts -u 2 -d 2 -a| wc -l`
+     result=`gtftk overlapping -i simple.gtf -c  simple.chromInfo  -t tts -u 2 -d 2 -a| wc -l`
       [ "$result" -eq 70 ]
     }
     
 
     #overlapping: tts of G0005T001,G0010T001 are overlapping other tx on the same strand.
     @test "overlapping_9" {
-     result=`gtftk overlapping -i pygtftk/data/simple/simple.gtf -c  pygtftk/data/simple/simple.chromInfo  -t tts -u 2 -d 2  --annotate-gtf | grep overlap_tts | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id| grep -v transcript_id| perl -npe 's/\\n/,/'`
+     result=`gtftk overlapping -i simple.gtf -c  simple.chromInfo  -t tts -u 2 -d 2  --annotate-gtf | grep overlap_tts | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id| grep -v transcript_id| perl -npe 's/\\n/,/'`
       [ "$result" = "G0005T001,G0010T001," ]
     }
     

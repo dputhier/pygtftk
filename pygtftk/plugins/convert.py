@@ -202,29 +202,35 @@ if __name__ == '__main__':
 else:
 
     test = '''
-    
+
+    # convert: load dataset
+    @test "convert_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+            
     # Convert:
     @test "convert_1" {
-     result=`gtftk convert -i pygtftk/data/simple/simple.gtf | awk 'BEGIN{FS="\\t"}{print NF}'| sort | uniq`
+     result=`gtftk convert -i simple.gtf | awk 'BEGIN{FS="\\t"}{print NF}'| sort | uniq`
       [ "$result" -eq 6 ]
     }
     
     
     # Convert: basic.
     @test "convert_2" {
-     result=`gtftk convert -f bed3 -i pygtftk/data/simple/simple.gtf | awk 'BEGIN{FS="\\t"}{print NF}'| sort | uniq`
+     result=`gtftk convert -f bed3 -i simple.gtf | awk 'BEGIN{FS="\\t"}{print NF}'| sort | uniq`
       [ "$result" -eq 3 ]
     }
     
     # Convert: check name.
     @test "convert_3" {
-     result=`gtftk convert -i pygtftk/data/simple/simple.gtf -n gene_id,transcript_id,start | cut -f4| awk 'BEGIN{FS="|"}{print NF}'| sort | uniq`
+     result=`gtftk convert -i simple.gtf -n gene_id,transcript_id,start | cut -f4| awk 'BEGIN{FS="|"}{print NF}'| sort | uniq`
       [ "$result" -eq 3 ]
     }
     
     # Convert: check zero based
     @test "convert_4" {
-     result=`gtftk convert -i pygtftk/data/simple/simple.gtf -n gene_id,transcript_id,start | cut -f2| head -n 1`
+     result=`gtftk convert -i simple.gtf -n gene_id,transcript_id,start | cut -f2| head -n 1`
       [ "$result" -eq 124 ]
     }
     '''

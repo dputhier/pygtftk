@@ -87,14 +87,21 @@ if __name__ == '__main__':
 else:
 
     test = '''
+    
+    # select_by_numeric_value: load dataset
+    @test "select_by_numeric_value_0" {
+     result=`gtftk get_example -f '*' -d simple; gtftk get_example -d mini_real -f "*"`
+      [ "$result" = "" ]
+    }
+    
     #select_by_numeric_value_1
     @test "select_by_numeric_value_1" {
-      result=`gtftk get_example -d mini_real -f "*"; gunzip -f airway_love.txt.gz`
+      result=`gunzip -f airway_love.txt.gz`
       [ -s "airway_love.txt" ]
     }
    
     @test "select_by_numeric_value_2" {
-      result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m|  gtftk select_by_numeric_value -t 'start < 10 and end > 10 and S1 == 0.5555 and S2 == 0.007e2' -n ".,?"| wc -l`
+      result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m|  gtftk select_by_numeric_value -t 'start < 10 and end > 10 and S1 == 0.5555 and S2 == 0.007e2' -n ".,?"| wc -l`
       [ "$result" -eq 5 ]
     }
     

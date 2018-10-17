@@ -219,57 +219,57 @@ else:
 
     test = """
 
-    #get_feat_seq:
-    @test "get_feat_seq_0.0" {
-     result=`echo 1`
-      [ "$result" = "1" ]
+    #get_feat_seq: load dataset
+    @test "get_feat_seq_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
     }
-    
+       
     #get_feat_seq:
     @test "get_feat_seq_0.1" {
-     result=`gtftk get_feat_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa  -l feature,transcript_id,start -t  exon  | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
+     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  exon  | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
       [ "$result" = "aatta,gcttg," ]
     }
 
     #get_feat_seq:
     @test "get_feat_seq_1" {
-     result=`gtftk get_feat_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa  -l feature,transcript_id,start -t  exon -n | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
+     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  exon -n | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
       [ "$result" = "caagc,taatt," ]
     }
     
     #get_feat_seq:
     @test "get_feat_seq_2" {
-     result=`gtftk get_feat_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa  -l feature,transcript_id,start -t  exon  | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
+     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  exon  | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
       [ "$result" = "aatta,gcttg," ]
     }
 
     #get_feat_seq:
     @test "get_feat_seq_3" {
-     result=`gtftk get_feat_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa  -l feature,transcript_id,start -t  CDS  | grep "G0004T002" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
+     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  CDS  | grep "G0004T002" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
       [ "$result" = "tct,g,gc," ]
     }
 
     #get_feat_seq:
     @test "get_feat_seq_4" {
-     result=`gtftk get_feat_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa  -l feature,transcript_id,start -t  CDS  | grep "G0006T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
+     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  CDS  | grep "G0006T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
       [ "$result" = "ct,att,acat," ]
     }
     
     #get_feat_seq:
     @test "get_feat_seq_5" {
-     result=`gtftk get_feat_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa  -l feature,transcript_id,start -t  CDS -n | grep "G0006T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
+     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  CDS -n | grep "G0006T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
       [ "$result" = "atgt,aat,ag," ]
     }
 
     #get_feat_seq:
     @test "get_feat_seq_6" {
-     result=`gtftk get_feat_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa  -l feature,transcript_id,start -t  CDS -n | grep "G0006T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
+     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  CDS -n | grep "G0006T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
       [ "$result" = "atgt,aat,ag," ]
     }
 
     #get_feat_seq:
     @test "get_feat_seq_7" {
-     result=`gtftk get_feat_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa   -t  CDS  | grep G0006T001 | perl -npe 's/\\n/,/g'`
+     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa   -t  CDS  | grep G0006T001 | perl -npe 's/\\n/,/g'`
       [ "$result" = ">G0006T001|G0006|chr1|22|35|CDS|33|34,>G0006T001|G0006|chr1|22|35|CDS|28|30,>G0006T001|G0006|chr1|22|35|CDS|22|25," ]
     }
     

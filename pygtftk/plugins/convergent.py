@@ -184,21 +184,28 @@ if __name__ == '__main__':
 else:
 
     test = """
+
+    #convergent: load dataset
+    @test "convergent_1" {
+     result=`gtftk get_example -d simple -f "*"`
+     [ "$result" = "" ]
+    }
+
     #convergent: this region contains 3 convergent tx
     @test "convergent_1" {
-     result=`gtftk convergent -K toto -i pygtftk/data/simple/simple.gtf  -c pygtftk/data/simple/simple.chromInfo -u 24 -d 24| gtftk select_by_key -t |gtftk tabulate -H -k transcript_id,dist_to_convergent -s ","| grep ",[0-9]"| wc -l`
+     result=`gtftk convergent -K toto -i simple.gtf  -c simple.chromInfo -u 24 -d 24| gtftk select_by_key -t |gtftk tabulate -H -k transcript_id,dist_to_convergent -s ","| grep ",[0-9]"| wc -l`
      [ "$result" -eq 3 ]
     }
 
     #convergent: 70 lines in output
     @test "convergent_2" {
-     result=`gtftk convergent -K toto -i pygtftk/data/simple/simple.gtf  -c pygtftk/data/simple/simple.chromInfo -u 12 -d 12| wc -l`
+     result=`gtftk convergent -K toto -i simple.gtf  -c simple.chromInfo -u 12 -d 12| wc -l`
       [ "$result" -eq 70 ]
     }
     
     #convergent: 25 exons
     @test "convergent_3" {
-     result=`gtftk convergent -K toto -i pygtftk/data/simple/simple.gtf  -c pygtftk/data/simple/simple.chromInfo -u 12 -d 12| gtftk select_by_key -k feature -v exon| wc -l`
+     result=`gtftk convergent -K toto -i simple.gtf  -c simple.chromInfo -u 12 -d 12| gtftk select_by_key -k feature -v exon| wc -l`
       [ "$result" -eq 25 ]
     }
     """

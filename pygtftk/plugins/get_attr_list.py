@@ -86,21 +86,29 @@ else:
 
     test = """
 
+
+    #get_attr_list: load dataset
+    @test "get_attr_list_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+       
+       
     #get_attr_list
     @test "get_attr_list_1" {
-     result=`gtftk get_example  | gtftk get_attr_list| grep exon| cut -f2 `
+     result=`gtftk get_attr_list -i simple.gtf| grep exon| cut -f2 `
       [ "$result" = "exon_id" ]
     }
 
     #get_attr_list
     @test "get_attr_list_2" {
-     result=`gtftk get_example  | gtftk get_attr_list  | wc -l`
+     result=`gtftk get_attr_list -i simple.gtf | wc -l`
       [ "$result" -eq 3 ]
     }
 
     #get_attr_list
     @test "get_attr_list_3" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m | gtftk get_attr_list| wc -l`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m | gtftk get_attr_list| wc -l`
       [ "$result" -eq 5 ]
     }
         

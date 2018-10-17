@@ -182,71 +182,78 @@ if __name__ == '__main__':
 else:
 
     test = """
-  
+
+    # feature_size: load dataset
+    @test "feature_size_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+    
+     
     #feat_size: check line number
     @test "feature_size_1" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf| wc  -l`
+     result=`gtftk feature_size -i simple.gtf| wc  -l`
       [ "$result" -eq 70 ]
     }
     
     #feat_size: check number of columns
     @test "feature_size_2" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf| awk 'BEGIN{FS="\\t"}{print NF}'| sort| uniq`
+     result=`gtftk feature_size -i simple.gtf| awk 'BEGIN{FS="\\t"}{print NF}'| sort| uniq`
       [ "$result" -eq 9 ]
     }
     
     #feat_size: check the right elements are flagged
     @test "feature_size_3" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf | grep feat_size| wc -l`
+     result=`gtftk feature_size -i simple.gtf | grep feat_size| wc -l`
       [ "$result" -eq 15 ]
     }
     
     #feat_size: check the right elements are flagged
     @test "feature_size_4" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf -t gene | grep feat_size | wc -l`
+     result=`gtftk feature_size -i simple.gtf -t gene | grep feat_size | wc -l`
       [ "$result" -eq 10 ]
     }
     
     #feat_size: check size is ok.
     @test "feature_size_5" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf -t gene| grep feat_size| grep G0001 | sed 's/.*feat_size "//'| sed 's/".*//'`
+     result=`gtftk feature_size -i simple.gtf -t gene| grep feat_size| grep G0001 | sed 's/.*feat_size "//'| sed 's/".*//'`
       [ "$result" -eq 14 ]
     }
     
     #feat_size: check line number with -b.
     @test "feature_size_6" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf -t gene -b| wc -l`
+     result=`gtftk feature_size -i simple.gtf -t gene -b| wc -l`
       [ "$result" -eq 10 ]
     }
     
     #feat_size: check number of columns
     @test "feature_size_7" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf -t gene -b| awk 'BEGIN{FS="\\t"}{print NF}'| sort | uniq`
+     result=`gtftk feature_size -i simple.gtf -t gene -b| awk 'BEGIN{FS="\\t"}{print NF}'| sort | uniq`
       [ "$result" -eq 6 ]
     }
     
     
     #feat_size: check size
     @test "feature_size_8" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf -t gene -b | cut -f 5| sort -n | perl -npe 's/\\n/,/'`
+     result=`gtftk feature_size -i simple.gtf -t gene -b | cut -f 5| sort -n | perl -npe 's/\\n/,/'`
       [ "$result" = "10,10,11,12,12,12,13,14,14,15," ]
     }
     
     #feat_size: check size of mature rna (bed)
     @test "feature_size_9" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf  -t mature_rna -b -n transcript_id,gene_id |cut -f 5| sort | uniq | perl -npe 's/\\n/,/'`
+     result=`gtftk feature_size -i simple.gtf  -t mature_rna -b -n transcript_id,gene_id |cut -f 5| sort | uniq | perl -npe 's/\\n/,/'`
       [ "$result" = "10,11,12,14,6,8,9," ]
     }
     
     #feat_size: check size of mature rna (gtf)
     @test "feature_size_10" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf  -t mature_rna  -n transcript_id,gene_id | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k feat_size -H | sort | uniq  | perl -npe 's/\\n/,/'`
+     result=`gtftk feature_size -i simple.gtf  -t mature_rna  -n transcript_id,gene_id | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k feat_size -H | sort | uniq  | perl -npe 's/\\n/,/'`
       [ "$result" = "10,11,12,14,6,8,9," ]
     }
 
     #feat_size: check size of mature rna (gtf)
     @test "feature_size_11" {
-     result=`gtftk feature_size -i pygtftk/data/simple/simple.gtf  -t mature_rna  -n transcript_id,gene_id | wc -l`
+     result=`gtftk feature_size -i simple.gtf  -t mature_rna  -n transcript_id,gene_id | wc -l`
       [ "$result" -eq 70 ]
     }
     

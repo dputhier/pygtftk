@@ -434,19 +434,19 @@ if __name__ == '__main__':
 else:
 
     test = '''
-        #control_list
-        @test "control_list_1" {
-          result=`gtftk control_list -i pygtftk/data/control_list/control_list_data.txt -r pygtftk/data/control_list/control_list_reference.txt -D ; cat control_list/control_list.txt | cut -f2| perl -npe 's/\\n/,/'`
-          [ "$result" = "exprs,2.02,4.04,6.06," ]
-        }
+    #control_list: load dataset
+    @test "control_list_0" {
+     result=`gtftk get_example -f '*' -d control_list`
+      [ "$result" = "" ]
+    }
+    
+    #control_list
+    @test "control_list_1" {
+      result=`gtftk control_list -i control_list_data.txt -r control_list_reference.txt -D ; cat control_list/control_list.txt | cut -f2| perl -npe 's/\\n/,/'`
+      [ "$result" = "exprs,2.02,4.04,6.06," ]
+    }
         
-        #control_list
-        @test "control_list_2" {
-          result=` rm -Rf control_list`
-          [ "$result" = "" ]
-        }
-        
-        '''
+    '''
 
     cmd = CmdObject(name="control_list",
                     message="Returns a list of gene matched for expression based on reference values.",

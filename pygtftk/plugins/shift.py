@@ -148,40 +148,47 @@ if __name__ == '__main__':
 else:
 
     test = '''
+    
+    # shift: load dataset
+    @test "shift_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+    
     #shift
     @test "shift_1" {
-     result=`gtftk get_example|  gtftk shift -s -10 -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 4`
+     result=`gtftk get_example|  gtftk shift -s -10 -c simple.chromInfo | head -n 1| cut -f 4`
       [ "$result" -eq 115 ]
     }
     
     #shift
     @test "shift_2" {
-     result=`gtftk get_example|  gtftk shift -s -10 -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 5`
+     result=`gtftk get_example|  gtftk shift -s -10 -c simple.chromInfo | head -n 1| cut -f 5`
       [ "$result" -eq 128 ]
     }
 
     #shift
     @test "shift_3" {
-     result=`gtftk get_example|  gtftk shift -s 10 -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 4`
+     result=`gtftk get_example|  gtftk shift -s 10 -c simple.chromInfo | head -n 1| cut -f 4`
       [ "$result" -eq 135 ]
     }
 
     #shift
     @test "shift_4" {
-     result=`gtftk get_example|  gtftk shift -s 10 -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 5`
+     result=`gtftk get_example|  gtftk shift -s 10 -c simple.chromInfo | head -n 1| cut -f 5`
       [ "$result" -eq 148 ]
     }
 
 
     #shift
     @test "shift_5" {
-     result=`gtftk get_example|  gtftk shift -s -10 -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 5`
+     result=`gtftk get_example|  gtftk shift -s -10 -c simple.chromInfo | head -n 1| cut -f 5`
       [ "$result" -eq 128 ]
     }
 
     #shift
     @test "shift_5" {
-     result=`gtftk get_example|  gtftk shift -s -10 -d -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 5`
+     result=`gtftk get_example|  gtftk shift -s -10 -d -c simple.chromInfo | head -n 1| cut -f 5`
       [ "$result" -eq 128 ]
     }
 
