@@ -91,10 +91,10 @@ if __name__ == '__main__':
 else:
     test = """
 
-    #Test number of output lines
+    #short_long: load the dataset
     @test "short_long_0" {
-    result=$(gtftk get_example -d simple_03 -f "*")
-    [ $result = "" ]
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
     }
         
     #Test number of output lines
