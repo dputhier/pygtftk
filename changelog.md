@@ -11,7 +11,9 @@
 
 - Added an example for col_from_tab in presentation.rst
 - Added a dataset mini_real_coding_pot.tab.
-- Working on travis now. 
+- Working on travis now.
+- gtftk configuration directory now contains several subdirectories whose names are computed based on gtftk program location.
+- Added a -d argument to gtftk program. This argument returns gtftk configuration directory. 
 
 ## v0.9.7
 
