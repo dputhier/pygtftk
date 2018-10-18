@@ -421,7 +421,7 @@ class GTF(object):
         >>> assert len(a_gtf) == 70
         >>> assert len(a_gtf[("feature","gene")]) == 10
         """
-        cmd_manager.CmdManager.check_config_file()
+
 
         # Increment the number of instances at the
         # class level
