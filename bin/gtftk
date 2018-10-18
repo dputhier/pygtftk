@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-
+import hashlib
 import os
 import shutil
 import sys
@@ -46,8 +45,20 @@ def main():
         message("gtftk needs bedtools (command line version). Please install it.",
                 type="ERROR")
 
+    # -------------------------------------------------------------------------
+    # Set the hash attribute value of CmdManager. Used to
+    # define the path to .gtftk
+    # -------------------------------------------------------------------------
+    CmdManager.hash = hashlib.md5(os.path.abspath(__file__).encode()).hexdigest()
+
+    # -------------------------------------------------------------------------
+    # Call the command manager
+    # and search plugins
+    # -------------------------------------------------------------------------
+
     cmd_manager = CmdManager()
     cmd_manager.load_plugins()
+
 
     # -------------------------------------------------------------------------
     # Get the list of arguments values passed through the command

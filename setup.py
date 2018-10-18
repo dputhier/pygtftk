@@ -52,19 +52,6 @@ except ImportError:
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 
-# -------------------------------------------------------------------------
-# Delete any existing .gtftk in home folder
-# -------------------------------------------------------------------------
-
-gtftk_cnf_dir = os.path.join(os.environ['HOME'], '.gtftk')
-sys.stderr.write("Trying to find an existing .gtftk directory\n")
-if os.path.exists(gtftk_cnf_dir):
-    sys.stderr.write("Found an existing .gtftk directory\n")
-    shutil.rmtree(gtftk_cnf_dir, ignore_errors=True)
-    if os.path.exists(gtftk_cnf_dir):
-        sys.stderr.write("Failed to delete .gtftk directory.\n")
-else:
-    sys.stderr.write("No .gtftk directory found.\n")
 
 # -------------------------------------------------------------------------
 # Check gtftk version
