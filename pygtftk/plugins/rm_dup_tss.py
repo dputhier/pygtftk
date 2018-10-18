@@ -168,7 +168,7 @@ else:
     
     
     #Check with rmdup (now 1 tx with the same TSS)
-    @test "rm_dup_tss_5" {
+    @test "rm_dup_tss_6" {
     result=$(gtftk get_example -d mini_real  | gtftk rm_dup_tss | gtftk select_by_key -t | gtftk get_5p_3p_coords -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
     [ $result -eq 1 ]
     }
