@@ -406,7 +406,7 @@ class SeparatedList(object):
                 for i in range(len(other) - 1):
                     val_1 = other[i]
                     val_2 = other[i + 1]
-                    to_test = "val_1 " + self.check + " val_2"
+                    to_test = str(val_1)  + self.check + str(val_2)
 
                     if not eval(to_test):
                         return False
@@ -546,10 +546,10 @@ class bedFileList(argparse.Action):
 
             check_file_or_dir_exists(i)
 
+            file_bo = BedTool(i)
             try:
-                file_bo = BedTool(i)
                 a = len(file_bo)
-            except:
+            except IndexError:
                 msg = "Unable to load file: " + i + "."
                 message(msg, type="ERROR")
                 sys.exit()
