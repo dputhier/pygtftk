@@ -93,7 +93,7 @@ else:
 
     #short_long: load the dataset
     @test "short_long_0" {
-     result=`gtftk get_example -f '*' -d simple`
+     result=`gtftk get_example -f '*' -d simple_03`
       [ "$result" = "" ]
     }
         
