@@ -80,6 +80,11 @@ PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 
 
+if PY2:
+    sys.stderr.write("\nStarting from version 0.9.8, gtftk does not support python 2 anymore.\n")
+    sys.exit(1)
+
+
 # -------------------------------------------------------------------------
 # Check gtftk version
 # -------------------------------------------------------------------------
@@ -271,12 +276,14 @@ setup(name="pygtftk",
 # Update gtftk config directory
 # ----------------------------------------------------------------------
 
-current_install_path = subprocess.Popen(['which', 'gtftk'], stdout=subprocess.PIPE).stdout.read().rstrip()
+current_install_path = subprocess.Popen(['which', 'gtftk'],
+                                        stdout=subprocess.PIPE).stdout.read().rstrip()
 if current_install_path == '':
     sys.stderr.write("Unable to find gtftk in the path...\n")
     sys.exit(1)
 
-config_dir_hash = hashlib.md5(os.path.abspath(current_install_path)).hexdigest()
+str_to_hash = current_install_path + __version__.encode()
+config_dir_hash = hashlib.md5(str_to_hash).hexdigest()
 config_dir = os.path.join(os.path.expanduser("~"),
                                      ".gtftk",
                                      config_dir_hash)
