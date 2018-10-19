@@ -12,6 +12,7 @@ Authors: D. Puthier and F. Lopez
 # -------------------------------------------------------------------------
 
 import glob
+import hashlib
 import os
 import re
 import shutil
@@ -44,6 +45,7 @@ try:
 except ImportError:
     sys.stderr.write("Please install setuptools before installing pygtftk.\n")
     exit(1)
+
 
 # -------------------------------------------------------------------------
 # Python Version
@@ -253,21 +255,30 @@ setup(name="pygtftk",
                         'setuptools'],
       ext_modules=[lib_pygtftk])
 
-config_dir = os.path.join(os.path.expanduser("~"), ".gtftk")
-dumped_plugin_path = os.path.join(config_dir, "plugin.pick")
 
-sys.stderr.write("Removing old plugin dump.\n")
+# ----------------------------------------------------------------------
+# Update gtftk config directory
+# ----------------------------------------------------------------------
 
-try:
-    os.remove(dumped_plugin_path)
-except OSError as e:
-    pass
+current_install_path = subprocess.Popen(['which', 'gtftk'], stdout=subprocess.PIPE).stdout.read().rstrip()
+if current_install_path == '':
+    sys.stderr.write("Unable to find gtftk in the path...\n")
+    sys.exit(1)
+
+config_dir_hash = hashlib.md5(os.path.abspath(current_install_path)).hexdigest()
+config_dir = os.path.join(os.path.expanduser("~"),
+                                     ".gtftk",
+                                     config_dir_hash)
 
 
+if os.path.exists(config_dir):
+    shutil.rmtree(config_dir)
+    sys.stderr.write("Deleting old configuration directory at: " + config_dir + "\n")
+
+# ----------------------------------------------------------------------
+# Print gtftk info (and load the plugins...)
+# ----------------------------------------------------------------------
+
+gtftk_sys_config = subprocess.Popen(['gtftk', '-s'], stdout=subprocess.PIPE).stdout.read().rstrip()
+sys.stderr.write(gtftk_sys_config.decode())
 sys.stderr.write("Installation complete.\n")
-
-try:
-    result = subprocess.Popen(['gtftk', '-h'], stdout=subprocess.PIPE)
-    sys.stderr.write(result.stdout.read().decode() + "\n")
-except :
-    sys.stderr.write("\nWARNING: Unable to run gtftk -h. Is the program available in the PATH ?\n")
