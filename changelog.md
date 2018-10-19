@@ -5,7 +5,11 @@
 
 ### Bug Fixes
 
+- Convergent and divergent return coordinate (e.g. dist_to_divergent) in integer not float...
+
 ### API Changes
+
+- pygtftk is no more compatible with python 2. This decision aims at integrating last plotnine versions (starting from 0.5.1) that depends on matplotlib 3.0.0 which strictly depends on py3k.
 
 ### New Features
 
