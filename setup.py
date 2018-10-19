@@ -289,7 +289,13 @@ if os.path.exists(config_dir):
 # ----------------------------------------------------------------------
 # Print gtftk info (and load the plugins...)
 # ----------------------------------------------------------------------
+# put this in a try as it could
+# raisse an error
+# if the program is not in the PATH.
+try:
+    gtftk_sys_config = subprocess.Popen(['gtftk', '-s'], stdout=subprocess.PIPE).stdout.read().rstrip()
+    sys.stderr.write(gtftk_sys_config.decode())
+except:
+    pass
 
-gtftk_sys_config = subprocess.Popen(['gtftk', '-s'], stdout=subprocess.PIPE).stdout.read().rstrip()
-sys.stderr.write(gtftk_sys_config.decode())
 sys.stderr.write("\n\nInstallation complete.\n\n")
