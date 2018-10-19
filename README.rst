@@ -48,15 +48,16 @@ Installation through conda package building
 
 Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
 
-A conda package will be available in the near future. In the meantime, you can however create an environment with all prerequisites using the commands below.
-If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_. ::
+If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_ and make sure you have bioconda and conda-forge channels set up in the order below. ::
 
-    git clone git@github.com:dputhier/pygtftk.git pygtftk
-    cd pygtftk
-    conda env create -n pygtftk_py3k -f conda/env.yaml python=3.6
-    source activate pygtftk_py3k
-    make install
-    gtftk -h 
+    conda config --add channels defaults
+    conda config --add channels bioconda
+    conda config --add channels conda-forge
+
+Then you can simply install pygtftk in its own isolated environment and activate it. ::
+
+    conda create -n pygtftk -c guillaumecharbonnier pygtftk
+    conda activate pygtftk
 
 
 Installation through setup.py
