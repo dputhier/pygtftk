@@ -24,6 +24,7 @@ __doc__ = """
 __notes__ = """
  -- The sequences are returned in 5' to 3' orientation.
  -- If you want to use wildcards, use quotes :e.g. 'foo/bar*.fa'.
+ -- The first time a genome is used, an index (*.fa.gtftk) will be created in ~/.gtftk.
 """
 
 
