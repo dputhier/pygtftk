@@ -22,6 +22,7 @@ from pygtftk.utils import TMP_FILE_LIST
 from pygtftk.utils import flatten_list
 from pygtftk.utils import message
 from pygtftk.utils import silentremove
+from pygtftk.version import __version__
 
 # Avoid warning message emitted by numpy
 # https://tinyurl.com/ybev6zrw
@@ -50,8 +51,12 @@ def main():
     # Set the hash attribute value of CmdManager. Used to
     # define the path to .gtftk
     # -------------------------------------------------------------------------
-    gtftk_path = subprocess.Popen(['which', 'gtftk'], stdout=subprocess.PIPE).stdout.read().rstrip()
-    CmdManager.hash = hashlib.md5(gtftk_path).hexdigest()
+    try:
+        gtftk_path = subprocess.Popen(['which', 'gtftk'], stdout=subprocess.PIPE).stdout.read().rstrip()
+    except:
+        gtftk_path = ''
+
+    CmdManager.hash = hashlib.md5(gtftk_path + __version__.encode()).hexdigest()
 
     # -------------------------------------------------------------------------
     # Call the command manager
