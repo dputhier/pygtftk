@@ -41,6 +41,7 @@ from pygtftk.utils import message
 from pygtftk.utils import mkdir_p
 from pygtftk.utils import print_table
 from pygtftk.version import __version__
+from pygtftk.utils import make_tmp_dir
 
 # ---------------------------------------------------------------
 # Python2/3  compatibility
@@ -275,7 +276,7 @@ class AddPlugin(argparse.Action):
 
         message("Searching for new plugins.", force=True)
 
-        dir_path = tempfile.mkdtemp(prefix="gtftk_AddPlugin")
+        dir_path = make_tmp_dir(prefix="gtftk_AddPlugin")
 
         dir_path = os.path.join(dir_path, "gtftk")
         cmd = "git clone " + values[0] + " " + dir_path

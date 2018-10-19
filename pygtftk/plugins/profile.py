@@ -37,6 +37,7 @@ from pygtftk.utils import chomp
 from pygtftk.utils import is_hex_color
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
+from pygtftk.utils import make_tmp_dir
 
 __updated__ = "2018-01-20"
 __doc__ = """
@@ -337,7 +338,9 @@ def profile(inputfile=None,
     # -------------------------------------------------------------------------
 
     # Use a temp file to avoid concurrency issues
-    dir_name = tempfile.mkdtemp(prefix='pygtftk_matrix_')
+    dir_name = make_tmp_dir(prefix='profile_matrix_')
+
+    # Uncompressing the file
     message("Uncompressing : " + dir_name,
             type="DEBUG")
 

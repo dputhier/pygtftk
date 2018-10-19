@@ -15,7 +15,7 @@ from collections import defaultdict
 from distutils.spawn import find_executable
 from subprocess import PIPE
 from subprocess import Popen
-from tempfile import NamedTemporaryFile
+from tempfile import NamedTemporaryFile, mkdtemp
 
 from future.utils import old_div
 
@@ -173,7 +173,7 @@ def make_tmp_file(prefix='tmp',
 
     tmp_file = NamedTemporaryFile(delete=False,
                                   mode='w',
-                                  prefix=prefix + "_gtftk_",
+                                  prefix=prefix + "_pygtftk_",
                                   suffix=suffix,
                                   dir=dir_target)
 
@@ -182,6 +182,37 @@ def make_tmp_file(prefix='tmp',
 
     return tmp_file
 
+def make_tmp_dir(prefix='tmp',
+                  store=True):
+    """
+    This function should be call to create a temporary file as all files
+    declared in TMP_FILE_LIST will be remove upon command exit.
+
+    :param prefix: a prefix for the temporary file (all of them will contain 'pygtftk').
+    :param store: declare the temporary file in utils.TMP_FILE_LIST. In pygtftk, \
+    the deletion of these files upon exit is controled through -k.
+
+    :Example:
+
+    >>> from pygtftk.utils import  make_tmp_dir
+    >>> import os
+    >>> import shutil
+    >>> tp_dir = make_tmp_dir()
+    >>> assert os.path.exists(tp_dir)
+    >>> assert os.path.isdir(tp_dir)
+    >>> shutil.rmtree(tp_dir)
+
+    """
+
+    dir_target = None
+
+    dir_name = mkdtemp(prefix=prefix + "_pygtftk_")
+    message("Creating directory : " + dir_name, type="DEBUG")
+
+    if store:
+        TMP_FILE_LIST.append(dir_name)
+
+    return dir_name
 
 # ---------------------------------------------------------------
 # get the path to an example file
