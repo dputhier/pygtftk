@@ -281,4 +281,4 @@ if os.path.exists(config_dir):
 
 gtftk_sys_config = subprocess.Popen(['gtftk', '-s'], stdout=subprocess.PIPE).stdout.read().rstrip()
 sys.stderr.write(gtftk_sys_config.decode())
-sys.stderr.write("Installation complete.\n")
+sys.stderr.write("\n\nInstallation complete.\n")
