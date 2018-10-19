@@ -74,7 +74,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-f', '--sleuth-format',
-                            help="Produce output in sleuth format.",
+                            help="Produce output in sleuth format (still experimental).",
                             action="store_true",
                             required=False)
 
