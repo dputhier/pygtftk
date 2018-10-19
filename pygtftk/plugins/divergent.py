@@ -229,13 +229,13 @@ else:
         
     #divergent: the region as 2 divergent transcripts
     @test "divergent_1" {
-     result=`gtftk divergent -i simple.gtf -c simple.chromInfo -u 4 -d 4 | gtftk select_by_key -k feature -v transcript | grep "4\.0" | gtftk tabulate -H -k transcript_id| sort| perl -npe 's/\\n/,/'`
+     result=`gtftk divergent -i simple.gtf -c simple.chromInfo -u 4 -d 4 | gtftk select_by_key -k feature -v transcript | grep 'dist_to_divergent..4' | gtftk tabulate -H -k transcript_id| sort| perl -npe 's/\\n/,/'`
       [ "$result" = "G0003T001,G0004T001,G0004T002," ]
     }
     
     #divergent: the region as 2 divergent transcripts
     @test "divergent_2" {
-     result=`gtftk divergent -i simple.gtf -c simple.chromInfo -u 4 -d 4 | grep "4\.0" |gtftk select_by_key -k feature -v transcript| gtftk tabulate -H -k transcript_id| sort| perl -npe 's/\\n/,/'`
+     result=`gtftk divergent -i simple.gtf -c simple.chromInfo -u 4 -d 4 | grep 'dist_to_divergent..4' |gtftk select_by_key -k feature -v transcript| gtftk tabulate -H -k transcript_id| sort| perl -npe 's/\\n/,/'`
       [ "$result" = "G0003T001,G0004T001,G0004T002," ]
     }
     
