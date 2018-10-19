@@ -18,6 +18,7 @@
 - Working on travis now.
 - gtftk configuration directory now contains several subdirectories whose names are computed based on gtftk program location.
 - Added a -d argument to gtftk program. This argument returns gtftk configuration directory. 
+- All tests should be independent of the directory.
 
 ## v0.9.7
 
