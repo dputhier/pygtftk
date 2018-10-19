@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import hashlib
-import subprocess
 import os
 import shutil
+import subprocess
 import sys
 import warnings
 from distutils.spawn import find_executable
+from subprocess import DEVNULL
 
 import matplotlib as mpl
 
@@ -52,7 +53,9 @@ def main():
     # define the path to .gtftk
     # -------------------------------------------------------------------------
     try:
-        gtftk_path = subprocess.Popen(['which', 'gtftk'], stdout=subprocess.PIPE).stdout.read().rstrip()
+        gtftk_path = subprocess.Popen(['which', 'gtftk'],
+                                      stdout=subprocess.PIPE,
+                                      stderr=DEVNULL).stdout.read().rstrip()
     except:
         gtftk_path = ''
 
@@ -65,7 +68,6 @@ def main():
 
     cmd_manager = CmdManager()
     cmd_manager.load_plugins()
-
 
     # -------------------------------------------------------------------------
     # Get the list of arguments values passed through the command

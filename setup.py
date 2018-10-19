@@ -7,22 +7,22 @@ The package comes with a set of UNIX commands that can be accessed through the g
 Authors: D. Puthier and F. Lopez
 """
 
-
 # -------------------------------------------------------------------------
 # A set of builtin packages
 # -------------------------------------------------------------------------
+
 
 import glob
 import hashlib
 import os
 import re
 import shutil
+import subprocess
 import sys
 from distutils import sysconfig
+from subprocess import DEVNULL
 from sys import platform
 from tempfile import NamedTemporaryFile
-import subprocess
-
 
 # -------------------------------------------------------------------------
 # Informations about the project
@@ -71,7 +71,6 @@ except ImportError:
     sys.stderr.write("Please install setuptools before installing pygtftk.\n")
     exit(1)
 
-
 # -------------------------------------------------------------------------
 # Python Version
 # -------------------------------------------------------------------------
@@ -79,11 +78,9 @@ except ImportError:
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 
-
 if PY2:
     sys.stderr.write("\nStarting from version 0.9.8, gtftk does not support python 2 anymore.\n")
     sys.exit(1)
-
 
 # -------------------------------------------------------------------------
 # Check gtftk version
@@ -271,14 +268,14 @@ setup(name="pygtftk",
                         'setuptools'],
       ext_modules=[lib_pygtftk])
 
-
 # ----------------------------------------------------------------------
 # Update gtftk config directory
 # ----------------------------------------------------------------------
 
 try:
     current_install_path = subprocess.Popen(['which', 'gtftk'],
-                                        stdout=subprocess.PIPE
+                                            stdout=subprocess.PIPE,
+                                            stderr=DEVNULL
                                             ).stdout.read().rstrip()
 except:
     current_install_path = ''
@@ -287,9 +284,8 @@ except:
 str_to_hash = current_install_path + __version__.encode()
 config_dir_hash = hashlib.md5(str_to_hash).hexdigest()
 config_dir = os.path.join(os.path.expanduser("~"),
-                                     ".gtftk",
-                                     config_dir_hash)
-
+                          ".gtftk",
+                          config_dir_hash)
 
 if os.path.exists(config_dir):
     shutil.rmtree(config_dir)
