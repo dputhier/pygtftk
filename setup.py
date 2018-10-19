@@ -7,6 +7,7 @@ The package comes with a set of UNIX commands that can be accessed through the g
 Authors: D. Puthier and F. Lopez
 """
 
+
 # -------------------------------------------------------------------------
 # A set of builtin packages
 # -------------------------------------------------------------------------
@@ -22,11 +23,35 @@ from sys import platform
 from tempfile import NamedTemporaryFile
 import subprocess
 
-#try:
-#    out=os.popen("ls -R /home/docs/checkouts/readthedocs.org/user_builds/pygtftk/")
-#    print(out.read())
-#except:
-#    print("Unable to print the test")
+
+# -------------------------------------------------------------------------
+# Informations about the project
+# -------------------------------------------------------------------------
+
+
+__author__ = 'fabrice Lopez,Denis Puthier'
+__email__ = 'denis.puthier@univ-amu.fr'
+__description__ = 'The Python GTF toolkit (pygtftk) package: easy handling of GTF files'
+__license__ = 'GPL-2'
+__url__ = 'https://github.com/dputhier/pygtftk'
+__url_source__ = 'https://github.com/dputhier/pygtftk'
+__url_tracker__ = 'https://github.com/dputhier/pygtftk'
+__keywords__ = 'genomics bioinformatics GTF BED'
+__python_requires__ = '>=3.5,<3.7'
+__classifiers__ = ("License :: OSI Approved :: MIT License",
+                   "Operating System :: MacOS",
+                   "Operating System :: POSIX :: Linux",
+                   "Development Status :: 4 - Beta",
+                   "Environment :: Console",
+                   "Programming Language :: Python :: 3.5",
+                   "Programming Language :: Python :: 3.6",
+                   "Intended Audience :: Science/Research",
+                   "Natural Language :: English",
+                   "Topic :: Scientific/Engineering :: Bio-Informatics",
+                   "Operating System :: POSIX :: Linux",
+                   "Operating System :: MacOS",
+                   "Topic :: Documentation :: Sphinx"
+                   )
 
 # -------------------------------------------------------------------------
 # Printing Python version
@@ -165,17 +190,17 @@ os.remove(tmp_file_conf.name)
 
 setup(name="pygtftk",
       version=__version__,
-      author_email='denis.puthier@univ-amu.fr',
-      author="fabrice Lopez,Denis Puthier",
-      description="The Python GTF toolkit (pygtftk) package: easy handling of GTF files",
-      url="https://github.com/dputhier/pygtftk",
+      author_email=__email__,
+      author=__author__,
+      description=__description__,
+      url=__url__,
       zip_safe=False,
       project_urls={
-          'Source': 'https://github.com/dputhier/pygtftk',
-          'Tracker': 'https://github.com/dputhier/pygtftk/issues'
+          'Source': __url_source__,
+          'Tracker': __url_tracker__
       },
-      python_requires='>=3.5,<3.7',
-      keywords="genomics bioinformatics GTF BED",
+      python_requires=__python_requires__,
+      keywords=__keywords__,
       packages=['pygtftk',
                 'pygtftk/plugins',
                 'docs',
@@ -212,20 +237,7 @@ setup(name="pygtftk",
       scripts=['bin/gtftk'],
       license='LICENSE.txt',
 
-      classifiers=("License :: OSI Approved :: MIT License",
-                   "Operating System :: MacOS",
-                   "Operating System :: POSIX :: Linux",
-                   "Development Status :: 4 - Beta",
-                   "Environment :: Console",
-                   "Programming Language :: Python :: 3.5",
-                   "Programming Language :: Python :: 3.6",
-                   "Intended Audience :: Science/Research",
-                   "Natural Language :: English",
-                   "Topic :: Scientific/Engineering :: Bio-Informatics",
-                   "Operating System :: POSIX :: Linux",
-                   "Operating System :: MacOS",
-                   "Topic :: Documentation :: Sphinx"
-                   ),
+      classifiers=__classifiers__,
       long_description=long_description,
       extras_require={
           'tests': [
