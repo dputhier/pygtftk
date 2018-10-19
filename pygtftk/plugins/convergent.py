@@ -2,7 +2,6 @@
 from __future__ import print_function
 
 import argparse
-import math
 import os
 import sys
 
@@ -143,12 +142,12 @@ def convergent(
 
         if gene_id_main != gn_id_ov:
             if tx_id_main in tx_to_convergent_nm:
-                dist = math.fabs(tts_pos[tx_id_main] - tts_pos[tx_id_ov])
+                dist = abs(tts_pos[tx_id_main] - tts_pos[tx_id_ov])
                 if dist < dist_to_convergent[tx_id_main]:
                     dist_to_convergent[tx_id_main] = dist
                     tx_to_convergent_nm[tx_id_main] = tx_id_ov
             else:
-                dist = math.fabs(tts_pos[tx_id_main] - tts_pos[tx_id_ov])
+                dist = abs(tts_pos[tx_id_main] - tts_pos[tx_id_ov])
                 dist_to_convergent[tx_id_main] = dist
                 tx_to_convergent_nm[tx_id_main] = tx_id_ov
 
@@ -184,11 +183,11 @@ if __name__ == '__main__':
 else:
 
     test = """
-
+    
     #convergent: load dataset
-    @test "convergent_1" {
-     result=`gtftk get_example -d simple -f "*"`
-     [ "$result" = "" ]
+    @test "convergent_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
     }
 
     #convergent: this region contains 3 convergent tx

@@ -2,7 +2,6 @@
 from __future__ import print_function
 
 import argparse
-import math
 import os
 import sys
 from builtins import str
@@ -170,13 +169,13 @@ Find transcript with divergent promoters.
 
         if gene_id_prom != gn_id_tss:
             if tx_id_prom in tx_with_divergent:
-                dist = math.fabs(tss_pos[tx_id_prom] - tss_pos[tx_id_tss])
+                dist = abs(tss_pos[tx_id_prom] - tss_pos[tx_id_tss])
                 if dist < dist_to_divergent[tx_id_prom]:
                     dist_to_divergent[tx_id_prom] = dist
                     tx_with_divergent[tx_id_prom] = tx_id_tss
             else:
 
-                dist = math.fabs(tss_pos[tx_id_prom] - tss_pos[tx_id_tss])
+                dist = abs(tss_pos[tx_id_prom] - tss_pos[tx_id_tss])
                 dist_to_divergent[tx_id_prom] = dist
                 tx_with_divergent[tx_id_prom] = tx_id_tss
 
