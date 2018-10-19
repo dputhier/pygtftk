@@ -14,7 +14,6 @@ import re
 import shutil
 import subprocess
 import sys
-import tempfile
 import textwrap
 from argparse import Action
 from builtins import object
@@ -37,11 +36,11 @@ from pygtftk.utils import PY3
 from pygtftk.utils import add_r_lib
 from pygtftk.utils import check_r_packages
 from pygtftk.utils import left_strip_str
+from pygtftk.utils import make_tmp_dir
 from pygtftk.utils import message
 from pygtftk.utils import mkdir_p
 from pygtftk.utils import print_table
 from pygtftk.version import __version__
-from pygtftk.utils import make_tmp_dir
 
 # ---------------------------------------------------------------
 # Python2/3  compatibility
@@ -208,6 +207,7 @@ class GetTests(argparse._StoreTrueAction):
 
         sys.exit()
 
+
 class GetTestsNoCon(argparse._StoreTrueAction):
     """A class to be used by argparser to get all plugin tests (that do not require internet conn)
     and write them to a file."""
@@ -329,7 +329,6 @@ class UpdatePlugin(argparse._StoreTrueAction):
         super(UpdatePlugin, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-
         if not os.path.exists(CmdManager.config_dir):
             message("Please run gtftk -h before adding additional plugins",
                     force=True)
@@ -373,6 +372,7 @@ class getSysInfo(argparse._StoreTrueAction):
         print("\n".join(info_sys))
         sys.exit()
 
+
 # ---------------------------------------------------------------
 # An additional action to get plugin path
 # ---------------------------------------------------------------
@@ -386,6 +386,7 @@ class getPluginPath(argparse._StoreTrueAction):
     def __call__(self, parser, namespace, values, option_string=None):
         print(CmdManager.config_dir)
         sys.exit()
+
 
 # ---------------------------------------------------------------
 # The cmdManager class
@@ -411,7 +412,7 @@ class CmdManager(object):
     # the path to the gtftk program.
     # the bin/gtftk program is suppose to
     # fill this attribute
-    hash=None
+    hash = None
 
     # -------------------------------------------------------------------------
     # The main parser
@@ -550,7 +551,6 @@ class CmdManager(object):
     @classmethod
     def check_config_file(cls):
 
-
         # ----------------------------------------------------------------------
         # Config directory and config files
         # ----------------------------------------------------------------------
@@ -566,7 +566,7 @@ class CmdManager(object):
                                                      "plugin.pick")
 
         CmdManager.version_file = os.path.join(CmdManager.config_dir,
-                                                     "version.py")
+                                               "version.py")
 
         if os.path.exists(os.path.join(CmdManager.config_dir, "reload")):
 
@@ -610,8 +610,6 @@ class CmdManager(object):
                                                         'plugins')}
                 a_file.write(yaml.dump(out_dict, default_flow_style=False))
 
-
-
         # ----------------------------------------------------------------------
         # Check version
         # ----------------------------------------------------------------------
@@ -637,8 +635,6 @@ class CmdManager(object):
     def _create_version_file(cls):
         version_file_installed = os.path.join(pygtftk.__path__[0], "version.py")
         shutil.copy(version_file_installed, CmdManager.config_dir)
-
-
 
     def __init__(self):
         """The constructor."""
@@ -920,11 +916,10 @@ class CmdManager(object):
         pick = cloudpickle.CloudPickler(f_handler)
         pick.dump((self.cmd_obj_list, self.parser))
         f_handler.close()
-        #self.load_plugins()
+        # self.load_plugins()
 
     def load_plugins(self):
         """Load the plugins."""
-
 
         if CmdManager.reload:
 
@@ -978,7 +973,6 @@ class CmdManager(object):
         CmdManager.parser._option_string_actions['--version'].default = argparse.SUPPRESS
 
         f_handler.close()
-
 
     @classmethod
     def parse_cmd_args(cls):

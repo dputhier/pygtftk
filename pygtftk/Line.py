@@ -12,12 +12,12 @@ returned respectively:
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from collections import OrderedDict
-
 from builtins import object
 from builtins import range
 from builtins import str
 from builtins import zip
+from collections import OrderedDict
+
 from cffi import FFI
 
 import pygtftk.utils

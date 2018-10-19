@@ -43,7 +43,6 @@ from pyparsing import operatorPrecedence
 
 import pygtftk
 import pygtftk.utils
-from pygtftk import cmd_manager
 from pygtftk.Line import Feature
 from pygtftk.fasta_interface import FASTA
 from pygtftk.tab_interface import TAB
@@ -421,7 +420,6 @@ class GTF(object):
         >>> assert len(a_gtf) == 70
         >>> assert len(a_gtf[("feature","gene")]) == 10
         """
-
 
         # Increment the number of instances at the
         # class level
@@ -2015,7 +2013,6 @@ class GTF(object):
             raise GTFtkError("File {f} is empty.".format(f=inputfile.name))
 
         for line_nb, line in enumerate(inputfile):
-
 
             if line_nb == 0:
                 if has_header:

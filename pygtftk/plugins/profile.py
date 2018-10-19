@@ -5,18 +5,17 @@ import argparse
 import os
 import re
 import shutil
-import tempfile
 import warnings
 import zipfile
+from builtins import range
+from builtins import str
+from builtins import zip
 from collections import OrderedDict
 
 import matplotlib as mpl
 import numpy as np
 import pandas as pd
 import plotnine
-from builtins import range
-from builtins import str
-from builtins import zip
 from matplotlib import cm
 from matplotlib import colors as mcolors
 from pandas import Categorical
@@ -36,8 +35,8 @@ from pygtftk.utils import GTFtkError
 from pygtftk.utils import chomp
 from pygtftk.utils import is_hex_color
 from pygtftk.utils import make_outdir_and_file
-from pygtftk.utils import message
 from pygtftk.utils import make_tmp_dir
+from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
 __doc__ = """

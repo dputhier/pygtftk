@@ -5,12 +5,12 @@ from __future__ import print_function
 import argparse
 import os
 import sys
-
-import numpy as np
-import pandas
 from builtins import range
 from builtins import str
 from builtins import zip
+
+import numpy as np
+import pandas
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import int_greater_than_null

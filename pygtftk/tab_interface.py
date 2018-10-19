@@ -4,10 +4,10 @@ Class declaration of the TAB object (may be returned by a GTF instance).
 from __future__ import absolute_import
 
 import textwrap
-
-import pandas as pd
 from builtins import object
 from builtins import range
+
+import pandas as pd
 from cffi import FFI
 
 import pygtftk.utils

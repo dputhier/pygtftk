@@ -157,8 +157,6 @@ def retrieve(species_name=None,
             message("Unable to change directory to '%s'." % ensembl_collection,
                     type="ERROR")
 
-
-
     try:
         all_releases = ftp.listdir(ftp.curdir)
     except Exception as e:
@@ -183,7 +181,6 @@ def retrieve(species_name=None,
         release = max(version_list)
         release_dir = "release-" + str(release)
         message("Latest version is %d." % release)
-
 
     try:
         ftp.chdir(release_dir)

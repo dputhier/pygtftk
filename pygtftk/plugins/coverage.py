@@ -5,9 +5,9 @@ from __future__ import print_function
 import argparse
 import os
 import sys
+from builtins import range
 
 import pandas as pd
-from builtins import range
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension

@@ -5,9 +5,9 @@ import argparse
 import os
 import re
 import sys
-
 from builtins import range
 from builtins import str
+
 from pybedtools.bedtool import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension

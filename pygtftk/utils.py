@@ -182,8 +182,9 @@ def make_tmp_file(prefix='tmp',
 
     return tmp_file
 
+
 def make_tmp_dir(prefix='tmp',
-                  store=True):
+                 store=True):
     """
     This function should be call to create a temporary file as all files
     declared in TMP_FILE_LIST will be remove upon command exit.
@@ -213,6 +214,7 @@ def make_tmp_dir(prefix='tmp',
         TMP_FILE_LIST.append(dir_name)
 
     return dir_name
+
 
 # ---------------------------------------------------------------
 # get the path to an example file

@@ -3,11 +3,11 @@ from __future__ import absolute_import
 import re
 import textwrap
 import xml.etree.ElementTree as elmt_tree
+from builtins import object
+from builtins import str
 from collections import defaultdict
 
 import requests
-from builtins import object
-from builtins import str
 from requests.exceptions import ConnectionError
 
 from pygtftk.utils import message

@@ -5,7 +5,6 @@ import argparse
 import os
 import shutil
 import sys
-
 from builtins import str
 from builtins import zip
 

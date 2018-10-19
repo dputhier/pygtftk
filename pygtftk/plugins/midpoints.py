@@ -5,8 +5,8 @@ from __future__ import print_function
 import argparse
 import os
 import sys
-
 from builtins import str
+
 from future.utils import old_div
 from pybedtools import BedTool
 

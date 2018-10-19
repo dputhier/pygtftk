@@ -4,9 +4,8 @@ from __future__ import print_function
 import argparse
 import os
 import sys
-from collections import OrderedDict
-
 from builtins import str
+from collections import OrderedDict
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject

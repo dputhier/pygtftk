@@ -6,7 +6,6 @@ import argparse
 import os
 import sys
 from _collections import defaultdict
-
 from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension

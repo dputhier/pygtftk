@@ -5,14 +5,14 @@ Class declaration of the FASTA object (may be returned by GTF object methods).
 from __future__ import absolute_import
 
 import textwrap
+from builtins import object
+from builtins import range
+from builtins import str
 from collections import OrderedDict
 
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from builtins import object
-from builtins import range
-from builtins import str
 from cffi import FFI
 
 from pygtftk.Line import FastaSequence

@@ -11,11 +11,11 @@ import glob
 import os
 import re
 import sys
-from collections import defaultdict
-
 from builtins import object
 from builtins import range
 from builtins import str
+from collections import defaultdict
+
 from pybedtools import BedTool
 
 from pygtftk.utils import PY3
@@ -406,7 +406,7 @@ class SeparatedList(object):
                 for i in range(len(other) - 1):
                     val_1 = other[i]
                     val_2 = other[i + 1]
-                    to_test = str(val_1)  + self.check + str(val_2)
+                    to_test = str(val_1) + self.check + str(val_2)
 
                     if not eval(to_test):
                         return False
