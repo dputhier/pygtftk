@@ -11,7 +11,6 @@ Authors: D. Puthier and F. Lopez
 # A set of builtin packages
 # -------------------------------------------------------------------------
 
-
 import glob
 import hashlib
 import os
@@ -23,6 +22,18 @@ from distutils import sysconfig
 from subprocess import DEVNULL
 from sys import platform
 from tempfile import NamedTemporaryFile
+
+# -------------------------------------------------------------------------
+# Python Version
+# -------------------------------------------------------------------------
+
+
+PY3 = sys.version_info[0] == 3
+PY2 = sys.version_info[0] == 2
+
+if PY2:
+    sys.stderr.write("\nStarting from version 0.9.8, gtftk does not support python 2 anymore.\n")
+    sys.exit(1)
 
 # -------------------------------------------------------------------------
 # Informations about the project
@@ -70,17 +81,6 @@ try:
 except ImportError:
     sys.stderr.write("Please install setuptools before installing pygtftk.\n")
     exit(1)
-
-# -------------------------------------------------------------------------
-# Python Version
-# -------------------------------------------------------------------------
-
-PY3 = sys.version_info[0] == 3
-PY2 = sys.version_info[0] == 2
-
-if PY2:
-    sys.stderr.write("\nStarting from version 0.9.8, gtftk does not support python 2 anymore.\n")
-    sys.exit(1)
 
 # -------------------------------------------------------------------------
 # Check gtftk version
