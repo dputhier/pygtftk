@@ -21,7 +21,7 @@ __doc__ = """
 
 __notes__ = """
  -- By default delete transcripts containing an intron (or a sum intronic nucleotides, see -m) whose size is below s.
- -- If -\invert-match is selected delete transcripts containing an intron (or a sum intronic nucleotides, see -m) whose size is greater or equal to s.
+ -- If -\-invert-match is selected delete transcripts containing an intron (or a sum intronic nucleotides, see -m) whose size is greater or equal to s.
  -- Mono-exonic transcripts are not tested for intron size. They can be kept or deleted based on -d.
 """
 

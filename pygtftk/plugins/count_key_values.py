@@ -132,8 +132,8 @@ else:
     test = """
 
     #count
-    @test "count_1" {
-     result=`gtftk get_example  | gtftk count| grep exon| cut -f2 `
+    @test "count_key_values_1" {
+     result=`gtftk get_example  | gtftk count_key_values| grep exon| cut -f2 `
       [ "$result" -eq 25 ]
     }
 
@@ -145,5 +145,6 @@ else:
                     fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
+                    notes=__notes__,
                     group="information",
                     test=test)
