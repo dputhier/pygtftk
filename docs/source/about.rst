@@ -1,16 +1,6 @@
-About pygtftk
+
+Warning about supported GTF file formats
 ===============================================
-
-The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF files (Gene Transfer Format). The pygtftk package is compatible with Python Python 3.5/3.6 and relies on **libgtftk**, a library of functions **written in C**.
-
-The package comes with a set of **UNIX commands** that can be accessed through the **gtftk main Unix program**. The gtftk program exposes several subcommands than can be piped, for instance, to filter, convert, extract or delete data from GTF files. The gtftk set of Unix commands, can be easily extended using a basic plugin architecture. All these aspects are covered in the help section.
-
-While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon  active development thus feel free to post any problem or required enhancement through the github interface.
-
-
-
-warning about supported GTF file formats
------------------------------------------------------------------
 
 .. warning:: Most of the commands of the gtftk suite are designed to handle files in **Ensembl** GTF format and thus require **transcript and gene features/lines** in the GTF. All lines must contain a transcript_id and gene_id value except the **gene feature** that should contain only the gene_id (**see get_example command for an example**). Transcript and gene lines will be used when required to get access to transcript and gene coordinates. This solution was choosen to define a reference GTF file format for (py)gtftk (since Ensembl format is probably the most widely used).
 
