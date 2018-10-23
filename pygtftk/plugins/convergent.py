@@ -2,10 +2,8 @@
 from __future__ import print_function
 
 import argparse
-import math
 import os
 import sys
-
 from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -143,12 +141,12 @@ def convergent(
 
         if gene_id_main != gn_id_ov:
             if tx_id_main in tx_to_convergent_nm:
-                dist = math.fabs(tts_pos[tx_id_main] - tts_pos[tx_id_ov])
+                dist = abs(tts_pos[tx_id_main] - tts_pos[tx_id_ov])
                 if dist < dist_to_convergent[tx_id_main]:
                     dist_to_convergent[tx_id_main] = dist
                     tx_to_convergent_nm[tx_id_main] = tx_id_ov
             else:
-                dist = math.fabs(tts_pos[tx_id_main] - tts_pos[tx_id_ov])
+                dist = abs(tts_pos[tx_id_main] - tts_pos[tx_id_ov])
                 dist_to_convergent[tx_id_main] = dist
                 tx_to_convergent_nm[tx_id_main] = tx_id_ov
 
@@ -184,21 +182,28 @@ if __name__ == '__main__':
 else:
 
     test = """
+    
+    #convergent: load dataset
+    @test "convergent_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+
     #convergent: this region contains 3 convergent tx
     @test "convergent_1" {
-     result=`gtftk convergent -K toto -i pygtftk/data/simple/simple.gtf  -c pygtftk/data/simple/simple.chromInfo -u 24 -d 24| gtftk select_by_key -t |gtftk tabulate -H -k transcript_id,dist_to_convergent -s ","| grep ",[0-9]"| wc -l`
+     result=`gtftk convergent -K toto -i simple.gtf  -c simple.chromInfo -u 24 -d 24| gtftk select_by_key -t |gtftk tabulate -H -k transcript_id,dist_to_convergent -s ","| grep ",[0-9]"| wc -l`
      [ "$result" -eq 3 ]
     }
 
     #convergent: 70 lines in output
     @test "convergent_2" {
-     result=`gtftk convergent -K toto -i pygtftk/data/simple/simple.gtf  -c pygtftk/data/simple/simple.chromInfo -u 12 -d 12| wc -l`
+     result=`gtftk convergent -K toto -i simple.gtf  -c simple.chromInfo -u 12 -d 12| wc -l`
       [ "$result" -eq 70 ]
     }
     
     #convergent: 25 exons
     @test "convergent_3" {
-     result=`gtftk convergent -K toto -i pygtftk/data/simple/simple.gtf  -c pygtftk/data/simple/simple.chromInfo -u 12 -d 12| gtftk select_by_key -k feature -v exon| wc -l`
+     result=`gtftk convergent -K toto -i simple.gtf  -c simple.chromInfo -u 12 -d 12| gtftk select_by_key -k feature -v exon| wc -l`
       [ "$result" -eq 25 ]
     }
     """

@@ -147,15 +147,21 @@ if __name__ == '__main__':
 else:
 
     test = """
+    #bed_to_gtf: load dataset
+    @test "bed_to_gtf_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+
     #bed_to_gtf: test stdin and ine number
     @test "bed_to_gtf_1" {
-     result=`gtftk select_by_key -i pygtftk/data/simple/simple.gtf -k feature -v transcript| gtftk convert -f bed | gtftk bed_to_gtf | wc -l`
+     result=`gtftk select_by_key -i simple.gtf -k feature -v transcript| gtftk convert -f bed | gtftk bed_to_gtf | wc -l`
       [ "$result" -eq 15 ]
     }
     
     #bed_to_gtf: test column number
     @test "bed_to_gtf_2" {
-     result=`gtftk select_by_key -i pygtftk/data/simple/simple.gtf -k feature -v transcript| gtftk convert -f bed | gtftk bed_to_gtf | awk 'BEGIN{FS="\\t"}{print NF}' | sort | uniq`
+     result=`gtftk select_by_key -i simple.gtf -k feature -v transcript| gtftk convert -f bed | gtftk bed_to_gtf | awk 'BEGIN{FS="\\t"}{print NF}' | sort | uniq`
       [ "$result" -eq 9 ]
     }
 

@@ -5,10 +5,9 @@ import argparse
 import errno
 import os
 import sys
-from collections import defaultdict
-
 from builtins import range
 from builtins import str
+from collections import defaultdict
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject

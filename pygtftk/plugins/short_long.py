@@ -90,41 +90,47 @@ if __name__ == '__main__':
 
 else:
     test = """
-    
+
+    #short_long: load the dataset
+    @test "short_long_0" {
+     result=`gtftk get_example -f '*' -d simple_03`
+      [ "$result" = "" ]
+    }
+        
     #Test number of output lines
     @test "short_long_1" {
-    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf  -g | gtftk select_by_key -t | wc -l)
+    result=$(gtftk short_long -i simple_short_long.gtf  -g | gtftk select_by_key -t | wc -l)
     [ $result -eq 11 ]
     }
     
     #Checks that the shortest transcripts have been selected (short)
     @test "short_long_2" {
-    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf| grep -c -E 'G0001T002|G0002T002|G0003T002|G0006T002|G0008T002|G0011T001')
+    result=$(gtftk short_long -i simple_short_long.gtf| grep -c -E 'G0001T002|G0002T002|G0003T002|G0006T002|G0008T002|G0011T001')
     [ $result -eq 22 ]
     }
     
     #Checks that the transcripts With the same tss are not present (short)
     @test "short_long_3" {
-    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf | perl -ne 'print if (/(G0001T001)|(G0002T001)|(G0003T001)|(G0006T001)|(G0008T001)|(G0011T002)/)')
+    result=$(gtftk short_long -i simple_short_long.gtf | perl -ne 'print if (/(G0001T001)|(G0002T001)|(G0003T001)|(G0006T001)|(G0008T001)|(G0011T002)/)')
     [ -z $result ]
     }
     
     #Checks that the longest transcripts have been selected (long)
     @test "short_long_4" {
-    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf -l | grep -c -E 'G0001T001|G0002T001|G0003T001|G0006T001|G0008T001|G0011T002')
+    result=$(gtftk short_long -i simple_short_long.gtf -l | grep -c -E 'G0001T001|G0002T001|G0003T001|G0006T001|G0008T001|G0011T002')
     [ $result -eq 27 ]
     }
     
     #Checks that the transcripts With the same tss are not present (long)
     @test "short_long_5" {
-    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf -l | perl -ne 'print if (/(G0001T002)|(G0002T002)|(G0003T002)|(G0006T002)|(G0008T002)|(G0011T001)/)')
+    result=$(gtftk short_long -i simple_short_long.gtf -l | perl -ne 'print if (/(G0001T002)|(G0002T002)|(G0003T002)|(G0006T002)|(G0008T002)|(G0011T001)/)')
     [ -z $result ]
     }
 
 
     #Test number of output lines (genes)
     @test "short_long_6" {
-    result=$(gtftk short_long -i pygtftk/data/simple_03/simple_short_long.gtf  -g |  gtftk select_by_key -k feature -v gene| wc -l)
+    result=$(gtftk short_long -i simple_short_long.gtf  -g |  gtftk select_by_key -k feature -v gene| wc -l)
     [ $result -eq 11 ]
     }
 

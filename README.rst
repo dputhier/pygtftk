@@ -26,7 +26,7 @@ Python GTF toolkit (pygtftk)
 =============================
 
 
-The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package is compatible with Python 2.7 and Python >=3.5 and relies on **libgtftk**, a library of functions **written in C**. 
+The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package is compatible with Python  >=3.5,<3.7 and relies on **libgtftk**, a library of functions **written in C**.
 
 The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files. The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help sections.
 
@@ -48,15 +48,16 @@ Installation through conda package building
 
 Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
 
-A conda package will be available in the near future. In the meantime, you can however create an environment with all prerequisites using the commands below.
-If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_. ::
+If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_ and make sure you have bioconda and conda-forge channels set up in the order below. ::
 
-    git clone git@github.com:dputhier/pygtftk.git pygtftk
-    cd pygtftk
-    conda env create -n pygtftk_py3k -f conda/env.yaml python=3.6
-    source activate pygtftk_py3k
-    make install
-    gtftk -h 
+    conda config --add channels defaults
+    conda config --add channels bioconda
+    conda config --add channels conda-forge
+
+Then you can simply install pygtftk in its own isolated environment and activate it. ::
+
+    conda create -n pygtftk -c guillaumecharbonnier pygtftk
+    conda activate pygtftk
 
 
 Installation through setup.py
@@ -66,7 +67,7 @@ This is not the prefered way for installation. Choose conda whenever possible. W
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
     cd pygtftk
-    # Check your Python version before (2.7 or >=3.5)
+    # Check your Python version (>=3.5,<3.7)
     pip install -r requirements.txt
     python setup.py install
 

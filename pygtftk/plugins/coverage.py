@@ -5,9 +5,9 @@ from __future__ import print_function
 import argparse
 import os
 import sys
+from builtins import range
 
 import pandas as pd
-from builtins import range
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -28,7 +28,7 @@ the n windows (--nb-window) with the highest coverage values.
 __notes__ = """
 -- Regions were signal can be computed (if GTF file as input): promoter/tss, tts,
 introns, intron_by_tx, intergenic regions or any feature available in the GTF file (transcript, exon, gene...).
--- If -\matrix-out is selected, the signal for each bigwig will be provided in a dedicated column. Otherwise, signal for each bigwig is provided through a dedicated line.
+-- If -\-matrix-out is selected, the signal for each bigwig will be provided in a dedicated column. Otherwise, signal for each bigwig is provided through a dedicated line.
 -- If bed is used as input, each region should have its own name (column 4).
 """
 
@@ -438,146 +438,152 @@ if __name__ == '__main__':
 else:
 
     test = """
-    
+
+    # coverage: load dataset
+    @test "coverage_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+        
     #coverage: test coverage of tts
     @test "coverage_1" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo  -f tts  -p 0  pygtftk/data/simple/simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -i simple.gtf -c simple.chromInfo  -f tts  -p 0  simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
       [ "$result" = "1.0,1.0,3.0,2.0,3.0,2.0,0.0,0.0,2.0,2.0,1.0,1.0,1.0,2.0,1.0," ]
     }
     
     #coverage: test coverage of tss
     @test "coverage_2" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo  -p 0 pygtftk/data/simple/simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -i simple.gtf -c simple.chromInfo  -p 0 simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
       [ "$result" = "0.0,0.0,2.0,2.0,2.0,0.0,0.0,0.0,1.0,1.0,4.0,4.0,0.0,0.0,1.0," ]
     }
     
     
     #coverage: test coverage of tss (-u, -d)
     @test "coverage_3" {
-     result=`gtftk coverage -u 3 -d 1 -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo  -p 0  pygtftk/data/simple/simple.bw| cut -f 5| perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -u 3 -d 1 -i simple.gtf -c simple.chromInfo  -p 0  simple.bw| cut -f 5| perl -npe 's/\\n/,/'`
       [ "$result" = "0.8,0.8,2.2,2.2,2.0,0.0,0.0,0.0,1.6,1.6,4.0,4.0,0.4,0.0,0.8," ]
     }
     
     #coverage: test coverage of intron
     @test "coverage_4" {
-     result=`gtftk coverage -f intron -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo  -p 0 pygtftk/data/simple/simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -f intron -i simple.gtf -c simple.chromInfo  -p 0 simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
       [ "$result" = "3.0,1.0,2.666667,0.0,0.0,0.0,2.0," ]
     }
     
     
     #coverage: test coverage of intergenic
     @test "coverage_5" {
-     result=`gtftk coverage -f intergenic -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo  -p 0 pygtftk/data/simple/simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -f intergenic -i simple.gtf -c simple.chromInfo  -p 0 simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
       [ "$result" = "1.0,1.857143,2.0,0.0,0.866667,3.5,1.72973,2.15,1.230769,0.0," ]
     }
     
     #coverage: transcript
     @test "coverage_6" {
-     result=`gtftk coverage -f transcript -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo  -p 0 pygtftk/data/simple/simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -f transcript -i simple.gtf -c simple.chromInfo  -p 0 simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
       [ "$result" = "0.666667,0.666667,2.5,2.0,2.666667,0.333333,0.0,0.0,1.0,1.0,2.142857,2.142857,0.181818,0.8,1.615385," ]
     }
     
     #coverage: test coverage of promoter
     @test "coverage_7" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo  -p 0  pygtftk/data/simple/simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -i simple.gtf -c simple.chromInfo  -p 0  simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
       [ "$result" = "0.0,0.0,2.0,2.0,2.0,0.0,0.0,0.0,1.0,1.0,4.0,4.0,0.0,0.0,1.0," ]
     }
     
     #coverage: test coverage of peaks
     @test "coverage_8" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo  -f tts  -p 0 -K toto -f transcript -m transcript_id,gene_id,exon_id pygtftk/data/simple/simple.bw | cut -f5| perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -i simple_peaks.bed -c simple.chromInfo  -f tts  -p 0 -K toto -f transcript -m transcript_id,gene_id,exon_id simple.bw | cut -f5| perl -npe 's/\\n/,/'`
       [ "$result" = "0.0,2.0,3.333333,2.666667,2.666667,0.0," ]
     }
     
     #coverage: Same results should be obatined with <stdin>
     @test "coverage_9" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo  -p 0  pygtftk/data/simple/simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -i simple.gtf -c simple.chromInfo  -p 0  simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
       [ "$result" = "0.0,0.0,2.0,2.0,2.0,0.0,0.0,0.0,1.0,1.0,4.0,4.0,0.0,0.0,1.0," ]
     }
     
     #coverage: Same results should be obatined with <stdin>
     @test "coverage_10" {
-     result=`cat pygtftk/data/simple/simple.gtf | gtftk coverage -c pygtftk/data/simple/simple.chromInfo  -p 0  pygtftk/data/simple/simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
+     result=`cat simple.gtf | gtftk coverage -c simple.chromInfo  -p 0  simple.bw | cut -f 5| perl -npe 's/\\n/,/'`
       [ "$result" = "0.0,0.0,2.0,2.0,2.0,0.0,0.0,0.0,1.0,1.0,4.0,4.0,0.0,0.0,1.0," ]
     }
     
     #coverage: Using peaks we expect 6 lines
     @test "coverage_11" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo  -f tts  -p 0 -K toto  pygtftk/data/simple/simple.bw| wc -l`
+     result=`gtftk coverage -i simple_peaks.bed -c simple.chromInfo  -f tts  -p 0 -K toto  simple.bw| wc -l`
       [ "$result" -eq 6 ]
     }
     
     #coverage: If two bigwig are provided we expect twice lines (bed)
     @test "coverage_12" {
-     result=`gtftk get_example -f 2.bw 2>/dev/null; gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo  -f tts  -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw| wc -l`
+     result=`gtftk get_example -f 2.bw 2>/dev/null; gtftk coverage -i simple_peaks.bed -c simple.chromInfo  -f tts  -p 0 -K toto  simple.bw simple.2.bw| wc -l`
       [ "$result" -eq 12 ]
     }
     
     #coverage: If two bigwig are provided we expect twice lines (gtf)
     @test "coverage_13" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo  -f tts  -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw | wc -l`
+     result=`gtftk coverage -i simple.gtf -c simple.chromInfo  -f tts  -p 0 -K toto  simple.bw simple.2.bw | wc -l`
       [ "$result" -eq 30 ]
     }
     
     
     #coverage: check label is working (1)
     @test "coverage_14" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw -l s1,s2 | cut -f4 | sed 's/|.*//'| sort | uniq -c| perl -npe 's/ +//g; s/\\n/,/'`
+     result=`gtftk coverage -i simple.gtf -c simple.chromInfo    -p 0 -K toto  simple.bw simple.2.bw -l s1,s2 | cut -f4 | sed 's/|.*//'| sort | uniq -c| perl -npe 's/ +//g; s/\\n/,/'`
       [ "$result" = "15s1,15s2," ]
     }
     
     #coverage: check label is working (2)
     @test "coverage_15" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw -l s1,s2 | cut -f4 | sed 's/|.*//'| sort | uniq -c| perl -npe 's/ +//g; s/\\n/,/'`
+     result=`gtftk coverage -i simple_peaks.bed -c simple.chromInfo    -p 0 -K toto  simple.bw simple.2.bw -l s1,s2 | cut -f4 | sed 's/|.*//'| sort | uniq -c| perl -npe 's/ +//g; s/\\n/,/'`
       [ "$result" = "6s1,6s2," ]
     }
     
     #coverage: Using peaks (as bed3) we expect 6 lines (here * 2)
     @test "coverage_16" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed3 -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw -l s1,s2| wc -l`
+     result=`gtftk coverage -i simple_peaks.bed3 -c simple.chromInfo    -p 0 -K toto  simple.bw simple.2.bw -l s1,s2| wc -l`
       [ "$result" -eq 12 ]
     }
     
     #coverage: here we expect 18 lines
     @test "coverage_17" {
-     result=`cp simple.2.bw simple.3.bw; gtftk coverage -i pygtftk/data/simple/simple_peaks.bed3 -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw simple.3.bw  pygtftk/data/simple/simple.2.bw -l s1,s2,s3 | wc -l`
+     result=`cp simple.2.bw simple.3.bw; gtftk coverage -i simple_peaks.bed3 -c simple.chromInfo    -p 0 -K toto  simple.bw simple.3.bw  simple.2.bw -l s1,s2,s3 | wc -l`
       [ "$result" -eq 18 ]
     }
     
     #coverage: 7 lines for introns
     @test "coverage_18" {
-     result=`gtftk get_example|  gtftk coverage -c pygtftk/data/simple/simple.chromInfo  -f intron -u 0 -d 0  pygtftk/data/simple/simple.bw| wc -l`
+     result=`gtftk coverage -i simple.gtf -c simple.chromInfo  -f intron -u 0 -d 0  simple.bw| wc -l`
       [ "$result" -eq 7 ]
     }
     
     #coverage: 10 lines for intergenic
     @test "coverage_19" {
-     result=`gtftk get_example|  gtftk coverage -c pygtftk/data/simple/simple.chromInfo  -f intergenic -u 0 -d 0  pygtftk/data/simple/simple.bw| wc -l`
+     result=`gtftk coverage -i simple.gtf -c simple.chromInfo  -f intergenic -u 0 -d 0  simple.bw| wc -l`
       [ "$result" -eq 10 ]
     }
     
     #coverage: 20 lines for CDS
     @test "coverage_20" {
-     result=`gtftk get_example|  gtftk coverage -c pygtftk/data/simple/simple.chromInfo  -f CDS -u 0 -d 0  pygtftk/data/simple/simple.bw| wc -l`
+     result=`gtftk coverage -i simple.gtf -c simple.chromInfo  -f CDS -u 0 -d 0  simple.bw| wc -l`
       [ "$result" -eq 20 ]
     }
     
     #coverage: test -s 
     @test "coverage_21" {
-     result=`gtftk coverage -s sum -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo  -f tts  -p 0 -K toto  pygtftk/data/simple/simple.bw | sortBed |  cut -f5 | perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -s sum -i simple_peaks.bed -c simple.chromInfo  -f tts  -p 0 -K toto  simple.bw | sortBed |  cut -f5 | perl -npe 's/\\n/,/'`
       [ "$result" = "0.0,6.0,10.0,8.0,8.0,0.0," ]
     }
 
     #coverage: test -s 
     @test "coverage_22" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw  -l s1,s2 -x | cut -f7 | perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -i simple_peaks.bed -c simple.chromInfo    -p 0 -K toto  simple.bw simple.2.bw  -l s1,s2 -x | cut -f7 | perl -npe 's/\\n/,/'`
       [ "$result" = "s2,0.0,2.0,3.333333,2.666667,2.666667,0.0," ]
     }
       
             
     #coverage: test -s 
     @test "coverage_23" {
-     result=`gtftk coverage -i pygtftk/data/simple/simple_peaks.bed -c pygtftk/data/simple/simple.chromInfo    -p 0 -K toto  pygtftk/data/simple/simple.bw pygtftk/data/simple/simple.2.bw  -l s1,s2 -x | cut -f6 | perl -npe 's/\\n/,/'`
+     result=`gtftk coverage -i simple_peaks.bed -c simple.chromInfo    -p 0 -K toto  simple.bw simple.2.bw  -l s1,s2 -x | cut -f6 | perl -npe 's/\\n/,/'`
       [ "$result" = "s1,0.0,2.0,3.333333,2.666667,2.666667,0.0," ]
     }
           

@@ -12,20 +12,57 @@ Authors: D. Puthier and F. Lopez
 # -------------------------------------------------------------------------
 
 import glob
+import hashlib
 import os
 import re
 import shutil
+import subprocess
 import sys
 from distutils import sysconfig
+from subprocess import DEVNULL
 from sys import platform
 from tempfile import NamedTemporaryFile
-import subprocess
 
-#try:
-#    out=os.popen("ls -R /home/docs/checkouts/readthedocs.org/user_builds/pygtftk/")
-#    print(out.read())
-#except:
-#    print("Unable to print the test")
+# -------------------------------------------------------------------------
+# Python Version
+# -------------------------------------------------------------------------
+
+
+PY3 = sys.version_info[0] == 3
+PY2 = sys.version_info[0] == 2
+
+if PY2:
+    sys.stderr.write("\nStarting from version 0.9.8, gtftk does not support python 2 anymore.\n")
+    sys.exit(1)
+
+# -------------------------------------------------------------------------
+# Informations about the project
+# -------------------------------------------------------------------------
+
+
+__author__ = 'fabrice Lopez,Denis Puthier'
+__email__ = 'denis.puthier@univ-amu.fr'
+__description__ = 'The Python GTF toolkit (pygtftk) package: easy handling of GTF files'
+__license__ = 'GPL-2'
+__url__ = 'https://github.com/dputhier/pygtftk'
+__url_source__ = 'https://github.com/dputhier/pygtftk'
+__url_tracker__ = 'https://github.com/dputhier/pygtftk'
+__keywords__ = 'genomics bioinformatics GTF BED'
+__python_requires__ = '>=3.5,<3.7'
+__classifiers__ = ("License :: OSI Approved :: MIT License",
+                   "Operating System :: MacOS",
+                   "Operating System :: POSIX :: Linux",
+                   "Development Status :: 4 - Beta",
+                   "Environment :: Console",
+                   "Programming Language :: Python :: 3.5",
+                   "Programming Language :: Python :: 3.6",
+                   "Intended Audience :: Science/Research",
+                   "Natural Language :: English",
+                   "Topic :: Scientific/Engineering :: Bio-Informatics",
+                   "Operating System :: POSIX :: Linux",
+                   "Operating System :: MacOS",
+                   "Topic :: Documentation :: Sphinx"
+                   )
 
 # -------------------------------------------------------------------------
 # Printing Python version
@@ -44,27 +81,6 @@ try:
 except ImportError:
     sys.stderr.write("Please install setuptools before installing pygtftk.\n")
     exit(1)
-
-# -------------------------------------------------------------------------
-# Python Version
-# -------------------------------------------------------------------------
-
-PY3 = sys.version_info[0] == 3
-PY2 = sys.version_info[0] == 2
-
-# -------------------------------------------------------------------------
-# Delete any existing .gtftk in home folder
-# -------------------------------------------------------------------------
-
-gtftk_cnf_dir = os.path.join(os.environ['HOME'], '.gtftk')
-sys.stderr.write("Trying to find an existing .gtftk directory\n")
-if os.path.exists(gtftk_cnf_dir):
-    sys.stderr.write("Found an existing .gtftk directory\n")
-    shutil.rmtree(gtftk_cnf_dir, ignore_errors=True)
-    if os.path.exists(gtftk_cnf_dir):
-        sys.stderr.write("Failed to delete .gtftk directory.\n")
-else:
-    sys.stderr.write("No .gtftk directory found.\n")
 
 # -------------------------------------------------------------------------
 # Check gtftk version
@@ -176,17 +192,17 @@ os.remove(tmp_file_conf.name)
 
 setup(name="pygtftk",
       version=__version__,
-      author_email='denis.puthier@univ-amu.fr',
-      author="fabrice Lopez,Denis Puthier",
-      description="The Python GTF toolkit (pygtftk) package: easy handling of GTF files",
-      url="https://github.com/dputhier/pygtftk",
+      author_email=__email__,
+      author=__author__,
+      description=__description__,
+      url=__url__,
       zip_safe=False,
       project_urls={
-          'Source': 'https://github.com/dputhier/pygtftk',
-          'Tracker': 'https://github.com/dputhier/pygtftk/issues'
+          'Source': __url_source__,
+          'Tracker': __url_tracker__
       },
-      python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <3.7',
-      keywords="genomics bioinformatics GTF BED",
+      python_requires=__python_requires__,
+      keywords=__keywords__,
       packages=['pygtftk',
                 'pygtftk/plugins',
                 'docs',
@@ -223,21 +239,7 @@ setup(name="pygtftk",
       scripts=['bin/gtftk'],
       license='LICENSE.txt',
 
-      classifiers=("License :: OSI Approved :: MIT License",
-                   "Operating System :: MacOS",
-                   "Operating System :: POSIX :: Linux",
-                   "Development Status :: 4 - Beta",
-                   "Environment :: Console",
-                   "Programming Language :: Python :: 2.7",
-                   "Programming Language :: Python :: 3.5",
-                   "Programming Language :: Python :: 3.6",
-                   "Intended Audience :: Science/Research",
-                   "Natural Language :: English",
-                   "Topic :: Scientific/Engineering :: Bio-Informatics",
-                   "Operating System :: POSIX :: Linux",
-                   "Operating System :: MacOS",
-                   "Topic :: Documentation :: Sphinx"
-                   ),
+      classifiers=__classifiers__,
       long_description=long_description,
       extras_require={
           'tests': [
@@ -260,27 +262,45 @@ setup(name="pygtftk",
                         'pyparsing >=2.2.0',
                         'GitPython >=2.1.8',
                         'pyparsing',
-                        'matplotlib >=2.0.2',
-                        'plotnine >=0.4.0',
+                        'matplotlib >=3.0.0',
+                        'plotnine >=0.5.1',
                         'future',
                         'setuptools'],
       ext_modules=[lib_pygtftk])
 
-config_dir = os.path.join(os.path.expanduser("~"), ".gtftk")
-dumped_plugin_path = os.path.join(config_dir, "plugin.pick")
-
-sys.stderr.write("Removing old plugin dump.\n")
+# ----------------------------------------------------------------------
+# Update gtftk config directory
+# ----------------------------------------------------------------------
 
 try:
-    os.remove(dumped_plugin_path)
-except OSError as e:
+    current_install_path = subprocess.Popen(['which', 'gtftk'],
+                                            stdout=subprocess.PIPE,
+                                            stderr=DEVNULL
+                                            ).stdout.read().rstrip()
+except:
+    current_install_path = ''
+    sys.stderr.write("Unable to find gtftk in the path...\n")
+
+str_to_hash = current_install_path + __version__.encode()
+config_dir_hash = hashlib.md5(str_to_hash).hexdigest()
+config_dir = os.path.join(os.path.expanduser("~"),
+                          ".gtftk",
+                          config_dir_hash)
+
+if os.path.exists(config_dir):
+    shutil.rmtree(config_dir)
+    sys.stderr.write("Deleting old configuration directory at: " + config_dir + "\n")
+
+# ----------------------------------------------------------------------
+# Print gtftk info (and load the plugins...)
+# ----------------------------------------------------------------------
+# put this in a try as it could
+# raisse an error
+# if the program is not in the PATH.
+try:
+    gtftk_sys_config = subprocess.Popen(['gtftk', '-s'], stdout=subprocess.PIPE).stdout.read().rstrip()
+    sys.stderr.write(gtftk_sys_config.decode())
+except:
     pass
 
-
-sys.stderr.write("Installation complete.\n")
-
-try:
-    result = subprocess.Popen(['gtftk', '-h'], stdout=subprocess.PIPE)
-    sys.stderr.write(result.stdout.read().decode() + "\n")
-except :
-    sys.stderr.write("\nWARNING: Unable to run gtftk -h. Is the program available in the PATH ?\n")
+sys.stderr.write("\n\nInstallation complete.\n\n")

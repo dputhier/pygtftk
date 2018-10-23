@@ -5,7 +5,6 @@ from __future__ import absolute_import
 import argparse
 import re
 import sys
-
 from builtins import object
 from builtins import range
 

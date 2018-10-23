@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 from __future__ import print_function
-from builtins import str
 
 import argparse
 import os
 import sys
+from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -125,27 +125,33 @@ if __name__ == '__main__':
 else:
 
     test = '''
+    #intronic: load dataset
+    @test "intronic_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+    
     #intronic: check coordinates
     @test "intronic_1" {
-     result=`gtftk intronic -i pygtftk/data/simple/simple.gtf | cut -f2,3| perl -npe 's/\\t/|/g; s/\\n/,/g'`
+     result=`gtftk intronic -i simple.gtf | cut -f2,3| perl -npe 's/\\t/|/g; s/\\n/,/g'`
       [ "$result" = "25|27,30|32,35|41,54|56,68|70,71|73,214|219," ]
     }
 
     #intronic: check number of lines
     @test "intronic_2" {
-     result=`gtftk intronic -i pygtftk/data/simple/simple.gtf | wc -l`
+     result=`gtftk intronic -i simple.gtf | wc -l`
       [ "$result" -eq 7 ]
     }
 
     #intronic: check number of lines
     @test "intronic_3" {
-     result=`gtftk get_example |  gtftk intronic -b | cut -f2 | perl -npe  's/\\n/,/'`
+     result=`gtftk intronic -i simple.gtf -b | cut -f2 | perl -npe  's/\\n/,/'`
       [ "$result" = "54,68,71,68,71,35,25,30,30,214," ]
     }
     
     #intronic: check number of lines
     @test "intronic_4" {
-     result=`gtftk get_example |  gtftk intronic -b | cut -f3 | perl -npe  's/\\n/,/'`
+     result=`gtftk intronic -i simple.gtf -b | cut -f3 | perl -npe  's/\\n/,/'`
       [ "$result" = "56,70,73,70,73,41,27,32,32,219," ]
     }
     

@@ -130,16 +130,21 @@ if __name__ == '__main__':
 else:
 
     test = '''
-       
+    #random_list: load dataset
+    @test "random_list_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+    
     #random_list: set seed and return G0010 (4 lines)
     @test "random_list_1" {
-     result=`gtftk random_list -i pygtftk/data/simple/simple.gtf -n 1 -t gene -s 123| wc -l`
+     result=`gtftk random_list -i simple.gtf -n 1 -t gene -s 123| wc -l`
       [ "$result" -eq 7 ]
     }
     
     #random_list: set seed and return G0007T001 (3 lines)
     @test "random_list_3" {
-     result=`gtftk random_list -i pygtftk/data/simple/simple.gtf -n 1  -s 111 -t transcript| wc -l`
+     result=`gtftk random_list -i simple.gtf -n 1  -s 111 -t transcript| wc -l`
       [ "$result" -eq 3 ]
     }
     

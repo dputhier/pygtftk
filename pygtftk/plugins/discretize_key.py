@@ -5,12 +5,12 @@ from __future__ import print_function
 import argparse
 import os
 import sys
-
-import numpy as np
-import pandas
 from builtins import range
 from builtins import str
 from builtins import zip
+
+import numpy as np
+import pandas
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import int_greater_than_null
@@ -281,22 +281,29 @@ if __name__ == '__main__':
 else:
 
     test = """
+
+    # discretize_key: load dataset
+    @test "discretize_key_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+
     # discretize_key
     @test "discretize_key_1" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -V 2 -l A,B  | gtftk tabulate  -k S1_d -Hun| perl -npe 's/\\n/,/'`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -V 2 -l A,B  | gtftk tabulate  -k S1_d -Hun| perl -npe 's/\\n/,/'`
       [ "$result" = "A,B," ]
     }
 
     # discretize_key
     @test "discretize_key_2" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 3 -V 2  | gtftk tabulate  -k S1_d -Hun| perl -npe 's/\\n/,/'`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 3 -V 2  | gtftk tabulate  -k S1_d -Hun| perl -npe 's/\\n/,/'`
       [ "$result" = "(0.231_0.488],(0.743_0.999],(0.488_0.743]," ]
     }
 
 
     # discretize_key
     @test "discretize_key_3" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -V 2  | gtftk tabulate  -k S1_d -Hun| perl -npe 's/\\n/,/'`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -V 2  | gtftk tabulate  -k S1_d -Hun| perl -npe 's/\\n/,/'`
       [ "$result" = "(0.231_0.616],(0.616_0.999]," ]
     }
 

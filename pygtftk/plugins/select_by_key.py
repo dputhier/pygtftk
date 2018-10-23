@@ -270,71 +270,77 @@ if __name__ == '__main__':
 else:
 
     test = '''
-      
+
+    # select_by_key: load dataset
+    @test "select_by_key_0" {
+     result=`gtftk get_example -f '*' -d simple; gtftk get_example -f '*' -d simple_02`
+      [ "$result" = "" ]
+    }
+  
     # Select_by_key: gene_id selection. Nb Lines.
     @test "select_by_key_1" {
-      result=`gtftk select_by_key  -k gene_id -v G0003 -i pygtftk/data/simple/simple.gtf | wc -l`
+      result=`gtftk select_by_key  -k gene_id -v G0003 -i simple.gtf | wc -l`
       [ "$result" -eq 5 ]
     }
     
     # Select_by_key: gene_id selection. Nb columns.
     @test "select_by_key_2" {
-      result=`gtftk select_by_key  -k gene_id -v G0003 -i pygtftk/data/simple/simple.gtf | awk 'BEGIN{FS="\\t"}{print NF}' | sort | uniq`
+      result=`gtftk select_by_key  -k gene_id -v G0003 -i simple.gtf | awk 'BEGIN{FS="\\t"}{print NF}' | sort | uniq`
       [ "$result" -eq 9 ]
     }
      
     # Select_by_key: Feature selection. Nb Lines.
     @test "select_by_key_3" {
-     result=`gtftk select_by_key  -k feature -v gene -i pygtftk/data/simple/simple.gtf | wc -l`
+     result=`gtftk select_by_key  -k feature -v gene -i simple.gtf | wc -l`
       [ "$result" -eq 10 ]
     }
     
     # Select_by_key: Feature selection. Nb columns.
     @test "select_by_key_4" {
-     result=`gtftk select_by_key  -k feature -v gene -i pygtftk/data/simple/simple.gtf | awk 'BEGIN{FS="\\t"}{print NF}' | sort | uniq`
+     result=`gtftk select_by_key  -k feature -v gene -i simple.gtf | awk 'BEGIN{FS="\\t"}{print NF}' | sort | uniq`
       [ "$result" -eq 9 ]
     }
     
     # Select_by_key: Feature selection. --output
     @test "select_by_key_5" {
-     result=`gtftk select_by_key  -k gene_id -v G0003 -i pygtftk/data/simple/simple.gtf  -o /tmp/test_select_by_key.gtf; cat /tmp/test_select_by_key.gtf | wc -l`
+     result=`gtftk select_by_key  -k gene_id -v G0003 -i simple.gtf  -o /tmp/test_select_by_key.gtf; cat /tmp/test_select_by_key.gtf | wc -l`
       [ "$result" -eq 5 ]
     }
     
     # Select_by_key: Feature selection. --file-with-values -col
     @test "select_by_key_6" {
-     result=`gtftk select_by_key  -k gene_id  -i pygtftk/data/simple/simple.gtf  -f pygtftk/data/simple/simple.geneList -c 3| wc -l`
+     result=`gtftk select_by_key  -k gene_id  -i simple.gtf  -f simple.geneList -c 3| wc -l`
       [ "$result" -eq 18 ]
     }
     
     
     # Select_by_key: not operator
     @test "select_by_key_7" {
-     result=`gtftk select_by_key -i pygtftk/data/simple/simple.gtf -k feature -v gene -n| wc -l`
+     result=`gtftk select_by_key -i simple.gtf -k feature -v gene -n| wc -l`
       [ "$result" -eq 60 ]
     }
     
     # Select_by_key: not operator
     @test "select_by_key_8" {
-     result=`gtftk select_by_key -i pygtftk/data/simple/simple.gtf -k feature -v gene -n| awk '$3=="gene"' | wc -l`
+     result=`gtftk select_by_key -i simple.gtf -k feature -v gene -n| awk '$3=="gene"' | wc -l`
       [ "$result" -eq 0 ]
     }
     
     # Select_by_key: not operator
     @test "select_by_key_9" {
-     result=`gtftk select_by_key -i pygtftk/data/simple/simple.gtf -k feature -v transcript -n | wc -l`
+     result=`gtftk select_by_key -i simple.gtf -k feature -v transcript -n | wc -l`
       [ "$result" -eq 55 ]
     }
     
     # Select_by_key: not operator
     @test "select_by_key_10" {
-     result=`gtftk select_by_key -i pygtftk/data/simple/simple.gtf -k feature -v transcript -n | awk '$3=="transcript"' | wc -l`
+     result=`gtftk select_by_key -i simple.gtf -k feature -v transcript -n | awk '$3=="transcript"' | wc -l`
       [ "$result" -eq 0 ]
     }
     
     # Select_by_key: bed convertion
     @test "select_by_key_11" {
-     result=`gtftk select_by_key -k feature -v exon -i pygtftk/data/simple_02/simple_02.gtf -m transcript_id,gene_id,exon_id  -s "||" -b | wc -l`
+     result=`gtftk select_by_key -k feature -v exon -i simple_02.gtf -m transcript_id,gene_id,exon_id  -s "||" -b | wc -l`
       [ "$result" -eq 25 ]
     }
     
@@ -346,13 +352,13 @@ else:
     
     # Select_by_key: bed convertion
     @test "select_by_key_13" {
-     result=`gtftk select_by_key -k feature -v transcript -i pygtftk/data/simple_02/simple_02.gtf -m transcript_id,gene_id,exon_id -b  -s "||"| wc -l`
+     result=`gtftk select_by_key -k feature -v transcript -i simple_02.gtf -m transcript_id,gene_id,exon_id -b  -s "||"| wc -l`
       [ "$result" -eq 15 ]
     }
     
     # Select_by_key: bed convertion
     @test "select_by_key_14" {
-     result=`gtftk select_by_key -k feature -v transcript -i pygtftk/data/simple_02/simple_02.gtf -m transcript_id,gene_id,exon_id  -b -s "||"|  cut -f2 | sort -n| perl -npe 's/\\n/,/'`
+     result=`gtftk select_by_key -k feature -v transcript -i simple_02.gtf -m transcript_id,gene_id,exon_id  -b -s "||"|  cut -f2 | sort -n| perl -npe 's/\\n/,/'`
       [ "$result" = "2,2,21,27,32,49,64,64,106,106,124,124,175,179,209," ]
     }
     

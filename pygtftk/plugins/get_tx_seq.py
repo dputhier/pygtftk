@@ -6,7 +6,6 @@ import os
 import re
 import shutil
 import sys
-
 from builtins import str
 from builtins import zip
 
@@ -24,6 +23,7 @@ __doc__ = """
 __notes__ = """
  -- The sequences are returned in 5' to 3' orientation.
  -- If you want to use wildcards, use quotes :e.g. 'foo/bar*.fa'.
+ -- The first time a genome is used, an index (*.fa.gtftk) will be created in ~/.gtftk.
 """
 
 
@@ -74,7 +74,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-f', '--sleuth-format',
-                            help="Produce output in sleuth format.",
+                            help="Produce output in sleuth format (still experimental).",
                             action="store_true",
                             required=False)
 
@@ -271,90 +271,96 @@ if __name__ == '__main__':
 else:
 
     test = """
-   
+
+    #get_tx_seq: load dataset
+    @test "get_tx_seq_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+       
     #get_tx_seq: test a mono-exonic tx (- strand)
     @test "get_tx_seq_1" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa | grep G0008T001 -A 1| tail -1`
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa | grep G0008T001 -A 1| tail -1`
       [ "$result" = "catgcgct" ]
     }
     
     #get_tx_seq: test a bi-exonic transcript (- strand) with rev-comp
     @test "get_tx_seq_2" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf --no-rev-comp -g pygtftk/data/simple/simple.fa | grep G0008T001 -A 1| tail -1`
+     result=`gtftk get_tx_seq -i simple.gtf --no-rev-comp -g simple.fa | grep G0008T001 -A 1| tail -1`
       [ "$result" = "agcgcatg" ]
     }
     
        
     #get_tx_seq: test a bi-exonic transcript (- strand) with  --no-rev-comp and --introns
     @test "get_tx_seq_3" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -n -w|  grep G0008T001 -A 1| tail -1`
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -n -w|  grep G0008T001 -A 1| tail -1`
       [ "$result" = "agcgcaccatatg" ]
     }
     
     #get_tx_seq: test a bi-exonic transcript (- strand) with --introns
     @test "get_tx_seq_4" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -w|  grep G0008T001 -A 1| tail -1`
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -w|  grep G0008T001 -A 1| tail -1`
       [ "$result" = "catatggtgcgct" ]
     }
     
     #get_tx_seq: test a bi-exonic transcript (- strand) with --introns
     @test "get_tx_seq_5" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -w |  grep G0008T001 -A 1| tail -1`
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -w |  grep G0008T001 -A 1| tail -1`
       [ "$result" = "catatggtgcgct" ]
     }
  
     #get_tx_seq: test a bi-exonic transcript (- strand) with --introns --no-rev-comp
     @test "get_tx_seq_6" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -w -n|  grep G0008T001 -A 1| tail -1`
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -w -n|  grep G0008T001 -A 1| tail -1`
       [ "$result" = "agcgcaccatatg" ]
     }
     
     # The sequence is independant of exon order
     #get_tx_seq: test a bi-exonic transcript (- strand) with --introns --no-rev-comp
     @test "get_tx_seq_7" {
-     result=`gtftk get_example |  perl -MList::Util -e 'print List::Util::shuffle <>' > /tmp/get_example_shuf.gtf ; gtftk get_tx_seq -i /tmp/get_example_shuf.gtf -g pygtftk/data/simple/simple.fa| grep G0006T001  -A 1 | tail -1`
+     result=`gtftk get_example |  perl -MList::Util -e 'print List::Util::shuffle <>' > /tmp/get_example_shuf.gtf ; gtftk get_tx_seq -i /tmp/get_example_shuf.gtf -g simple.fa| grep G0006T001  -A 1 | tail -1`
       [ "$result" = "gctattacat" ]
     }
 
     #sleuth output
     @test "get_tx_seq_8" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -f| wc -l`
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -f| wc -l`
       [ "$result" -eq 30 ]
     }
 
     #sleuth output
     @test "get_tx_seq_9" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -f| head -1`
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -f| head -1`
       [ "$result" = ">G0001T002 chromosome:GRCm38:chr1:125:138:1 gene:G0001 gene_biotype:? transcript_biotype:?" ]
     }   
 
     #sleuth output
     @test "get_tx_seq_10" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -f -a bla| head -1`
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -f -a bla| head -1`
       [ "$result" = ">G0001T002 chromosome:bla:chr1:125:138:1 gene:G0001 gene_biotype:? transcript_biotype:?" ]
     }
 
     # The process ends normality if no corresponding chr is found
     @test "get_tx_seq_11" {
-     result=`sed 's/^/bla/' pygtftk/data/simple/simple.gtf | gtftk get_tx_seq -g pygtftk/data/simple/simple.fa | wc -l `
+     result=`sed 's/^/bla/' simple.gtf | gtftk get_tx_seq -g simple.fa | wc -l `
       [ "$result" -eq 0 ]
     }
     
     # The process ends normality if no corresponding chr is found
     @test "get_tx_seq_12" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -l chrom,start,end| head -1`
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -l chrom,start,end| head -1`
       [ "$result" = ">chr1|125|138" ]
     }
         
     # The process ends normality if no corresponding chr is found
     @test "get_tx_seq_13" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -l transcript_id,gene_id,gene_biotype| head -1`
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -l transcript_id,gene_id,gene_biotype| head -1`
       [ "$result" = ">G0001T002|G0001|?" ]
     }
 
     # The process ends normality if no corresponding chr is found
     @test "get_tx_seq_14" {
-     result=`gtftk get_tx_seq -i pygtftk/data/simple/simple.gtf -g pygtftk/data/simple/simple.fa -l feature,transcript_id,seqid -s , | head -1 `
+     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -l feature,transcript_id,seqid -s , | head -1 `
       [ "$result" = ">transcript,G0001T002,chr1" ]
     }
         

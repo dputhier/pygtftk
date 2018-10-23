@@ -4,13 +4,13 @@ from __future__ import print_function
 
 import argparse
 import os
-import pyBigWig
 import sys
 import zipfile
-
-import pandas as pd
 from builtins import range
 from builtins import str
+
+import pandas as pd
+import pyBigWig
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -579,61 +579,67 @@ if __name__ == '__main__':
 else:
 
     test = '''
-     
+
+        #mk_matrix: load dataset
+        @test "mk_matrix_0" {
+         result=`gtftk get_example -d simple -f "*"`
+          [ "$result" = "" ]
+        }
+        
         #mk_matrix: test  unstranded
         @test "mk_matrix_1" {
-         result=`gtftk mk_matrix -nst -p 0 -w 4 -u 2 -d 1 -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf pygtftk/data/simple/simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ; cat simpl_mat | grep -v "#" | grep -v "main"| sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`gtftk mk_matrix -nst -p 0 -w 4 -u 2 -d 1 -c simple.chromInfo -i simple.gtf simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ; cat simpl_mat | grep -v "#" | grep -v "main"| sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "0.0|0.0|1.0|1.0,0.0|0.0|1.0|1.0,3.0|2.0|2.0|2.0,3.0|2.0|2.0|2.0,2.0|2.0|2.0|2.0,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,2.0|2.0|1.0|1.0,2.0|2.0|1.0|1.0,4.0|4.0|4.0|4.0,4.0|4.0|4.0|4.0,1.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,1.0|1.0|1.0|1.0," ]
         }
         
         
         #mk_matrix: test stranded
         @test "mk_matrix_2" {
-         result=` rm -f simpl_mat*; gtftk mk_matrix -p 0 -w 4 -u 2 -d 1 -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf pygtftk/data/simple/simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main"| sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=` rm -f simpl_mat*; gtftk mk_matrix -p 0 -w 4 -u 2 -d 1 -c simple.chromInfo -i simple.gtf simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main"| sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "1.0|1.0|0.0|0.0,1.0|1.0|0.0|0.0,2.0|2.0|2.0|3.0,2.0|2.0|2.0|3.0,2.0|2.0|2.0|2.0,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,2.0|2.0|1.0|1.0,2.0|2.0|1.0|1.0,4.0|4.0|4.0|4.0,4.0|4.0|4.0|4.0,1.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,1.0|1.0|1.0|1.0," ]
         }
         
         #mk_matrix: test pseudo-count
         @test "mk_matrix_3" {
-         result=`gtftk mk_matrix -p 1 -w 4 -u 2 -d 1 -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf pygtftk/data/simple/simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main" |  sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`gtftk mk_matrix -p 1 -w 4 -u 2 -d 1 -c simple.chromInfo -i simple.gtf simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main" |  sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "2.0|2.0|1.0|1.0,2.0|2.0|1.0|1.0,3.0|3.0|3.0|4.0,3.0|3.0|3.0|4.0,3.0|3.0|3.0|3.0,1.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,3.0|3.0|2.0|2.0,3.0|3.0|2.0|2.0,5.0|5.0|5.0|5.0,5.0|5.0|5.0|5.0,2.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,2.0|2.0|2.0|2.0," ]
         }
         
         #mk_matrix: test transcript
         @test "mk_matrix_4" {
-         result=`gtftk mk_matrix -p 1 -w 4 -d 0  -u 0 -t transcript -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf pygtftk/data/simple/simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main"|  sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`gtftk mk_matrix -p 1 -w 4 -d 0  -u 0 -t transcript -c simple.chromInfo -i simple.gtf simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main"|  sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "1.0|1.666667|2.0|2.0,1.0|1.666667|2.0|2.0,3.0|3.0|4.333333|4.0,3.5|3.0|2.5|3.0,3.666667|4.333333|3.0|3.666667,1.0|1.0|1.0|2.333333,1.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,2.0|2.0|2.0|2.0,2.0|2.0|2.0|2.0,4.666667|3.333333|2.666667|2.4,4.666667|3.333333|2.666667|2.4,1.0|1.0|1.0|1.4,1.0|1.0|1.5|2.75,2.5|3.0|3.0|2.0," ]
         }
         
         
         #mk_matrix: test transcript unstranded
         @test "mk_matrix_5" {
-         result=`gtftk mk_matrix -nst -p 1 -V -w 4 -K toto  -d 0  -u 0 -t transcript -c pygtftk/data/simple/simple.chromInfo -i pygtftk/data/simple/simple.gtf pygtftk/data/simple/simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main"|  sort -k4,4n | sort -k4,4n |cut -f8,9,10,11| perl -npe 's/\\t/|/g; s/\\n/,/' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`gtftk mk_matrix -nst -p 1 -V -w 4 -K toto  -d 0  -u 0 -t transcript -c simple.chromInfo -i simple.gtf simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main"|  sort -k4,4n | sort -k4,4n |cut -f8,9,10,11| perl -npe 's/\\t/|/g; s/\\n/,/' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "2.0|1.666667|1.0,2.0|1.666667|1.0,4.333333|3.0|3.0,2.5|3.0|3.5,3.0|4.333333|3.666667,1.0|1.0|1.0,1.0|1.0|1.0,1.0|1.0|1.0,2.0|2.0|2.0,2.0|2.0|2.0,3.333333|2.666667|2.4,3.333333|2.666667|2.4,1.0|1.0|1.4,1.0|1.5|2.75,3.0|3.0|2.5," ]
         }
         
         #mk_matrix: every file contain 15 transcripts
         @test "mk_matrix_6" {
-         result=`rm -Rf simpl_mat*; rm -Rf toto; gtftk mk_matrix -i pygtftk/data/simple/simple.gtf -u 2 -d 2 -t transcript -w 4 pygtftk/data/simple/simple.bw -o simple_mat -c pygtftk/data/simple/simple.chromInfo -K toto; wc -l toto/*.bed | grep 15| wc -l`
+         result=`rm -Rf simpl_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo -K toto; wc -l toto/*.bed | grep 15| wc -l`
           [ "$result" -eq 6 ]
         }
         
         
         #mk_matrix: test downstream + upstream (transcript)
         @test "mk_matrix_7" {
-         result=`rm -Rf  simple_mat*; rm -Rf toto; gtftk mk_matrix -i pygtftk/data/simple/simple.gtf -u 2 -d 2 -t transcript -w 4 pygtftk/data/simple/simple.bw -o simple_mat -c pygtftk/data/simple/simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cut -f8,9,10,11 simple_mat| tail -14| perl -npe 's/\\t/|/g; s/\\n/,/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`rm -Rf  simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cut -f8,9,10,11 simple_mat| tail -14| perl -npe 's/\\t/|/g; s/\\n/,/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "3.666667|2.333333|1.666667|1.4,0.0|0.0|0.5|1.75,0.0|0.0|0.0|1.333333,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,2.666667|3.333333|2.0|2.666667,2.0|2.0|3.333333|3.0,2.5|2.0|1.5|2.0,1.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,1.5|2.0|2.0|1.0,0.0|0.666667|1.0|1.0,0.0|0.666667|1.0|1.0,0.0|0.0|0.0|0.4," ]
         }
         
         #mk_matrix: test upstream.
         @test "mk_matrix_8" {
-         result=`rm -Rf  simple_mat*; rm -Rf toto; gtftk mk_matrix -i pygtftk/data/simple/simple.gtf -u 2 -d 2 -t transcript -w 4 pygtftk/data/simple/simple.bw -o simple_mat -c pygtftk/data/simple/simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| cut -f7| grep -v "#" | grep -v "upstream" | perl -npe 's/\\t/|/g; s/\\n/,/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`rm -Rf  simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| cut -f7| grep -v "#" | grep -v "upstream" | perl -npe 's/\\t/|/g; s/\\n/,/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "4.0,4.0,0.0,0.0,0.0,0.0,2.0,2.0,2.0,2.0,2.0,1.0,1.0,1.0,0.5," ]
         }
         
         #mk_matrix: test downstream.
         @test "mk_matrix_9" {
-         result=`rm -Rf  simple_mat*; rm -Rf toto; gtftk mk_matrix -i pygtftk/data/simple/simple.gtf -u 2 -d 2 -t transcript -w 4 pygtftk/data/simple/simple.bw -o simple_mat -c pygtftk/data/simple/simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| cut -f12| grep -v "#" | perl -npe 's/\\t/|/g; s/\\n/,/g' |  sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`rm -Rf  simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| cut -f12| grep -v "#" | perl -npe 's/\\t/|/g; s/\\n/,/g' |  sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "downstream_1,2.0,2.0,2.0,2.0,0.0,0.0,1.0,2.5,3.0,3.0,3.0,1.5,1.0,1.0,2.0," ]
         }
         
@@ -646,32 +652,32 @@ else:
         
         #mk_matrix: test NA values
         @test "mk_matrix_11" {
-         result=`cat pygtftk/data/simple/simple.gtf | sed 's/chr1/chr2/' |gtftk mk_matrix -u 2 -d 2 -t transcript -w 4  -o simple_mat -c pygtftk/data/simple/simple.chromInfo -V -zn   pygtftk/data/simple/simple.bw  ; unzip -u  simple_mat.zip &>/dev/null; cut -f7- simple_mat | tail -14| perl -npe 's/\\t/\\n/g'| sort | uniq`
+         result=`cat simple.gtf | sed 's/chr1/chr2/' |gtftk mk_matrix -u 2 -d 2 -t transcript -w 4  -o simple_mat -c simple.chromInfo -V -zn   simple.bw  ; unzip -u  simple_mat.zip &>/dev/null; cut -f7- simple_mat | tail -14| perl -npe 's/\\t/\\n/g'| sort | uniq`
           [ "$result" = "NA" ]
         }
         
         #mk_matrix: test header
         @test "mk_matrix_12" {
-         result=`cat pygtftk/data/simple/simple.gtf | gtftk mk_matrix -u 2 -d 2 -t transcript -w 4  -o simple_mat -c pygtftk/data/simple/simple.chromInfo -V -zn   pygtftk/data/simple/simple.bw  ; unzip -u  simple_mat.zip &>/dev/null; cut -f7- simple_mat| head -2| tail -1| perl -npe 's/\\t/|/g'`
+         result=`cat simple.gtf | gtftk mk_matrix -u 2 -d 2 -t transcript -w 4  -o simple_mat -c simple.chromInfo -V -zn   simple.bw  ; unzip -u  simple_mat.zip &>/dev/null; cut -f7- simple_mat| head -2| tail -1| perl -npe 's/\\t/|/g'`
           [ "$result" = "upstream_1|main_1|main_2|main_3|main_4|downstream_1" ]
         }
         
         #mk_matrix: test --bin-frac
         @test "mk_matrix_13" {
-         result=`rm -Rf simple_mat*; cat pygtftk/data/simple/simple.gtf | sed 's/chr1/chr2/' |gtftk mk_matrix -u 5 -d 5 -b 0.5 -t transcript -w 10  -o simple_mat -c pygtftk/data/simple/simple.chromInfo -V -zn   pygtftk/data/simple/simple.bw  ; unzip -u  simple_mat.zip &>/dev/null; cut -f7- simple_mat| head -2| tail -1| perl -npe 's/\\t/|/g'`
+         result=`rm -Rf simple_mat*; cat simple.gtf | sed 's/chr1/chr2/' |gtftk mk_matrix -u 5 -d 5 -b 0.5 -t transcript -w 10  -o simple_mat -c simple.chromInfo -V -zn   simple.bw  ; unzip -u  simple_mat.zip &>/dev/null; cut -f7- simple_mat| head -2| tail -1| perl -npe 's/\\t/|/g'`
           [ "$result" = "upstream_1|upstream_2|upstream_3|upstream_4|upstream_5|main_1|main_2|main_3|main_4|main_5|main_6|main_7|main_8|main_9|main_10|downstream_1|downstream_2|downstream_3|downstream_4|downstream_5" ]
         }
         
         
         #mk_matrix: test orientation
         @test "mk_matrix_14" {
-         result=`rm -Rf simple_mat*; cat pygtftk/data/simple/simple.gtf  |gtftk mk_matrix -u 5 -d 5 -t transcript -w 5  -o simple_mat -c pygtftk/data/simple/simple.chromInfo -V -zn   pygtftk/data/simple/simple.bw  ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| grep G0005T001 simple_mat| cut -f8-12| perl -npe 's/\\t/|/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`rm -Rf simple_mat*; cat simple.gtf  |gtftk mk_matrix -u 5 -d 5 -t transcript -w 5  -o simple_mat -c simple.chromInfo -V -zn   simple.bw  ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| grep G0005T001 simple_mat| cut -f8-12| perl -npe 's/\\t/|/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "2.0|3.333333|3.333333|2.0|2.666667" ]
         }
         
         #mk_matrix: test NO orientation (-nst)
         @test "mk_matrix_15" {
-         result=`rm -Rf simple_mat*; cat pygtftk/data/simple/simple.gtf  |gtftk mk_matrix -nst -u 5 -d 5 -t transcript -w 5  -o simple_mat -c pygtftk/data/simple/simple.chromInfo -V -zn   pygtftk/data/simple/simple.bw  ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| grep G0005T001 simple_mat| cut -f8-12| perl -npe 's/\\t/|/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`rm -Rf simple_mat*; cat simple.gtf  |gtftk mk_matrix -nst -u 5 -d 5 -t transcript -w 5  -o simple_mat -c simple.chromInfo -V -zn   simple.bw  ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| grep G0005T001 simple_mat| cut -f8-12| perl -npe 's/\\t/|/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "2.666667|2.0|3.333333|3.333333|2.0" ]
         }
       

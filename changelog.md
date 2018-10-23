@@ -5,13 +5,21 @@
 
 ### Bug Fixes
 
+- Convergent and divergent return coordinate (e.g. dist_to_divergent) in integer not float...
+
 ### API Changes
+
+- pygtftk is no more compatible with python 2. This decision aims at integrating last plotnine versions (starting from 0.5.1) that depends on matplotlib 3.0.0 which strictly depends on py3k.
 
 ### New Features
 
 - Added an example for col_from_tab in presentation.rst
 - Added a dataset mini_real_coding_pot.tab.
-- Working on travis now. 
+- Working on travis now.
+- gtftk configuration directory now contains several subdirectories whose names are computed based on gtftk program location.
+- Added a -d argument to gtftk program. This argument returns gtftk configuration directory. 
+- All tests should be independent of the directory.
+- Added test to count_key_values.
 
 ## v0.9.7
 
@@ -19,6 +27,7 @@
 
 - Fixed a bug in add_attr_from_file. The arg has_header led to empty result.
 - Fixed a bug in select_by_reg_exp. The match method was used instead of search method...
+- Fixed an error in count_key_values. 
 
 ### API Changes
 

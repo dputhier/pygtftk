@@ -20,9 +20,9 @@ __doc__ = """
 __notes__ = """
  -- By default shift is not strand specific. Meaning that if -\shift-value is set to 10, all coordinates will be moved 10 bases in 5' direction relative to the forward/watson/plus/top strand.
  -- Use a negative value to shift in 3' direction, a positive value to shift in 5' direction.
- -- If -\stranded is true, features are transposed in 5' direction relative to their associated strand.
+ -- If -\-stranded is true, features are transposed in 5' direction relative to their associated strand.
  -- By default, features are not allowed to go outside the genome coordinates. In the current implementation, in case this would happen (using a very large -\shift-value), feature would accumulate at the ends of chromosomes irrespectively of gene or transcript structures giving rise, ultimately, to several exons from the same transcript having the same starts or ends. 
- -- One can forced features to go outside the genome and ultimatly dissapear with large -\shift-value by using -a.
+ -- One can forced features to go outside the genome and ultimatly dissapear with large -\-shift-value by using -a.
 """
 
 
@@ -148,40 +148,47 @@ if __name__ == '__main__':
 else:
 
     test = '''
+    
+    # shift: load dataset
+    @test "shift_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+    
     #shift
     @test "shift_1" {
-     result=`gtftk get_example|  gtftk shift -s -10 -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 4`
+     result=`gtftk get_example|  gtftk shift -s -10 -c simple.chromInfo | head -n 1| cut -f 4`
       [ "$result" -eq 115 ]
     }
     
     #shift
     @test "shift_2" {
-     result=`gtftk get_example|  gtftk shift -s -10 -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 5`
+     result=`gtftk get_example|  gtftk shift -s -10 -c simple.chromInfo | head -n 1| cut -f 5`
       [ "$result" -eq 128 ]
     }
 
     #shift
     @test "shift_3" {
-     result=`gtftk get_example|  gtftk shift -s 10 -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 4`
+     result=`gtftk get_example|  gtftk shift -s 10 -c simple.chromInfo | head -n 1| cut -f 4`
       [ "$result" -eq 135 ]
     }
 
     #shift
     @test "shift_4" {
-     result=`gtftk get_example|  gtftk shift -s 10 -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 5`
+     result=`gtftk get_example|  gtftk shift -s 10 -c simple.chromInfo | head -n 1| cut -f 5`
       [ "$result" -eq 148 ]
     }
 
 
     #shift
     @test "shift_5" {
-     result=`gtftk get_example|  gtftk shift -s -10 -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 5`
+     result=`gtftk get_example|  gtftk shift -s -10 -c simple.chromInfo | head -n 1| cut -f 5`
       [ "$result" -eq 128 ]
     }
 
     #shift
     @test "shift_5" {
-     result=`gtftk get_example|  gtftk shift -s -10 -d -c pygtftk/data/mini_real/hg38.genome | head -n 1| cut -f 5`
+     result=`gtftk get_example|  gtftk shift -s -10 -d -c simple.chromInfo | head -n 1| cut -f 5`
       [ "$result" -eq 128 ]
     }
 

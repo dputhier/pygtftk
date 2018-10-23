@@ -1,6 +1,3 @@
-#!/bin/bash
-
-git clone  git@github.com:dputhier/pygtftk.git
-cd pygtftk
-pip -r requirements.txt
-python setup.py install
+ln -s $CC `dirname $CC`/gcc
+$PYTHON setup.py install --single-version-externally-managed --record=record.txt
+cp bin/* $PREFIX/bin/

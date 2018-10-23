@@ -11,9 +11,9 @@ import imp
 import logging
 import os
 import re
+import shutil
 import subprocess
 import sys
-import tempfile
 import textwrap
 from argparse import Action
 from builtins import object
@@ -36,6 +36,7 @@ from pygtftk.utils import PY3
 from pygtftk.utils import add_r_lib
 from pygtftk.utils import check_r_packages
 from pygtftk.utils import left_strip_str
+from pygtftk.utils import make_tmp_dir
 from pygtftk.utils import message
 from pygtftk.utils import mkdir_p
 from pygtftk.utils import print_table
@@ -206,6 +207,7 @@ class GetTests(argparse._StoreTrueAction):
 
         sys.exit()
 
+
 class GetTestsNoCon(argparse._StoreTrueAction):
     """A class to be used by argparser to get all plugin tests (that do not require internet conn)
     and write them to a file."""
@@ -263,10 +265,6 @@ class AddPlugin(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
 
-        CmdManager.config_dir_user = os.path.join(
-            os.path.expanduser("~"),
-            ".gtftk")
-
         if not os.path.exists(CmdManager.config_dir):
             message("Please run gtftk -h before adding additional plugins",
                     force=True)
@@ -278,7 +276,7 @@ class AddPlugin(argparse.Action):
 
         message("Searching for new plugins.", force=True)
 
-        dir_path = tempfile.mkdtemp(prefix="gtftk_AddPlugin")
+        dir_path = make_tmp_dir(prefix="gtftk_AddPlugin")
 
         dir_path = os.path.join(dir_path, "gtftk")
         cmd = "git clone " + values[0] + " " + dir_path
@@ -331,14 +329,10 @@ class UpdatePlugin(argparse._StoreTrueAction):
         super(UpdatePlugin, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        CmdManager.config_dir_user = os.path.join(
-            os.path.expanduser("~"),
-            ".gtftk")
-
         if not os.path.exists(CmdManager.config_dir):
             message("Please run gtftk -h before adding additional plugins",
                     force=True)
-            sys.exit()
+            sys.exit(0)
 
         open(os.path.join(CmdManager.config_dir, "reload"), "w")
         message("Plugins will be updated at next startup.", force=True)
@@ -380,6 +374,21 @@ class getSysInfo(argparse._StoreTrueAction):
 
 
 # ---------------------------------------------------------------
+# An additional action to get plugin path
+# ---------------------------------------------------------------
+
+class getPluginPath(argparse._StoreTrueAction):
+    """A class to be used by argparser to plugin path."""
+
+    def __init__(self, option_strings, dest, nargs='+', **kwargs):
+        super(getPluginPath, self).__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        print(CmdManager.config_dir)
+        sys.exit()
+
+
+# ---------------------------------------------------------------
 # The cmdManager class
 # ---------------------------------------------------------------
 
@@ -397,7 +406,13 @@ class CmdManager(object):
     config_ffd = None
     config_file = None
     dumped_plugin_path = None
+    version_file = None
     reload = False
+    # hash should contain the md5 of
+    # the path to the gtftk program.
+    # the bin/gtftk program is suppose to
+    # fill this attribute
+    hash = None
 
     # -------------------------------------------------------------------------
     # The main parser
@@ -455,6 +470,11 @@ class CmdManager(object):
                         nargs=0,
                         help="Display some info about the system.",
                         action=getSysInfo)
+
+    parser.add_argument('-d', '--plugin-path',
+                        nargs=0,
+                        help="Print plugin path",
+                        action=getPluginPath)
 
     if PY3:
         parser.add_argument('-v', '--version',
@@ -536,10 +556,8 @@ class CmdManager(object):
         # ----------------------------------------------------------------------
 
         CmdManager.config_dir = os.path.join(os.path.expanduser("~"),
-                                             ".gtftk")
-
-        CmdManager.config_ffd = os.path.join(CmdManager.config_dir,
-                                             "gtftk.ffd")
+                                             ".gtftk",
+                                             CmdManager.hash)
 
         CmdManager.config_file = os.path.join(CmdManager.config_dir,
                                               "gtftk.cnf")
@@ -547,8 +565,13 @@ class CmdManager(object):
         CmdManager.dumped_plugin_path = os.path.join(CmdManager.config_dir,
                                                      "plugin.pick")
 
+        CmdManager.version_file = os.path.join(CmdManager.config_dir,
+                                               "version.py")
+
         if os.path.exists(os.path.join(CmdManager.config_dir, "reload")):
+
             CmdManager.reload = True
+            os.unlink(os.path.join(CmdManager.config_dir, "reload"))
         else:
             CmdManager.reload = False
 
@@ -571,6 +594,7 @@ class CmdManager(object):
                 pass
 
         plug_dir_default = os.path.join(CmdManager.config_dir, "plugins")
+
         if not os.path.exists(plug_dir_default):
             try:
                 os.makedirs(plug_dir_default)
@@ -586,16 +610,36 @@ class CmdManager(object):
                                                         'plugins')}
                 a_file.write(yaml.dump(out_dict, default_flow_style=False))
 
+        # ----------------------------------------------------------------------
+        # Check version
+        # ----------------------------------------------------------------------
+
+        if os.path.exists(CmdManager.version_file):
+
+            cur_version = None
+
+            version_fh = open(CmdManager.version_file, "r")
+
+            for i in version_fh:
+                if "__version__" in i:
+                    cur_version = i.split("=")[1]
+                    cur_version = re.sub("[\'\" \n\r]", "", cur_version)
+
+            if cur_version != __version__:
+                cls._create_version_file()
+                CmdManager.reload = True
+        else:
+            cls._create_version_file()
+
+    @classmethod
+    def _create_version_file(cls):
+        version_file_installed = os.path.join(pygtftk.__path__[0], "version.py")
+        shutil.copy(version_file_installed, CmdManager.config_dir)
+
     def __init__(self):
         """The constructor."""
 
         self.check_config_file()
-
-        """
-        if not os.path.exists(CmdManager.config_ffd):
-            with open(CmdManager.config_ffd, 'w') as a_file:
-                a_file.write(pygtftk.settings.FILE_FORMAT_DEF)
-        """
 
     @classmethod
     def add_command(cls, cmd):
@@ -633,8 +677,6 @@ class CmdManager(object):
                             tokens[i].strip())).strip(),
                     100, initial_indent='     ', subsequent_indent='     ')
 
-        cmd.desc = cmd.desc.replace("-\\", "--")
-
         if cmd.references is not None:
             cmd.references = cmd.references.lstrip("\n")
             cmd.references = cmd.references.strip()
@@ -660,7 +702,7 @@ class CmdManager(object):
                     cmd.updated)).strip(),
             100, initial_indent='  ', subsequent_indent='     ')
 
-        cmd.desc = cmd.desc.replace("-\\", "--")
+        cmd.desc = re.sub("\-\\\-", "--", cmd.desc)
 
         # ----------------------------------------------------------------------
         # Define command-wise args
@@ -670,58 +712,58 @@ class CmdManager(object):
             group = cmd.parser.add_argument_group(
                 'Command-wise optional arguments')
 
-            # help is a default argument for any command
-            group.add_argument("-h",
-                               "--help",
-                               action="help",
-                               help="Show this help message and exit.")
+        # help is a default argument for any command
+        group.add_argument("-h",
+                           "--help",
+                           action="help",
+                           help="Show this help message and exit.")
 
-            # verbose is a default argument of any command
-            group.add_argument("-V",
-                               "--verbosity",
-                               default=0,
-                               metavar="",
-                               type=int,
-                               help="Increase output verbosity.",
-                               nargs='?',
-                               required=False)
+        # verbose is a default argument of any command
+        group.add_argument("-V",
+                           "--verbosity",
+                           default=0,
+                           metavar="",
+                           type=int,
+                           help="Increase output verbosity.",
+                           nargs='?',
+                           required=False)
 
-            # verbose is a default argument of any command
-            group.add_argument("-D",
-                               "--no-date",
-                               action="store_true",
-                               help="Do not add date to output file names.")
+        # verbose is a default argument of any command
+        group.add_argument("-D",
+                           "--no-date",
+                           action="store_true",
+                           help="Do not add date to output file names.")
 
-            # verbose is a default argument of any command
-            group.add_argument("-C",
-                               "--add-chr",
-                               action="store_true",
-                               help="Add 'chr' to chromosome names before printing output.")
+        # verbose is a default argument of any command
+        group.add_argument("-C",
+                           "--add-chr",
+                           action="store_true",
+                           help="Add 'chr' to chromosome names before printing output.")
 
-            # keep-temp-file is a default argument of any command
-            group.add_argument("-K",
-                               "--tmp-dir",
-                               type=str,
-                               metavar="",
-                               default=None,
-                               help="Keep all temporary files into this folder.",
-                               required=False)
+        # keep-temp-file is a default argument of any command
+        group.add_argument("-K",
+                           "--tmp-dir",
+                           type=str,
+                           metavar="",
+                           default=None,
+                           help="Keep all temporary files into this folder.",
+                           required=False)
 
-            # keep-temp-file is a default argument of any command
-            group.add_argument("-A",
-                               "--keep-all",
-                               action="store_true",
-                               help="Try to keep all temporary files even if process does not terminate normally.",
-                               required=False)
+        # keep-temp-file is a default argument of any command
+        group.add_argument("-A",
+                           "--keep-all",
+                           action="store_true",
+                           help="Try to keep all temporary files even if process does not terminate normally.",
+                           required=False)
 
-            # logger-file can be used to store the requested command
-            # arguments into a file.
-            group.add_argument("-L",
-                               "--logger-file",
-                               type=str,
-                               metavar="",
-                               help='Stores the arguments passed to the command into a file.',
-                               required=False)
+        # logger-file can be used to store the requested command
+        # arguments into a file.
+        group.add_argument("-L",
+                           "--logger-file",
+                           type=str,
+                           metavar="",
+                           help='Stores the arguments passed to the command into a file.',
+                           required=False)
 
         # Add the command to the list of known command
         cls.cmd_obj_list[cmd.name] = cmd
@@ -814,6 +856,7 @@ class CmdManager(object):
 
     def _find_plugins(self):
 
+        message("Searching plugins", force=True)
         config_file = CmdManager.config_file
 
         # User plugins
@@ -861,24 +904,35 @@ class CmdManager(object):
     def dump_plugins(self):
         """Save the plugins into a pickle object."""
 
+        message("Dumping plugins", force=True)
+
         if PY2:
             f_handler = open(CmdManager.dumped_plugin_path, "w")
         if PY3:
             f_handler = open(CmdManager.dumped_plugin_path, "wb")
+
         pick = cloudpickle.CloudPickler(f_handler)
         pick.dump((self.cmd_obj_list, self.parser))
         f_handler.close()
-        self.load_plugins()
+        # self.load_plugins()
 
     def load_plugins(self):
         """Load the plugins."""
 
-        if not os.path.exists(
-                CmdManager.dumped_plugin_path) or CmdManager.reload:
+        if CmdManager.reload:
+
+            shutil.rmtree(CmdManager.config_dir, ignore_errors=True)
+            self.check_config_file()
             self._find_plugins()
             self.dump_plugins()
         else:
-            self._load_dumped_plugins()
+            if not os.path.exists(CmdManager.dumped_plugin_path):
+                shutil.rmtree(CmdManager.config_dir, ignore_errors=True)
+                self.check_config_file()
+                self._find_plugins()
+                self.dump_plugins()
+
+        self._load_dumped_plugins()
 
     def _load_dumped_plugins(self):
 
@@ -925,6 +979,11 @@ class CmdManager(object):
         CmdManager.args = cls.parser.parse_args(None)
         args = CmdManager.args
         cmd_name = args.command
+
+        if cmd_name is None:
+            message("Please provide a subcommand or argument (e.g. -h)", type="WARNING", force=True)
+            CmdManager.parser.print_help()
+            exit(0)
 
         lang = cls.cmd_obj_list[cmd_name].lang
 
@@ -1007,7 +1066,8 @@ class CmdManager(object):
         # Delete arg that won't be used by supparsers
         for key_arg in ['bash_comp', 'add_chr', 'version', 'help',
                         'plugin_tests', 'list_plugins', 'plugin_tests_no_conn',
-                        'r_libs', 'add_plugin', 'update_plugins', 'system_info']:
+                        'r_libs', 'add_plugin', 'update_plugins', 'system_info',
+                        'plugin_path']:
             try:
                 del args[key_arg]
             except:

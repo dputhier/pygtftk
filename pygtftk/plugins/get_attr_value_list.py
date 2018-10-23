@@ -99,28 +99,34 @@ if __name__ == '__main__':
 else:
 
     test = """
-
+    
+    # get_attr_value_list: load dataset
+    @test "get_attr_value_list_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+    
     #get_attr_value_list
     @test "get_attr_value_list_1" {
-     result=`gtftk get_example  | gtftk get_attr_value_list -k feature | perl -npe 's/\\n/,/g'`
+     result=`gtftk get_attr_value_list -i simple.gtf -k feature | perl -npe 's/\\n/,/g'`
       [ "$result" = "CDS,exon,gene,transcript," ]
     }
 
     #get_attr_value_list
     @test "get_attr_value_list_2" {
-     result=`gtftk get_example  | gtftk get_attr_value_list -k feature  | wc -l`
+     result=`gtftk get_attr_value_list -i simple.gtf -k feature  | wc -l`
       [ "$result" -eq 4 ]
     }
 
     #get_attr_value_list
     @test "get_attr_value_list_3" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m | gtftk get_attr_value_list -k S1 | wc -l `
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m | gtftk get_attr_value_list -k S1 | wc -l `
       [ "$result" -eq 3 ]
     }
         
     #get_attr_value_list
     @test "get_attr_value_list_4" {
-     result=`gtftk join_attr -i pygtftk/data/simple/simple.gtf  -j pygtftk/data/simple/simple.join_mat -k gene_id -m | gtftk get_attr_value_list -k S1 | perl -npe 's/\\n/,/'`
+     result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m | gtftk get_attr_value_list -k S1 | perl -npe 's/\\n/,/'`
       [ "$result" = "0.2322,0.5555,0.999," ]
     }
         

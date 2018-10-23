@@ -6,7 +6,7 @@ set -e
 yum install zlib-devel -y
 
 # Compile wheels
-for PYBIN in `ls --color=none -d1 /opt/python/*/bin| grep -v "34"| grep -v "37"`; do
+for PYBIN in `ls --color=none -d1 /opt/python/*/bin| grep -P "(35)|(36)"`; do
     echo "${PYBIN}"
     echo ""
     "${PYBIN}/pip" install -U pip

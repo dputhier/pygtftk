@@ -21,3 +21,7 @@ install:
 script:
  - make test_para_travis -j 2
  - make nose_travis
+
+branches:
+ only:
+ - master

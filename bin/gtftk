@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-
+import hashlib
 import os
 import shutil
+import subprocess
 import sys
 import warnings
 from distutils.spawn import find_executable
+from subprocess import DEVNULL
 
 import matplotlib as mpl
 
@@ -22,6 +23,7 @@ from pygtftk.utils import TMP_FILE_LIST
 from pygtftk.utils import flatten_list
 from pygtftk.utils import message
 from pygtftk.utils import silentremove
+from pygtftk.version import __version__
 
 # Avoid warning message emitted by numpy
 # https://tinyurl.com/ybev6zrw
@@ -45,6 +47,24 @@ def main():
     if not find_executable("bedtools"):
         message("gtftk needs bedtools (command line version). Please install it.",
                 type="ERROR")
+
+    # -------------------------------------------------------------------------
+    # Set the hash attribute value of CmdManager. Used to
+    # define the path to .gtftk
+    # -------------------------------------------------------------------------
+    try:
+        gtftk_path = subprocess.Popen(['which', 'gtftk'],
+                                      stdout=subprocess.PIPE,
+                                      stderr=DEVNULL).stdout.read().rstrip()
+    except:
+        gtftk_path = ''
+
+    CmdManager.hash = hashlib.md5(gtftk_path + __version__.encode()).hexdigest()
+
+    # -------------------------------------------------------------------------
+    # Call the command manager
+    # and search plugins
+    # -------------------------------------------------------------------------
 
     cmd_manager = CmdManager()
     cmd_manager.load_plugins()

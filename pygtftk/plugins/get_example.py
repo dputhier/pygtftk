@@ -41,7 +41,8 @@ def make_parser():
                                 "simple_02",
                                 "simple_03",
                                 "simple_04",
-                                "simple_05"],
+                                "simple_05",
+                                "control_list"],
                             default="simple",
                             required=False)
 
@@ -143,10 +144,11 @@ def get_example(outputfile=None,
             message("Copying from :" + target_path)
 
             for i in file_path:
-                message(
-                    "Copying: " + os.path.basename(i),
-                    force=True)
-                shutil.copy(i, ".")
+                if not os.path.exists(os.path.join(os.getcwd(), os.path.basename(i))):
+                    message("Copying file : " + os.path.basename(i), force=True)
+                    shutil.copy(i, ".")
+                else:
+                    message("Copy canceled, file already exist:" + os.path.basename(i), force=True)
 
         else:
 
@@ -160,9 +162,13 @@ def get_example(outputfile=None,
             target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
             message("Copying from :" + target_path)
 
+
             for i in file_path:
-                message("Copying file : " + os.path.basename(i), force=True)
-                shutil.copy(i, ".")
+                if not os.path.exists(os.path.join(os.getcwd(), os.path.basename(i))):
+                    message("Copying file : " + os.path.basename(i), force=True)
+                    shutil.copy(i, ".")
+                else:
+                    message("Copy canceled, file already exist:" + os.path.basename(i), force=True)
 
     close_properly(outputfile)
 

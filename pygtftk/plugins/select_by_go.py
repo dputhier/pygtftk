@@ -151,7 +151,7 @@ else:
     test = '''
     # Select_by_go all
     @test "select_by_go_1" {
-     result=`gtftk select_by_go -i  pygtftk/data/mini_real/mini_real.gtf.gz  -s hsapiens | gtftk tabulate -uH -k gene_name | wc -l`
+     result=`gtftk get_example -d mini_real | gtftk select_by_go -V 3 -s hsapiens | gtftk tabulate -uH -k gene_name | wc -l`
       [ "$result" -gt 50 ]
     }
     

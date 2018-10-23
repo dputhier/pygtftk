@@ -4,7 +4,6 @@ from __future__ import print_function
 import argparse
 import os
 import sys
-
 from builtins import str
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -96,23 +95,29 @@ if __name__ == '__main__':
 
 else:
     test = """
-        
+
+    # intergenic: load dataset
+    @test "intergenic_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+            
     #intergenic: check few coord
     @test "intergenic_1" {
-     result=`gtftk intergenic -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo | head -3| tail -1 | cut -f2`
+     result=`gtftk intergenic -i simple.gtf -c simple.chromInfo | head -3| tail -1 | cut -f2`
       [ "$result" -eq 47 ]
     }
     
     #intergenic: check few coord
     @test "intergenic_2" {
-     result=`gtftk intergenic -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo | wc -l`
+     result=`gtftk intergenic -i simple.gtf -c simple.chromInfo | wc -l`
       [ "$result" -eq 10 ]
     }
     
     
     #intergenic: check chr
     @test "intergenic_3" {
-     result=`gtftk intergenic -i pygtftk/data/simple/simple.gtf -c pygtftk/data/simple/simple.chromInfo | cut -f1| sort|uniq| perl -npe 's/\\n/,/'`
+     result=`gtftk intergenic -i simple.gtf -c simple.chromInfo | cut -f1| sort|uniq| perl -npe 's/\\n/,/'`
       [ "$result" = "chr1,chr2," ]
     }
     """

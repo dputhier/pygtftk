@@ -19,6 +19,7 @@ __doc__ = """
  Convert a GTF to tabulated format.
 """
 __notes__ = """
+ -- Warning: by default tabulate will discard any line for which one of the selected key is not defined. Use -x (-\-accept-undef) to print them.
  -- To refer to default keys use: seqid,source,feature,start,end,frame,gene_id...
  -- Note that 'all' or '*' are special keys that can be used to convert the whole GTF into a tabulated file. Thanks @fafa13.
 """
@@ -248,64 +249,72 @@ if __name__ == '__main__':
 else:
 
     test = '''
+
+    # tabulate: load dataset
+    @test "tabulate_0" {
+     result=`gtftk get_example -f '*' -d simple`
+      [ "$result" = "" ]
+    }
+       
+    
     # tabulate: check column number
     @test "tabulate_1" {
-     result=`gtftk tabulate -H -i  pygtftk/data/simple/simple.gtf -k transcript_id,gene_id,start| awk -F "\\t" '{print NF}'| sort | uniq`
+     result=`gtftk tabulate -H -i  simple.gtf -k transcript_id,gene_id,start| awk -F "\\t" '{print NF}'| sort | uniq`
       [ "$result" -eq 3 ]
     }
     
     # tabulate: check column number
     @test "tabulate_2" {
-     result=`gtftk tabulate -i  pygtftk/data/simple/simple.gtf -k transcript_id,gene_id,gene_id,start| awk -F "\\t" '{print NF}'| sort | uniq`
+     result=`gtftk tabulate -i  simple.gtf -k transcript_id,gene_id,gene_id,start| awk -F "\\t" '{print NF}'| sort | uniq`
       [ "$result" -eq 4 ]
     }
     
     
     # tabulate: check separator
     @test "tabulate_3" {
-     result=`gtftk tabulate -H -i  pygtftk/data/simple/simple.gtf -k transcript_id,gene_id,gene_id,start -s ":" | awk -F ":" '{print NF}'| sort | uniq`
+     result=`gtftk tabulate -H -i  simple.gtf -k transcript_id,gene_id,gene_id,start -s ":" | awk -F ":" '{print NF}'| sort | uniq`
       [ "$result" -eq 4 ]
     }
 
     # tabulate: check -u
     @test "tabulate_4" {
-     result=`gtftk tabulate  -i  pygtftk/data/simple/simple.gtf -k transcript_id,gene_id,start -uHx| wc -l`
+     result=`gtftk tabulate  -i  simple.gtf -k transcript_id,gene_id,start -uHx| wc -l`
       [ "$result" -eq 44 ]
     }
     
     # tabulate: check -n
     @test "tabulate_5" {
-     result=`gtftk tabulate  -i  pygtftk/data/simple/simple.gtf -k transcript_id,gene_id,start -unH| wc -l`
+     result=`gtftk tabulate  -i  simple.gtf -k transcript_id,gene_id,start -unH| wc -l`
       [ "$result" -eq 34 ]
     }
 
     # tabulate: check -un
     @test "tabulate_6" {
-     result=`gtftk tabulate  -i  pygtftk/data/simple/simple.gtf -k transcript_id,gene_id,start -un| wc -l`
+     result=`gtftk tabulate  -i  simple.gtf -k transcript_id,gene_id,start -un| wc -l`
       [ "$result" -eq 35 ]
     }
 
     # tabulate: check all as key
     @test "tabulate_7" {
-     result=`gtftk get_example | gtftk tabulate -k all -x| wc -l `
+     result=`gtftk tabulate -k all -x -i  simple.gtf| wc -l `
       [ "$result" -eq 71 ]
     }
 
     # tabulate: check all as key
     @test "tabulate_8" {
-     result=`gtftk get_example | gtftk tabulate -k all -x | awk  -F "\\t" '{print NF}'| sort | uniq`
+     result=`gtftk tabulate -k all -x -i simple.gtf| awk  -F "\\t" '{print NF}'| sort | uniq`
       [ "$result" -eq 12 ]
     }
     
     # tabulate: check "*" as key and -b
     @test "tabulate_9" {
-     result=`gtftk get_example | gtftk tabulate -k "*" -b  -x | awk  -F "\\t" '{print NF}'| sort | uniq`
+     result=`gtftk tabulate -k "*" -b  -x -i  simple.gtf | awk  -F "\\t" '{print NF}'| sort | uniq`
       [ "$result" -eq 4 ]
     }
     
     # tabulate: check "*" as key and -b
     @test "tabulate_10" {
-     result=`gtftk get_example | gtftk tabulate -k all -x | awk  -F "\t" '{print NF}'| sort | uniq`
+     result=`gtftk tabulate -i  simple.gtf -k all -x | awk  -F "\t" '{print NF}'| sort | uniq`
       [ "$result" -eq 12 ]
     }
     

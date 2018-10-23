@@ -1,73 +1,60 @@
 package:
   name: pygtftk
-  version: "0.9.1"
+  version: "0.9.7"
 
 source:
-  #todo
+  url: https://github.com/dputhier/pygtftk/archive/0.9.7.tar.gz
+  md5: 6ce8e5d2351cd039c11dee6814dc6b98
+  sha1: 23862a12605a02de001d540c4e2fa5688294d662
 
 build:
-  #todo
+  number: 1
 
 requirements:
   build:
-    - GitPython >=2.1.8
-    - python >=3.6
-    - pyparsing
-    - argparse
-    - bedtools ==2.27.1
-    - cloudpickle >=0.4.0
-    - ftputil >=3.3.1,<4.0.0
-    - pandas >=0.23.3
-    - scipy >=1.1.0
-    - pybedtools >=0.7.8
-    - pybigwig >=0.3.10
-    - pyyaml >=3.12
-    - gcc >=4.8.5
-    - requests >=2.13.0
-    - cffi >=1.10.0
-    - pyparsing >=2.2.0
-    - biopython >=1.69
-    - zlib >=1.2.11
-    - matplotlib >=2.0.2
-    - plotnine >=0.4.0
-    - pip:
-      - future
-      - pyBigWig >=0.3.12
-      - future
-
+    - {{ compiler('c') }}
+  host:
+    - python >=3.5,<3.7
+    - zlib
   run:
-    - GitPython >=2.1.8
-    - python >=3.6
-    - pyparsing
+    - python >=3.5,<3.7
+    - cython
     - argparse
     - bedtools ==2.27.1
     - cloudpickle >=0.4.0
     - ftputil >=3.3.1,<4.0.0
+    - numpy
     - pandas >=0.23.3
     - scipy >=1.1.0
     - pybedtools >=0.7.8
-    - pybigwig >=0.3.10
+    - pybigwig >=0.3
     - pyyaml >=3.12
-    - gcc >=4.8.5
     - requests >=2.13.0
     - cffi >=1.10.0
     - pyparsing >=2.2.0
     - biopython >=1.69
-    - zlib >=1.2.11
+    - zlib
     - matplotlib >=2.0.2
     - plotnine >=0.4.0
-    - pip:
-      - future
-      - pyBigWig >=0.3.12
-      - future
+    - future
 
 test:
   commands:
-    # You can put additional test commands to be run here.
+    - gtftk -h
+      # Nose unit tests:
+    - cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $i; nosetests --with-doctest $i;   done
+      # Bats functional tests:
+    - gtftk -p > gtftk_test.bats; bats -t gtftk_test.bats; rm -f gtftk_test.bats
+  imports:
+    - pygtftk
+  # You can also put a file called run_test.py, run_test.sh, or run_test.bat
+  # in the recipe that will be run at test time.
+  requires:
+    - nose
+    - bats
 
 about:
-  home: https://github.com/dputhier/pygtftk
+  home: http://github.com/dputhier/pygtftk
   license: MIT
-  summary: 'The gtftk suite.'
-
+  summary: 'The gtftk suite providing facilities to manipulate genomic annotations in gtf format.'
 
