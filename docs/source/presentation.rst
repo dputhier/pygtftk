@@ -498,7 +498,7 @@ The default is to create equally spaced interval. The intervals can also be crea
 .. command-output:: gtftk get_example -d mini_real -f "*"
 	:shell:
 
-.. command-output:: gtftk get_example -d mini_real |  gtftk join_attr -H -j mini_real_counts_ENCFF630HEX.txt -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
+.. command-output:: gtftk get_example -d mini_real |  gtftk join_attr -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
 	:shell:
 
 **Arguments:**
@@ -1264,7 +1264,7 @@ A simple overlayed profile of all epigenetic marks around promoter. Here *---gro
     :width: 75%
     :target: _static/example_01.png
 
-Changing colors and applying color order can be done using the following syntax:
+                    Changing colors and applying color order can be done using the following syntax:
 
 
 .. command-output:: gtftk profile -D -i mini_real_promoter.zip -c 'red,blue,violet' -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if  example_01b.png
@@ -1276,7 +1276,7 @@ Changing colors and applying color order can be done using the following syntax:
     :target: _static/example_01b.png
 
 
-Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5' and 3' regions:
+                    Transcript coverage is obtained using the *mini_real_tx.zip* matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5' and 3' regions:
 
 .. command-output:: gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if  example_02.png
 	:shell:
@@ -1303,7 +1303,7 @@ Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to
     :target: _static/example_05.png
 
 
-Alternatively, the groups can be set to chromosomes or transcript classes:
+                    Alternatively, the groups can be set to chromosomes or transcript classes:
 
 
 .. command-output:: gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if  example_06.png -V 2 -nm ranging
@@ -1323,7 +1323,7 @@ Alternatively, the groups can be set to chromosomes or transcript classes:
     :width: 75%
     :target: _static/example_06b.png
 
-Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
+                    Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
 
 
 .. command-output:: gtftk profile -D -i mini_real_tx.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if  example_07.png  -fo -w -nm ranging
