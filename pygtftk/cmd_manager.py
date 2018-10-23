@@ -677,8 +677,6 @@ class CmdManager(object):
                             tokens[i].strip())).strip(),
                     100, initial_indent='     ', subsequent_indent='     ')
 
-        cmd.desc = cmd.desc.replace("-\\", "--")
-
         if cmd.references is not None:
             cmd.references = cmd.references.lstrip("\n")
             cmd.references = cmd.references.strip()
@@ -704,7 +702,7 @@ class CmdManager(object):
                     cmd.updated)).strip(),
             100, initial_indent='  ', subsequent_indent='     ')
 
-        cmd.desc = cmd.desc.replace("-\\", "--")
+        cmd.desc = re.sub("\-\\\-", "--", cmd.desc)
 
         # ----------------------------------------------------------------------
         # Define command-wise args
@@ -714,58 +712,58 @@ class CmdManager(object):
             group = cmd.parser.add_argument_group(
                 'Command-wise optional arguments')
 
-            # help is a default argument for any command
-            group.add_argument("-h",
-                               "--help",
-                               action="help",
-                               help="Show this help message and exit.")
+        # help is a default argument for any command
+        group.add_argument("-h",
+                           "--help",
+                           action="help",
+                           help="Show this help message and exit.")
 
-            # verbose is a default argument of any command
-            group.add_argument("-V",
-                               "--verbosity",
-                               default=0,
-                               metavar="",
-                               type=int,
-                               help="Increase output verbosity.",
-                               nargs='?',
-                               required=False)
+        # verbose is a default argument of any command
+        group.add_argument("-V",
+                           "--verbosity",
+                           default=0,
+                           metavar="",
+                           type=int,
+                           help="Increase output verbosity.",
+                           nargs='?',
+                           required=False)
 
-            # verbose is a default argument of any command
-            group.add_argument("-D",
-                               "--no-date",
-                               action="store_true",
-                               help="Do not add date to output file names.")
+        # verbose is a default argument of any command
+        group.add_argument("-D",
+                           "--no-date",
+                           action="store_true",
+                           help="Do not add date to output file names.")
 
-            # verbose is a default argument of any command
-            group.add_argument("-C",
-                               "--add-chr",
-                               action="store_true",
-                               help="Add 'chr' to chromosome names before printing output.")
+        # verbose is a default argument of any command
+        group.add_argument("-C",
+                           "--add-chr",
+                           action="store_true",
+                           help="Add 'chr' to chromosome names before printing output.")
 
-            # keep-temp-file is a default argument of any command
-            group.add_argument("-K",
-                               "--tmp-dir",
-                               type=str,
-                               metavar="",
-                               default=None,
-                               help="Keep all temporary files into this folder.",
-                               required=False)
+        # keep-temp-file is a default argument of any command
+        group.add_argument("-K",
+                           "--tmp-dir",
+                           type=str,
+                           metavar="",
+                           default=None,
+                           help="Keep all temporary files into this folder.",
+                           required=False)
 
-            # keep-temp-file is a default argument of any command
-            group.add_argument("-A",
-                               "--keep-all",
-                               action="store_true",
-                               help="Try to keep all temporary files even if process does not terminate normally.",
-                               required=False)
+        # keep-temp-file is a default argument of any command
+        group.add_argument("-A",
+                           "--keep-all",
+                           action="store_true",
+                           help="Try to keep all temporary files even if process does not terminate normally.",
+                           required=False)
 
-            # logger-file can be used to store the requested command
-            # arguments into a file.
-            group.add_argument("-L",
-                               "--logger-file",
-                               type=str,
-                               metavar="",
-                               help='Stores the arguments passed to the command into a file.',
-                               required=False)
+        # logger-file can be used to store the requested command
+        # arguments into a file.
+        group.add_argument("-L",
+                           "--logger-file",
+                           type=str,
+                           metavar="",
+                           help='Stores the arguments passed to the command into a file.',
+                           required=False)
 
         # Add the command to the list of known command
         cls.cmd_obj_list[cmd.name] = cmd

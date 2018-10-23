@@ -21,7 +21,7 @@ __doc__ = """
 __notes__ = """
  -- Use -\-uniq to get the count of non-redondant values.
  -- Not available values ('.') are not taken into account.
- -- Use "*" as the key to get the counts fro all keys.
+ -- Use "*" as the key to get the counts for all keys.
 """
 
 
@@ -100,7 +100,7 @@ def count_key_values(
     for i in gtf.extract_data(keys, as_list_of_list=True):
 
         for k, v in zip(key_list, i):
-            if v == '.':
+            if v in ['.', '?']:
                 continue
             if uniq:
                 val_list[k].add(v)
@@ -131,12 +131,26 @@ else:
 
     test = """
 
-    #count
-    @test "count_1" {
-     result=`gtftk get_example  | gtftk count| grep exon| cut -f2 `
-      [ "$result" -eq 25 ]
+    #count_key_values
+    @test "count_key_values_0" {
+     result=`gtftk get_example  | gtftk count_key_values  | grep gene_id | cut -f 2`
+      [ "$result" -eq 70 ]
     }
 
+    @test "count_key_values_1" {
+     result=`gtftk get_example  | gtftk count_key_values  | grep transcript_id | cut -f 2`
+      [ "$result" -eq 60 ]
+    }
+
+    @test "count_key_values_2" {
+     result=`gtftk get_example  | gtftk count_key_values  -u | grep gene_id | cut -f 2`
+      [ "$result" -eq 10 ]
+    }
+
+    @test "count_key_values_3" {
+     result=`gtftk get_example  | gtftk count_key_values  -u | grep transcript_id | cut -f 2`
+      [ "$result" -eq 15 ]
+    }   
     """
 
     CMD = CmdObject(name="count_key_values",
@@ -145,5 +159,6 @@ else:
                     fun=os.path.abspath(__file__),
                     updated=__updated__,
                     desc=__doc__,
+                    notes=__notes__,
                     group="information",
                     test=test)

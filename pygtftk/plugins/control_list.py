@@ -38,9 +38,9 @@ __doc__ = """
 """
 
 __notes__ = """
-    -- -\infile is a two columns tabulated file. The first column contains the list of ids (including reference IDs)
+    -- -\-infile is a two columns tabulated file. The first column contains the list of ids (including reference IDs)
     and the second column contains the expression/signal values. This file should contain no header.
-    -- Think about discarding any unwanted IDs from -\infile before calling control_list.
+    -- Think about discarding any unwanted IDs from -\-infile before calling control_list.
 """
 
 

@@ -19,7 +19,7 @@ __doc__ = """
  Convert a GTF to tabulated format.
 """
 __notes__ = """
- -- Warning: by default tabulate will discard any line for which one of the selected key is not defined. Use -x (–accept-undef) to print them.
+ -- Warning: by default tabulate will discard any line for which one of the selected key is not defined. Use -x (-\-accept-undef) to print them.
  -- To refer to default keys use: seqid,source,feature,start,end,frame,gene_id...
  -- Note that 'all' or '*' are special keys that can be used to convert the whole GTF into a tabulated file. Thanks @fafa13.
 """

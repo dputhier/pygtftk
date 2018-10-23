@@ -20,9 +20,9 @@ __doc__ = """
 __notes__ = """
  -- By default shift is not strand specific. Meaning that if -\shift-value is set to 10, all coordinates will be moved 10 bases in 5' direction relative to the forward/watson/plus/top strand.
  -- Use a negative value to shift in 3' direction, a positive value to shift in 5' direction.
- -- If -\stranded is true, features are transposed in 5' direction relative to their associated strand.
+ -- If -\-stranded is true, features are transposed in 5' direction relative to their associated strand.
  -- By default, features are not allowed to go outside the genome coordinates. In the current implementation, in case this would happen (using a very large -\shift-value), feature would accumulate at the ends of chromosomes irrespectively of gene or transcript structures giving rise, ultimately, to several exons from the same transcript having the same starts or ends. 
- -- One can forced features to go outside the genome and ultimatly dissapear with large -\shift-value by using -a.
+ -- One can forced features to go outside the genome and ultimatly dissapear with large -\-shift-value by using -a.
 """
 
 
