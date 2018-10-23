@@ -19,6 +19,7 @@
 - gtftk configuration directory now contains several subdirectories whose names are computed based on gtftk program location.
 - Added a -d argument to gtftk program. This argument returns gtftk configuration directory. 
 - All tests should be independent of the directory.
+- Added test to count_key_values.
 
 ## v0.9.7
 
@@ -26,6 +27,7 @@
 
 - Fixed a bug in add_attr_from_file. The arg has_header led to empty result.
 - Fixed a bug in select_by_reg_exp. The match method was used instead of search method...
+- Fixed an error in count_key_values. 
 
 ### API Changes
 
