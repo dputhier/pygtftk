@@ -1,13 +1,11 @@
-{% set version = "0.9.8" %}
-
 package:
   name: pygtftk
-  version: '{{ version }}'
+  version: "0.9.7"
 
 source:
-  git_url: 'https://github.com/dputhier/pygtftk'
-  #url: 'https://github.com/dputhier/pygtftk/archive/v{{ version }}.tar.gz'
-  #sha256: 88b920d0fea7e7a7f796b0b03986226a094f8bdd590d9723663ae8dab4032c38
+  url: https://github.com/dputhier/pygtftk/archive/0.9.7.tar.gz
+  md5: 6ce8e5d2351cd039c11dee6814dc6b98
+  sha1: 23862a12605a02de001d540c4e2fa5688294d662
 
 build:
   number: 0
@@ -46,14 +44,11 @@ test:
   commands:
     - gtftk -h
 # CPU-consuming tests:
-    - cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $i; nosetests --with-doctest $i;   done
-    - gtftk -p > gtftk_test.bats; bats -t gtftk_test.bats; rm -f gtftk_test.bats
-  requires:
-    - nose
-    - bats
-    - unzip
-    - coreutils
-    - perl
+#    - cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $i; nosetests --with-doctest $i;   done
+#    - gtftk -p > gtftk_test.bats; bats -t gtftk_test.bats; rm -f gtftk_test.bats
+#  requires:
+#    - nose
+#    - bats
 
 about:
   home: http://github.com/dputhier/pygtftk
