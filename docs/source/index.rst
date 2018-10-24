@@ -1,7 +1,3 @@
-.. gtftk documentation master file, created by
-   sphinx-quickstart on Fri Jan  2 11:18:01 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
 Welcome to pygtftk documentation page
 --------------------------------------
@@ -13,17 +9,24 @@ The package comes with a set of **UNIX commands** that can be accessed through t
 While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon  active development thus feel free to post any problem or required enhancement through the github interface.
 
 
+
+.. image:: _static/example_07.png
+    :width: 85%
+    :target: _static/example_07.png
+
+
+
 Table of content
 ----------------
 
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   about
-   installation
-   presentation
-   api
-   bwig_coverage
-   developers
+    about
+    installation
+    presentation
+    api
+    bwig_coverage
+    developers
 
