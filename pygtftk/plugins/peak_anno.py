@@ -44,15 +44,15 @@ __notes__ = """
  In the case of the chromosomes ('_by_chrom_' pdf file) the question is to test whether enrichments/depletions observed
  at a global level are also observed throughout chromosomes or whether some of them deviate from the general trend.
  
- -- If -\more-keys is used additional region sets will be tested based on the associated key value.
- As an example, if -\more-keys is set to the 'gene_biotype' (a key generally found in ensembl GTF), the
+ -- If -\-more-keys is used additional region sets will be tested based on the associated key value.
+ As an example, if -\-more-keys is set to the 'gene_biotype' (a key generally found in ensembl GTF), the
  region related to 'protein_coding', 'lncRNA' or any other value for that key will be retrieved merged and tested.
 
- -- Use -\no-basic-feature if you want to perform enrichment analysis on focused annotations only (-\more-bed or -\more-key).
+ -- Use -\no-basic-feature if you want to perform enrichment analysis on focused annotations only (-\-more-bed or -\-more-key).
 
  -- TODO: This function does not support a mappability file at the moment...
 
--- TODO: the png output by chromosomes is not functional at the moment. 
+ -- TODO: the png output by chromosomes is not functional at the moment. 
  """
 
 
