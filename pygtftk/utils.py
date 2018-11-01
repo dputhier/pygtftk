@@ -968,6 +968,12 @@ def left_strip_str(string):
 # Lists and dicts
 # ---------------------------------------------------------------
 
+def nested_dict(n, type):
+    """"http://stackoverflow.com/questions/29348345"""
+    if n == 1:
+        return defaultdict(type)
+    else:
+        return defaultdict(lambda: nested_dict(n - 1, type))
 
 def flatten_list(x, outlist=[]):
     """Flatten a list of lists.
