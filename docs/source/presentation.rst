@@ -858,6 +858,23 @@ Commands from section 'annotation'
 ------------------------------------
 
 
+closest_gn_to_feat
+~~~~~~~~~~~~~~~~~~~~~~
+
+**Description:** Find the n closest genes/transcripts for each feature.
+
+**Example:**
+
+.. command-output:: gtftk closest_gn_to_feat -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -K toto -n gene_id
+	:shell:
+
+
+**Arguments:**
+
+.. command-output:: gtftk closest_gn_to_feat -h
+	:shell:
+
+
 closest_genes
 ~~~~~~~~~~~~~~~~~~~~~~
 
