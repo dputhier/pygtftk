@@ -571,51 +571,74 @@ class bedFileList(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
-class bedFile(argparse.FileType):
+class bedFile(argparse.Action):
     """
-    Check the BED file exist and has proper format.
+    Check the files has BED format.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self,
+                 option_strings,
+                 dest,
+                 nargs=None,
+                 const=None,
+                 default=None,
+                 type=None,
+                 choices=None,
+                 required=False,
+                 help=None,
+                 metavar=None):
+        argparse.Action.__init__(self,
+                                 option_strings=option_strings,
+                                 dest=dest,
+                                 nargs=nargs,
+                                 const=const,
+                                 default=default,
+                                 type=type,
+                                 choices=choices,
+                                 required=required,
+                                 help=help,
+                                 metavar=metavar,
+                                 )
 
-        super(bedFile, self).__init__(**kwargs)
+    def __call__(self,
+                 parser,
+                 namespace,
+                 values,
+                 option_string=None):
 
-    def __call__(self, string):
-
-        i = string
-
-        check_file_or_dir_exists(i)
+        check_file_or_dir_exists(values)
 
         try:
-            file_bo = BedTool(i)
+            file_bo = BedTool(values)
             a = len(file_bo)
         except:
-            msg = "Unable to load file: " + i.fn + "."
+            msg = "Unable to load file: " + values + "."
             message(msg, type="ERROR")
             sys.exit()
 
         if len(file_bo) == 0:
-            msg = "It seems that file " + i.fn + " is empty."
+            msg = "It seems that file " + values + " is empty."
             message(msg, type="ERROR")
             sys.exit()
 
         if file_bo.file_type != 'bed':
             msg = "File {f} is not a valid bed file."
-            msg = msg.format(f=i.fn)
+            msg = msg.format(f=values)
             message(msg, type="ERROR")
             sys.exit()
 
-        return super(bedFile, self).__call__(string)
 
+        # Add the attribute
+        setattr(namespace, self.dest, values)
 
 class bedFileWithUnambiguousNames(argparse.FileType):
     """
     Check the BED file exist and has proper format.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, mode='r',  **kwargs):
 
-        super(bedFileWithUnambiguousNames, self).__init__(**kwargs)
+        super(bedFileWithUnambiguousNames, self).__init__(mode, **kwargs)
 
     def __call__(self, string):
 
