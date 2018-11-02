@@ -14,7 +14,6 @@ import sys
 from builtins import object
 from builtins import range
 from builtins import str
-from collections import defaultdict
 
 from pybedtools import BedTool
 
@@ -571,91 +570,80 @@ class bedFileList(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
-class bedFile(argparse.FileType):
+class bed6(argparse.Action):
     """
     Check the BED file exist and has proper format.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self,
+                 option_strings,
+                 dest,
+                 nargs=None,
+                 const=None,
+                 default=None,
+                 type=None,
+                 choices=None,
+                 required=False,
+                 help=None,
+                 metavar=None):
+        argparse.Action.__init__(self,
+                                 option_strings=option_strings,
+                                 dest=dest,
+                                 nargs=nargs,
+                                 const=const,
+                                 default=default,
+                                 type=type,
+                                 choices=choices,
+                                 required=required,
+                                 help=help,
+                                 metavar=metavar,
+                                 )
 
-        super(bedFile, self).__init__(**kwargs)
+    def __call__(self,
+                 parser,
+                 namespace,
+                 values,
+                 option_string=None):
 
-    def __call__(self, string):
-
-        i = string
-
-        check_file_or_dir_exists(i)
+        check_file_or_dir_exists(values)
 
         try:
-            file_bo = BedTool(i)
+            file_bo = BedTool(values)
             a = len(file_bo)
         except:
-            msg = "Unable to load file: " + i.fn + "."
+            msg = "Unable to load file: " + values + "."
             message(msg, type="ERROR")
             sys.exit()
 
         if len(file_bo) == 0:
-            msg = "It seems that file " + i.fn + " is empty."
+            msg = "It seems that file " + values + " is empty."
             message(msg, type="ERROR")
             sys.exit()
 
         if file_bo.file_type != 'bed':
             msg = "File {f} is not a valid bed file."
-            msg = msg.format(f=i.fn)
+            msg = msg.format(f=values)
             message(msg, type="ERROR")
             sys.exit()
 
-        return super(bedFile, self).__call__(string)
-
-
-class bedFileWithUnambiguousNames(argparse.FileType):
-    """
-    Check the BED file exist and has proper format.
-    """
-
-    def __init__(self, **kwargs):
-
-        super(bedFileWithUnambiguousNames, self).__init__(**kwargs)
-
-    def __call__(self, string):
-
-        bedfile = string
-
-        check_file_or_dir_exists(bedfile)
-
-        try:
-            file_bo = BedTool(bedfile)
-            a = len(file_bo)
-        except:
-            msg = "Unable to load file: " + bedfile + "."
-            message(msg, type="ERROR")
-            sys.exit()
-
-        if len(file_bo) == 0:
-            msg = "It seems that file " + bedfile + " is empty."
-            message(msg, type="ERROR")
-            sys.exit()
-
-        if file_bo.file_type != 'bed':
-            msg = "File {f} is not a valid bed file."
-            msg = msg.format(f=bedfile)
-            message(msg, type="ERROR")
-            sys.exit()
-
-        names = defaultdict(int)
+        names = set()
 
         for line in file_bo:
-            if len(line.fields) < 6:
-                message("Need a BED6 file.", type="ERROR")
+            if len(line.fields) != 6:
+                message("File -- " + values + " --Need a BED6 file.", type="ERROR")
                 sys.exit()
 
-            names[line.name] += 1
-            if names[line.name] > 1:
-                message("File -- " + bedfile + " -- Names (4th columns of the bed file) should be unambiguous.",
+            if line.strand not in ['-', '+', '.']:
+                message("File -- " + values + " -- strand is not in proper format", type="ERROR")
+            if line.name not in names:
+                names.add(line.name)
+            else:
+                message("File -- " + values + " -- Names (4th columns of the bed file) should be unambiguous.",
                         type="ERROR")
                 sys.exit()
 
-        return super(bedFileWithUnambiguousNames, self).__call__(string)
+        # Add the attribute
+        setattr(namespace, self.dest, values)
 
 
 class globbedFileList(argparse.Action):

@@ -428,7 +428,7 @@ class CmdManager(object):
   gtftk intron_sizes | gtftk exon_sizes | gtftk convergent -u 24 -d 24  -c simple.chromInfo | \\
   gtftk divergent -u 101 -d 10  -c simple.chromInfo  | \\
   gtftk overlapping -u 0 -d 0 -t transcript -c simple.chromInfo -a |  \\
-  gtftk select_by_key -k feature -v transcript |   gtftk tabulate -k "*" -b
+  gtftk select_by_key -k feature -v transcript |   gtftk tabulate -k "*" -b -x
   
 
   Type 'gtftk sub-command -h' for more information.

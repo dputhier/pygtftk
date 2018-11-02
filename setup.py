@@ -24,6 +24,12 @@ from sys import platform
 from tempfile import NamedTemporaryFile
 
 # -------------------------------------------------------------------------
+# Python compiler version
+# -------------------------------------------------------------------------
+print("Python version and gcc version used for compilation")
+print(sys.version)
+
+# -------------------------------------------------------------------------
 # Python Version
 # -------------------------------------------------------------------------
 
