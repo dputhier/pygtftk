@@ -1053,7 +1053,7 @@ else:
     cmd = CmdObject(name="heatmap",
                     message="Create a heatmap from mk_matrix result.",
                     parser=make_parser(),
-                    fun=heatmap,
+                    fun=os.path.abspath(__file__),
                     desc=__doc__,
                     updated=__updated__,
                     notes=__notes__,
