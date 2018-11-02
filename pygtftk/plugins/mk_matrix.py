@@ -588,39 +588,39 @@ else:
         
         #mk_matrix: test  unstranded
         @test "mk_matrix_1" {
-         result=`gtftk mk_matrix -nst -p 0 -w 4 -u 2 -d 1 -c simple.chromInfo -i simple.gtf simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ; cat simpl_mat | grep -v "#" | grep -v "main"| sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`gtftk mk_matrix -nst -p 0 -w 4 -u 2 -d 1 -c simple.chromInfo -i simple.gtf simple.bw -o simple_mat; unzip -u  simple_mat.zip &> /dev/null ; cat simple_mat | grep -v "#" | grep -v "main"| sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "0.0|0.0|1.0|1.0,0.0|0.0|1.0|1.0,3.0|2.0|2.0|2.0,3.0|2.0|2.0|2.0,2.0|2.0|2.0|2.0,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,2.0|2.0|1.0|1.0,2.0|2.0|1.0|1.0,4.0|4.0|4.0|4.0,4.0|4.0|4.0|4.0,1.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,1.0|1.0|1.0|1.0," ]
         }
         
         
         #mk_matrix: test stranded
         @test "mk_matrix_2" {
-         result=` rm -f simpl_mat*; gtftk mk_matrix -p 0 -w 4 -u 2 -d 1 -c simple.chromInfo -i simple.gtf simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main"| sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=` rm -f simple_mat*; gtftk mk_matrix -p 0 -w 4 -u 2 -d 1 -c simple.chromInfo -i simple.gtf simple.bw -o simple_mat; unzip -u  simple_mat.zip &> /dev/null ;  cat simple_mat | grep -v "#" | grep -v "main"| sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "1.0|1.0|0.0|0.0,1.0|1.0|0.0|0.0,2.0|2.0|2.0|3.0,2.0|2.0|2.0|3.0,2.0|2.0|2.0|2.0,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,2.0|2.0|1.0|1.0,2.0|2.0|1.0|1.0,4.0|4.0|4.0|4.0,4.0|4.0|4.0|4.0,1.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,1.0|1.0|1.0|1.0," ]
         }
         
         #mk_matrix: test pseudo-count
         @test "mk_matrix_3" {
-         result=`gtftk mk_matrix -p 1 -w 4 -u 2 -d 1 -c simple.chromInfo -i simple.gtf simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main" |  sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`gtftk mk_matrix -p 1 -w 4 -u 2 -d 1 -c simple.chromInfo -i simple.gtf simple.bw -o simple_mat; unzip -u  simple_mat.zip &> /dev/null ;  cat simple_mat | grep -v "#" | grep -v "main" |  sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/'| sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "2.0|2.0|1.0|1.0,2.0|2.0|1.0|1.0,3.0|3.0|3.0|4.0,3.0|3.0|3.0|4.0,3.0|3.0|3.0|3.0,1.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,3.0|3.0|2.0|2.0,3.0|3.0|2.0|2.0,5.0|5.0|5.0|5.0,5.0|5.0|5.0|5.0,2.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,2.0|2.0|2.0|2.0," ]
         }
         
         #mk_matrix: test transcript
         @test "mk_matrix_4" {
-         result=`gtftk mk_matrix -p 1 -w 4 -d 0  -u 0 -t transcript -c simple.chromInfo -i simple.gtf simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main"|  sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`gtftk mk_matrix -p 1 -w 4 -d 0  -u 0 -t transcript -c simple.chromInfo -i simple.gtf simple.bw -o simple_mat; unzip -u  simple_mat.zip &> /dev/null ;  cat simple_mat | grep -v "#" | grep -v "main"|  sort -k4,4n | sort -k4,4n |cut -f7-10| perl -npe 's/\\t/|/g; s/\\n/,/' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "1.0|1.666667|2.0|2.0,1.0|1.666667|2.0|2.0,3.0|3.0|4.333333|4.0,3.5|3.0|2.5|3.0,3.666667|4.333333|3.0|3.666667,1.0|1.0|1.0|2.333333,1.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,2.0|2.0|2.0|2.0,2.0|2.0|2.0|2.0,4.666667|3.333333|2.666667|2.4,4.666667|3.333333|2.666667|2.4,1.0|1.0|1.0|1.4,1.0|1.0|1.5|2.75,2.5|3.0|3.0|2.0," ]
         }
         
         
         #mk_matrix: test transcript unstranded
         @test "mk_matrix_5" {
-         result=`gtftk mk_matrix -nst -p 1 -V -w 4 -K toto  -d 0  -u 0 -t transcript -c simple.chromInfo -i simple.gtf simple.bw -o simpl_mat; unzip -u  simpl_mat.zip &> /dev/null ;  cat simpl_mat | grep -v "#" | grep -v "main"|  sort -k4,4n | sort -k4,4n |cut -f8,9,10,11| perl -npe 's/\\t/|/g; s/\\n/,/' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`gtftk mk_matrix -nst -p 1 -V -w 4 -K toto  -d 0  -u 0 -t transcript -c simple.chromInfo -i simple.gtf simple.bw -o simple_mat; unzip -u  simple_mat.zip &> /dev/null ;  cat simple_mat | grep -v "#" | grep -v "main"|  sort -k4,4n | sort -k4,4n |cut -f8,9,10,11| perl -npe 's/\\t/|/g; s/\\n/,/' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "2.0|1.666667|1.0,2.0|1.666667|1.0,4.333333|3.0|3.0,2.5|3.0|3.5,3.0|4.333333|3.666667,1.0|1.0|1.0,1.0|1.0|1.0,1.0|1.0|1.0,2.0|2.0|2.0,2.0|2.0|2.0,3.333333|2.666667|2.4,3.333333|2.666667|2.4,1.0|1.0|1.4,1.0|1.5|2.75,3.0|3.0|2.5," ]
         }
         
         #mk_matrix: every file contain 15 transcripts
         @test "mk_matrix_6" {
-         result=`rm -Rf simpl_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo -K toto; wc -l toto/*.bed | grep 15| wc -l`
+         result=`rm -Rf simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo -K toto; wc -l toto/*.bed | grep 15| wc -l`
           [ "$result" -eq 6 ]
         }
         

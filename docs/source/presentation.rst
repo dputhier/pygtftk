@@ -498,7 +498,7 @@ The default is to create equally spaced interval. The intervals can also be crea
 .. command-output:: gtftk get_example -d mini_real -f "*"
 	:shell:
 
-.. command-output:: gtftk get_example -d mini_real |  gtftk join_attr -H -j mini_real_counts_ENCFF630HEX.txt -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
+.. command-output:: gtftk get_example -d mini_real |  gtftk join_attr -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
 	:shell:
 
 **Arguments:**
@@ -856,6 +856,23 @@ convert_ensembl
 
 Commands from section 'annotation'
 ------------------------------------
+
+
+closest_gn_to_feat
+~~~~~~~~~~~~~~~~~~~~~~
+
+**Description:** Find the n closest genes/transcripts for each feature.
+
+**Example:**
+
+.. command-output:: gtftk closest_gn_to_feat -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -K toto -n gene_id
+	:shell:
+
+
+**Arguments:**
+
+.. command-output:: gtftk closest_gn_to_feat -h
+	:shell:
 
 
 closest_genes
@@ -1322,6 +1339,7 @@ Alternatively, the groups can be set to chromosomes or transcript classes:
 .. image:: _static/example_06b.png
     :width: 75%
     :target: _static/example_06b.png
+
 
 Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
 
