@@ -17,6 +17,7 @@ from subprocess import PIPE
 from subprocess import Popen
 from tempfile import NamedTemporaryFile, mkdtemp
 
+import pandas as pd
 from future.utils import old_div
 
 import pygtftk
@@ -975,6 +976,7 @@ def nested_dict(n, type):
     else:
         return defaultdict(lambda: nested_dict(n - 1, type))
 
+
 def flatten_list(x, outlist=[]):
     """Flatten a list of lists.
 
@@ -1084,6 +1086,33 @@ def median_comp(alist):
     else:
         midavg = old_div((sorted(alist)[old_div(len(alist), 2)] + sorted(alist)[old_div(len(alist), 2) - 1]), 2.0)
         return midavg
+
+
+def pos_max_val(x):
+    """Returns the position of the maximum value in the list."""
+    if isinstance(x, pd.core.series.Series):
+        x = x.tolist()
+    m = np.nanmax(x)
+    l = [i for i, j in enumerate(x) if j == m]
+    return l[0]
+
+
+def pos_min_val(x):
+    """Returns the position of the maximum value in the list."""
+    if isinstance(x, pd.core.series.Series):
+        x = x.tolist()
+    m = np.nanmin(x)
+    l = [i for i, j in enumerate(x) if j == m]
+    return l[0]
+
+
+def mad(arr):
+    """ Median Absolute Deviation: a "Robust" version of standard deviation.
+        https://stackoverflow.com/questions/8930370/where-can-i-find-mad-mean-absolute-deviation-in-scipy
+    """
+    arr = np.ma.array(arr).compressed()  # should be faster to not use masked arrays.
+    med = np.median(arr)
+    return np.median(np.abs(arr - med))
 
 
 def intervals(l, n, silent=False):
