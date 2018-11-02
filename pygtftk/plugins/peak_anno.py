@@ -14,10 +14,7 @@ from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import bedFileList, bedFile
 from pygtftk.arg_formatter import checkChromFile
 from pygtftk.arg_formatter import int_greater_than_null_or_None
-from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
-from pygtftk.utils import check_r_installed
-from pygtftk.utils import check_r_packages
 from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import chrom_info_to_bed_file
 from pygtftk.utils import close_properly
@@ -46,7 +43,8 @@ __notes__ = """
  
  -- If -\-more-keys is used additional region sets will be tested based on the associated key value.
  As an example, if -\-more-keys is set to the 'gene_biotype' (a key generally found in ensembl GTF), the
- region related to 'protein_coding', 'lncRNA' or any other value for that key will be retrieved merged and tested.
+ region related to 'protein_coding', 'lncRNA' or any other values for that key will be retrieved merged and tested
+ for enrichment.
 
  -- Use -\no-basic-feature if you want to perform enrichment analysis on focused annotations only (-\-more-bed or -\-more-key).
 
@@ -155,9 +153,11 @@ def make_parser():
     return parser
 
 
-# Perform intersection between a bedTools object
+# -------------------------------------------------------------------------
+# This function performs intersection between a bedTools object
 # an another file (feature_file) e.g promoter, intron, exon...
 # Fill a dictionary of dictionary
+# -------------------------------------------------------------------------
 
 
 def _intersection_results(reg_file=None,
@@ -249,6 +249,11 @@ def _intersection_results(reg_file=None,
     return my_dict
 
 
+# -------------------------------------------------------------------------
+# The command function
+# -------------------------------------------------------------------------
+
+
 def peak_anno(inputfile=None,
               outputdir=None,
               peak_file=None,
@@ -271,6 +276,11 @@ def peak_anno(inputfile=None,
     classical features (e.g promoter, tts, gene body, UTR,...) and to sets of user provided pics.
     """
 
+    # -------------------------------------------------------------------------
+    # If user wants no basic features (e.g prom, genes, exons) then he
+    # needs to provide --more-keys or --more-bed
+    # -------------------------------------------------------------------------
+
     if no_basic_feature:
         if more_keys is not None:
             if inputfile is None:
@@ -290,18 +300,25 @@ def peak_anno(inputfile=None,
             message("Please provide a chromInfo file (--chrom-info)",
                     type="ERROR")
 
-    # chrom sizes
+    # -------------------------------------------------------------------------
+    # chrom_len will store the chromosome sizes.
+    # As one diagram inspect enrichment on a per-chromosome basis
+    # we can not accept too much chromosomes
+    # -------------------------------------------------------------------------
+
     chrom_len = chrom_info_as_dict(chrom_info)
 
     if len(chrom_len.keys()) > 100:
         message("Can't accept more than 100 chromosomes in peak_anno (see --chrom-info).",
                 type="ERROR")
 
-    # A muti-level dict to store the results
+    # -------------------------------------------------------------------------
+    # The hits variable is a muti-level dict to store the results
     # per chromosome
-    # e.g my_dict[ft_type][chrom]["Observed"]
-    # e.g my_dict[ft_type][chrom]["coverage"]
-    # e.g my_dict[ft_type][chrom]["Nb_trial_or_peaks"]
+    #   - e.g my_dict[ft_type][chrom]["Observed"]
+    #   - e.g my_dict[ft_type][chrom]["coverage"]
+    #   - e.g my_dict[ft_type][chrom]["Nb_trial_or_peaks"]
+    # -------------------------------------------------------------------------
 
     def nested_dict(n, type):
         """"http://stackoverflow.com/questions/29348345"""
@@ -312,9 +329,12 @@ def peak_anno(inputfile=None,
 
     hits = nested_dict(3, int)
 
-    # Read the gtf file
-    # Discard any records corresponding to chr not declared in
-    # ChromInfo file
+    # -------------------------------------------------------------------------
+    # Read the gtf file and discard any records corresponding to chr not declared
+    # in ChromInfo file. This only needs to be done if one want basic feature
+    # (default) or more-keys (e.g gene_biotype)
+    # -------------------------------------------------------------------------
+
     if not no_basic_feature or more_keys:
         gtf = GTF(inputfile).select_by_key("seqid", ",".join(chrom_len.keys()))
 
@@ -323,7 +343,10 @@ def peak_anno(inputfile=None,
                     "falling in chromosomes declared in chromInfo file.",
                     type="ERROR")
 
+    # -------------------------------------------------------------------------
     # Check user provided annotations
+    # -------------------------------------------------------------------------
+
     if more_bed is not None:
 
         if more_bed_labels is not None:
@@ -558,31 +581,14 @@ def peak_anno(inputfile=None,
             msg = "Image format: {f}. Please fix.".format(f=page_format)
             message(msg, type="ERROR")
 
-    code_body = """
-
-    # Gtftk-like messages
-    message <- function(msg){{
-      cat(paste("    |--- ",format(Sys.time(),"%R"), "-INFO : ", msg, "\\n", sep=""), file=stderr())
-    }}
-
-    None <- 'None'
-
-    ####################################################
-    # Load libraries
-    ####################################################
-    
-    library(reshape2)
-    library(ggplot2)
-    library(scales) # Used for declaration of pseudolog10 axis transformation "trans_new".
-
     ####################################################
     # Read the dataset
     ####################################################
-     
-    d <- read.table("{data_file}",
-                    head=T,
-                    sep="\\t",
-                    quote="")
+
+    d < - read.table("{data_file}",
+                     head=T,
+                     sep="\\t",
+                     quote="")
 
     ####################################################
     # Adjust label names if all features comes from the same key
@@ -592,401 +598,405 @@ def peak_anno(inputfile=None,
     # redundant 'key' used as prefix for all features.
 
     # Set default xlab for plot:
-    xlabel <- 'Features'
+    xlabel < - 'Features'
 
     # Check that 'ft_type' either contains ':' the separator between key and value or the 'Full_chromosomes' feature.
-    if (length(grep(":|Full_chromosomes",d[,"ft_type"], invert=FALSE)) == length(d[,"ft_type"])){{
-        potential_common_key_rows=grep(":",d[,"ft_type"])
-        potential_common_key_vector=gsub(":.*$", '', d[potential_common_key_rows,"ft_type"])
+    if (length(grep(":|Full_chromosomes", d[, "ft_type"], invert=FALSE)) == length(d[, "ft_type"])){{
+    potential_common_key_rows=grep(":", d[, "ft_type"])
+    potential_common_key_vector=gsub(":.*$", '', d[potential_common_key_rows, "ft_type"])
 
-        if (length(unique(potential_common_key_vector)) == 1){{
-            common_key <- unique(potential_common_key_vector)
+    if (length(unique(potential_common_key_vector)) == 1){{
+    common_key < - unique(potential_common_key_vector)
 
-            #Remove 'common_key' from 'ft_type'
-            # 'as.factor' needed for 'by_chrom' plot to be correctly drawn.
-            d[,"ft_type"] <- as.factor(gsub(paste0(common_key,":"), '', d[,"ft_type"]))
+    # Remove 'common_key' from 'ft_type'
+    # 'as.factor' needed for 'by_chrom' plot to be correctly drawn.
+    d[, "ft_type"] < - as.factor(gsub(paste0(common_key, ":"), '', d[, "ft_type"]))
 
-            xlabel <- paste("Features in",common_key)
+    xlabel < - paste("Features in", common_key)
 
-        }}
+    }}
     }}
 
     ####################################################
     # Get the chromosome order
     ####################################################
 
-    chr_order <- d$chrom
-    chr_order <- sort(chr_order[!duplicated(chr_order)], decreasing = TRUE)
-    chr_order_num <- gsub("[^0-9]", "", chr_order)
-    chr_order <- chr_order[order(as.numeric(chr_order_num))]
-    d$chrom <- factor(d$chrom, levels = chr_order)
-    
-    # Compute expected number of intersections
-    d$freq <- d$coverage / d$reference_size
+    chr_order < - d$chrom
+    chr_order < - sort(chr_order[!duplicated(chr_order)], decreasing = TRUE)
+    chr_order_num < - gsub("[^0-9]", "", chr_order)
+    chr_order < - chr_order[order(as.numeric(chr_order_num))]
+    d$chrom < - factor(d$chrom, levels = chr_order)
 
-    d$Expected <- d$freq * d$Nb_trial_or_peak
+    # Compute expected number of intersections
+    d$freq < - d$coverage / d$reference_size
+
+    d$Expected < - d$freq * d$Nb_trial_or_peak
 
     ####################################################
     # Compute binomial p.val  (unilateral)
     ####################################################
-    
-    for(i in 1:nrow(d)){{
-      
-          if(d$Expected[i] > 0){{
-              if(d$Observed[i] > 0){{
-                  log2_ratio <- log2(d$Observed[i] / d$Expected[i])
-              }}else{{
-                  log2_ratio <- NA
-              }}
-          }}else{{
-              log2_ratio <- NA
-          }}
-    
-          d$log2_ratio[i] <- log2_ratio
-        
-          if(d$Nb_trial_or_peak[i] > 0){{
-          pval <- binom.test(alternative="two.sided",
-                              n=d$Nb_trial_or_peak[i],
-                              x= d$Observed[i],
-                              p = d$freq[i])$p.value
-          }}else{{
-              pval <- NA
-          }}
-          
-          d$pval.binom[i] <- pval
-          
-          if(d$Observed[i] > d$Expected[i]){{
-              d$test_type[i] <- "Enrichment"
-          }}else if(d$Observed[i] < d$Expected[i]){{
-              d$test_type[i] <- "Depletion"
-          }}else{{
-                d$test_type[i] <- "Unchanged"
-          }}
-      
+
+    for (i in 1:nrow(d)){{
+
+    if (d$Expected[i] > 0){{
+    if (d$Observed[i] > 0){{
+    log2_ratio < - log2(d$Observed[i] / d$Expected[i])
+    }} else {{
+    log2_ratio < - NA
+    }}
+    }} else {{
+    log2_ratio < - NA
+    }}
+
+    d$log2_ratio[i] < - log2_ratio
+
+    if (d$Nb_trial_or_peak[i] > 0){{
+    pval < - binom.test(alternative="two.sided",
+    n=d$Nb_trial_or_peak[i],
+    x= d$Observed[i],
+    p = d$freq[i])$p.value
+    }} else {{
+    pval < - NA
+    }}
+
+    d$pval.binom[i] < - pval
+
+    if (d$Observed[i] > d$Expected[i]){{
+    d$test_type[i] < - "Enrichment"
+    }} else if (d$Observed[i] < d$Expected[i]){{
+    d$test_type[i] < - "Depletion"
+    }} else {{
+    d$test_type[i] < - "Unchanged"
+    }}
+
     }}
 
     ####################################################
     # Melt the data frame
     ####################################################
 
-    dm <- melt(d[ , c("ft_type", "chrom", "Observed", "Expected")],
-                 id.vars =c("ft_type", "chrom"))
-    
-    dm$variable <- factor(dm$variable, levels=c("Expected", "Observed"))
+    dm < - melt(d[, c("ft_type", "chrom", "Observed", "Expected")],
+    id.vars = c("ft_type", "chrom"))
+
+    dm$variable < - factor(dm$variable, levels = c("Expected", "Observed"))
 
     ####################################################
     # function to compute pseudolog10 transformation of y-axis
     ####################################################
-  
-    log10p_trans <- function() {{trans_new(
+
+    log10p_trans < - function()
+    {{trans_new(
         name="log10p",
-        transform=function(x){{log10(x+1)}},
-        inverse=function(x){{10^x - 1}},
-        breaks = trans_breaks('log10', function(x) 10^x),
-        format = trans_format('log10', math_format(10^.x))
-        )}}
+        transform=function(x)
+    {{log10(x + 1)}},
+    inverse = function(x)
+    {{10 ^ x - 1}},
+    breaks = trans_breaks('log10', function(x)
+    10 ^ x),
+    format = trans_format('log10', math_format(10 ^.x))
+    )}}
 
     ####################################################
     # function to compute diagram
     ####################################################
 
-    bar_plot_with_pval <- function(ft_type=NULL,
+    bar_plot_with_pval < - function(ft_type=NULL,
                                     which_chrom=NULL,
                                     which_row=NULL,
                                     by_chrom=FALSE,
                                     y_axis_trans=log10p_trans)
-                                    {{
+    {{
+
+        p < - ggplot()
+        if (! by_chrom)
+    {{
+        aes.plot < - aes(ft_type, value, fill=variable)
+    }} else {{
+        aes.plot < - aes(chrom, value, fill=variable)
+    }}
+    p < - p + geom_bar(data=dm[which_row,],
+                       aes.plot,
+                       stat="identity",
+                       position=position_dodge(width=0.90),
+                       alpha=0.6,
+                       show.legend = TRUE)
+
+    p < - p + ylab("Number of overlaps")
+    p < - p + xlab(xlab.plot)
+    p < - p + theme(legend.title = element_blank())
+    p < - p + theme_bw()
+    p < - p + theme(legend.position = "bottom")
+    p < - p + theme(legend.key = element_blank())
+    p < - p + theme(legend.title = element_blank())
+    p < - p + theme(axis.title.x = element_text(colour="grey20",
+                                                size=10, angle=0,
+                                                face="plain"))
+    p < - p + theme(axis.text.x = element_blank())
+    p < - p + theme(axis.text.x = element_text(size=10,
+                                               vjust=0.9,
+                                               hjust=1,
+                                               angle=45))
+    p < - p + theme(axis.text.y = element_blank())
+    p < - p + theme(axis.text.y = element_text(size=8,
+                                               angle=0))
+
+    if (! by_chrom){{
+    aes.plot < - aes(label = sprintf("%.02f", value),
+    x = ft_type,
+    y = ifelse(value < 1, 1, value),
+    colour=variable)
+    }} else {{
+    aes.plot < - aes(label = sprintf("%.02f", value),
+    x = chrom,
+    y = ifelse(value < 1, 1, value),
+    colour=variable)
+    }}
+
+    p < - p + geom_text(data=dm[which_row, ],
+    aes.plot,
+    position = position_dodge(width = 0.8),
+    angle=90,
+    vjust = 0.5,
+    hjust=-0.25,
+    size=2)
+
+    p < - p + guides(colour=FALSE, fill=guide_legend(ncol=2)        )
 
 
-          p <- ggplot()
-          if(! by_chrom){{
-            aes.plot <- aes(ft_type, value, fill=variable)
-          }}else{{
-            aes.plot <- aes(chrom, value, fill=variable)
-          }}
-            p <- p + geom_bar(data=dm[which_row, ],
-                        aes.plot,
-                        stat="identity",
-                        position = position_dodge(width = 0.90),
-                        alpha = 0.6,
-                        show.legend=TRUE)
 
-        p <- p + ylab("Number of overlaps")
-        p <- p + xlab(xlab.plot)
-        p <- p + theme(legend.title=element_blank())
-        p <- p + theme_bw()
-        p <- p + theme(legend.position="bottom")
-        p <- p + theme(legend.key = element_blank())
-        p <- p + theme(legend.title=element_blank())
-        p <- p + theme(axis.title.x = element_text(colour="grey20",
-                                                    size=10,angle=0,
-                                                    face="plain"))
-        p <- p + theme(axis.text.x = element_blank())
-        p <- p + theme(axis.text.x = element_text(size=10,
-                                                  vjust = 0.9,
-                                                  hjust = 1,
-                                                  angle=45))
-        p <- p + theme(axis.text.y = element_blank())
-        p <- p + theme(axis.text.y = element_text(size=8,
-                                                  angle=0))
+    ####################################################
+    # Add an horizontal segment to indicate p-val
+    ####################################################
 
-        if(! by_chrom){{
-          aes.plot <- aes(label = sprintf("%.02f", value),
-                          x = ft_type,
-                          y = ifelse(value < 1, 1, value),
-                          colour=variable)
-        }}else{{
-          aes.plot <- aes(label = sprintf("%.02f", value),
-                          x = chrom,
-                          y = ifelse(value < 1, 1, value),
-                          colour=variable)
-        }}
-        
-        p <- p + geom_text(data=dm[which_row, ],
-                           aes.plot,
-                          position = position_dodge(width = 0.8),
-                          angle=90,
-                          vjust = 0.5,
-                          hjust=-0.25,
-                          size=2)
-    
-        p <- p + guides(colour=FALSE, fill=guide_legend(ncol=2)        )
+    j < - 1
 
-    
-        
-        ####################################################
-        # Add an horizontal segment to indicate p-val
-        ####################################################
-        
-        j <- 1
-    
-        # keep the highest value (exp/obs)
-        # for each genomic feature (prom, UTR,...)
-        dm.sub <- dm[which_row, ]
-        
-        if(! by_chrom){{
-          dm.sub <- do.call(rbind,
-                        lapply(
-                          lapply(split(dm.sub, dm.sub$ft_type),
-                                 function(x) x[order(x$value, decreasing = TRUE), ]),
-                          head, 1))
-        }}else{{
-          dm.sub <- do.call(rbind,
-                            lapply(
-                              lapply(split(dm.sub, dm.sub$chrom),
-                                     function(x) x[order(x$value, decreasing = TRUE), ]),
-                              head, 1))
-        }}
-        
-        if(! by_chrom){{
-          ft_type_list <- levels(as.factor(as.character(dm.sub$ft_type)))
-        }}else{{
-          ft_type_list <- levels(d$chrom)[levels(d$chrom) %in% levels(as.factor(as.character(dm.sub$chrom)))]
-        }}
-        
-        for(i in 1:length(ft_type_list)){{
- 
-              y_val <- ifelse(is.na(dm.sub$value[i]), 8, dm.sub$value[i] * 8)
-              y_val <- ifelse(y_val < 8 , 8, y_val)
-              x <- c(i-0.2, i-0.2, i+0.2, i+0.2)
-              y <- c(y_val * 0.95,
-                     y_val * 1,
-                     y_val * 1,
-                     y_val * 0.95)
-                        
-              z <- ft_type_list[i]
-              p <- p + geom_path(data = data.frame(x=x,
-                                                   y=y,
-                                                   ft_type=z,
-                                                   value=NA,
-                                                   variable=NA,
-                                                   check.names = FALSE),
-                                 aes(x = x, y = y)
-                                 )
-    
-        }}
-    
-    
-        ####################################################
-        # Add p-val
-        ####################################################
-            
-        for(i in 1:length(ft_type_list)){{
-         
-             x <- i
-             y <- ifelse(is.na(dm.sub$value[i]), 10, dm.sub$value[i] * 12)
-             y <- ifelse(y < 10, 10, y)
+    # keep the highest value (exp/obs)
+    # for each genomic feature (prom, UTR,...)
+    dm.sub < - dm[which_row, ]
 
+    if (! by_chrom){{
+    dm.sub < - do.call(rbind,
+    lapply(
+    lapply(split(dm.sub, dm.sub$ft_type),
+    function(x) x[order(x$value, decreasing = TRUE), ]),
+    head, 1))
+    }} else {{
+    dm.sub < - do.call(rbind,
+    lapply(
+    lapply(split(dm.sub, dm.sub$chrom),
+    function(x) x[order(x$value, decreasing = TRUE), ]),
+    head, 1))
+    }}
 
-             if(!by_chrom){{
-                    selected <- d$chrom == which_chrom & d$ft_type == ft_type_list[i]
-                    lab <- paste(sprintf(" %.03g",
-                                         d[selected, ]$pval.binom),
-                                         "\\n",
-                                         sprintf("%.03g ", d[selected, ]$log2_ratio))
-               
-                   test_type <- d[selected, ]$test_type
-                   d.tmp <- data.frame(x=x,
-                                       y=y,
-                                       value=lab,
-                                       ft_type=ft_type_list[i],
-                                       test_type=test_type,
-                                       check.names = FALSE)
-                                       
-                  d.tmp$test_type <- as.factor(d.tmp$test_type)
-              }}else{{
-                selected <- d$chrom == ft_type_list[i] & d$ft_type == ft_type
-                lab <- paste(sprintf(" %.03g",
-                                     d[selected, ]$pval.binom),
-                                     "\\n",
-                                     sprintf("%.03g ", d[selected, ]$log2_ratio))
-                
-                test_type <- as.character(d[selected, ]$test_type)
-                d.tmp <- data.frame(x=x,
-                                    y=y,
-                                    value=lab,
-                                    ft_type=ft_type,
-                                    test_type=test_type,
-                                    check.names = FALSE)
-                
-                d.tmp$test_type <- as.factor(d.tmp$test_type)
-              }}
+    if (! by_chrom){{
+    ft_type_list < - levels(as.factor(as.character(dm.sub$ft_type)))
+    }} else {{
+    ft_type_list < - levels(d$chrom)[levels(d$chrom) % in % levels(as.factor(as.character(dm.sub$chrom)))]
+    }}
 
-             p <- p + geom_text(angle = 90,
-                                data=d.tmp,
-                                aes(label = value,
-                                    x = x,
-                                    y = y,
-                                    colour=factor(test_type)),
-                                    fontface = "bold",
-                                position = position_dodge(width = 0.8),
-                                vjust = 0.5,
-                                hjust=0.5,
-                                size=2,
-                                show.legend=F)
-            #print(d.tmp)
-            
-        }}
-        
-    
-        ####################################################
-        # plot limits
-        ####################################################
-    
-        ylim_max <- max(dm$value) * 25
-        ybreaks_max <- as.numeric(format(ylim_max,digits=1))
-        p <- p + scale_y_continuous(trans="log10p",breaks=trans_breaks('log10', function(x) 10^x)(c(1,ybreaks_max)))
+    for (i in 1:length(ft_type_list)){{
 
-        ####################################################
-        # Colors
-        ####################################################
-            
-        p <- p + scale_fill_manual(values=c("Observed"="blue",
-                                            "Expected"="#8A8A8A",
-                                            "Enrichment"="#8B0000",
-                                            "Unchanged"="#000000",
-                                            "Depletion"="#006400"))
-    
-        p <- p + scale_color_manual(values=c("Observed"="blue",
-                                            "Expected"="#8A8A8A",
-                                            "Enrichment"="#8B0000",
-                                            "Unchanged"="#000000",
-                                            "Depletion"="#006400"))
-        
-        return(p)
-        
+        y_val < - ifelse( is.na(dm.sub$value[i]), 8, dm.sub$value[i] * 8)
+    y_val < - ifelse(y_val < 8, 8, y_val)
+    x < - c(i - 0.2, i - 0.2, i + 0.2, i + 0.2)
+    y < - c(y_val * 0.95,
+            y_val * 1,
+            y_val * 1,
+            y_val * 0.95)
+
+    z < - ft_type_list[i]
+    p < - p + geom_path(data=data.frame(x=x,
+                                        y=y,
+                                        ft_type=z,
+                                        value=NA,
+                                        variable=NA,
+                                        check.names = FALSE),
+    aes(x=x, y=y)
+    )
+
     }}
 
 
     ####################################################
-    # Compute bar plot by feature
+    # Add p-val
     ####################################################
 
+    for (i in 1:length(ft_type_list)){{
 
-                
-    xlab.plot <- xlabel
-    ft_type <- levels(d$ft_type)
-    which_chrom = "all_chrom"
-    which_row <- dm$chrom == which_chrom
-    pdf_path <- "{pdf_file}"
+    x < - i
+    y < - ifelse( is.na(dm.sub$value[i]), 10, dm.sub$value[i] * 12)
+    y < - ifelse(y < 10, 10, y)
 
-    pdf_width <- {pdf_width}
-    pdf_height <- {pdf_height}
-        
-    if(pdf_width == 'None')
-        pdf_width <- length(ft_type)
+    if (!by_chrom){{
+    selected < - d$chrom == which_chrom & d$ft_type == ft_type_list[i]
+    lab < - paste(sprintf(" %.03g",
+    d[selected, ]$pval.binom),
+    "\\n",
+    sprintf("%.03g ", d[selected, ]$log2_ratio))
 
-    if(pdf_height == 'None')
-        pdf_height <- 6
-        
-    
-    ggsave(filename=pdf_path,
-         plot=bar_plot_with_pval(ft_type=ft_type,
-                               which_chrom=which_chrom,
-                               which_row=which_row),
-         width=pdf_width,
-         height=pdf_height)
-             
+    test_type < - d[selected, ]$test_type
+    d.tmp < - data.frame(x=x,
+    y=y,
+    value=lab,
+    ft_type=ft_type_list[i],
+    test_type=test_type,
+    check.names = FALSE)
 
+    d.tmp$test_type < - as.factor(d.tmp$test_type)
+    }} else {{
+    selected < - d$chrom == ft_type_list[i] & d$ft_type == ft_type
+    lab < - paste(sprintf(" %.03g",
+    d[selected, ]$pval.binom),
+    "\\n",
+    sprintf("%.03g ", d[selected, ]$log2_ratio))
 
-    
-    ####################################################
-    # Compute bar plot ~ chromosome
-    ####################################################
+    test_type < - as.character(d[selected, ]$test_type)
+    d.tmp < - data.frame(x=x,
+    y=y,
+    value=lab,
+    ft_type=ft_type,
+    test_type=test_type,
+    check.names = FALSE)
 
+    d.tmp$test_type < - as.factor(d.tmp$test_type)
+    }}
 
-    pdf_path <- "{pdf_file_by_chrom}"
-    {page_format}(pdf_path, width=pdf_width, height=pdf_height)
-    by_chrom <- TRUE
-    
-    plot_list <- list()
-    
-
-    for(i in levels(d$ft_type)){{
-
-        message(paste("Preparing profile diagram by chromosome: ", i))
-        xlab.plot <- i
-        ft_type <- i
-        which_row <- dm$chrom != "all_chrom" & dm$ft_type == i
-        
-        p <- bar_plot_with_pval(ft_type=ft_type,
-                                which_chrom=which_chrom,
-                                which_row=which_row,
-                                by_chrom=by_chrom)
-
-        print(p)
+    p < - p + geom_text(angle = 90,
+    data=d.tmp,
+    aes(label = value,
+    x = x,
+    y = y,
+    colour=factor(test_type)),
+    fontface = "bold",
+    position = position_dodge(width = 0.8),
+    vjust = 0.5,
+    hjust=0.5,
+    size=2,
+    show.legend=F)
+    # print(d.tmp)
 
     }}
-    
-    dev.null <- dev.off()
 
-    
-    write.table(d, "{data_file}", sep="\\t", quote=F, col.names=TRUE, row.names=FALSE)
-    """.format(data_file=data_file.name,
-               pdf_file=pdf_file.name,
-               pdf_file_by_chrom=pdf_file_by_chrom.name,
-               pdf_width=pdf_width,
-               pdf_height=pdf_height,
-               page_format=page_format)
 
-    if verbosity:
-        message("Printing R code to: " + r_code_file.name)
+    ####################################################
+    # plot limits
+    ####################################################
 
-    print(code_body, file=r_code_file)
-    r_code_file.close()
+    ylim_max < - max(dm$value) * 25
+    ybreaks_max < - as.numeric(format(ylim_max, digits=1))
+    p < - p + scale_y_continuous(trans="log10p", breaks=trans_breaks('log10', function(x) 10 ^ x)(c(1, ybreaks_max)))
 
-    if verbosity:
-        message("Executing R code.")
+    ####################################################
+    # Colors
+    ####################################################
 
-    # Execute R code.
-    check_r_packages(["reshape2", "ggplot2"])
-    check_r_installed()
+    p < - p + scale_fill_manual(values=c("Observed"="blue",
+    "Expected"="#8A8A8A",
+    "Enrichment"="#8B0000",
+    "Unchanged"="#000000",
+    "Depletion"="#006400"))
 
-    os.system("cat " + r_code_file.name + "| R --slave")
+    p < - p + scale_color_manual(values=c("Observed"="blue",
+    "Expected"="#8A8A8A",
+    "Enrichment"="#8B0000",
+    "Unchanged"="#000000",
+    "Depletion"="#006400"))
+
+
+return (p)
+
+}}
+
+
+####################################################
+# Compute bar plot by feature
+####################################################
+
+
+xlab.plot < - xlabel
+ft_type < - levels(d$ft_type)
+which_chrom = "all_chrom"
+which_row < - dm$chrom == which_chrom
+pdf_path < - "{pdf_file}"
+
+pdf_width < - {pdf_width}
+pdf_height < - {pdf_height}
+
+if (pdf_width == 'None')
+pdf_width < - length(ft_type)
+
+if (pdf_height == 'None')
+pdf_height < - 6
+
+ggsave(filename=pdf_path,
+       plot=bar_plot_with_pval(ft_type=ft_type,
+which_chrom = which_chrom,
+which_row = which_row),
+width = pdf_width,
+        height = pdf_height)
+
+
+
+
+####################################################
+# Compute bar plot ~ chromosome
+####################################################
+
+
+pdf_path < - "{pdf_file_by_chrom}"
+{page_format}(pdf_path, width=pdf_width, height=pdf_height)
+by_chrom < - TRUE
+
+plot_list < - list()
+
+for (i in levels(d$ft_type)){{
+
+message(paste("Preparing profile diagram by chromosome: ", i))
+xlab.plot < - i
+ft_type < - i
+which_row < - dm$chrom != "all_chrom" & dm$ft_type == i
+
+p < - bar_plot_with_pval(ft_type=ft_type,
+                         which_chrom=which_chrom,
+                         which_row=which_row,
+                         by_chrom=by_chrom)
+
+print(p)
+
+}}
+
+dev.null < - dev.off()
+
+write.table(d, "{data_file}", sep="\\t", quote=F, col.names = TRUE, row.names = FALSE)
+""".format(data_file=data_file.name,
+           pdf_file=pdf_file.name,
+           pdf_file_by_chrom=pdf_file_by_chrom.name,
+           pdf_width=pdf_width,
+           pdf_height=pdf_height,
+           page_format=page_format)
+
+if verbosity:
+    message("Printing R code to: " + r_code_file.name)
+
+print(code_body, file=r_code_file)
+r_code_file.close()
+
+if verbosity:
+    message("Executing R code.")
+
+# Execute R code.
+check_r_packages(["reshape2", "ggplot2"])
+check_r_installed()
+
+os.system("cat " + r_code_file.name + "| R --slave")
 
 
 def main():
-    """The main function."""
+"""
+The
+main
+function.
+"""
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
