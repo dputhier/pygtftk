@@ -9,7 +9,8 @@ from _collections import defaultdict
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import bedFile, checkChromFile
+from pygtftk.arg_formatter import bed6
+from pygtftk.arg_formatter import checkChromFile
 from pygtftk.arg_formatter import int_ge_to_null
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -18,12 +19,13 @@ from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
 __doc__ = """
-Get the genes/transcripts closest to a set of feature. The region to be search around the feature is controled by 
- -\-slop-value. The -\-name argument allows to export also some informations regarding these  genes/transcripts (e.g. biotype...).
+Get the genes/transcripts closest to a set of features. The region to be search around the feature is controlled by 
+ -\-slop-value. The -\-name argument allows to export also some information regarding these  genes/transcripts (e.g. biotype, gene_name...).
 """
 __notes__ = """
  -- Features (e.g. peaks, enhancer regions...) are provided in BED6 format.
- -- Output is in BED format with two additional columns: gene list and associated distances.
+ -- Features names (column 4 of the input BED) should be non-redondant. 
+ -- Output is in BED6 format with two additional columns: gene list and associated distances.
 """
 
 
@@ -52,7 +54,7 @@ def make_parser():
                             help="The input BED file containing regions of interest.",
                             metavar="BED",
                             required=True,
-                            action=bedFile)
+                            action=bed6)
 
     parser_grp.add_argument('-t', '--ft-type',
                             help="The feature of interest.",
@@ -79,8 +81,7 @@ def make_parser():
                             type=str)
 
     parser_grp.add_argument('-c', '--chrom-info',
-                            help='Tabulated file (chr as '
-                                 'column 1, sizes as column 2.)',
+                            help='Tabulated file (chr as column 1, sizes as column 2.)',
                             default=None,
                             action=checkChromFile,
                             required=True)
@@ -117,6 +118,10 @@ def closest_gn_to_feat(inputfile=None,
     # -------------------------------------------------------------------------
     # Load the BED file, slop and intersect with gene/tx
     # -------------------------------------------------------------------------
+
+    region_bo = BedTool(region_file).slop(s=False,
+                                          b=slop_value,
+                                          g=chrom_info.name)
 
     region_bo = BedTool(region_file).slop(s=False,
                                           b=slop_value,
@@ -224,13 +229,13 @@ else:
     #closest_gn_to_feat: 
     @test "closest_gn_to_feat_1" {
      result=`gtftk closest_gn_to_feat -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -n gene_id| md5sum-lite | perl -npe 's/\\s.*//'`
-      [ "$result" = "7883485b27bc9bda4a7c47846c7a0d25" ]
+      [ "$result" = "1ea2fbb5a5f10c607836139757c4f6de" ]
     }
         
     
     """
     CmdObject(name="closest_gn_to_feat",
-              message="Get the list of genes/transcripts closest to a set of feature.",
+              message="Get the list of genes/transcripts closest to a set of features.",
               parser=make_parser(),
               fun=os.path.abspath(__file__),
               notes=__notes__,
