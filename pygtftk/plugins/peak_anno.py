@@ -8,10 +8,12 @@ import re
 import sys
 from collections import defaultdict
 
+import pandas as pd
 from pybedtools import BedTool
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import bedFileList, bedFile
+from pygtftk import bedtool_extension
+from pygtftk.arg_formatter import FileWithExtension, bedFileList
+from pygtftk.arg_formatter import bed6
 from pygtftk.arg_formatter import checkChromFile
 from pygtftk.arg_formatter import int_greater_than_null_or_None
 from pygtftk.gtf_interface import GTF
@@ -87,7 +89,7 @@ def make_parser():
                                  ' (bed format).',
                             default=None,
                             metavar="BED",
-                            type=bedFile(),
+                            type=bed6,
                             required=True)
 
     parser_grp.add_argument('-b', '--more-bed',
@@ -160,86 +162,69 @@ def make_parser():
 # -------------------------------------------------------------------------
 
 
-def _intersection_results(reg_file=None,
+def _intersection_results(peak_file=None,
                           feature_bo=None,
                           my_dict=None,
                           chrom_len=None,
-                          page_format=None,
-                          user_img_file=None,
-                          ft_type=None,
-                          file_out_list=None):
+                          ft_type=None):
     """Get feature and peaks and compute intersections. Returns an updated
-    dict."""
+    dict.
+    """
 
+    # -------------------------------------------------------------------------
     # Compute the number of regions of interest falling in
     # each chromosome.
+    # If ft_type = "Full_chromosomes" we are checking whether peaks
+    # tend to fall on some chromosomes (i.e. not a the feature level)
+    # -------------------------------------------------------------------------
+
+    peak_file = BedTool(peak_file)
+    nb_peaks = len(peak_file)
+
+    for i in peak_file:
+        if ft_type != "Full_chromosomes":
+            my_dict[ft_type][i.chrom]["Nb_trial_or_peak"] += 1
+            my_dict[ft_type]["all_chrom"]["Nb_trial_or_peak"] += 1
+        else:
+            my_dict[ft_type][i.chrom]["Nb_trial_or_peak"] = nb_peaks
+
+    # -------------------------------------------------------------------------
+    # Compute the nucleotide size of all feature (promoter, exons, introns,...)
+    # Save features (introns, intergenic,...) for tracability
+    # -------------------------------------------------------------------------
 
     feature_bo = feature_bo.sort()
-    reg_file = BedTool(reg_file)
-    nb_peaks = len(reg_file)
-
-    for i in reg_file:
-        chrom = i.chrom
-        if chrom in chrom_len:
-            if ft_type != "Full_chromosomes":
-                my_dict[ft_type][chrom]["Nb_trial_or_peak"] += 1
-                my_dict[ft_type]["all_chrom"]["Nb_trial_or_peak"] += 1
-            else:
-                my_dict[ft_type][chrom]["Nb_trial_or_peak"] = nb_peaks
-
-        else:
-            for file_out in file_out_list:
-                os.remove(file_out.name)
-            msg = "Peak file: " + chrom + \
-                  " is undefined in chromInfo file. Please fix."
-            message(msg, type="ERROR")
-
-    # Compute the nucleotide size of all feature (promoter, exons, introns,...)
-
     feature_merge_bo = feature_bo.merge()
 
-    # Save features (introns, intergenic,...) for tracability
     peak_anno_tmp_file = make_tmp_file(prefix="peak_anno_" + ft_type + "_merged",
                                        suffix=".bed")
+
     feature_merge_bo.saveas(peak_anno_tmp_file.name)
     peak_anno_tmp_file.close()
 
     for i in feature_merge_bo:
 
-        chrom = i.chrom
-
-        if chrom in chrom_len:
-            size = i.end - i.start
-            if ft_type != "Full_chromosomes":
-                my_dict[ft_type][chrom]["coverage"] += size
-                my_dict[ft_type]["all_chrom"]["coverage"] += size
-            else:
-                # We will compare "Chromosomes" to the full genome.
-                my_dict[ft_type][chrom][
-                    "coverage"] = chrom_len[chrom]
+        size = i.end - i.start
+        if ft_type != "Full_chromosomes":
+            my_dict[ft_type][i.chrom]["coverage"] += size
+            my_dict[ft_type]["all_chrom"]["coverage"] += size
         else:
-            for file_out in file_out_list:
-                os.remove(file_out.name)
-            msg = """The chromosome {chrom} is undefined in: {file}. Please fix."""
-            msg = msg.format(chrom=chrom, file=feature_bo.fn)
-            message(msg, type="ERROR")
+            # We will compare "Chromosomes" to the full genome.
+            my_dict[ft_type][i.chrom][
+                "coverage"] = chrom_len[i.chrom]
 
+    # -------------------------------------------------------------------------
     # Compute intersections
-    intersections = reg_file.intersect(feature_merge_bo)
+    # -------------------------------------------------------------------------
+
+    intersections = peak_file.intersect(feature_merge_bo)
 
     for i in intersections:
 
-        if i.chrom in chrom_len:
-
-            chrom = i.chrom
-            my_dict[ft_type][chrom]["Observed"] += 1
-            if ft_type != "Full_chromosomes":
-                my_dict[ft_type]["all_chrom"]["Observed"] += 1
-        else:
-            for file_out in file_out_list:
-                os.remove(file_out.name)
-            msg = "The chromosome " + chrom + " is undefined."
-            message(msg, type="WARNING")
+        chrom = i.chrom
+        my_dict[ft_type][chrom]["Observed"] += 1
+        if ft_type != "Full_chromosomes":
+            my_dict[ft_type]["all_chrom"]["Observed"] += 1
 
     file_out_save = make_tmp_file(prefix="peak_anno_intersections_" +
                                          ft_type,
@@ -273,7 +258,7 @@ def peak_anno(inputfile=None,
               verbosity=True):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
-    classical features (e.g promoter, tts, gene body, UTR,...) and to sets of user provided pics.
+    classical features (e.g promoter, tts, gene body, UTR,...) and to sets of user provided peaks.
     """
 
     # -------------------------------------------------------------------------
@@ -343,6 +328,17 @@ def peak_anno(inputfile=None,
                     "falling in chromosomes declared in chromInfo file.",
                     type="ERROR")
 
+        chrom_list = gtf.get_chroms(nr=True)
+
+        # -------------------------------------------------------------------------
+        # Check chromosomes are defined in the chrom-info file
+        # -------------------------------------------------------------------------
+
+        for i in chrom_list:
+            if i not in chrom_len:
+                message("Chromosome " + " i from GTF is undefined in --chrom-info file.",
+                        type="ERROR")
+
     # -------------------------------------------------------------------------
     # Check user provided annotations
     # -------------------------------------------------------------------------
@@ -370,50 +366,47 @@ def peak_anno(inputfile=None,
                 "--more-bed-labels should be set if --more-bed is used.",
                 type="ERROR")
 
+    # -------------------------------------------------------------------------
     # Preparing output files
+    # -------------------------------------------------------------------------
+
     file_out_list = make_outdir_and_file(out_dir=outputdir,
                                          alist=["00_peak_anno_stats.txt",
                                                 "00_peak_anno_diagrams." + page_format,
-                                                "00_peak_anno_diagrams_by_chrom." + page_format,
-                                                "00_peak_anno_R_code.R"],
+                                                "00_peak_anno_diagrams_by_chrom." + page_format
+                                                ],
                                          force=True)
 
-    data_file, pdf_file, pdf_file_by_chrom, r_code_file = file_out_list
+    data_file, pdf_file, pdf_file_by_chrom = file_out_list
 
+    # -------------------------------------------------------------------------
     # Get the midpoints of the peaks
-    region_mid_point = make_tmp_file("peaks_midpoints", ".bed")
+    # -------------------------------------------------------------------------
+
+    region_mid_point_file = make_tmp_file("peaks_midpoints", ".bed")
 
     # Loop through peaks
-    peak_bo = BedTool(peak_file.name)
+    region_mid_point = bedtool_extension(peak_file.name).get_midpoints()
 
-    for line in peak_bo:
+    region_mid_point.saveas(region_mid_point_file)
 
-        diff = line.end - line.start
+    # -------------------------------------------------------------------------
+    # Check chromosomes for peaks are defined in the chrom-info file
+    # -------------------------------------------------------------------------
 
-        if diff % 2 != 0:
-            # e.g 10-13 (zero based) -> 11-13 one based
-            # mipoint is 12 (one-based) -> 11-12 (zero based)
-            # e.g 949-1100 (zero based) -> 950-1100 one based
-            # mipoint is 1025 (one-based) -> 1024-1025 (zero based)
-            # floored division (python 2)...
-            line.end = line.start + int(diff / 2) + 1
-            line.start = line.end - 1
-        else:
-            # e.g 10-14 (zero based) -> 11-14 one based
-            # mipoint is 12-13 (one-based) -> 11-13 (zero based)
-            # e.g 9-5100 (zero based) -> 10-5100 one based
-            # mipoint is 2555-2555 (one-based) -> 2554-2555 (zero based)
-            # floored division (python 2)...
-            # No real center. Take both
+    chrom_list = set()
+    for i in region_mid_point:
+        chrom_list.add(i.chrom)
 
-            line.start = line.start + int(diff / 2) - 1
-            line.end = line.start + 2
+    for i in chrom_list:
+        if i not in chrom_len:
+            message("Chromosome " + " i from GTF is undefined in --chrom-info file.",
+                    type="ERROR")
 
-        region_mid_point.write(str(line))
-
-    region_mid_point.close()
-
+    # -------------------------------------------------------------------------
     # Fill the dict with info about basic features include in GTF
+    # -------------------------------------------------------------------------
+
     if not no_basic_feature:
         for feat_type in gtf.get_feature_list(nr=True):
             if feat_type not in ["start_codon", "stop_codon"]:
@@ -423,78 +416,89 @@ def peak_anno(inputfile=None,
                                                    "gene_id",
                                                    "exon_id"]).sort().merge()  # merging bed file !
 
-                hits = _intersection_results(reg_file=region_mid_point.name,
+                hits = _intersection_results(peak_file=region_mid_point.fn,
                                              feature_bo=gtf_sub_bed,
                                              my_dict=hits,
                                              chrom_len=chrom_len,
-                                             ft_type=feat_type,
-                                             file_out_list=file_out_list)
+                                             ft_type=feat_type)
 
+        # -------------------------------------------------------------------------
         # Get the intergenic regions
+        # -------------------------------------------------------------------------
 
         gtf_sub_bed = gtf.get_intergenic(chrom_info,
                                          0,
                                          0,
                                          chrom_len.keys()).merge()
 
-        hits = _intersection_results(reg_file=region_mid_point.name,
+        hits = _intersection_results(peak_file=region_mid_point.name,
                                      feature_bo=gtf_sub_bed,
                                      my_dict=hits,
                                      chrom_len=chrom_len,
                                      ft_type="Intergenic")
 
+        # -------------------------------------------------------------------------
         # Get the intronic regions
+        # -------------------------------------------------------------------------
+
         gtf_sub_bed = gtf.get_introns()
 
-        hits = _intersection_results(reg_file=region_mid_point.name,
+        hits = _intersection_results(peak_file=region_mid_point.name,
                                      feature_bo=gtf_sub_bed,
                                      my_dict=hits,
                                      chrom_len=chrom_len,
                                      ft_type="Introns")
 
+        # -------------------------------------------------------------------------
         # Get the promoter regions
+        # -------------------------------------------------------------------------
+
         gtf_sub_bed = gtf.get_tss().slop(s=True,
                                          l=upstream,
                                          r=downstream,
                                          g=chrom_info.name).cut([0, 1, 2,
                                                                  3, 4, 5]).sort().merge()
 
-        hits = _intersection_results(reg_file=region_mid_point.name,
+        hits = _intersection_results(peak_file=region_mid_point.name,
                                      feature_bo=gtf_sub_bed,
                                      my_dict=hits,
                                      chrom_len=chrom_len,
                                      ft_type="Promoters")
 
+        # -------------------------------------------------------------------------
         # Get the tts regions
+        # -------------------------------------------------------------------------
+
         gtf_sub_bed = gtf.get_tts().slop(s=True,
                                          l=upstream,
                                          r=downstream,
                                          g=chrom_info.name).cut([0, 1, 2,
                                                                  3, 4, 5]).sort().merge()
 
-        hits = _intersection_results(reg_file=region_mid_point.name,
+        hits = _intersection_results(peak_file=region_mid_point.name,
                                      feature_bo=gtf_sub_bed,
                                      my_dict=hits,
                                      chrom_len=chrom_len,
                                      ft_type="TTS")
 
+        # -------------------------------------------------------------------------
         # Test the whole chromosomes as features
-        gtf_sub_bed = gtf.get_tts().slop(s=True,
-                                         l=upstream,
-                                         r=downstream,
-                                         g=chrom_info.name).cut([0, 1, 2,
-                                                                 3, 4, 5]).sort().merge()
+        # -------------------------------------------------------------------------
 
         gtf_sub_bed = BedTool(
             chrom_info_to_bed_file(
                 chrom_info,
                 chr_list=chrom_len.keys()))
 
-        hits = _intersection_results(reg_file=region_mid_point.name,
+        hits = _intersection_results(peak_file=region_mid_point.name,
                                      feature_bo=gtf_sub_bed,
                                      my_dict=hits,
                                      chrom_len=chrom_len,
                                      ft_type="Full_chromosomes")
+
+    # -------------------------------------------------------------------------
+    # if the user request --more-keys (e.g. gene_biotype)
+    # -------------------------------------------------------------------------
 
     if more_keys is not None:
         more_keys_list = more_keys.split(",")
@@ -513,17 +517,30 @@ def peak_anno(inputfile=None,
                                                        "gene_id",
                                                        "exon_id"]).sort().merge()  # merging bed file !
 
-                    hits = _intersection_results(reg_file=region_mid_point.name,
+                    hits = _intersection_results(peak_file=region_mid_point.name,
                                                  feature_bo=gtf_sub_bed,
                                                  my_dict=hits,
                                                  chrom_len=chrom_len,
                                                  ft_type=":".join([user_key,
                                                                    val]))
+    # -------------------------------------------------------------------------
     # Process user defined annotations
+    # -------------------------------------------------------------------------
+
     if more_bed is not None:
         message("Processing user-defined regions (bed format).")
         for bed_anno, bed_lab in zip(more_bed, more_bed_labels):
-            hits = _intersection_results(reg_file=region_mid_point.name,
+
+            chrom_list = set()
+            for i in BedTool(bed_anno.name):
+                chrom_list.add(i.chrom)
+
+            for i in chrom_list:
+                if i not in chrom_len:
+                    message("Chromosome " + " i from GTF is undefined in " + bed_anno.name + " file.",
+                            type="ERROR")
+
+            hits = _intersection_results(peak_file=region_mid_point.name,
                                          feature_bo=BedTool(bed_anno.name),
                                          my_dict=hits,
                                          chrom_len=chrom_len,
@@ -581,51 +598,61 @@ def peak_anno(inputfile=None,
             msg = "Image format: {f}. Please fix.".format(f=page_format)
             message(msg, type="ERROR")
 
-    ####################################################
-    # Read the dataset
-    ####################################################
+    # -------------------------------------------------------------------------
+    # Read the data set
+    # -------------------------------------------------------------------------
 
-    d < - read.table("{data_file}",
-                     head=T,
-                     sep="\\t",
-                     quote="")
+    data = pd.read_csv(data_file.name, sep="\t", header=1)
 
-    ####################################################
+    if data.shape[0] == 0:
+        message("No lines found in input file.",
+                type="ERROR")
+
+    # -------------------------------------------------------------------------
     # Adjust label names if all features comes from the same key
-    ####################################################
     # When using only features from a given key in a gtf,
     # the readability can be increased removing the
     # redundant 'key' used as prefix for all features.
+    # -------------------------------------------------------------------------
 
     # Set default xlab for plot:
-    xlabel < - 'Features'
+    xlabel = 'Features'
 
+    """
     # Check that 'ft_type' either contains ':' the separator between key and value or the 'Full_chromosomes' feature.
-    if (length(grep(":|Full_chromosomes", d[, "ft_type"], invert=FALSE)) == length(d[, "ft_type"])){{
-    potential_common_key_rows=grep(":", d[, "ft_type"])
-    potential_common_key_vector=gsub(":.*$", '', d[potential_common_key_rows, "ft_type"])
+    if
+        if (length(grep(":|Full_chromosomes", d[, "ft_type"], invert=FALSE)) == length(d[, "ft_type"])){{
+        potential_common_key_rows=grep(":", d[, "ft_type"])
+        potential_common_key_vector=gsub(":.*$", '', d[potential_common_key_rows, "ft_type"])
 
-    if (length(unique(potential_common_key_vector)) == 1){{
-    common_key < - unique(potential_common_key_vector)
+        if (length(unique(potential_common_key_vector)) == 1){{
+        common_key < - unique(potential_common_key_vector)
 
-    # Remove 'common_key' from 'ft_type'
-    # 'as.factor' needed for 'by_chrom' plot to be correctly drawn.
-    d[, "ft_type"] < - as.factor(gsub(paste0(common_key, ":"), '', d[, "ft_type"]))
+        # Remove 'common_key' from 'ft_type'
+        # 'as.factor' needed for 'by_chrom' plot to be correctly drawn.
+        d[, "ft_type"] < - as.factor(gsub(paste0(common_key, ":"), '', d[, "ft_type"]))
 
-    xlabel < - paste("Features in", common_key)
+        xlabel < - paste("Features in", common_key)
 
-    }}
-    }}
+        }}
+        }}
 
-    ####################################################
+
+    # -------------------------------------------------------------------------
     # Get the chromosome order
-    ####################################################
+    # -------------------------------------------------------------------------
 
-    chr_order < - d$chrom
+    chr_order = list(data['chrom'].unique)
+        
     chr_order < - sort(chr_order[!duplicated(chr_order)], decreasing = TRUE)
     chr_order_num < - gsub("[^0-9]", "", chr_order)
     chr_order < - chr_order[order(as.numeric(chr_order_num))]
     d$chrom < - factor(d$chrom, levels = chr_order)
+
+        """
+    # -------------------------------------------------------------------------
+    # Get the chromosome order
+    # -------------------------------------------------------------------------
 
     # Compute expected number of intersections
     d$freq < - d$coverage / d$reference_size

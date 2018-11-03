@@ -711,7 +711,6 @@ class BedFileList(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
-
 class fileList(argparse.Action):
     """
     Check the files exist.
@@ -746,8 +745,6 @@ class fileList(argparse.Action):
                  namespace,
                  values,
                  option_string=None):
-
-
         values = glob.glob(values)
 
         check_file_or_dir_exists(values)
