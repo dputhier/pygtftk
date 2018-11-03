@@ -9,7 +9,7 @@ from builtins import str
 from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import globbedFileList
+from pygtftk.arg_formatter import fileList
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -49,7 +49,7 @@ def make_parser():
     parser_grp.add_argument('-g', '--genome',
                             help="The genome in fasta format. Accept path with wildcards (e.g. *.fa).",
                             default=None,
-                            action=globbedFileList,
+                            action=fileList,
                             required=True)
 
     parser_grp.add_argument('-s', '--separator',
