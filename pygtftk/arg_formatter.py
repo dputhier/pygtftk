@@ -646,6 +646,83 @@ class bed6(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
+class bed6_or_bed3(argparse.Action):
+    """
+    Check the BED file exist and has proper format.
+    """
+
+    def __init__(self,
+                 option_strings,
+                 dest,
+                 nargs=None,
+                 const=None,
+                 default=None,
+                 type=None,
+                 choices=None,
+                 required=False,
+                 help=None,
+                 metavar=None):
+        argparse.Action.__init__(self,
+                                 option_strings=option_strings,
+                                 dest=dest,
+                                 nargs=nargs,
+                                 const=const,
+                                 default=default,
+                                 type=type,
+                                 choices=choices,
+                                 required=required,
+                                 help=help,
+                                 metavar=metavar,
+                                 )
+
+    def __call__(self,
+                 parser,
+                 namespace,
+                 values,
+                 option_string=None):
+
+        check_file_or_dir_exists(values)
+
+        try:
+            file_bo = BedTool(values)
+            a = len(file_bo)
+        except:
+            msg = "Unable to load file: " + values + "."
+            message(msg, type="ERROR")
+            sys.exit()
+
+        if len(file_bo) == 0:
+            msg = "It seems that file " + values + " is empty."
+            message(msg, type="ERROR")
+            sys.exit()
+
+        if file_bo.file_type != 'bed':
+            msg = "File {f} is not a valid bed file."
+            msg = msg.format(f=values)
+            message(msg, type="ERROR")
+            sys.exit()
+
+        names = set()
+
+        for line in file_bo:
+            if len(line.fields) not in [3, 6]:
+                message("File -- " + values + " --Need a BED6 or BED3 file.", type="ERROR")
+                sys.exit()
+
+            if len(line.fields) == 6:
+                if line.strand not in ['-', '+', '.']:
+                    message("File -- " + values + " -- strand is not in proper format", type="ERROR")
+                if line.name not in names:
+                    names.add(line.name)
+                else:
+                    message("File -- " + values + " -- Names (4th columns of the bed file) should be unambiguous.",
+                            type="ERROR")
+                    sys.exit()
+
+        # Add the attribute
+        setattr(namespace, self.dest, values)
+
+
 class BedFileList(argparse.Action):
     """
     Check the files exist.
