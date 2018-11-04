@@ -6,16 +6,22 @@ import argparse
 import os
 import re
 import sys
+import warnings
 from collections import defaultdict
 
+import numpy as np
 import pandas as pd
-from pybedtools import BedTool
+from plotnine import (ggplot, aes, position_dodge,
+                      geom_bar, ggsave, ylab, theme, element_blank, element_text, scale_fill_manual,
+                      scale_color_manual, guides, guide_legend, geom_label, geom_text, scale_y_log10)
+from scipy.stats import binom_test
 
-from pygtftk import bedtool_extension
 from pygtftk.arg_formatter import FileWithExtension, bedFileList
-from pygtftk.arg_formatter import bed6
+from pygtftk.arg_formatter import bed6_or_bed3
 from pygtftk.arg_formatter import checkChromFile
 from pygtftk.arg_formatter import int_greater_than_null_or_None
+from pygtftk.bedtool_extension import BedTool
+from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import chrom_info_to_bed_file
@@ -89,7 +95,7 @@ def make_parser():
                                  ' (bed format).',
                             default=None,
                             metavar="BED",
-                            type=bed6,
+                            action=bed6_or_bed3,
                             required=True)
 
     parser_grp.add_argument('-b', '--more-bed',
@@ -210,8 +216,7 @@ def _intersection_results(peak_file=None,
             my_dict[ft_type]["all_chrom"]["coverage"] += size
         else:
             # We will compare "Chromosomes" to the full genome.
-            my_dict[ft_type][i.chrom][
-                "coverage"] = chrom_len[i.chrom]
+            my_dict[ft_type][i.chrom]["coverage"] = chrom_len[i.chrom]
 
     # -------------------------------------------------------------------------
     # Compute intersections
@@ -386,9 +391,9 @@ def peak_anno(inputfile=None,
     region_mid_point_file = make_tmp_file("peaks_midpoints", ".bed")
 
     # Loop through peaks
-    region_mid_point = bedtool_extension(peak_file.name).get_midpoints()
+    region_mid_point = BedTool(peak_file).get_midpoints()
 
-    region_mid_point.saveas(region_mid_point_file)
+    region_mid_point.saveas(region_mid_point_file.name)
 
     # -------------------------------------------------------------------------
     # Check chromosomes for peaks are defined in the chrom-info file
@@ -431,7 +436,7 @@ def peak_anno(inputfile=None,
                                          0,
                                          chrom_len.keys()).merge()
 
-        hits = _intersection_results(peak_file=region_mid_point.name,
+        hits = _intersection_results(peak_file=region_mid_point.fn,
                                      feature_bo=gtf_sub_bed,
                                      my_dict=hits,
                                      chrom_len=chrom_len,
@@ -443,7 +448,7 @@ def peak_anno(inputfile=None,
 
         gtf_sub_bed = gtf.get_introns()
 
-        hits = _intersection_results(peak_file=region_mid_point.name,
+        hits = _intersection_results(peak_file=region_mid_point.fn,
                                      feature_bo=gtf_sub_bed,
                                      my_dict=hits,
                                      chrom_len=chrom_len,
@@ -459,7 +464,7 @@ def peak_anno(inputfile=None,
                                          g=chrom_info.name).cut([0, 1, 2,
                                                                  3, 4, 5]).sort().merge()
 
-        hits = _intersection_results(peak_file=region_mid_point.name,
+        hits = _intersection_results(peak_file=region_mid_point.fn,
                                      feature_bo=gtf_sub_bed,
                                      my_dict=hits,
                                      chrom_len=chrom_len,
@@ -475,11 +480,11 @@ def peak_anno(inputfile=None,
                                          g=chrom_info.name).cut([0, 1, 2,
                                                                  3, 4, 5]).sort().merge()
 
-        hits = _intersection_results(peak_file=region_mid_point.name,
+        hits = _intersection_results(peak_file=region_mid_point.fn,
                                      feature_bo=gtf_sub_bed,
                                      my_dict=hits,
                                      chrom_len=chrom_len,
-                                     ft_type="TTS")
+                                     ft_type="Terminator")
 
         # -------------------------------------------------------------------------
         # Test the whole chromosomes as features
@@ -490,7 +495,7 @@ def peak_anno(inputfile=None,
                 chrom_info,
                 chr_list=chrom_len.keys()))
 
-        hits = _intersection_results(peak_file=region_mid_point.name,
+        hits = _intersection_results(peak_file=region_mid_point.fn,
                                      feature_bo=gtf_sub_bed,
                                      my_dict=hits,
                                      chrom_len=chrom_len,
@@ -517,7 +522,7 @@ def peak_anno(inputfile=None,
                                                        "gene_id",
                                                        "exon_id"]).sort().merge()  # merging bed file !
 
-                    hits = _intersection_results(peak_file=region_mid_point.name,
+                    hits = _intersection_results(peak_file=region_mid_point.fn,
                                                  feature_bo=gtf_sub_bed,
                                                  my_dict=hits,
                                                  chrom_len=chrom_len,
@@ -540,7 +545,7 @@ def peak_anno(inputfile=None,
                     message("Chromosome " + " i from GTF is undefined in " + bed_anno.name + " file.",
                             type="ERROR")
 
-            hits = _intersection_results(peak_file=region_mid_point.name,
+            hits = _intersection_results(peak_file=region_mid_point.fn,
                                          feature_bo=BedTool(bed_anno.name),
                                          my_dict=hits,
                                          chrom_len=chrom_len,
@@ -561,7 +566,7 @@ def peak_anno(inputfile=None,
     if len(hits) == 0:
         message("No feature found.", type="ERROR")
 
-    nb_peaks = str(len(BedTool(region_mid_point.name)))
+    nb_peaks = str(len(region_mid_point))
 
     for chrom in chrom_len:
         if chrom != "all_chrom":
@@ -571,7 +576,7 @@ def peak_anno(inputfile=None,
         for key2 in chrom_len:
             if key1 == "Full_chromosomes":
                 ref_size = str(chrom_len["all_chrom"])
-                nb_trial = str(len(BedTool(region_mid_point.name)))
+                nb_trial = nb_peaks
             else:
                 ref_size = str(chrom_len[key2])
                 nb_trial = str(hits[key1][key2]["Nb_trial_or_peak"])
@@ -602,428 +607,239 @@ def peak_anno(inputfile=None,
     # Read the data set
     # -------------------------------------------------------------------------
 
-    data = pd.read_csv(data_file.name, sep="\t", header=1)
+    d = pd.read_csv(data_file.name, sep="\t", header=0)
 
-    if data.shape[0] == 0:
+    if d.shape[0] == 0:
         message("No lines found in input file.",
                 type="ERROR")
 
-    # -------------------------------------------------------------------------
-    # Adjust label names if all features comes from the same key
-    # When using only features from a given key in a gtf,
-    # the readability can be increased removing the
-    # redundant 'key' used as prefix for all features.
-    # -------------------------------------------------------------------------
-
-    # Set default xlab for plot:
-    xlabel = 'Features'
-
-    """
-    # Check that 'ft_type' either contains ':' the separator between key and value or the 'Full_chromosomes' feature.
-    if
-        if (length(grep(":|Full_chromosomes", d[, "ft_type"], invert=FALSE)) == length(d[, "ft_type"])){{
-        potential_common_key_rows=grep(":", d[, "ft_type"])
-        potential_common_key_vector=gsub(":.*$", '', d[potential_common_key_rows, "ft_type"])
-
-        if (length(unique(potential_common_key_vector)) == 1){{
-        common_key < - unique(potential_common_key_vector)
-
-        # Remove 'common_key' from 'ft_type'
-        # 'as.factor' needed for 'by_chrom' plot to be correctly drawn.
-        d[, "ft_type"] < - as.factor(gsub(paste0(common_key, ":"), '', d[, "ft_type"]))
-
-        xlabel < - paste("Features in", common_key)
-
-        }}
-        }}
-
-
-    # -------------------------------------------------------------------------
-    # Get the chromosome order
-    # -------------------------------------------------------------------------
-
-    chr_order = list(data['chrom'].unique)
-        
-    chr_order < - sort(chr_order[!duplicated(chr_order)], decreasing = TRUE)
-    chr_order_num < - gsub("[^0-9]", "", chr_order)
-    chr_order < - chr_order[order(as.numeric(chr_order_num))]
-    d$chrom < - factor(d$chrom, levels = chr_order)
-
-        """
     # -------------------------------------------------------------------------
     # Get the chromosome order
     # -------------------------------------------------------------------------
 
     # Compute expected number of intersections
-    d$freq < - d$coverage / d$reference_size
+    d['freq'] = d['coverage'] / d['reference_size']
+    d['Expected'] = d['freq'] * d['Nb_trial_or_peak']
 
-    d$Expected < - d$freq * d$Nb_trial_or_peak
-
-    ####################################################
+    # -------------------------------------------------------------------------
     # Compute binomial p.val  (unilateral)
-    ####################################################
+    # -------------------------------------------------------------------------
 
-    for (i in 1:nrow(d)){{
+    for i, _ in d.iterrows():
 
-    if (d$Expected[i] > 0){{
-    if (d$Observed[i] > 0){{
-    log2_ratio < - log2(d$Observed[i] / d$Expected[i])
-    }} else {{
-    log2_ratio < - NA
-    }}
-    }} else {{
-    log2_ratio < - NA
-    }}
+        if d.loc[i, 'Expected'] > 0:
+            if d.loc[i, 'Observed'] > 0:
+                log2_ratio = np.log2(d.loc[i, 'Observed'] / d.loc[i, 'Expected'])
+            else:
+                log2_ratio = np.nan
+        else:
+            log2_ratio = np.nan
 
-    d$log2_ratio[i] < - log2_ratio
+        d.loc[i, 'log2_ratio'] = log2_ratio
 
-    if (d$Nb_trial_or_peak[i] > 0){{
-    pval < - binom.test(alternative="two.sided",
-    n=d$Nb_trial_or_peak[i],
-    x= d$Observed[i],
-    p = d$freq[i])$p.value
-    }} else {{
-    pval < - NA
-    }}
+        if d.loc[i, 'Nb_trial_or_peak'] > 0:
+            pval = binom_test(n=d.loc[i, 'Nb_trial_or_peak'],
+                              x=d.loc[i, 'Observed'],
+                              p=d.loc[i, 'freq'])
 
-    d$pval.binom[i] < - pval
+            d.loc[i, 'pval_binom'] = pval
+            d.loc[i, 'pval_binom_str'] = "{0:0.3g}".format(pval)
 
-    if (d$Observed[i] > d$Expected[i]){{
-    d$test_type[i] < - "Enrichment"
-    }} else if (d$Observed[i] < d$Expected[i]){{
-    d$test_type[i] < - "Depletion"
-    }} else {{
-    d$test_type[i] < - "Unchanged"
-    }}
+        if d.loc[i, 'Observed'] > d.loc[i, 'Expected']:
+            d.loc[i, 'test_type'] = 'Enrichment'
+        elif d.loc[i, 'Observed'] < d.loc[i, 'Expected']:
+            d.loc[i, 'test_type'] = 'Depletion'
+        else:
+            d.loc[i, 'test_type'] = 'Unchanged'
 
-    }}
+        d.loc[i, 'max_y'] = max(d.loc[i, 'Observed'], d.loc[i, 'Expected'])
 
-    ####################################################
+    # -------------------------------------------------------------------------
+    # Save file
+    # -------------------------------------------------------------------------
+
+    d.to_csv(open(data_file.name, 'w'), sep="\t", header=True, index=False)
+
+    # -------------------------------------------------------------------------
     # Melt the data frame
-    ####################################################
-
-    dm < - melt(d[, c("ft_type", "chrom", "Observed", "Expected")],
-    id.vars = c("ft_type", "chrom"))
-
-    dm$variable < - factor(dm$variable, levels = c("Expected", "Observed"))
-
-    ####################################################
-    # function to compute pseudolog10 transformation of y-axis
-    ####################################################
-
-    log10p_trans < - function()
-    {{trans_new(
-        name="log10p",
-        transform=function(x)
-    {{log10(x + 1)}},
-    inverse = function(x)
-    {{10 ^ x - 1}},
-    breaks = trans_breaks('log10', function(x)
-    10 ^ x),
-    format = trans_format('log10', math_format(10 ^.x))
-    )}}
-
-    ####################################################
-    # function to compute diagram
-    ####################################################
-
-    bar_plot_with_pval < - function(ft_type=NULL,
-                                    which_chrom=NULL,
-                                    which_row=NULL,
-                                    by_chrom=FALSE,
-                                    y_axis_trans=log10p_trans)
-    {{
-
-        p < - ggplot()
-        if (! by_chrom)
-    {{
-        aes.plot < - aes(ft_type, value, fill=variable)
-    }} else {{
-        aes.plot < - aes(chrom, value, fill=variable)
-    }}
-    p < - p + geom_bar(data=dm[which_row,],
-                       aes.plot,
-                       stat="identity",
-                       position=position_dodge(width=0.90),
-                       alpha=0.6,
-                       show.legend = TRUE)
-
-    p < - p + ylab("Number of overlaps")
-    p < - p + xlab(xlab.plot)
-    p < - p + theme(legend.title = element_blank())
-    p < - p + theme_bw()
-    p < - p + theme(legend.position = "bottom")
-    p < - p + theme(legend.key = element_blank())
-    p < - p + theme(legend.title = element_blank())
-    p < - p + theme(axis.title.x = element_text(colour="grey20",
-                                                size=10, angle=0,
-                                                face="plain"))
-    p < - p + theme(axis.text.x = element_blank())
-    p < - p + theme(axis.text.x = element_text(size=10,
-                                               vjust=0.9,
-                                               hjust=1,
-                                               angle=45))
-    p < - p + theme(axis.text.y = element_blank())
-    p < - p + theme(axis.text.y = element_text(size=8,
-                                               angle=0))
-
-    if (! by_chrom){{
-    aes.plot < - aes(label = sprintf("%.02f", value),
-    x = ft_type,
-    y = ifelse(value < 1, 1, value),
-    colour=variable)
-    }} else {{
-    aes.plot < - aes(label = sprintf("%.02f", value),
-    x = chrom,
-    y = ifelse(value < 1, 1, value),
-    colour=variable)
-    }}
-
-    p < - p + geom_text(data=dm[which_row, ],
-    aes.plot,
-    position = position_dodge(width = 0.8),
-    angle=90,
-    vjust = 0.5,
-    hjust=-0.25,
-    size=2)
-
-    p < - p + guides(colour=FALSE, fill=guide_legend(ncol=2)        )
-
-
-
-    ####################################################
-    # Add an horizontal segment to indicate p-val
-    ####################################################
-
-    j < - 1
-
-    # keep the highest value (exp/obs)
-    # for each genomic feature (prom, UTR,...)
-    dm.sub < - dm[which_row, ]
-
-    if (! by_chrom){{
-    dm.sub < - do.call(rbind,
-    lapply(
-    lapply(split(dm.sub, dm.sub$ft_type),
-    function(x) x[order(x$value, decreasing = TRUE), ]),
-    head, 1))
-    }} else {{
-    dm.sub < - do.call(rbind,
-    lapply(
-    lapply(split(dm.sub, dm.sub$chrom),
-    function(x) x[order(x$value, decreasing = TRUE), ]),
-    head, 1))
-    }}
-
-    if (! by_chrom){{
-    ft_type_list < - levels(as.factor(as.character(dm.sub$ft_type)))
-    }} else {{
-    ft_type_list < - levels(d$chrom)[levels(d$chrom) % in % levels(as.factor(as.character(dm.sub$chrom)))]
-    }}
-
-    for (i in 1:length(ft_type_list)){{
-
-        y_val < - ifelse( is.na(dm.sub$value[i]), 8, dm.sub$value[i] * 8)
-    y_val < - ifelse(y_val < 8, 8, y_val)
-    x < - c(i - 0.2, i - 0.2, i + 0.2, i + 0.2)
-    y < - c(y_val * 0.95,
-            y_val * 1,
-            y_val * 1,
-            y_val * 0.95)
-
-    z < - ft_type_list[i]
-    p < - p + geom_path(data=data.frame(x=x,
-                                        y=y,
-                                        ft_type=z,
-                                        value=NA,
-                                        variable=NA,
-                                        check.names = FALSE),
-    aes(x=x, y=y)
-    )
-
-    }}
-
-
-    ####################################################
-    # Add p-val
-    ####################################################
-
-    for (i in 1:length(ft_type_list)){{
-
-    x < - i
-    y < - ifelse( is.na(dm.sub$value[i]), 10, dm.sub$value[i] * 12)
-    y < - ifelse(y < 10, 10, y)
-
-    if (!by_chrom){{
-    selected < - d$chrom == which_chrom & d$ft_type == ft_type_list[i]
-    lab < - paste(sprintf(" %.03g",
-    d[selected, ]$pval.binom),
-    "\\n",
-    sprintf("%.03g ", d[selected, ]$log2_ratio))
-
-    test_type < - d[selected, ]$test_type
-    d.tmp < - data.frame(x=x,
-    y=y,
-    value=lab,
-    ft_type=ft_type_list[i],
-    test_type=test_type,
-    check.names = FALSE)
-
-    d.tmp$test_type < - as.factor(d.tmp$test_type)
-    }} else {{
-    selected < - d$chrom == ft_type_list[i] & d$ft_type == ft_type
-    lab < - paste(sprintf(" %.03g",
-    d[selected, ]$pval.binom),
-    "\\n",
-    sprintf("%.03g ", d[selected, ]$log2_ratio))
-
-    test_type < - as.character(d[selected, ]$test_type)
-    d.tmp < - data.frame(x=x,
-    y=y,
-    value=lab,
-    ft_type=ft_type,
-    test_type=test_type,
-    check.names = FALSE)
-
-    d.tmp$test_type < - as.factor(d.tmp$test_type)
-    }}
-
-    p < - p + geom_text(angle = 90,
-    data=d.tmp,
-    aes(label = value,
-    x = x,
-    y = y,
-    colour=factor(test_type)),
-    fontface = "bold",
-    position = position_dodge(width = 0.8),
-    vjust = 0.5,
-    hjust=0.5,
-    size=2,
-    show.legend=F)
-    # print(d.tmp)
-
-    }}
-
-
-    ####################################################
-    # plot limits
-    ####################################################
-
-    ylim_max < - max(dm$value) * 25
-    ybreaks_max < - as.numeric(format(ylim_max, digits=1))
-    p < - p + scale_y_continuous(trans="log10p", breaks=trans_breaks('log10', function(x) 10 ^ x)(c(1, ybreaks_max)))
-
-    ####################################################
-    # Colors
-    ####################################################
-
-    p < - p + scale_fill_manual(values=c("Observed"="blue",
-    "Expected"="#8A8A8A",
-    "Enrichment"="#8B0000",
-    "Unchanged"="#000000",
-    "Depletion"="#006400"))
-
-    p < - p + scale_color_manual(values=c("Observed"="blue",
-    "Expected"="#8A8A8A",
-    "Enrichment"="#8B0000",
-    "Unchanged"="#000000",
-    "Depletion"="#006400"))
-
-
-return (p)
-
-}}
-
-
-####################################################
-# Compute bar plot by feature
-####################################################
-
-
-xlab.plot < - xlabel
-ft_type < - levels(d$ft_type)
-which_chrom = "all_chrom"
-which_row < - dm$chrom == which_chrom
-pdf_path < - "{pdf_file}"
-
-pdf_width < - {pdf_width}
-pdf_height < - {pdf_height}
-
-if (pdf_width == 'None')
-pdf_width < - length(ft_type)
-
-if (pdf_height == 'None')
-pdf_height < - 6
-
-ggsave(filename=pdf_path,
-       plot=bar_plot_with_pval(ft_type=ft_type,
-which_chrom = which_chrom,
-which_row = which_row),
-width = pdf_width,
-        height = pdf_height)
-
-
-
-
-####################################################
-# Compute bar plot ~ chromosome
-####################################################
-
-
-pdf_path < - "{pdf_file_by_chrom}"
-{page_format}(pdf_path, width=pdf_width, height=pdf_height)
-by_chrom < - TRUE
-
-plot_list < - list()
-
-for (i in levels(d$ft_type)){{
-
-message(paste("Preparing profile diagram by chromosome: ", i))
-xlab.plot < - i
-ft_type < - i
-which_row < - dm$chrom != "all_chrom" & dm$ft_type == i
-
-p < - bar_plot_with_pval(ft_type=ft_type,
-                         which_chrom=which_chrom,
-                         which_row=which_row,
-                         by_chrom=by_chrom)
-
-print(p)
-
-}}
-
-dev.null < - dev.off()
-
-write.table(d, "{data_file}", sep="\\t", quote=F, col.names = TRUE, row.names = FALSE)
-""".format(data_file=data_file.name,
-           pdf_file=pdf_file.name,
-           pdf_file_by_chrom=pdf_file_by_chrom.name,
-           pdf_width=pdf_width,
-           pdf_height=pdf_height,
-           page_format=page_format)
-
-if verbosity:
-    message("Printing R code to: " + r_code_file.name)
-
-print(code_body, file=r_code_file)
-r_code_file.close()
-
-if verbosity:
-    message("Executing R code.")
-
-# Execute R code.
-check_r_packages(["reshape2", "ggplot2"])
-check_r_installed()
-
-os.system("cat " + r_code_file.name + "| R --slave")
+    # -------------------------------------------------------------------------
+
+    import pickle
+    test_file = open("toto.pick", 'wb')
+    pickle.dump(d, test_file)
+    test_file.close()
+    message('Melting.')
+    dm = d.melt(id_vars=[x for x in d.columns if x not in ['Observed',
+                                                           'Expected']],
+                value_vars=['Observed', 'Expected'])
+
+    dm['variable'] = pd.Categorical(dm['variable'])
+
+    # -------------------------------------------------------------------------
+    # Prepare a function for drawing diagram
+    # -------------------------------------------------------------------------
+
+    def bar_plot(dm=None,
+                 ft_type=None,
+                 which_row=None,
+                 by_chrom=False,
+                 y_axis_trans=None):
+        p = ggplot()
+
+        # -------------------------------------------------------------------------
+        # Display bars
+        # -------------------------------------------------------------------------
+
+        message('Adding bar plot.')
+
+        if not by_chrom:
+            aes_plot = aes('ft_type', 'value', fill='variable')
+        else:
+            aes_plot = aes('chrom', 'value', fill='variable')
+
+        p += geom_bar(data=dm[which_row],
+                      mapping=aes_plot,
+                      stat='identity',
+                      position='dodge',
+                      alpha=0.6,
+                      show_legend=True)
+
+        p += ylab("Number of overlaps")
+        p += theme(legend_title=element_blank(),
+                   legend_position="bottom",
+                   legend_box_spacing=0.65,
+                   legend_key_size=8,
+                   legend_text=element_text(size=8),
+                   legend_key=element_blank(),
+                   axis_title_x=element_blank(),
+                   axis_title_y=element_text(colour="#333333",
+                                             size=8,
+                                             hjust=4,
+                                             angle=90,
+                                             face="plain"),
+                   axis_text_y=element_text(size=8,
+                                            margin={'r': 5},
+                                            angle=0),
+                   axis_text_x=element_text(size=8,
+                                            margin={'t': 5, 'r': 5},
+                                            ha='right',
+                                            angle=45))
+
+        p += scale_y_log10()
+
+        # -------------------------------------------------------------------------
+        # Display text (observed vs expected)
+        # -------------------------------------------------------------------------
+
+        message('Adding text (observed vs expected)')
+
+        if not by_chrom:
+            x_ft_type = 'ft_type'
+        else:
+            x_ft_type = 'chrom'
+
+        aes_plot = aes(x='ft_type',
+                       y='value',
+                       label='value',
+                       colour='variable')
+
+        dodge_text = position_dodge(width=0.9)
+
+        p += geom_text(data=dm[which_row],
+                       mapping=aes_plot,
+                       format_string='{0:.2f}',
+                       position=dodge_text,
+                       angle=0,
+                       va='bottom',
+                       ha='center',
+                       size=4)
+
+        # -------------------------------------------------------------------------
+        # Display text (pval)
+        # -------------------------------------------------------------------------
+
+        message('Adding text (p-values)')
+
+        aes_plot = aes(x='ft_type',
+                       y='max_y',
+                       label='pval_binom_str',
+                       colour='test_type')
+
+        p += geom_label(data=dm[(which_row) & (dm['variable'] == 'Observed')],
+                        mapping=aes_plot,
+                        position='identity',
+                        angle=0,
+                        nudge_y=0.1,
+                        va='bottom',
+                        ha='center',
+                        size=4)
+
+        # -------------------------------------------------------------------------
+        # Set color scale
+        # -------------------------------------------------------------------------
+
+        col_dict = {'Observed': 'blue',
+                    'Expected': '#8A8A8A',
+                    'Enrichment': '#990000',
+                    'Unchanged': '#000000',
+                    'Depletion': '#008800'}
+
+        p += scale_fill_manual(values=col_dict)
+
+        p += scale_color_manual(values=col_dict)
+
+        p += guides(colour=False, fill=guide_legend(ncol=2))
+
+        # p += scale_color_discrete(l=.4)
+
+        # -------------------------------------------------------------------------
+        # return
+        # -------------------------------------------------------------------------
+
+        return (p)
+
+    # -------------------------------------------------------------------------
+    # Compute bar plot by feature
+    # -------------------------------------------------------------------------
+
+    p = bar_plot(dm=dm,
+                 ft_type=list(d['ft_type'].unique()),
+                 which_row=dm['chrom'] == 'all_chrom',
+                 by_chrom=False,
+                 y_axis_trans=None)
+
+    # -------------------------------------------------------------------------
+    # Turn warning off. Both pandas and plotnine use warnings for deprecated
+    # functions. I need to turn they off although I'm not really satisfied with
+    # this solution...
+    # -------------------------------------------------------------------------
+
+    def fxn():
+        warnings.warn("deprecated", DeprecationWarning)
+
+    # -------------------------------------------------------------------------
+    #
+    # Saving
+    #
+    # -------------------------------------------------------------------------
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        fxn()
+        message("Saving diagram to file : " + pdf_file.name)
+        message("Be patient. This may be long for large datasets.")
+        ggsave(filename=pdf_file.name,
+               plot=p,
+               width=pdf_width,
+               height=pdf_height)
+        # dm.to_csv(data_file, sep="\t", header=True, index=False)
+
+    close_properly(pdf_file, data_file)
 
 
 def main():
-"""
-The
-main
-function.
-"""
+    """The main function."""
+
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
@@ -1037,141 +853,141 @@ if __name__ == '__main__':
 else:
 
     test = '''
+            
+        #peak_anno: chr2 len
+        @test "peak_anno_1" {
+             result=`rm -Rf peak_annotation; gtftk peak_anno  -i pygtftk/data/simple_02/simple_02.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed -c pygtftk/data/simple_02/simple_02.chromInfo -u 2 -d 2 -K peak_annotation`
+          [ "$result" = "" ]
+        }
         
-    #peak_anno: chr2 len
-    @test "peak_anno_1" {
-         result=`rm -Rf peak_annotation; gtftk peak_anno  -i pygtftk/data/simple_02/simple_02.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed -c pygtftk/data/simple_02/simple_02.chromInfo -u 2 -d 2 -K peak_annotation`
-      [ "$result" = "" ]
-    }
+        
+        #peak_anno: all_chrom len
+        @test "peak_anno_2" {
+         result=`cat peak_annotation/00_peak_anno_stats_* | grep chr2 | cut -f 3 | sort | uniq | perl -npe 's/\\n/,/'`
+          [ "$result" = "1700,400," ]
+        }
+        
+        
+        #peak_anno: all_chrom len
+        @test "peak_anno_3" {
+         result=`cat peak_annotation/00_peak_anno_stats_* | grep all_chrom | cut -f 3 | sort | uniq`
+          [ "$result" = "1700" ]
+        }
+        
+        #peak_anno: there are 11 guys (midpoints) intersecting CDS
+        @test "peak_anno_4" {
+         result=`grep -w CDS peak_annotation/00_peak_anno_stats_* | cut -f 6 | perl -npe 's/\\n/,/'`
+          [ "$result" = "0,0,0,11,11,0," ]
+        }
+        
+        
+        #peak_anno: there is 59 guys (midpoints) intersecting intergenic regions (and 19 on chr1).
+        @test "peak_anno_5" {
+         result=`grep -i Interg peak_annotation/00_peak_anno_stats_* | cut -f 6 | perl -npe 's/\\n/,/'`
+          [ "$result" = "0,0,40,19,59,0," ]
+        }
+        
+        
+        
+        #peak_anno: size of intronic features is 21 bases
+        @test "peak_anno_7" {
+         result=`grep -i Introns peak_annotation/00_peak_anno_stats_* | cut -f 5 | sort | uniq | perl -npe 's/\\n/,/'`
+          [ "$result" = "0,21," ]
+        }
+        
+        
+        #peak_anno: the size of all features (this has been checked)
+        @test "peak_anno_8" {
+         result=`cat peak_annotation/00_peak_anno_stats_* | cut -f 5 | sort -n | uniq | grep -v cov | perl -npe 's/\\n/,/'`
+          [ "$result" = "0,21,48,53,92,100,113,187,200,300,400,700,1587," ]
+        }
+        
+        #peak_anno: 40 peaks tested for chromosome 2
+        @test "peak_anno_9" {
+         result=`cut -f 1,2,4 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr2 | cut -f 3`
+          [ "$result" -eq 40 ]
+        }
+        
+        #peak_anno: 45 peaks on chromosome 1
+        @test "peak_anno_10" {
+         result=`cut -f 1,2,4 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr1 | cut -f 3`
+          [ "$result" -eq 45 ]
+        }
+        
+        #peak_anno: Chromosomal coverage of promoter is 48 on chr1
+        @test "peak_anno_11" {
+         result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr1 | cut -f 3`
+          [ "$result" -eq 48 ]
+        }
+        
+        
+        #peak_anno: Coverage of intergenic regions is 187 nuc
+        @test "peak_anno_12" {
+         result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Inter | grep chr1 | cut -f 3`
+          [ "$result" -eq 187 ]
+        }
+        
+        #peak_anno: Number of peaks midpoints intersecting intergenic is 19
+        @test "peak_anno_13" {
+         result=`cut -f 1,2,6 peak_annotation/00_peak_anno_*txt | grep Inter | grep chr1 | cut -f 3`
+          [ "$result" -eq 19 ]
+        }
+        
+        
+        #peak_anno: Coverage of intronic regions is 21 nuc
+        @test "peak_anno_14" {
+         result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Intro | grep chr1 | cut -f 3`
+          [ "$result" -eq 21 ]
+        }
+        
+        #peak_anno: The number of peaks midpoints falling in introns is 1
+        @test "peak_anno_15" {
+         result=`cut -f 1,2,6 peak_annotation/00_peak_anno_*txt | grep Intro | grep chr1 | cut -f 3`
+          [ "$result" -eq 1 ]
+        }
+        
+        # This test does not test peak_anno and currently fail on some systems (issue 184). Its output is already git-controlled so skipping it allows to pursue on following tests.
+        ##peak_anno: check more keys
+        #@test "peak_anno_15a" {
+        # result=`gtftk nb_exons -i pygtftk/data/simple_02/simple_02.gtf -g > pygtftk/data/simple_02/simple_02_nbe.gtf`
+        #  [ "$result" = "" ]
+        #}
+        
+        #peak_anno: check more keys
+        @test "peak_anno_16" {
+         result=`rm -Rf peak_annotation;  gtftk peak_anno  -i pygtftk/data/simple_02/simple_02_nbe.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed  -K peak_annotation --more-keys nb_exons -c pygtftk/data/simple_02/simple_02.chromInfo`
+          [ "$result" = "" ]
+        }
     
-    
-    #peak_anno: all_chrom len
-    @test "peak_anno_2" {
-     result=`cat peak_annotation/00_peak_anno_stats_* | grep chr2 | cut -f 3 | sort | uniq | perl -npe 's/\\n/,/'`
-      [ "$result" = "1700,400," ]
-    }
-    
-    
-    #peak_anno: all_chrom len
-    @test "peak_anno_3" {
-     result=`cat peak_annotation/00_peak_anno_stats_* | grep all_chrom | cut -f 3 | sort | uniq`
-      [ "$result" = "1700" ]
-    }
-    
-    #peak_anno: there are 11 guys (midpoints) intersecting CDS
-    @test "peak_anno_4" {
-     result=`grep -w CDS peak_annotation/00_peak_anno_stats_* | cut -f 6 | perl -npe 's/\\n/,/'`
-      [ "$result" = "0,0,0,11,11,0," ]
-    }
-    
-    
-    #peak_anno: there is 59 guys (midpoints) intersecting intergenic regions (and 19 on chr1).
-    @test "peak_anno_5" {
-     result=`grep -i Interg peak_annotation/00_peak_anno_stats_* | cut -f 6 | perl -npe 's/\\n/,/'`
-      [ "$result" = "0,0,40,19,59,0," ]
-    }
-    
-    
-    
-    #peak_anno: size of intronic features is 21 bases
-    @test "peak_anno_7" {
-     result=`grep -i Introns peak_annotation/00_peak_anno_stats_* | cut -f 5 | sort | uniq | perl -npe 's/\\n/,/'`
-      [ "$result" = "0,21," ]
-    }
-    
-    
-    #peak_anno: the size of all features (this has been checked)
-    @test "peak_anno_8" {
-     result=`cat peak_annotation/00_peak_anno_stats_* | cut -f 5 | sort -n | uniq | grep -v cov | perl -npe 's/\\n/,/'`
-      [ "$result" = "0,21,48,53,92,100,113,187,200,300,400,700,1587," ]
-    }
-    
-    #peak_anno: 40 peaks tested for chromosome 2
-    @test "peak_anno_9" {
-     result=`cut -f 1,2,4 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr2 | cut -f 3`
-      [ "$result" -eq 40 ]
-    }
-    
-    #peak_anno: 45 peaks on chromosome 1
-    @test "peak_anno_10" {
-     result=`cut -f 1,2,4 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr1 | cut -f 3`
-      [ "$result" -eq 45 ]
-    }
-    
-    #peak_anno: Chromosomal coverage of promoter is 48 on chr1
-    @test "peak_anno_11" {
-     result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr1 | cut -f 3`
-      [ "$result" -eq 48 ]
-    }
-    
-    
-    #peak_anno: Coverage of intergenic regions is 187 nuc
-    @test "peak_anno_12" {
-     result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Inter | grep chr1 | cut -f 3`
-      [ "$result" -eq 187 ]
-    }
-    
-    #peak_anno: Number of peaks midpoints intersecting intergenic is 19
-    @test "peak_anno_13" {
-     result=`cut -f 1,2,6 peak_annotation/00_peak_anno_*txt | grep Inter | grep chr1 | cut -f 3`
-      [ "$result" -eq 19 ]
-    }
-    
-    
-    #peak_anno: Coverage of intronic regions is 21 nuc
-    @test "peak_anno_14" {
-     result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Intro | grep chr1 | cut -f 3`
-      [ "$result" -eq 21 ]
-    }
-    
-    #peak_anno: The number of peaks midpoints falling in introns is 1
-    @test "peak_anno_15" {
-     result=`cut -f 1,2,6 peak_annotation/00_peak_anno_*txt | grep Intro | grep chr1 | cut -f 3`
-      [ "$result" -eq 1 ]
-    }
-    
-    # This test does not test peak_anno and currently fail on some systems (issue 184). Its output is already git-controlled so skipping it allows to pursue on following tests.
-    ##peak_anno: check more keys
-    #@test "peak_anno_15a" {
-    # result=`gtftk nb_exons -i pygtftk/data/simple_02/simple_02.gtf -g > pygtftk/data/simple_02/simple_02_nbe.gtf`
-    #  [ "$result" = "" ]
-    #}
-    
-    #peak_anno: check more keys
-    @test "peak_anno_16" {
-     result=`rm -Rf peak_annotation;  gtftk peak_anno  -i pygtftk/data/simple_02/simple_02_nbe.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed  -K peak_annotation --more-keys nb_exons -c pygtftk/data/simple_02/simple_02.chromInfo`
-      [ "$result" = "" ]
-    }
-
-    #peak_anno: check more keys
-    @test "peak_anno_17" {
-     result=`cat peak_annotation/*txt| grep "nb_exons"| wc -l`
-      [ "$result" -eq 18 ]
-    }
-    
-    #peak_anno: check more keys
-    @test "peak_anno_18" {
-     result=`cat peak_annotation/*txt| grep "nb_exons"| wc -l`
-      [ "$result" -eq 18 ]
-    }
-    
-    #peak_anno: check no basic feature
-    @test "peak_anno_19" {
-     result=`rm -Rf peak_annotation; gtftk peak_anno  -i pygtftk/data/simple_02/simple_02_nbe.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed  -K peak_annotation --more-keys nb_exons -c pygtftk/data/simple_02/simple_02.chromInfo -n`
-      [ "$result" = "" ]
-    }
-    
-    #peak_anno: check no basic feature
-    @test "peak_anno_20" {
-     result=`cat peak_annotation/*txt|  wc -l`
-      [ "$result" -eq 24 ]
-    }
-    '''
+        #peak_anno: check more keys
+        @test "peak_anno_17" {
+         result=`cat peak_annotation/*txt| grep "nb_exons"| wc -l`
+          [ "$result" -eq 18 ]
+        }
+        
+        #peak_anno: check more keys
+        @test "peak_anno_18" {
+         result=`cat peak_annotation/*txt| grep "nb_exons"| wc -l`
+          [ "$result" -eq 18 ]
+        }
+        
+        #peak_anno: check no basic feature
+        @test "peak_anno_19" {
+         result=`rm -Rf peak_annotation; gtftk peak_anno  -i pygtftk/data/simple_02/simple_02_nbe.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed  -K peak_annotation --more-keys nb_exons -c pygtftk/data/simple_02/simple_02.chromInfo -n`
+          [ "$result" = "" ]
+        }
+        
+        #peak_anno: check no basic feature
+        @test "peak_anno_20" {
+         result=`cat peak_annotation/*txt|  wc -l`
+          [ "$result" -eq 24 ]
+        }
+        '''
 
     cmd = CmdObject(name="peak_anno",
                     message="Statistics on bed file intersections with genomic features.",
                     parser=make_parser(),
-                    fun=peak_anno,
+                    fun=os.path.abspath(__file__),
                     desc=__doc__,
                     group="annotation",
                     notes=__notes__,
