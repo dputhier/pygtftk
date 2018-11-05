@@ -7,13 +7,15 @@ import os
 import re
 import sys
 import warnings
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 import numpy as np
 import pandas as pd
+from mizani.formatters import scientific_format
 from plotnine import (ggplot, aes, position_dodge,
                       geom_bar, ggsave, ylab, theme, element_blank, element_text, scale_fill_manual,
-                      scale_color_manual, guides, guide_legend, geom_label, geom_text, scale_y_log10)
+                      guides, guide_legend, geom_label, geom_text, facet_wrap, element_rect,
+                      geom_point, scale_y_continuous, scale_color_manual)
 from scipy.stats import binom_test
 
 from pygtftk.arg_formatter import FileWithExtension, bedFileList
@@ -158,6 +160,24 @@ def make_parser():
                             default='pdf',
                             required=False)
 
+    parser_grp.add_argument('-fc', '--facet-col',
+                            help='Number of facet columns.',
+                            default=None,
+                            type=int_greater_than_null_or_None,
+                            required=False)
+
+    parser_grp.add_argument('-st', '--strip-text',
+                            help='Size of strip text.',
+                            default=5,
+                            type=int,
+                            required=False)
+
+    parser_grp.add_argument('-bc', '--border-color',
+                            help='Border color for the plot.',
+                            default="#777777",
+                            type=str,
+                            required=False)
+
     return parser
 
 
@@ -258,6 +278,9 @@ def peak_anno(inputfile=None,
               chrom_info=None,
               user_img_file=None,
               page_format=None,
+              facet_col=None,
+              strip_text=8,
+              border_color=None,
               tmp_dir=None,
               logger_file=None,
               verbosity=True):
@@ -627,6 +650,10 @@ def peak_anno(inputfile=None,
 
     for i, _ in d.iterrows():
 
+        epsilon_text_obs = 0
+        epsilon_text_exp = 0
+
+        ## Compute a log ratio
         if d.loc[i, 'Expected'] > 0:
             if d.loc[i, 'Observed'] > 0:
                 log2_ratio = np.log2(d.loc[i, 'Observed'] / d.loc[i, 'Expected'])
@@ -637,6 +664,7 @@ def peak_anno(inputfile=None,
 
         d.loc[i, 'log2_ratio'] = log2_ratio
 
+        ## Compute the binomial test
         if d.loc[i, 'Nb_trial_or_peak'] > 0:
             pval = binom_test(n=d.loc[i, 'Nb_trial_or_peak'],
                               x=d.loc[i, 'Observed'],
@@ -645,6 +673,7 @@ def peak_anno(inputfile=None,
             d.loc[i, 'pval_binom'] = pval
             d.loc[i, 'pval_binom_str'] = "{0:0.3g}".format(pval)
 
+        ## Enriched or depleted ?
         if d.loc[i, 'Observed'] > d.loc[i, 'Expected']:
             d.loc[i, 'test_type'] = 'Enrichment'
         elif d.loc[i, 'Observed'] < d.loc[i, 'Expected']:
@@ -652,7 +681,15 @@ def peak_anno(inputfile=None,
         else:
             d.loc[i, 'test_type'] = 'Unchanged'
 
-        d.loc[i, 'max_y'] = max(d.loc[i, 'Observed'], d.loc[i, 'Expected'])
+        ## max_y to be use to plot pval
+        max_y = max(d.loc[i, 'Observed'], d.loc[i, 'Expected'])
+        d.loc[i, 'max_y'] = max_y + 20 / 100 * max_y
+
+        ## y_lim to set diagram limits in y coords.
+        d.loc[i, 'y_lim'] = max_y + 40 / 100 * max_y
+
+        ## ft_type for display in strip
+        d.loc[i, 'ft_type_strip'] = d.loc[i, 'ft_type'].replace(":", ":\n")
 
     # -------------------------------------------------------------------------
     # Save file
@@ -680,10 +717,11 @@ def peak_anno(inputfile=None,
     # -------------------------------------------------------------------------
 
     def bar_plot(dm=None,
-                 ft_type=None,
+                 x_ft_type=None,
                  which_row=None,
                  by_chrom=False,
-                 y_axis_trans=None):
+                 y_axis_trans=None,
+                 facet_col=None):
         p = ggplot()
 
         # -------------------------------------------------------------------------
@@ -692,40 +730,62 @@ def peak_anno(inputfile=None,
 
         message('Adding bar plot.')
 
-        if not by_chrom:
-            aes_plot = aes('ft_type', 'value', fill='variable')
-        else:
-            aes_plot = aes('chrom', 'value', fill='variable')
-
-        p += geom_bar(data=dm[which_row],
+        aes_plot = aes(x_ft_type, 'value', fill='variable')
+        data_sub = dm[which_row].copy()
+        p += geom_bar(data=data_sub,
                       mapping=aes_plot,
                       stat='identity',
-                      position='dodge',
                       alpha=0.6,
+                      position='dodge',
                       show_legend=True)
 
         p += ylab("Number of overlaps")
         p += theme(legend_title=element_blank(),
-                   legend_position="bottom",
+                   legend_position="top",
                    legend_box_spacing=0.65,
                    legend_key_size=8,
                    legend_text=element_text(size=8),
                    legend_key=element_blank(),
                    axis_title_x=element_blank(),
-                   axis_title_y=element_text(colour="#333333",
+                   axis_title_y=element_text(colour='#333333',
                                              size=8,
                                              hjust=4,
                                              angle=90,
                                              face="plain"),
-                   axis_text_y=element_text(size=8,
-                                            margin={'r': 5},
+                   axis_text_y=element_text(size=5,
+                                            margin={'r': 0},
                                             angle=0),
-                   axis_text_x=element_text(size=8,
-                                            margin={'t': 5, 'r': 5},
-                                            ha='right',
-                                            angle=45))
+                   axis_text_x=element_blank(),
+                   panel_spacing_x=0.4,
+                   panel_spacing_y=0.2,
+                   strip_text_x=element_text(size=strip_text,
+                                             colour='white',
+                                             lineheight=1.4),
 
-        p += scale_y_log10()
+                   axis_ticks_major_x=element_blank(),
+                   axis_ticks_minor_x=element_blank(),
+                   strip_background=element_rect(fill=border_color, colour=border_color),
+                   panel_border=element_rect(colour=border_color, size=1),
+                   panel_grid_minor=element_blank())
+
+        # p += scale_y_log10()
+
+        # -------------------------------------------------------------------------
+        # Order features levels (Categories) based on pval
+        # and create facets
+        # -------------------------------------------------------------------------
+
+        data_sub.loc[:, x_ft_type] = pd.Categorical(data_sub[x_ft_type].tolist())
+
+        levels_ordered = [x for _, x in sorted(zip(data_sub['pval_binom'].tolist(),
+                                                   data_sub[x_ft_type].tolist()))]
+        unique = list(OrderedDict.fromkeys(levels_ordered))
+
+        data_sub[x_ft_type].cat.reorder_categories(unique, inplace=True)
+
+        p += facet_wrap('~' + x_ft_type,
+                        scales="free",
+                        ncol=facet_col)
 
         # -------------------------------------------------------------------------
         # Display text (observed vs expected)
@@ -733,26 +793,22 @@ def peak_anno(inputfile=None,
 
         message('Adding text (observed vs expected)')
 
-        if not by_chrom:
-            x_ft_type = 'ft_type'
-        else:
-            x_ft_type = 'chrom'
-
-        aes_plot = aes(x='ft_type',
+        aes_plot = aes(x=x_ft_type,
                        y='value',
                        label='value',
                        colour='variable')
 
         dodge_text = position_dodge(width=0.9)
 
-        p += geom_text(data=dm[which_row],
+        p += geom_text(data=data_sub,
                        mapping=aes_plot,
                        format_string='{0:.2f}',
                        position=dodge_text,
                        angle=0,
                        va='bottom',
                        ha='center',
-                       size=4)
+                       size=4,
+                       show_legend=False)
 
         # -------------------------------------------------------------------------
         # Display text (pval)
@@ -760,19 +816,31 @@ def peak_anno(inputfile=None,
 
         message('Adding text (p-values)')
 
-        aes_plot = aes(x='ft_type',
+        aes_plot = aes(x=x_ft_type,
                        y='max_y',
                        label='pval_binom_str',
-                       colour='test_type')
+                       fill='test_type')
 
-        p += geom_label(data=dm[(which_row) & (dm['variable'] == 'Observed')],
+        p += geom_label(data=data_sub[data_sub['variable'] == 'Observed'],
                         mapping=aes_plot,
                         position='identity',
+                        colour="white",
                         angle=0,
-                        nudge_y=0.1,
                         va='bottom',
                         ha='center',
-                        size=4)
+                        size=4,
+                        show_legend=False)
+
+        # -------------------------------------------------------------------------
+        # Set some constrains on y_lim
+        # -------------------------------------------------------------------------
+
+        p += geom_point(data=data_sub[data_sub['variable'] == 'Observed'],
+                        mapping=aes(x=x_ft_type,
+                                    y='y_lim'),
+                        alpha=0,
+                        colour="white",
+                        show_legend=False)
 
         # -------------------------------------------------------------------------
         # Set color scale
@@ -788,9 +856,17 @@ def peak_anno(inputfile=None,
 
         p += scale_color_manual(values=col_dict)
 
-        p += guides(colour=False, fill=guide_legend(ncol=2))
+        p += guides(colour=False, fill=guide_legend(ncol=2, byrow=True))
 
         # p += scale_color_discrete(l=.4)
+
+        message("facet_col " + str(facet_col))
+
+        # -------------------------------------------------------------------------
+        # y axis labels in scientific notation
+        # -------------------------------------------------------------------------
+
+        p += scale_y_continuous(labels=scientific_format(digits=2))
 
         # -------------------------------------------------------------------------
         # return
@@ -802,11 +878,50 @@ def peak_anno(inputfile=None,
     # Compute bar plot by feature
     # -------------------------------------------------------------------------
 
+    if facet_col is None:
+        if len(dm['ft_type'].unique()) >= 4:
+            facet_col = 5
+        else:
+            facet_col = len(dm['ft_type'].unique())
+    else:
+        facet_col = min(facet_col, len(dm['ft_type'].unique()))
+
     p = bar_plot(dm=dm,
-                 ft_type=list(d['ft_type'].unique()),
+                 x_ft_type='ft_type_strip',
                  which_row=dm['chrom'] == 'all_chrom',
                  by_chrom=False,
-                 y_axis_trans=None)
+                 y_axis_trans=None,
+                 facet_col=facet_col)
+
+    # -------------------------------------------------------------------------
+    #
+    # Computing page size
+    #
+    # -------------------------------------------------------------------------
+
+    if pdf_width is None:
+        panel_width = 1.5
+        pdf_width = panel_width * facet_col
+
+        if panel_width > 25:
+            panel_width = 25
+            message("Setting --pdf-width to 25 (limit)")
+
+    if pdf_height is None:
+        panel_height = 1.5
+        panel_nb = len(dm['ft_type'].unique()) / facet_col
+        modulo = len(dm['ft_type'].unique()) % facet_col
+
+        if modulo:
+            panel_nb += 1
+        pdf_height = panel_nb * panel_height
+
+        if pdf_height > 25:
+            pdf_height = 25
+            message("Setting --pdf-height to 25 (limit)")
+
+    message("Page width set to " + str(pdf_width))
+    message("Page height set to " + str(pdf_height))
 
     # -------------------------------------------------------------------------
     # Turn warning off. Both pandas and plotnine use warnings for deprecated
@@ -822,6 +937,15 @@ def peak_anno(inputfile=None,
     # Saving
     #
     # -------------------------------------------------------------------------
+
+    if pdf_width is None:
+        pdf_width = len(list(dm['ft_type'].unique())) * 0.5
+        if pdf_width > 25:
+            pdf_width = 25
+            message("Setting --pdf-width to 25 (limit)")
+
+    if pdf_height is None:
+        pdf_height = 5
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
