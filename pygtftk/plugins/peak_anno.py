@@ -14,14 +14,14 @@ import pandas as pd
 from mizani.formatters import scientific_format
 from plotnine import (ggplot, aes, position_dodge,
                       geom_bar, ggsave, ylab, theme, element_blank, element_text, scale_fill_manual,
-                      guides, guide_legend, geom_label, geom_text, facet_wrap, element_rect,
-                      geom_point, scale_y_continuous, scale_color_manual)
+                      guides, guide_legend, geom_label, geom_text, geom_point, scale_color_manual,
+                      scale_y_continuous)
 from scipy.stats import binom_test
 
 from pygtftk.arg_formatter import FileWithExtension, bedFileList
 from pygtftk.arg_formatter import bed6_or_bed3
 from pygtftk.arg_formatter import checkChromFile
-from pygtftk.arg_formatter import int_greater_than_null_or_None
+from pygtftk.arg_formatter import int_greater_than_null_or_None, int_greater_than_null
 from pygtftk.bedtool_extension import BedTool
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -160,22 +160,10 @@ def make_parser():
                             default='pdf',
                             required=False)
 
-    parser_grp.add_argument('-fc', '--facet-col',
-                            help='Number of facet columns.',
-                            default=None,
-                            type=int_greater_than_null_or_None,
-                            required=False)
-
-    parser_grp.add_argument('-st', '--strip-text',
-                            help='Size of strip text.',
-                            default=5,
-                            type=int,
-                            required=False)
-
-    parser_grp.add_argument('-bc', '--border-color',
-                            help='Border color for the plot.',
-                            default="#777777",
-                            type=str,
+    parser_grp.add_argument('-dpi', '--dpi',
+                            help='Dpi to use.',
+                            type=int_greater_than_null,
+                            default=300,
                             required=False)
 
     return parser
@@ -208,11 +196,7 @@ def _intersection_results(peak_file=None,
     nb_peaks = len(peak_file)
 
     for i in peak_file:
-        if ft_type != "Full_chromosomes":
-            my_dict[ft_type][i.chrom]["Nb_trial_or_peak"] += 1
-            my_dict[ft_type]["all_chrom"]["Nb_trial_or_peak"] += 1
-        else:
-            my_dict[ft_type][i.chrom]["Nb_trial_or_peak"] = nb_peaks
+        my_dict[ft_type]["all_chrom"]["Nb_trial_or_peak"] += 1
 
     # -------------------------------------------------------------------------
     # Compute the nucleotide size of all feature (promoter, exons, introns,...)
@@ -229,14 +213,8 @@ def _intersection_results(peak_file=None,
     peak_anno_tmp_file.close()
 
     for i in feature_merge_bo:
-
         size = i.end - i.start
-        if ft_type != "Full_chromosomes":
-            my_dict[ft_type][i.chrom]["coverage"] += size
-            my_dict[ft_type]["all_chrom"]["coverage"] += size
-        else:
-            # We will compare "Chromosomes" to the full genome.
-            my_dict[ft_type][i.chrom]["coverage"] = chrom_len[i.chrom]
+        my_dict[ft_type]["all_chrom"]["coverage"] += size
 
     # -------------------------------------------------------------------------
     # Compute intersections
@@ -245,11 +223,7 @@ def _intersection_results(peak_file=None,
     intersections = peak_file.intersect(feature_merge_bo)
 
     for i in intersections:
-
-        chrom = i.chrom
-        my_dict[ft_type][chrom]["Observed"] += 1
-        if ft_type != "Full_chromosomes":
-            my_dict[ft_type]["all_chrom"]["Observed"] += 1
+        my_dict[ft_type]["all_chrom"]["Observed"] += 1
 
     file_out_save = make_tmp_file(prefix="peak_anno_intersections_" +
                                          ft_type,
@@ -278,9 +252,7 @@ def peak_anno(inputfile=None,
               chrom_info=None,
               user_img_file=None,
               page_format=None,
-              facet_col=None,
-              strip_text=8,
-              border_color=None,
+              dpi=300,
               tmp_dir=None,
               logger_file=None,
               verbosity=True):
@@ -407,6 +379,17 @@ def peak_anno(inputfile=None,
 
     data_file, pdf_file, pdf_file_by_chrom = file_out_list
 
+    if user_img_file is not None:
+
+        os.unlink(pdf_file.name)
+        pdf_file = user_img_file
+
+        test_path = os.path.abspath(pdf_file.name)
+        test_path = os.path.dirname(test_path)
+
+        if not os.path.exists(test_path):
+            os.makedirs(test_path)
+
     # -------------------------------------------------------------------------
     # Get the midpoints of the peaks
     # -------------------------------------------------------------------------
@@ -529,13 +512,24 @@ def peak_anno(inputfile=None,
     # -------------------------------------------------------------------------
 
     if more_keys is not None:
+
         more_keys_list = more_keys.split(",")
+
         if len(more_keys_list) > 50:
-            message(
-                "The selected key in --more-keys should be associated with less than 50 different values.")
+            message("The selected key in --more-keys should be "
+                    "associated with less than 50 different values.",
+                    type="ERROR")
         for user_key in more_keys_list:
             user_key_values = set(gtf.extract_data(user_key,
-                                                   as_list=True))
+                                                   as_list=True,
+                                                   hide_undef=True,
+                                                   no_na=True,
+                                                   nr=True))
+
+            if len(user_key_values) > 50:
+                message("The selected key in --more-keys "
+                        "should be associated with less than 50 different values.",
+                        type="ERROR")
             for val in user_key_values:
 
                 gtf_sub = gtf.select_by_key(user_key, val, 0)
@@ -616,16 +610,6 @@ def peak_anno(inputfile=None,
 
     close_properly(data_file)
 
-    if user_img_file is not None:
-        os.unlink(pdf_file.name)
-        os.unlink(pdf_file_by_chrom.name)
-        pdf_file = user_img_file
-        pdf_file_by_chrom = pdf_file.name.replace("." + page_format, "_by_chrom." + page_format)
-        pdf_file_by_chrom = open(pdf_file_by_chrom, 'w')
-        if not pdf_file.name.endswith(page_format):
-            msg = "Image format: {f}. Please fix.".format(f=page_format)
-            message(msg, type="ERROR")
-
     # -------------------------------------------------------------------------
     # Read the data set
     # -------------------------------------------------------------------------
@@ -637,10 +621,9 @@ def peak_anno(inputfile=None,
                 type="ERROR")
 
     # -------------------------------------------------------------------------
-    # Get the chromosome order
+    # Compute expected number of intersections
     # -------------------------------------------------------------------------
 
-    # Compute expected number of intersections
     d['freq'] = d['coverage'] / d['reference_size']
     d['Expected'] = d['freq'] * d['Nb_trial_or_peak']
 
@@ -649,9 +632,6 @@ def peak_anno(inputfile=None,
     # -------------------------------------------------------------------------
 
     for i, _ in d.iterrows():
-
-        epsilon_text_obs = 0
-        epsilon_text_exp = 0
 
         ## Compute a log ratio
         if d.loc[i, 'Expected'] > 0:
@@ -674,22 +654,21 @@ def peak_anno(inputfile=None,
             d.loc[i, 'pval_binom_str'] = "{0:0.3g}".format(pval)
 
         ## Enriched or depleted ?
+        d.loc[i, 'test_type'] = 'Unchanged'
+
         if d.loc[i, 'Observed'] > d.loc[i, 'Expected']:
-            d.loc[i, 'test_type'] = 'Enrichment'
+            if d.loc[i, 'pval_binom'] < 0.05:
+                d.loc[i, 'test_type'] = 'Enrichment'
         elif d.loc[i, 'Observed'] < d.loc[i, 'Expected']:
-            d.loc[i, 'test_type'] = 'Depletion'
-        else:
-            d.loc[i, 'test_type'] = 'Unchanged'
+            if d.loc[i, 'pval_binom'] < 0.05:
+                d.loc[i, 'test_type'] = 'Depletion'
 
-        ## max_y to be use to plot pval
-        max_y = max(d.loc[i, 'Observed'], d.loc[i, 'Expected'])
-        d.loc[i, 'max_y'] = max_y + 20 / 100 * max_y
+    # -------------------------------------------------------------------------
+    # ft_type for display
+    # -------------------------------------------------------------------------
 
-        ## y_lim to set diagram limits in y coords.
-        d.loc[i, 'y_lim'] = max_y + 40 / 100 * max_y
-
-        ## ft_type for display in strip
-        d.loc[i, 'ft_type_strip'] = d.loc[i, 'ft_type'].replace(":", ":\n")
+    for i, _ in d.iterrows():
+        d.loc[i, 'ft_type'] = d.loc[i, 'ft_type'].replace(":", ":\n")
 
     # -------------------------------------------------------------------------
     # Save file
@@ -698,31 +677,66 @@ def peak_anno(inputfile=None,
     d.to_csv(open(data_file.name, 'w'), sep="\t", header=True, index=False)
 
     # -------------------------------------------------------------------------
-    # Melt the data frame
-    # -------------------------------------------------------------------------
-
-    import pickle
-    test_file = open("toto.pick", 'wb')
-    pickle.dump(d, test_file)
-    test_file.close()
-    message('Melting.')
-    dm = d.melt(id_vars=[x for x in d.columns if x not in ['Observed',
-                                                           'Expected']],
-                value_vars=['Observed', 'Expected'])
-
-    dm['variable'] = pd.Categorical(dm['variable'])
-
-    # -------------------------------------------------------------------------
     # Prepare a function for drawing diagram
     # -------------------------------------------------------------------------
 
-    def bar_plot(dm=None,
+    def bar_plot(d=None,
                  x_ft_type=None,
-                 which_row=None,
-                 by_chrom=False,
-                 y_axis_trans=None,
-                 facet_col=None):
+                 which_row=None):
+
+        # -------------------------------------------------------------------------
+        # Subset the data
+        # -------------------------------------------------------------------------
+
+        d_sub = d[which_row].copy()
+
+        # -------------------------------------------------------------------------
+        # Compute text position
+        # -------------------------------------------------------------------------
+
+        max_y = max(d_sub['Expected'].tolist() + d_sub['Observed'].tolist())
+
+        offset = 10 / 100 * max_y
+
+        for i, _ in d_sub.iterrows():
+            ## max_y to be use to plot pval
+            max_y_col = max(d_sub.loc[i, 'Observed'],
+                            d_sub.loc[i, 'Expected'])
+
+            d_sub.loc[i, 'y_pval'] = max_y_col + offset * 1.2
+            d_sub.loc[i, 'y_text'] = max_y_col + offset / 10
+
+            ## y_lim to set diagram limits in y coords.
+            d_sub.loc[i, 'y_lim'] = max_y + offset * 1.5
+
+        # -------------------------------------------------------------------------
+        # Melt the data frame
+        # -------------------------------------------------------------------------
+
+        message('Melting.')
+        dm = d_sub.melt(id_vars=[x for x in d_sub.columns if x not in ['Expected',
+                                                                       'Observed']],
+                        value_vars=['Observed', 'Expected'])
+
+        dm['variable'] = pd.Categorical(dm['variable'])
+
+        # -------------------------------------------------------------------------
+        # Create a new plot
+        # -------------------------------------------------------------------------
+
         p = ggplot()
+
+        # -------------------------------------------------------------------------
+        # Order features levels (Categories) based on binom test
+        # -------------------------------------------------------------------------
+
+        dm.loc[:, x_ft_type] = pd.Categorical(dm[x_ft_type].tolist())
+
+        levels_ordered = [x for _, x in sorted(zip(dm['pval_binom'].tolist(),
+                                                   dm[x_ft_type].tolist()))]
+        unique = list(OrderedDict.fromkeys(levels_ordered))
+
+        dm[x_ft_type].cat.reorder_categories(unique, inplace=True)
 
         # -------------------------------------------------------------------------
         # Display bars
@@ -731,8 +745,8 @@ def peak_anno(inputfile=None,
         message('Adding bar plot.')
 
         aes_plot = aes(x_ft_type, 'value', fill='variable')
-        data_sub = dm[which_row].copy()
-        p += geom_bar(data=data_sub,
+
+        p += geom_bar(data=dm,
                       mapping=aes_plot,
                       stat='identity',
                       alpha=0.6,
@@ -755,37 +769,9 @@ def peak_anno(inputfile=None,
                    axis_text_y=element_text(size=5,
                                             margin={'r': 0},
                                             angle=0),
-                   axis_text_x=element_blank(),
-                   panel_spacing_x=0.4,
-                   panel_spacing_y=0.2,
-                   strip_text_x=element_text(size=strip_text,
-                                             colour='white',
-                                             lineheight=1.4),
-
-                   axis_ticks_major_x=element_blank(),
-                   axis_ticks_minor_x=element_blank(),
-                   strip_background=element_rect(fill=border_color, colour=border_color),
-                   panel_border=element_rect(colour=border_color, size=1),
-                   panel_grid_minor=element_blank())
-
-        # p += scale_y_log10()
-
-        # -------------------------------------------------------------------------
-        # Order features levels (Categories) based on pval
-        # and create facets
-        # -------------------------------------------------------------------------
-
-        data_sub.loc[:, x_ft_type] = pd.Categorical(data_sub[x_ft_type].tolist())
-
-        levels_ordered = [x for _, x in sorted(zip(data_sub['pval_binom'].tolist(),
-                                                   data_sub[x_ft_type].tolist()))]
-        unique = list(OrderedDict.fromkeys(levels_ordered))
-
-        data_sub[x_ft_type].cat.reorder_categories(unique, inplace=True)
-
-        p += facet_wrap('~' + x_ft_type,
-                        scales="free",
-                        ncol=facet_col)
+                   axis_text_x=element_text(size=5,
+                                            angle=45)
+                   )
 
         # -------------------------------------------------------------------------
         # Display text (observed vs expected)
@@ -794,17 +780,17 @@ def peak_anno(inputfile=None,
         message('Adding text (observed vs expected)')
 
         aes_plot = aes(x=x_ft_type,
-                       y='value',
+                       y='y_text',
                        label='value',
                        colour='variable')
 
         dodge_text = position_dodge(width=0.9)
 
-        p += geom_text(data=data_sub,
+        p += geom_text(data=dm,
                        mapping=aes_plot,
-                       format_string='{0:.2f}',
+                       format_string='{0:.3g}',
                        position=dodge_text,
-                       angle=0,
+                       angle=90,
                        va='bottom',
                        ha='center',
                        size=4,
@@ -817,11 +803,11 @@ def peak_anno(inputfile=None,
         message('Adding text (p-values)')
 
         aes_plot = aes(x=x_ft_type,
-                       y='max_y',
+                       y='y_pval',
                        label='pval_binom_str',
                        fill='test_type')
 
-        p += geom_label(data=data_sub[data_sub['variable'] == 'Observed'],
+        p += geom_label(data=dm[dm['variable'] == 'Observed'],
                         mapping=aes_plot,
                         position='identity',
                         colour="white",
@@ -835,7 +821,7 @@ def peak_anno(inputfile=None,
         # Set some constrains on y_lim
         # -------------------------------------------------------------------------
 
-        p += geom_point(data=data_sub[data_sub['variable'] == 'Observed'],
+        p += geom_point(data=dm[dm['variable'] == 'Observed'],
                         mapping=aes(x=x_ft_type,
                                     y='y_lim'),
                         alpha=0,
@@ -860,8 +846,6 @@ def peak_anno(inputfile=None,
 
         # p += scale_color_discrete(l=.4)
 
-        message("facet_col " + str(facet_col))
-
         # -------------------------------------------------------------------------
         # y axis labels in scientific notation
         # -------------------------------------------------------------------------
@@ -878,20 +862,9 @@ def peak_anno(inputfile=None,
     # Compute bar plot by feature
     # -------------------------------------------------------------------------
 
-    if facet_col is None:
-        if len(dm['ft_type'].unique()) >= 4:
-            facet_col = 5
-        else:
-            facet_col = len(dm['ft_type'].unique())
-    else:
-        facet_col = min(facet_col, len(dm['ft_type'].unique()))
-
-    p = bar_plot(dm=dm,
-                 x_ft_type='ft_type_strip',
-                 which_row=dm['chrom'] == 'all_chrom',
-                 by_chrom=False,
-                 y_axis_trans=None,
-                 facet_col=facet_col)
+    p = bar_plot(d=d,
+                 x_ft_type='ft_type',
+                 which_row=d['chrom'] == 'all_chrom')
 
     # -------------------------------------------------------------------------
     #
@@ -899,26 +872,18 @@ def peak_anno(inputfile=None,
     #
     # -------------------------------------------------------------------------
 
+    nb_ft = len(list(d['ft_type'].unique()))
+
     if pdf_width is None:
-        panel_width = 1.5
-        pdf_width = panel_width * facet_col
+        panel_width = 0.5
+        pdf_width = panel_width * nb_ft
 
         if panel_width > 25:
             panel_width = 25
             message("Setting --pdf-width to 25 (limit)")
 
     if pdf_height is None:
-        panel_height = 1.5
-        panel_nb = len(dm['ft_type'].unique()) / facet_col
-        modulo = len(dm['ft_type'].unique()) % facet_col
-
-        if modulo:
-            panel_nb += 1
-        pdf_height = panel_nb * panel_height
-
-        if pdf_height > 25:
-            pdf_height = 25
-            message("Setting --pdf-height to 25 (limit)")
+        panel_height = 5
 
     message("Page width set to " + str(pdf_width))
     message("Page height set to " + str(pdf_height))
@@ -955,7 +920,8 @@ def peak_anno(inputfile=None,
         ggsave(filename=pdf_file.name,
                plot=p,
                width=pdf_width,
-               height=pdf_height)
+               height=pdf_height,
+               dpi=dpi)
         # dm.to_csv(data_file, sep="\t", header=True, index=False)
 
     close_properly(pdf_file, data_file)
