@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
+import math
 import os
 import re
 import sys
@@ -166,6 +167,12 @@ def make_parser():
                             default=300,
                             required=False)
 
+    parser_grp.add_argument('-r', '--order-bar',
+                            help='The way bar should be ordered.',
+                            choices=['log2_ratio','pval_binom'],
+                            default='log2_ratio',
+                            required=False)
+
     return parser
 
 
@@ -253,6 +260,7 @@ def peak_anno(inputfile=None,
               user_img_file=None,
               page_format=None,
               dpi=300,
+              order_bar=None,
               tmp_dir=None,
               logger_file=None,
               verbosity=True):
@@ -637,12 +645,16 @@ def peak_anno(inputfile=None,
         if d.loc[i, 'Expected'] > 0:
             if d.loc[i, 'Observed'] > 0:
                 log2_ratio = np.log2(d.loc[i, 'Observed'] / d.loc[i, 'Expected'])
+                d.loc[i, 'log2_ratio_str'] = "{0:0.2f}".format(log2_ratio)
+                d.loc[i, 'log2_ratio'] = log2_ratio
             else:
-                log2_ratio = np.nan
+                d.loc[i, 'log2_ratio_str'] = "NA"
+                d.loc[i, 'log2_ratio'] = float('nan')
         else:
-            log2_ratio = np.nan
+            d.loc[i, 'log2_ratio'] = float('nan')
+            d.loc[i, 'log2_ratio_str'] = "NA"
 
-        d.loc[i, 'log2_ratio'] = log2_ratio
+
 
         ## Compute the binomial test
         if d.loc[i, 'Nb_trial_or_peak'] > 0:
@@ -703,11 +715,12 @@ def peak_anno(inputfile=None,
             max_y_col = max(d_sub.loc[i, 'Observed'],
                             d_sub.loc[i, 'Expected'])
 
-            d_sub.loc[i, 'y_pval'] = max_y_col + offset * 1.2
+            d_sub.loc[i, 'y_log2_ratio'] = max_y_col + offset * 2.4
+            d_sub.loc[i, 'y_pval'] = max_y_col + offset * 1.8
             d_sub.loc[i, 'y_text'] = max_y_col + offset / 10
 
             ## y_lim to set diagram limits in y coords.
-            d_sub.loc[i, 'y_lim'] = max_y + offset * 1.5
+            d_sub.loc[i, 'y_lim'] = max_y + offset * 2.2
 
         # -------------------------------------------------------------------------
         # Melt the data frame
@@ -732,8 +745,11 @@ def peak_anno(inputfile=None,
 
         dm.loc[:, x_ft_type] = pd.Categorical(dm[x_ft_type].tolist())
 
-        levels_ordered = [x for _, x in sorted(zip(dm['pval_binom'].tolist(),
-                                                   dm[x_ft_type].tolist()))]
+
+        levels_ordered = [x for _, x in sorted(zip(dm[order_bar].tolist(),
+                                                   dm[x_ft_type].tolist()),
+                                               key=lambda x: x[0] if not math.isnan(x[0]) else 0,
+                                               reverse=True)]
         unique = list(OrderedDict.fromkeys(levels_ordered))
 
         dm[x_ft_type].cat.reorder_categories(unique, inplace=True)
@@ -818,6 +834,27 @@ def peak_anno(inputfile=None,
                         show_legend=False)
 
         # -------------------------------------------------------------------------
+        # Display text (log2_ratio)
+        # -------------------------------------------------------------------------
+
+        message('Adding text (log2_ratio)')
+
+        aes_plot = aes(x=x_ft_type,
+                       y='y_log2_ratio',
+                       label='log2_ratio_str',
+                       fill='test_type')
+
+        p += geom_label(data=dm[dm['variable'] == 'Observed'],
+                        mapping=aes_plot,
+                        position='identity',
+                        colour="white",
+                        angle=0,
+                        va='bottom',
+                        ha='center',
+                        size=4,
+                        show_legend=False)
+
+        # -------------------------------------------------------------------------
         # Set some constrains on y_lim
         # -------------------------------------------------------------------------
 
@@ -883,7 +920,7 @@ def peak_anno(inputfile=None,
             message("Setting --pdf-width to 25 (limit)")
 
     if pdf_height is None:
-        panel_height = 5
+        pdf_height = 5
 
     message("Page width set to " + str(pdf_width))
     message("Page height set to " + str(pdf_height))
@@ -902,15 +939,6 @@ def peak_anno(inputfile=None,
     # Saving
     #
     # -------------------------------------------------------------------------
-
-    if pdf_width is None:
-        pdf_width = len(list(dm['ft_type'].unique())) * 0.5
-        if pdf_width > 25:
-            pdf_width = 25
-            message("Setting --pdf-width to 25 (limit)")
-
-    if pdf_height is None:
-        pdf_height = 5
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
