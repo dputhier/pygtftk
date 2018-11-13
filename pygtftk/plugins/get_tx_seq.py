@@ -46,7 +46,8 @@ def make_parser():
                             metavar="FASTA",
                             type=FileWithExtension('w',
                                                    valid_extensions=('\.[Ff][Aa][Ss][Tt][Aa]$',
-                                                                     '\.[Ff][Aa]$')))
+                                                                     '\.[Ff][Aa]$',
+                                                                     '\.[Ff][Nn]][Aa]$')))
 
     parser_grp.add_argument('-g', '--genome',
                             help="The genome in fasta format. Accept path with wildcards (e.g. *.fa).",
@@ -195,6 +196,7 @@ def get_tx_seq(inputfile=None,
                                    as_list=True,
                                    no_na=True,
                                    nr=True)
+
     if len(nb_tx_after) != len(nb_tx_before):
         diff = list(set(nb_tx_before) - set(nb_tx_after))
         message("Some transcripts had"
