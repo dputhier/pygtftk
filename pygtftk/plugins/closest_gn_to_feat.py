@@ -18,12 +18,17 @@ from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
 __doc__ = """
-Get the genes/transcripts closest to a set of feature. The region to be search around the feature is controled by 
- -\-slop-value. The -\-name argument allows to export also some informations regarding these  genes/transcripts (e.g. biotype...).
+Get the genes/transcripts/tss/tts in the neighborhood of peaks  ordered by distance. The region to be search around the peak is controled by 
+ -\-slop-value. The -\-name argument allows to export also some information regarding these  genes/transcripts (e.g. biotype...). You may ask 
+ for a gene-centric ouput (print gene/transcript/tss coordinates instead of peak coordinates).
 """
 __notes__ = """
  -- Features (e.g. peaks, enhancer regions...) are provided in BED6 format.
- -- Output is in BED format with two additional columns: gene list and associated distances.
+ -- If -\-ft_type is set to tss or tts the closest tss or tts of each transcript will be considered.
+ -- Output is in BED format with two additional columns: gene list (csv) and associated distance (csv). 
+ -- You may ask for -\-gene-centric to print gene/transcript/tss coordinates instead of peak coordinates).
+ -- Use -\-uncollapse to wite one peak to gene/distance per line (no csv).
+ 
 """
 
 
@@ -57,7 +62,7 @@ def make_parser():
     parser_grp.add_argument('-t', '--ft-type',
                             help="The feature of interest.",
                             default='gene',
-                            choices=['gene', 'transcript'],
+                            choices=['gene', 'transcript' , 'tss', 'tts'],
                             required=False)
 
     parser_grp.add_argument('-n', '--names',
@@ -78,6 +83,15 @@ def make_parser():
                             metavar="SEP",
                             type=str)
 
+    parser_grp.add_argument('-u', '--uncollapse',
+                            help='Write one peak to gene/distance per line (no comma separated list).',
+                            action="store_true")
+
+
+    parser_grp.add_argument('-g', '--gene-centric',
+                            help='Print --feature-type coordinate and the peak list and associated distance.',
+                            action="store_true")
+
     parser_grp.add_argument('-c', '--chrom-info',
                             help='Tabulated file (chr as '
                                  'column 1, sizes as column 2.)',
@@ -96,12 +110,16 @@ def closest_gn_to_feat(inputfile=None,
                        slop_value=None,
                        chrom_info=None,
                        separator="|",
+                       uncollapse=False,
                        tmp_dir=None,
                        logger_file=None,
+                       gene_centric=False,
                        verbosity=0):
     """
     Get the gene/transcript closest to a set of feature.
     """
+
+    collapsed = not uncollapse
 
     # -------------------------------------------------------------------------
     # Load the GTF an get the regions of interest
@@ -111,8 +129,17 @@ def closest_gn_to_feat(inputfile=None,
 
     gtf = GTF(inputfile, check_ensembl_format=True)
 
-    ann_bo = gtf.select_by_key("feature",
-                               ft_type).to_bed(name=nms)
+    if ft_type in ['gene', 'transcript']:
+        ann_bo = gtf.select_by_key("feature",
+                                   ft_type).to_bed(name=nms)
+    elif ft_type == 'tss':
+        ann_bo = gtf.get_tss(name=nms)
+    elif ft_type == 'tts':
+        ann_bo = gtf.get_tts(name=nms)
+    else:
+        message("Unsupported feature (see --ft_type).",
+                type="ERROR")
+
 
     # -------------------------------------------------------------------------
     # Load the BED file, slop and intersect with gene/tx
@@ -130,7 +157,8 @@ def closest_gn_to_feat(inputfile=None,
 
     intersect_bo = region_bo.intersect(ann_bo, wa=True, wb=True)
 
-    feat_to_gen = defaultdict(list)
+    closest = defaultdict(list)
+
 
     for feat in intersect_bo:
         cur_key = [feat[0],
@@ -140,62 +168,149 @@ def closest_gn_to_feat(inputfile=None,
                    int(feat[7]),
                    int(feat[8])] + feat[9:12]
 
-        feat_to_gen[tuple(cur_key)] += [tuple(cur_val)]
+
+        closest[tuple(cur_key)] += [tuple(cur_val)]
+
+
+
 
     # -------------------------------------------------------------------------
     # Compute distance to gene/transcript
     # -------------------------------------------------------------------------
     # Compare the positions of two fragments f1,f2
     #
-    #    a --------------- b f1
-    #
-    #         c -------------- d  f2
+    #                      a --------------- b f1
+    #                     22                25
+    #    c -------------- d  f2
+    #    21               22
 
-    feat_to_dist = defaultdict(list)
+    closest_dist = defaultdict(list)
 
-    for feat, gen_list in feat_to_gen.items():
+    for peak, gen_list in closest.items():
 
         for gen in gen_list:
 
-            a = feat[1] + int(slop_value)
-            b = feat[2] - int(slop_value)
+            a = peak[1] + int(slop_value)
+            b = peak[2] - int(slop_value)
             c = gen[1]
             d = gen[2]
 
             if a > d:
-                dist_feat = a - d + 1
+                dist_peak = a - d + 1
             elif a < d:
-                if b > c or b == c:
-                    dist_feat = 0
+                if b >= c:
+                    dist_peak = 0
                 else:
-                    dist_feat = c - b + 1
+                    dist_peak = c - b + 1
             elif a == d:
-                dist_feat = 0
+                # zero based and (!) half open
+                dist_peak = 1
 
-            feat_to_dist[feat] += [dist_feat]
-
-    for feat in feat_to_gen:
-
-        output_str = []
-        output_str += feat
-        gene_list = []
-        gene_dist = []
-
-        for gn, dist in zip(feat_to_gen[feat], feat_to_dist[feat]):
-            gene_list += [gn[3]]
-            gene_dist += [dist]
-
-        gene_list = [x for _, x in sorted(zip(gene_dist, gene_list))]
-        gene_dist = sorted(gene_dist)
-        gene_dist = [str(x) for x in gene_dist]
-        col_right = ",".join(gene_list) + "\t" + ", ".join(gene_dist)
-
-        feat = [str(x) for x in feat]
-        outputfile.write("\t".join(feat) + "\t" + col_right + "\n")
+            closest_dist[peak] += [dist_peak]
 
     # -------------------------------------------------------------------------
-    # Load the BED file, slop and intersect with gene/tx
+    # Loop over peak or genes
     # -------------------------------------------------------------------------
+
+    if not gene_centric:
+
+        # -------------------------------------------------------------------------
+        # Keep only gene names in the list.
+        # Order gene lists based on distance.
+        # -------------------------------------------------------------------------
+
+        for peak in closest:
+
+            gene_list = [x for _, x in sorted(zip(closest_dist[peak], closest[peak]))]
+            gene_dist = sorted(closest_dist[peak])
+
+            gene_dist = [str(x) for x in gene_dist]
+
+            closest[peak] = [x[3] for x in gene_list]
+            closest_dist[peak] = gene_dist
+            
+        for peak in closest:
+
+            if collapsed:
+
+                # -------------------------------------------------------------------------
+                # print csv of genes and dists for each peak
+                # -------------------------------------------------------------------------
+
+                col_right = ",".join(closest[peak]) + "\t" + ", ".join(closest_dist[peak])
+                peak = [str(x) for x in peak]
+                outputfile.write("\t".join(peak) + "\t" + col_right + "\n")
+
+            else:
+
+                # -------------------------------------------------------------------------
+                # for each peak print a gene and a dist
+                # -------------------------------------------------------------------------
+
+                for gn, dist in zip(closest[peak], closest_dist[peak]):
+                    col_right = "\t".join([gn, str(dist)])
+                    peak = [str(x) for x in peak]
+                    outputfile.write("\t".join(peak) + "\t" + col_right + "\n")
+
+
+    else:
+
+        # -------------------------------------------------------------------------
+        # Put gene as key and peak list as values
+        # -------------------------------------------------------------------------
+
+        closest_cp = defaultdict(list)
+        closest_dist_cp = defaultdict(list)
+
+        for peak in closest:
+
+            for gn, dist in zip(closest[peak], closest_dist[peak]):
+                gn = tuple([str(x) for x in gn])
+                closest_cp[gn] += [peak]
+                closest_dist_cp[gn] += [dist]
+
+        # -------------------------------------------------------------------------
+        # Keep only peak names in the list.
+        # Order peak lists based on distance.
+        # -------------------------------------------------------------------------
+
+        for gn in closest_cp:
+
+            peak_list = [x for _, x in sorted(zip(closest_dist_cp[gn], closest_cp[gn]))]
+            peak_dist = sorted(closest_dist_cp[gn])
+
+            peak_dist = [str(x) for x in peak_dist]
+
+            # get peak name
+            closest_cp[gn] = [x[3] for x in peak_list]
+            closest_dist_cp[gn] = peak_dist
+
+        if collapsed:
+
+            # -------------------------------------------------------------------------
+            # for each gene print csv of peaks and dists
+            # -------------------------------------------------------------------------
+
+
+            for gn in closest_cp:
+
+                col_right = ",".join(closest_cp[gn]) + "\t" + ",".join(closest_dist_cp[gn])
+                outputfile.write("\t".join(gn) + "\t" + col_right + "\n")
+        else:
+
+            # -------------------------------------------------------------------------
+            # for each gene print a peak and a dist
+            # -------------------------------------------------------------------------
+
+            for gene in closest_cp:
+
+                for peak, dist in zip(closest_cp[gene], closest_dist_cp[gene]):
+                    col_right = "\t".join([peak, str(dist)])
+                    outputfile.write("\t".join(gene) + "\t" + col_right + "\n")
+
+
+
+
 
     close_properly(outputfile, inputfile)
 
@@ -221,16 +336,53 @@ else:
       [ "$result" = "" ]
     }
     
-    #closest_gn_to_feat: 
+    #closest_gn_to_feat: check gene
     @test "closest_gn_to_feat_1" {
      result=`gtftk closest_gn_to_feat -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -n gene_id| md5sum-lite | perl -npe 's/\\s.*//'`
-      [ "$result" = "7883485b27bc9bda4a7c47846c7a0d25" ]
+      [ "$result" = "1ea2fbb5a5f10c607836139757c4f6de" ]
     }
-        
+
+    #closest_gn_to_feat: check tx
+    @test "closest_gn_to_feat_2" {
+     result=`gtftk closest_gn_to_feat -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -t transcript -n transcript_id | md5sum-lite | perl -npe 's/\\s.*//'`
+      [ "$result" = "a90cf09d38d28399ab480df0c258d53f" ]
+    }
     
+    
+    #closest_gn_to_feat: check tss
+    @test "closest_gn_to_feat_3" {
+     result=`gtftk closest_gn_to_feat -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -t tss -n transcript_id  | md5sum-lite | perl -npe 's/\\s.*//'`
+      [ "$result" = "aa89ecf2a0c86f8ff3790589a0436dcc" ]
+    }
+
+    #closest_gn_to_feat: check tts
+    @test "closest_gn_to_feat_4" {
+     result=`gtftk closest_gn_to_feat -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -t tts -n transcript_id -K toto | md5sum-lite | perl -npe 's/\\s.*//'`
+      [ "$result" = "0d3e7b17314469ecd8b2ffff65acaa29" ]
+    }
+
+    #closest_gn_to_feat: check tts, gene centric
+    @test "closest_gn_to_feat_5" {
+     result=`gtftk closest_gn_to_feat -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -t tss -n transcript_id -K toto -g | md5sum-lite | perl -npe 's/\\s.*//'`
+      [ "$result" = "b76208a2c0a384ba3368af5251090039" ]
+    }
+
+
+    #closest_gn_to_feat: check tts, gene centric, uncollapsed
+    @test "closest_gn_to_feat_6" {
+     result=`gtftk closest_gn_to_feat -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -t tss -n transcript_id -K toto -gu | md5sum-lite | perl -npe 's/\\s.*//'`
+      [ "$result" = "2e4683b4f7ea8a79c8c7c632bec16e9e" ]
+    }
+
+    #closest_gn_to_feat: check gene, peak centric, uncollapsed
+    @test "closest_gn_to_feat_7" {
+     result=`gtftk closest_gn_to_feat -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -n gene_id -u | md5sum-lite | perl -npe 's/\\s.*//'`
+      [ "$result" = "9721e0bf42fea4ca4f3d0738154d69f0" ]
+    }
+
     """
     CmdObject(name="closest_gn_to_feat",
-              message="Get the list of genes/transcripts closest to a set of feature.",
+              message="Get the list of genes/transcripts/tss/tts closest to a set of peaks (or the opposite).",
               parser=make_parser(),
               fun=os.path.abspath(__file__),
               notes=__notes__,
