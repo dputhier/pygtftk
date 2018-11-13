@@ -248,10 +248,9 @@ setup(name="pygtftk",
       classifiers=__classifiers__,
       long_description=long_description,
       extras_require={
-          'tests': [
+          'dev': [
               'nose',
-              'pycodestyle >= 2.1.0'],
-          'docs': [
+              'pycodestyle >= 2.1.0',
               'sphinx >=1.5.2',
               'sphinxcontrib-programoutput >=0.8',
               'sphinx_bootstrap_theme >=0.4.9']},
