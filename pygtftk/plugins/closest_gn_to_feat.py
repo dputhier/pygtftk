@@ -144,22 +144,37 @@ def closest_gn_to_feat(inputfile=None,
 
 
     # -------------------------------------------------------------------------
-    # Load the BED file, slop and intersect with gene/tx
+    # Load the BED file
     # -------------------------------------------------------------------------
 
-    region_bo = BedTool(region_file).slop(s=False,
-                                          b=slop_value,
-                                          g=chrom_info.name)
+    region_bo = BedTool(region_file)
 
-    region_bo = BedTool(region_file).slop(s=False,
+    # -------------------------------------------------------------------------
+    # Store the start and ends of peaks. As region_file is a bed6 action
+    # names are unambiguous.
+    # -------------------------------------------------------------------------
+
+    peak_starts = defaultdict()
+    peak_ends = defaultdict()
+
+    for i in region_bo:
+        peak_starts[i.name] = i.start
+        peak_ends[i.name] = i.end
+
+    # -------------------------------------------------------------------------
+    # Slop the regions
+    # -------------------------------------------------------------------------
+
+    region_bo = region_bo.slop(s=False,
                                           b=slop_value,
                                           g=chrom_info.name)
 
     tmp_file = make_tmp_file("slopped_regions", ".bed")
     region_bo.saveas(tmp_file.name)
 
-    if region_bo.field_count() < 6:
-        message("BED should be in BED6 format.", type="ERROR")
+    # -------------------------------------------------------------------------
+    # Intersect
+    # -------------------------------------------------------------------------
 
     intersect_bo = region_bo.intersect(ann_bo, wa=True, wb=True)
 
@@ -192,12 +207,13 @@ def closest_gn_to_feat(inputfile=None,
 
     closest_dist = defaultdict(list)
 
+
     for peak, gen_list in closest.items():
 
         for gen in gen_list:
 
-            a = peak[1] + int(slop_value)
-            b = peak[2] - int(slop_value)
+            a = peak_starts[peak[3]]
+            b = peak_ends[peak[3]]
             c = gen[1]
             d = gen[2]
 
