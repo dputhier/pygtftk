@@ -404,7 +404,7 @@ else:
 
     """
     CmdObject(name="closest_gn_to_feat",
-              message="Get the list of genes/transcripts/tss/tts closest to a set of peaks (or the opposite).",
+              message="Get the list of genes/transcripts/tss/tts closest to a set of peaks.",
               parser=make_parser(),
               fun=os.path.abspath(__file__),
               notes=__notes__,
