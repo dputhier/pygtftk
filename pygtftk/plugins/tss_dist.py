@@ -149,6 +149,21 @@ else:
      result=`gtftk get_example -d mini_real | gtftk tss_dist | grep ENSG00000097007 | cut -f4 | perl -npe 's/\\n/,/' `
       [ "$result" = "121120,121086,34," ]
     }    
+
+    @test "tss_dist_4" {
+     result=`gtftk get_example -d simple_03 | gtftk tss_dist | grep G0002T002| cut -f 4 `
+      [ "$result" -eq 5 ]
+    }    
+
+    @test "tss_dist_4" {
+     result=`gtftk get_example -d simple_03 | gtftk tss_dist | grep G0011T001| cut -f 4 `
+      [ "$result" -eq 13 ]
+    }            
+
+    @test "tss_dist_5" {
+     result=`gtftk get_example -d simple_06 | gtftk tss_dist | md5sum-lite | perl -npe 's/\\s.*//'`
+      [ "$result" = "8ed7258ed14b5cb518332b1f29d31e5e" ]
+    }
     
     """
 
