@@ -692,7 +692,11 @@ class globbedFileList(argparse.Action):
                  namespace,
                  values,
                  option_string=None):
-        values = glob.glob(values)
+
+        if "*" in values:
+            values = glob.glob(values)
+        else:
+            values = [values]
 
         check_file_or_dir_exists(values)
 
