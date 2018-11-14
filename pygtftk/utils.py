@@ -455,7 +455,7 @@ def check_file_or_dir_exists(file_or_dir=None):
 
     # Convert to filename
     file_or_dir = [x.name if isinstance(x, file) else x for x in file_or_dir]
-    print(file_or_dir)
+
     for file_or_dir_cur in file_or_dir:
 
         if not os.path.exists(file_or_dir_cur):

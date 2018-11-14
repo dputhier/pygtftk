@@ -135,6 +135,12 @@ def get_tx_seq(inputfile=None,
 
     message("%d fasta files found." % len(genome))
 
+    as_gz_ext = [True for x in genome if x.name.endswith(".gz")]
+
+
+    if any(as_gz_ext):
+        message("Genome in gz format is not currently supported.", type="ERROR")
+
     if len(genome) == 1:
         message("Checking fasta file chromosome list")
         genome = genome[0]

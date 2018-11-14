@@ -113,6 +113,13 @@ def get_feat_seq(inputfile=None,
     # https://github.com/dputhier/libgtftk/issues/27
     # -------------------------------------------------------------------------
 
+    as_gz_ext = [True for x in genome if x.name.endswith(".gz")]
+
+
+    if any(as_gz_ext):
+        message("Genome in gz format is not currently supported.", type="ERROR")
+
+
     genome_chr_list = []
 
     message("%d fasta files found." % len(genome))
