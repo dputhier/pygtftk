@@ -364,6 +364,24 @@ else:
       [ "$result" = ">transcript,G0001T002,chr1" ]
     }
         
+    # load mini_real_10M
+    @test "get_tx_seq_15" {
+     result=`gtftk get_example -f '*' -d mini_real_10M; gunzip chr1_hg38_10M.fa.gz`
+      [ "$result" = "" ]
+    }
+
+    # Check the size of transcript seq compared to ensembl. 
+    @test "get_tx_seq_16" {
+     result=`gtftk get_tx_seq -i mini_real_10M.gtf.gz -g chr1_hg38_10M.fa -l transcript_id | perl -ne 'if(/^>/){/>(.*)/; $id=$1}else{chomp; print $id,"\\t",length, "\\n"}' > observed_size.txt`
+      [ -f  observed_size.txt ]
+    }
+                    
+    # Check the size of transcript seq compared to ensembl. 
+    @test "get_tx_seq_17" {
+     result=`cat observed_size.txt | md5sum-lite | sed 's/ .*//'`
+      [ "$result" = "d85190249df504c349c7d687338f4b71" ]
+    }  
+    
     """
 
     CmdObject(name="get_tx_seq",
