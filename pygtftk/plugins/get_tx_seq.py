@@ -274,7 +274,7 @@ else:
 
     #get_tx_seq: load dataset
     @test "get_tx_seq_0" {
-     result=`gtftk get_example -f '*' -d simple; gtftk get_example -f '*' -d mini_real_10M; gunzip chr1_hg38_10M.fa.gz`
+     result=`gtftk get_example -f '*' -d simple`
       [ "$result" = "" ]
     }
        
