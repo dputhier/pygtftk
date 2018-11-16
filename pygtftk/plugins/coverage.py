@@ -369,15 +369,9 @@ def coverage(
         df_first = pd.read_csv(result_bed.name, sep="\t", header=None)
 
         df_first = df_first.ix[:, [0, 1, 2, 3, 5, 4]]
-        """
-        bwig = [z.split("|")[0] for z in df_first[3]]
-        bwig_nr = list(set(bwig))
-        """
 
         df_list = []
-        """
-        for i in range(len(bwig_nr)):
-        """
+
         for i in range(len(labels)):
             # create a sub data frame containing the coverage values of the
             # current bwig
