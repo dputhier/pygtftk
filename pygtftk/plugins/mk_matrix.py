@@ -4,13 +4,13 @@ from __future__ import print_function
 
 import argparse
 import os
-import pyBigWig
 import sys
 import zipfile
 from builtins import range
 from builtins import str
 
 import pandas as pd
+import pyBigWig
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension
@@ -490,6 +490,9 @@ def mk_matrix(
     df_copy = df_main[['bwig', 'chrom', 'gene',
                        'strand', 'start', 'end']]
 
+    df_start = df_main.pop('start')
+    df_end = df_main.pop('end')
+
     if "upstream" in outputfile_list:
         message("Merging upstream file")
         message(
@@ -521,7 +524,6 @@ def mk_matrix(
                                                                  'chrom',
                                                                  'gene',
                                                                  'strand'])
-
     df_start = df_main.pop('start')
     df_end = df_main.pop('end')
     df_main.insert(2, 'start', df_start)
