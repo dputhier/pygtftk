@@ -10,7 +10,7 @@ ordered as in --id-file.'''
 
 def make_parser():
     """The program parser."""
-    parser = argparse.ArgumentParser(add_help=True)
+    parser = argparse.ArgumentParser(add_help=True, description=__DESC__)
 
     parser_grp = parser.add_argument_group('Arguments')
 
