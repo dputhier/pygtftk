@@ -67,12 +67,12 @@ def select_by_regexp(inputfile=None,
     associated values.
     """
 
-    gtf = GTF(inputfile, check_ensembl_format=False
-              ).select_by_regexp(key,
-                                 regexp,
-                                 invert_match
-                                 ).write(outputfile,
-                                         gc_off=True)
+    GTF(inputfile,
+        check_ensembl_format=False).select_by_regexp(key,
+                                                     regexp,
+                                                     invert_match
+                                                     ).write(outputfile,
+                                                             gc_off=True)
 
     close_properly(outputfile, inputfile)
 

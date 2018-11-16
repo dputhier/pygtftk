@@ -80,12 +80,6 @@ def make_parser():
                             type=int_ge_to_null,
                             required=False)
 
-    parser_grp.add_argument('-s', '--separator',
-                            help="The separator to be used for separating name elements (see -n).",
-                            default="|",
-                            metavar="SEP",
-                            type=str)
-
     parser_grp.add_argument('-u', '--uncollapse',
                             help='Write one peak to gene/distance per line (no comma separated list).',
                             action="store_true")
@@ -110,7 +104,6 @@ def closest_gn_to_feat(inputfile=None,
                        region_file=None,
                        slop_value=None,
                        chrom_info=None,
-                       separator="|",
                        uncollapse=False,
                        tmp_dir=None,
                        logger_file=None,

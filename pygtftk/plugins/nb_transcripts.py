@@ -5,7 +5,6 @@ import argparse
 import os
 import sys
 from builtins import str
-from collections import OrderedDict
 
 from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.cmd_object import CmdObject
@@ -69,7 +68,6 @@ def nb_transcripts(inputfile=None,
     """
 
     gtf = GTF(inputfile)
-    n_tx = OrderedDict()
 
     message("Computing the number of transcript per gene in input GTF file.")
 

@@ -12,7 +12,6 @@ from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import checkChromFile
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
-from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import close_properly
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
@@ -130,12 +129,6 @@ def overlapping(
 Description: Find transcripts whose body/TSS/TTS do or do not overlap with any
 transcript from another gene.
     """
-
-    # ----------------------------------------------------------------------
-    # Check chrom file
-    # ----------------------------------------------------------------------
-
-    chrom_dict = chrom_info_as_dict(chrom_info)
 
     # ----------------------------------------------------------------------
     # Prepare key names

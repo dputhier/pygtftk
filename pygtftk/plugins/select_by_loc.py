@@ -140,25 +140,25 @@ def select_by_loc(inputfile=None,
 
     if not invert_match:
 
-        out = gtf.select_by_key(ft_type + '_id',
-                                ",".join(id_list),
-                                invert_match=invert_match).write(outputfile,
-                                                                 gc_off=True)
+        gtf.select_by_key(ft_type + '_id',
+                          ",".join(id_list),
+                          invert_match=invert_match).write(outputfile,
+                                                           gc_off=True)
     else:
         if ft_type == 'transcript':
 
-            out = gtf.select_by_key('transcript_id',
-                                    ",".join(id_list),
-                                    invert_match=invert_match,
-                                    no_na=True
-                                    ).write(outputfile,
-                                            gc_off=True)
+            gtf.select_by_key('transcript_id',
+                              ",".join(id_list),
+                              invert_match=invert_match,
+                              no_na=True
+                              ).write(outputfile,
+                                      gc_off=True)
         else:
-            out = gtf.select_by_key('gene_id',
-                                    ",".join(id_list),
-                                    invert_match=invert_match
-                                    ).write(outputfile,
-                                            gc_off=True)
+            gtf.select_by_key('gene_id',
+                              ",".join(id_list),
+                              invert_match=invert_match
+                              ).write(outputfile,
+                                      gc_off=True)
 
     close_properly(outputfile, inputfile)
 

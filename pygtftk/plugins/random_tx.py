@@ -108,11 +108,11 @@ def random_tx(
     message("Printing results")
 
     message("Selecting transcript.")
-    gtf = gtf.select_by_key("transcript_id",
-                            ",".join(tx_to_delete),
-                            invert_match=True
-                            ).write(outputfile,
-                                    gc_off=True)
+    gtf.select_by_key("transcript_id",
+                      ",".join(tx_to_delete),
+                      invert_match=True
+                      ).write(outputfile,
+                              gc_off=True)
 
     close_properly(outputfile, inputfile)
 

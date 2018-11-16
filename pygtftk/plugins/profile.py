@@ -45,12 +45,15 @@ __doc__ = """
 """
 
 __notes__ = """
- -- The ranging normalization method [1] implies the following transformation: 
- -- -  (x_i - min(x))/(max(x) - min(x)).
  -- Think about using normalized bigWig files as input to mk_matrix. This
  will limit the requirement for an additional normalization step (see
  Deeptools for a set of useful methods implemented in bamCoverage/bamCompare).
 """
+
+'''
+ -- The ranging normalization method [1] implies the following transformation: 
+ -- -  (x_i - min(x))/(max(x) - min(x)).
+'''
 
 __references__ = """
  -- [1] Numerical Ecology - second Edition - P. Legendre, L. Legendre (1998) Elsevier.
@@ -264,7 +267,6 @@ def profile(inputfile=None,
             normalization_method=None,
             to_log=False,
             upper_limit=0.95,
-            quantiles=False,
             profile_colors=None,
             palette='nipy_spectral',
             page_width=None,
@@ -275,7 +277,6 @@ def profile(inputfile=None,
             tmp_dir=None,
             facet_col=None,
             border_color="#BBBBBB",
-            force_tx_class=False,
             stat="mean",
             facet_var=None,
             x_lab="Selected genomic regions",
@@ -1229,7 +1230,7 @@ if __name__ == '__main__':
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    draw_profile(**args)
+    profile(**args)
 
 else:
 

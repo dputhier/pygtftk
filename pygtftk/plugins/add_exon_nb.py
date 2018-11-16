@@ -55,10 +55,10 @@ def add_exon_nb(inputfile=None,
 
     message("Calling nb_exons.", type="DEBUG")
 
-    gtf = GTF(inputfile.name,
-              check_ensembl_format=False
-              ).add_exon_number(exon_numbering_key
-                                ).write(outputfile, gc_off=True)
+    GTF(inputfile.name,
+        check_ensembl_format=False
+        ).add_exon_number(exon_numbering_key
+                          ).write(outputfile, gc_off=True)
 
     close_properly(inputfile, outputfile)
 

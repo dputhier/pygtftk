@@ -258,7 +258,7 @@ def discretize_key(inputfile=None,
 
     with tmp_file as tp_file:
         for p, v in zip(dest_pos, breaks):
-            tmp_file.write(str(p) + "\t" + str(v) + '\n')
+            tp_file.write(str(p) + "\t" + str(v) + '\n')
 
     gtf.add_attr_to_pos(tmp_file,
                         new_key=dest_key).write(outputfile,

@@ -64,11 +64,11 @@ def select_by_numeric_value(inputfile=None,
     """Select lines from a GTF file based on a boolean test on numeric values.
     """
 
-    gtf = GTF(inputfile, check_ensembl_format=False
-              ).select_by_numeric_value(test,
-                                        na_omit=na_omit,
-                                        ).write(outputfile,
-                                                gc_off=True)
+    GTF(inputfile,
+        check_ensembl_format=False).select_by_numeric_value(test,
+                                                            na_omit=na_omit,
+                                                            ).write(outputfile,
+                                                                    gc_off=True)
     close_properly(outputfile, inputfile)
 
 

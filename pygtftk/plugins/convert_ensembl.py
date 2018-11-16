@@ -56,21 +56,20 @@ def make_parser():
     return parser
 
 
-def convert_ensembl(
-        inputfile=None,
-        outputfile=None,
-        tmp_dir=None,
-        logger_file=None,
-        no_check_gene_chr=False,
-        verbosity=0):
+def convert_ensembl(inputfile=None,
+                    outputfile=None,
+                    tmp_dir=None,
+                    logger_file=None,
+                    no_check_gene_chr=False,
+                    verbosity=0):
     """
     Convert the GTF file to ensembl format.
     """
 
-    gtf = GTF(inputfile,
-              check_ensembl_format=False
-              ).convert_to_ensembl(check_gene_chr=not no_check_gene_chr,
-                                   ).write(outputfile, gc_off=True)
+    GTF(inputfile,
+        check_ensembl_format=False
+        ).convert_to_ensembl(check_gene_chr=not no_check_gene_chr,
+                             ).write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -80,7 +79,7 @@ def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    count(**args)
+    convert_ensembl(**args)
 
 
 if __name__ == '__main__':

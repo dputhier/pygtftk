@@ -65,18 +65,18 @@ def select_by_tx_size(inputfile=None,
                      M=str(max_size))
     message(msg)
 
-    gtf = GTF(inputfile
-              ).select_by_transcript_size(min_size,
-                                          max_size
-                                          ).write(outputfile,
-                                                  gc_off=True)
+    GTF(inputfile
+        ).select_by_transcript_size(min_size,
+                                    max_size
+                                    ).write(outputfile,
+                                            gc_off=True)
 
 
 def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    select_by_transcript_size(**args)
+    select_by_tx_size(**args)
 
 
 if __name__ == '__main__':

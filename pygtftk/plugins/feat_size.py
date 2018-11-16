@@ -107,8 +107,6 @@ def feature_size(
 
     names = names.split(",")
 
-    tmp_file = make_tmp_file(prefix="feature_size_", suffix=".txt")
-
     if ft_type != 'mature_rna':
 
         if bed:

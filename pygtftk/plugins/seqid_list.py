@@ -71,7 +71,7 @@ def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    count(**args)
+    seqid_list(**args)
 
 
 if __name__ == '__main__':

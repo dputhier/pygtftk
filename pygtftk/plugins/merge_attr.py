@@ -84,13 +84,13 @@ def merge_attr(
     Merge a set of attributes into a destination attribute.
     """
 
-    gtf = GTF(inputfile,
-              check_ensembl_format=False
-              ).merge_attr(target_feature,
-                           src_key,
-                           dest_key,
-                           separator).write(outputfile,
-                                            gc_off=True)
+    GTF(inputfile,
+        check_ensembl_format=False
+        ).merge_attr(target_feature,
+                     src_key,
+                     dest_key,
+                     separator).write(outputfile,
+                                      gc_off=True)
 
     close_properly(outputfile, inputfile)
 

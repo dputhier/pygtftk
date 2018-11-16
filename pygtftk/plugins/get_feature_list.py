@@ -72,7 +72,7 @@ def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    count(**args)
+    get_feature_list(**args)
 
 
 if __name__ == '__main__':

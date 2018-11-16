@@ -293,7 +293,7 @@ def mk_matrix(
                                 ).select_by_key("seqid",
                                                 ",".join(bw_chrom))
 
-        tmp = gtf.select_by_key("feature",
+        tmp = tmp.select_by_key("feature",
                                 "transcript")
         tmp_tx_name = tmp.extract_data("transcript_id", as_list=True)
 
@@ -489,9 +489,6 @@ def mk_matrix(
     # They will re-joined added later
     df_copy = df_main[['bwig', 'chrom', 'gene',
                        'strand', 'start', 'end']]
-
-    df_start = df_main.pop('start')
-    df_end = df_main.pop('end')
 
     if "upstream" in outputfile_list:
         message("Merging upstream file")

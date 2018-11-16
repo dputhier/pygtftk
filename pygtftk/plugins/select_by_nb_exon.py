@@ -53,7 +53,6 @@ def select_by_nb_exon(inputfile=None,
                       min_exon_number=None,
                       max_exon_number=None,
                       tmp_dir=None,
-                      force_gtf=False,
                       logger_file=None,
                       verbosity=0):
     """
