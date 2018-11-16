@@ -680,11 +680,17 @@ class globbedFileList(argparse.Action):
                  namespace,
                  values,
                  option_string=None):
-        values = glob.glob(values)
+
+        if "*" in values:
+            values = glob.glob(values)
+        else:
+            values = [values]
 
         check_file_or_dir_exists(values)
 
-        values = [open(i, "r") for i in values]
+        #values = [ io.TextIOWrapper(gzip.GzipFile(i, 'r')) if ".gz" in i else open(i, "r") for i in values]
+
+        values = [ open(i, "r") for i in values]
 
         # Add the attribute
         setattr(namespace, self.dest, values)

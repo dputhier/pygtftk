@@ -43,6 +43,7 @@ def make_parser():
                                 "simple_04",
                                 "simple_05",
                                 "simple_06",
+                                "mini_real_10M",
                                 "control_list"],
                             default="simple",
                             required=False)

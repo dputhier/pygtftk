@@ -449,8 +449,6 @@ def check_file_or_dir_exists(file_or_dir=None):
 
     """
 
-    test_list = []
-
     # Convert to a list
     if not isinstance(file_or_dir, list):
         file_or_dir = [file_or_dir]
@@ -459,8 +457,9 @@ def check_file_or_dir_exists(file_or_dir=None):
     file_or_dir = [x.name if isinstance(x, file) else x for x in file_or_dir]
 
     for file_or_dir_cur in file_or_dir:
+
         if not os.path.exists(file_or_dir_cur):
-            raise GTFtkError("File not found: " + file_or_dir_cur)
+            message("File not found: " + file_or_dir_cur, type="ERROR")
 
         else:
             message("Found file " + file_or_dir_cur)

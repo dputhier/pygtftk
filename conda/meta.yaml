@@ -11,18 +11,21 @@ source:
 
 build:
   number: 0
+  skip: true # [not py35 and not py36]
+  #  script: python -m pip install --no-deps --ignore-installed --no-cache-dir -vvv .
 
 requirements:
   build:
     - {{ compiler('c') }}
   host:
-    - python >=3.6,<3.7
+    - python
+    - pip
+    - setuptools
     - zlib
   run:
-    - python >=3.6,<3.7
-    - cython
+    - python >=3.5,<3.7
     - argparse
-    - bedtools ==2.27.1
+    - bedtools ==2.23
     - cloudpickle >=0.4.0
     - ftputil >=3.3.1,<4.0.0
     - numpy
@@ -35,7 +38,6 @@ requirements:
     - cffi >=1.10.0
     - pyparsing >=2.2.0
     - biopython >=1.69
-    - zlib
     - matplotlib >=2.0.2
     - plotnine >=0.4.0
     - future
@@ -49,7 +51,6 @@ test:
     - nose
     - bats
     - unzip
-    - coreutils
     - perl
 
 about:
