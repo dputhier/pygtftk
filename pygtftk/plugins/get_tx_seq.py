@@ -137,7 +137,6 @@ def get_tx_seq(inputfile=None,
 
     as_gz_ext = [True for x in genome if x.name.endswith(".gz")]
 
-
     if any(as_gz_ext):
         message("Genome in gz format is not currently supported.", type="ERROR")
 

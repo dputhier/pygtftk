@@ -164,7 +164,6 @@ def get_example(outputfile=None,
             target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
             message("Copying from :" + target_path)
 
-
             for i in file_path:
                 if not os.path.exists(os.path.join(os.getcwd(), os.path.basename(i))):
                     message("Copying file : " + os.path.basename(i), force=True)

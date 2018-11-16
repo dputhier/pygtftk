@@ -13,9 +13,11 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
+
 __doc__ = """
   Compute the locations of donor and acceptor splice sites.
 """
+
 __notes__ = """
  This will return a single position which corresponds to the most 5' and/or the most 3' intronic region.
  If the gtf file does not contain exon numbering you can compute it using the add_exon_nb command.

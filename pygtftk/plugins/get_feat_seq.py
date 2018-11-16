@@ -4,17 +4,14 @@ from __future__ import print_function
 import argparse
 import os
 import re
-import shutil
 import sys
 from builtins import str
-from builtins import zip
 
 from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import globbedFileList
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
-from pygtftk.utils import message, make_tmp_file
+from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
 __doc__ = """
@@ -61,8 +58,6 @@ def make_parser():
                                                                      '\.[Ff][Nn][Aa]$',
                                                                      '\.[Ff][Aa]$')))
 
-
-
     parser_grp.add_argument('-s', '--separator',
                             help="To separate info in header.",
                             default="|",
@@ -86,7 +81,6 @@ def make_parser():
                                  "corresponding to gene on minus strand.",
                             action="store_true",
                             required=False)
-
 
     parser_grp.add_argument('-r', '--rev-comp-to-header',
                             help="Indicate in the header whether sequence was rev-complemented.",
@@ -129,9 +123,7 @@ def get_feat_seq(inputfile=None,
     # -------------------------------------------------------------------------
 
     if genome.name.endswith(".gz"):
-
         message("Genome in gz format is not currently supported.", type="ERROR")
-
 
     genome_chr_list = []
 
@@ -139,14 +131,11 @@ def get_feat_seq(inputfile=None,
 
     message("Checking fasta file chromosome list")
 
-
     with genome as geno:
         for i in geno:
             if i.startswith(">"):
                 i = i.rstrip("\n")
                 genome_chr_list += [i[1:]]
-
-
 
     gtf = GTF(inputfile, check_ensembl_format=False)
 
@@ -173,21 +162,19 @@ def get_feat_seq(inputfile=None,
 
     message("Retrieving fasta sequences.")
 
-
     feat_seq = gtf.select_by_key("feature",
                                  feature_type
                                  ).to_bed(name=label.split(","),
                                           sep=separator
-                                 ).sequence(fi=genome.name,
-                                            name=True,
-                                            s=force_strandedness)
+                                          ).sequence(fi=genome.name,
+                                                     name=True,
+                                                     s=force_strandedness)
 
     id_printed = set()
 
     to_print = True
 
-
-    for nb_line,line in enumerate(open(feat_seq.seqfn)):
+    for nb_line, line in enumerate(open(feat_seq.seqfn)):
         if line.startswith(">"):
 
             # This (+/-) may be added by pybedtool
@@ -203,7 +190,7 @@ def get_feat_seq(inputfile=None,
 
             if unique:
                 if line in id_printed:
-                        to_print = False
+                    to_print = False
             if to_print:
                 outputfile.write(line)
                 id_printed.add(line)
@@ -215,7 +202,6 @@ def get_feat_seq(inputfile=None,
                 to_print = True
             else:
                 outputfile.write(line)
-
 
     close_properly(outputfile, inputfile)
 
@@ -254,6 +240,7 @@ else:
       [ "$result" = "caagc,taatt," ]
     }
     
+
 
     #get_feat_seq:
     @test "get_feat_seq_3" {

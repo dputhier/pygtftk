@@ -4,13 +4,13 @@ from __future__ import print_function
 
 import argparse
 import os
+import pyBigWig
 import sys
 import zipfile
 from builtins import range
 from builtins import str
 
 import pandas as pd
-import pyBigWig
 from pybedtools import BedTool
 
 from pygtftk.arg_formatter import FileWithExtension

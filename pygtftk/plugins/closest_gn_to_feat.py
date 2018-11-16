@@ -65,7 +65,7 @@ def make_parser():
     parser_grp.add_argument('-t', '--ft-type',
                             help="The feature of interest.",
                             default='gene',
-                            choices=['gene', 'transcript' , 'tss', 'tts'],
+                            choices=['gene', 'transcript', 'tss', 'tts'],
                             required=False)
 
     parser_grp.add_argument('-n', '--names',
@@ -89,7 +89,6 @@ def make_parser():
     parser_grp.add_argument('-u', '--uncollapse',
                             help='Write one peak to gene/distance per line (no comma separated list).',
                             action="store_true")
-
 
     parser_grp.add_argument('-g', '--gene-centric',
                             help='Print --feature-type coordinate and the peak list and associated distance.',
@@ -142,7 +141,6 @@ def closest_gn_to_feat(inputfile=None,
         message("Unsupported feature (see --ft_type).",
                 type="ERROR")
 
-
     # -------------------------------------------------------------------------
     # Load the BED file
     # -------------------------------------------------------------------------
@@ -166,8 +164,8 @@ def closest_gn_to_feat(inputfile=None,
     # -------------------------------------------------------------------------
 
     region_bo = region_bo.slop(s=False,
-                                          b=slop_value,
-                                          g=chrom_info.name)
+                               b=slop_value,
+                               g=chrom_info.name)
 
     tmp_file = make_tmp_file("slopped_regions", ".bed")
     region_bo.saveas(tmp_file.name)
@@ -180,7 +178,6 @@ def closest_gn_to_feat(inputfile=None,
 
     closest = defaultdict(list)
 
-
     for feat in intersect_bo:
         cur_key = [feat[0],
                    int(feat[1]),
@@ -189,11 +186,7 @@ def closest_gn_to_feat(inputfile=None,
                    int(feat[7]),
                    int(feat[8])] + feat[9:12]
 
-
         closest[tuple(cur_key)] += [tuple(cur_val)]
-
-
-
 
     # -------------------------------------------------------------------------
     # Compute distance to gene/transcript
@@ -206,7 +199,6 @@ def closest_gn_to_feat(inputfile=None,
     #    21               22
 
     closest_dist = defaultdict(list)
-
 
     for peak, gen_list in closest.items():
 
@@ -242,7 +234,6 @@ def closest_gn_to_feat(inputfile=None,
         # -------------------------------------------------------------------------
 
         for peak in closest:
-
             gene_list = [x for _, x in sorted(zip(closest_dist[peak], closest[peak]))]
             gene_dist = sorted(closest_dist[peak])
 
@@ -250,7 +241,7 @@ def closest_gn_to_feat(inputfile=None,
 
             closest[peak] = [x[3] for x in gene_list]
             closest_dist[peak] = gene_dist
-            
+
         for peak in closest:
 
             if collapsed:
@@ -297,7 +288,6 @@ def closest_gn_to_feat(inputfile=None,
         # -------------------------------------------------------------------------
 
         for gn in closest_cp:
-
             peak_list = [x for _, x in sorted(zip(closest_dist_cp[gn], closest_cp[gn]))]
             peak_dist = sorted(closest_dist_cp[gn])
 
@@ -313,9 +303,7 @@ def closest_gn_to_feat(inputfile=None,
             # for each gene print csv of peaks and dists
             # -------------------------------------------------------------------------
 
-
             for gn in closest_cp:
-
                 col_right = ",".join(closest_cp[gn]) + "\t" + ",".join(closest_dist_cp[gn])
                 outputfile.write("\t".join(gn) + "\t" + col_right + "\n")
         else:
@@ -329,10 +317,6 @@ def closest_gn_to_feat(inputfile=None,
                 for peak, dist in zip(closest_cp[gene], closest_dist_cp[gene]):
                     col_right = "\t".join([peak, str(dist)])
                     outputfile.write("\t".join(gene) + "\t" + col_right + "\n")
-
-
-
-
 
     close_properly(outputfile, inputfile)
 

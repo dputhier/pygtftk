@@ -17,6 +17,7 @@ __updated__ = "2018-01-20"
 __doc__ = """
  Transpose coordinates in 3' or 5' direction.
 """
+
 __notes__ = """
  -- By default shift is not strand specific. Meaning that if -\shift-value is set to 10, all coordinates will be moved 10 bases in 5' direction relative to the forward/watson/plus/top strand.
  -- Use a negative value to shift in 3' direction, a positive value to shift in 5' direction.

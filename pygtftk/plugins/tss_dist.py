@@ -16,6 +16,7 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
+
 __doc__ = """
  Computes the distance between TSSs of pairs of gene transcripts.
 """
