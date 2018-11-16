@@ -293,7 +293,7 @@ def mk_matrix(
                                 ).select_by_key("seqid",
                                                 ",".join(bw_chrom))
 
-        tmp = tmp.select_by_key("feature",
+        tmp = gtf.select_by_key("feature",
                                 "transcript")
         tmp_tx_name = tmp.extract_data("transcript_id", as_list=True)
 
@@ -521,6 +521,7 @@ def mk_matrix(
                                                                  'chrom',
                                                                  'gene',
                                                                  'strand'])
+
     df_start = df_main.pop('start')
     df_end = df_main.pop('end')
     df_main.insert(2, 'start', df_start)
