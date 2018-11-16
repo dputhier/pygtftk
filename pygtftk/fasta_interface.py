@@ -171,8 +171,11 @@ class FASTA(object):
 
             yield record
 
+    """
+    This should be rewritten carefully.
+
     def iter_features(self, feat="exon", no_feat_name=False):
-        """Iterate over features.
+        Iterate over features.
 
         :param feat: The feature type (exon, CDS).
         :param no_feat_name: Don't write the feature type in the header.
@@ -200,7 +203,7 @@ class FASTA(object):
         >>> assert [rec.sequence for rec in a_list if rec.transcript_id == 'G0008T001'] == ['agcgc', 'atg']
         >>> assert [rec.sequence for rec in a_list if rec.transcript_id == 'G0004T001'] == ['atct', 'g', 'gcg']
 
-        """
+   
 
         if not self.intron:
             GTFtkError("Can't iter_features() if self.intron is False.")
@@ -238,7 +241,7 @@ class FASTA(object):
                     yield fs
 
     def enumerate(self, type="any", add_feature=False):
-        """Iterate transcript wise and return tx_id and a list of exons"""
+        Iterate transcript wise and return tx_id and a list of exons
         for i in range(self._data.nb):
             tx = self._data.sequence[i]
             tx_seq = tx.sequence
@@ -258,7 +261,7 @@ class FASTA(object):
                 yield tx.header, seq_list
 
     def as_dict(self, feat="exon"):
-        """Iterate feature wise
+        Iterate feature wise
 
         :param feat: The feature type (exon, CDS).
 
@@ -284,7 +287,7 @@ class FASTA(object):
         >>> assert a_dict[('G0004', 'G0004T002', 'chr1', 74, 75, '+', 'CDS')] == 'gc'
         >>> assert a_dict[('G0006', 'G0006T001', 'chr1', 22, 25, '-', 'CDS')] == 'acat'
         >>> assert a_dict[('G0006', 'G0006T001', 'chr1', 28, 30, '-', 'CDS')]  == 'att'
-        """
+        
 
         d_out = OrderedDict()
 
@@ -330,7 +333,7 @@ class FASTA(object):
                            b.strand.decode(),
                            name)] = seq[s:e + 1]
         return d_out
-
+    """
     def __getitem__(self, x=None):
         if 0 <= x < self._data.nb:
             return FastaSequence(self._data.data[x])
