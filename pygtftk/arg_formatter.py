@@ -554,13 +554,13 @@ class bedFileList(argparse.Action):
                 sys.exit()
 
             if len(file_bo) == 0:
-                msg = "It seems that file " + i.fn + " is empty."
+                msg = "It seems that file " + i + " is empty."
                 message(msg, type="ERROR")
                 sys.exit()
 
             if file_bo.file_type != 'bed':
                 msg = "File {f} is not a valid bed file."
-                msg = msg.format(f=i.fn)
+                msg = msg.format(f=i)
                 message(msg, type="ERROR")
                 sys.exit()
 
@@ -688,9 +688,9 @@ class globbedFileList(argparse.Action):
 
         check_file_or_dir_exists(values)
 
-        #values = [ io.TextIOWrapper(gzip.GzipFile(i, 'r')) if ".gz" in i else open(i, "r") for i in values]
+        # values = [ io.TextIOWrapper(gzip.GzipFile(i, 'r')) if ".gz" in i else open(i, "r") for i in values]
 
-        values = [ open(i, "r") for i in values]
+        values = [open(i, "r") for i in values]
 
         # Add the attribute
         setattr(namespace, self.dest, values)

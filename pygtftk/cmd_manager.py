@@ -109,7 +109,6 @@ class BashCompletionAction(argparse._StoreTrueAction):
             option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        reload(pygtftk.settings)
         print(pygtftk.settings.get_completion_script())
         sys.exit()
 

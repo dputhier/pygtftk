@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
-import sys
 import argparse
+import sys
+
 from Bio import SeqIO
-from Bio.SeqIO import FastaIO
 
 __DESC__ = ''' Compare sequences from two fasta files with records ordered in the same way.'''
+
 
 def make_parser():
     """The program parser."""
@@ -35,22 +36,22 @@ def make_parser():
 
     return parser
 
+
 def get_seq_from_ids(inputfile_1=None,
                      inputfile_2=None,
                      outputfile=None):
-
-
     record_dict_1 = SeqIO.to_dict(SeqIO.parse(inputfile_1.name, "fasta"))
     record_dict_2 = SeqIO.to_dict(SeqIO.parse(inputfile_2.name, "fasta"))
 
     all_key = list(set(list(record_dict_1.keys()) + list(record_dict_2.keys())))
     for i in all_key:
         if record_dict_1[i].seq != record_dict_2[i].seq:
-            print("-- " + i + " has not the same sequence in both files...")
-            print("->" + record_dict_1[i].seq)
-            print("->" + record_dict_2[i].seq)                  
+            outputfile.write("-- " + i + " has not the same sequence in both files...\n")
+            outputfile.write("->" + record_dict_1[i].seq + "\n")
+            outputfile.write("->" + record_dict_2[i].seq + "\n")
         else:
-            print("-- " + i + " has same sequence")
+            outputfile.write("-- " + i + " has same sequence\n")
+
 
 def main():
     """The main function."""

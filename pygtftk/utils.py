@@ -923,7 +923,7 @@ def to_alphanum(string):
     are found at the beginning or end of the string, they are deleted.
 
     :param string: A character string in which non alphanumeric char have to be replaced.
-    :param replacement_list:
+
 
     :Example :
 
@@ -973,6 +973,7 @@ def nested_dict(n, type):
         return defaultdict(type)
     else:
         return defaultdict(lambda: nested_dict(n - 1, type))
+
 
 def flatten_list(x, outlist=[]):
     """Flatten a list of lists.

@@ -637,7 +637,7 @@ class GTF(object):
         """
         Print the nb first lines of the GTF object.
 
-        :param n: The number of line to display.
+        :param nb: The number of line to display.
         :param returned: If True, don't print but returns the message.
 
         """
@@ -677,7 +677,7 @@ class GTF(object):
         """
         Print the nb last lines of the GTF object.
 
-        :param n: The number of line to display.
+        :param nb: The number of line to display.
         """
 
         nb_rec = len(self)
@@ -1202,8 +1202,6 @@ class GTF(object):
             nr = 1
         else:
             nr = 0
-
-        key_list = keys.split(",")
 
         message("Calling extract_data_iter.", type="DEBUG")
 
@@ -3421,7 +3419,6 @@ class GTF(object):
 if __name__ == "__main__":
 
     from pygtftk.utils import get_example_file
-    from pygtftk.gtf_interface import GTF
 
     a = get_example_file()
     gtf = GTF(a[0])

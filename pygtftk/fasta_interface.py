@@ -8,7 +8,6 @@ import textwrap
 from builtins import object
 from builtins import range
 from builtins import str
-from collections import OrderedDict
 
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
@@ -16,7 +15,6 @@ from Bio.SeqRecord import SeqRecord
 from cffi import FFI
 
 from pygtftk.Line import FastaSequence
-from pygtftk.utils import GTFtkError
 from pygtftk.utils import PY3
 
 ffi = FFI()
@@ -334,6 +332,7 @@ class FASTA(object):
                            name)] = seq[s:e + 1]
         return d_out
     """
+
     def __getitem__(self, x=None):
         if 0 <= x < self._data.nb:
             return FastaSequence(self._data.data[x])

@@ -63,7 +63,7 @@ class Biomart(object):
         message("Listing available databases", type="DEBUG")
         try:
             self.query(query={'type': 'registry'})
-        except ConnectionError as err:
+        except ConnectionError:
             message("Raised a connection Error.", type="ERROR")
 
         tree = elmt_tree.fromstring(self.response.content)
