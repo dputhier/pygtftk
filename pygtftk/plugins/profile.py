@@ -184,11 +184,6 @@ def make_parser():
                             type=int_greater_than_null,
                             required=False)
 
-    parser_grp.add_argument('-fo', '--force-tx-class',
-                            help='Force even if some transcripts from --transcript-file were not found.',
-                            action="store_true",
-                            required=False)
-
     parser_grp.add_argument('-w', '--show-group-number',
                             help='Show the number of element per group.',
                             action="store_true",
@@ -263,7 +258,6 @@ def profile(inputfile=None,
             group_by='bwig',
             color_order=None,
             transcript_file=None,
-            transform=None,
             normalization_method=None,
             to_log=False,
             upper_limit=0.95,
@@ -274,7 +268,6 @@ def profile(inputfile=None,
             page_height=None,
             page_format='pdf',
             user_img_file=None,
-            tmp_dir=None,
             facet_col=None,
             border_color="#BBBBBB",
             stat="mean",
@@ -288,6 +281,7 @@ def profile(inputfile=None,
             theme_plotnine='bw',
             confidence_interval=False,
             dpi=300,
+            tmp_dir=None,
             logger_file=None,
             verbosity=False
             ):
@@ -485,11 +479,11 @@ def profile(inputfile=None,
             # Select the transcript of interest and add classes info to the data.frame
             # -------------------------------------------------------------------------
 
-            message("Checking how many genes where found in the transcript list.")
+            message("Checking how many transcript where found in the transcript list.")
 
             nb_retained = len([x for x in all_tx if x in tx_ordering])
 
-            msg = "Keeping {a} transcript out of {b}.".format(a=nb_retained, b=len(all_tx))
+            msg = "Keeping {a} transcript out of {b} in input transcript list.".format(a=nb_retained, b=len(all_tx))
             message(msg)
 
             # subsetting
