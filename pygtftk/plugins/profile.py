@@ -5,6 +5,7 @@ import argparse
 import os
 import re
 import shutil
+import sys
 import warnings
 import zipfile
 from builtins import range
@@ -250,6 +251,10 @@ def make_parser():
                             default="nipy_spectral",
                             required=False)
 
+    parser_grp.add_argument('-l', '--list-bwig',
+                            help='List the bigwig files in the matrix file..',
+                            action="store_true")
+
     return parser
 
 
@@ -279,6 +284,7 @@ def profile(inputfile=None,
             show_group_number=False,
             line_width=1,
             theme_plotnine='bw',
+            list_bwig=False,
             confidence_interval=False,
             dpi=300,
             tmp_dir=None,
@@ -379,6 +385,10 @@ def profile(inputfile=None,
             input_file_tx.add(tx_id)
             input_file_chrom.add(chrom)
             input_file_bwig.add(field[0])
+
+    if list_bwig:
+        message("Bigwig list: " + ",".join(input_file_bwig), force=True)
+        sys.exit(0)
 
     # -------------------------------------------------------------------------
     #
