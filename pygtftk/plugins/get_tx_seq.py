@@ -371,7 +371,7 @@ else:
         
     # load mini_real_10M
     @test "get_tx_seq_15" {
-     result=`gtftk get_example -f '*' -d mini_real_10M; gunzip -f chr1_hg38_10M.fa.gz`
+     result=`gtftk get_example -f '*' -d mini_real_10M; if [ ! -f chr1_hg38_10M.fa ]; then gunzip -f chr1_hg38_10M.fa.gz; fi `
       [ "$result" = "" ]
     }
 
