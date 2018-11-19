@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from __future__ import division
 
 import argparse
@@ -32,6 +33,7 @@ from pygtftk.arg_formatter import float_greater_than_null
 from pygtftk.arg_formatter import float_grt_than_null_and_lwr_than_one
 from pygtftk.arg_formatter import int_greater_than_null
 from pygtftk.cmd_object import CmdObject
+from pygtftk.utils import ALL_MPL_PALETTES
 from pygtftk.utils import GTFtkError
 from pygtftk.utils import chomp
 from pygtftk.utils import is_hex_color
@@ -512,23 +514,7 @@ def profile(inputfile=None,
     #
     # -------------------------------------------------------------------------
 
-    all_palettes = ['viridis', 'plasma', 'inferno', 'magma',
-                    'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
-                    'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-                    'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn',
-                    'binary', 'gist_yarg', 'gist_gray', 'gray', 'bone', 'pink',
-                    'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia',
-                    'hot', 'afmhot', 'gist_heat', 'copper',
-                    'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
-                    'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic',
-                    'Pastel1', 'Pastel2', 'Paired', 'Accent',
-                    'Dark2', 'Set1', 'Set2', 'Set3',
-                    'tab10', 'tab20', 'tab20b', 'tab20c',
-                    'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
-                    'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg', 'hsv',
-                    'gist_rainbow', 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar']
-
-    if palette not in all_palettes:
+    if palette not in ALL_MPL_PALETTES:
         message("Sorry but the palette is unknown.")
 
     def get_list_of_colors_mpl(number, pal=palette):
