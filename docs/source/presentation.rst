@@ -1316,7 +1316,7 @@ Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to
 **Example:**
 
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if  example_05.png -e -V 2 -fc 2
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_05.png -e -V 2 -fc 2
 	:shell:
 
 
@@ -1328,7 +1328,7 @@ Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to
 Alternatively, the groups can be set to chromosomes or transcript classes:
 
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if  example_06.png -V 2 -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_06.png -V 2 -nm ranging
 	:shell:
 
 
@@ -1337,7 +1337,7 @@ Alternatively, the groups can be set to chromosomes or transcript classes:
     :target: _static/example_06.png
 
 
-.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig -fo -t tx_classes.txt -o profile_prom  -pf png -if  example_06b.png -V 2 -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_06b.png -V 2 -nm ranging
 	:shell:
 
 
@@ -1349,7 +1349,7 @@ Alternatively, the groups can be set to chromosomes or transcript classes:
 Note that facets may also be associated to epigenetic marks. In this case each the --group-by can be set to *tx_classes* or *chrom*.
 
 
-.. command-output:: gtftk profile -D -i mini_real_tx.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if  example_07.png  -fo -w -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_tx.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if  example_07.png -w -nm ranging
 	:shell:
 
 
@@ -1358,7 +1358,7 @@ Note that facets may also be associated to epigenetic marks. In this case each t
     :target: _static/example_07.png
 
 
-.. command-output:: gtftk profile -D -i mini_real_tx.zip -g chrom -f bwig  -o profile_tx -pf png -if  example_08.png  -fo -w -nm ranging
+.. command-output:: gtftk profile -D -i mini_real_tx.zip -g chrom -f bwig  -o profile_tx -pf png -if  example_08.png  -w -nm ranging
 	:shell:
 
 
