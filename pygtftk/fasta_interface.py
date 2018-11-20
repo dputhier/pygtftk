@@ -15,28 +15,18 @@ from Bio.SeqRecord import SeqRecord
 from cffi import FFI
 
 from pygtftk.Line import FastaSequence
-from pygtftk.utils import PY3
 
 ffi = FFI()
 
+
 # ---------------------------------------------------------------
-# Python2/3  compatibility
+# Function def
 # ---------------------------------------------------------------
 
 
-try:
-    basestring
-except NameError:
-    basestring = str
+def native_str(x):
+    return bytes(x.encode())
 
-if PY3:
-    from io import IOBase
-
-    file = IOBase
-
-if PY3:
-    def native_str(x):
-        return bytes(x.encode())
 
 # ---------------------------------------------------------------
 # The FASTA class
@@ -65,8 +55,7 @@ class FASTA(object):
         >>> from future.utils import native_str
         >>> from pygtftk.fasta_interface import  FASTA
         >>> from pygtftk.gtf_interface import GTF
-        >>> from pygtftk.utils import PY3
-        >>> if PY3: native_str=lambda x:bytes(x.encode())
+        >>> native_str=lambda x:bytes(x.encode())
         >>> from pygtftk.utils import get_example_file
         >>> a_file = get_example_file("simple", "gtf")[0]
         >>> a_gtf = GTF(a_file)

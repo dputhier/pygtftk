@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+
 
 """ Select the shortest mature transcript (i.e without introns) for each gene or the longest if the \
 -l arguments is used. """
+
 import os
 
 __updated__ = "2018-01-25"

@@ -8,6 +8,7 @@ import argparse
 import errno
 import glob
 import imp
+import io
 import logging
 import os
 import re
@@ -31,25 +32,12 @@ import pygtftk.plugins
 import pygtftk.settings
 import pygtftk.utils
 from pygtftk.arg_formatter import ArgFormatter
-from pygtftk.utils import PY2
-from pygtftk.utils import PY3
-from pygtftk.utils import add_r_lib
-from pygtftk.utils import check_r_packages
 from pygtftk.utils import left_strip_str
 from pygtftk.utils import make_tmp_dir
 from pygtftk.utils import message
 from pygtftk.utils import mkdir_p
 from pygtftk.utils import print_table
 from pygtftk.version import __version__
-
-# ---------------------------------------------------------------
-# Python2/3  compatibility
-# ---------------------------------------------------------------
-
-if PY3:
-    from io import IOBase
-
-    file = IOBase
 
 
 # ---------------------------------------------------------------
@@ -434,19 +422,11 @@ class CmdManager(object):
 
     """
 
-    if PY2:
-        parser = argparse.ArgumentParser(
-            formatter_class=ArgFormatter,
-            description=prg_desc,
-            epilog="------------------------\n",
-            version='%(prog)s v{0}'.format(__version__)
-        )
-    if PY3:
-        parser = argparse.ArgumentParser(
-            formatter_class=ArgFormatter,
-            description=prg_desc,
-            epilog="------------------------\n"
-        )
+    parser = argparse.ArgumentParser(
+        formatter_class=ArgFormatter,
+        description=prg_desc,
+        epilog="------------------------\n"
+    )
 
     parser._optionals.title = "Main command arguments"
 
@@ -475,10 +455,9 @@ class CmdManager(object):
                         help="Print plugin path",
                         action=getPluginPath)
 
-    if PY3:
-        parser.add_argument('-v', '--version',
-                            action='version',
-                            version='%(prog)s v{0}'.format(__version__))
+    parser.add_argument('-v', '--version',
+                        action='version',
+                        version='%(prog)s v{0}'.format(__version__))
 
     """
     parser.add_argument('-r', '--r-libs',
@@ -853,7 +832,8 @@ class CmdManager(object):
         else:
             raise ValueError("Unknow group for commande : %s" % cmd.name)
 
-    def _find_plugins(self):
+    @staticmethod
+    def _find_plugins():
 
         message("Searching plugins", force=True)
         config_file = CmdManager.config_file
@@ -905,10 +885,7 @@ class CmdManager(object):
 
         message("Dumping plugins", force=True)
 
-        if PY2:
-            f_handler = open(CmdManager.dumped_plugin_path, "w")
-        if PY3:
-            f_handler = open(CmdManager.dumped_plugin_path, "wb")
+        f_handler = open(CmdManager.dumped_plugin_path, "wb")
 
         pick = cloudpickle.CloudPickler(f_handler)
         pick.dump((self.cmd_obj_list, self.parser))
@@ -933,14 +910,11 @@ class CmdManager(object):
 
         self._load_dumped_plugins()
 
-    def _load_dumped_plugins(self):
+    @staticmethod
+    def _load_dumped_plugins():
 
-        if PY2:
-            f_handler = open(CmdManager.dumped_plugin_path, "r")
-            CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
-        if PY3:
-            f_handler = open(CmdManager.dumped_plugin_path, "rb")
-            CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
+        f_handler = open(CmdManager.dumped_plugin_path, "rb")
+        CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
         f_handler.close()
 
         for cur_cmd in sorted(CmdManager.cmd_obj_list):
@@ -1050,7 +1024,7 @@ class CmdManager(object):
                 del args['command']
 
                 for key, value in list(args.items()):
-                    if isinstance(value, file):
+                    if isinstance(value, io.IOBase):
                         value = value.name
                     else:
                         value = str(value)

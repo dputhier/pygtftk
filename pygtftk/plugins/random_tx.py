@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
@@ -11,8 +10,6 @@ from pygtftk.arg_formatter import FileWithExtension
 from pygtftk.arg_formatter import int_greater_than_null
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
-from pygtftk.utils import PY2
-from pygtftk.utils import PY3
 from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
@@ -88,12 +85,7 @@ def random_tx(
     message("Selecting random transcript")
 
     if seed_value is not None:
-        if PY3:
-            # Unfortunatly 'version 1'
-            # is not back-compatible...
-            random.seed(seed_value, version=1)
-        elif PY2:
-            random.seed(seed_value)
+        random.seed(seed_value, version=1)
 
     tx_to_delete = []
 

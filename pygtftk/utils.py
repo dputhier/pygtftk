@@ -5,12 +5,16 @@ from __future__ import print_function
 
 import datetime
 import glob
+import io
 import os
 import random
 import re
 import string
 import sys
 import time
+from builtins import range
+from builtins import str
+from builtins import zip
 from collections import defaultdict
 from distutils.spawn import find_executable
 from subprocess import PIPE
@@ -20,18 +24,6 @@ from tempfile import NamedTemporaryFile, mkdtemp
 from future.utils import old_div
 
 import pygtftk
-
-# -------------------------------------------------------------------------
-# Python Version
-# -------------------------------------------------------------------------
-
-
-PY3 = sys.version_info[0] == 3
-PY2 = sys.version_info[0] == 2
-if PY3:
-    from builtins import range
-    from builtins import str
-    from builtins import zip
 
 # -------------------------------------------------------------------------
 # VARIABLES
@@ -59,24 +51,6 @@ CHROM_CHECKED = False
 # Characters
 TAB = '\t'
 NEWLINE = '\n'
-
-# R libraries
-R_LIB = defaultdict(list)
-
-# ---------------------------------------------------------------
-# Python2/3  compatibility
-# ---------------------------------------------------------------
-
-
-try:
-    basestring
-except NameError:
-    basestring = str
-
-if PY3:
-    from io import IOBase
-
-    file = IOBase
 
 
 # ---------------------------------------------------------------
@@ -305,7 +279,7 @@ def add_prefix_to_file(infile, prefix=None):
     if prefix is None:
         return infile
 
-    if isinstance(infile, file):
+    if isinstance(infile, io.IOBase):
         new_file = infile.name
     else:
         new_file = infile
@@ -313,7 +287,7 @@ def add_prefix_to_file(infile, prefix=None):
     new_file = os.path.join(os.path.dirname(new_file),
                             prefix + os.path.basename(new_file))
 
-    if isinstance(infile, file):
+    if isinstance(infile, io.IOBase):
         return open(new_file, "w")
     else:
         return new_file
@@ -453,7 +427,7 @@ def check_file_or_dir_exists(file_or_dir=None):
         file_or_dir = [file_or_dir]
 
     # Convert to filename
-    file_or_dir = [x.name if isinstance(x, file) else x for x in file_or_dir]
+    file_or_dir = [x.name if isinstance(x, io.IOBase) else x for x in file_or_dir]
 
     for file_or_dir_cur in file_or_dir:
 
@@ -571,27 +545,19 @@ def chrom_info_to_bed_file(chrom_file, chr_list=None):
 
     >>> from  pygtftk.utils import chrom_info_to_bed_file
     >>> from  pygtftk.utils import get_example_file
-    >>> from pygtftk.utils import PY3
-    >>> from pygtftk.utils import PY2
     >>> from pybedtools import  BedTool
     >>> a = get_example_file(ext='chromInfo')
     >>> b = chrom_info_to_bed_file(open(a[0], 'r'))
     >>> c = BedTool(b.name)
     >>> d = c.__iter__()
     >>> i = next(d)
-    >>> if PY2: assert str(i.chrom) == 'chr2'
-    >>> if PY2: assert i.start == 0
-    >>> if PY2: assert i.end == 600
-    >>> if PY3: assert str(i.chrom) == 'chr1'
-    >>> if PY3: assert i.start == 0
-    >>> if PY3: assert i.end == 300
+    >>> assert str(i.chrom) == 'chr1'
+    >>> assert i.start == 0
+    >>> assert i.end == 300
     >>> i = next(d)
-    >>> if PY3: assert str(i.chrom) == 'chr2'
-    >>> if PY3: assert i.start == 0
-    >>> if PY3: assert i.end == 600
-    >>> if PY2: assert str(i.chrom) == 'chr1'
-    >>> if PY2: assert i.start == 0
-    >>> if PY2: assert i.end == 300
+    >>> str(i.chrom) == 'chr2'
+    >>> i.start == 0
+    >>> i.end == 600
     """
 
     message("Converting chrom info to bed format")
@@ -717,7 +683,7 @@ def silentremove(filename):
     >>> assert not os.path.exists(a.name)
 
     """
-    if isinstance(filename, file):
+    if isinstance(filename, io.IOBase):
         filename = filename.name
 
     try:
@@ -827,22 +793,6 @@ def message(msg, nl=True, type="INFO", force=False):
 
     if force:
         pygtftk.utils.VERBOSITY = VERBOSITY_BACK
-
-
-# ---------------------------------------------------------------
-# Line type
-# ---------------------------------------------------------------
-
-def add_r_lib(cmd=None, libs=None):
-    """Declare a new set of required R libraries.
-
-    :param libs: Comma separated list of R libraries.
-    :param cmd: The target command.
-
-    """
-
-    for lib in libs.split(","):
-        R_LIB[cmd] += [lib]
 
 
 # ---------------------------------------------------------------

@@ -15,6 +15,7 @@ from __future__ import print_function
 
 import gc
 import glob
+import io
 import os
 import re
 import sys
@@ -27,7 +28,6 @@ from collections import OrderedDict
 from collections import defaultdict
 
 from cffi import FFI
-from future.utils import native_str
 from pybedtools.bedtool import BedTool
 from pyparsing import CaselessLiteral
 from pyparsing import Combine
@@ -47,7 +47,6 @@ from pygtftk.Line import Feature
 from pygtftk.fasta_interface import FASTA
 from pygtftk.tab_interface import TAB
 from pygtftk.utils import GTFtkError
-from pygtftk.utils import PY3
 from pygtftk.utils import check_file_or_dir_exists
 from pygtftk.utils import chomp
 from pygtftk.utils import chrom_info_to_bed_file
@@ -55,24 +54,15 @@ from pygtftk.utils import flatten_list_recur
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
+
 # ---------------------------------------------------------------
-# Python2/3  compatibility
+# Function definition
 # ---------------------------------------------------------------
 
 
-try:
-    basestring
-except NameError:
-    basestring = str
+def native_str(x):
+    return bytes(x.encode())
 
-if PY3:
-    from io import IOBase
-
-    file = IOBase
-
-if PY3:
-    def native_str(x):
-        return bytes(x.encode())
 
 # ---------------------------------------------------------------
 # find module path
@@ -435,7 +425,7 @@ class GTF(object):
         if isinstance(input_obj, list):
             input_obj = input_obj[0]
 
-        if isinstance(input_obj, file):
+        if isinstance(input_obj, io.IOBase):
 
             if input_obj.name != '<stdin>':
                 self.fn = input_obj.name
@@ -443,7 +433,7 @@ class GTF(object):
                 self.fn = "-"
             self._data = 0
 
-        elif isinstance(input_obj, basestring):
+        elif isinstance(input_obj, str):
 
             if input_obj == '-':
                 self.fn = "-"
@@ -959,7 +949,7 @@ class GTF(object):
             raise GTFtkError(msg)
 
         if not isinstance(keys, list):
-            if isinstance(keys, basestring):
+            if isinstance(keys, str):
                 keys = keys.split(",")
             else:
                 raise GTFtkError("Please provide a key as str or list.")
@@ -1442,10 +1432,10 @@ class GTF(object):
 
         else:
 
-            if not isinstance(key, basestring):
+            if not isinstance(key, str):
                 raise GTFtkError("Key should be a string")
 
-            if not isinstance(value, basestring):
+            if not isinstance(value, str):
                 raise GTFtkError("Value should be a unicode string")
 
             new_data = self._dll.select_by_key(self._data,
@@ -1998,7 +1988,7 @@ class GTF(object):
         if inputfile is None:
             raise GTFtkError("Need an input/join file.")
 
-        if isinstance(inputfile, basestring):
+        if isinstance(inputfile, str):
             inputfile = open(inputfile)
 
         message("Reading file to join.", type="DEBUG")
@@ -2077,7 +2067,7 @@ class GTF(object):
         if inputfile is None:
             raise GTFtkError("Need an input/join file.")
 
-        if isinstance(inputfile, file):
+        if isinstance(inputfile, io.IOBase):
             inputfile = inputfile.name
 
         id_to_val = defaultdict(lambda: defaultdict(list))
@@ -2413,7 +2403,7 @@ class GTF(object):
         if isinstance(output, list):
             output = output[0]
 
-        if isinstance(output, basestring):
+        if isinstance(output, str):
             if output == "-":
                 output_str = "-"
             else:
@@ -2424,7 +2414,7 @@ class GTF(object):
                     raise GTFtkError("Unable to open file %s" % output)
                 output_str = output.name
 
-        elif isinstance(output, file):
+        elif isinstance(output, io.IOBase):
             if output.name != '<stdout>':
                 output.close()
                 output_str = output.name
@@ -2914,7 +2904,7 @@ class GTF(object):
 
         message("Calling 'get_intergenic'.", type="DEBUG")
 
-        if not isinstance(chrom_file, file):
+        if not isinstance(chrom_file, io.IOBase):
             raise GTFtkError('chrom_file should be a file object.')
 
         if not os.path.exists(chrom_file.name):
@@ -3348,7 +3338,7 @@ class GTF(object):
         >>> assert [int(x) for x in a_list] == list(range(70))
         """
 
-        if isinstance(input_file, basestring):
+        if isinstance(input_file, str):
             input_file = open(input_file)
 
         if input_file.closed:
@@ -3391,7 +3381,7 @@ class GTF(object):
         >>> assert a_list[3] == 'CCC'
         """
 
-        if isinstance(input_file, basestring):
+        if isinstance(input_file, str):
             input_file = open(input_file)
 
         if input_file.closed:

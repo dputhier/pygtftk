@@ -23,25 +23,9 @@ from cffi import FFI
 import pygtftk.utils
 import pygtftk.utils
 from pygtftk.utils import GTFtkError
-from pygtftk.utils import PY3
 from pygtftk.utils import write_properly
 
 ffi = FFI()
-
-# ---------------------------------------------------------------
-# Python2/3  compatibility
-# ---------------------------------------------------------------
-
-
-try:
-    basestring
-except NameError:
-    basestring = str
-
-if PY3:
-    from io import IOBase
-
-    file = IOBase
 
 
 # ---------------------------------------------------------------
@@ -511,7 +495,7 @@ class Feature(object):
         >>> assert feat.format_tab('transcript_id') == a
 
         """
-        if isinstance(attr_list, basestring):
+        if isinstance(attr_list, str):
             attr_list = [attr_list]
 
         tok = list()
@@ -840,7 +824,7 @@ class Feature(object):
 
         """
 
-        if isinstance(attr_name, basestring):
+        if isinstance(attr_name, str):
             attr_name = [attr_name]
 
         if not isinstance(attr_name, list):
