@@ -1599,18 +1599,21 @@ class GTF(object):
         if isinstance(start_str, list):
             start_str = [str(x) for x in start_str]
             start_str = ",".join(start_str)
+
         elif isinstance(start_str, int):
             start_str = str(start_str)
 
         if isinstance(end_str, list):
             end_str = [str(x) for x in end_str]
             end_str = ",".join(end_str)
+
         elif isinstance(end_str, int):
             end_str = str(end_str)
 
         chr_list = chr_str.split(",")
         start_list = start_str.split(",")
         start_list = [int(x) for x in start_list]
+
         end_list = end_str.split(",")
         end_list = [int(x) for x in end_list]
 
@@ -1624,6 +1627,7 @@ class GTF(object):
         msg = "Calling select_by_loc ({n} locations)."
         msg = msg.format(n=nb_loc)
         message(msg, type="DEBUG")
+
         # GTF_DATA *gtf_data, int nb_loc, char **chr, int *begin_gl, int
         # *end_gl
         new_data = self._dll.select_by_genomic_location(self._data,
@@ -1655,16 +1659,13 @@ class GTF(object):
 
         info = self.extract_data("gene_id,transcript_id",
                                  as_list_of_list=True,
-                                 nr=True,
-                                 no_na=True, hide_undef=True)
+                                 nr=True, no_na=True, hide_undef=True)
 
         gene_to_tx_max_exon = OrderedDict()
 
         for i in info:
 
             gene_id, tx_id = i
-            gene_id = gene_id
-            tx_id = tx_id
 
             if gene_id in gene_to_tx_max_exon:
                 if nb_exons[tx_id] > nb_exons[gene_to_tx_max_exon[gene_id]]:
@@ -2051,8 +2052,8 @@ class GTF(object):
                                   inputfile=None):
         """Add key/value pairs to the GTF file. Expect a matrix with row names as target keys column names as novel key and each cell as value.
 
-        :param feat: The comma separated list of target feature. If None, all the features.
-        :param key: The name of the key used for joining (i.e the key corresponding to value provided in the file).
+        :param feat: The comma separated list of target features. If None, all the features.
+        :param key: The name of the key to use for joining (i.e the key corresponding to value provided in the file).
         :param inputfile: A two column (e.g transcript_id and new value) file.
 
         :Example:
@@ -2140,8 +2141,8 @@ class GTF(object):
                            new_key_value=[]):
         """Add key/value pairs to the GTF object.
 
-        :param feat: The comma separated list of target feature. If None, all the features.
-        :param key: The name of the key used for joining (e.g 'transcript_id').
+        :param feat: The comma separated list of target features. If None, all the features.
+        :param key: The name of the key to use for joining (e.g 'transcript_id').
         :param key_value: The values for the key (e.g ['tx_1', 'tx_2',...,'tx_n'])
         :param new_key: A name for the novel key.
         :param new_key_value: A name for the novel key (e.g ['val_tx_1', 'val_tx_2',...,'val_tx_n']).
@@ -3227,7 +3228,6 @@ class GTF(object):
         >>> assert len(a_feat) == 4
         >>> a_feat = a_gtf.get_feature_list(nr=False)
         >>> assert len(a_feat) == 70
-
         """
 
         message("Calling 'get_feature_list'.", type="DEBUG")
