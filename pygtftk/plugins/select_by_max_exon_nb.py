@@ -12,7 +12,7 @@ from pygtftk.utils import message
 
 __updated__ = "2018-02-11"
 __doc__ = """
-For each gene select the transcript with the highest number of exons.
+For each gene select the transcript with the highest number of exons. If ties, select the first encountered.
 """
 
 
