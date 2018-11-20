@@ -15,6 +15,11 @@ __doc__ = """
  Select lines from a GTF file based on a regexp.
 """
 
+__notes__ = """
+ -- The default is to try to select feature from conventional human chromosome (chr1..chr22, chrX and chrY) with
+ -\-key set to chrom and -\-regexp set to "^chr[0-9XY]+$".
+"""
+
 
 def make_parser():
     """The program parser."""
@@ -38,14 +43,12 @@ def make_parser():
                         help='The key name',
                         default="chrom",
                         metavar="KEY",
-                        type=str,
-                        required=True)
+                        type=str)
 
     parser.add_argument('-r', '--regexp',
                         help='The regular expression.',
                         default="^chr[0-9XY]+$",
-                        type=str,
-                        required=True)
+                        type=str)
 
     parser.add_argument('-n', '--invert-match',
                         help='Not/invert match. Selected lines whose requested key '
@@ -124,5 +127,6 @@ else:
               fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
+              notes=__notes__,
               updated=__updated__,
               test=test)
