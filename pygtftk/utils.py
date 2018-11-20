@@ -438,7 +438,6 @@ def check_file_or_dir_exists(file_or_dir=None):
     """Check if a file/directory or a list of files/directories exist. Raise error if a file is not found.
 
     :param file_or_dir: file object or a list of file object.
-    :param  is_list: Is file_or_dir a list ?
 
     :Example:
 
@@ -979,6 +978,7 @@ def flatten_list(x, outlist=[]):
     """Flatten a list of lists.
 
     :param x: a list or list of list.
+    :param outlist: The output list.
 
     :Example:
 
