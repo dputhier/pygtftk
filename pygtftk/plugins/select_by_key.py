@@ -166,18 +166,16 @@ def select_by_key(inputfile=None,
         key = "feature"
         value = "exon"
 
-    elif value is not None and key is None:
-        message("Please set -k.",
-                type="ERROR")
-
-    elif value is None and file_with_values is None:
-        if key is not None:
-            message("Key and value are mandatory. Alternatively use -e/t/g/f.",
+    elif file_with_values is None:
+        if key is None or value is None:
+            message("Key and value are mandatory. Alternatively use -e/t/g/f or -f with -k.",
                     type="ERROR")
 
     elif file_with_values is not None:
         if key is None:
             message("Please set -k.", type="ERROR")
+        if value is not None:
+            message("The -f and -v arguments are mutually exclusive.", type="ERROR")
 
     # ----------------------------------------------------------------------
     # Load file with value
