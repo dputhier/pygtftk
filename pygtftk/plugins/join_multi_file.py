@@ -46,7 +46,7 @@ def make_parser():
                             type=str,
                             required=False)
 
-    parser_grp.add_argument('matrix-files',
+    parser_grp.add_argument('matrix_files',
                             help="'A set of "
                                  "matrix files with row names as target keys column names as novel "
                                  "key and each cell as value.",
