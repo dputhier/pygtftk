@@ -6,7 +6,7 @@ import os
 import re
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -31,15 +31,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.gtf_rw('w'))
 
     parser_grp.add_argument('-k', '--key',
                             help='Comma separated list of attribute names or a '

@@ -26,10 +26,7 @@ from plotnine import ggplot
 from plotnine import xlab
 from plotnine import ylab
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import float_greater_than_null
-from pygtftk.arg_formatter import float_grt_than_null_and_lwr_than_one
-from pygtftk.arg_formatter import int_greater_than_null
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.utils import ALL_MPL_PALETTES
 from pygtftk.utils import GTFtkError
@@ -72,7 +69,7 @@ def make_parser():
                             help='A zip file containing a matrix as produced by mk_matrix.',
                             default=None,
                             metavar='MATRIX',
-                            type=FileWithExtension('r', '\.[Zz][Ii][Pp]'),
+                            type=arg_formatter.zip_rw('r'),
                             required=True)
 
     parser_grp.add_argument('-o', '--out-dir',
@@ -127,13 +124,19 @@ def make_parser():
 
     parser_grp.add_argument('-pw', '--page-width',
                             help='Output pdf file width (e.g. 7 inches).',
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=None,
+                                                          val_type="float",
+                                                          linc=False),
                             default=None,
                             required=False)
 
     parser_grp.add_argument('-ph', '--page-height',
                             help='Output  file height (e.g. 5 inches).',
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=None,
+                                                          val_type="float",
+                                                          linc=False),
                             default=None,
                             required=False)
 
@@ -145,7 +148,10 @@ def make_parser():
 
     parser_grp.add_argument('-lw', '--line-width',
                             help='Line width.',
-                            type=float_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=None,
+                                                          val_type="float",
+                                                          linc=False),
                             default=1.25,
                             required=False)
 
@@ -182,7 +188,10 @@ def make_parser():
     parser_grp.add_argument('-fc', '--facet-col',
                             help='Number of facet columns.',
                             default=4,
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=1,
+                                                          highest=None,
+                                                          val_type="int",
+                                                          linc=True),
                             required=False)
 
     parser_grp.add_argument('-w', '--show-group-number',
@@ -198,7 +207,10 @@ def make_parser():
 
     parser_grp.add_argument('-ul',
                             '--upper-limit',
-                            type=float_grt_than_null_and_lwr_than_one,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=1,
+                                                          val_type="float",
+                                                          linc=False),
                             default=0.95,
                             help='Upper limit based on quantile computed from unique values.',
                             required=False)
@@ -223,7 +235,10 @@ def make_parser():
 
     parser_grp.add_argument('-dpi', '--dpi',
                             help='Dpi to use.',
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=50,
+                                                          highest=None,
+                                                          val_type="int",
+                                                          linc=True),
                             default=300,
                             required=False)
 

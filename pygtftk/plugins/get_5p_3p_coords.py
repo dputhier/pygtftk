@@ -5,7 +5,7 @@ import argparse
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import chomp
@@ -30,16 +30,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file (BED).",
                             default=sys.stdout,
                             metavar="BED",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Bb][Ee][Dd]$',
-                                                                     '\.[Bb][Ee][Dd]6$')))
+                            type=arg_formatter.bed_rw('w'))
 
     parser_grp.add_argument('-t', '--ft-type',
                             help="The target feature (as found in the 3rd "

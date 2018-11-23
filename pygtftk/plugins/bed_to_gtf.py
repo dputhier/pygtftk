@@ -11,7 +11,7 @@ from builtins import str
 from pybedtools import BedTool
 
 import pygtftk.utils
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.utils import chomp
 from pygtftk.utils import close_properly
@@ -37,17 +37,13 @@ def make_parser():
                                  "behave as if it was a GTF.",
                             default=sys.stdin,
                             metavar="BED",
-                            type=FileWithExtension('r',
-                                                   valid_extensions=('\.[Bb][Ee][Dd]$',
-                                                                     '\.[Bb][Ee][Dd]3$',
-                                                                     '\.[Bb][Ee][Dd]6$')))
+                            type=arg_formatter.bed_rw('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.gtf_rw('w'))
 
     parser_grp.add_argument('-t', '--ft-type',
                             help="The type of features you are trying to "

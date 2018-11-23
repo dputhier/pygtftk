@@ -8,7 +8,7 @@ import sys
 import ftputil
 from ftputil.error import FTPOSError
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import message
@@ -35,8 +35,7 @@ def make_parser():
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file (gtf.gz).",
                             metavar="GTF.GZ",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]\.[Gg][Zz]$'))
+                            type=arg_formatter.gtf_rwb('w'))
 
     parser_grp.add_argument('-e', '--ensembl-collection',
                             help="Which ensembl collection to interrogate"

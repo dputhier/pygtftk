@@ -6,7 +6,7 @@ import os
 import sys
 from builtins import str
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -27,17 +27,13 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF",
                             required=False,
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="BED/BED3/BED6",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Bb][Ee][Dd]$',
-                                                                     '\.[Bb][Ee][Dd]3$',
-                                                                     '\.[Bb][Ee][Dd]6$')))
+                            type=arg_formatter.bed_rw('w'))
 
     parser_grp.add_argument('-n', '--names',
                             help="The key(s) that should be used as name.",

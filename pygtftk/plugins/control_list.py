@@ -22,8 +22,7 @@ from plotnine import (aes, xlab,
                       theme_bw, scale_fill_manual, geom_violin)
 from plotnine import ggplot
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import int_greater_than_null
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.utils import chomp
 from pygtftk.utils import is_hex_color
@@ -55,11 +54,7 @@ def make_parser():
                             metavar='TXT',
                             help='A two columns tab-file. See notes.',
                             default=None,
-                            type=FileWithExtension('r',
-                                                   valid_extensions=('\.[Tt][Xx][Tt]',
-                                                                     '\.[Cc][Ss][Vv]',
-                                                                     '\.[Tt][Aa][Bb]',
-                                                                     '\.[Tt][Ss][Vv]')),
+                            type=arg_formatter.txt_rw('r'),
                             required=True)
 
     parser_grp.add_argument('--referenceGeneFile', '-r',
@@ -68,12 +63,7 @@ def make_parser():
                                  ' transcript ids).'
                                  ' No header.',
                             default=None,
-                            type=FileWithExtension('r',
-                                                   valid_extensions=('\.[Tt][Xx][Tt]',
-                                                                     '\.[Cc][Ss][Vv]',
-                                                                     '\.[Tt][Aa][Bb]',
-                                                                     '\.[Tt][Ss][Vv]',
-                                                                     '\.[Ii][Dd][Ss]')),
+                            type=arg_formatter.txt_rw('r'),
                             required=True)
 
     parser_grp.add_argument('--out-dir', '-o',
@@ -96,13 +86,19 @@ def make_parser():
 
     parser_grp.add_argument('-pw', '--page-width',
                             help='Output pdf file width (e.g. 7 inches).',
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=None,
+                                                          linc=False,
+                                                          val_type='float'),
                             default=None,
                             required=False)
 
     parser_grp.add_argument('-ph', '--page-height',
                             help='Output  file height (e.g. 5 inches).',
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=None,
+                                                          linc=False,
+                                                          val_type='float'),
                             default=None,
                             required=False)
 
@@ -114,7 +110,10 @@ def make_parser():
 
     parser_grp.add_argument('-dpi', '--dpi',
                             help='Dpi to use.',
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=None,
+                                                          linc=False,
+                                                          val_type='int'),
                             default=300,
                             required=False)
 

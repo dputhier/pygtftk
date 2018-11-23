@@ -8,10 +8,9 @@ from _collections import defaultdict
 
 from pybedtools import BedTool
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.arg_formatter import bed6
 from pygtftk.arg_formatter import checkChromFile
-from pygtftk.arg_formatter import int_ge_to_null
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly, make_tmp_file
@@ -45,16 +44,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file (BED).",
                             default=sys.stdout,
                             metavar="BED",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Bb][Ee][Dd]$',
-                                                                     '\.[Bb][Ee][Dd]6$')))
+                            type=arg_formatter.bed_rw('w'))
 
     parser_grp.add_argument('-r', '--region-file',
                             help="The input BED file containing regions of interest.",
@@ -77,7 +73,8 @@ def make_parser():
     parser_grp.add_argument('-p', '--slop-value',
                             help="Look until this number of nucleotides in 5' and 3' direction",
                             default=0,
-                            type=int_ge_to_null,
+                            type=arg_formatter.ranged_num(lowest=0, highest=None,
+                                                          val_type="int", linc=True),
                             required=False)
 
     parser_grp.add_argument('-u', '--uncollapse',

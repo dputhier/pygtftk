@@ -3,7 +3,7 @@ import argparse
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -25,15 +25,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.gtf_rw('w'))
 
     parser_grp.add_argument('-k', '--key-to-join',
                             help='The name of the key used to join (e.g transcript_id).',
@@ -48,7 +46,7 @@ def make_parser():
                             type=str,
                             required=False)
 
-    parser_grp.add_argument('matrice_files',
+    parser_grp.add_argument('matrix-files',
                             help="'A set of "
                                  "matrix files with row names as target keys column names as novel "
                                  "key and each cell as value.",
@@ -63,7 +61,7 @@ def join_multi_file(
         outputfile=None,
         target_feature=None,
         key_to_join=None,
-        matrice_files=[],
+        matrix_files=[],
         tmp_dir=None,
         logger_file=None,
         verbosity=0):
@@ -97,7 +95,7 @@ def join_multi_file(
     #  Do it
     # -----------------------------------------------------------
 
-    for join_file in matrice_files:
+    for join_file in matrix_files:
         gtf = gtf.add_attr_from_matrix_file(feat=target_feature,
                                             key=key_to_join,
                                             inputfile=join_file.name)

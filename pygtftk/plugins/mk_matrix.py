@@ -4,18 +4,17 @@ from __future__ import print_function
 
 import argparse
 import os
+import pyBigWig
 import sys
 import zipfile
 from builtins import range
 from builtins import str
 
 import pandas as pd
-import pyBigWig
 from pybedtools import BedTool
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.arg_formatter import checkChromFile
-from pygtftk.arg_formatter import int_greater_than_null, int_ge_to_null
 from pygtftk.bwig.bw_coverage import bw_profile_mp
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -46,16 +45,14 @@ def make_parser():
 
     parser_grp.add_argument('bigwiglist',
                             help='A list of Bigwig files (last argument).',
-                            type=argparse.FileType('r'),
+                            type=arg_formatter.bw_rw('r'),
                             nargs='+')
 
     parser_grp.add_argument('-i', '--inputfile',
                             help="A GTF file or bed file. A GTF if <stdin>.",
                             default=sys.stdin,
                             metavar="GTF/BED",
-                            type=FileWithExtension('r',
-                                                   valid_extensions=('\.[Gg][Tt][Ff](\.[Gg][Zz])?$',
-                                                                     '\.[Bb][Ee][Dd]$')))
+                            type=arg_formatter.gtf_or_bed_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file name (.zip extension will be added).",
@@ -85,19 +82,22 @@ def make_parser():
     parser_grp.add_argument('-p', '--pseudo-count',
                             help='Pseudo-count to add to all values.',
                             default=0,
-                            type=int_ge_to_null,
+                            type=arg_formatter.ranged_num(lowest=0, highest=None,
+                                                          val_type="float", linc=True),
                             required=False)
 
     parser_grp.add_argument('-u', '--upstream',
                             help="Extend the region of interest in 5' by a given value.",
                             default=1000,
-                            type=int_ge_to_null,
+                            type=arg_formatter.ranged_num(lowest=0, highest=None,
+                                                          val_type="int", linc=True),
                             required=False)
 
     parser_grp.add_argument('-d', '--downstream',
                             help="Extend the region of interest in 3' by a given value.",
                             default=1000,
-                            type=int_ge_to_null,
+                            type=arg_formatter.ranged_num(lowest=0, highest=None,
+                                                          val_type="int", linc=True),
                             required=False)
 
     parser_grp.add_argument('-c', '--chrom-info',
@@ -110,13 +110,15 @@ def make_parser():
     parser_grp.add_argument('-w', '--bin-nb',
                             help='Split the region into w bins.',
                             default=100,
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=1, highest=None,
+                                                          val_type="int", linc=True),
                             required=False)
 
     parser_grp.add_argument('-k', '--nb-proc',
                             help='Use this many threads to compute coverage.',
                             default=1,
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=1, highest=None,
+                                                          val_type="int", linc=True),
                             required=False)
 
     parser_grp.add_argument('-b', '--bin-around-frac',

@@ -7,7 +7,7 @@ import sys
 from builtins import str
 from collections import OrderedDict
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -29,19 +29,13 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF",
                             required=False,
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Tt][Xx][Tt]',
-                                                                     '\.[Cc][Ss][Vv]',
-                                                                     '\.[Tt][Aa][Bb]',
-                                                                     '\.[Tt][Ss][Vv]',
-                                                                     '\.[Cc][Oo][Vv]')))
+                            type=arg_formatter.txt_rw('w'))
 
     parser_grp.add_argument('-d', '--header',
                             help="A comma-separated list of string to use as header.",
