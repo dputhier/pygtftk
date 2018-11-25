@@ -1222,7 +1222,12 @@ def profile(inputfile=None,
         fxn()
         message("Saving diagram to file : " + img_file.name)
         message("Be patient. This may be long for large datasets.")
-        p.save(filename=img_file.name, width=page_width, height=page_height, dpi=dpi, limitsize=False)
+        try:
+            p.save(filename=img_file.name, width=page_width, height=page_height, dpi=dpi, limitsize=False)
+        except PlotnineError as err:
+            message("Plotnine message: " + err.message)
+            message("Plotnine encountered an error.", type="ERROR")
+
         dm.to_csv(data_file, sep="\t", header=True, index=False)
 
     # Delete temporary dir

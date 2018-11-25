@@ -21,6 +21,7 @@ from plotnine import (aes, xlab,
                       theme, element_blank,
                       theme_bw, scale_fill_manual, geom_violin)
 from plotnine import ggplot
+from plotnine.exceptions import PlotnineError
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
@@ -250,7 +251,11 @@ def control_list(in_file=None,
     #
     # -------------------------------------------------------------------------
 
-    reference_genes = pd.read_csv(referenceGeneFile.name, sep="\t", header=None)
+    try:
+        reference_genes = pd.read_csv(referenceGeneFile.name, sep="\t", header=None)
+    except pd.errors.EmptyDataError:
+        message("No genes in --referenceGeneFile.", type="ERROR")
+
     reference_genes.rename(columns={reference_genes.columns.values[0]: 'gene'}, inplace=True)
 
     # -------------------------------------------------------------------------
@@ -412,7 +417,12 @@ def control_list(in_file=None,
         fxn()
         message("Saving diagram to file : " + img_file.name)
         message("Be patient. This may be long for large datasets.")
-        p.save(filename=img_file.name, width=page_width, height=page_height, dpi=dpi, limitsize=False)
+
+        try:
+            p.save(filename=img_file.name, width=page_width, height=page_height, dpi=dpi, limitsize=False)
+        except PlotnineError as err:
+            message("Plotnine message: " + err.message)
+            message("Plotnine encountered an error.", type="ERROR")
 
     # -------------------------------------------------------------------------
     #
