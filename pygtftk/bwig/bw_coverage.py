@@ -7,12 +7,12 @@ import multiprocessing
 import os
 import pyBigWig
 import sys
-from itertools import repeat
-
-import numpy as np
 from builtins import range
 from builtins import str
 from builtins import zip
+from itertools import repeat
+
+import numpy as np
 from pybedtools import BedTool
 
 from pygtftk.utils import GTFtkError
@@ -181,6 +181,7 @@ def _big_wig_coverage_worker(input_values):
                         out = ['NA'] * bin_nb
                     else:
                         out = [pc] * bin_nb
+
             # Prepare output
             if i.name in ["", "."]:
                 name = "|".join([i.chrom,
@@ -399,7 +400,6 @@ def bw_profile_mp(in_bed_file=None,
                          repeat(zero_to_na),
                          repeat(stat),
                          repeat(verbose)))
-
 
         for res_file_list in pool.map_async(_big_wig_coverage_worker,
                                             argss).get(999999):
