@@ -260,18 +260,20 @@ def coverage(
     #
     # -------------------------------------------------------------------------
 
+    name_column = name_column.split(",")
+
     if is_gtf:
 
         message("Getting regions of interest...")
 
-        if ft_type == "intergenic":
+        if ft_type.lower() == "intergenic":
 
             region_bo = gtf.get_intergenic(chrom_info, 0, 0).slop(s=True,
                                                                   l=upstream,
                                                                   r=downstream,
                                                                   g=chrom_info.name).sort()
 
-        elif ft_type == "intron":
+        elif ft_type.lower() == "intron":
 
             region_bo = gtf.get_introns().slop(s=True,
                                                l=upstream,
@@ -280,28 +282,29 @@ def coverage(
 
         elif ft_type == "intron_by_tx":
 
-            region_bo = gtf.get_introns(by_transcript=True
+            region_bo = gtf.get_introns(by_transcript=True,
+                                        name=name_column,
                                         ).slop(s=True,
                                                l=upstream,
                                                r=downstream,
                                                g=chrom_info.name).sort()
 
-        elif ft_type == "promoter":
+        elif ft_type.lower() in ["promoter", "tss"]:
 
-            region_bo = gtf.get_tss(name=["transcript_id"]).slop(s=True,
-                                                                 l=upstream,
-                                                                 r=downstream,
-                                                                 g=chrom_info.name).sort()
+            region_bo = gtf.get_tss(name=name_column, ).slop(s=True,
+                                                             l=upstream,
+                                                             r=downstream,
+                                                             g=chrom_info.name).sort()
 
-        elif ft_type == "tts":
+        elif ft_type.lower() == ["tts", "terminator"]:
 
-            region_bo = gtf.get_tts(name=["transcript_id"]).slop(s=True,
-                                                                 l=upstream,
-                                                                 r=downstream,
-                                                                 g=chrom_info.name).sort()
+            region_bo = gtf.get_tts(name=name_column).slop(s=True,
+                                                           l=upstream,
+                                                           r=downstream,
+                                                           g=chrom_info.name).sort()
 
         else:
-            name_column = name_column.split(",")
+
             region_bo = gtf.select_by_key(
                 "feature",
                 ft_type, 0
