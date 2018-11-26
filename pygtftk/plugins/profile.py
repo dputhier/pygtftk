@@ -25,6 +25,7 @@ from plotnine import geom_line
 from plotnine import ggplot
 from plotnine import xlab
 from plotnine import ylab
+from plotnine.exceptions import PlotnineError
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
