@@ -60,7 +60,7 @@ def exon_sizes(
  Add a new key to transcript features containing a comma separated list of exon-size.
     """
 
-    gtf = GTF(inputfile, check_ensembl_format=False)
+    gtf = GTF(inputfile)
 
     all_tx_ids = gtf.get_tx_ids(nr=True)
     tx_to_size_list = dict()
