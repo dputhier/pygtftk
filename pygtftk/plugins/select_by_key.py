@@ -306,7 +306,7 @@ else:
     
     # Select_by_key: Feature selection. --file-with-values -col
     @test "select_by_key_6" {
-     result=`gtftk select_by_key  -k gene_id  -i simple.gtf  -f simple.geneList -c 3| wc -l`
+     result=`rm -f /tmp/test_select_by_key.gtf; gtftk select_by_key  -k gene_id  -i simple.gtf  -f simple.geneList -c 3| wc -l`
       [ "$result" -eq 18 ]
     }
     
