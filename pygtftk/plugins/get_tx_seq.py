@@ -322,7 +322,7 @@ else:
 
     #sleuth output
     @test "get_tx_seq_8" {
-     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -f| wc -l`
+     result=`rm -f /tmp/get_example_shuf.gtf; gtftk get_tx_seq -i simple.gtf -g simple.fa -f| wc -l`
       [ "$result" -eq 30 ]
     }
 
