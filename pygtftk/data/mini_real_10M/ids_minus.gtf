@@ -455,10 +455,7 @@ chr1	havana	transcript	9148011	9182392	0	-	-1	gene_id "ENSG00000228526"; transcr
 chr1	havana	exon	9148011	9151835	0	-	-1	gene_id "ENSG00000228526"; transcript_id "ENST00000635687"; gene_biotype "lincRNA"; transcript_biotype "lincRNA"; exon_id "ENSE00003790229"; gene_name "MIR34AHG";
 chr1	ensembl	transcript	9151668	9151777	0	-	-1	gene_id "ENSG00000228526"; transcript_id "ENST00000385130"; gene_biotype "lincRNA"; transcript_biotype "miRNA"; gene_name "MIR34AHG";
 chr1	ensembl	exon	9151668	9151777	0	-	-1	gene_id "ENSG00000228526"; transcript_id "ENST00000385130"; gene_biotype "lincRNA"; transcript_biotype "miRNA"; exon_id "ENSE00001500136"; gene_name "MIR34AHG";
-chr1	havana	transcript	9181839	9196983	0	-	-1	gene_id "ENSG00000228526"; transcript_id "ENST00000635405"; gene_biotype "lincRNA"; transcript_biotype "lincRNA"; gene_name "MIR34AHG";
-chr1	havana	exon	9181839	9182295	0	-	-1	gene_id "ENSG00000228526"; transcript_id "ENST00000635405"; gene_biotype "lincRNA"; transcript_biotype "lincRNA"; exon_id "ENSE00003791526"; gene_name "MIR34AHG";
 chr1	havana	exon	9182007	9182392	0	-	-1	gene_id "ENSG00000228526"; transcript_id "ENST00000635687"; gene_biotype "lincRNA"; transcript_biotype "lincRNA"; exon_id "ENSE00003787977"; gene_name "MIR34AHG";
 chr1	havana	transcript	9182007	9183750	0	-	-1	gene_id "ENSG00000228526"; transcript_id "ENST00000437157"; gene_biotype "lincRNA"; transcript_biotype "lincRNA"; gene_name "MIR34AHG";
 chr1	havana	exon	9182007	9182295	0	-	-1	gene_id "ENSG00000228526"; transcript_id "ENST00000437157"; gene_biotype "lincRNA"; transcript_biotype "lincRNA"; exon_id "ENSE00001658885"; gene_name "MIR34AHG";
 chr1	havana	exon	9183631	9183750	0	-	-1	gene_id "ENSG00000228526"; transcript_id "ENST00000437157"; gene_biotype "lincRNA"; transcript_biotype "lincRNA"; exon_id "ENSE00001670416"; gene_name "MIR34AHG";
-chr1	havana	exon	9196912	9196983	0	-	-1	gene_id "ENSG00000228526"; transcript_id "ENST00000635405"; gene_biotype "lincRNA"; transcript_biotype "lincRNA"; exon_id "ENSE00003784444"; gene_name "MIR34AHG";
