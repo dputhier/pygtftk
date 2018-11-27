@@ -6,11 +6,12 @@
 
 - Fix a critical bug in get_sequence that affected get_feat_seq and get_tx_seq.
 - Select_by_key now throw an error when no key/val are available.
-
+- No more function with mutable objects as default arguments.
 
 ### API Changes
 
 - Refactored arg_formatter by  creating a single type (ranged_num) to test for numeric inputs.
+- Refactored all plugins so that there is no more reference to unused arguments (tmp_dir, verbosity...).
 
 
 ### Code changes

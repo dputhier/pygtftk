@@ -2628,7 +2628,7 @@ class GTF(object):
             name_out = []
 
             value_name = name_list + more_name + feature_name
-            key_name = name + more_name + feature_name
+            key_name = name + ['more_name'] + ['feature_name']
 
             if explicit:
                 for k, v in zip(key_name, value_name):
