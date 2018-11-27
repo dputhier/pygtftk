@@ -57,10 +57,7 @@ def get_attr_value_list(
         outputfile=None,
         key_name=None,
         separator="\n",
-        count=False,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        count=False):
     """
     Get the list of values observed for an attributes.
     """

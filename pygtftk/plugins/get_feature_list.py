@@ -46,10 +46,7 @@ def make_parser():
 def get_feature_list(
         inputfile=None,
         outputfile=None,
-        separator="",
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        separator=""):
     """
     Get the list of features enclosed in the GTF.
     """

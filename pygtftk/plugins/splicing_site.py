@@ -67,10 +67,7 @@ def splicing_site(inputfile=None,
                   outputfile=None,
                   exon_numbering_key=False,
                   names="exon_id,transcript_id,gene_id",
-                  separator="\t",
-                  tmp_dir=None,
-                  logger_file=None,
-                  verbosity=0):
+                  separator="\t"):
     """
     Compute the locations of splice donor are acceptor  sites. You may extend them in 3' and 5' depending on your needs.
     """

@@ -58,7 +58,7 @@ def make_parser():
                             type=arg_formatter.txt_rw('r'),
                             required=True)
 
-    parser_grp.add_argument('--referenceGeneFile', '-r',
+    parser_grp.add_argument('--reference-gene-file', '-r',
                             metavar='TXT',
                             help='The file containing the reference gene list (1 column,'
                                  ' transcript ids).'
@@ -150,7 +150,7 @@ def make_parser():
 
 def control_list(in_file=None,
                  out_dir=None,
-                 referenceGeneFile=None,
+                 reference_gene_file=None,
                  log2=False,
                  page_width=None,
                  page_height=None,
@@ -161,10 +161,7 @@ def control_list(in_file=None,
                  dpi=300,
                  rug=False,
                  jitter=False,
-                 skip_first=False,
-                 tmp_dir=None,
-                 logger_file=None,
-                 verbosity=None):
+                 skip_first=False):
     # -------------------------------------------------------------------------
     #
     # Check in_file content
@@ -252,9 +249,9 @@ def control_list(in_file=None,
     # -------------------------------------------------------------------------
 
     try:
-        reference_genes = pd.read_csv(referenceGeneFile.name, sep="\t", header=None)
+        reference_genes = pd.read_csv(reference_gene_file.name, sep="\t", header=None)
     except pd.errors.EmptyDataError:
-        message("No genes in --referenceGeneFile.", type="ERROR")
+        message("No genes in --reference-gene-file.", type="ERROR")
 
     reference_genes.rename(columns={reference_genes.columns.values[0]: 'gene'}, inplace=True)
 

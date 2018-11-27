@@ -83,10 +83,7 @@ def feature_size(
         names="transcript_id",
         key_name='feature_size',
         separator="|",
-        bed=False,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        bed=False):
     """
  Get the size and limits (start/end) of features enclosed in the GTF. If bed
  format is requested returns the limits zero-based half open and the size as a score.

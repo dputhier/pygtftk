@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
-import sys
 import argparse
+import sys
+
 from Bio import SeqIO
-from Bio.SeqIO import FastaIO
 
 __DESC__ = '''Take a FASTA as input and produced a new FASTA file with record 
 ordered as in --id-file.'''
+
 
 def make_parser():
     """The program parser."""
@@ -26,14 +27,14 @@ def make_parser():
                             metavar="FASTA",
                             type=argparse.FileType('w'))
 
-
     return parser
 
-def unfold(inputfile=None,
-                     outputfile=None):
 
+def unfold(inputfile=None,
+           outputfile=None):
     for rec in SeqIO.parse(inputfile.name, "fasta"):
-            SeqIO.write(rec, outputfile, "fasta-2line")
+        SeqIO.write(rec, outputfile, "fasta-2line")
+
 
 def main():
     """The main function."""

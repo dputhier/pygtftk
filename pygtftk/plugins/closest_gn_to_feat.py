@@ -9,8 +9,8 @@ from _collections import defaultdict
 from pybedtools import BedTool
 
 from pygtftk import arg_formatter
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.arg_formatter import bed6
-from pygtftk.arg_formatter import checkChromFile
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly, make_tmp_file
@@ -88,7 +88,7 @@ def make_parser():
     parser_grp.add_argument('-c', '--chrom-info',
                             help='Tabulated file (chr as column 1, sizes as column 2.)',
                             default=None,
-                            action=checkChromFile,
+                            action=CheckChromFile,
                             required=True)
 
     return parser
@@ -102,10 +102,7 @@ def closest_gn_to_feat(inputfile=None,
                        slop_value=None,
                        chrom_info=None,
                        uncollapse=False,
-                       tmp_dir=None,
-                       logger_file=None,
-                       gene_centric=False,
-                       verbosity=0):
+                       gene_centric=False):
     """
     Get the gene/transcript closest to a set of feature.
     """

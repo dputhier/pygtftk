@@ -72,10 +72,7 @@ def random_list(
         outputfile=None,
         number=None,
         ft_type=None,
-        seed_value=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        seed_value=None):
     """
     Select a random list of genes or transcripts.
     """

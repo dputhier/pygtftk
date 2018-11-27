@@ -72,12 +72,9 @@ def make_parser():
 def shift(inputfile=None,
           outputfile=None,
           shift_value=None,
-          tmp_dir=None,
           chrom_info=None,
           stranded=False,
-          allow_outside=False,
-          logger_file=None,
-          verbosity=0):
+          allow_outside=False):
     """Shift coordinates in 3' or 5' direction.
     """
 

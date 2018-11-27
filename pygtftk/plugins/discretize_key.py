@@ -106,10 +106,7 @@ def discretize_key(inputfile=None,
                    percentiles=False,
                    percentiles_of_uniq=False,
                    log=False,
-                   labels=None,
-                   tmp_dir=None,
-                   logger_file=None,
-                   verbosity=0):
+                   labels=None):
     """
     Create a new key by discretizing a numeric key.
     """

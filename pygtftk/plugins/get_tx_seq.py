@@ -115,10 +115,7 @@ def get_tx_seq(inputfile=None,
                label="",
                sleuth_format=True,
                explicit=True,
-               assembly="bla",
-               tmp_dir=None,
-               logger_file=None,
-               verbosity=0):
+               assembly="bla"):
     """
     Description: Get transcripts sequences in fasta format from a GTF file.
     """

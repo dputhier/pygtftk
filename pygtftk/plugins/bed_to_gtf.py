@@ -64,10 +64,7 @@ def bed_to_gtf(
         inputfile=None,
         outputfile=None,
         ft_type="transcript",
-        source="Unknown",
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        source="Unknown"):
     """
  Convert a bed file to a gtf. This will make the poor bed feel as if it was a
  nice gtf (but with lots of empty fields...). May be helpful sometimes...

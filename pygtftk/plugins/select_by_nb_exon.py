@@ -48,10 +48,7 @@ def make_parser():
 def select_by_nb_exon(inputfile=None,
                       outputfile=None,
                       min_exon_number=None,
-                      max_exon_number=None,
-                      tmp_dir=None,
-                      logger_file=None,
-                      verbosity=0):
+                      max_exon_number=None):
     """
     Select transcripts based on the number of exons.
     """

@@ -108,10 +108,7 @@ def closest_genes(
         diff_strandedness=False,
         text_format=False,
         identifier="gene_id",
-        collapse=False,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        collapse=False):
     """
     Find the n closest genes for each gene.
     """

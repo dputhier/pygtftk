@@ -45,10 +45,7 @@ def make_parser():
 def get_attr_list(
         inputfile=None,
         outputfile=None,
-        separator="\n",
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        separator="\n"):
     """
     Get the list of attributes from a GTF file.
     """

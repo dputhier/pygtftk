@@ -8,6 +8,7 @@ import sys
 import ftputil
 from ftputil.error import FTPOSError
 
+import pygtftk
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -83,14 +84,11 @@ def make_parser():
 def retrieve(species_name=None,
              outputfile=None,
              release='Latest',
-             tmp_dir=None,
              to_stdout=False,
              list_only=False,
-             logger_file=None,
              delete=False,
              hide_species_name=None,
-             ensembl_collection='vertebrate',
-             verbosity=0):
+             ensembl_collection='vertebrate'):
     """Retrieve a GTF file from ensembl.
 
     :Example:
@@ -134,7 +132,7 @@ def retrieve(species_name=None,
 
     try:
         ftp = ftputil.FTPHost(host, user, password)
-        if verbosity:
+        if pygtftk.utils.VERBOSITY:
             message("Connected to ensembl FTP website.")
     except FTPOSError as err:
         message(str(err))

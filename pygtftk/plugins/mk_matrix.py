@@ -13,8 +13,9 @@ from builtins import str
 import pandas as pd
 from pybedtools import BedTool
 
+import pygtftk
 from pygtftk import arg_formatter
-from pygtftk.arg_formatter import checkChromFile
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.bwig.bw_coverage import bw_profile_mp
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -104,7 +105,7 @@ def make_parser():
                             help='Tabulated file (chr as '
                                  'column 1, sizes as column 2.)',
                             default=None,
-                            action=checkChromFile,
+                            action=CheckChromFile,
                             required=True)
 
     parser_grp.add_argument('-w', '--bin-nb',
@@ -158,10 +159,7 @@ def mk_matrix(
         nb_proc=None,
         labels=None,
         no_stranded=False,
-        tmp_dir=None,
-        logger_file=None,
-        zero_to_na=False,
-        verbosity=False):
+        zero_to_na=False):
     """
  Description: Create a matrix to be used by 'profile' and 'heatmap' commands.
     """
@@ -384,7 +382,7 @@ def mk_matrix(
                              labels=labels,
                              outputfile=outputfile.name,
                              zero_to_na=zero_to_na,
-                             verbose=verbosity)
+                             verbose=pygtftk.utils.VERBOSITY)
 
     outputfile_list["main"] = tmp_file
 
@@ -437,7 +435,7 @@ def mk_matrix(
                                      labels=labels,
                                      outputfile=outputfile.name,
                                      zero_to_na=zero_to_na,
-                                     verbose=verbosity)
+                                     verbose=pygtftk.utils.VERBOSITY)
 
             outputfile_list["upstream"] = tmp_file
 
@@ -475,7 +473,7 @@ def mk_matrix(
                                      labels=labels,
                                      outputfile=outputfile.name,
                                      zero_to_na=zero_to_na,
-                                     verbose=verbosity)
+                                     verbose=pygtftk.utils.VERBOSITY)
 
             outputfile_list["downstream"] = tmp_file
 

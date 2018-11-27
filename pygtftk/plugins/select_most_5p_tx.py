@@ -46,10 +46,7 @@ def make_parser():
 
 def select_most_5p_tx(inputfile=None,
                       outputfile=None,
-                      keep_gene_lines=False,
-                      tmp_dir=None,
-                      logger_file=None,
-                      verbosity=0):
+                      keep_gene_lines=False):
     """
     Select the most 5' transcript of each gene.
     """

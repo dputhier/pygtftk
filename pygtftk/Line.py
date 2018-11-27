@@ -280,8 +280,10 @@ class Feature(object):
 
 
         >>> from pygtftk.Line import Feature
-        >>> alist = ['chr1','Unknown','transcript', 100, 200]
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
         >>> from collections import OrderedDict
+        >>> alist = ['chr1','Unknown','transcript', 100, 200]
         >>> d = OrderedDict()
         >>> d['transcript_id'] = 'g1t1'
         >>> d['gene_id'] = 'g1'
@@ -289,15 +291,10 @@ class Feature(object):
         >>> a = Feature.from_list(alist)
         >>> assert a.get_tx_id() == 'g1t1'
         >>> assert a.get_gn_id() == 'g1'
-        >>> from  pygtftk.utils import get_example_file
-        >>> import pygtftk
-        >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> for i in a_gtf: pass
-        >>> assert type(i) == pygtftk.Line.Feature
-
-
+        >>> assert type(i) == Feature
         """
 
         if ptr is not None:
@@ -564,7 +561,7 @@ class Feature(object):
         pygtftk.utils.write_properly('\t'.join(token), outputfile)
 
     def write_gtf_to_bed6(self,
-                          name=["transcript_id", "gene_id"],
+                          name=("transcript_id", "gene_id"),
                           sep="|",
                           add_feature_type=False,
                           outputfile=None):
@@ -592,6 +589,11 @@ class Feature(object):
         >>> assert simple_line_count(tmp_file) == 1
 
         """
+
+        if isinstance(name, tuple):
+            name = list(name)
+        elif isinstance(name, str):
+            name = [name]
 
         if pygtftk.utils.ADD_CHR == 1:
             chrom_out = "chr" + self.chrom

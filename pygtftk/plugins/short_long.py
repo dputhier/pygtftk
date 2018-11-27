@@ -4,11 +4,8 @@
 """ Select the shortest mature transcript (i.e without introns) for each gene or the longest if the \
 -l arguments is used. """
 
-import os
-
-__updated__ = "2018-01-25"
-
 import argparse
+import os
 import sys
 
 from pygtftk import arg_formatter
@@ -54,10 +51,7 @@ def make_parser():
 def short_long(inputfile=None,
                outputfile=None,
                longs=None,
-               keep_gene_lines=False,
-               tmp_dir=None,
-               logger_file=None,
-               verbosity=0):
+               keep_gene_lines=False):
     """ Select the shortest transcript for each gene, Or the longuest if the \
 -l arguments is used. """
 

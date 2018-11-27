@@ -63,10 +63,7 @@ def random_tx(
         inputfile=None,
         outputfile=None,
         max_transcript=None,
-        seed_value=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        seed_value=None):
     """
     Select randomly up to m transcript for each gene.
     """

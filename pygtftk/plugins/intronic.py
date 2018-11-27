@@ -75,11 +75,8 @@ def intronic(
         names='transcript_id',
         separator="_",
         intron_nb_in_name=False,
-        tmp_dir=None,
         no_feature_name=False,
-        by_transcript=False,
-        logger_file=None,
-        verbosity=0):
+        by_transcript=False):
     """
  Extract intronic regions.
     """

@@ -89,10 +89,7 @@ def select_by_go(inputfile=None,
                  http_proxy=None,
                  list_datasets=None,
                  species=None,
-                 invert_match=False,
-                 tmp_dir=None,
-                 logger_file=None,
-                 verbosity=0):
+                 invert_match=False):
     """ Select lines from a GTF file based using a Gene Ontology ID (e.g GO:0050789).
     """
 

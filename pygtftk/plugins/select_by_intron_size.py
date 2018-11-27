@@ -75,10 +75,7 @@ def select_by_intron_size(
         merged=False,
         invert_match=False,
         delete_monoexonic=False,
-        add_intron_size=False,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        add_intron_size=False):
     """
     Select genes which contain an intron of size at least s or whose sum of intron size is at least s
     """

@@ -66,10 +66,7 @@ def del_attr(
         outputfile=None,
         key="transcript_id",
         reg_exp=False,
-        invert_match=False,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        invert_match=False):
     """
     Delete extended attributes in the target gtf file. attr_list can be a
     comma-separated list of attributes.

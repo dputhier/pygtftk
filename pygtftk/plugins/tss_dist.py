@@ -52,10 +52,7 @@ def make_parser():
 
 def tss_dist(
         inputfile=None,
-        outputfile=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        outputfile=None):
     """
     Computes the distance between TSS of gene transcripts.
     """

@@ -58,10 +58,7 @@ def count(
         inputfile=None,
         outputfile=None,
         header=None,
-        additional_text=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        additional_text=None):
     """
     Count the number of features in the gtf file.
     """

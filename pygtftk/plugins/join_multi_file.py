@@ -61,10 +61,7 @@ def join_multi_file(
         outputfile=None,
         target_feature=None,
         key_to_join=None,
-        matrix_files=[],
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        matrix_files=()):
     """
     Join attributes from a set of tabulated files.
     """

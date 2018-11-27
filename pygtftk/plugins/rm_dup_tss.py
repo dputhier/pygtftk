@@ -48,10 +48,7 @@ def make_parser():
 
 
 def rm_dup_tss(inputfile=None,
-               outputfile=None,
-               tmp_dir=None,
-               logger_file=None,
-               verbosity=0):
+               outputfile=None):
     """If several transcripts of a gene share the same tss, select only one."""
 
     # ----------------------------------------------------------------------

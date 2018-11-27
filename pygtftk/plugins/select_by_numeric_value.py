@@ -54,10 +54,7 @@ def make_parser():
 def select_by_numeric_value(inputfile=None,
                             outputfile=None,
                             test=None,
-                            na_omit=None,
-                            tmp_dir=None,
-                            logger_file=None,
-                            verbosity=0):
+                            na_omit=None):
     """Select lines from a GTF file based on a boolean test on numeric values.
     """
 

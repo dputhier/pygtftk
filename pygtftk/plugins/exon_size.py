@@ -55,10 +55,7 @@ def make_parser():
 def exon_sizes(
         inputfile=None,
         outputfile=None,
-        key_name=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        key_name=None):
     """
  Add a new key to transcript features containing a comma separated list of exon-size.
     """

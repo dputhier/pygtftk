@@ -485,7 +485,7 @@ class GTF(object):
         else:
             self._data = new_data
 
-        self._message("GTF created ", type="DEBUG_MEM")
+        self.message("GTF created ", type="DEBUG_MEM")
         self._ptr_addr += [id(self._data)]
 
     # ---------------------------------------------------------------
@@ -565,7 +565,7 @@ class GTF(object):
 
             return self._clone(new_data)
 
-    def _message(self, msg="", type='DEBUG'):
+    def message(self, msg="", type='DEBUG'):
         """A processing message whose verbosity is adapted based on pygtftk.utils.VERBOSITY.
 
         >>> import pygtftk.utils
@@ -575,9 +575,9 @@ class GTF(object):
         >>> a_gtf = GTF(a_file)
         >>> pygtftk.utils.VERBOSITY = 0
         >>> pygtftk.utils.VERBOSITY = 2
-        >>> a_gtf._message('bla')
+        >>> a_gtf.message('bla')
         >>> pygtftk.utils.VERBOSITY = 3
-        >>> a_gtf._message('bla')
+        >>> a_gtf.message('bla')
         >>> pygtftk.utils.VERBOSITY = 0
         """
 
@@ -588,7 +588,7 @@ class GTF(object):
 
         if pygtftk.utils.VERBOSITY >= 3:
             msg = msg + \
-                  "(#l={a}, p={c}, f={b}, i={d}, n={e})."
+                  " (#l={a}, p={c}, f={b}, i={d}, n={e})."
             msg = msg.format(a=self._data.size,
                              b=self.fn,
                              c=addr,
@@ -620,7 +620,7 @@ class GTF(object):
         if self._data != 0:
             if gc.isenabled():
                 self._dll.free_gtf_data(self._data)
-                self._message("GTF deleted ", type="DEBUG_MEM")
+                self.message("GTF deleted ", type="DEBUG_MEM")
                 self._data = 0
 
     def head(self, nb=6, returned=False):
@@ -792,7 +792,7 @@ class GTF(object):
 
         """
 
-        self._message("Subsetting  GTF instance")
+        self.message("Subsetting  GTF instance")
 
         if isinstance(x, tuple):
             if not len(x):
@@ -1701,7 +1701,7 @@ class GTF(object):
 
     def select_by_numeric_value(self,
                                 bool_exp=None,
-                                na_omit=[".", "?"]):
+                                na_omit=(".", "?")):
         """Test a numeric value. Select lines using a boolean operation on attributes.
         The boolean expression must contain attributes enclosed with braces.
         Example: "cDNA_length > 200 and tx_genomic_length > 2000".
@@ -1709,7 +1709,7 @@ class GTF(object):
         start, end, score or frame.
 
         :param bool_exp: A simple boolean operation. And/or operation are not supported at the moment.
-        :param na_omit: Any line for which one of the tested value is in this list wont be evaluated (e.g. [".", "?"]).
+        :param na_omit: Any line for which one of the tested value is in this list wont be evaluated (e.g. (".", "?")).
 
 
         :Example:
@@ -1718,7 +1718,7 @@ class GTF(object):
         >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
-        >>> b_gtf = a_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=["G0001T001","G0002T001","G0003T001","G0004T001"], new_key="test", new_key_value=["10","11","20","40"])
+        >>> b_gtf = a_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=("G0001T001","G0002T001","G0003T001","G0004T001"), new_key="test", new_key_value=("10","11","20","40"))
         >>> c_list = b_gtf.select_by_key("feature","transcript").select_by_numeric_value("test > 2").extract_data("test", as_list=True)
         >>> assert c_list == ['10', '11', '20', '40']
         >>> a_file = get_example_file(datasetname="mini_real", ext="gtf.gz")[0]
@@ -1733,12 +1733,17 @@ class GTF(object):
         >>> assert len(a_gtf.select_by_numeric_value("phase > 0 and phase < 2", na_omit=".").extract_data('phase', as_list=True,  nr=True)) == 1
         """
 
-        if na_omit is not None:
-            if not isinstance(na_omit, list):
-                na_omit = na_omit.split(",")
+        if isinstance(na_omit, str):
+            na_omit = tuple(na_omit.split(","))
+        if isinstance(na_omit, list):
+            na_omit = tuple(na_omit)
+        elif na_omit is None:
+            na_omit = ()
 
-        def _find_keys(pr, the_key='key', res=[], visited=0):
+        def _find_keys(pr, the_key='key', res=None, visited=0):
             """Should be called like that: _find_keys(pr, res=[])."""
+            if res is None:
+                res = []
             if isinstance(pr, ParseResults):
                 if visited == 0:
                     if pr.haskeys():
@@ -1811,29 +1816,17 @@ class GTF(object):
         result = []
         pos = 0
 
-        if na_omit is None:
-            for i in tab:
-
+        for i in tab:
+            if not any([True if x in na_omit else False for x in i]):
                 try:
                     [float(x) for x in i]
                     if eval(parsed_exp_str):
                         result += [pos]
                 except:
-                    msg = "Found non numeric values in: '%s'. Use -n/a_omit." % ",".join(i)
+                    msg = "Found non numeric values in: '%s'." % ",".join(
+                        i)
                     GTFtkError(msg)
-                pos += 1
-        else:
-            for i in tab:
-                if not any([True if x in na_omit else False for x in i]):
-                    try:
-                        [float(x) for x in i]
-                        if eval(parsed_exp_str):
-                            result += [pos]
-                    except:
-                        msg = "Found non numeric values in: '%s'." % ",".join(
-                            i)
-                        GTFtkError(msg)
-                pos += 1
+            pos += 1
         # Call C function
 
         if len(result) < 1:
@@ -2126,9 +2119,9 @@ class GTF(object):
     def add_attr_from_list(self,
                            feat=None,
                            key="transcript_id",
-                           key_value=[],
+                           key_value=(),
                            new_key="new_key",
-                           new_key_value=[]):
+                           new_key_value=()):
         """Add key/value pairs to the GTF object.
 
         :param feat: The comma separated list of target features. If None, all the features.
@@ -2144,19 +2137,18 @@ class GTF(object):
         >>> from pygtftk.utils import TAB
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
-        >>> b_gtf = a_gtf.add_attr_from_list(feat="gene", key="gene_id", key_value=["G0001", "G0002"], new_key="coding_pot", new_key_value=["0.5", "0.8"])
+        >>> b_gtf = a_gtf.add_attr_from_list(feat="gene", key="gene_id", key_value=("G0001", "G0002"), new_key="coding_pot", new_key_value=("0.5", "0.8"))
         >>> assert b_gtf.extract_data(keys="coding_pot", as_list=True, no_na=True, hide_undef=True) == ['0.5', '0.8']
-        >>> b_gtf = a_gtf.add_attr_from_list(feat="gene", key="gene_id", key_value=["G0002", "G0001"], new_key="coding_pot", new_key_value=["0.8", "0.5"])
+        >>> b_gtf = a_gtf.add_attr_from_list(feat="gene", key="gene_id", key_value=("G0002", "G0001"), new_key="coding_pot", new_key_value=("0.8", "0.5"))
         >>> assert b_gtf.extract_data(keys="coding_pot", as_list=True, no_na=True, hide_undef=True) == ['0.5', '0.8']
-        >>> key_value = a_gtf.extract_data("transcript_id", no_na=True, as_list=True, nr=True)
-        >>> b=a_gtf.add_attr_from_list(None, key="transcript_id", key_value=key_value, new_key="bla", new_key_value=[str(x) for x in range(len(key_value))])
+        >>> key_value = tuple(a_gtf.extract_data("transcript_id", no_na=True, as_list=True, nr=True))
+        >>> b=a_gtf.add_attr_from_list(None, key="transcript_id", key_value=key_value, new_key="bla", new_key_value=tuple([str(x) for x in range(len(key_value))]))
         """
 
         message("Calling add_attr_from_list", type="DEBUG")
 
-        if not isinstance(key_value, list) or not isinstance(
-                new_key_value, list):
-            raise GTFtkError("key_value and new_key_value should be lists.")
+        if not isinstance(key_value, tuple) or not isinstance(new_key_value, tuple):
+            raise GTFtkError("key_value and new_key_value should be tuple.")
 
         if feat is None:
             feat = ",".join(self.get_feature_list(nr=True))
@@ -2395,7 +2387,7 @@ class GTF(object):
             message("Garbage collector has been disabled.", type="DEBUG")
             gc.disable()
 
-        self._message("Writing a GTF ")
+        self.message("Writing a GTF ")
 
         if pygtftk.utils.ADD_CHR == 1:
             add_chr = 1
@@ -2438,7 +2430,7 @@ class GTF(object):
         if output_str != "-":
             output.close()
 
-        self._message("GTF written ")
+        self.message("GTF written ")
 
     def get_sequences(self, genome=None, intron=False, rev_comp=True):
         """
@@ -2506,13 +2498,13 @@ class GTF(object):
             return None
 
     def to_bed(self,
-               name=["gene_id"],
+               name=("gene_id"),
                sep="|",
                add_feature_type=False,
-               more_name=[]):
+               more_name=None):
         """Returns a Bedtool object (Bed6 format).
 
-        :param name: The keys that should be used to computed the 'name' column.
+        :param name: The keys that should be used to computed the 'name' column (a tuple).
         :param more_name: Additional text to add to the name (a list).
         :param sep: The separator used for the name (e.g 'gene_id|transcript_id".
         :param add_feature_type: Add the feature type to the name.
@@ -2527,12 +2519,21 @@ class GTF(object):
         >>> assert a_bo.field_count() == 6
         >>> assert len(a_bo) == 15
         >>> for i in a_bo: pass
-        >>> a_bo = a_gtf.select_by_key("feature", "transcript").to_bed(name=['gene_id', 'transcript_id'])
+        >>> a_bo = a_gtf.select_by_key("feature", "transcript").to_bed(name=('gene_id', 'transcript_id'))
         >>> for i in a_bo: pass
-        >>> a_bo = a_gtf.select_by_key("feature", "transcript").to_bed(name=['gene_id', 'transcript_id'], sep="--")
+        >>> a_bo = a_gtf.select_by_key("feature", "transcript").to_bed(name=('gene_id', 'transcript_id'), sep="--")
         >>> for i in a_bo: pass
 
         """
+
+        name = list(name)
+
+        if more_name is None:
+            more_name = []
+        elif isinstance(more_name, str):
+            more_name = list(more_name)
+        elif isinstance(more_name, tuple):
+            more_name = list(more_name)
 
         message("Calling 'to_bed' method.", type="DEBUG")
 
@@ -2567,10 +2568,10 @@ class GTF(object):
 
     def get_5p_end(self,
                    feat_type="transcript",
-                   name=["transcript_id"],
+                   name=("transcript_id"),
                    sep="|",
                    as_dict=False,
-                   more_name=[],
+                   more_name=(),
                    one_based=False,
                    feature_name=None,
                    explicit=False):
@@ -2580,7 +2581,7 @@ class GTF(object):
         :param feat_type: The feature type.
         :param name: The key that should be used to computed the 'name' column.
         :param sep: The separator used for the name (e.g 'gene_id|transcript_id".
-        :param more_name: Additional text to add to the name (a list).
+        :param more_name: Additional text to add to the name (a tuple).
         :param as_dict: return the result as a dictionnary.
         :param one_based: if as_dict is requested, return coordinates in on-based format.
         :param feature_name: A feature name to be added to the 4th column.
@@ -2603,6 +2604,19 @@ class GTF(object):
         >>> assert i.name == 'transcript_id=G0001T002|gene_id=G0001'
         """
 
+        if isinstance(name, tuple):
+            name = list(name)
+        elif isinstance(name, str):
+            name = [name]
+
+        if isinstance(more_name, tuple):
+            more_name = list(more_name)
+        elif isinstance(more_name, str):
+            more_name = more_name.split(',')
+
+        if feature_name is None:
+            feature_name = []
+
         message("Calling 'get_5p_end'.", type="DEBUG")
 
         tx_bed = make_tmp_file("TSS", ".bed")
@@ -2613,12 +2627,8 @@ class GTF(object):
 
             name_out = []
 
-            if feature_name is None:
-                value_name = name_list + more_name
-                key_name = name + ["more_name"]
-            else:
-                value_name = name_list + more_name + [feature_name]
-                key_name = name + ["more_name"] + ["feature_name"]
+            value_name = name_list + more_name + feature_name
+            key_name = name + more_name + feature_name
 
             if explicit:
                 for k, v in zip(key_name, value_name):
@@ -2649,10 +2659,10 @@ class GTF(object):
         return bed_obj
 
     def get_tss(self,
-                name=["transcript_id"],
+                name=("transcript_id"),
                 sep="|",
                 as_dict=False,
-                more_name=[],
+                more_name=(),
                 one_based=False,
                 feature_name=None,
                 explicit=False):
@@ -2660,7 +2670,7 @@ class GTF(object):
         (zero-based coordinate).
 
         :param name: The key that should be used to computed the 'name' column.
-        :param more_name: Additional text to add to the name (a list).
+        :param more_name: Additional text to add to the name (a tuple).
         :param sep: The separator used for the name (e.g 'gene_id|transcript_id".
         :param as_dict: return the result as a dictionnary.
         :param one_based: if as_dict is requested, return coordinates in on-based format.
@@ -2678,6 +2688,12 @@ class GTF(object):
 
         """
 
+        if isinstance(more_name, tuple):
+            more_name = list(more_name)
+
+        if isinstance(name, tuple):
+            name = list(name)
+
         return (self.get_5p_end(feat_type="transcript",
                                 name=name,
                                 more_name=more_name,
@@ -2689,10 +2705,10 @@ class GTF(object):
 
     def get_3p_end(self,
                    feat_type="transcript",
-                   name=["transcript_id"],
+                   name=("transcript_id"),
                    sep="|",
                    as_dict=False,
-                   more_name=[],
+                   more_name=(),
                    feature_name=None,
                    explicit=False):
         """Returns a Bedtool object containing the 3' coordinates of selected
@@ -2720,7 +2736,24 @@ class GTF(object):
         >>> for i in a_bed: break
         >>> assert i.name == 'gene_id=G0001|exon_id=G0001T002E001'
         """
+
         message("Calling 'get_3p_end'.", type="DEBUG")
+
+        if isinstance(name, tuple):
+            name = list(name)
+        elif isinstance(name, str):
+            name = [name]
+
+        if isinstance(more_name, tuple):
+            more_name = list(more_name)
+        elif isinstance(more_name, str):
+            more_name = more_name.split(',')
+
+        if feature_name is None:
+            feature_name = []
+
+        if isinstance(name, tuple):
+            name = list(name)
 
         tx_bed = make_tmp_file("TTS", ".bed")
 
@@ -2729,12 +2762,8 @@ class GTF(object):
                                          upon_none='set_na')
             name_out = []
 
-            if feature_name is None:
-                value_name = name_list + more_name
-                key_name = name + ["more_name"]
-            else:
-                value_name = name_list + more_name + [feature_name]
-                key_name = name + ["more_name"] + ["feature_name"]
+            value_name = name_list + more_name + feature_name
+            key_name = name + more_name + feature_name
 
             if explicit:
                 for k, v in zip(key_name, value_name):
@@ -2761,10 +2790,10 @@ class GTF(object):
         return bed_obj
 
     def get_tts(self,
-                name=["transcript_id"],
+                name=("transcript_id"),
                 sep="|",
                 as_dict=False,
-                more_name=[],
+                more_name=(),
                 feature_name=None,
                 explicit=False
                 ):
@@ -2788,6 +2817,13 @@ class GTF(object):
         >>> assert len(a_bed) == 15
 
         """
+
+        if isinstance(more_name, tuple):
+            more_name = list(more_name)
+
+        if isinstance(name, tuple):
+            name = list(name)
+
         return (self.get_3p_end(feat_type="transcript",
                                 name=name,
                                 sep=sep,
@@ -2945,7 +2981,7 @@ class GTF(object):
 
     def get_introns(self,
                     by_transcript=False,
-                    name=['transcript_id', 'gene_id'],
+                    name=('transcript_id', 'gene_id'),
                     sep='|',
                     intron_nb_in_name=False,
                     feat_name=False,
@@ -2969,6 +3005,9 @@ class GTF(object):
         >>> assert len(a_bed) == 7
 
         """
+
+        if isinstance(name, tuple):
+            name = list(name)
 
         message("Calling 'get_intron'.", type="DEBUG")
 
@@ -3065,7 +3104,7 @@ class GTF(object):
         return introns_bo
 
     def get_midpoints(self,
-                      name=["transcript_id", "gene_id"],
+                      name=("transcript_id", "gene_id"),
                       sep="|"):
         """Returns a bedtools object containing the midpoints of features.
 
@@ -3082,6 +3121,9 @@ class GTF(object):
         >>> assert len(a_bed) == 25
 
         """
+
+        if isinstance(name, tuple):
+            name = list(name)
 
         message("Calling 'get_midpoints'.", type="DEBUG")
 

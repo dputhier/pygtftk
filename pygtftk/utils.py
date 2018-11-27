@@ -555,9 +555,9 @@ def chrom_info_to_bed_file(chrom_file, chr_list=None):
     >>> assert i.start == 0
     >>> assert i.end == 300
     >>> i = next(d)
-    >>> str(i.chrom) == 'chr2'
-    >>> i.start == 0
-    >>> i.end == 600
+    >>> assert str(i.chrom) == 'chr2'
+    >>> assert i.start == 0
+    >>> assert i.end == 600
     """
 
     message("Converting chrom info to bed format")
@@ -904,7 +904,7 @@ def left_strip_str(string):
 
     for pos, line in enumerate(string.split("\n")):
         if line == "":
-            if new_line == []:
+            if not new_line:
                 continue
         line = " " + re.sub("^\s+", "", line)
         new_line += [line.lstrip("\n")]
@@ -924,7 +924,7 @@ def nested_dict(n, type):
         return defaultdict(lambda: nested_dict(n - 1, type))
 
 
-def flatten_list(x, outlist=[]):
+def flatten_list(x, outlist=None):
     """Flatten a list of lists.
 
     :param x: a list or list of list.
@@ -944,6 +944,9 @@ def flatten_list(x, outlist=[]):
 
     """
 
+    if outlist is None:
+        outlist = []
+
     if not isinstance(x, (list, tuple)):
         outlist += [x]
     else:
@@ -960,16 +963,16 @@ def flatten_list_recur(a_list, sep=" "):
 
     """
 
-    def _iterFlatten(root):
+    def _iter_flatten(root):
 
         if isinstance(root, (list, tuple)):
             for element in root:
-                for e in _iterFlatten(element):
+                for e in _iter_flatten(element):
                     yield e
         else:
             yield root
 
-    return sep.join(list(_iterFlatten(a_list)))
+    return sep.join(list(_iter_flatten(a_list)))
 
 
 def sort_2_lists(list1, list2):
@@ -1003,7 +1006,10 @@ def print_table(table):
                                 for i, x in enumerate(line)) + " |")
 
 
-def call_nested_dict_from_list(data, args=[]):
+def call_nested_dict_from_list(data, args=None):
+    if args is None:
+        args = []
+
     if args and data:
         element = args[0]
         if element:

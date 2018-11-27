@@ -137,8 +137,8 @@ class ArgFormatter(argparse.HelpFormatter):
                     positionals.append(action)
 
             # build full usage string
-            format = self._format_actions_usage
-            action_usage = format(optionals + positionals, groups)
+            format_fun = self._format_actions_usage
+            action_usage = format_fun(optionals + positionals, groups)
             usage = ' '.join([s for s in [prog, action_usage] if s])
 
             # wrap the usage parts if it's too long
@@ -147,8 +147,8 @@ class ArgFormatter(argparse.HelpFormatter):
 
                 # break usage into wrappable parts
                 part_regexp = r'\(.*?\)+|\[.*?\]+|\S+'
-                opt_usage = format(optionals, groups)
-                pos_usage = format(positionals, groups)
+                opt_usage = format_fun(optionals, groups)
+                pos_usage = format_fun(positionals, groups)
                 opt_parts = re.findall(part_regexp, opt_usage)
                 pos_parts = re.findall(part_regexp, pos_usage)
                 assert ' '.join(opt_parts) == opt_usage
@@ -289,7 +289,7 @@ def int_greater_than_null(a_value):
 # Check the chrom file format
 # ---------------------------------------------------------------
 
-class checkChromFile(argparse.Action):
+class CheckChromFile(argparse.Action):
     """
     Check the chromosome file exists and has the proper format.
     """

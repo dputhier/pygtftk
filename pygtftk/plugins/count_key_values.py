@@ -70,10 +70,7 @@ def count_key_values(
         outputfile=None,
         keys="gene_id,transcript_id",
         uniq=True,
-        tmp_dir=None,
-        additional_text=None,
-        logger_file=None,
-        verbosity=0):
+        additional_text=None):
     """
  Count the number values for a set of keys.
     """

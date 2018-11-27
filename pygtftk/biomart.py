@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import re
 import textwrap
-import xml.etree.ElementTree as elmt_tree
+import xml.etree.ElementTree as ElementTree
 from builtins import object
 from builtins import str
 from collections import defaultdict
@@ -34,6 +34,7 @@ class Biomart(object):
         self.databases = []
         self.datasets = defaultdict(list)
         self._get_databases()
+        self.response = None
 
     def __repr__(self, *args, **kwargs):
 
@@ -66,7 +67,7 @@ class Biomart(object):
         except ConnectionError:
             message("Raised a connection Error.", type="ERROR")
 
-        tree = elmt_tree.fromstring(self.response.content)
+        tree = ElementTree.fromstring(self.response.content)
 
         for child in tree:
             if child.tag == 'MartURLLocation':

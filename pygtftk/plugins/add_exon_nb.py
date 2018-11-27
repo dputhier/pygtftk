@@ -45,10 +45,7 @@ def make_parser():
 
 def add_exon_nb(inputfile=None,
                 outputfile=None,
-                exon_numbering_key=None,
-                tmp_dir=None,
-                logger_file=None,
-                verbosity=0):
+                exon_numbering_key=None):
     """Add the exon number to each exon (based on 5' to 3' orientation)."""
 
     message("Calling nb_exons.", type="DEBUG")

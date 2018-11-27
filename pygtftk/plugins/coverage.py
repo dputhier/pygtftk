@@ -10,8 +10,9 @@ from builtins import range
 import pandas as pd
 from pybedtools import BedTool
 
+import pygtftk
 from pygtftk import arg_formatter
-from pygtftk.arg_formatter import checkChromFile
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.bwig.bw_coverage import bw_cov_mp
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -70,7 +71,7 @@ def make_parser():
                                  " column 2 ",
                             default=None,
                             metavar="CHROMINFO",
-                            action=checkChromFile,
+                            action=CheckChromFile,
                             required=True)
 
     parser_grp.add_argument('-u', '--upstream',
@@ -179,10 +180,7 @@ def coverage(
         chrom_info=None,
         nb_proc=1,
         matrix_out=False,
-        tmp_dir=None,
-        logger_file=None,
-        stat='mean',
-        verbosity=True):
+        stat='mean'):
     """
     Compute transcript coverage with one or several bigWig.
     """
@@ -296,7 +294,7 @@ def coverage(
                                                              r=downstream,
                                                              g=chrom_info.name).sort()
 
-        elif ft_type.lower() == ["tts", "terminator"]:
+        elif ft_type.lower() in ["tts", "terminator"]:
 
             region_bo = gtf.get_tts(name=name_column).slop(s=True,
                                                            l=upstream,
@@ -341,7 +339,7 @@ def coverage(
                            nb_proc=nb_proc,
                            n_highest=n_highest,
                            stat=stat,
-                           verbose=verbosity)
+                           verbose=pygtftk.utils.VERBOSITY)
 
     if matrix_out:
         result_bed.close()

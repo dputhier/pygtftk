@@ -60,10 +60,7 @@ def select_by_regexp(inputfile=None,
                      outputfile=None,
                      key=None,
                      regexp=None,
-                     invert_match=False,
-                     tmp_dir=None,
-                     logger_file=None,
-                     verbosity=0):
+                     invert_match=False):
     """Select lines from a GTF file based on attributes and
     associated values.
     """

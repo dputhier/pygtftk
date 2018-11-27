@@ -95,10 +95,7 @@ def get_feat_seq(inputfile=None,
                  no_rev_comp=False,
                  label="",
                  rev_comp_to_header=False,
-                 unique=False,
-                 tmp_dir=None,
-                 logger_file=None,
-                 verbosity=0):
+                 unique=False):
     """
     Description: Get transcripts sequences in fasta format from a GTF file.
     """

@@ -128,7 +128,6 @@ def select_by_key(inputfile=None,
                   key=None,
                   value=None,
                   invert_match=False,
-                  tmp_dir=None,
                   file_with_values=None,
                   col=0,
                   select_transcripts=False,
@@ -139,9 +138,7 @@ def select_by_key(inputfile=None,
                   bed_format=False,
                   log=False,
                   separator="|",
-                  names="transcript_id",
-                  logger_file=None,
-                  verbosity=0):
+                  names="transcript_id"):
     """Select lines from a GTF file based on attributes and
     associated values.
     """

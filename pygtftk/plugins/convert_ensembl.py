@@ -56,10 +56,7 @@ def make_parser():
 
 def convert_ensembl(inputfile=None,
                     outputfile=None,
-                    tmp_dir=None,
-                    logger_file=None,
-                    no_check_gene_chr=False,
-                    verbosity=0):
+                    no_check_gene_chr=False):
     """
     Convert the GTF file to ensembl format.
     """

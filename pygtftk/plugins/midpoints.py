@@ -68,10 +68,7 @@ def midpoints(
         outputfile=None,
         ft_type="transcript",
         names="transcript_id",
-        separator="|",
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        separator="|"):
     """
  Get the midpoint coordinates for the requested feature.
     """

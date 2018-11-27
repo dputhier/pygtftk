@@ -302,11 +302,7 @@ def profile(inputfile=None,
             theme_plotnine='bw',
             list_bwig=False,
             confidence_interval=False,
-            dpi=300,
-            tmp_dir=None,
-            logger_file=None,
-            verbosity=False
-            ):
+            dpi=300):
     # -------------------------------------------------------------------------
     #
     # Pandas version is sometimes problematic

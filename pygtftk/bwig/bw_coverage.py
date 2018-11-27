@@ -15,6 +15,7 @@ from itertools import repeat
 import numpy as np
 from pybedtools import BedTool
 
+import pygtftk
 from pygtftk.utils import GTFtkError
 from pygtftk.utils import add_prefix_to_file
 from pygtftk.utils import close_properly
@@ -57,8 +58,6 @@ def _big_wig_coverage_worker(input_values):
     :param verbose: run in verbose mode.
 
     """
-    from pygtftk.utils import WARN_REGION_SIZE
-    from pygtftk.utils import WARN_UNDEF
 
     (span, bw_list,
      region_bed_file_name,
@@ -113,8 +112,8 @@ def _big_wig_coverage_worker(input_values):
 
             if (i.end - i.start) < bin_nb:
 
-                if WARN_REGION_SIZE:
-                    WARN_REGION_SIZE = False
+                if pygtftk.utils.WARN_REGION_SIZE:
+                    pygtftk.utils.WARN_REGION_SIZE = False
                     message("Encountered regions shorter than bin number.",
                             type="WARNING")
                     message(i.name +
@@ -169,13 +168,13 @@ def _big_wig_coverage_worker(input_values):
                         out = [pc if np.isnan(k) else k + pc for k in out]
 
                 except:
-                    if WARN_UNDEF:
+                    if pygtftk.utils.WARN_UNDEF:
+                        pygtftk.utils.WARN_UNDEF = False
+
                         mesg = "Encountered regions undefined in bigWig file."
                         message(mesg, type="WARNING")
-                        mesg = '%s:%s-%s' % (i.chrom,
-                                             str(i.start), str(i.end))
+                        mesg = '%s:%s-%s' % (i.chrom, str(i.start), str(i.end))
                         message(mesg)
-                        WARN_UNDEF = False
 
                     if zero_to_na:
                         out = ['NA'] * bin_nb

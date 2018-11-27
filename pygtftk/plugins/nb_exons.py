@@ -52,11 +52,8 @@ def make_parser():
 
 def nb_exons(inputfile=None,
              outputfile=None,
-             tmp_dir=None,
              key_name=None,
-             text_format=False,
-             logger_file=None,
-             verbosity=0):
+             text_format=False):
     """
     Count the number of exons in the gtf file.
     """

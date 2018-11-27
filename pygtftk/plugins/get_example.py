@@ -80,10 +80,7 @@ def get_example(outputfile=None,
                 dataset=None,
                 format="gtf",
                 list=False,
-                all_dataset=False,
-                tmp_dir=None,
-                logger_file=None,
-                verbosity=0):
+                all_dataset=False):
     """
     Print example gtf files.
     """

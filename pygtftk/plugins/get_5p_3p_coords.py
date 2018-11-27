@@ -87,10 +87,7 @@ def get_5p_3p_coords(inputfile=None,
                      more_names='',
                      transpose=0,
                      invert=False,
-                     explicit=False,
-                     tmp_dir=None,
-                     logger_file=None,
-                     verbosity=0):
+                     explicit=False):
     """
     Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
     """

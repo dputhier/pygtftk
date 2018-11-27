@@ -86,10 +86,7 @@ def join_attr(
         new_key=None,
         target_feature=None,
         key_to_join=None,
-        matrix=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        matrix=None):
     """
     Join attributes from a tabulated file.
     """

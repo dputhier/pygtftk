@@ -67,10 +67,7 @@ def convert(inputfile=None,
             format="bed",
             names="gene_id,transcript_id",
             separator="|",
-            more_names='',
-            tmp_dir=None,
-            logger_file=None,
-            verbosity=0):
+            more_names=''):
     """
  Convert a GTF to various format.
     """

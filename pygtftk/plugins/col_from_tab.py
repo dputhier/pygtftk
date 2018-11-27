@@ -70,10 +70,7 @@ def col_from_tab(inputfile=None,
                  invert_match=False,
                  no_header=False,
                  unique=False,
-                 separator=None,
-                 tmp_dir=None,
-                 logger_file=None,
-                 verbosity=None):
+                 separator=None):
     """Select columns from a tabulated file based on their names."""
 
     line_set = dict()

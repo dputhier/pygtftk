@@ -7,7 +7,7 @@ from builtins import str
 from collections import defaultdict
 
 from pygtftk import arg_formatter
-from pygtftk.arg_formatter import checkChromFile
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -51,7 +51,7 @@ def make_parser():
                                  " column 2",
                             default=None,
                             metavar="CHROMINFO",
-                            action=checkChromFile,
+                            action=CheckChromFile,
                             required=True)
 
     parser_grp.add_argument('-u', '--upstream',
@@ -117,10 +117,7 @@ def overlapping(
         same_strandedness=False,
         diff_strandedness=False,
         annotate_gtf=False,
-        tmp_dir=None,
-        logger_file=None,
-        invert_match=False,
-        verbosity=0):
+        invert_match=False):
     """
 Description: Find transcripts whose body/TSS/TTS do or do not overlap with any
 transcript from another gene.

@@ -73,10 +73,7 @@ def merge_attr(
         src_key="gene_id,transcript_id",
         separator="|",
         target_feature="*",
-        dest_key="gene_tx_ids",
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=None):
+        dest_key="gene_tx_ids"):
     """
     Merge a set of attributes into a destination attribute.
     """

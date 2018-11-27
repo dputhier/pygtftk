@@ -7,7 +7,7 @@ import sys
 from builtins import str
 
 from pygtftk import arg_formatter
-from pygtftk.arg_formatter import checkChromFile
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -52,7 +52,7 @@ def make_parser():
                                  " column 2 ",
                             default=None,
                             metavar="CHROMINFO",
-                            action=checkChromFile,
+                            action=CheckChromFile,
                             required=True)
 
     parser_grp.add_argument('-u', '--upstream',
@@ -79,10 +79,7 @@ def convergent(
         outputfile=None,
         upstream=1500,
         downstream=1500,
-        chrom_info=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        chrom_info=None):
     """
     Find transcript with convergent tts.
     """

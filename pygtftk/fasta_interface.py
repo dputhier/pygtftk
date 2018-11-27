@@ -52,7 +52,6 @@ class FASTA(object):
 
         >>> # The __init__ example is provided as doctest
         >>> # Please use get_sequences method from the GTF object.
-        >>> from future.utils import native_str
         >>> from pygtftk.fasta_interface import  FASTA
         >>> from pygtftk.gtf_interface import GTF
         >>> native_str=lambda x:bytes(x.encode())

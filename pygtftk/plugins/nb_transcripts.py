@@ -51,11 +51,8 @@ def make_parser():
 
 def nb_transcripts(inputfile=None,
                    outputfile=None,
-                   tmp_dir=None,
                    text_format=False,
-                   key_name="",
-                   logger_file=None,
-                   verbosity=0):
+                   key_name=""):
     """
     Compute the number of transcript per gene.
     """

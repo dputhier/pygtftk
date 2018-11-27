@@ -46,10 +46,7 @@ def make_parser():
 def seqid_list(
         inputfile=None,
         outputfile=None,
-        tmp_dir=None,
-        separator="",
-        logger_file=None,
-        verbosity=0):
+        separator=""):
     """
     Select the seqid/chromosomes.
     """

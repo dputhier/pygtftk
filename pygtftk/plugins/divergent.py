@@ -7,7 +7,7 @@ import sys
 from builtins import str
 
 from pygtftk import arg_formatter
-from pygtftk.arg_formatter import checkChromFile
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -54,7 +54,7 @@ def make_parser():
                                  " column 2",
                             default=None,
                             metavar="CHROMINFO",
-                            action=checkChromFile,
+                            action=CheckChromFile,
                             required=True)
 
     parser_grp.add_argument('-u', '--upstream',
@@ -79,7 +79,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-S', '--no-strandness',
-                            help="Do not consider strandness (only look whether the promoter from a transcript overlap with the promoter from another gene).",
+                            help="Do not consider strandness (only look whether the promoter from a transcript overlaps with the promoter from another gene).",
                             action="store_true",
                             required=False)
 

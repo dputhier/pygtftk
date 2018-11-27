@@ -49,10 +49,7 @@ def make_parser():
 def select_by_tx_size(inputfile=None,
                       outputfile=None,
                       min_size=None,
-                      max_size=None,
-                      tmp_dir=None,
-                      logger_file=None,
-                      verbosity=0):
+                      max_size=None):
     """
     Select features by size.
     """

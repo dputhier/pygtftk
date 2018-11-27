@@ -76,10 +76,7 @@ def select_by_loc(inputfile=None,
                   location=None,
                   ft_type=None,
                   invert_match=False,
-                  tmp_dir=None,
-                  location_file=None,
-                  logger_file=None,
-                  verbosity=0):
+                  location_file=None):
     """
  Select transcripts overlapping a given locations.
     """

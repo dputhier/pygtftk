@@ -44,7 +44,7 @@ def make_parser():
                             default=sys.stdout,
                             metavar="TXT",
                             type=arg_formatter.txt_rw('w'))
-    
+
     parser_grp.add_argument('-s', '--separator',
                             help="The output field separator.",
                             default="\t",
@@ -110,7 +110,6 @@ def make_parser():
 def tabulate(inputfile=None,
              outputfile=None,
              key=None,
-             tmp_dir=None,
              no_unset=False,
              unique=False,
              no_basic=False,
@@ -120,9 +119,7 @@ def tabulate(inputfile=None,
              select_transcript_ids=False,
              select_exon_ids=False,
              separator="\t",
-             logger_file=None,
-             no_header=False,
-             verbosity=0):
+             no_header=False):
     """Convert a GTF to tabulated format.
     """
 
