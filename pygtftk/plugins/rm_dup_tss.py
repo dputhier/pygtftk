@@ -145,7 +145,7 @@ else:
     
     #Check no duplicate TSS exists
     @test "rm_dup_tss_3" {
-    result=$(gtftk get_example -d simple_05 |  gtftk rm_dup_tss  | perl -ne 'print if (/(G0001T002)|(G0003T002)|(G0004T002)|(G0006T002)|(G0007T002)|(G0008T002)/)' out_rm.gtf)
+    result=$(gtftk get_example -d simple_05 |  gtftk rm_dup_tss  | perl -ne 'print if (/(G0001T002)|(G0003T002)|(G0004T002)|(G0006T002)|(G0007T002)|(G0008T002)/)')
     [ -z $result ]
     }
 
@@ -164,7 +164,7 @@ else:
     
     #Check with rmdup (now 1 tx with the same TSS)
     @test "rm_dup_tss_6" {
-    result=$(gtftk get_example -d mini_real  | gtftk rm_dup_tss | gtftk select_by_key -t | gtftk get_5p_3p_coords -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
+    result=$(   gtftk get_example -d mini_real  | gtftk rm_dup_tss | gtftk select_by_key -t | gtftk get_5p_3p_coords -n gene_name | cut -f2,4 | awk 'BEGIN{n=0};{ if($2=="PCDH15" && $1=="54801290"){n++}}END{print n}')
     [ $result -eq 1 ]
     }
         
