@@ -132,7 +132,7 @@ def _big_wig_coverage_worker(input_values):
     else:
         if bin_nb < 1:
             bin_nb = 1
-        matrix_file = make_tmp_file_pool(prefix="worker_coverage_")
+        matrix_file = make_tmp_file_pool(prefix="worker_coverage_", suffix=".txt")
 
     for cpt, big_wig in enumerate(bw_list):
 

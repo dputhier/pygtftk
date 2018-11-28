@@ -620,26 +620,26 @@ else:
         
         #mk_matrix: every file contain 15 transcripts
         @test "mk_matrix_6" {
-         result=`gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo -K toto; wc -l toto/*.bed | grep 15| wc -l`
+         result=`rm -Rf simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo -K toto; wc -l toto/worker_coverage__pygtftk_*txt | wc -l`
           [ "$result" -eq 6 ]
         }
         
         
         #mk_matrix: test downstream + upstream (transcript)
         @test "mk_matrix_7" {
-         result=` gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cut -f8,9,10,11 simple_mat| tail -14| perl -npe 's/\\t/|/g; s/\\n/,/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`rm -Rf  simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cut -f8,9,10,11 simple_mat| tail -14| perl -npe 's/\\t/|/g; s/\\n/,/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "3.666667|2.333333|1.666667|1.4,0.0|0.0|0.5|1.75,0.0|0.0|0.0|1.333333,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,2.666667|3.333333|2.0|2.666667,2.0|2.0|3.333333|3.0,2.5|2.0|1.5|2.0,1.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,1.5|2.0|2.0|1.0,0.0|0.666667|1.0|1.0,0.0|0.666667|1.0|1.0,0.0|0.0|0.0|0.4," ]
         }
         
         #mk_matrix: test upstream.
         @test "mk_matrix_8" {
-         result=` gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| cut -f7| grep -v "#" | grep -v "upstream" | perl -npe 's/\\t/|/g; s/\\n/,/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`rm -Rf  simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| cut -f7| grep -v "#" | grep -v "upstream" | perl -npe 's/\\t/|/g; s/\\n/,/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "4.0,4.0,0.0,0.0,0.0,0.0,2.0,2.0,2.0,2.0,2.0,1.0,1.0,1.0,0.5," ]
         }
         
         #mk_matrix: test downstream.
         @test "mk_matrix_9" {
-         result=`gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| cut -f12| grep -v "#" | perl -npe 's/\\t/|/g; s/\\n/,/g' |  sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`rm -Rf  simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cat simple_mat| cut -f12| grep -v "#" | perl -npe 's/\\t/|/g; s/\\n/,/g' |  sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "downstream_1,2.0,2.0,2.0,2.0,0.0,0.0,1.0,2.5,3.0,3.0,3.0,1.5,1.0,1.0,2.0," ]
         }
         
