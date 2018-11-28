@@ -7,6 +7,7 @@
 - Fix a critical bug in get_sequence that affected get_feat_seq and get_tx_seq.
 - Select_by_key now throw an error when no key/val are available.
 - No more function with mutable objects as default arguments.
+- Fix temporary file deletion. 
 
 ### API Changes
 

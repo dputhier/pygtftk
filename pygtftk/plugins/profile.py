@@ -621,7 +621,7 @@ def profile(inputfile=None,
             if curr_item not in input_file_bwig:
                 message("Color order: Found undefined bigwig labels (" + curr_item + ")... Please Check.",
                         type="WARNING")
-                message("Use one of :" + ",".join(input_file_bwig) + ".",
+                message("Use one of : " + ",".join(input_file_bwig) + ".",
                         type="ERROR")
 
     elif group_by == 'tx_classes':
@@ -650,8 +650,8 @@ def profile(inputfile=None,
     if len(color_order) < len(profile_colors):
         profile_colors = profile_colors[:len(color_order)]
 
-    message("Color order :" + str(color_order), type="DEBUG")
-    message("Profile color :" + str(profile_colors), type="DEBUG")
+    message("Color order : " + str(color_order), type="DEBUG")
+    message("Profile color : " + str(profile_colors), type="DEBUG")
 
     # -------------------------------------------------------------------------
     #

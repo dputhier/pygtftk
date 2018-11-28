@@ -215,7 +215,7 @@ def discretize_key(inputfile=None,
         q = q + [np.percentile(dest_values_tmp, 100)]
 
         if len(q) != len(set(q)):
-            message("No ties are accepted in  percentiles :",
+            message("No ties are accepted in  percentiles.",
                     type="WARNING",
                     force=True)
             message("Breaks: " + str(q), type="WARNING", force=True)

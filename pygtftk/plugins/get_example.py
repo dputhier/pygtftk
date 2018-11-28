@@ -146,7 +146,7 @@ def get_example(outputfile=None,
                     message("Copying file : " + os.path.basename(i), force=True)
                     shutil.copy(i, ".")
                 else:
-                    message("Copy canceled, file already exist:" + os.path.basename(i), force=True)
+                    message("Copy canceled, file already exist: " + os.path.basename(i), force=True)
 
         else:
 

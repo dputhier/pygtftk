@@ -24,6 +24,7 @@ from pygtftk.utils import flatten_list
 from pygtftk.utils import message
 from pygtftk.utils import silentremove
 from pygtftk.version import __version__
+from pygtftk.bwig.bw_coverage import TMP_FILE_POOL_MANAGER
 
 # Avoid warning message emitted by numpy
 # https://tinyurl.com/ybev6zrw
@@ -104,16 +105,16 @@ if __name__ == "__main__":
 
         # delete created temporary files
 
-        for i in flatten_list(TMP_FILE_LIST, outlist=[]):
+        for i in flatten_list(TMP_FILE_LIST + list(TMP_FILE_POOL_MANAGER), outlist=[]):
 
             # If the user ask to keep temp files
             if args.tmp_dir is not None:
-                message("Keeping temporary file :" + i)
+                message("Keeping temp file : " + i)
 
                 base_name_i = os.path.basename(i)
                 shutil.move(i, os.path.join(args.tmp_dir, base_name_i))
             else:
-                message("Deleting temporary file :" + i, type="DEBUG")
+                message("Deleting temp file : " + i, type="DEBUG")
                 silentremove(i)
 
     except KeyboardInterrupt:
