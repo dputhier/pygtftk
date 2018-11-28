@@ -705,7 +705,12 @@ def message(msg, nl=True, type="INFO", force=False):
     """
 
     now = datetime.datetime.now()
-    ho_min = str(now.hour) + ":" + str(now.minute).zfill(2)
+
+    if pygtftk.utils.VERBOSITY > 2:
+        ho_min = str(now.hour) + ":" + str(now.minute).zfill(2) + ":" + str(now.second).zfill(2)
+    else:
+        ho_min = str(now.hour) + ":" + str(now.minute).zfill(2)
+
     do_it = False
 
     if type not in ["INFO", "ERROR", "WARNING", "DEBUG", "DEBUG_MEM"]:
