@@ -621,7 +621,7 @@ else:
         #mk_matrix: every file contain 15 transcripts
         @test "mk_matrix_6" {
          result=`rm -Rf simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo -K toto -k 1; wc -l toto/* | grep 15 | wc -l`
-          [ "$result" -eq 6 ]
+          [ "$result" -eq 9 ]
         }
         
         
