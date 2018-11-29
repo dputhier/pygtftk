@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
@@ -10,7 +9,7 @@ from builtins import str
 
 from pybedtools.bedtool import BedTool
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -37,15 +36,13 @@ def make_parser():
                         help="Path to the GTF file. Default to STDIN",
                         default=sys.stdin,
                         metavar="GTF",
-                        type=FileWithExtension('r',
-                                               valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                        type=arg_formatter.gtf_rwb('r'))
 
     parser.add_argument('-o', '--outputfile',
                         help="Output file.",
                         default=sys.stdout,
                         metavar="GTF",
-                        type=FileWithExtension('w',
-                                               valid_extensions='\.[Gg][Tt][Ff]$'))
+                        type=arg_formatter.gtf_rw('w'))
 
     parser_mut = parser.add_mutually_exclusive_group(required=True)
 
@@ -79,10 +76,7 @@ def select_by_loc(inputfile=None,
                   location=None,
                   ft_type=None,
                   invert_match=False,
-                  tmp_dir=None,
-                  location_file=None,
-                  logger_file=None,
-                  verbosity=0):
+                  location_file=None):
     """
  Select transcripts overlapping a given locations.
     """
@@ -140,25 +134,25 @@ def select_by_loc(inputfile=None,
 
     if not invert_match:
 
-        out = gtf.select_by_key(ft_type + '_id',
-                                ",".join(id_list),
-                                invert_match=invert_match).write(outputfile,
-                                                                 gc_off=True)
+        gtf.select_by_key(ft_type + '_id',
+                          ",".join(id_list),
+                          invert_match=invert_match).write(outputfile,
+                                                           gc_off=True)
     else:
         if ft_type == 'transcript':
 
-            out = gtf.select_by_key('transcript_id',
-                                    ",".join(id_list),
-                                    invert_match=invert_match,
-                                    no_na=True
-                                    ).write(outputfile,
-                                            gc_off=True)
+            gtf.select_by_key('transcript_id',
+                              ",".join(id_list),
+                              invert_match=invert_match,
+                              no_na=True
+                              ).write(outputfile,
+                                      gc_off=True)
         else:
-            out = gtf.select_by_key('gene_id',
-                                    ",".join(id_list),
-                                    invert_match=invert_match
-                                    ).write(outputfile,
-                                            gc_off=True)
+            gtf.select_by_key('gene_id',
+                              ",".join(id_list),
+                              invert_match=invert_match
+                              ).write(outputfile,
+                                      gc_off=True)
 
     close_properly(outputfile, inputfile)
 

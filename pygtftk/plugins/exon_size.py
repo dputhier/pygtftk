@@ -7,7 +7,7 @@ import sys
 from builtins import str
 from builtins import zip
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -34,15 +34,13 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF",
                             required=False,
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output GTF file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.gtf_rw('r'))
 
     parser_grp.add_argument('-a',
                             '--key-name',
@@ -57,15 +55,12 @@ def make_parser():
 def exon_sizes(
         inputfile=None,
         outputfile=None,
-        key_name=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        key_name=None):
     """
  Add a new key to transcript features containing a comma separated list of exon-size.
     """
 
-    gtf = GTF(inputfile, check_ensembl_format=False)
+    gtf = GTF(inputfile)
 
     all_tx_ids = gtf.get_tx_ids(nr=True)
     tx_to_size_list = dict()

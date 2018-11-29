@@ -7,7 +7,7 @@ import re
 import sys
 from builtins import range
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.utils import chomp
 from pygtftk.utils import message
 from pygtftk.utils import write_properly
@@ -27,22 +27,14 @@ def make_parser():
     parser_grp.add_argument('-i', '--inputfile',
                             help="The tabulated file. Default to STDIN",
                             default=sys.stdin,
-                            metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions=('\.[Tt][Xx][Tt]',
-                                                                     '\.[Cc][Ss][Vv]',
-                                                                     '\.[Tt][Aa][Bb]',
-                                                                     '\.[Tt][Ss][Vv]')))
+                            metavar="TXT",
+                            type=arg_formatter.txt_rw('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Tt][Xx][Tt]',
-                                                                     '\.[Cc][Ss][Vv]',
-                                                                     '\.[Tt][Aa][Bb]',
-                                                                     '\.[Tt][Ss][Vv]')))
+                            type=arg_formatter.txt_rw('w'))
 
     parser_grp.add_argument('-c', '--columns',
                             help="The list (csv) of column names.",
@@ -78,10 +70,7 @@ def col_from_tab(inputfile=None,
                  invert_match=False,
                  no_header=False,
                  unique=False,
-                 separator=None,
-                 tmp_dir=None,
-                 logger_file=None,
-                 verbosity=None):
+                 separator=None):
     """Select columns from a tabulated file based on their names."""
 
     line_set = dict()

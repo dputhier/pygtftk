@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import glob
@@ -42,6 +41,8 @@ def make_parser():
                                 "simple_03",
                                 "simple_04",
                                 "simple_05",
+                                "simple_06",
+                                "mini_real_10M",
                                 "control_list"],
                             default="simple",
                             required=False)
@@ -79,10 +80,7 @@ def get_example(outputfile=None,
                 dataset=None,
                 format="gtf",
                 list=False,
-                all_dataset=False,
-                tmp_dir=None,
-                logger_file=None,
-                verbosity=0):
+                all_dataset=False):
     """
     Print example gtf files.
     """
@@ -148,7 +146,7 @@ def get_example(outputfile=None,
                     message("Copying file : " + os.path.basename(i), force=True)
                     shutil.copy(i, ".")
                 else:
-                    message("Copy canceled, file already exist:" + os.path.basename(i), force=True)
+                    message("Copy canceled, file already exist: " + os.path.basename(i), force=True)
 
         else:
 
@@ -161,7 +159,6 @@ def get_example(outputfile=None,
             file_path = [x for x in file_path if "__" not in x]
             target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
             message("Copying from :" + target_path)
-
 
             for i in file_path:
                 if not os.path.exists(os.path.join(os.getcwd(), os.path.basename(i))):

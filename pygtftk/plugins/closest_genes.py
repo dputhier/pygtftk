@@ -8,7 +8,7 @@ import sys
 from _collections import defaultdict
 from builtins import zip
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -36,20 +36,13 @@ def make_parser():
                         help="Path to the GTF file. Default to STDIN",
                         default=sys.stdin,
                         metavar="GTF",
-                        type=FileWithExtension('r',
-                                               valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                        type=arg_formatter.gtf_rwb('r'))
 
     parser.add_argument('-o', '--outputfile',
                         help="Output file.",
                         default=sys.stdout,
                         metavar="GTF/TXT",
-                        type=FileWithExtension('w',
-                                               valid_extensions=('\.[Gg][Tt][Ff]$',
-                                                                 '\.[Tt][Xx][Tt]',
-                                                                 '\.[Cc][Ss][Vv]',
-                                                                 '\.[Tt][Aa][Bb]',
-                                                                 '\.[Tt][Ss][Vv]',
-                                                                 '\.[Cc][Oo][Vv]')))
+                        type=arg_formatter.gtf_or_txt_rw('w'))
 
     parser_grp.add_argument('-r', '--from-region-type',
                             help="What is region to consider for each gene.",
@@ -115,10 +108,7 @@ def closest_genes(
         diff_strandedness=False,
         text_format=False,
         identifier="gene_id",
-        collapse=False,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        collapse=False):
     """
     Find the n closest genes for each gene.
     """
@@ -195,10 +185,6 @@ def closest_genes(
                                           3, 4, 5]).sort()
     else:
         message("Unknown type.", type="ERROR")
-
-    strands = gn_gtf.extract_data(identifier + ",strand",
-                                  as_dict_of_values=True,
-                                  hide_undef=True)
 
     # ----------------------------------------------------------------------
     # Search closest genes

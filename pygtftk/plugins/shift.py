@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
-
 import argparse
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.arg_formatter import chromFileAsDict
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -17,6 +15,7 @@ __updated__ = "2018-01-20"
 __doc__ = """
  Transpose coordinates in 3' or 5' direction.
 """
+
 __notes__ = """
  -- By default shift is not strand specific. Meaning that if -\shift-value is set to 10, all coordinates will be moved 10 bases in 5' direction relative to the forward/watson/plus/top strand.
  -- Use a negative value to shift in 3' direction, a positive value to shift in 5' direction.
@@ -36,15 +35,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.gtf_rw('w'))
 
     parser_grp.add_argument('-s', '--shift-value',
                             help="Shift coordinate by s nucleotides.",
@@ -75,12 +72,9 @@ def make_parser():
 def shift(inputfile=None,
           outputfile=None,
           shift_value=None,
-          tmp_dir=None,
           chrom_info=None,
           stranded=False,
-          allow_outside=False,
-          logger_file=None,
-          verbosity=0):
+          allow_outside=False):
     """Shift coordinates in 3' or 5' direction.
     """
 

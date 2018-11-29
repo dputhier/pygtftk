@@ -1,21 +1,21 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 import argparse
-import errno
 import os
 import sys
 from builtins import range
 from builtins import str
 from collections import defaultdict
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
+
 __doc__ = """
  Computes the distance between TSSs of pairs of gene transcripts.
 """
@@ -38,29 +38,20 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF",
                             required=False,
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Tt][Xx][Tt]',
-                                                                     '\.[Cc][Ss][Vv]',
-                                                                     '\.[Tt][Aa][Bb]',
-                                                                     '\.[Tt][Ss][Vv]',
-                                                                     '\.[Cc][Oo][Vv]')))
+                            type=arg_formatter.txt_rw('w'))
 
     return parser
 
 
 def tss_dist(
         inputfile=None,
-        outputfile=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        outputfile=None):
     """
     Computes the distance between TSS of gene transcripts.
     """
@@ -112,9 +103,15 @@ def tss_dist(
                                              str(tss_2),
                                              str(tss_1)]) + "\n"
                         outputfile.write(str_out)
-    except IOError as e:
-        if e.errno == errno.EPIPE:
-            message("Received a boken pipe signal", type="WARNING")
+
+
+    except (BrokenPipeError, IOError):
+        def _void_f(*args, **kwargs):
+            pass
+
+        message("Received a boken pipe signal", type="WARNING")
+        sys.stdout.write = _void_f
+        sys.stdout.flush = _void_f
 
     close_properly(outputfile, inputfile)
 
@@ -149,6 +146,21 @@ else:
      result=`gtftk get_example -d mini_real | gtftk tss_dist | grep ENSG00000097007 | cut -f4 | perl -npe 's/\\n/,/' `
       [ "$result" = "121120,121086,34," ]
     }    
+
+    @test "tss_dist_4" {
+     result=`gtftk get_example -d simple_03 | gtftk tss_dist | grep G0002T002| cut -f 4 `
+      [ "$result" -eq 5 ]
+    }    
+
+    @test "tss_dist_4" {
+     result=`gtftk get_example -d simple_03 | gtftk tss_dist | grep G0011T001| cut -f 4 `
+      [ "$result" -eq 13 ]
+    }            
+
+    @test "tss_dist_5" {
+     result=`gtftk get_example -d simple_06 | gtftk tss_dist | md5sum-lite | perl -npe 's/\\s.*//'`
+      [ "$result" = "8ed7258ed14b5cb518332b1f29d31e5e" ]
+    }
     
     """
 
