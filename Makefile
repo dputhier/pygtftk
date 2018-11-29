@@ -94,10 +94,10 @@ test_cmd:
 	make bats_cmd CMD=$(CMD)
 
 %.bats:
-	@gtftk -l | sort -r > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
+	@gtftk -l |sort -r > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
 
 %.bats_travis:
-	@gtftk -l | sort -r | grep -v select_by_go | grep -v retrieve > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
+	@gtftk -l |sort -r | grep -v select_by_go | grep -v retrieve > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
 
 %.completed : %.bats
 	@bats -t $<
@@ -107,13 +107,13 @@ test_cmd:
 	@bats -t $<
 	@echo "completed" > $@
 
-OUTPUT = $(eval OUTPUT := $$(shell gtftk -l | sort -r 2>/dev/null))$(OUTPUT)
+OUTPUT = $(eval OUTPUT := $$(shell gtftk -l |sort -r 2>/dev/null))$(OUTPUT)
 OUTPUT2 = $(addsuffix .completed, $(OUTPUT))
 
 
 test_para: $(OUTPUT2)
 
-OUTPUT3 = $(eval OUTPUT3 := $$(shell gtftk -l | sort -r | grep -v select_by_go | grep -v retrieve 2>/dev/null))$(OUTPUT3)
+OUTPUT3 = $(eval OUTPUT3 := $$(shell gtftk -l |sort -r | grep -v select_by_go | grep -v retrieve 2>/dev/null))$(OUTPUT3)
 OUTPUT4 = $(addsuffix .completed, $(OUTPUT3))
 
 test_para_travis: $(OUTPUT4)
