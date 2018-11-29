@@ -93,9 +93,9 @@ def main():
 
 if __name__ == "__main__":
 
-    from signal import signal, SIGPIPE, SIG_DFL
+    #from signal import signal, SIGPIPE, SIG_DFL
 
-    signal(SIGPIPE, SIG_DFL)
+    #signal(SIGPIPE, SIG_DFL)
 
     try:
 
@@ -120,4 +120,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         message("Canceled on user request.")
         sys.exit(0)
+    except BrokenPipeError:
+        pass
     sys.exit(0)
