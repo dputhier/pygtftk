@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import argparse
-import errno
 import os
 import sys
 
@@ -222,9 +221,14 @@ def tabulate(inputfile=None,
                         if t not in printed:
                             i.write(outputfile, separator)
                         printed[t] = 1
-    except IOError as e:
-        if e.errno == errno.EPIPE:
-            message("Received a boken pipe signal", type="WARNING")
+
+    except (BrokenPipeError, IOError):
+        def _void_f(*args, **kwargs):
+            pass
+
+        message("Received a boken pipe signal", type="WARNING")
+        sys.stdout.write = _void_f
+        sys.stdout.flush = _void_f
 
     close_properly(outputfile, inputfile)
 

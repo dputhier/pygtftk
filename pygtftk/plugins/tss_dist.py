@@ -2,7 +2,6 @@
 
 
 import argparse
-import errno
 import os
 import sys
 from builtins import range
@@ -104,9 +103,15 @@ def tss_dist(
                                              str(tss_2),
                                              str(tss_1)]) + "\n"
                         outputfile.write(str_out)
-    except IOError as e:
-        if e.errno == errno.EPIPE:
-            message("Received a boken pipe signal", type="WARNING")
+
+
+    except (BrokenPipeError, IOError):
+        def _void_f(*args, **kwargs):
+            pass
+
+        message("Received a boken pipe signal", type="WARNING")
+        sys.stdout.write = _void_f
+        sys.stdout.flush = _void_f
 
     close_properly(outputfile, inputfile)
 
