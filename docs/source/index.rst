@@ -31,6 +31,7 @@ Table of content
     convertion
     annotation
     coordinates
+    sequence
     coverage
     miscellaneous
     api
