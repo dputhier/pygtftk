@@ -921,6 +921,20 @@ def left_strip_str(string):
 # Lists and dicts
 # ---------------------------------------------------------------
 
+def to_list(obj, split_char=None):
+    """ Convert a None, str, tuple to list. May also split if required."""
+    if obj is None:
+        obj = []
+    elif isinstance(obj, str):
+        if split_char is None:
+            obj = [obj]
+        else:
+            obj = obj.split(split_char)
+    elif isinstance(obj, tuple):
+        obj = list(obj)
+    return obj
+
+
 def nested_dict(n, type):
     """"http://stackoverflow.com/questions/29348345"""
     if n == 1:
