@@ -53,6 +53,7 @@ from pygtftk.utils import chrom_info_to_bed_file
 from pygtftk.utils import flatten_list_recur
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
+from pygtftk.utils import to_list
 
 
 # ---------------------------------------------------------------
@@ -368,6 +369,7 @@ GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features,  char *key, char *txt, 
 GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_key, char *sep);
 GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
+void write_bed(GTF_DATA *gtf_data, char *output, char *add_chr, char *names);
 """)
 
 # ---------------------------------------------------------------
@@ -2497,6 +2499,41 @@ class GTF(object):
         else:
             return None
 
+    def write_bed(self,
+                  ouputfile=None,
+                  name=("gene_id"),
+                  sep="|",
+                  add_feature_type=False,
+                  more_name=None):
+
+        if isinstance(ouputfile, list):
+            ouputfile = ouputfile[0]
+
+        if isinstance(ouputfile, io.IOBase):
+
+            if ouputfile.name != '<stdout>':
+                fn = ouputfile.name
+            else:
+                fn = "-"
+
+        elif isinstance(ouputfile, str):
+
+            if ouputfile == '-':
+                fn = "-"
+            else:
+                if ouputfile != '<stdout>':
+                    check_file_or_dir_exists(ouputfile)
+                    fn = ouputfile
+                else:
+                    fn = "-"
+        else:
+            raise GTFtkError("Unsupported input type.")
+
+        name = to_list(name, split_char=",")
+        more_name = to_list(more_name, split_char=None)
+
+        self._dll.write_bed()
+
     def to_bed(self,
                name=("gene_id"),
                sep="|",
@@ -2526,14 +2563,9 @@ class GTF(object):
 
         """
 
-        name = list(name)
+        name = list(name, split_char=",")
 
-        if more_name is None:
-            more_name = []
-        elif isinstance(more_name, str):
-            more_name = list(more_name)
-        elif isinstance(more_name, tuple):
-            more_name = list(more_name)
+        more_name = to_list(more_name, split_char=None)
 
         message("Calling 'to_bed' method.", type="DEBUG")
 
