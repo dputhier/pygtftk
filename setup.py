@@ -153,6 +153,22 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                         extra_compile_args=extra_compile_args,
                         sources=cmd_src_list)
 
+
+
+
+from Cython.Build import cythonize
+
+cython_peak_anno = cythonize('/pygtftk/stats/intersect/*.pyx')
+
+
+
+
+
+
+
+
+
+
 # ----------------------------------------------------------------------
 # Description
 # ----------------------------------------------------------------------
@@ -215,6 +231,7 @@ setup(name="pygtftk",
                 'docs/source',
                 'pygtftk/bwig',
                 'pygtftk/rtools',
+                'pygtftk/stats/intersect',
                 'pygtftk/data',
                 'pygtftk/data/simple',
                 'pygtftk/data/simple_02',
@@ -239,6 +256,7 @@ setup(name="pygtftk",
                     'pygtftk/plugins': ['*.*'],
                     'docs': ['Makefile'],
                     'docs/source': ['*.*'],
+                    'pygtftk/stats/intersect': ['*.*'],
                     'pygtftk/src': ['*.*'],
                     'pygtftk/src/libgtftk': ['*.*'],
                     'pygtftk/src/libgtftk/command': ['*.*']},
@@ -271,8 +289,9 @@ setup(name="pygtftk",
                         'matplotlib >=3.0.0',
                         'plotnine >=0.5.1',
                         'future',
-                        'setuptools'],
-      ext_modules=[lib_pygtftk])
+                        'setuptools',
+                        'cython'],
+      ext_modules=[lib_pygtftk, cython_peak_anno])
 
 # ----------------------------------------------------------------------
 # Update gtftk config directory
