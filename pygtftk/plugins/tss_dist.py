@@ -78,7 +78,7 @@ def tss_dist(
                                 "tss_num_1",
                                 "tss_num_2"]) + "\n")
     try:
-        for gn_id in gn_tss_dist:
+        for gn_id in sorted(gn_tss_dist.keys()):
             tx_list = sorted(list(gn_tss_dist[gn_id].keys()))
             for i in range(len(tx_list) - 1):
 
