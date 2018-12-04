@@ -437,7 +437,8 @@ class Feature(object):
 
         >>> from pygtftk.utils import get_example_feature
         >>> feat = get_example_feature()
-        >>> assert feat.get_attr_names() == ['transcript_id', 'gene_id']
+        >>> assert 'transcript_id' in feat.get_attr_names()
+        >>> assert 'gene_id' in feat.get_attr_names()
 
         """
         return list(self.attr.keys())
