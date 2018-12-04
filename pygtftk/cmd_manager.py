@@ -394,7 +394,8 @@ class CmdManager(object):
     parser = argparse.ArgumentParser(
         formatter_class=ArgFormatter,
         description=prg_desc,
-        epilog="------------------------\n"
+        epilog="------------------------\n",
+        allow_abbrev=False
     )
 
     parser._optionals.title = "Main command arguments"
