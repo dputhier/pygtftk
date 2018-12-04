@@ -1,3 +1,34 @@
+
+# FOR MY JUPYTER KERNEL TESTING ONLY
+import os
+os.getcwd()
+os.chdir('/home/ferre/anaconda3/lib/python3.6/site-packages/pygtftk-0.9.8-py3.6-linux-x86_64.egg/pygtftk')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #!/usr/bin/env python
 from __future__ import division
 from __future__ import print_function
@@ -33,7 +64,6 @@ from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
-R_LIBS = "reshape2,ggplot2"
 
 __updated__ = "2018-01-24"
 __doc__ = """
@@ -46,12 +76,12 @@ __doc__ = """
 
 __notes__ = """
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
- 
+
  -- The program produces two pdf files and one txt file ('_stats_') containing intersection statistics.
  The two pdf files correspond to the statistics performed on the whole genome or at the level of the chromosomes.
  In the case of the chromosomes ('_by_chrom_' pdf file) the question is to test whether enrichments/depletions observed
  at a global level are also observed throughout chromosomes or whether some of them deviate from the general trend.
- 
+
  -- If -\-more-keys is used additional region sets will be tested based on the associated key value.
  As an example, if -\-more-keys is set to the 'gene_biotype' (a key generally found in ensembl GTF), the
  region related to 'protein_coding', 'lncRNA' or any other values for that key will be retrieved merged and tested
@@ -61,7 +91,7 @@ __notes__ = """
 
  -- TODO: This function does not support a mappability file at the moment...
 
- -- TODO: the png output by chromosomes is not functional at the moment. 
+ -- TODO: the png output by chromosomes is not functional at the moment.
  """
 
 
@@ -92,6 +122,16 @@ def make_parser():
                             metavar="TXT",
                             action=checkChromFile,
                             required=False)
+
+
+
+
+    # TODO : chromfile will return a file, use the arg_formatter module
+
+
+
+
+
 
     parser_grp.add_argument('-p', '--peak-file',
                             help='The file containing the peaks/regions to be annotated.'
@@ -177,72 +217,25 @@ def make_parser():
 
 
 # -------------------------------------------------------------------------
-# This function performs intersection between a bedTools object
-# an another file (feature_file) e.g promoter, intron, exon...
-# Fill a dictionary of dictionary
-# -------------------------------------------------------------------------
-
-
-def _intersection_results(peak_file=None,
-                          feature_bo=None,
-                          my_dict=None,
-                          chrom_len=None,
-                          ft_type=None):
-    """Get feature and peaks and compute intersections. Returns an updated
-    dict.
-    """
-
-    # -------------------------------------------------------------------------
-    # Compute the number of regions of interest falling in
-    # each chromosome.
-    # If ft_type = "Full_chromosomes" we are checking whether peaks
-    # tend to fall on some chromosomes (i.e. not a the feature level)
-    # -------------------------------------------------------------------------
-
-    peak_file = BedTool(peak_file)
-    nb_peaks = len(peak_file)
-
-    for i in peak_file:
-        my_dict[ft_type]["all_chrom"]["Nb_trial_or_peak"] += 1
-
-    # -------------------------------------------------------------------------
-    # Compute the nucleotide size of all feature (promoter, exons, introns,...)
-    # Save features (introns, intergenic,...) for tracability
-    # -------------------------------------------------------------------------
-
-    feature_bo = feature_bo.sort()
-    feature_merge_bo = feature_bo.merge()
-
-    peak_anno_tmp_file = make_tmp_file(prefix="peak_anno_" + ft_type + "_merged",
-                                       suffix=".bed")
-
-    feature_merge_bo.saveas(peak_anno_tmp_file.name)
-    peak_anno_tmp_file.close()
-
-    for i in feature_merge_bo:
-        size = i.end - i.start
-        my_dict[ft_type]["all_chrom"]["coverage"] += size
-
-    # -------------------------------------------------------------------------
-    # Compute intersections
-    # -------------------------------------------------------------------------
-
-    intersections = peak_file.intersect(feature_merge_bo)
-
-    for i in intersections:
-        my_dict[ft_type]["all_chrom"]["Observed"] += 1
-
-    file_out_save = make_tmp_file(prefix="peak_anno_intersections_" +
-                                         ft_type,
-                                  suffix=".bed")
-    intersections.saveas(file_out_save.name)
-
-    return my_dict
-
-
-# -------------------------------------------------------------------------
 # The command function
 # -------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def peak_anno(inputfile=None,
@@ -295,32 +288,10 @@ def peak_anno(inputfile=None,
 
     # -------------------------------------------------------------------------
     # chrom_len will store the chromosome sizes.
-    # As one diagram inspect enrichment on a per-chromosome basis
-    # we can not accept too much chromosomes
     # -------------------------------------------------------------------------
 
     chrom_len = chrom_info_as_dict(chrom_info)
 
-    if len(chrom_len.keys()) > 100:
-        message("Can't accept more than 100 chromosomes in peak_anno (see --chrom-info).",
-                type="ERROR")
-
-    # -------------------------------------------------------------------------
-    # The hits variable is a muti-level dict to store the results
-    # per chromosome
-    #   - e.g my_dict[ft_type][chrom]["Observed"]
-    #   - e.g my_dict[ft_type][chrom]["coverage"]
-    #   - e.g my_dict[ft_type][chrom]["Nb_trial_or_peaks"]
-    # -------------------------------------------------------------------------
-
-    def nested_dict(n, type):
-        """"http://stackoverflow.com/questions/29348345"""
-        if n == 1:
-            return defaultdict(type)
-        else:
-            return defaultdict(lambda: nested_dict(n - 1, type))
-
-    hits = nested_dict(3, int)
 
     # -------------------------------------------------------------------------
     # Read the gtf file and discard any records corresponding to chr not declared
@@ -380,12 +351,11 @@ def peak_anno(inputfile=None,
 
     file_out_list = make_outdir_and_file(out_dir=outputdir,
                                          alist=["00_peak_anno_stats.txt",
-                                                "00_peak_anno_diagrams." + page_format,
-                                                "00_peak_anno_diagrams_by_chrom." + page_format
+                                                "00_peak_anno_diagrams." + page_format
                                                 ],
                                          force=True)
 
-    data_file, pdf_file, pdf_file_by_chrom = file_out_list
+    data_file, pdf_file = file_out_list
 
     if user_img_file is not None:
 
@@ -398,16 +368,6 @@ def peak_anno(inputfile=None,
         if not os.path.exists(test_path):
             os.makedirs(test_path)
 
-    # -------------------------------------------------------------------------
-    # Get the midpoints of the peaks
-    # -------------------------------------------------------------------------
-
-    region_mid_point_file = make_tmp_file("peaks_midpoints", ".bed")
-
-    # Loop through peaks
-    region_mid_point = BedTool(peak_file).get_midpoints()
-
-    region_mid_point.saveas(region_mid_point_file.name)
 
     # -------------------------------------------------------------------------
     # Check chromosomes for peaks are defined in the chrom-info file
@@ -426,20 +386,35 @@ def peak_anno(inputfile=None,
     # Fill the dict with info about basic features include in GTF
     # -------------------------------------------------------------------------
 
+
+    from functools import partial
+    # Import the main function from the stats.intersect module
+    from pygtftk.stats.intersect.overlap_stats_shuffling import compute_overlap_stats
+
+    # PARTIAL TODO EXPLAIN
+    my_intersection = partial(compute_overlap_stats, chrom_len=chrom_len)
+
+
+    # OLD CALLER
+    # hits = _intersection_results(peak_file=region_mid_point.fn,
+    #                              feature_bo=gtf_sub_bed,
+    #                              my_dict=hits,
+    #                              chrom_len=chrom_len,
+    #                              ft_type="Intergenic")
+
     if not no_basic_feature:
         for feat_type in gtf.get_feature_list(nr=True):
-            if feat_type not in ["start_codon", "stop_codon"]:
-                gtf_sub = gtf.select_by_key("feature", feat_type, 0)
+            gtf_sub = gtf.select_by_key("feature", feat_type, 0)
 
-                gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
-                                                   "gene_id",
-                                                   "exon_id"]).sort().merge()  # merging bed file !
+            gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
+                                               "gene_id",
+                                               "exon_id"]).sort().merge()  # merging bed file !
 
-                hits = _intersection_results(peak_file=region_mid_point.fn,
-                                             feature_bo=gtf_sub_bed,
-                                             my_dict=hits,
-                                             chrom_len=chrom_len,
-                                             ft_type=feat_type)
+            # PERSONAL NOTE : gtf_sub_bed is already a BedTool object, no need to import it (I worked with filepaths previously)
+
+
+            # REPLACE WITH : hits[feat_type] = pygtftk.stats.intersect.overlap_stats_shuffling # import the function before
+            hits[feat_type] = my_intersection(peak_file=region_mid_point.fn, feature_bo=gtf_sub_bed)
 
         # -------------------------------------------------------------------------
         # Get the intergenic regions
@@ -450,11 +425,7 @@ def peak_anno(inputfile=None,
                                          0,
                                          chrom_len.keys()).merge()
 
-        hits = _intersection_results(peak_file=region_mid_point.fn,
-                                     feature_bo=gtf_sub_bed,
-                                     my_dict=hits,
-                                     chrom_len=chrom_len,
-                                     ft_type="Intergenic")
+        hits["Intergenic"] = my_intersection(peak_file=region_mid_point.fn, feature_bo=gtf_sub_bed)
 
         # -------------------------------------------------------------------------
         # Get the intronic regions
@@ -462,11 +433,7 @@ def peak_anno(inputfile=None,
 
         gtf_sub_bed = gtf.get_introns()
 
-        hits = _intersection_results(peak_file=region_mid_point.fn,
-                                     feature_bo=gtf_sub_bed,
-                                     my_dict=hits,
-                                     chrom_len=chrom_len,
-                                     ft_type="Introns")
+        hits["Introns"] = my_intersection(peak_file=region_mid_point.fn, feature_bo=gtf_sub_bed)
 
         # -------------------------------------------------------------------------
         # Get the promoter regions
@@ -478,11 +445,7 @@ def peak_anno(inputfile=None,
                                          g=chrom_info.name).cut([0, 1, 2,
                                                                  3, 4, 5]).sort().merge()
 
-        hits = _intersection_results(peak_file=region_mid_point.fn,
-                                     feature_bo=gtf_sub_bed,
-                                     my_dict=hits,
-                                     chrom_len=chrom_len,
-                                     ft_type="Promoters")
+        hits["Promoters"] = my_intersection(peak_file=region_mid_point.fn, feature_bo=gtf_sub_bed)
 
         # -------------------------------------------------------------------------
         # Get the tts regions
@@ -494,26 +457,9 @@ def peak_anno(inputfile=None,
                                          g=chrom_info.name).cut([0, 1, 2,
                                                                  3, 4, 5]).sort().merge()
 
-        hits = _intersection_results(peak_file=region_mid_point.fn,
-                                     feature_bo=gtf_sub_bed,
-                                     my_dict=hits,
-                                     chrom_len=chrom_len,
-                                     ft_type="Terminator")
+        hits["Terminator"] = my_intersection(peak_file=region_mid_point.fn, feature_bo=gtf_sub_bed)
 
-        # -------------------------------------------------------------------------
-        # Test the whole chromosomes as features
-        # -------------------------------------------------------------------------
 
-        gtf_sub_bed = BedTool(
-            chrom_info_to_bed_file(
-                chrom_info,
-                chr_list=chrom_len.keys()))
-
-        hits = _intersection_results(peak_file=region_mid_point.fn,
-                                     feature_bo=gtf_sub_bed,
-                                     my_dict=hits,
-                                     chrom_len=chrom_len,
-                                     ft_type="Full_chromosomes")
 
     # -------------------------------------------------------------------------
     # if the user request --more-keys (e.g. gene_biotype)
@@ -546,13 +492,10 @@ def peak_anno(inputfile=None,
                     gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
                                                        "gene_id",
                                                        "exon_id"]).sort().merge()  # merging bed file !
+                    ft_type=":".join([user_key,val]) # Key for the dictionary
+                    hits[ft_type] = my_intersection(peak_file=region_mid_point.fn,
+                                                 feature_bo=gtf_sub_bed)
 
-                    hits = _intersection_results(peak_file=region_mid_point.fn,
-                                                 feature_bo=gtf_sub_bed,
-                                                 my_dict=hits,
-                                                 chrom_len=chrom_len,
-                                                 ft_type=":".join([user_key,
-                                                                   val]))
     # -------------------------------------------------------------------------
     # Process user defined annotations
     # -------------------------------------------------------------------------
@@ -570,28 +513,32 @@ def peak_anno(inputfile=None,
                     message("Chromosome " + " i from GTF is undefined in " + bed_anno.name + " file.",
                             type="ERROR")
 
-            hits = _intersection_results(peak_file=region_mid_point.fn,
-                                         feature_bo=BedTool(bed_anno.name),
-                                         my_dict=hits,
-                                         chrom_len=chrom_len,
-                                         ft_type=bed_lab)
+            hits[bed_lab] = my_intersection(peak_file=region_mid_point.fn,
+                                         feature_bo=BedTool(bed_anno.name))
 
-    # Store the result into a file
-    # before loading it into R
-    message("Storing data in: " + data_file.name)
 
-    data_file.write("\t".join(["ft_type",
-                               "chrom",
-                               "reference_size",
-                               "Nb_trial_or_peak",
-                               "coverage",
 
-                               "Observed\n"]))
+
+
+    # ------------------ Treating the 'hits' dictionary --------------------- #
+
+
+
+
+
+
+
+
+
+
+
+    # personal note : bayesian fitting and true intersection can be done here. Just replace this obsolete code
 
     if len(hits) == 0:
         message("No feature found.", type="ERROR")
 
     nb_peaks = str(len(region_mid_point))
+    # Do all my math here
 
     for chrom in chrom_len:
         if chrom != "all_chrom":
@@ -619,10 +566,57 @@ def peak_anno(inputfile=None,
     close_properly(data_file)
 
     # -------------------------------------------------------------------------
-    # Read the data set
+    # Read the data set and plot it
     # -------------------------------------------------------------------------
 
+
+    # Personal note : this is simply a pandas version of my output_intersect.txt
     d = pd.read_csv(data_file.name, sep="\t", header=0)
+
+    plot_results(d)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# NOTE : my code should output something very much like d, so the plotnine
+# code below can be re-used as is
+
+
+def plot_results(d):
+    """
+    Main plotting function by D.Puthier
+    """
 
     if d.shape[0] == 0:
         message("No lines found in input file.",
@@ -639,6 +633,8 @@ def peak_anno(inputfile=None,
     # Compute binomial p.val  (unilateral)
     # -------------------------------------------------------------------------
 
+
+    # i are the features
     for i, _ in d.iterrows():
 
         ## Compute a log ratio
@@ -955,6 +951,37 @@ def peak_anno(inputfile=None,
     close_properly(pdf_file, data_file)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def main():
     """The main function."""
 
@@ -970,131 +997,135 @@ if __name__ == '__main__':
 
 else:
 
+
+    # Do my unitary test here (in bash)
+    # Add some doctests in the code itself (I think the module is already loaded, just write the doctests, check with Denis)
+
     test = '''
-            
+
         #peak_anno: chr2 len
         @test "peak_anno_1" {
              result=`rm -Rf peak_annotation; gtftk peak_anno  -i pygtftk/data/simple_02/simple_02.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed -c pygtftk/data/simple_02/simple_02.chromInfo -u 2 -d 2 -K peak_annotation`
           [ "$result" = "" ]
         }
-        
-        
+
+
         #peak_anno: all_chrom len
         @test "peak_anno_2" {
          result=`cat peak_annotation/00_peak_anno_stats_* | grep chr2 | cut -f 3 | sort | uniq | perl -npe 's/\\n/,/'`
           [ "$result" = "1700,400," ]
         }
-        
-        
+
+
         #peak_anno: all_chrom len
         @test "peak_anno_3" {
          result=`cat peak_annotation/00_peak_anno_stats_* | grep all_chrom | cut -f 3 | sort | uniq`
           [ "$result" = "1700" ]
         }
-        
+
         #peak_anno: there are 11 guys (midpoints) intersecting CDS
         @test "peak_anno_4" {
          result=`grep -w CDS peak_annotation/00_peak_anno_stats_* | cut -f 6 | perl -npe 's/\\n/,/'`
           [ "$result" = "0,0,0,11,11,0," ]
         }
-        
-        
+
+
         #peak_anno: there is 59 guys (midpoints) intersecting intergenic regions (and 19 on chr1).
         @test "peak_anno_5" {
          result=`grep -i Interg peak_annotation/00_peak_anno_stats_* | cut -f 6 | perl -npe 's/\\n/,/'`
           [ "$result" = "0,0,40,19,59,0," ]
         }
-        
-        
-        
+
+
+
         #peak_anno: size of intronic features is 21 bases
         @test "peak_anno_7" {
          result=`grep -i Introns peak_annotation/00_peak_anno_stats_* | cut -f 5 | sort | uniq | perl -npe 's/\\n/,/'`
           [ "$result" = "0,21," ]
         }
-        
-        
+
+
         #peak_anno: the size of all features (this has been checked)
         @test "peak_anno_8" {
          result=`cat peak_annotation/00_peak_anno_stats_* | cut -f 5 | sort -n | uniq | grep -v cov | perl -npe 's/\\n/,/'`
           [ "$result" = "0,21,48,53,92,100,113,187,200,300,400,700,1587," ]
         }
-        
+
         #peak_anno: 40 peaks tested for chromosome 2
         @test "peak_anno_9" {
          result=`cut -f 1,2,4 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr2 | cut -f 3`
           [ "$result" -eq 40 ]
         }
-        
+
         #peak_anno: 45 peaks on chromosome 1
         @test "peak_anno_10" {
          result=`cut -f 1,2,4 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr1 | cut -f 3`
           [ "$result" -eq 45 ]
         }
-        
+
         #peak_anno: Chromosomal coverage of promoter is 48 on chr1
         @test "peak_anno_11" {
          result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr1 | cut -f 3`
           [ "$result" -eq 48 ]
         }
-        
-        
+
+
         #peak_anno: Coverage of intergenic regions is 187 nuc
         @test "peak_anno_12" {
          result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Inter | grep chr1 | cut -f 3`
           [ "$result" -eq 187 ]
         }
-        
+
         #peak_anno: Number of peaks midpoints intersecting intergenic is 19
         @test "peak_anno_13" {
          result=`cut -f 1,2,6 peak_annotation/00_peak_anno_*txt | grep Inter | grep chr1 | cut -f 3`
           [ "$result" -eq 19 ]
         }
-        
-        
+
+
         #peak_anno: Coverage of intronic regions is 21 nuc
         @test "peak_anno_14" {
          result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Intro | grep chr1 | cut -f 3`
           [ "$result" -eq 21 ]
         }
-        
+
         #peak_anno: The number of peaks midpoints falling in introns is 1
         @test "peak_anno_15" {
          result=`cut -f 1,2,6 peak_annotation/00_peak_anno_*txt | grep Intro | grep chr1 | cut -f 3`
           [ "$result" -eq 1 ]
         }
-        
+
         # This test does not test peak_anno and currently fail on some systems (issue 184). Its output is already git-controlled so skipping it allows to pursue on following tests.
         ##peak_anno: check more keys
         #@test "peak_anno_15a" {
         # result=`gtftk nb_exons -i pygtftk/data/simple_02/simple_02.gtf -g > pygtftk/data/simple_02/simple_02_nbe.gtf`
         #  [ "$result" = "" ]
         #}
-        
+
         #peak_anno: check more keys
         @test "peak_anno_16" {
          result=`rm -Rf peak_annotation;  gtftk peak_anno  -i pygtftk/data/simple_02/simple_02_nbe.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed  -K peak_annotation --more-keys nb_exons -c pygtftk/data/simple_02/simple_02.chromInfo`
           [ "$result" = "" ]
         }
-    
+
         #peak_anno: check more keys
         @test "peak_anno_17" {
          result=`cat peak_annotation/*txt| grep "nb_exons"| wc -l`
           [ "$result" -eq 18 ]
         }
-        
+
         #peak_anno: check more keys
         @test "peak_anno_18" {
          result=`cat peak_annotation/*txt| grep "nb_exons"| wc -l`
           [ "$result" -eq 18 ]
         }
-        
+
         #peak_anno: check no basic feature
         @test "peak_anno_19" {
          result=`rm -Rf peak_annotation; gtftk peak_anno  -i pygtftk/data/simple_02/simple_02_nbe.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed  -K peak_annotation --more-keys nb_exons -c pygtftk/data/simple_02/simple_02.chromInfo -n`
           [ "$result" = "" ]
         }
-        
+
         #peak_anno: check no basic feature
         @test "peak_anno_20" {
          result=`cat peak_annotation/*txt|  wc -l`
