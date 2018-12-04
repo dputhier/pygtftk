@@ -1,4 +1,3 @@
-
 Welcome to pygtftk documentation page
 --------------------------------------
 
@@ -25,7 +24,16 @@ Table of content
 
     about
     installation
-    presentation
+    gtftk_args
+    information
+    editing
+    selection
+    convertion
+    annotation
+    coordinates
+    sequence
+    coverage
+    miscellaneous
     api
     bwig_coverage
     developers

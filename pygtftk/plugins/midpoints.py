@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-from __future__ import division
-from __future__ import print_function
 
 import argparse
 import os
@@ -10,7 +8,7 @@ from builtins import str
 from future.utils import old_div
 from pybedtools import BedTool
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import chomp
@@ -35,19 +33,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF/BED",
-                            type=FileWithExtension('r',
-                                                   valid_extensions=('\.[Gg][Tt][Ff](\.[Gg][Zz])?$',
-                                                                     '\.[Bb][Ee][Dd]$',
-                                                                     '\.[Bb][Ee][Dd]3$',
-                                                                     '\.[Bb][Ee][Dd]6$')))
+                            type=arg_formatter.gtf_or_bed_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file (BED).",
                             default=sys.stdout,
                             metavar="BED",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Bb][Ee][Dd]$',
-                                                                     '\.[Bb][Ee][Dd]6$')))
+                            type=arg_formatter.bed_rw('w'))
 
     parser_grp.add_argument('-t', '--ft-type',
                             help="The target feature (as found in the 3rd "
@@ -76,10 +68,7 @@ def midpoints(
         outputfile=None,
         ft_type="transcript",
         names="transcript_id",
-        separator="|",
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        separator="|"):
     """
  Get the midpoint coordinates for the requested feature.
     """

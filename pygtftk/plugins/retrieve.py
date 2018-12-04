@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
@@ -9,7 +8,8 @@ import sys
 import ftputil
 from ftputil.error import FTPOSError
 
-from pygtftk.arg_formatter import FileWithExtension
+import pygtftk
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import message
@@ -36,8 +36,7 @@ def make_parser():
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file (gtf.gz).",
                             metavar="GTF.GZ",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]\.[Gg][Zz]$'))
+                            type=arg_formatter.gtf_rwb('w'))
 
     parser_grp.add_argument('-e', '--ensembl-collection',
                             help="Which ensembl collection to interrogate"
@@ -85,14 +84,11 @@ def make_parser():
 def retrieve(species_name=None,
              outputfile=None,
              release='Latest',
-             tmp_dir=None,
              to_stdout=False,
              list_only=False,
-             logger_file=None,
              delete=False,
              hide_species_name=None,
-             ensembl_collection='vertebrate',
-             verbosity=0):
+             ensembl_collection='vertebrate'):
     """Retrieve a GTF file from ensembl.
 
     :Example:
@@ -136,7 +132,7 @@ def retrieve(species_name=None,
 
     try:
         ftp = ftputil.FTPHost(host, user, password)
-        if verbosity:
+        if pygtftk.utils.VERBOSITY:
             message("Connected to ensembl FTP website.")
     except FTPOSError as err:
         message(str(err))

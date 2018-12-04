@@ -6,7 +6,7 @@ import pygtftk
 pygtftk.__NON_INTERACTIVE__ = False
 
 # -------------------------------------------------------------------------
-# We dont keep temp filesby default
+# We dont keep temp files by default
 # -------------------------------------------------------------------------
 
 pygtftk.__ARGS__ = dict()

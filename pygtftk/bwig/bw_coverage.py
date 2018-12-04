@@ -7,14 +7,16 @@ import multiprocessing
 import os
 import pyBigWig
 import sys
-from itertools import repeat
-
-import numpy as np
 from builtins import range
 from builtins import str
 from builtins import zip
+from itertools import repeat
+from tempfile import NamedTemporaryFile
+
+import numpy as np
 from pybedtools import BedTool
 
+import pygtftk
 from pygtftk.utils import GTFtkError
 from pygtftk.utils import add_prefix_to_file
 from pygtftk.utils import close_properly
@@ -22,6 +24,63 @@ from pygtftk.utils import flatten_list
 from pygtftk.utils import intervals
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
+
+# -------------------------------------------------------------------------
+# TMP_FILE_POOL_MANAGER stores temporary file name
+# make_tmp_file_pool is function that add temporary files to TMP_FILE_POOL_MANAGER
+# TMP_FILE_POOL_MANAGER will be updated by workers (in contrast to a global
+# variable)
+# -------------------------------------------------------------------------
+
+TMP_FILE_POOL_MANAGER = multiprocessing.Manager().list()
+
+
+def make_tmp_file_pool(prefix='tmp',
+                       suffix='',
+                       store=True,
+                       dir=None):
+    """
+    This
+
+    :Example:
+
+    >>> from pygtftk.utils import make_tmp_file_pool
+    >>> tmp_file = make_tmp_file_pool()
+    >>> assert os.path.exists(tmp_file.name)
+    >>> tmp_file = make_tmp_file_pool(prefix="pref")
+    >>> assert os.path.exists(tmp_file.name)
+    >>> tmp_file = make_tmp_file_pool(suffix="suf")
+    >>> assert os.path.exists(tmp_file.name)
+
+    """
+
+    dir_target = None
+
+    if dir is None:
+        if pygtftk.utils.TMP_DIR is not None:
+            if not os.path.exists(pygtftk.utils.TMP_DIR):
+                msg = "Creating directory {d}."
+                message(msg.format(d=pygtftk.utils.TMP_DIR), type="INFO")
+                os.mkdir(pygtftk.utils.TMP_DIR)
+                dir_target = pygtftk.utils.TMP_DIR
+
+    else:
+        if not os.path.exists(dir):
+            msg = "Creating directory {d}."
+            message(msg.format(d=dir), type="INFO")
+            os.mkdir(dir)
+            dir_target = dir
+
+    tmp_file = NamedTemporaryFile(delete=False,
+                                  mode='w',
+                                  prefix=prefix + "_pygtftk_",
+                                  suffix=suffix,
+                                  dir=dir_target)
+
+    if store:
+        TMP_FILE_POOL_MANAGER.append(tmp_file.name)
+
+    return tmp_file
 
 
 # -------------------------------------------------------------------------
@@ -57,8 +116,6 @@ def _big_wig_coverage_worker(input_values):
     :param verbose: run in verbose mode.
 
     """
-    from pygtftk.utils import WARN_REGION_SIZE
-    from pygtftk.utils import WARN_UNDEF
 
     (span, bw_list,
      region_bed_file_name,
@@ -75,7 +132,7 @@ def _big_wig_coverage_worker(input_values):
     else:
         if bin_nb < 1:
             bin_nb = 1
-        matrix_file = make_tmp_file(prefix="worker_coverage_")
+        matrix_file = make_tmp_file_pool(prefix="worker_coverage_", suffix=".txt")
 
     for cpt, big_wig in enumerate(bw_list):
 
@@ -106,15 +163,13 @@ def _big_wig_coverage_worker(input_values):
             nb += 1
 
             if nb == nb_to_do:
-                message(str(multiprocessing.current_process().name) +
-                        " has processed " +
-                        str(nb) +
-                        " regions")
+                p_name = str(multiprocessing.current_process().name)
+                message(p_name + " has processed " + str(nb) + " regions")
 
             if (i.end - i.start) < bin_nb:
 
-                if WARN_REGION_SIZE:
-                    WARN_REGION_SIZE = False
+                if pygtftk.utils.WARN_REGION_SIZE:
+                    pygtftk.utils.WARN_REGION_SIZE = False
                     message("Encountered regions shorter than bin number.",
                             type="WARNING")
                     message(i.name +
@@ -169,18 +224,19 @@ def _big_wig_coverage_worker(input_values):
                         out = [pc if np.isnan(k) else k + pc for k in out]
 
                 except:
-                    if WARN_UNDEF:
+                    if pygtftk.utils.WARN_UNDEF:
+                        pygtftk.utils.WARN_UNDEF = False
+
                         mesg = "Encountered regions undefined in bigWig file."
                         message(mesg, type="WARNING")
-                        mesg = '%s:%s-%s' % (i.chrom,
-                                             str(i.start), str(i.end))
+                        mesg = '%s:%s-%s' % (i.chrom, str(i.start), str(i.end))
                         message(mesg)
-                        WARN_UNDEF = False
 
                     if zero_to_na:
                         out = ['NA'] * bin_nb
                     else:
                         out = [pc] * bin_nb
+
             # Prepare output
             if i.name in ["", "."]:
                 name = "|".join([i.chrom,
@@ -399,7 +455,6 @@ def bw_profile_mp(in_bed_file=None,
                          repeat(zero_to_na),
                          repeat(stat),
                          repeat(verbose)))
-
 
         for res_file_list in pool.map_async(_big_wig_coverage_worker,
                                             argss).get(999999):

@@ -4,18 +4,18 @@ from __future__ import print_function
 
 import argparse
 import os
+import pyBigWig
 import sys
 import zipfile
 from builtins import range
 from builtins import str
 
 import pandas as pd
-import pyBigWig
 from pybedtools import BedTool
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import checkChromFile
-from pygtftk.arg_formatter import int_greater_than_null, int_ge_to_null
+import pygtftk
+from pygtftk import arg_formatter
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.bwig.bw_coverage import bw_profile_mp
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -46,16 +46,14 @@ def make_parser():
 
     parser_grp.add_argument('bigwiglist',
                             help='A list of Bigwig files (last argument).',
-                            type=argparse.FileType('r'),
+                            type=arg_formatter.bw_rw('r'),
                             nargs='+')
 
     parser_grp.add_argument('-i', '--inputfile',
                             help="A GTF file or bed file. A GTF if <stdin>.",
                             default=sys.stdin,
                             metavar="GTF/BED",
-                            type=FileWithExtension('r',
-                                                   valid_extensions=('\.[Gg][Tt][Ff](\.[Gg][Zz])?$',
-                                                                     '\.[Bb][Ee][Dd]$')))
+                            type=arg_formatter.gtf_or_bed_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file name (.zip extension will be added).",
@@ -85,38 +83,43 @@ def make_parser():
     parser_grp.add_argument('-p', '--pseudo-count',
                             help='Pseudo-count to add to all values.',
                             default=0,
-                            type=int_ge_to_null,
+                            type=arg_formatter.ranged_num(lowest=0, highest=None,
+                                                          val_type="float", linc=True),
                             required=False)
 
     parser_grp.add_argument('-u', '--upstream',
                             help="Extend the region of interest in 5' by a given value.",
                             default=1000,
-                            type=int_ge_to_null,
+                            type=arg_formatter.ranged_num(lowest=0, highest=None,
+                                                          val_type="int", linc=True),
                             required=False)
 
     parser_grp.add_argument('-d', '--downstream',
                             help="Extend the region of interest in 3' by a given value.",
                             default=1000,
-                            type=int_ge_to_null,
+                            type=arg_formatter.ranged_num(lowest=0, highest=None,
+                                                          val_type="int", linc=True),
                             required=False)
 
     parser_grp.add_argument('-c', '--chrom-info',
                             help='Tabulated file (chr as '
                                  'column 1, sizes as column 2.)',
                             default=None,
-                            action=checkChromFile,
+                            action=CheckChromFile,
                             required=True)
 
     parser_grp.add_argument('-w', '--bin-nb',
                             help='Split the region into w bins.',
                             default=100,
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=1, highest=None,
+                                                          val_type="int", linc=True),
                             required=False)
 
     parser_grp.add_argument('-k', '--nb-proc',
                             help='Use this many threads to compute coverage.',
                             default=1,
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=1, highest=None,
+                                                          val_type="int", linc=True),
                             required=False)
 
     parser_grp.add_argument('-b', '--bin-around-frac',
@@ -156,10 +159,7 @@ def mk_matrix(
         nb_proc=None,
         labels=None,
         no_stranded=False,
-        tmp_dir=None,
-        logger_file=None,
-        zero_to_na=False,
-        verbosity=False):
+        zero_to_na=False):
     """
  Description: Create a matrix to be used by 'profile' and 'heatmap' commands.
     """
@@ -382,7 +382,7 @@ def mk_matrix(
                              labels=labels,
                              outputfile=outputfile.name,
                              zero_to_na=zero_to_na,
-                             verbose=verbosity)
+                             verbose=pygtftk.utils.VERBOSITY)
 
     outputfile_list["main"] = tmp_file
 
@@ -435,7 +435,7 @@ def mk_matrix(
                                      labels=labels,
                                      outputfile=outputfile.name,
                                      zero_to_na=zero_to_na,
-                                     verbose=verbosity)
+                                     verbose=pygtftk.utils.VERBOSITY)
 
             outputfile_list["upstream"] = tmp_file
 
@@ -473,7 +473,7 @@ def mk_matrix(
                                      labels=labels,
                                      outputfile=outputfile.name,
                                      zero_to_na=zero_to_na,
-                                     verbose=verbosity)
+                                     verbose=pygtftk.utils.VERBOSITY)
 
             outputfile_list["downstream"] = tmp_file
 
@@ -620,14 +620,14 @@ else:
         
         #mk_matrix: every file contain 15 transcripts
         @test "mk_matrix_6" {
-         result=`rm -Rf simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo -K toto; wc -l toto/*.bed | grep 15| wc -l`
-          [ "$result" -eq 6 ]
+         result=`rm -Rf simple_mat*; rm -Rf mk_matrix_6; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo -K mk_matrix_6 -k 1; wc -l mk_matrix_6/* | grep 15 | wc -l`
+          [ "$result" -eq 9 ]
         }
         
         
         #mk_matrix: test downstream + upstream (transcript)
         @test "mk_matrix_7" {
-         result=`rm -Rf  simple_mat*; rm -Rf toto; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cut -f8,9,10,11 simple_mat| tail -14| perl -npe 's/\\t/|/g; s/\\n/,/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
+         result=`rm -Rf  simple_mat*; rm -Rf mk_matrix_7; gtftk mk_matrix -i simple.gtf -u 2 -d 2 -t transcript -w 4 simple.bw -o simple_mat -c simple.chromInfo ; unzip -u  simple_mat.zip &>/dev/null; cut -f8,9,10,11 simple_mat| tail -14| perl -npe 's/\\t/|/g; s/\\n/,/g' | sed 's/0000000005//g' | sed 's/69999999995/7/g'`
           [ "$result" = "3.666667|2.333333|1.666667|1.4,0.0|0.0|0.5|1.75,0.0|0.0|0.0|1.333333,0.0|0.0|0.0|0.0,0.0|0.0|0.0|0.0,2.666667|3.333333|2.0|2.666667,2.0|2.0|3.333333|3.0,2.5|2.0|1.5|2.0,1.0|1.0|1.0|1.0,1.0|1.0|1.0|1.0,1.5|2.0|2.0|1.0,0.0|0.666667|1.0|1.0,0.0|0.666667|1.0|1.0,0.0|0.0|0.0|0.4," ]
         }
         

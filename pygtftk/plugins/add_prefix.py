@@ -69,10 +69,7 @@ def add_prefix(inputfile=None,
                key="transcript_id",
                text=None,
                target_feature="*",
-               suffix=False,
-               tmp_dir=None,
-               logger_file=None,
-               verbosity=None):
+               suffix=False):
     """
     Add a prefix to target values.
     """

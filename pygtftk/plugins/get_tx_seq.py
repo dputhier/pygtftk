@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
@@ -9,8 +8,8 @@ import sys
 from builtins import str
 from builtins import zip
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import fileList
+from pygtftk import arg_formatter
+from pygtftk.arg_formatter import globbedFileList
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -37,22 +36,19 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output FASTA file.",
                             default=sys.stdout,
                             metavar="FASTA",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Ff][Aa][Ss][Tt][Aa]$',
-                                                                     '\.[Ff][Aa]$')))
+                            type=arg_formatter.fasta_rw('w'))
 
     parser_grp.add_argument('-g', '--genome',
                             help="The genome in fasta format. Accept path with wildcards (e.g. *.fa).",
                             default=None,
                             metavar="FASTA",
-                            action=fileList,
+                            action=globbedFileList,
                             required=True)
 
     parser_grp.add_argument('-w', '--with-introns',
@@ -119,10 +115,7 @@ def get_tx_seq(inputfile=None,
                label="",
                sleuth_format=True,
                explicit=True,
-               assembly="bla",
-               tmp_dir=None,
-               logger_file=None,
-               verbosity=0):
+               assembly="bla"):
     """
     Description: Get transcripts sequences in fasta format from a GTF file.
     """
@@ -134,6 +127,11 @@ def get_tx_seq(inputfile=None,
     genome_chr_list = []
 
     message("%d fasta files found." % len(genome))
+
+    as_gz_ext = [True for x in genome if x.name.endswith(".gz")]
+
+    if any(as_gz_ext):
+        message("Genome in gz format is not currently supported.", type="ERROR")
 
     if len(genome) == 1:
         message("Checking fasta file chromosome list")
@@ -324,7 +322,7 @@ else:
 
     #sleuth output
     @test "get_tx_seq_8" {
-     result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -f| wc -l`
+     result=`rm -f /tmp/get_example_shuf.gtf; gtftk get_tx_seq -i simple.gtf -g simple.fa -f| wc -l`
       [ "$result" -eq 30 ]
     }
 
@@ -363,6 +361,52 @@ else:
      result=`gtftk get_tx_seq -i simple.gtf -g simple.fa -l feature,transcript_id,seqid -s , | head -1 `
       [ "$result" = ">transcript,G0001T002,chr1" ]
     }
+        
+    # load mini_real_10M
+    @test "get_tx_seq_15" {
+     result=`gtftk get_example -f '*' -d mini_real_10M; if [ ! -f chr1_hg38_10M.fa ]; then gunzip -f chr1_hg38_10M.fa.gz; fi `
+      [ "$result" = "" ]
+    }
+
+    # Check the size of transcript seq compared to ensembl. 
+    @test "get_tx_seq_16" {
+     result=`gtftk get_tx_seq -i mini_real_10M.gtf.gz -g chr1_hg38_10M.fa -l transcript_id | perl -ne 'if(/^>/){/>(.*)/; $id=$1}else{chomp; print $id,"\\t",length, "\\n"}' > observed_size.txt`
+      [ -f  observed_size.txt ]
+    }
+                    
+    # Check the size of transcript seq compared to ensembl. 
+    @test "get_tx_seq_17" {
+     result=`cat observed_size.txt | md5sum-lite | sed 's/ .*//'`
+      [ "$result" = "1d145f52046dba514040623f1efe2072" ]
+    }  
+
+    # Check the sequence of tx on plus strand compared to ensembl. 
+    # should be the same as 'cat expected_sequence_plus.fa | md5sum-lite'
+    @test "get_tx_seq_18" {
+         result=`gtftk get_tx_seq -i ids_plus.gtf -g chr1_hg38_10M.fa -l transcript_id | perl -ne 'print uc $_'> observed_sequence_plus.fa; cat observed_sequence_plus.fa | md5sum-lite | sed 's/ .*//'`
+      [ "$result" = "7327e4010944c2def4431bf5ef77a4f1" ]
+    } 
+
+    # Check the sequence of tx on plus strand compared to ensembl (no rev-comp). 
+    # should be the same as 'cat expected_sequence_plus.fa | md5sum-lite'
+    @test "get_tx_seq_19" {
+     result=`gtftk get_tx_seq -i ids_plus.gtf -g chr1_hg38_10M.fa -l transcript_id -n | perl -ne 'print uc $_'> observed_sequence_plus.fa; cat observed_sequence_plus.fa | md5sum-lite | sed 's/ .*//'`
+      [ "$result" = "7327e4010944c2def4431bf5ef77a4f1" ]
+    } 
+    
+    # Check the sequence of tx on minus strand compared to ensembl (rev_comp). 
+    # should be the same as 'cat expected_sequence_minus_rv.fa | md5sum-lite'
+    @test "get_tx_seq_20" {
+     result=`gtftk get_tx_seq -i ids_minus.gtf -g chr1_hg38_10M.fa -l transcript_id | perl -ne 'print uc $_'> observed_sequence_minus_rv.fa; cat observed_sequence_minus_rv.fa | md5sum-lite | sed 's/ .*//'`
+      [ "$result" = "6f40e63555a4bb6f849261b0fe9e928c" ]
+    } 
+
+    # Check the sequence of tx on minus strand compared to ensembl (no rev_comp). 
+    # should be the same as 'cat expected_sequence_minus_no_rv.fa | md5sum-lite'
+    @test "get_tx_seq_21" {
+     result=`gtftk get_tx_seq -i ids_minus.gtf -g chr1_hg38_10M.fa -l transcript_id -n | perl -ne 'print uc $_'> observed_sequence_minus_no_rv.fa; cat observed_sequence_minus_no_rv.fa | md5sum-lite | sed 's/ .*//'`
+      [ "$result" = "87c15b230b6057be091566ac29ada7a1" ]
+    } 
         
     """
 

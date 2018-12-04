@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.9.9
+
+### Bug Fixes
+
+- Fix a critical bug in get_sequence that affected get_feat_seq and get_tx_seq.
+- Select_by_key now throw an error when no key/val are available.
+- No more function with mutable objects as default arguments.
+- Fix temporary file deletion. 
+
+### API Changes
+
+- Refactored arg_formatter by  creating a single type (ranged_num) to test for numeric inputs.
+- Refactored all plugins so that there is no more reference to unused arguments (tmp_dir, verbosity...).
+
+
+### Code changes
+
+- No more reference to PY2.
+- Added several test to get_tx_seq and get_feat_seq.
+- Added several script to manipulate fasta files (see 'tools' folder). For pygtftk dev.
+- Added 'extra_require' slot in setup().
+- The get-feature-seq program now relies on bedtools (not on internal C code). This may change in the future asa a more flexible C interface is available.
+
+### New Features
+
+- Added --list-bigwigs to profile (to display the content of a coverage file).
+- Added a novel dataset	(mini_real_10M) derived from mini_real and containing 10 Mb of chr1.
+- The configuration directory now supports several subdirectories named based on a hash string computed from path to the gtftk program.
+
 
 ## v0.9.8
 

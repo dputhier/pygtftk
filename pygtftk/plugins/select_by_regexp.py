@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 import argparse
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -13,6 +13,11 @@ from pygtftk.utils import close_properly
 __updated__ = "2018-01-20"
 __doc__ = """
  Select lines from a GTF file based on a regexp.
+"""
+
+__notes__ = """
+ -- The default is to try to select feature from conventional human chromosome (chr1..chr22, chrX and chrY) with
+ -\-key set to chrom and -\-regexp set to "^chr[0-9XY]+$".
 """
 
 
@@ -24,28 +29,24 @@ def make_parser():
                         help="Path to the GTF file. Default to STDIN",
                         default=sys.stdin,
                         metavar="GTF",
-                        type=FileWithExtension('r',
-                                               valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                        type=arg_formatter.gtf_rwb('r'))
 
     parser.add_argument('-o', '--outputfile',
                         help="Output file.",
                         default=sys.stdout,
                         metavar="GTF",
-                        type=FileWithExtension('w',
-                                               valid_extensions='\.[Gg][Tt][Ff]$'))
+                        type=arg_formatter.gtf_rw('w'))
 
     parser.add_argument('-k', '--key',
                         help='The key name',
                         default="chrom",
                         metavar="KEY",
-                        type=str,
-                        required=True)
+                        type=str)
 
     parser.add_argument('-r', '--regexp',
                         help='The regular expression.',
                         default="^chr[0-9XY]+$",
-                        type=str,
-                        required=True)
+                        type=str)
 
     parser.add_argument('-n', '--invert-match',
                         help='Not/invert match. Selected lines whose requested key '
@@ -59,20 +60,17 @@ def select_by_regexp(inputfile=None,
                      outputfile=None,
                      key=None,
                      regexp=None,
-                     invert_match=False,
-                     tmp_dir=None,
-                     logger_file=None,
-                     verbosity=0):
+                     invert_match=False):
     """Select lines from a GTF file based on attributes and
     associated values.
     """
 
-    gtf = GTF(inputfile, check_ensembl_format=False
-              ).select_by_regexp(key,
-                                 regexp,
-                                 invert_match
-                                 ).write(outputfile,
-                                         gc_off=True)
+    GTF(inputfile,
+        check_ensembl_format=False).select_by_regexp(key,
+                                                     regexp,
+                                                     invert_match
+                                                     ).write(outputfile,
+                                                             gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -124,5 +122,6 @@ else:
               fun=os.path.abspath(__file__),
               group="selection",
               desc=__doc__,
+              notes=__notes__,
               updated=__updated__,
               test=test)

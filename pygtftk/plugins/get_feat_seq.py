@@ -1,27 +1,27 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
-import shutil
+import re
 import sys
 from builtins import str
-from builtins import zip
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import fileList
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
-from pygtftk.utils import message, make_tmp_file
+from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
 __doc__ = """
- Get feature sequences in a flexible fasta format from a GTF file.
+ Get feature sequences (i.e. column 3) in a flexible fasta format from a GTF file. 
 """
 __notes__ = """
  -- The sequences are returned in 5' to 3' orientation.
  -- If you want to use wildcards, use quotes :e.g. 'foo/bar*.fa'.
+ -- See get_tx_seq for mature RNA sequence.
+ -- If -\-unique is used if a header was already encountered the record won't be print. 
+ Take care to use unambiguous identifiers in the header.
 """
 
 
@@ -35,22 +35,20 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output FASTA file.",
                             default=sys.stdout,
                             metavar="FASTA",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Ff][Aa][Ss][Tt][Aa]$',
-                                                                     '\.[Ff][Aa]$')))
+                            type=arg_formatter.fasta_rw('w'))
 
     parser_grp.add_argument('-g', '--genome',
-                            help="The genome in fasta format. Accept path with wildcards (e.g. *.fa).",
+                            help="The genome in fasta format.",
                             default=None,
-                            action=fileList,
-                            required=True)
+                            metavar="FASTA",
+                            required=True,
+                            type=arg_formatter.fasta_rw('r'))
 
     parser_grp.add_argument('-s', '--separator',
                             help="To separate info in header.",
@@ -76,8 +74,13 @@ def make_parser():
                             action="store_true",
                             required=False)
 
-    parser_grp.add_argument('-e', '--explicit',
-                            help="Write explicitly the name of the keys in the header.",
+    parser_grp.add_argument('-r', '--rev-comp-to-header',
+                            help="Indicate in the header whether sequence was rev-complemented.",
+                            action="store_true",
+                            required=False)
+
+    parser_grp.add_argument('-u', '--unique',
+                            help="Don't write redondant IDS.",
                             action="store_true",
                             required=False)
 
@@ -90,61 +93,40 @@ def get_feat_seq(inputfile=None,
                  feature_type="exon",
                  separator="",
                  no_rev_comp=False,
-                 explicit=False,
                  label="",
-                 tmp_dir=None,
-                 logger_file=None,
-                 verbosity=0):
+                 rev_comp_to_header=False,
+                 unique=False):
     """
     Description: Get transcripts sequences in fasta format from a GTF file.
     """
 
     # -------------------------------------------------------------------------
-    # Check args consistancy.
-    #
+    # Should sequences be reverse-complemented
     # -------------------------------------------------------------------------
 
-    if feature_type in ["transcript", "gene"]:
-        message("Please use get_tx_seq for transcript sequence.",
-                type="ERROR")
+    force_strandedness = not no_rev_comp
 
     # -------------------------------------------------------------------------
     # Check chrom to avoid segfault
     # https://github.com/dputhier/libgtftk/issues/27
     # -------------------------------------------------------------------------
 
+    if genome.name.endswith(".gz"):
+        message("Genome in gz format is not currently supported.", type="ERROR")
+
     genome_chr_list = []
 
-    message("%d fasta files found." % len(genome))
+    message("Fasta files found: %s" % genome.name)
 
-    if len(genome) == 1:
-        message("Checking fasta file chromosome list")
-        genome = genome[0]
-        with genome as genome_file:
-            for i in genome_file:
-                if i.startswith(">"):
-                    i = i.rstrip("\n")
-                    genome_chr_list += [i[1:]]
-    else:
-        message("Merging fasta files")
-        tmp_genome = make_tmp_file(prefix="genome", suffix=".fa")
-        with tmp_genome as tg:
-            for curr_file in genome:
-                message("Merging %s" % curr_file.name)
-                with curr_file as cf:
-                    shutil.copyfileobj(cf, tg, 1024 * 1024 * 100)
+    message("Checking fasta file chromosome list")
 
-        message("Checking fasta file chromosome list")
-        genome = open(tmp_genome.name, "r")
-        with genome as genome_file:
-            for i in genome_file:
-                if i.startswith(">"):
-                    i = i.rstrip("\n")
-                    genome_chr_list += [i[1:]]
+    with genome as geno:
+        for i in geno:
+            if i.startswith(">"):
+                i = i.rstrip("\n")
+                genome_chr_list += [i[1:]]
 
-    rev_comp = not no_rev_comp
-
-    gtf = GTF(inputfile)
+    gtf = GTF(inputfile, check_ensembl_format=False)
 
     gtf_chr_list = gtf.get_chroms(nr=True)
 
@@ -168,36 +150,47 @@ def get_feat_seq(inputfile=None,
     # -------------------------------------------------------------------------
 
     message("Retrieving fasta sequences.")
-    fasta_seq = gtf.get_sequences(genome=genome.name,
-                                  intron=True,
-                                  rev_comp=rev_comp)
 
-    tx_gtf = gtf.select_by_key("feature", "transcript")
+    feat_seq = gtf.select_by_key("feature",
+                                 feature_type
+                                 ).to_bed(name=label.split(","),
+                                          sep=separator
+                                          ).sequence(fi=genome.name,
+                                                     name=True,
+                                                     s=force_strandedness)
 
-    label = ",".join([x for x in label.split(',') if x != 'feature'])
+    id_printed = set()
 
-    if label != '':
-        tx_info = tx_gtf.extract_data("transcript_id," +
-                                      label,
-                                      as_dict_of_lists=True)
+    to_print = True
 
-    else:
-        tx_info = dict()
+    for nb_line, line in enumerate(open(feat_seq.seqfn)):
+        if line.startswith(">"):
 
-    for i in fasta_seq.iter_features(feat=feature_type):
+            # This (+/-) may be added by pybedtool
+            # but can be accessed though --label
+            line = re.sub("\(\+\)$", "", line)
+            line = re.sub("\(\-\)$", "", line)
 
-        if not explicit:
-            feat_info = [feature_type] + [str(i.start)] + [str(i.end)]
-            header = separator.join(tx_info[i.transcript_id] + feat_info)
+            if rev_comp_to_header:
+                if force_strandedness:
+                    line = line + separator + "rev_comp"
+                else:
+                    line = line + separator + "no_rev_comp"
+
+            if unique:
+                if line in id_printed:
+                    to_print = False
+            if to_print:
+                outputfile.write(line)
+                id_printed.add(line)
+
+
+
         else:
-            feat_info = ["feature_type=" + feature_type] + \
-                        ["feature_start=" + str(i.start)] + \
-                        ["feature_end=" + str(i.end)]
-            header = [str(x[0]) + "=" + x[1]
-                      for x in zip(label.split(","), tx_info[i.transcript_id])]
-            header = separator.join(header + feat_info)
-        outputfile.write(">" + header + "\n")
-        outputfile.write(i.sequence + "\n")
+            if not to_print:
+                to_print = True
+            else:
+                outputfile.write(line)
 
     close_properly(outputfile, inputfile)
 
@@ -220,27 +213,23 @@ else:
 
     #get_feat_seq: load dataset
     @test "get_feat_seq_0" {
-     result=`gtftk get_example -f '*' -d simple`
+     result=`gtftk get_example -f '*' -d simple; gtftk get_example -f '*' -d mini_real_10M; if [ ! -f chr1_hg38_10M.fa ]; then gunzip -f chr1_hg38_10M.fa.gz; fi `
       [ "$result" = "" ]
     }
        
     #get_feat_seq:
-    @test "get_feat_seq_0.1" {
+    @test "get_feat_seq_1" {
      result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  exon  | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
-      [ "$result" = "aatta,gcttg," ]
+      [ "$result" = "gcttg,aatta," ]
     }
 
     #get_feat_seq:
-    @test "get_feat_seq_1" {
+    @test "get_feat_seq_2" {
      result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  exon -n | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
       [ "$result" = "caagc,taatt," ]
     }
     
-    #get_feat_seq:
-    @test "get_feat_seq_2" {
-     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  exon  | grep "G0003T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
-      [ "$result" = "aatta,gcttg," ]
-    }
+
 
     #get_feat_seq:
     @test "get_feat_seq_3" {
@@ -251,7 +240,7 @@ else:
     #get_feat_seq:
     @test "get_feat_seq_4" {
      result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  CDS  | grep "G0006T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
-      [ "$result" = "ct,att,acat," ]
+      [ "$result" = "acat,att,ct," ]
     }
     
     #get_feat_seq:
@@ -261,18 +250,59 @@ else:
     }
 
     #get_feat_seq:
-    @test "get_feat_seq_6" {
-     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  CDS -n | grep "G0006T001" -A 1| perl -ne  'chomp, print $_,"," if(/^[AaTtCcGg]+$/)'`
-      [ "$result" = "atgt,aat,ag," ]
+    @test "get_feat_seq_7" {
+     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa   -t  CDS  | grep G0006T001 | perl -npe 's/\\n/,/g'`
+      [ "$result" = ">CDS|G0006T001|G0006|chr1|21|25,>CDS|G0006T001|G0006|chr1|27|30,>CDS|G0006T001|G0006|chr1|32|34," ]
+    }
+ 
+    #check with a real dataset (no rev-comp) minus strand
+    @test "get_feat_seq_8" {
+     result=`gtftk select_by_key -f ids_minus_exon.txt -k exon_id -i mini_real_10M.gtf.gz | gtftk get_feat_seq -g chr1_hg38_10M.fa -l exon_id -u | perl -ne 'print uc $_' > observed_sequence_minus_exon.fa`
+      [ -f  observed_sequence_minus_exon.fa ]
     }
 
     #get_feat_seq:
-    @test "get_feat_seq_7" {
-     result=`gtftk get_feat_seq -i simple.gtf -g simple.fa   -t  CDS  | grep G0006T001 | perl -npe 's/\\n/,/g'`
-      [ "$result" = ">G0006T001|G0006|chr1|22|35|CDS|33|34,>G0006T001|G0006|chr1|22|35|CDS|28|30,>G0006T001|G0006|chr1|22|35|CDS|22|25," ]
-    }
+    @test "get_feat_seq_9" {
+     result=`diff observed_sequence_minus_exon.fa expected_sequence_minus_exon.fa`
+      [ "$result" = "" ]
+    }    
     
-        
+     #check with a real dataset (no rev-comp) plus strand
+    @test "get_feat_seq_10" {
+     result=`gtftk select_by_key -f ids_plus_exon.txt -k exon_id -i mini_real_10M.gtf.gz | gtftk get_feat_seq -g chr1_hg38_10M.fa -l exon_id -u | perl -ne 'print uc $_' > observed_sequence_plus_exon.fa`
+      [ -f  observed_sequence_plus_exon.fa ]
+    }
+
+    #get_feat_seq:
+    @test "get_feat_seq_11" {
+     result=`diff observed_sequence_plus_exon.fa expected_sequence_plus_exon.fa`
+      [ "$result" = "" ]
+    }       
+
+    #check with a real dataset (no rev-comp) minus strand
+    @test "get_feat_seq_12" {
+     result=`gtftk select_by_key -f ids_minus_exon.txt -k exon_id -i mini_real_10M.gtf.gz | gtftk get_feat_seq -g chr1_hg38_10M.fa -l exon_id -u -n | perl -ne 'print uc $_' > observed_sequence_minus_exon_no_rv.fa`
+      [ -f  observed_sequence_minus_exon_no_rv.fa ]
+    }
+
+    #get_feat_seq:
+    @test "get_feat_seq_13" {
+     result=`diff observed_sequence_minus_exon_no_rv.fa expected_sequence_minus_exon_no_rv.fa`
+      [ "$result" = "" ]
+    }    
+
+     #check with a real dataset (with rev-comp) plus strand
+    @test "get_feat_seq_14" {
+     result=`gtftk select_by_key -f ids_plus_exon.txt -k exon_id -i mini_real_10M.gtf.gz | gtftk get_feat_seq -g chr1_hg38_10M.fa -l exon_id -u -n | perl -ne 'print uc $_' > observed_sequence_plus_exon.fa`
+      [ -f  observed_sequence_plus_exon.fa ]
+    }
+
+    #get_feat_seq:
+    @test "get_feat_seq_15" {
+     result=`diff observed_sequence_plus_exon.fa expected_sequence_plus_exon.fa`
+      [ "$result" = "" ]
+    }     
+          
     """
 
     CmdObject(name="get_feat_seq",

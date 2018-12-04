@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
 import sys
 from builtins import str
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import chomp
@@ -33,15 +32,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.gtf_rwb('r'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file (BED).",
                             default=sys.stdout,
                             metavar="BED",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Bb][Ee][Dd]$'))
+                            type=arg_formatter.bed_rw('w'))
 
     parser_grp.add_argument('-b', '--by-transcript',
                             help="The intronic regions are returned for each"
@@ -78,11 +75,8 @@ def intronic(
         names='transcript_id',
         separator="_",
         intron_nb_in_name=False,
-        tmp_dir=None,
         no_feature_name=False,
-        by_transcript=False,
-        logger_file=None,
-        verbosity=0):
+        by_transcript=False):
     """
  Extract intronic regions.
     """

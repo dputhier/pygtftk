@@ -84,7 +84,7 @@ void get_chunk(char *ret, FILE *fasta_file, long seqpos, int L, int N, int p, ch
 				fseek(fasta_file, -1, SEEK_CUR);
 				reste_row_file = L;
 			}
-		} while (reste_row & !eof);
+		} while (reste_row && !eof);
 	}
 }
 

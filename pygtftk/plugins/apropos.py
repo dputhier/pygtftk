@@ -34,10 +34,7 @@ def make_parser():
 
 
 def apropos(keyword="",
-            notes=False,
-            tmp_dir=None,
-            logger_file=None,
-            verbosity=0):
+            notes=False):
     """
     Search in all command description files those related to a user-defined keyword.
     """

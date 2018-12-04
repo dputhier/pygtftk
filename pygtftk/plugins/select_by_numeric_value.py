@@ -1,11 +1,10 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -29,15 +28,13 @@ def make_parser():
                         help="Path to the GTF file. Default to STDIN",
                         default=sys.stdin,
                         metavar="GTF",
-                        type=FileWithExtension('r',
-                                               valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                        type=arg_formatter.gtf_rwb('r'))
 
     parser.add_argument('-o', '--outputfile',
                         help="Output file.",
                         default=sys.stdout,
                         metavar="GTF",
-                        type=FileWithExtension('w',
-                                               valid_extensions='\.[Gg][Tt][Ff]$'))
+                        type=arg_formatter.gtf_rw('w'))
 
     parser.add_argument('-t', '--test',
                         help='The test to be applied.',
@@ -57,18 +54,15 @@ def make_parser():
 def select_by_numeric_value(inputfile=None,
                             outputfile=None,
                             test=None,
-                            na_omit=None,
-                            tmp_dir=None,
-                            logger_file=None,
-                            verbosity=0):
+                            na_omit=None):
     """Select lines from a GTF file based on a boolean test on numeric values.
     """
 
-    gtf = GTF(inputfile, check_ensembl_format=False
-              ).select_by_numeric_value(test,
-                                        na_omit=na_omit,
-                                        ).write(outputfile,
-                                                gc_off=True)
+    GTF(inputfile,
+        check_ensembl_format=False).select_by_numeric_value(test,
+                                                            na_omit=na_omit,
+                                                            ).write(outputfile,
+                                                                    gc_off=True)
     close_properly(outputfile, inputfile)
 
 
