@@ -39,6 +39,7 @@ requirements:
     - matplotlib >=2.0.2
     - plotnine >=0.4.0
     - future
+    - cython
 
 test:
   imports:
@@ -56,4 +57,3 @@ about:
   home: http://github.com/dputhier/pygtftk
   license: MIT
   summary: 'The gtftk suite providing facilities to manipulate genomic annotations in gtf format.'
-
