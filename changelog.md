@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.9.10
+
+### Bug Fixes
+
+- Argparse was part of the dependencies. However, argparse is part of Python 3. Thus, this caused pygtftk to come with an older version of argparse...
+
+### API Changes
+
+
+### Code changes
+
+
+### New Features
+
+
+
 ## v0.9.9
 
 ### Bug Fixes
