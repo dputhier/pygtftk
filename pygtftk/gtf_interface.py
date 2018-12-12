@@ -345,6 +345,7 @@ typedef struct SORT_ROW {
 GTF_DATA *load_GTF(char *input);
 GTF_DATA *select_by_key(GTF_DATA *gtf_data, char *key, char *value, int not);
 void print_gtf_data(GTF_DATA *gtf_data, char *output, int add_chr);
+void print_bed(GTF_DATA *gtf_data, char *output, int add_chr, char *keys, char *sep, char *more_info);
 GTF_DATA *select_by_transcript_size(GTF_DATA *gtf_data, int min, int max);
 GTF_DATA *select_by_number_of_exon(GTF_DATA *gtf_data, int min, int max);
 GTF_DATA *select_by_genomic_location(GTF_DATA *gtf_data, int nb_loc, char **chr, int *begin_gl, int *end_gl);
@@ -369,7 +370,6 @@ GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features,  char *key, char *txt, 
 GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_key, char *sep);
 GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
-void write_bed(GTF_DATA *gtf_data, char *output, char *add_chr, char *names);
 """)
 
 # ---------------------------------------------------------------
@@ -2503,8 +2503,16 @@ class GTF(object):
                   ouputfile=None,
                   name=("gene_id"),
                   sep="|",
-                  add_feature_type=False,
+                  add_chr=0,
                   more_name=None):
+        """Write a GTF file in BED format. This function uses a direct call to the C interface.
+
+        :param ouputfile: The outputfilename.
+        :param name: The keys that should be used to computed the 'name' column (a tuple).
+        :param more_name: Additional text to add to the name (a list).
+        :param sep: The separator used for the name (e.g 'gene_id|transcript_id".
+
+        """
 
         if isinstance(ouputfile, list):
             ouputfile = ouputfile[0]
@@ -2529,10 +2537,19 @@ class GTF(object):
         else:
             raise GTFtkError("Unsupported input type.")
 
-        name = to_list(name, split_char=",")
-        more_name = to_list(more_name, split_char=None)
+        if pygtftk.utils.ADD_CHR == 1:
+            add_chr = 1
 
-        self._dll.write_bed()
+        name = ",".join(to_list(name))
+        more_name = ",".join(to_list(more_name, split_char=None))
+
+        self._dll.print_bed(self._data,
+                            native_str(fn),
+                            add_chr,
+                            native_str(name),
+                            native_str(sep),
+                            native_str(more_name)
+                            )
 
     def to_bed(self,
                name=("gene_id"),

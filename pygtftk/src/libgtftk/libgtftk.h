@@ -384,6 +384,7 @@ typedef struct BLAST_HSP {
 GTF_DATA *load_GTF(char *input);
 GTF_DATA *select_by_key(GTF_DATA *gtf_data, char *key, char *value, int not);
 void print_gtf_data(GTF_DATA *gtf_data, char *output, int add_chr);
+void *print_bed(GTF_DATA *gtf_data, char *output, int add_chr, char *keys, char *sep, char *more_info);
 GTF_DATA *select_by_transcript_size(GTF_DATA *gtf_data, int min, int max);
 GTF_DATA *select_by_number_of_exon(GTF_DATA *gtf_data, int min, int max);
 GTF_DATA *select_by_genomic_location(GTF_DATA *gtf_data, int nb_loc, char **chr, int *begin_gl, int *end_gl);

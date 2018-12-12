@@ -16,6 +16,7 @@
  * external functions declaration
  */
 extern int compare_row_list(const void *p1, const void *p2);
+extern int split_ip(char ***tab, char *s, char *delim);
 
 /*
  * global variables declaration
@@ -76,6 +77,160 @@ void print_row(FILE *output, GTF_ROW *r, char delim, int add_chr) {
 	print_attributes(r, output);
 	fprintf(output, "\n");
 }
+
+/*
+ * prints a list of comma (or other sep) separated attribute values from a GTF row.
+ *
+ *
+ * Parameters:
+ * 		row:	the GTF row from which to print attributes
+ * 		output:	where to print (a file or stdout)
+ *      keys: a comma separated list of keys to be selected.
+ *      sep:    the separator to use (e.g '|', ','...).
+ */
+void print_attr_with_sep(GTF_ROW *row, FILE *output, char delim, char *keys, char *sep, char *more_info) {
+	int n, i, j;
+	int found = 0;
+	char **token;
+	char *keys_concat = (char *)calloc(5000, sizeof(char));
+
+
+    n = split_ip(&token, strdup(keys), ",");
+
+    for(i=0; i<n; i++)
+    {
+        found = 0;
+
+        if(strcmp("seqid", token[i]) == 0)
+        {
+                    strcat(keys_concat, row->field[0]);
+                    if (i < (n-1)) strcat(keys_concat, sep);
+                    found = 1;
+        }
+        else if(strcmp("chrom", token[i]) == 0)
+        {
+                    strcat(keys_concat, row->field[0]);
+                    if (i < (n-1)) strcat(keys_concat, sep);
+                    found = 1;
+        }
+        else if(strcmp("source", token[i]) == 0)
+        {
+                    strcat(keys_concat, row->field[1]);
+                    if (i < (n-1)) strcat(keys_concat, sep);
+                    found = 1;
+        }
+        else if(strcmp("feature", token[i]) == 0)
+        {
+                    strcat(keys_concat, row->field[2]);
+                    if (i < (n-1)) strcat(keys_concat, sep);
+                    found = 1;
+        }
+        else if(strcmp("start", token[i]) == 0)
+        {
+                    strcat(keys_concat, row->field[3]);
+                    if (i < (n-1)) strcat(keys_concat, sep);
+                    found = 1;
+        }
+        else if(strcmp("end", token[i]) == 0)
+        {
+                    strcat(keys_concat, row->field[4]);
+                    if (i < (n-1)) strcat(keys_concat, sep);
+                    found = 1;
+        }
+        else if(strcmp("score", token[i]) == 0)
+        {
+                    strcat(keys_concat, row->field[5]);
+                    if (i < (n-1)) strcat(keys_concat, sep);
+                    found = 1;
+        }
+        else if(strcmp("strand", token[i]) == 0)
+        {
+                    strcat(keys_concat, row->field[6]);
+                    if (i < (n-1)) strcat(keys_concat, sep);
+                    found = 1;
+        }
+        else if(strcmp("phase", token[i]) == 0)
+        {
+                    strcat(keys_concat, row->field[7]);
+                    if (i < (n-1)) strcat(keys_concat, sep);
+                    found = 1;
+        }
+
+        if(found == 0)
+        {
+            if (row->attributes.nb != -1)
+            {
+                for(j=0; j< row->attributes.nb; j++)
+                {
+
+                    if(strcmp(row->attributes.attr[j]->key, token[i]) == 0)
+                    {
+                            strcat(keys_concat, row->attributes.attr[j]->value);
+                            if (i < (n-1)) strcat(keys_concat, sep);
+                            found = 1;
+
+                    }
+                }
+            }
+        }
+
+        if(found == 0){
+            if(found == 0){
+                strcat(keys_concat, "?");
+                if (i < (n-1)) strcat(keys_concat, sep);
+            }
+        }
+    }
+
+    //keys_concat = (char *)realloc(keys_concat, (strlen(keys_concat) + 1) * sizeof(char));
+
+
+    if(strlen(more_info)){
+        strcat(keys_concat, sep);
+        strcat(keys_concat, more_info);
+    }
+
+    if(keys_concat){
+       fprintf(output, "%s", keys_concat);
+    }
+    else
+    {
+        fprintf(output, "");
+    }
+
+    fprintf(output, "%c", delim);
+
+    free(keys_concat);
+}
+
+/*
+ * prints a GTF row in bed format to output with the given character delimiter
+ *
+ * Parameters:
+ * 		output:		where to print
+ * 		r:			the row to print
+ * 		delim:		the delimiter character
+ * 		add_chr:	boolean; if true(1), add "chr" at the begining of the row
+ *      keys:      a comma separated list of keys whose values will appear in the name
+ *                  (4th) colum of the bed.
+ *      sep:        The separator to use for names (4th column).
+ */
+void print_row_bed(FILE *output, GTF_ROW *r,  char delim, int add_chr, char *keys, char *sep, char *more_info){
+
+
+	if (add_chr) fprintf(output, "chr");
+	// print chr, start, end
+	print_string(r->field[0], output, column[0], delim);
+	fprintf(output,"%d%c", atoi(r->field[3]) - 1, delim);
+	print_string(r->field[4], output, column[4], delim);
+	// print requested columns with user-defined delim
+	print_attr_with_sep(r, output, delim, keys, sep, more_info);
+	// print score strand
+	print_string(r->field[5], output, column[5], delim);
+	fprintf(output,"%s", r->field[6]);
+	fprintf(output, "\n");
+}
+
 
 /*
  * Creates an empty index and add/link it in the index list of the column
