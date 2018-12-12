@@ -3074,7 +3074,7 @@ class GTF(object):
                 elif strand == "-":
                     n = nb_introns
                 else:
-                    continue
+                    raise GTFtkError('Strand is undefined !!(' + tx_cur + ')')
 
                 for i in range(0, nb_introns):
 
