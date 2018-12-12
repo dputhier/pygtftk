@@ -1,8 +1,15 @@
+#
+# # FOR MY JUPYTER KERNEL TESTING ONLY
+# import os
+# os.getcwd()
+# os.chdir('/home/ferre/anaconda3/lib/python3.6/site-packages/pygtftk-0.9.8-py3.6-linux-x86_64.egg/pygtftk')
+#
+#
+#
+# # WIP : this is used during development to import Cython code
+# import pyximport; pyximport.install(reload_support=True)
 
-# FOR MY JUPYTER KERNEL TESTING ONLY
-import os
-os.getcwd()
-os.chdir('/home/ferre/anaconda3/lib/python3.6/site-packages/pygtftk-0.9.8-py3.6-linux-x86_64.egg/pygtftk')
+
 
 
 
@@ -41,19 +48,20 @@ import sys
 import warnings
 from collections import defaultdict, OrderedDict
 
+import pybedtools
 import numpy as np
 import pandas as pd
 from mizani.formatters import scientific_format
 from plotnine import (ggplot, aes, position_dodge,
                       geom_bar, ggsave, ylab, theme, element_blank, element_text, scale_fill_manual,
                       guides, guide_legend, geom_label, geom_text, geom_point, scale_color_manual,
-                      scale_y_continuous)
+                      scale_y_continuous, geom_errorbar)
 from scipy.stats import binom_test
 
-from pygtftk.arg_formatter import FileWithExtension, bedFileList
-from pygtftk.arg_formatter import bed6_or_bed3
-from pygtftk.arg_formatter import checkChromFile
-from pygtftk.arg_formatter import int_greater_than_null_or_None, int_greater_than_null
+from pygtftk.arg_formatter import FileWithExtension#, bedFileList
+from pygtftk.arg_formatter import bed6
+from pygtftk.arg_formatter import CheckChromFile
+from pygtftk.arg_formatter import ranged_num
 from pygtftk.bedtool_extension import BedTool
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -65,13 +73,26 @@ from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
 
-__updated__ = "2018-01-24"
+__updated__ = "2018-12-20"
 __doc__ = """
  Annotate peaks (in bed format) with region sets computed on the
  fly from a GTF file  (e.g promoter, tts, gene body, UTR...). The midpoint of
  each peak is considered and intersected iteratively with region sets. A binomial
  p-value is computed based on hypothesized probability of success p (fraction of genome covered by the
  feature f), the number of trials (number of peaks) and the number of successes (number of intersections).
+
+
+
+ADD SUMMARY OT SHUFFLES HERE
+
+Annotate peak in bed format with region sets.
+
+Each feature is randomly shuffled across the genome (inter-region lengths are also considered)
+as well as the peaks, and the probability of intersection under the nulll hypothesis (peak and this feature are independant)
+You can discover functional associations this way
+
+
+
  """
 
 __notes__ = """
@@ -92,6 +113,29 @@ __notes__ = """
  -- TODO: This function does not support a mappability file at the moment...
 
  -- TODO: the png output by chromosomes is not functional at the moment.
+
+
+
+
+
+-- We offer regular and markov shuffle, explain
+
+-- intersection is computed by us.
+
+-- we fit a neg binom if not markov
+
+-- The goal of a minibatch is to save RAM. Increase the nb. of minibatches instead of the size.
+
+-- You may need to use very small minibatches if you have large bed files (eg exons and introns)
+
+Alternate shuffling method with Markov model of order 2
+# Only use if you suspect there is a structure to the data. Not recommended in the general case.
+
+-- excl : we must exclude the same regions from bedA and bedB because we do it by making fake
+smaller chromosomes so they must be the same or we have differetn chromsizes
+
+-- the fig gives for both stats esperance and sigma (error bars) on the shuffles, and next to it the actual value
+
  """
 
 
@@ -120,7 +164,7 @@ def make_parser():
                                  "Chromosomes as column 1, sizes as column 2",
                             default=None,
                             metavar="TXT",
-                            action=checkChromFile,
+                            action=CheckChromFile,
                             required=False)
 
 
@@ -133,18 +177,92 @@ def make_parser():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # QF My arguments
+    parser_grp.add_argument('-nt', '--nb-threads',
+                            help='Number of threads for multiprocessing.',
+                            type=ranged_num(0,None),
+                            default=8,
+                            required=False)
+
+    parser_grp.add_argument('-s', '--seed',
+                            help='Numpy random seed.',
+                            type=ranged_num(None,None),
+                            default=42,
+                            required=False)
+
+    parser_grp.add_argument('-mn', '--minibatch-nb',
+                            help='Number of minibatches of shuffles.',
+                            type=ranged_num(0,None),
+                            default=8,
+                            required=False)
+
+    parser_grp.add_argument('-ms', '--minibatch-size',
+                            help='Size of each minibatch, in number of shuffles.',
+                            type=ranged_num(0,None),
+                            default=25,
+                            required=False)
+
+    parser_grp.add_argument('-e', '--bed-excl',
+                            help='Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features.'
+                                 ' (bed format).',
+                            default=None,
+                            metavar="BED",
+                            action=bed6, # TODO accept bed3
+                            required=False)
+
+    parser_grp.add_argument('-ma', '--use-markov',
+                            help='Whether to use Markov shuffling or order 2 instead of independant shuffles of region lenghts and inter-region lengths.',
+                            default=False,
+                            type=bool,
+                            required=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     parser_grp.add_argument('-p', '--peak-file',
                             help='The file containing the peaks/regions to be annotated.'
                                  ' (bed format).',
                             default=None,
                             metavar="BED",
-                            action=bed6_or_bed3,
+                            action=bed6, # TODO accept bed3
                             required=True)
 
     parser_grp.add_argument('-b', '--more-bed',
                             help="A comma separated list of bed files to be "
                                  "considered as additional genomic annotations.",
-                            action=bedFileList,
+                            action=bed6, # TODO PUT IS BACK AS bedFileList
                             required=False)
 
     parser_grp.add_argument('-l', '--more-bed-labels',
@@ -168,13 +286,13 @@ def make_parser():
 
     parser_grp.add_argument('-pw', '--pdf-width',
                             help='Output pdf file width (inches).',
-                            type=int_greater_than_null_or_None,
+                            type=ranged_num(0,None),
                             default=None,
                             required=False)
 
     parser_grp.add_argument('-ph', '--pdf-height',
                             help='Output pdf file height (inches).',
-                            type=int_greater_than_null_or_None,
+                            type=ranged_num(0,None),
                             default=None,
                             required=False)
 
@@ -203,7 +321,7 @@ def make_parser():
 
     parser_grp.add_argument('-dpi', '--dpi',
                             help='Dpi to use.',
-                            type=int_greater_than_null,
+                            type=ranged_num(0,None),
                             default=300,
                             required=False)
 
@@ -226,6 +344,35 @@ def make_parser():
 
 
 
+#
+#
+# # TODO some placeholders for debugging in jupyter !!!!!!
+# # TODO : see the denis formats, although my personal overlap functions will be
+# # provided bedfiles, I'm not sure for here.
+# inputfile=pybedtools.BedTool('example_1')
+# outputdir=None
+# peak_file=None
+# more_bed=None
+# more_bed_labels=None
+# upstream=1000
+# more_keys=None
+# downstream=1000
+# no_basic_feature=False
+#
+# pdf_width=None
+# pdf_height=None
+# chrom_info=None
+# user_img_file=None
+# page_format=None
+# dpi=300
+# order_bar=None
+#
+# nb_threads=8
+# seed=42
+# minibatch_nb=8
+# minibatch_size=25
+# bed_excl=None
+# use_markov=False
 
 
 
@@ -234,10 +381,7 @@ def make_parser():
 
 
 
-
-
-
-
+# TODO I am going to add args, and check there are the same args here as in the argparser
 def peak_anno(inputfile=None,
               outputdir=None,
               peak_file=None,
@@ -254,13 +398,50 @@ def peak_anno(inputfile=None,
               page_format=None,
               dpi=300,
               order_bar=None,
-              tmp_dir=None,
-              logger_file=None,
-              verbosity=True):
+
+
+
+              nb_threads=8,
+              seed=42,
+              minibatch_nb=8,
+              minibatch_size=25,
+              bed_excl=None,
+              use_markov=False,
+
+
+
+
+
+
+
+
+
+
+
+              ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
     classical features (e.g promoter, tts, gene body, UTR,...) and to sets of user provided peaks.
     """
+
+
+
+    # Set random seed
+    np.random.seed(seed)
+
+
+
+
+
+
+    # Treat region_mid_point
+    # TODO DONE RENAME
+    #region_mid_point = peak_file # now we do not take only the midpoints
+    peak_file = pybedtools.BedTool(peak_file)
+
+
+
+
 
     # -------------------------------------------------------------------------
     # If user wants no basic features (e.g prom, genes, exons) then he
@@ -373,8 +554,14 @@ def peak_anno(inputfile=None,
     # Check chromosomes for peaks are defined in the chrom-info file
     # -------------------------------------------------------------------------
 
+
+
+
+
+
+
     chrom_list = set()
-    for i in region_mid_point:
+    for i in pybedtools.BedTool(peak_file):
         chrom_list.add(i.chrom)
 
     for i in chrom_list:
@@ -392,8 +579,19 @@ def peak_anno(inputfile=None,
     from pygtftk.stats.intersect.overlap_stats_shuffling import compute_overlap_stats
 
     # PARTIAL TODO EXPLAIN
-    my_intersection = partial(compute_overlap_stats, chrom_len=chrom_len)
+    overlap_partial = partial(compute_overlap_stats, chrom_len=chrom_len,
+        minibatch_size=minibatch_size,minibatch_nb=minibatch_nb,
+        bed_excl=bed_excl,use_markov_shuffling=use_markov,
+        nb_threads=nb_threads)
+    # TODO DONE ALL OTHER REQUIRED ARGUMENTS (minibatch size, etc.)
+    # bedA, # corresponds to the old argument 'peak_file=region_mid_point.fn'
+    # bedB, # corresponds to the old argument 'feature_bo=gtf_sub_bed'
 
+
+
+
+    # Initialize result dict
+    hits = dict()
 
     # OLD CALLER
     # hits = _intersection_results(peak_file=region_mid_point.fn,
@@ -412,9 +610,7 @@ def peak_anno(inputfile=None,
 
             # PERSONAL NOTE : gtf_sub_bed is already a BedTool object, no need to import it (I worked with filepaths previously)
 
-
-            # REPLACE WITH : hits[feat_type] = pygtftk.stats.intersect.overlap_stats_shuffling # import the function before
-            hits[feat_type] = my_intersection(peak_file=region_mid_point.fn, feature_bo=gtf_sub_bed)
+            hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
 
         # -------------------------------------------------------------------------
         # Get the intergenic regions
@@ -425,7 +621,7 @@ def peak_anno(inputfile=None,
                                          0,
                                          chrom_len.keys()).merge()
 
-        hits["Intergenic"] = my_intersection(peak_file=region_mid_point.fn, feature_bo=gtf_sub_bed)
+        hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
 
         # -------------------------------------------------------------------------
         # Get the intronic regions
@@ -433,7 +629,7 @@ def peak_anno(inputfile=None,
 
         gtf_sub_bed = gtf.get_introns()
 
-        hits["Introns"] = my_intersection(peak_file=region_mid_point.fn, feature_bo=gtf_sub_bed)
+        hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
 
         # -------------------------------------------------------------------------
         # Get the promoter regions
@@ -445,7 +641,7 @@ def peak_anno(inputfile=None,
                                          g=chrom_info.name).cut([0, 1, 2,
                                                                  3, 4, 5]).sort().merge()
 
-        hits["Promoters"] = my_intersection(peak_file=region_mid_point.fn, feature_bo=gtf_sub_bed)
+        hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
 
         # -------------------------------------------------------------------------
         # Get the tts regions
@@ -457,7 +653,7 @@ def peak_anno(inputfile=None,
                                          g=chrom_info.name).cut([0, 1, 2,
                                                                  3, 4, 5]).sort().merge()
 
-        hits["Terminator"] = my_intersection(peak_file=region_mid_point.fn, feature_bo=gtf_sub_bed)
+        hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
 
 
 
@@ -493,8 +689,8 @@ def peak_anno(inputfile=None,
                                                        "gene_id",
                                                        "exon_id"]).sort().merge()  # merging bed file !
                     ft_type=":".join([user_key,val]) # Key for the dictionary
-                    hits[ft_type] = my_intersection(peak_file=region_mid_point.fn,
-                                                 feature_bo=gtf_sub_bed)
+                    hits[ft_type] = overlap_partial(bedA=peak_file,
+                                                 bedB=gtf_sub_bed)
 
     # -------------------------------------------------------------------------
     # Process user defined annotations
@@ -513,8 +709,73 @@ def peak_anno(inputfile=None,
                     message("Chromosome " + " i from GTF is undefined in " + bed_anno.name + " file.",
                             type="ERROR")
 
-            hits[bed_lab] = my_intersection(peak_file=region_mid_point.fn,
-                                         feature_bo=BedTool(bed_anno.name))
+            hits[bed_lab] = overlap_partial(bedA=peak_file,
+                                         bedB=BedTool(bed_anno.name))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -524,56 +785,95 @@ def peak_anno(inputfile=None,
 
 
 
-
-
-
-
-
-
-
-
-    # personal note : bayesian fitting and true intersection can be done here. Just replace this obsolete code
-
     if len(hits) == 0:
         message("No feature found.", type="ERROR")
 
-    nb_peaks = str(len(region_mid_point))
-    # Do all my math here
+    nb_peaks = str(len(peak_file))
 
-    for chrom in chrom_len:
-        if chrom != "all_chrom":
-            hits["Full_chromosomes"][chrom]["Nb_trial_or_peak"] = nb_peaks
+    should_print_header = True
 
-    for key1 in hits:
-        for key2 in chrom_len:
-            if key1 == "Full_chromosomes":
-                ref_size = str(chrom_len["all_chrom"])
-                nb_trial = nb_peaks
-            else:
-                ref_size = str(chrom_len[key2])
-                nb_trial = str(hits[key1][key2]["Nb_trial_or_peak"])
+    for feature_type in hits.keys():
 
-            if not (key1 == "Full_chromosomes" and key2 == "all_chrom"):
-                out_list = [key1,
-                            key2,
-                            ref_size,
-                            nb_trial,
-                            str(hits[key1][key2]["coverage"]),
-                            str(hits[key1][key2]["Observed"])]
+        current_dict = hits[feature_type]   # This is an ordered dict
 
-                data_file.write("\t".join(out_list) + "\n")
+        if should_print_header:
+            header = [str(s) for s in hits[feat_type].keys()]
+
+            data_file.write("\t".join(['feature_type']+header) + "\n")
+            should_print_header = False
+
+        values = []
+        for k,v in current_dict.items():
+            values = values + [str(v)]
+
+        data_file.write("\t".join([feature_type] + values) + "\n")
 
     close_properly(data_file)
+
+
+
+
+
+
+
+
+
+    sys.exit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     # -------------------------------------------------------------------------
     # Read the data set and plot it
     # -------------------------------------------------------------------------
 
-
-    # Personal note : this is simply a pandas version of my output_intersect.txt
     d = pd.read_csv(data_file.name, sep="\t", header=0)
 
     plot_results(d)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -615,157 +915,145 @@ def peak_anno(inputfile=None,
 
 def plot_results(d):
     """
-    Main plotting function by D.Puthier
+    Main plotting function by Q. Ferré and D. Puthier
     """
 
     if d.shape[0] == 0:
         message("No lines found in input file.",
                 type="ERROR")
 
-    # -------------------------------------------------------------------------
-    # Compute expected number of intersections
-    # -------------------------------------------------------------------------
-
-    d['freq'] = d['coverage'] / d['reference_size']
-    d['Expected'] = d['freq'] * d['Nb_trial_or_peak']
-
-    # -------------------------------------------------------------------------
-    # Compute binomial p.val  (unilateral)
-    # -------------------------------------------------------------------------
-
-
-    # i are the features
-    for i, _ in d.iterrows():
-
-        ## Compute a log ratio
-        if d.loc[i, 'Expected'] > 0:
-            if d.loc[i, 'Observed'] > 0:
-                log2_ratio = np.log2(d.loc[i, 'Observed'] / d.loc[i, 'Expected'])
-                d.loc[i, 'log2_ratio_str'] = "{0:0.2f}".format(log2_ratio)
-                d.loc[i, 'log2_ratio'] = log2_ratio
-            else:
-                d.loc[i, 'log2_ratio_str'] = "NA"
-                d.loc[i, 'log2_ratio'] = float('nan')
-        else:
-            d.loc[i, 'log2_ratio'] = float('nan')
-            d.loc[i, 'log2_ratio_str'] = "NA"
-
-
-
-        ## Compute the binomial test
-        if d.loc[i, 'Nb_trial_or_peak'] > 0:
-            pval = binom_test(n=d.loc[i, 'Nb_trial_or_peak'],
-                              x=d.loc[i, 'Observed'],
-                              p=d.loc[i, 'freq'])
-
-            d.loc[i, 'pval_binom'] = pval
-            d.loc[i, 'pval_binom_str'] = "{0:0.3g}".format(pval)
-
-        ## Enriched or depleted ?
-        d.loc[i, 'test_type'] = 'Unchanged'
-
-        if d.loc[i, 'Observed'] > d.loc[i, 'Expected']:
-            if d.loc[i, 'pval_binom'] < 0.05:
-                d.loc[i, 'test_type'] = 'Enrichment'
-        elif d.loc[i, 'Observed'] < d.loc[i, 'Expected']:
-            if d.loc[i, 'pval_binom'] < 0.05:
-                d.loc[i, 'test_type'] = 'Depletion'
-
-    # -------------------------------------------------------------------------
-    # ft_type for display
-    # -------------------------------------------------------------------------
-
-    for i, _ in d.iterrows():
-        d.loc[i, 'ft_type'] = d.loc[i, 'ft_type'].replace(":", ":\n")
-
-    # -------------------------------------------------------------------------
-    # Save file
-    # -------------------------------------------------------------------------
-
+    # Save the data file
     d.to_csv(open(data_file.name, 'w'), sep="\t", header=True, index=False)
 
+
+
+    # # DEBUG : load a result
+    # # It's not the full result but  it will do
+    # import pandas as pd
+    # d = pd.read_csv('/home/ferre/Téléchargements/test/peak_annotation/peak_anno_stats_MINI.txt',
+    # sep='\t')
+
+
+
+
+
+
     # -------------------------------------------------------------------------
-    # Prepare a function for drawing diagram
+    # Subset the data
     # -------------------------------------------------------------------------
 
-    def bar_plot(d=None,
-                 x_ft_type=None,
-                 which_row=None):
+    d_sub = d.copy()
 
-        # -------------------------------------------------------------------------
-        # Subset the data
-        # -------------------------------------------------------------------------
+    # # -------------------------------------------------------------------------
+    # # Compute text position
+    # # -------------------------------------------------------------------------
+    #
+    # max_y = max(d_sub['nb_intersections_true'].tolist() + d_sub['summed_bp_overlaps_true'].tolist())
+    #
+    # offset = 10 / 100 * max_y
+    #
+    # for i, _ in d_sub.iterrows():
+    #     ## max_y to be use to plot pval
+    #     max_y_col = max(d_sub.loc[i, 'nb_intersections_true'],
+    #                     d_sub.loc[i, 'summed_bp_overlaps_true'])
+    #
+    #     d_sub.loc[i, 'y_log2_ratio'] = max_y_col + offset * 2.4
+    #     d_sub.loc[i, 'y_pval'] = max_y_col + offset * 1.8
+    #     d_sub.loc[i, 'y_text'] = max_y_col + offset / 10
+    #
+    #     ## y_lim to set diagram limits in y coords.
+    #     d_sub.loc[i, 'y_lim'] = max_y + offset * 2.2
 
-        d_sub = d[which_row].copy()
+    # -------------------------------------------------------------------------
+    # Melt the data frame
+    # -------------------------------------------------------------------------
 
-        # -------------------------------------------------------------------------
-        # Compute text position
-        # -------------------------------------------------------------------------
+    #message('Melting.')
 
-        max_y = max(d_sub['Expected'].tolist() + d_sub['Observed'].tolist())
+    # dm = d_sub.melt(id_vars=[x for x in d_sub.columns if x not in ['nb_intersections_true',
+    #                                                                'Observed']],
+    #                 value_vars=['nb_intersections_true', 'Expected'])
+    #
 
-        offset = 10 / 100 * max_y
+    # dm = d_sub.melt()
+    #
+    # dm['variable'] = pd.Categorical(dm['variable'])
+    #
+    dm = d_sub
+    #
+    # dmp
+    #
+    # dmp = d_sub.melt(id_vars='feature_type')
+    # dm
 
-        for i, _ in d_sub.iterrows():
-            ## max_y to be use to plot pval
-            max_y_col = max(d_sub.loc[i, 'Observed'],
-                            d_sub.loc[i, 'Expected'])
+    # -------------------------------------------------------------------------
+    # Order features levels (Categories) based on binom test
+    # -------------------------------------------------------------------------
 
-            d_sub.loc[i, 'y_log2_ratio'] = max_y_col + offset * 2.4
-            d_sub.loc[i, 'y_pval'] = max_y_col + offset * 1.8
-            d_sub.loc[i, 'y_text'] = max_y_col + offset / 10
+    # dm.loc[:, x_ft_type] = pd.Categorical(dm[x_ft_type].tolist())
+    #
+    #
+    # levels_ordered = [x for _, x in sorted(zip(dm[order_bar].tolist(),
+    #                                            dm[x_ft_type].tolist()),
+    #                                        key=lambda x: x[0] if not math.isnan(x[0]) else 0,
+    #                                        reverse=True)]
+    # unique = list(OrderedDict.fromkeys(levels_ordered))
+    #
+    # dm[x_ft_type].cat.reorder_categories(unique, inplace=True)
 
-            ## y_lim to set diagram limits in y coords.
-            d_sub.loc[i, 'y_lim'] = max_y + offset * 2.2
+    # -------------------------------------------------------------------------
+    # Display bars
+    # -------------------------------------------------------------------------
 
-        # -------------------------------------------------------------------------
-        # Melt the data frame
-        # -------------------------------------------------------------------------
+    message('Adding bar plot.')
 
-        message('Melting.')
-        dm = d_sub.melt(id_vars=[x for x in d_sub.columns if x not in ['Expected',
-                                                                       'Observed']],
-                        value_vars=['Observed', 'Expected'])
-
-        dm['variable'] = pd.Categorical(dm['variable'])
-
-        # -------------------------------------------------------------------------
-        # Create a new plot
-        # -------------------------------------------------------------------------
-
-        p = ggplot()
-
-        # -------------------------------------------------------------------------
-        # Order features levels (Categories) based on binom test
-        # -------------------------------------------------------------------------
-
-        dm.loc[:, x_ft_type] = pd.Categorical(dm[x_ft_type].tolist())
+    # -------------------------------------------------------------------------
+    # Create a new plot
+    # -------------------------------------------------------------------------
 
 
-        levels_ordered = [x for _, x in sorted(zip(dm[order_bar].tolist(),
-                                                   dm[x_ft_type].tolist()),
-                                               key=lambda x: x[0] if not math.isnan(x[0]) else 0,
-                                               reverse=True)]
-        unique = list(OrderedDict.fromkeys(levels_ordered))
+    def plot_this(statname):
 
-        dm[x_ft_type].cat.reorder_categories(unique, inplace=True)
+        # -------------- First plot : number of intersections ---------------- #
 
-        # -------------------------------------------------------------------------
-        # Display bars
-        # -------------------------------------------------------------------------
+        # Collect true and shuffled number of intersections
+        data_ni = dm[['feature_type',statname+'_esperance_shuffled',statname+'_true']]
+        maximum = data_ni[[statname+'_esperance_shuffled',statname+'_true']].max(axis=1)
 
-        message('Adding bar plot.')
+        data_ni.columns = ['Feature','Shuffled','True']# Rename columns
+        dmm = data_ni.melt(id_vars='Feature')
+        dmm.columns = ['Feature','Type',statname]
 
-        aes_plot = aes(x_ft_type, 'value', fill='variable')
+        # Create plot
+        p = ggplot(dmm)
 
-        p += geom_bar(data=dm,
-                      mapping=aes_plot,
-                      stat='identity',
-                      alpha=0.6,
-                      position='dodge',
-                      show_legend=True)
+        # Bar plot of shuffled vs true
+        aes_plot = aes(x='Feature', y=statname,fill='Type')
+        p += geom_bar(mapping=aes_plot,stat='identity', alpha=0.6, position='dodge', show_legend=True, width=.6)
 
-        p += ylab("Number of overlaps")
+        # Add error bars for the standard deviation of the shuffles
+        errorbar_mins = dm[statname+'_esperance_shuffled'] - np.sqrt(dm[statname+'_variance_shuffled'])
+        errorbar_maxs = dm[statname+'_esperance_shuffled'] + np.sqrt(dm[statname+'_variance_shuffled'])
+
+        # True values have no error
+        na_series = pd.Series([np.nan]*len(errorbar_mins))
+        errorbar_mins = errorbar_mins.append(na_series) ; errorbar_mins.index = range(len(errorbar_mins))
+        errorbar_maxs = errorbar_maxs.append(na_series) ; errorbar_maxs.index = range(len(errorbar_maxs))
+
+        p += geom_errorbar(aes(x='Feature',ymin=errorbar_mins, ymax=errorbar_maxs, fill='Type'), width=.5, position=position_dodge(.6))
+
+
+
+        # Text for the p-value
+        text = dm[statname+'_pvalue'].append(na_series) ; text.index = range(len(text))
+        text = text.apply(lambda x: 'p='+'{0:.3g}'.format(x)) # Add 'p=' before and format the p value
+        text_pos =  (maximum + 0.05 * max(maximum)).append(na_series) ; text_pos.index = range(len(text_pos))
+        aes_plot = aes(x='Feature', y = text_pos, label = text, fill='Type')
+        p += geom_text(mapping=aes_plot, stat='identity',size=5)
+
+        # Theme
+        #p += theme(axis_text_x = element_text(angle = 90, hjust = 1))
+
         p += theme(legend_title=element_blank(),
                    legend_position="top",
                    legend_box_spacing=0.65,
@@ -785,119 +1073,59 @@ def plot_results(d):
                                             angle=45)
                    )
 
-        # -------------------------------------------------------------------------
-        # Display text (observed vs expected)
-        # -------------------------------------------------------------------------
+        return p
 
-        message('Adding text (observed vs expected)')
 
-        aes_plot = aes(x=x_ft_type,
-                       y='y_text',
-                       label='value',
-                       colour='variable')
+    # Compute the plots for both statistics
+    p1 = plot_this('nb_intersections') + ylab("Number of intersections")
+    p2 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs")
 
-        dodge_text = position_dodge(width=0.9)
 
-        p += geom_text(data=dm,
-                       mapping=aes_plot,
-                       format_string='{0:.3g}',
-                       position=dodge_text,
-                       angle=90,
-                       va='bottom',
-                       ha='center',
-                       size=4,
-                       show_legend=False)
 
-        # -------------------------------------------------------------------------
-        # Display text (pval)
-        # -------------------------------------------------------------------------
 
-        message('Adding text (p-values)')
+    # TODO : use log scale !!!!!!
 
-        aes_plot = aes(x=x_ft_type,
-                       y='y_pval',
-                       label='pval_binom_str',
-                       fill='test_type')
 
-        p += geom_label(data=dm[dm['variable'] == 'Observed'],
-                        mapping=aes_plot,
-                        position='identity',
-                        colour="white",
-                        angle=0,
-                        va='bottom',
-                        ha='center',
-                        size=4,
-                        show_legend=False)
 
-        # -------------------------------------------------------------------------
-        # Display text (log2_ratio)
-        # -------------------------------------------------------------------------
 
-        message('Adding text (log2_ratio)')
 
-        aes_plot = aes(x=x_ft_type,
-                       y='y_log2_ratio',
-                       label='log2_ratio_str',
-                       fill='test_type')
 
-        p += geom_label(data=dm[dm['variable'] == 'Observed'],
-                        mapping=aes_plot,
-                        position='identity',
-                        colour="white",
-                        angle=0,
-                        va='bottom',
-                        ha='center',
-                        size=4,
-                        show_legend=False)
 
-        # -------------------------------------------------------------------------
-        # Set some constrains on y_lim
-        # -------------------------------------------------------------------------
 
-        p += geom_point(data=dm[dm['variable'] == 'Observed'],
-                        mapping=aes(x=x_ft_type,
-                                    y='y_lim'),
-                        alpha=0,
-                        colour="white",
-                        show_legend=False)
 
-        # -------------------------------------------------------------------------
-        # Set color scale
-        # -------------------------------------------------------------------------
+        #
+        #
+        # # -------------------------------------------------------------------------
+        # # Set color scale
+        # # -------------------------------------------------------------------------
+        #
+        # col_dict = {'Observed': 'blue',
+        #             'Expected': '#8A8A8A',
+        #             'Enrichment': '#990000',
+        #             'Unchanged': '#000000',
+        #             'Depletion': '#008800'}
+        #
+        # p += scale_fill_manual(values=col_dict)
+        #
+        # p += scale_color_manual(values=col_dict)
+        #
+        # p += guides(colour=False, fill=guide_legend(ncol=2, byrow=True))
+        #
+        # # p += scale_color_discrete(l=.4)
+        #
+        # # -------------------------------------------------------------------------
+        # # y axis labels in scientific notation
+        # # -------------------------------------------------------------------------
+        #
+        # p += scale_y_continuous(labels=scientific_format(digits=2))
+        #
+        # # -------------------------------------------------------------------------
+        # # return
+        # # -------------------------------------------------------------------------
+        #
 
-        col_dict = {'Observed': 'blue',
-                    'Expected': '#8A8A8A',
-                    'Enrichment': '#990000',
-                    'Unchanged': '#000000',
-                    'Depletion': '#008800'}
+        #return (p1, p2)
 
-        p += scale_fill_manual(values=col_dict)
-
-        p += scale_color_manual(values=col_dict)
-
-        p += guides(colour=False, fill=guide_legend(ncol=2, byrow=True))
-
-        # p += scale_color_discrete(l=.4)
-
-        # -------------------------------------------------------------------------
-        # y axis labels in scientific notation
-        # -------------------------------------------------------------------------
-
-        p += scale_y_continuous(labels=scientific_format(digits=2))
-
-        # -------------------------------------------------------------------------
-        # return
-        # -------------------------------------------------------------------------
-
-        return (p)
-
-    # -------------------------------------------------------------------------
-    # Compute bar plot by feature
-    # -------------------------------------------------------------------------
-
-    p = bar_plot(d=d,
-                 x_ft_type='ft_type',
-                 which_row=d['chrom'] == 'all_chrom')
 
     # -------------------------------------------------------------------------
     #
@@ -905,7 +1133,11 @@ def plot_results(d):
     #
     # -------------------------------------------------------------------------
 
-    nb_ft = len(list(d['ft_type'].unique()))
+
+
+
+
+    nb_ft = len(list(d['feature_type'].unique()))
 
     if pdf_width is None:
         panel_width = 0.5
@@ -941,8 +1173,17 @@ def plot_results(d):
         fxn()
         message("Saving diagram to file : " + pdf_file.name)
         message("Be patient. This may be long for large datasets.")
-        ggsave(filename=pdf_file.name,
-               plot=p,
+
+
+
+
+        # TODO : save plots for the two stats on two pages ? 'from plotnine.ggplot import save_as_pdf_pages'
+
+
+        from plotnine.ggplot import save_as_pdf_pages
+
+        save_as_pdf_pages(filename='pdf_file.name',
+               plots=[p1,p2],
                width=pdf_width,
                height=pdf_height,
                dpi=dpi)
@@ -1141,5 +1382,4 @@ else:
                     group="annotation",
                     notes=__notes__,
                     updated=__updated__,
-                    test=test,
-                    rlib=R_LIBS)
+                    test=test)
