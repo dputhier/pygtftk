@@ -155,18 +155,14 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
 
 
 
+# ---------------------------- Building Cython ------------------------------- #
 from Cython.Build import cythonize
 
-cython_peak_anno = cythonize('/pygtftk/stats/intersect/*.pyx')
+cython_peak_anno = cythonize(["pygtftk/stats/intersect/*.pyx"])
 
-
-
-
-
-
-
-
-
+# Fix an issue with cythonize() : set proper names for the generated extensions
+for module in cython_peak_anno:
+    module.name = module.name.replace("intersect.","pygtftk.stats.intersect.")
 
 # ----------------------------------------------------------------------
 # Description
@@ -293,7 +289,7 @@ setup(name="pygtftk",
                         'future',
                         'setuptools',
                         'cython'],
-      ext_modules=[lib_pygtftk, cython_peak_anno])
+      ext_modules=[lib_pygtftk] + cython_peak_anno)
 
 # ----------------------------------------------------------------------
 # Update gtftk config directory
