@@ -23,6 +23,8 @@ from subprocess import DEVNULL
 from sys import platform
 from tempfile import NamedTemporaryFile
 
+import numpy as np
+
 # -------------------------------------------------------------------------
 # Python compiler version
 # -------------------------------------------------------------------------
@@ -152,9 +154,6 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                         extra_compile_args=extra_compile_args,
                         sources=cmd_src_list)
 
-
-
-
 # ---------------------------- Building Cython ------------------------------- #
 from Cython.Build import cythonize
 
@@ -162,7 +161,7 @@ cython_peak_anno = cythonize(["pygtftk/stats/intersect/*.pyx"])
 
 # Fix an issue with cythonize() : set proper names for the generated extensions
 for module in cython_peak_anno:
-    module.name = module.name.replace("intersect.","pygtftk.stats.intersect.")
+    module.name = module.name.replace("intersect.", "pygtftk.stats.intersect.")
 
 # ----------------------------------------------------------------------
 # Description
@@ -208,6 +207,7 @@ os.remove(tmp_file_conf.name)
 
 
 setup(name="pygtftk",
+      include_dirs=[np.get_include()],
       version=__version__,
       author_email=__email__,
       author=__author__,
