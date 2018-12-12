@@ -55,7 +55,7 @@ def make_parser():
                             metavar='TXT',
                             help='A two columns tab-file. See notes.',
                             default=None,
-                            type=arg_formatter.txt_rw('r'),
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='txt'),
                             required=True)
 
     parser_grp.add_argument('--reference-gene-file', '-r',
@@ -64,7 +64,7 @@ def make_parser():
                                  ' transcript ids).'
                                  ' No header.',
                             default=None,
-                            type=arg_formatter.txt_rw('r'),
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='txt'),
                             required=True)
 
     parser_grp.add_argument('--out-dir', '-o',

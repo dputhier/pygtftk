@@ -49,7 +49,7 @@ def make_parser():
     parser_grp.add_argument(
         'bw_list',
         help='A list of Bigwig file (last argument).',
-        type=arg_formatter.bw_rw('r'),
+        type=arg_formatter.FormattedFile(mode='r', file_ext='bigwig'),
         nargs='+')
 
     parser_grp.add_argument('-i', '--inputfile',
@@ -57,13 +57,13 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF/BED",
                             required=False,
-                            type=arg_formatter.gtf_or_bed_rwb('r'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('bed', 'gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=arg_formatter.txt_rw('w'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='txt'))
 
     parser_grp.add_argument('-c', '--chrom-info',
                             help="Tabulated two-columns file. Chromosomes"

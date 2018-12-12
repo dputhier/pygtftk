@@ -70,7 +70,7 @@ def make_parser():
                             help='A zip file containing a matrix as produced by mk_matrix.',
                             default=None,
                             metavar='MATRIX',
-                            type=arg_formatter.zip_rw('r'),
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='zip'),
                             required=True)
 
     parser_grp.add_argument('-o', '--out-dir',

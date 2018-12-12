@@ -16,12 +16,12 @@ build:
 
 requirements:
   build:
-    - {{ compiler('c') }}
+  - {{ compiler('c') }}
   host:
-    - python
-    - pip
-    - setuptools
-    - zlib
+  - python
+  - pip
+  - setuptools
+  - zlib
   run:
     - python >=3.5,<3.7
     - argparse
@@ -45,14 +45,14 @@ requirements:
 
 test:
   imports:
-    - pygtftk
+  - pygtftk
   commands:
-    - gtftk -h
+  - gtftk -h
   requires:
-    - nose
-    - bats
-    - unzip
-    - perl
+  - nose
+  - bats
+  - unzip
+  - perl
 
 about:
   home: http://github.com/dputhier/pygtftk

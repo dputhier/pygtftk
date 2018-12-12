@@ -15,7 +15,7 @@ import time
 from builtins import range
 from builtins import str
 from builtins import zip
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from distutils.spawn import find_executable
 from subprocess import PIPE
 from subprocess import Popen
@@ -489,7 +489,7 @@ def chrom_info_as_dict(chrom_info_file):
     if chrom_info_file.closed:
         chrom_info_file = open(chrom_info_file.name, "r")
 
-    chrom_len = defaultdict(int)
+    chrom_len = OrderedDict()
 
     for line in chrom_info_file:
 

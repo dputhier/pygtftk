@@ -36,7 +36,7 @@ def make_parser():
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file (gtf.gz).",
                             metavar="GTF.GZ",
-                            type=arg_formatter.gtf_rwb('w'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='gtf.gz'))
 
     parser_grp.add_argument('-e', '--ensembl-collection',
                             help="Which ensembl collection to interrogate"
@@ -275,6 +275,7 @@ def retrieve(species_name=None,
                 os.remove(os.path.join(outputdir, target_gtf))
             else:
                 if outputfile is not None:
+                    message("Renaming.")
                     os.rename(os.path.join(outputdir, target_gtf),
                               outputfile.name)
 

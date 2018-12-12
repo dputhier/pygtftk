@@ -28,13 +28,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=arg_formatter.gtf_rwb('r'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=arg_formatter.gtf_rw('w'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-m', '--max-transcript',
                             help="The maximum number of transcripts to select for each gene.",

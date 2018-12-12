@@ -18,6 +18,17 @@
 .. image:: https://travis-ci.org/dputhier/pygtftk.svg?branch=master
     :target: https://travis-ci.org/dputhier/pygtftk
 
+.. image:: https://img.shields.io/github/repo-size/badges/shields.svg
+    :target: https://travis-ci.org/dputhier/pygtftk
+
+.. image:: https://img.shields.io/conda/dn/:channel/:package.svg
+    :target: https://github.com/dputhier/pygtftk
+
+
+
+[![GitHub repo size in bytes]()](https://github.com/dputhier/pygtftk)
+
+
 .. highlight-language: shell
 
 

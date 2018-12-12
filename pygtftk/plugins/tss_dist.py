@@ -38,13 +38,13 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF",
                             required=False,
-                            type=arg_formatter.gtf_rwb('r'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=arg_formatter.txt_rw('w'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='txt'))
 
     return parser
 
@@ -78,7 +78,7 @@ def tss_dist(
                                 "tss_num_1",
                                 "tss_num_2"]) + "\n")
     try:
-        for gn_id in gn_tss_dist:
+        for gn_id in sorted(gn_tss_dist.keys()):
             tx_list = sorted(list(gn_tss_dist[gn_id].keys()))
             for i in range(len(tx_list) - 1):
 
