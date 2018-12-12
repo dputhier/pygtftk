@@ -10,68 +10,30 @@
 # import pyximport; pyximport.install(reload_support=True)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#!/usr/bin/env python
+# !/usr/bin/env python
 from __future__ import division
 from __future__ import print_function
 
 import argparse
-import math
 import os
 import re
 import sys
 import warnings
-from collections import defaultdict, OrderedDict
 
-import pybedtools
 import numpy as np
 import pandas as pd
-from mizani.formatters import scientific_format
+import pybedtools
 from plotnine import (ggplot, aes, position_dodge,
-                      geom_bar, ggsave, ylab, theme, element_blank, element_text, scale_fill_manual,
-                      guides, guide_legend, geom_label, geom_text, geom_point, scale_color_manual,
-                      scale_y_continuous, geom_errorbar)
-from scipy.stats import binom_test
+                      geom_bar, ylab, theme, element_blank, element_text, geom_text, geom_errorbar)
 
-from pygtftk.arg_formatter import FileWithExtension#, bedFileList
-from pygtftk.arg_formatter import bed6
-from pygtftk.arg_formatter import CheckChromFile
-from pygtftk.arg_formatter import ranged_num
+from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import chrom_info_as_dict
-from pygtftk.utils import chrom_info_to_bed_file
 from pygtftk.utils import close_properly
 from pygtftk.utils import make_outdir_and_file
-from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
-
 
 __updated__ = "2018-12-20"
 __doc__ = """
@@ -150,8 +112,7 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputdir',
                             help='Output directory name.',
@@ -167,51 +128,30 @@ def make_parser():
                             action=CheckChromFile,
                             required=False)
 
-
-
-
     # TODO : chromfile will return a file, use the arg_formatter module
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     # QF My arguments
     parser_grp.add_argument('-nt', '--nb-threads',
                             help='Number of threads for multiprocessing.',
-                            type=ranged_num(0,None),
+                            type=arg_formatter.ranged_num(0, None),
                             default=8,
                             required=False)
 
     parser_grp.add_argument('-s', '--seed',
                             help='Numpy random seed.',
-                            type=ranged_num(None,None),
+                            type=arg_formatter.ranged_num(None, None),
                             default=42,
                             required=False)
 
     parser_grp.add_argument('-mn', '--minibatch-nb',
                             help='Number of minibatches of shuffles.',
-                            type=ranged_num(0,None),
+                            type=arg_formatter.ranged_num(0, None),
                             default=8,
                             required=False)
 
     parser_grp.add_argument('-ms', '--minibatch-size',
                             help='Size of each minibatch, in number of shuffles.',
-                            type=ranged_num(0,None),
+                            type=arg_formatter.ranged_num(0, None),
                             default=25,
                             required=False)
 
@@ -220,7 +160,7 @@ def make_parser():
                                  ' (bed format).',
                             default=None,
                             metavar="BED",
-                            action=bed6, # TODO accept bed3
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
                             required=False)
 
     parser_grp.add_argument('-ma', '--use-markov',
@@ -229,45 +169,22 @@ def make_parser():
                             type=bool,
                             required=False)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     parser_grp.add_argument('-p', '--peak-file',
                             help='The file containing the peaks/regions to be annotated.'
                                  ' (bed format).',
                             default=None,
                             metavar="BED",
-                            action=bed6, # TODO accept bed3
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
                             required=True)
 
-    parser_grp.add_argument('-b', '--more-bed',
-                            help="A comma separated list of bed files to be "
-                                 "considered as additional genomic annotations.",
-                            action=bed6, # TODO PUT IS BACK AS bedFileList
+    parser_grp.add_argument('--more-bed',
+                            help="A list of bed files to be considered as additional genomic annotations.",
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
+                            nargs='*',
                             required=False)
 
     parser_grp.add_argument('-l', '--more-bed-labels',
-                            help="A comma separated list of labels."
-                                 "(see --more-bed)",
+                            help="A comma separated list of labels (see --more-bed)",
                             default=None,
                             type=str,
                             required=False)
@@ -286,13 +203,13 @@ def make_parser():
 
     parser_grp.add_argument('-pw', '--pdf-width',
                             help='Output pdf file width (inches).',
-                            type=ranged_num(0,None),
+                            type=ranged_num(0, None),
                             default=None,
                             required=False)
 
     parser_grp.add_argument('-ph', '--pdf-height',
                             help='Output pdf file height (inches).',
-                            type=ranged_num(0,None),
+                            type=ranged_num(0, None),
                             default=None,
                             required=False)
 
@@ -321,13 +238,13 @@ def make_parser():
 
     parser_grp.add_argument('-dpi', '--dpi',
                             help='Dpi to use.',
-                            type=ranged_num(0,None),
+                            type=ranged_num(0, None),
                             default=300,
                             required=False)
 
     parser_grp.add_argument('-r', '--order-bar',
                             help='The way bar should be ordered.',
-                            choices=['log2_ratio','pval_binom'],
+                            choices=['log2_ratio', 'pval_binom'],
                             default='log2_ratio',
                             required=False)
 
@@ -337,11 +254,6 @@ def make_parser():
 # -------------------------------------------------------------------------
 # The command function
 # -------------------------------------------------------------------------
-
-
-
-
-
 
 
 #
@@ -375,12 +287,6 @@ def make_parser():
 # use_markov=False
 
 
-
-
-
-
-
-
 # TODO I am going to add args, and check there are the same args here as in the argparser
 def peak_anno(inputfile=None,
               outputdir=None,
@@ -399,8 +305,6 @@ def peak_anno(inputfile=None,
               dpi=300,
               order_bar=None,
 
-
-
               nb_threads=8,
               seed=42,
               minibatch_nb=8,
@@ -408,40 +312,19 @@ def peak_anno(inputfile=None,
               bed_excl=None,
               use_markov=False,
 
-
-
-
-
-
-
-
-
-
-
               ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
     classical features (e.g promoter, tts, gene body, UTR,...) and to sets of user provided peaks.
     """
 
-
-
     # Set random seed
     np.random.seed(seed)
 
-
-
-
-
-
     # Treat region_mid_point
     # TODO DONE RENAME
-    #region_mid_point = peak_file # now we do not take only the midpoints
+    # region_mid_point = peak_file # now we do not take only the midpoints
     peak_file = pybedtools.BedTool(peak_file)
-
-
-
-
 
     # -------------------------------------------------------------------------
     # If user wants no basic features (e.g prom, genes, exons) then he
@@ -472,7 +355,6 @@ def peak_anno(inputfile=None,
     # -------------------------------------------------------------------------
 
     chrom_len = chrom_info_as_dict(chrom_info)
-
 
     # -------------------------------------------------------------------------
     # Read the gtf file and discard any records corresponding to chr not declared
@@ -549,16 +431,9 @@ def peak_anno(inputfile=None,
         if not os.path.exists(test_path):
             os.makedirs(test_path)
 
-
     # -------------------------------------------------------------------------
     # Check chromosomes for peaks are defined in the chrom-info file
     # -------------------------------------------------------------------------
-
-
-
-
-
-
 
     chrom_list = set()
     for i in pybedtools.BedTool(peak_file):
@@ -573,22 +448,18 @@ def peak_anno(inputfile=None,
     # Fill the dict with info about basic features include in GTF
     # -------------------------------------------------------------------------
 
-
     from functools import partial
     # Import the main function from the stats.intersect module
     from pygtftk.stats.intersect.overlap_stats_shuffling import compute_overlap_stats
 
     # PARTIAL TODO EXPLAIN
     overlap_partial = partial(compute_overlap_stats, chrom_len=chrom_len,
-        minibatch_size=minibatch_size,minibatch_nb=minibatch_nb,
-        bed_excl=bed_excl,use_markov_shuffling=use_markov,
-        nb_threads=nb_threads)
+                              minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
+                              bed_excl=bed_excl, use_markov_shuffling=use_markov,
+                              nb_threads=nb_threads)
     # TODO DONE ALL OTHER REQUIRED ARGUMENTS (minibatch size, etc.)
     # bedA, # corresponds to the old argument 'peak_file=region_mid_point.fn'
     # bedB, # corresponds to the old argument 'feature_bo=gtf_sub_bed'
-
-
-
 
     # Initialize result dict
     hits = dict()
@@ -655,8 +526,6 @@ def peak_anno(inputfile=None,
 
         hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
 
-
-
     # -------------------------------------------------------------------------
     # if the user request --more-keys (e.g. gene_biotype)
     # -------------------------------------------------------------------------
@@ -688,9 +557,9 @@ def peak_anno(inputfile=None,
                     gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
                                                        "gene_id",
                                                        "exon_id"]).sort().merge()  # merging bed file !
-                    ft_type=":".join([user_key,val]) # Key for the dictionary
+                    ft_type = ":".join([user_key, val])  # Key for the dictionary
                     hits[ft_type] = overlap_partial(bedA=peak_file,
-                                                 bedB=gtf_sub_bed)
+                                                    bedB=gtf_sub_bed)
 
     # -------------------------------------------------------------------------
     # Process user defined annotations
@@ -710,80 +579,9 @@ def peak_anno(inputfile=None,
                             type="ERROR")
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
-                                         bedB=BedTool(bed_anno.name))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                            bedB=BedTool(bed_anno.name))
 
     # ------------------ Treating the 'hits' dictionary --------------------- #
-
-
 
     if len(hits) == 0:
         message("No feature found.", type="ERROR")
@@ -794,46 +592,23 @@ def peak_anno(inputfile=None,
 
     for feature_type in hits.keys():
 
-        current_dict = hits[feature_type]   # This is an ordered dict
+        current_dict = hits[feature_type]  # This is an ordered dict
 
         if should_print_header:
             header = [str(s) for s in hits[feat_type].keys()]
 
-            data_file.write("\t".join(['feature_type']+header) + "\n")
+            data_file.write("\t".join(['feature_type'] + header) + "\n")
             should_print_header = False
 
         values = []
-        for k,v in current_dict.items():
+        for k, v in current_dict.items():
             values = values + [str(v)]
 
         data_file.write("\t".join([feature_type] + values) + "\n")
 
     close_properly(data_file)
 
-
-
-
-
-
-
-
-
     sys.exit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     # -------------------------------------------------------------------------
     # Read the data set and plot it
@@ -842,71 +617,6 @@ def peak_anno(inputfile=None,
     d = pd.read_csv(data_file.name, sep="\t", header=0)
 
     plot_results(d)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # NOTE : my code should output something very much like d, so the plotnine
@@ -925,18 +635,11 @@ def plot_results(d):
     # Save the data file
     d.to_csv(open(data_file.name, 'w'), sep="\t", header=True, index=False)
 
-
-
     # # DEBUG : load a result
     # # It's not the full result but  it will do
     # import pandas as pd
     # d = pd.read_csv('/home/ferre/Téléchargements/test/peak_annotation/peak_anno_stats_MINI.txt',
     # sep='\t')
-
-
-
-
-
 
     # -------------------------------------------------------------------------
     # Subset the data
@@ -968,7 +671,7 @@ def plot_results(d):
     # Melt the data frame
     # -------------------------------------------------------------------------
 
-    #message('Melting.')
+    # message('Melting.')
 
     # dm = d_sub.melt(id_vars=[x for x in d_sub.columns if x not in ['nb_intersections_true',
     #                                                                'Observed']],
@@ -1011,48 +714,50 @@ def plot_results(d):
     # Create a new plot
     # -------------------------------------------------------------------------
 
-
     def plot_this(statname):
 
         # -------------- First plot : number of intersections ---------------- #
 
         # Collect true and shuffled number of intersections
-        data_ni = dm[['feature_type',statname+'_esperance_shuffled',statname+'_true']]
-        maximum = data_ni[[statname+'_esperance_shuffled',statname+'_true']].max(axis=1)
+        data_ni = dm[['feature_type', statname + '_esperance_shuffled', statname + '_true']]
+        maximum = data_ni[[statname + '_esperance_shuffled', statname + '_true']].max(axis=1)
 
-        data_ni.columns = ['Feature','Shuffled','True']# Rename columns
+        data_ni.columns = ['Feature', 'Shuffled', 'True']  # Rename columns
         dmm = data_ni.melt(id_vars='Feature')
-        dmm.columns = ['Feature','Type',statname]
+        dmm.columns = ['Feature', 'Type', statname]
 
         # Create plot
         p = ggplot(dmm)
 
         # Bar plot of shuffled vs true
-        aes_plot = aes(x='Feature', y=statname,fill='Type')
-        p += geom_bar(mapping=aes_plot,stat='identity', alpha=0.6, position='dodge', show_legend=True, width=.6)
+        aes_plot = aes(x='Feature', y=statname, fill='Type')
+        p += geom_bar(mapping=aes_plot, stat='identity', alpha=0.6, position='dodge', show_legend=True, width=.6)
 
         # Add error bars for the standard deviation of the shuffles
-        errorbar_mins = dm[statname+'_esperance_shuffled'] - np.sqrt(dm[statname+'_variance_shuffled'])
-        errorbar_maxs = dm[statname+'_esperance_shuffled'] + np.sqrt(dm[statname+'_variance_shuffled'])
+        errorbar_mins = dm[statname + '_esperance_shuffled'] - np.sqrt(dm[statname + '_variance_shuffled'])
+        errorbar_maxs = dm[statname + '_esperance_shuffled'] + np.sqrt(dm[statname + '_variance_shuffled'])
 
         # True values have no error
-        na_series = pd.Series([np.nan]*len(errorbar_mins))
-        errorbar_mins = errorbar_mins.append(na_series) ; errorbar_mins.index = range(len(errorbar_mins))
-        errorbar_maxs = errorbar_maxs.append(na_series) ; errorbar_maxs.index = range(len(errorbar_maxs))
+        na_series = pd.Series([np.nan] * len(errorbar_mins))
+        errorbar_mins = errorbar_mins.append(na_series);
+        errorbar_mins.index = range(len(errorbar_mins))
+        errorbar_maxs = errorbar_maxs.append(na_series);
+        errorbar_maxs.index = range(len(errorbar_maxs))
 
-        p += geom_errorbar(aes(x='Feature',ymin=errorbar_mins, ymax=errorbar_maxs, fill='Type'), width=.5, position=position_dodge(.6))
-
-
+        p += geom_errorbar(aes(x='Feature', ymin=errorbar_mins, ymax=errorbar_maxs, fill='Type'), width=.5,
+                           position=position_dodge(.6))
 
         # Text for the p-value
-        text = dm[statname+'_pvalue'].append(na_series) ; text.index = range(len(text))
-        text = text.apply(lambda x: 'p='+'{0:.3g}'.format(x)) # Add 'p=' before and format the p value
-        text_pos =  (maximum + 0.05 * max(maximum)).append(na_series) ; text_pos.index = range(len(text_pos))
-        aes_plot = aes(x='Feature', y = text_pos, label = text, fill='Type')
-        p += geom_text(mapping=aes_plot, stat='identity',size=5)
+        text = dm[statname + '_pvalue'].append(na_series);
+        text.index = range(len(text))
+        text = text.apply(lambda x: 'p=' + '{0:.3g}'.format(x))  # Add 'p=' before and format the p value
+        text_pos = (maximum + 0.05 * max(maximum)).append(na_series);
+        text_pos.index = range(len(text_pos))
+        aes_plot = aes(x='Feature', y=text_pos, label=text, fill='Type')
+        p += geom_text(mapping=aes_plot, stat='identity', size=5)
 
         # Theme
-        #p += theme(axis_text_x = element_text(angle = 90, hjust = 1))
+        # p += theme(axis_text_x = element_text(angle = 90, hjust = 1))
 
         p += theme(legend_title=element_blank(),
                    legend_position="top",
@@ -1075,67 +780,50 @@ def plot_results(d):
 
         return p
 
-
     # Compute the plots for both statistics
     p1 = plot_this('nb_intersections') + ylab("Number of intersections")
     p2 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs")
 
-
-
-
     # TODO : use log scale !!!!!!
 
+    #
+    #
+    # # -------------------------------------------------------------------------
+    # # Set color scale
+    # # -------------------------------------------------------------------------
+    #
+    # col_dict = {'Observed': 'blue',
+    #             'Expected': '#8A8A8A',
+    #             'Enrichment': '#990000',
+    #             'Unchanged': '#000000',
+    #             'Depletion': '#008800'}
+    #
+    # p += scale_fill_manual(values=col_dict)
+    #
+    # p += scale_color_manual(values=col_dict)
+    #
+    # p += guides(colour=False, fill=guide_legend(ncol=2, byrow=True))
+    #
+    # # p += scale_color_discrete(l=.4)
+    #
+    # # -------------------------------------------------------------------------
+    # # y axis labels in scientific notation
+    # # -------------------------------------------------------------------------
+    #
+    # p += scale_y_continuous(labels=scientific_format(digits=2))
+    #
+    # # -------------------------------------------------------------------------
+    # # return
+    # # -------------------------------------------------------------------------
+    #
 
-
-
-
-
-
-
-
-        #
-        #
-        # # -------------------------------------------------------------------------
-        # # Set color scale
-        # # -------------------------------------------------------------------------
-        #
-        # col_dict = {'Observed': 'blue',
-        #             'Expected': '#8A8A8A',
-        #             'Enrichment': '#990000',
-        #             'Unchanged': '#000000',
-        #             'Depletion': '#008800'}
-        #
-        # p += scale_fill_manual(values=col_dict)
-        #
-        # p += scale_color_manual(values=col_dict)
-        #
-        # p += guides(colour=False, fill=guide_legend(ncol=2, byrow=True))
-        #
-        # # p += scale_color_discrete(l=.4)
-        #
-        # # -------------------------------------------------------------------------
-        # # y axis labels in scientific notation
-        # # -------------------------------------------------------------------------
-        #
-        # p += scale_y_continuous(labels=scientific_format(digits=2))
-        #
-        # # -------------------------------------------------------------------------
-        # # return
-        # # -------------------------------------------------------------------------
-        #
-
-        #return (p1, p2)
-
+    # return (p1, p2)
 
     # -------------------------------------------------------------------------
     #
     # Computing page size
     #
     # -------------------------------------------------------------------------
-
-
-
-
 
     nb_ft = len(list(d['feature_type'].unique()))
 
@@ -1174,53 +862,18 @@ def plot_results(d):
         message("Saving diagram to file : " + pdf_file.name)
         message("Be patient. This may be long for large datasets.")
 
-
-
-
         # TODO : save plots for the two stats on two pages ? 'from plotnine.ggplot import save_as_pdf_pages'
-
 
         from plotnine.ggplot import save_as_pdf_pages
 
         save_as_pdf_pages(filename='pdf_file.name',
-               plots=[p1,p2],
-               width=pdf_width,
-               height=pdf_height,
-               dpi=dpi)
+                          plots=[p1, p2],
+                          width=pdf_width,
+                          height=pdf_height,
+                          dpi=dpi)
         # dm.to_csv(data_file, sep="\t", header=True, index=False)
 
     close_properly(pdf_file, data_file)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def main():
@@ -1237,7 +890,6 @@ if __name__ == '__main__':
 
 
 else:
-
 
     # Do my unitary test here (in bash)
     # Add some doctests in the code itself (I think the module is already loaded, just write the doctests, check with Denis)
