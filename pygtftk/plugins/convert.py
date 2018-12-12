@@ -27,13 +27,13 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF",
                             required=False,
-                            type=arg_formatter.gtf_rwb('r'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="BED/BED3/BED6",
-                            type=arg_formatter.bed_rw('w'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='bed'))
 
     parser_grp.add_argument('-n', '--names',
                             help="The key(s) that should be used as name.",

@@ -14,11 +14,10 @@ import os
 import re
 import sys
 from builtins import str
-from functools import partial
 
 from pybedtools import BedTool
 
-from pygtftk.utils import check_file_or_dir_exists
+from pygtftk.utils import check_file_or_dir_exists, make_tmp_file, close_properly
 from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import message
 
@@ -364,83 +363,135 @@ class chromFileAsDict(argparse.Action):
 
 
 # ---------------------------------------------------------------
-# Check file is in bed6 format
+# Check file extension and format
 # ---------------------------------------------------------------
 
-class bed6(argparse.Action):
+class FormattedFile(argparse.FileType):
     """
-    Check the BED file exist and has proper format.
+    Check file extensions and format.
+
+    :param mode: the mode ('r'...).
+    :param mode: A string or tuple, The accepted file_ext  ('bed', 'bed.gz', 'txt', 'txt.gz', 'gtf', 'gtf.gz', 'fasta',
+    'fasta.gz', 'zip', 'bigwig')
+
     """
 
-    def __init__(self,
-                 option_strings,
-                 dest,
-                 nargs=None,
-                 const=None,
-                 default=None,
-                 type=None,
-                 choices=None,
-                 required=False,
-                 help=None,
-                 metavar=None):
-        argparse.Action.__init__(self,
-                                 option_strings=option_strings,
-                                 dest=dest,
-                                 nargs=nargs,
-                                 const=const,
-                                 default=default,
-                                 type=type,
-                                 choices=choices,
-                                 required=required,
-                                 help=help,
-                                 metavar=metavar,
-                                 )
+    def __init__(self, mode='r', file_ext='bed', **kwargs):
+        super(FormattedFile, self).__init__(mode, **kwargs)
+        self.file_ext = file_ext
 
-    def __call__(self,
-                 parser,
-                 namespace,
-                 values,
-                 option_string=None):
+    def __call__(self, string):
+        match = False
 
-        check_file_or_dir_exists(values)
+        # ---------------------------------------------------------------
+        # Check file extension
+        # ---------------------------------------------------------------
 
-        try:
-            file_bo = BedTool(values)
-            a = len(file_bo)
-        except:
-            msg = "Unable to load file: " + values + "."
-            message(msg, type="ERROR")
+        fasta_format_1 = '(\.[Ff][Aa][Ss][Tt][Aa]$)|(\.[Ff][Nn][Aa]$)'
+        fasta_format_2 = '|(\.[Ff][Aa]$)|(\.[Ff][Aa][Ss]$)|(\.[Ff][Ff][Nn]$)|(\.[Ff][Rr][Nn]$)'
+        fasta_regexp = fasta_format_1 + fasta_format_2
+        fasta_regexp_gz = re.sub("\$", "\.[Gg][Zz]$", fasta_regexp)
+        bed_regexp = '\.[Bb][Ee][Dd][3456]{0,1}$'
+        bed_regexp_gz = re.sub("\$", "\.[Gg][Zz]$", bed_regexp)
+        gtf_regexp = '\.[Gg][Tt][Ff]$'
+        gtf_regexp_gz = re.sub("\$", "\.[Gg][Zz]$", gtf_regexp)
+        txt_regexp = '(\.[Tt][Xx][Tt]$)|(\.[Cc][Ss][Vv]$)|(\.[Dd][Ss][Vv]$)|(\.[Tt][Aa][Bb]$)|(\.[Tt][Ss][Vv]$)'
+        txt_regexp_gz = re.sub("\$", "\.[Gg][Zz]$", txt_regexp)
+        bigwig_regexp = '(\.[Bb][Ww]$)|(\.[Bb][Ii][Gg][Ww][Ii][Gg]$)'
+        zip_regexp = '\.[Zz][Ii][Pp]$'
+
+        ext2regexp = {'bed': bed_regexp,
+                      'bed.gz': bed_regexp_gz,
+                      'gtf': gtf_regexp,
+                      'gtf.gz': gtf_regexp_gz,
+                      'fasta': fasta_regexp,
+                      'fasta.gz': fasta_regexp_gz,
+                      'txt': txt_regexp,
+                      'txt.gz': txt_regexp_gz,
+                      'bigwig': bigwig_regexp,
+                      'zip': zip_regexp}
+
+        match = False
+
+        if isinstance(self.file_ext, str):
+            extension_list = [self.file_ext]
+        else:
+            extension_list = list(self.file_ext)
+
+        for this_ext in extension_list:
+            if re.search(ext2regexp[this_ext], string):
+                match = True
+                break
+
+        if not match:
+            message('Not a valid filename extension :' + string, type="WARNING")
+            message('Extension expected: ' + ext2regexp[this_ext], type="ERROR")
             sys.exit()
 
-        if len(file_bo) == 0:
-            msg = "It seems that file " + values + " is empty."
-            message(msg, type="ERROR")
-            sys.exit()
+        # ---------------------------------------------------------------
+        # Check directory
+        # ---------------------------------------------------------------
 
-        if file_bo.file_type != 'bed':
-            msg = "File {f} is not a valid bed file."
-            msg = msg.format(f=values)
-            message(msg, type="ERROR")
-            sys.exit()
+        outputdir = os.path.dirname(os.path.abspath(string))
 
-        names = set()
+        if not os.path.exists(outputdir):
+            if 'w' in self._mode:
+                message("Directory not found. Creating.", type="WARNING")
+                os.makedirs(outputdir)
 
-        for line in file_bo:
-            if len(line.fields) != 6:
-                message("File -- " + values + " --Need a BED6 file.", type="ERROR")
-                sys.exit()
+        # ---------------------------------------------------------------
+        # Check format
+        # ---------------------------------------------------------------
 
-            if line.strand not in ['-', '+', '.']:
-                message("File -- " + values + " -- strand is not in proper format", type="ERROR")
-            if line.name not in names:
-                names.add(line.name)
-            else:
-                message("File -- " + values + " -- Names (4th columns of the bed file) should be unambiguous.",
-                        type="ERROR")
-                sys.exit()
+        # if bed3, bed4, bad5 convert to bed6
 
-        # Add the attribute
-        setattr(namespace, self.dest, values)
+        if self._mode == 'r':
+            if self.file_ext == 'bed':
+
+                try:
+                    file_bo = BedTool(string)
+                    nb_line = len(file_bo)
+                except:
+                    msg = "Unable to load file: " + string + "."
+                    message(msg, type="ERROR")
+                    sys.exit()
+
+                if nb_line == 0:
+                    msg = "It seems that file " + string + " is empty."
+                    message(msg, type="ERROR")
+                    sys.exit()
+
+                if file_bo.file_type != 'bed':
+                    msg = "File {f} is not a valid bed file."
+                    msg = msg.format(f=string)
+                    message(msg, type="ERROR")
+                    sys.exit()
+
+                region_nb = 0
+                field_count = file_bo.field_count()
+
+                if field_count != 6:
+                    message("Converting to bed6 format, file: " + string, type="DEBUG")
+                    tmp_file = make_tmp_file(prefix="bed6_",
+                                             suffix=".bed")
+                    for record in file_bo:
+                        if field_count < 4:
+                            record.name = 'region_' + str(region_nb)
+
+                        fields = record.fields[0:3]
+                        fields += [record.name,
+                                   record.score,
+                                   record.strand]
+                        tmp_file.write("\t".join(fields))
+
+                    close_properly(tmp_file)
+                    string = tmp_file.name
+
+        # we will work with string
+        if 'w' in self._mode:
+            self._mode = 'w'
+
+        return super(FormattedFile, self).__call__(string)
 
 
 # ---------------------------------------------------------------
@@ -496,106 +547,3 @@ class globbedFileList(argparse.Action):
 
         # Add the attribute
         setattr(namespace, self.dest, values)
-
-
-# ---------------------------------------------------------------
-# Check file extension
-# ---------------------------------------------------------------
-
-
-class FileWithExtension(argparse.FileType):
-    """
-    Declare and check file extensions.
-    """
-
-    def __init__(self, mode='r', valid_extensions=None, **kwargs):
-        super(FileWithExtension, self).__init__(mode, **kwargs)
-        self.valid_extensions = valid_extensions
-
-    def __call__(self, string):
-        match = False
-        if self.valid_extensions:
-            if isinstance(self.valid_extensions, str):
-                if not string.endswith(self.valid_extensions):
-                    if re.search(self.valid_extensions, string):
-                        match = True
-                else:
-                    match = True
-            elif isinstance(self.valid_extensions, tuple):
-                for exp in self.valid_extensions:
-                    if not string.endswith(exp):
-                        if re.search(exp, string):
-                            match = True
-                            break
-                    else:
-                        match = True
-                        break
-
-        if not match:
-            message('Not a valid filename extension :' + string, type="WARNING")
-            message('Extension expected: ' + str(self.valid_extensions),
-                    type="ERROR")
-            sys.exit()
-
-        outputdir = os.path.dirname(os.path.abspath(string))
-
-        if not os.path.exists(outputdir):
-            if 'w' in self._mode:
-                message("Directory not found. Creating.", type="WARNING")
-                os.makedirs(outputdir)
-
-        # we will work with string
-        if 'w' in self._mode:
-            self._mode = 'w'
-
-        return super(FileWithExtension, self).__call__(string)
-
-
-# ---------------------------------------------------------------
-# Pre-defined file types with extension constrains
-# ---------------------------------------------------------------
-
-
-# gtf
-gtf_rwb = partial(FileWithExtension, valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$')
-
-# gtf file not gz
-gtf_rw = partial(FileWithExtension, valid_extensions='\.[Gg][Tt][Ff]$')
-
-# gtf file or txt file
-gtf_or_txt_rw = partial(FileWithExtension, valid_extensions=('\.[Gg][Tt][Ff]$',
-                                                             '\.[Tt][Xx][Tt]',
-                                                             '\.[Cc][Ss][Vv]',
-                                                             '\.[Tt][Aa][Bb]',
-                                                             '\.[Tt][Ss][Vv]'))
-
-# bed file not gz
-bed_rw = partial(FileWithExtension, valid_extensions=('\.[Bb][Ee][Dd]$',
-                                                      '\.[Bb][Ee][Dd]3$',
-                                                      '\.[Bb][Ee][Dd]6$'))
-# txt file
-txt_rw = partial(FileWithExtension, valid_extensions=('\.[Tt][Xx][Tt]',
-                                                      '\.[Cc][Ss][Vv]',
-                                                      '\.[Dd][Ss][Vv]',
-                                                      '\.[Tt][Aa][Bb]',
-                                                      '\.[Tt][Ss][Vv]'))
-# bigwig file
-bw_rw = partial(FileWithExtension, valid_extensions=('\.[Bb][Ww]$',
-                                                     '\.[Bb][Ii][Gg][Ww][Ii][Gg]$'))
-
-# bigwig file
-gtf_or_bed_rwb = partial(FileWithExtension, valid_extensions=('\.[Gg][Tt][Ff](\.[Gg][Zz])?$',
-                                                              '\.[Bb][Ee][Dd]$',
-                                                              '\.[Bb][Ee][Dd]3$',
-                                                              '\.[Bb][Ee][Dd]6$'))
-
-# fasta file
-fasta_rw = partial(FileWithExtension, valid_extensions=('\.[Ff][Aa][Ss][Tt][Aa]$',
-                                                        '\.[Ff][Nn][Aa]$',
-                                                        '\.[Ff][Aa]$',
-                                                        '\.[Ff][Aa][Ss]$',
-                                                        '\.[Ff][Ff][Nn]$',
-                                                        '\.[Ff][Rr][Nn]$'))
-
-# zip file
-zip_rw = partial(FileWithExtension, valid_extensions='\.[Zz][Ii][Pp]$')

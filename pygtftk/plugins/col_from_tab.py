@@ -28,13 +28,13 @@ def make_parser():
                             help="The tabulated file. Default to STDIN",
                             default=sys.stdin,
                             metavar="TXT",
-                            type=arg_formatter.txt_rw('r'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='txt'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=arg_formatter.txt_rw('w'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='txt'))
 
     parser_grp.add_argument('-c', '--columns',
                             help="The list (csv) of column names.",
