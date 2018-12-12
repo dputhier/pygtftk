@@ -275,6 +275,7 @@ def retrieve(species_name=None,
                 os.remove(os.path.join(outputdir, target_gtf))
             else:
                 if outputfile is not None:
+                    message("Renaming.")
                     os.rename(os.path.join(outputdir, target_gtf),
                               outputfile.name)
 
