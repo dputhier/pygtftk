@@ -271,21 +271,6 @@ def ranged_num(lowest=-1, highest=1, val_type=("int", "float"),
 
 
 # ---------------------------------------------------------------
-# Check a numeric is an int greater than 0
-# ---------------------------------------------------------------
-
-def int_greater_than_null(a_value):
-    """Check a numeric is an int greater than 0."""
-    try:
-        a_value = int(a_value)
-    except:
-        raise argparse.ArgumentTypeError("An integer with min value 1.")
-    if a_value <= 0:
-        raise argparse.ArgumentTypeError("Minimum value is 1.")
-    return a_value
-
-
-# ---------------------------------------------------------------
 # Check the chrom file format
 # ---------------------------------------------------------------
 
