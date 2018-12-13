@@ -7,21 +7,44 @@ import numpy as np
 import pandas as pd
 
 
+
+
+
+
+
+
+
+
+
 # -------------------------- Reading bed files ------------------------------- #
 
 def bed_to_lists_of_intervals(bed,chromsizes):
     """
-    Reads a bed file and returns two dictionaries, with the list of region lengths
-    and interregions lengths (resp. Lr and Li).
-    The bed file must be a pybedtools object.
+    Reads a bed file (as a pybedtools.BedTool object) and returns respectively
+    two dictionaries, with the list of region lengths and interregions lengths
+    (resp. Lr and Li), as well as a list of all chromosomes.
+
     The dictionaries group the lists of lengths by chromosome.
 
     A dictionary of chromosome sizes must also be provided to compute the
-    distance between the last feature and the chromosome end
+    distance between the last feature and the chromosome end.
 
     For example, Li['chr1'] is the list of distances between regions in chr1.
+
+    Tests :
+    >>> from pygtftk.utils import get_example_file
+    >>> from pygtftk.stats.intersect import bed_to_lists_of_intervals
+    >>> import pybedtools
+    >>> import numpy.testing as npt
+    >>> f = pybedtools.BedTool(get_example_file("simple","bed")[0])
+    >>> c = get_example_file(ext="chromInfo")[0]
+    >>> from pygtftk.utils import chrom_info_as_dict
+    >>> cl = chrom_info_as_dict(open(c, "r"))
+    >>> result = bed_to_lists_of_intervals(f,cl)
+    >>> npt.assert_array_equal(result[0]['chr1'], np.array([ 5, 10]))
+    >>> npt.assert_array_equal(result[1]['chr1'], np.array([ 10, 25, 250]))
+    >>> npt.assert_array_equal(result[2], np.array(['chr1']))
     """
-    # bed = pybedtools.BedTool(bed_path)
 
     # Convert bedfile to pandas array
     bed = bed.to_dataframe()
@@ -175,3 +198,40 @@ def compute_stats_for_intersection(myintersect):
     intersect_nb = len(myintersect)
     stats = (bp_overlap, intersect_nb)
     return stats
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+#
+#
+#
+#
+# if __name__ == "__main__":
+#     import doctest
+#     doctest.testmod()
