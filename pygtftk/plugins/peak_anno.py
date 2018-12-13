@@ -25,6 +25,7 @@ import pandas as pd
 import pybedtools
 from plotnine import (ggplot, aes, position_dodge,
                       geom_bar, ylab, theme, element_blank, element_text, geom_text, geom_errorbar)
+from plotnine.ggplot import save_as_pdf_pages
 
 from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
@@ -321,10 +322,7 @@ def peak_anno(inputfile=None,
     # Set random seed
     np.random.seed(seed)
 
-    # Treat region_mid_point
-    # TODO DONE RENAME
-    # region_mid_point = peak_file # now we do not take only the midpoints
-    print(peak_file)
+    # Load the peak file as pybedtools.BedTool object
     peak_file = pybedtools.BedTool(peak_file.name)
 
     # -------------------------------------------------------------------------
@@ -484,7 +482,6 @@ def peak_anno(inputfile=None,
 
             hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
 
-        print(peak_file)
         # -------------------------------------------------------------------------
         # Get the intergenic regions
         # -------------------------------------------------------------------------
@@ -610,7 +607,6 @@ def peak_anno(inputfile=None,
 
     close_properly(data_file)
 
-    sys.exit()
 
     # -------------------------------------------------------------------------
     # Read the data set and plot it
@@ -618,14 +614,14 @@ def peak_anno(inputfile=None,
 
     d = pd.read_csv(data_file.name, sep="\t", header=0)
 
-    plot_results(d)
+    plot_results(d,data_file,pdf_file,pdf_width,pdf_height,dpi)
 
 
 # NOTE : my code should output something very much like d, so the plotnine
 # code below can be re-used as is
 
 
-def plot_results(d):
+def plot_results(d,data_file,pdf_file,pdf_width,pdf_height,dpi):
     """
     Main plotting function by Q. Ferré and D. Puthier
     """
@@ -644,71 +640,9 @@ def plot_results(d):
     # sep='\t')
 
     # -------------------------------------------------------------------------
-    # Subset the data
+    # Copy the data
     # -------------------------------------------------------------------------
-
-    d_sub = d.copy()
-
-    # # -------------------------------------------------------------------------
-    # # Compute text position
-    # # -------------------------------------------------------------------------
-    #
-    # max_y = max(d_sub['nb_intersections_true'].tolist() + d_sub['summed_bp_overlaps_true'].tolist())
-    #
-    # offset = 10 / 100 * max_y
-    #
-    # for i, _ in d_sub.iterrows():
-    #     ## max_y to be use to plot pval
-    #     max_y_col = max(d_sub.loc[i, 'nb_intersections_true'],
-    #                     d_sub.loc[i, 'summed_bp_overlaps_true'])
-    #
-    #     d_sub.loc[i, 'y_log2_ratio'] = max_y_col + offset * 2.4
-    #     d_sub.loc[i, 'y_pval'] = max_y_col + offset * 1.8
-    #     d_sub.loc[i, 'y_text'] = max_y_col + offset / 10
-    #
-    #     ## y_lim to set diagram limits in y coords.
-    #     d_sub.loc[i, 'y_lim'] = max_y + offset * 2.2
-
-    # -------------------------------------------------------------------------
-    # Melt the data frame
-    # -------------------------------------------------------------------------
-
-    # message('Melting.')
-
-    # dm = d_sub.melt(id_vars=[x for x in d_sub.columns if x not in ['nb_intersections_true',
-    #                                                                'Observed']],
-    #                 value_vars=['nb_intersections_true', 'Expected'])
-    #
-
-    # dm = d_sub.melt()
-    #
-    # dm['variable'] = pd.Categorical(dm['variable'])
-    #
-    dm = d_sub
-    #
-    # dmp
-    #
-    # dmp = d_sub.melt(id_vars='feature_type')
-    # dm
-
-    # -------------------------------------------------------------------------
-    # Order features levels (Categories) based on binom test
-    # -------------------------------------------------------------------------
-
-    # dm.loc[:, x_ft_type] = pd.Categorical(dm[x_ft_type].tolist())
-    #
-    #
-    # levels_ordered = [x for _, x in sorted(zip(dm[order_bar].tolist(),
-    #                                            dm[x_ft_type].tolist()),
-    #                                        key=lambda x: x[0] if not math.isnan(x[0]) else 0,
-    #                                        reverse=True)]
-    # unique = list(OrderedDict.fromkeys(levels_ordered))
-    #
-    # dm[x_ft_type].cat.reorder_categories(unique, inplace=True)
-
-    # -------------------------------------------------------------------------
-    # Display bars
-    # -------------------------------------------------------------------------
+    dm = d.copy()
 
     message('Adding bar plot.')
 
@@ -759,8 +693,6 @@ def plot_results(d):
         p += geom_text(mapping=aes_plot, stat='identity', size=5)
 
         # Theme
-        # p += theme(axis_text_x = element_text(angle = 90, hjust = 1))
-
         p += theme(legend_title=element_blank(),
                    legend_position="top",
                    legend_box_spacing=0.65,
@@ -786,45 +718,9 @@ def plot_results(d):
     p1 = plot_this('nb_intersections') + ylab("Number of intersections")
     p2 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs")
 
-    # TODO : use log scale !!!!!!
-
-    #
-    #
-    # # -------------------------------------------------------------------------
-    # # Set color scale
-    # # -------------------------------------------------------------------------
-    #
-    # col_dict = {'Observed': 'blue',
-    #             'Expected': '#8A8A8A',
-    #             'Enrichment': '#990000',
-    #             'Unchanged': '#000000',
-    #             'Depletion': '#008800'}
-    #
-    # p += scale_fill_manual(values=col_dict)
-    #
-    # p += scale_color_manual(values=col_dict)
-    #
-    # p += guides(colour=False, fill=guide_legend(ncol=2, byrow=True))
-    #
-    # # p += scale_color_discrete(l=.4)
-    #
-    # # -------------------------------------------------------------------------
-    # # y axis labels in scientific notation
-    # # -------------------------------------------------------------------------
-    #
-    # p += scale_y_continuous(labels=scientific_format(digits=2))
-    #
-    # # -------------------------------------------------------------------------
-    # # return
-    # # -------------------------------------------------------------------------
-    #
-
-    # return (p1, p2)
 
     # -------------------------------------------------------------------------
-    #
     # Computing page size
-    #
     # -------------------------------------------------------------------------
 
     nb_ft = len(list(d['feature_type'].unique()))
@@ -853,9 +749,7 @@ def plot_results(d):
         warnings.warn("deprecated", DeprecationWarning)
 
     # -------------------------------------------------------------------------
-    #
     # Saving
-    #
     # -------------------------------------------------------------------------
 
     with warnings.catch_warnings():
@@ -864,16 +758,14 @@ def plot_results(d):
         message("Saving diagram to file : " + pdf_file.name)
         message("Be patient. This may be long for large datasets.")
 
-        # TODO : save plots for the two stats on two pages ? 'from plotnine.ggplot import save_as_pdf_pages'
 
-        from plotnine.ggplot import save_as_pdf_pages
 
-        save_as_pdf_pages(filename='pdf_file.name',
+
+        save_as_pdf_pages(filename=pdf_file.name,
                           plots=[p1, p2],
                           width=pdf_width,
                           height=pdf_height,
                           dpi=dpi)
-        # dm.to_csv(data_file, sep="\t", header=True, index=False)
 
     close_properly(pdf_file, data_file)
 
