@@ -1073,6 +1073,12 @@ def plot_results(d):
                                             angle=45)
                    )
 
+
+        # y axis in scientific notation and in log ?
+        # TODO WARNING : If I do this, the error bars will not be properly positioned !
+        #from plotnine import scale_y_log10
+        #p += scale_y_log10(labels=scientific_format(digits=2))
+
         return p
 
 
@@ -1081,9 +1087,7 @@ def plot_results(d):
     p2 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs")
 
 
-
-
-    # TODO : use log scale !!!!!!
+    # TODO : use log scale !!!!!! ??
 
 
 
@@ -1113,11 +1117,7 @@ def plot_results(d):
         #
         # # p += scale_color_discrete(l=.4)
         #
-        # # -------------------------------------------------------------------------
-        # # y axis labels in scientific notation
-        # # -------------------------------------------------------------------------
-        #
-        # p += scale_y_continuous(labels=scientific_format(digits=2))
+
         #
         # # -------------------------------------------------------------------------
         # # return
