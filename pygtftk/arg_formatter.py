@@ -238,6 +238,9 @@ def ranged_num(lowest=-1, highest=1, val_type=("int", "float"),
     else:
         gt = '>='
 
+    if isinstance(val_type, tuple):
+        val_type = val_type[0]
+
     def type_func(a_value):
         if val_type == "int":
             try:

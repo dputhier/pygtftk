@@ -125,13 +125,13 @@ def make_parser():
                                  "Chromosomes as column 1, sizes as column 2",
                             default=None,
                             metavar="TXT",
-                            action=CheckChromFile,
+                            action=arg_formatter.CheckChromFile,
                             required=False)
 
     # TODO : chromfile will return a file, use the arg_formatter module
 
     # QF My arguments
-    parser_grp.add_argument('-nt', '--nb-threads',
+    parser_grp.add_argument('-k', '--nb-threads',
                             help='Number of threads for multiprocessing.',
                             type=arg_formatter.ranged_num(0, None),
                             default=8,
@@ -203,13 +203,13 @@ def make_parser():
 
     parser_grp.add_argument('-pw', '--pdf-width',
                             help='Output pdf file width (inches).',
-                            type=ranged_num(0, None),
+                            type=arg_formatter.ranged_num(0, None),
                             default=None,
                             required=False)
 
     parser_grp.add_argument('-ph', '--pdf-height',
                             help='Output pdf file height (inches).',
-                            type=ranged_num(0, None),
+                            type=arg_formatter.ranged_num(0, None),
                             default=None,
                             required=False)
 
@@ -238,7 +238,7 @@ def make_parser():
 
     parser_grp.add_argument('-dpi', '--dpi',
                             help='Dpi to use.',
-                            type=ranged_num(0, None),
+                            type=arg_formatter.ranged_num(0, None),
                             default=300,
                             required=False)
 
@@ -324,7 +324,8 @@ def peak_anno(inputfile=None,
     # Treat region_mid_point
     # TODO DONE RENAME
     # region_mid_point = peak_file # now we do not take only the midpoints
-    peak_file = pybedtools.BedTool(peak_file)
+    print(peak_file)
+    peak_file = pybedtools.BedTool(peak_file.name)
 
     # -------------------------------------------------------------------------
     # If user wants no basic features (e.g prom, genes, exons) then he
@@ -479,10 +480,11 @@ def peak_anno(inputfile=None,
                                                "gene_id",
                                                "exon_id"]).sort().merge()  # merging bed file !
 
-            # PERSONAL NOTE : gtf_sub_bed is already a BedTool object, no need to import it (I worked with filepaths previously)
+            del gtf_sub
 
             hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
 
+        print(peak_file)
         # -------------------------------------------------------------------------
         # Get the intergenic regions
         # -------------------------------------------------------------------------
@@ -549,6 +551,7 @@ def peak_anno(inputfile=None,
                 message("The selected key in --more-keys "
                         "should be associated with less than 50 different values.",
                         type="ERROR")
+
             for val in user_key_values:
 
                 gtf_sub = gtf.select_by_key(user_key, val, 0)
@@ -557,6 +560,7 @@ def peak_anno(inputfile=None,
                     gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
                                                        "gene_id",
                                                        "exon_id"]).sort().merge()  # merging bed file !
+                    del gtf_sub
                     ft_type = ":".join([user_key, val])  # Key for the dictionary
                     hits[ft_type] = overlap_partial(bedA=peak_file,
                                                     bedB=gtf_sub_bed)
@@ -585,8 +589,6 @@ def peak_anno(inputfile=None,
 
     if len(hits) == 0:
         message("No feature found.", type="ERROR")
-
-    nb_peaks = str(len(peak_file))
 
     should_print_header = True
 
