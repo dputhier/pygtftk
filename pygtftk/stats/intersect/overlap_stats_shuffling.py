@@ -188,19 +188,12 @@ def compute_all_intersections_minibatch(Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2,
 from pygtftk.utils import message
 
 # NO DEFAULT ARGS HERE, DEFAULTS COME FROM
-def compute_overlap_stats(#peak_file=region_mid_point.fn, # RENAME AS bedA # TODO RENAME REGION_MID_POINT ! NOW WE WORK WITH FULL BEDS
-                        #feature_bo=gtf_sub_bed, # RENAME AS bedB
-
-                        bedA, # corresponds to the old argument 'peak_file=region_mid_point.fn'
+def compute_overlap_stats(bedA, # corresponds to the old argument 'peak_file=region_mid_point.fn'
                         bedB, # corresponds to the old argument 'feature_bo=gtf_sub_bed'
 
-                        chrom_len, # chrom_len
-
-
+                        chrom_len,
                         minibatch_size, minibatch_nb,
-
                         bed_excl,
-
                         use_markov_shuffling,
                         nb_threads):
     """
@@ -212,10 +205,6 @@ def compute_overlap_stats(#peak_file=region_mid_point.fn, # RENAME AS bedA # TOD
     Author : Quentin Ferré <quentin.q.ferre@gmail.com>
     """
 
-
-    # ALL CODE HERE
-
-    # TODO all my log stuff will be a message instead : message('blabla')
 
     message('Beginning shuffling for a given set of features...')
     message('BATCHES : '+str(minibatch_nb)+' batches of '+str(minibatch_size)+' shuffles', type='DEBUG')
@@ -290,8 +279,6 @@ def compute_overlap_stats(#peak_file=region_mid_point.fn, # RENAME AS bedA # TOD
     unlisted_bp_overlaps = [item for sublist in bp_overlaps for item in sublist]
     summed_bp_overlaps = [sum(x) for x in bp_overlaps]
     intersect_nbs = [s[1] for s in stats]
-
-    #print(intersect_nbs)
 
 
 
