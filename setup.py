@@ -11,19 +11,19 @@ Authors: D. Puthier and F. Lopez
 # A set of builtin packages
 # -------------------------------------------------------------------------
 
+import sys
+
 import glob
 import hashlib
+import numpy as np
 import os
+import platform
 import re
 import shutil
 import subprocess
-import sys
-from distutils import sysconfig
+from Cython.Distutils import build_ext
 from subprocess import DEVNULL
-from sys import platform
 from tempfile import NamedTemporaryFile
-
-import numpy as np
 
 # -------------------------------------------------------------------------
 # Python compiler version
@@ -130,6 +130,7 @@ cmd_src_list = glob.glob("pygtftk/src/libgtftk/*.c")
 cmd_src_list += glob.glob("pygtftk/src/libgtftk/command/*.c")
 cmd_src_list = list(set(cmd_src_list))
 
+'''
 if platform == "darwin":
     vars = sysconfig.get_config_vars()
     # vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
@@ -137,6 +138,7 @@ if platform == "darwin":
     dyn_lib_compil = []
 else:
     dyn_lib_compil = ['-shared']
+'''
 
 extra_compile_args = ['-Ipygtftk/src/libgtftk',
                       '-O3',
@@ -144,7 +146,7 @@ extra_compile_args = ['-Ipygtftk/src/libgtftk',
                       '-fPIC',
                       '-MMD',
                       '-MP',
-                      '-fmessage-length=0'] + dyn_lib_compil
+                      '-fmessage-length=0']  # + dyn_lib_compil
 
 lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                         include_dirs=[
@@ -155,13 +157,27 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                         sources=cmd_src_list)
 
 # ---------------------------- Building Cython ------------------------------- #
-from Cython.Build import cythonize
 
-cython_peak_anno = cythonize(["pygtftk/stats/intersect/*.pyx"])
+extra_comp_cython = ['-W']
 
-# Fix an issue with cythonize() : set proper names for the generated extensions
-for module in cython_peak_anno:
-    module.name = module.name.replace("intersect.", "pygtftk.stats.intersect.")
+# Avoid cython warning about numpy API deprecation
+# upon installation
+
+if platform.system() == 'Darwin':
+    extra_comp_cython += ['-Wno-#warnings']
+
+cython_peak_anno = Extension(name='pygtftk.stats.intersect.create_shuffles',
+                             sources=["pygtftk/stats/intersect/create_shuffles.pyx"],
+                             extra_compile_args=extra_comp_cython,
+                             language='c')
+
+cython_peak_anno_2 = Extension(name='pygtftk.stats.intersect.overlap.overlap_regions',
+                               sources=["pygtftk/stats/intersect/overlap/overlap_regions.pyx"],
+                               extra_compile_args=extra_comp_cython,
+                               language='c')
+
+print(cython_peak_anno)
+print(cython_peak_anno_2)
 
 # ----------------------------------------------------------------------
 # Description
@@ -219,6 +235,7 @@ setup(name="pygtftk",
           'Tracker': __url_tracker__
       },
       python_requires=__python_requires__,
+      cmdclass={'build_ext': build_ext},
       keywords=__keywords__,
       packages=['pygtftk',
                 'pygtftk/plugins',
@@ -227,6 +244,7 @@ setup(name="pygtftk",
                 'pygtftk/bwig',
                 'pygtftk/rtools',
                 'pygtftk/stats/intersect',
+                'pygtftk/stats/intersect/overlap',
                 'pygtftk/data',
                 'pygtftk/data/simple',
                 'pygtftk/data/simple_02',
@@ -256,12 +274,12 @@ setup(name="pygtftk",
                     'docs': ['Makefile'],
                     'docs/source': ['*.*'],
                     'pygtftk/stats/intersect': ['*.*'],
+                    'pygtftk/stats/intersect/overlap': ['*.*'],
                     'pygtftk/src': ['*.*'],
                     'pygtftk/src/libgtftk': ['*.*'],
                     'pygtftk/src/libgtftk/command': ['*.*']},
       scripts=['bin/gtftk'],
       license='LICENSE.txt',
-
       classifiers=__classifiers__,
       long_description=long_description,
       extras_require={
@@ -288,7 +306,7 @@ setup(name="pygtftk",
                         'future',
                         'setuptools',
                         'cython'],
-      ext_modules=[lib_pygtftk] + cython_peak_anno)
+      ext_modules=[lib_pygtftk] + [cython_peak_anno] + [cython_peak_anno_2])
 
 # ----------------------------------------------------------------------
 # Update gtftk config directory
