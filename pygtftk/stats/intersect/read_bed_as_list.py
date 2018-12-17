@@ -32,7 +32,7 @@ def bed_to_lists_of_intervals(bed,chromsizes):
 
     Tests :
     >>> from pygtftk.utils import get_example_file
-    >>> from pygtftk.stats.intersect import bed_to_lists_of_intervals
+    >>> from pygtftk.stats.intersect.read_bed_as_list import bed_to_lists_of_intervals
     >>> import pybedtools
     >>> import numpy.testing as npt
     >>> f = pybedtools.BedTool(get_example_file("simple","bed")[0])
@@ -101,8 +101,6 @@ def exclude_chromsizes(exclusion,chromsizes):
     return chromsizes
 
 
-
-
 def exclude_concatenate(bedfile, exclusion, chromsizes):
     """
     When given a bedfile (in pybedtools BedFile format) and an exclusion bed file
@@ -122,12 +120,25 @@ def exclude_concatenate(bedfile, exclusion, chromsizes):
 
     Remark : This version is highly inefficient (1 second per excluded feature)
     but is only run once per analysis, so it will be improved later.
+
+    >>> from pygtftk.utils import get_example_file
+    >>> from pygtftk.stats.intersect.read_bed_as_list import exclude_concatenate
+    >>> import pybedtools
+    >>> import numpy.testing as npt
+    >>> f = pybedtools.BedTool(get_example_file("simple","bed")[0])
+    >>> c = get_example_file(ext="chromInfo")[0]
+    >>> from pygtftk.utils import chrom_info_as_dict
+    >>> cl = chrom_info_as_dict(open(c, "r"))
+    >>> e = pybedtools.BedTool('chr1\t12\t45',from_string=True)
+    >>> result = exclude_concatenate(f,e,cl)
+    >>> assert str(result[0]) == 'chr1\t10\t12\n'
+    >>> assert str(result[1]) == 'chr1\t12\t17\n'
     """
 
-
     # Raw edition does not work in pybedtools, so need to use pandas dataframe instead.
-    bedfile = bedfile.to_dataframe()
-    exclusion = exclusion.to_dataframe()
+    # Also, merge the files before, just in case they were not.
+    bedfile = bedfile.merge().to_dataframe()
+    exclusion = exclusion.merge().to_dataframe()
 
     # WARNING Must use a copy and not remove elements one by one, because that
     # would shift the position and now you are comparing positions in two
