@@ -152,7 +152,7 @@ def exclude_concatenate(bedfile, exclusion, chromsizes):
             # all regions where region_start is under exclu_start but region_end is higher thean exclu_start : truncate by setting region_end to exclu_start
             if (bedfile.at[i,'start'] < excl['start']) & (bedfile.at[i,'end'] >= excl['start']) :
                 truncate_by = bedfile.at[i,'end'] - excl['start']
-                result.at[i,'end'] = result.at['end'] - truncate_by
+                result.at[i,'end'] = result.at[i,'end'] - truncate_by
 
             # all which contain the excluded region (start before and end after) : shorten the end by the region length
             elif (bedfile.at[i,'start'] < excl['start']) & (bedfile.at[i,'end'] >= excl['end']):
@@ -167,11 +167,18 @@ def exclude_concatenate(bedfile, exclusion, chromsizes):
 
             # all regions where region_start is higher than excl_start but lower than excl_end and region_end is higher than excl_end : truncate by setting region_start to excl_end and also region_end = region_end - nb_of_nt_of_region_that_are_in_excl
             elif (bedfile.at[i,'start'] >= excl['start']) & (bedfile.at[i,'start'] < excl['end']) & (bedfile.at[i,'end'] >= excl['end']) :
+
+                # Compute some utils
+                region_length_before_truncating = result.at[i,'end'] - result.at[i,'start']
+                nb_of_bp_of_region_that_are_in_excl = (excl['end'] - bedfile.at[i,'start'])
+
+                # Move start point
                 forward_by = bedfile.at[i,'start'] - excl['start']
                 result.at[i,'start'] = result.at[i,'start'] - forward_by
 
-                nb_of_bp_of_region_that_are_in_excl = (excl['end'] - bedfile.at[i,'start'])
-                result.at[i,'end'] = result.at[i,'end'] - nb_of_bp_of_region_that_are_in_excl
+                # Move end point to 'new start point + new length'
+                new_length = region_length_before_truncating - nb_of_bp_of_region_that_are_in_excl
+                result.at[i,'end'] = result.at[i,'start'] + new_length
 
             # all regions where region_start and region_end are both higher than excl_end : move by setting region_start = region_start - excl_length and region_end = region_end - excl_length
             elif (bedfile.at[i,'start'] >= excl['end']) :
