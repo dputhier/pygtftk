@@ -1,12 +1,11 @@
 """
-Describe the module
+Contains various utility functions relative to the negative binomial distribution.
 """
 
 import scipy
 import scipy.stats
 import numpy as np
 
-# ------------------------ Check Neg Binom adjustment ------------------------ #
 
 def check_negbin_adjustment(obs,mean,var):
     """
@@ -26,12 +25,17 @@ def check_negbin_adjustment(obs,mean,var):
 
 
 def log_nb_pval(k,mean,var):
+    """
+    Log p-value for a negative binomial of those moments.
+    """
     r = mean**2 / (var-mean) ; p = 1/(mean/r + 1) # Conversion
     return scipy.stats.nbinom(r,p).logcdf(k)
 
 
 def empirical_p_val(x,data):
-    # Quick wrapper : returns the proportion of elements greater than x in the data
+    """
+    Quick wrapper : returns the proportion of elements greater than x in the data
+    """
     arr = np.array(data)
     where = np.where(arr > x)[0]
     return len(where)/len(arr)

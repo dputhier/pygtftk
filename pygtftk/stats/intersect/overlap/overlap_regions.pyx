@@ -1,5 +1,6 @@
 """
-Describe the module
+Algorithm to compute the overlap between two sets of genomic regions (as BED files).
+Meant to achieve the same functionality as `bedtools intersect --sorted`.
 """
 
 import numpy as np
@@ -78,6 +79,8 @@ def find_intersection(fake_bed_A,fake_bed_B, all_chrom):
     """
     When given a fake bed (as a list of tuples, not a text file to avoid text
     overhead) return the intersection computed using our implemented algorithm.
+
+    Both bed files MUST have been sorted beforehand.
     """
     # Read those fake beds as pandas dataframes
     a_df = pd.DataFrame(fake_bed_A)
@@ -124,8 +127,7 @@ def find_intersection(fake_bed_A,fake_bed_B, all_chrom):
 
 
 
-
-
+################################################################################
 # ---------------------- Run and process intersections ----------------------- #
 # Wrappers for code
 

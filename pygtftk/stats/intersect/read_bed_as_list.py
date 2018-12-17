@@ -1,5 +1,6 @@
 """
-Describe the module
+A set of functions to turn a BED file into a list of intervals, and exclude
+certain regions to create concatenated sub-chromosomes.
 """
 
 import pybedtools
@@ -12,11 +13,9 @@ import pandas as pd
 
 
 
-
-
-
-
+################################################################################
 # -------------------------- Reading bed files ------------------------------- #
+################################################################################
 
 def bed_to_lists_of_intervals(bed,chromsizes):
     """
@@ -84,7 +83,11 @@ def bed_to_lists_of_intervals(bed,chromsizes):
 
 
 
-# -------------------------- Exclusion and concatenation ------------------------------- #
+
+
+################################################################################
+# ----------------------- Exclusion and concatenation ------------------------ #
+#################################################################################
 
 def exclude_chromsizes(exclusion,chromsizes):
     """
@@ -192,8 +195,11 @@ def exclude_concatenate(bedfile, exclusion, chromsizes):
 
 
 
-# ----------------- Compute statistics on the intersections ------------------ #
 
+
+################################################################################
+# ----------------- Compute statistics on the intersections ------------------ #
+################################################################################
 
 def compute_stats_for_intersection(myintersect):
     """
@@ -205,40 +211,3 @@ def compute_stats_for_intersection(myintersect):
     intersect_nb = len(myintersect)
     stats = (bp_overlap, intersect_nb)
     return stats
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
-#
-#
-#
-#
-# if __name__ == "__main__":
-#     import doctest
-#     doctest.testmod()
