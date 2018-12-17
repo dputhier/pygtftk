@@ -1,5 +1,6 @@
 """
-Describe the module
+A module to shuffle BED files and generate new "fake" BED files.
+This shuffle keeps the distribution of regions and inter-region legths.
 """
 
 
@@ -11,9 +12,14 @@ from functools import partial
 from multiprocessing import Pool
 
 
+################################################################################
 # -------------------------- Shuffling bed files ----------------------------- #
+################################################################################
 
-## CUSTOM SIMPLE SHUFFLE
+
+# ------------------------ Custom simple permutation ------------------------- #
+
+
 def shuffle(arr):
     """
     Given a numpy array, will shuffle its rows independantly.
@@ -26,7 +32,8 @@ def shuffle(arr):
     return result
 
 
-## CUSTOM MARKOV SHUFFLE
+
+# ------------------------ Custom Markov shuffling --------------------------- #
 
 cdef noise(int x, int factor=1000):
     """
@@ -54,13 +61,14 @@ cdef roundup(int x, int factor=1000):
 def learn_word_dict(corpus):
     """
     Turn a corpus (a list) into a dictionary of all consecutive trios of elements.
+
+    The dictionary gives, for each pair of elements, all the elements that were
+    found following this pair in the corpus.
     """
 
     def make_trios(corpus):
-
         # Must have at least 3 features
-        if len(corpus) < 3 :
-            raise ValueError('At least one chromosome in one of the input bed files has fewer than 3 features. You cannot use Markov shuffling in this case.')
+        if len(corpus) < 3 : raise ValueError('At least one chromosome in one of the input bed files has fewer than 3 features. You cannot use Markov shuffling in this case.')
 
         for i in range(len(corpus)-2):
             yield (corpus[i], corpus[i+1], corpus[i+2])
@@ -73,7 +81,7 @@ def learn_word_dict(corpus):
         # Values are rounded to the thousands to avoid overfitting
         k_1, k_2, k_3 = roundup(k_1), roundup(k_2), roundup(k_3)
 
-        key = (k_1,k_2)
+        key = (k_1, k_2)
         if key in word_dict.keys():
             word_dict[key].append(k_3)
         else:
@@ -131,18 +139,18 @@ def generate_markov(arguments):
 
 def markov_shuffle(arr, nb_threads = 8):
     """
-    This function takes an array as input because it is meant to be slotted
+    This function takes an array as input, because it is meant to be slotted
     at the place of shuffle(), which shuffles the rows of an array independently.
 
-    As the rows of the array to be fed are all identical at first (it is a tiling of a list)
-    Learn a Markov model of order 2 on the first row of the array, then
-    replace each row with an independant realisation of the Markov model.
+    As the rows of the array to be fed are all identical at first (it is a tiling of a list),
+    this learns a Markov model of order 2 on the first row of the array, then
+    replaces each row with an independant realisation of the Markov model.
 
     WARNING : This is *very* long. Calling this across all chromosomes of a
     modest BED file (20K lines) for a batch size of 50 may take upwards of 1 minute.
     """
     # Take the first row since they are all supposed to be identical
-    L = arr[0,] # Remeber that L must be a numpy array
+    L = arr[0,] # Remember that L must be a numpy array
     wd = learn_word_dict(arr[0,]) # Learn a dictionary
 
     # Replace each row with a Markov shuffled version
@@ -170,9 +178,9 @@ def markov_shuffle(arr, nb_threads = 8):
 
 
 
-
-
+################################################################################
 # ---------------- Generating bed files from shuffled ones ------------------- #
+################################################################################
 
 cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
     """
@@ -204,11 +212,6 @@ cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
         fake_bed.append((str(chrom),int(start),int(end)))
 
     return fake_bed
-
-
-
-
-
 
 
 
