@@ -1,44 +1,30 @@
 """
-A module to
+This is the main function to compute random shuffles to assess statistical
+significance overlap of two sets of genomic regions, provided as BED files.
 """
 
-#
-# # FOR MY JUPYTER KERNEL TESTING ONLY
-# import os
-# os.getcwd()
-# os.chdir('/home/ferre/anaconda3/lib/python3.6/site-packages/pygtftk-0.9.8-py3.6-linux-x86_64.egg/pygtftk')
-#
-#
-
-
-import time
-
-import functools as ft
 import numpy as np
 import pybedtools
-from multiprocessing import Pool
-from pygtftk.stats.intersect.overlap import overlap_regions as oc
 
+from multiprocessing import Pool
+import functools as ft
+import time
+
+from pygtftk.utils import message
+
+from collections import OrderedDict
+
+from pygtftk.stats.intersect import read_bed_as_list as read_bed
+from pygtftk.stats.intersect.overlap import overlap_regions as oc
 from pygtftk.stats.intersect import create_shuffles as cs
 from pygtftk.stats.intersect import negbin_fit as nf
-from pygtftk.stats.intersect import read_bed_as_list as read_bed
 
-
-#
-#
-# # WIP : this is used during development to import Cython code
-# import pyximport; pyximport.install(reload_support=True)
-#
-#
-
-
+################################################################################
 ################################## Functions ###################################
-
+################################################################################
 
 # -------------------------------- MINIBATCH --------------------------------- #
-
-
-def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2, all_chrom1, all_chrom2,
+def compute_all_intersections_minibatch(Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2,
                                         minibatch_size,
                                         use_markov_shuffling,
                                         nb_threads):
@@ -298,14 +284,5 @@ def compute_overlap_stats(bedA,  # corresponds to the old argument 'peak_file=re
     result['summed_bp_overlaps_true'] = true_bp_overlaps
     result['summed_bp_overlaps_pvalue'] = pval_bp_overlaps
 
-    return result
 
-#
-#
-#
-#
-#
-#
-# poub = compute_overlap_stats(bedA, bedB, chrom_len, minibatch_size, minibatch_nb,bed_excl,use_markov_shuffling,nb_threads)
-#
-#
+    return result

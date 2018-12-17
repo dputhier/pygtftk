@@ -1,15 +1,3 @@
-#
-# # FOR MY JUPYTER KERNEL TESTING ONLY
-# import os
-# os.getcwd()
-# os.chdir('/home/ferre/anaconda3/lib/python3.6/site-packages/pygtftk-0.9.8-py3.6-linux-x86_64.egg/pygtftk')
-#
-#
-#
-# # WIP : this is used during development to import Cython code
-# import pyximport; pyximport.install(reload_support=True)
-
-
 # !/usr/bin/env python
 from __future__ import division
 from __future__ import print_function
@@ -68,7 +56,7 @@ __notes__ = """
 
  -- TODO: This function does not support a mappability file at the moment...
 
- -- The list of region and inter-region lengths can be independantly shuffled or using a Markov model
+ -- The list of region and inter-region lengths can be independently shuffled or using a Markov model
  of order 2 (only use if you suspect there is a structure to the data, not recommended in the general case).
 
  -- The goal of a minibatch is to save RAM. Increase the number of minibatches instead of the size of each. You may need to use very small minibatches if you have large sets of regions.
@@ -107,9 +95,6 @@ def make_parser():
                             action=arg_formatter.CheckChromFile,
                             required=False)
 
-    # TODO : chromfile will return a file, use the arg_formatter module
-
-    # QF My arguments
     parser_grp.add_argument('-k', '--nb-threads',
                             help='Number of threads for multiprocessing.',
                             type=arg_formatter.ranged_num(0, None),
@@ -221,12 +206,6 @@ def make_parser():
                             default=300,
                             required=False)
 
-    parser_grp.add_argument('-r', '--order-bar',
-                            help='The way bar should be ordered.',
-                            choices=['log2_ratio', 'pval_binom'],
-                            default='log2_ratio',
-                            required=False)
-
     return parser
 
 
@@ -250,7 +229,6 @@ def peak_anno(inputfile=None,
               user_img_file=None,
               page_format=None,
               dpi=300,
-              order_bar=None,
 
               nb_threads=8,
               seed=42,
@@ -417,6 +395,7 @@ def peak_anno(inputfile=None,
             del gtf_sub
 
             hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+            message("Working on : "+str(feat_type), type="DEBUG")
 
         # -------------------------------------------------------------------------
         # Get the intergenic regions
@@ -428,6 +407,7 @@ def peak_anno(inputfile=None,
                                          chrom_len.keys()).merge()
 
         hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+        message("Working on : Intergenic", type="DEBUG")
 
         # -------------------------------------------------------------------------
         # Get the intronic regions
@@ -436,6 +416,7 @@ def peak_anno(inputfile=None,
         gtf_sub_bed = gtf.get_introns()
 
         hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+        message("Working on : Introns", type="DEBUG")
 
         # -------------------------------------------------------------------------
         # Get the promoter regions
@@ -448,6 +429,7 @@ def peak_anno(inputfile=None,
                                                                  3, 4, 5]).sort().merge()
 
         hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+        message("Working on : Promoters", type="DEBUG")
 
         # -------------------------------------------------------------------------
         # Get the tts regions
@@ -460,6 +442,7 @@ def peak_anno(inputfile=None,
                                                                  3, 4, 5]).sort().merge()
 
         hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+        message("Working on : Terminator", type="DEBUG")
 
     # -------------------------------------------------------------------------
     # if the user request --more-keys (e.g. gene_biotype)
@@ -497,6 +480,7 @@ def peak_anno(inputfile=None,
                     ft_type = ":".join([user_key, val])  # Key for the dictionary
                     hits[ft_type] = overlap_partial(bedA=peak_file,
                                                     bedB=gtf_sub_bed)
+                    message("Working on : "+str(feat_type), type="DEBUG")
 
     # -------------------------------------------------------------------------
     # Process user defined annotations
@@ -517,6 +501,7 @@ def peak_anno(inputfile=None,
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
                                             bedB=BedTool(bed_anno.name))
+            message("Working on : "+str(bed_lab), type="DEBUG")
 
     # ------------------ Treating the 'hits' dictionary --------------------- #
 
@@ -534,7 +519,7 @@ def peak_anno(inputfile=None,
 
         # First line should be a header
         if should_print_header:
-            header = [str(s) for s in hits[feat_type].keys()]
+            header = [str(s) for s in hits[feature_type].keys()]
 
             data_file.write("\t".join(['feature_type'] + header) + "\n")
             should_print_header = False
@@ -561,7 +546,7 @@ def peak_anno(inputfile=None,
 # code below can be re-used as is
 
 
-def plot_results(d,data_file,pdf_file,pdf_width,pdf_height,dpi):
+def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
     """
     Main plotting function by Q. Ferré and D. Puthier
     """
@@ -572,19 +557,6 @@ def plot_results(d,data_file,pdf_file,pdf_width,pdf_height,dpi):
 
     # Save the data file
     d.to_csv(open(data_file.name, 'w'), sep="\t", header=True, index=False)
-
-
-
-
-
-    # # DEBUG : load a result
-    # # It's not the full result but  it will do
-    # import pandas as pd
-    # d = pd.read_csv('/home/ferre/Téléchargements/test/peak_annotation/peak_anno_stats_MINI.txt',
-    # sep='\t')
-
-
-
 
 
     # -------------------------------------------------------------------------
@@ -623,9 +595,9 @@ def plot_results(d,data_file,pdf_file,pdf_width,pdf_height,dpi):
 
         # True values have no error
         na_series = pd.Series([np.nan] * len(errorbar_mins))
-        errorbar_mins = errorbar_mins.append(na_series);
+        errorbar_mins = errorbar_mins.append(na_series)
         errorbar_mins.index = range(len(errorbar_mins))
-        errorbar_maxs = errorbar_maxs.append(na_series);
+        errorbar_maxs = errorbar_maxs.append(na_series)
         errorbar_maxs.index = range(len(errorbar_maxs))
 
         p += geom_errorbar(aes(x='Feature', ymin=errorbar_mins, ymax=errorbar_maxs, fill='Type'), width=.5,
@@ -635,7 +607,7 @@ def plot_results(d,data_file,pdf_file,pdf_width,pdf_height,dpi):
         text = dm[statname + '_pvalue'].append(na_series);
         text.index = range(len(text))
         text = text.apply(lambda x: 'p=' + '{0:.3g}'.format(x))  # Add 'p=' before and format the p value
-        text_pos = (maximum + 0.05 * max(maximum)).append(na_series);
+        text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
         text_pos.index = range(len(text_pos))
         aes_plot = aes(x='Feature', y=text_pos, label=text, fill='Type')
         p += geom_text(mapping=aes_plot, stat='identity', size=5)
@@ -706,9 +678,6 @@ def plot_results(d,data_file,pdf_file,pdf_width,pdf_height,dpi):
         message("Saving diagram to file : " + pdf_file.name)
         message("Be patient. This may be long for large datasets.")
 
-
-
-
         save_as_pdf_pages(filename=pdf_file.name,
                           plots=[p1, p2],
                           width=pdf_width,
@@ -733,11 +702,8 @@ if __name__ == '__main__':
 
 else:
 
-    # Do my unitary test here (in bash)
-    # Add some doctests in the code itself (I think the module is already loaded, just write the doctests, check with Denis)
-
+    # TODO Implement new tests
     test = '''
-
         #peak_anno: chr2 len
         @test "peak_anno_1" {
              result=`rm -Rf peak_annotation; gtftk peak_anno  -i pygtftk/data/simple_02/simple_02.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed -c pygtftk/data/simple_02/simple_02.chromInfo -u 2 -d 2 -K peak_annotation`
