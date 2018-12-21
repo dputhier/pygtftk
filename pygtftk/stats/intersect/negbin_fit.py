@@ -6,6 +6,8 @@ import scipy
 import scipy.stats
 import numpy as np
 
+from pygtftk.utils import message
+
 
 def check_negbin_adjustment(obs,mean,var):
     """
@@ -27,15 +29,38 @@ def check_negbin_adjustment(obs,mean,var):
 def log_nb_pval(k,mean,var):
     """
     Log p-value for a negative binomial of those moments.
+
+    This is the two-sided p-value : it will return the minimum of the left-sided
+    and right-sided p-value
     """
+    # To prevent division by zero or negative r, if the mean is higher than
+    # or equal to the variance, set it to variance + epsilon and send a warning
+    if mean >= var :
+        mean = var + 1E-4
+        message("Computing log(p-val) for a Neg Binom with mean >= var ; mean was set to var + 1E-4")
+
     r = mean**2 / (var-mean) ; p = 1/(mean/r + 1) # Conversion
-    return scipy.stats.nbinom(r,p).logcdf(k)
+
+    left_pval = scipy.stats.nbinom(r,p).logcdf(k)
+    right_pval = scipy.stats.nbinom(r,p).logsf(k)
+
+    twosided_pval = min(left_pval,right_pval)
+
+    return
 
 
 def empirical_p_val(x,data):
     """
-    Quick wrapper : returns the proportion of elements greater than x in the data
+    Quick wrapper : empirical two-sided p value.
+
+    Returns the proportion of elements greater than x or smaller than x in the data, whichever proportion is smaller.
+
+    This can be used with any dataset, not just a negative-binomial-compliant one.
     """
     arr = np.array(data)
-    where = np.where(arr > x)[0]
-    return len(where)/len(arr)
+
+    higher = len(np.where(arr >= x)[0])
+    lower = len(np.where(arr < x)[0])
+    signif = min(higher, lower)
+
+    return signif/len(arr)
