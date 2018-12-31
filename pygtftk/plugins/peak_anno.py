@@ -217,15 +217,19 @@ def make_parser():
 def peak_anno(inputfile=None,
               outputdir=None,
               peak_file=None,
+              chrom_info=None,
+
               more_bed=None,
               more_bed_labels=None,
               upstream=1000,
               more_keys=None,
               downstream=1000,
               no_basic_feature=False,
+              bed_excl=None,
+              use_markov=False,
+
               pdf_width=None,
               pdf_height=None,
-              chrom_info=None,
               user_img_file=None,
               page_format=None,
               dpi=300,
@@ -234,9 +238,6 @@ def peak_anno(inputfile=None,
               seed=42,
               minibatch_nb=8,
               minibatch_size=25,
-              bed_excl=None,
-              use_markov=False,
-
               ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
@@ -508,8 +509,7 @@ def peak_anno(inputfile=None,
     if len(hits) == 0:
         message("No feature found.", type="ERROR")
 
-    # Print the 'hits' dictionary into a tabulated file
-
+    ### Print the 'hits' dictionary into a tabulated file
 
     should_print_header = True
 
@@ -542,8 +542,8 @@ def peak_anno(inputfile=None,
     plot_results(d,data_file,pdf_file,pdf_width,pdf_height,dpi)
 
 
-# NOTE : my code should output something very much like d, so the plotnine
-# code below can be re-used as is
+
+
 
 
 def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
@@ -702,7 +702,7 @@ if __name__ == '__main__':
 
 else:
 
-    # TODO Implement new tests
+    # TODO Rewrite the conditions based on MY results with trivial data
     test = '''
         #peak_anno: chr2 len
         @test "peak_anno_1" {
@@ -710,127 +710,10 @@ else:
           [ "$result" = "" ]
         }
 
-
         #peak_anno: all_chrom len
         @test "peak_anno_2" {
          result=`cat peak_annotation/00_peak_anno_stats_* | grep chr2 | cut -f 3 | sort | uniq | perl -npe 's/\\n/,/'`
           [ "$result" = "1700,400," ]
-        }
-
-
-        #peak_anno: all_chrom len
-        @test "peak_anno_3" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | grep all_chrom | cut -f 3 | sort | uniq`
-          [ "$result" = "1700" ]
-        }
-
-        #peak_anno: there are 11 guys (midpoints) intersecting CDS
-        @test "peak_anno_4" {
-         result=`grep -w CDS peak_annotation/00_peak_anno_stats_* | cut -f 6 | perl -npe 's/\\n/,/'`
-          [ "$result" = "0,0,0,11,11,0," ]
-        }
-
-
-        #peak_anno: there is 59 guys (midpoints) intersecting intergenic regions (and 19 on chr1).
-        @test "peak_anno_5" {
-         result=`grep -i Interg peak_annotation/00_peak_anno_stats_* | cut -f 6 | perl -npe 's/\\n/,/'`
-          [ "$result" = "0,0,40,19,59,0," ]
-        }
-
-
-
-        #peak_anno: size of intronic features is 21 bases
-        @test "peak_anno_7" {
-         result=`grep -i Introns peak_annotation/00_peak_anno_stats_* | cut -f 5 | sort | uniq | perl -npe 's/\\n/,/'`
-          [ "$result" = "0,21," ]
-        }
-
-
-        #peak_anno: the size of all features (this has been checked)
-        @test "peak_anno_8" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | cut -f 5 | sort -n | uniq | grep -v cov | perl -npe 's/\\n/,/'`
-          [ "$result" = "0,21,48,53,92,100,113,187,200,300,400,700,1587," ]
-        }
-
-        #peak_anno: 40 peaks tested for chromosome 2
-        @test "peak_anno_9" {
-         result=`cut -f 1,2,4 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr2 | cut -f 3`
-          [ "$result" -eq 40 ]
-        }
-
-        #peak_anno: 45 peaks on chromosome 1
-        @test "peak_anno_10" {
-         result=`cut -f 1,2,4 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr1 | cut -f 3`
-          [ "$result" -eq 45 ]
-        }
-
-        #peak_anno: Chromosomal coverage of promoter is 48 on chr1
-        @test "peak_anno_11" {
-         result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Promoter | grep chr1 | cut -f 3`
-          [ "$result" -eq 48 ]
-        }
-
-
-        #peak_anno: Coverage of intergenic regions is 187 nuc
-        @test "peak_anno_12" {
-         result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Inter | grep chr1 | cut -f 3`
-          [ "$result" -eq 187 ]
-        }
-
-        #peak_anno: Number of peaks midpoints intersecting intergenic is 19
-        @test "peak_anno_13" {
-         result=`cut -f 1,2,6 peak_annotation/00_peak_anno_*txt | grep Inter | grep chr1 | cut -f 3`
-          [ "$result" -eq 19 ]
-        }
-
-
-        #peak_anno: Coverage of intronic regions is 21 nuc
-        @test "peak_anno_14" {
-         result=`cut -f 1,2,5 peak_annotation/00_peak_anno_*txt | grep Intro | grep chr1 | cut -f 3`
-          [ "$result" -eq 21 ]
-        }
-
-        #peak_anno: The number of peaks midpoints falling in introns is 1
-        @test "peak_anno_15" {
-         result=`cut -f 1,2,6 peak_annotation/00_peak_anno_*txt | grep Intro | grep chr1 | cut -f 3`
-          [ "$result" -eq 1 ]
-        }
-
-        # This test does not test peak_anno and currently fail on some systems (issue 184). Its output is already git-controlled so skipping it allows to pursue on following tests.
-        ##peak_anno: check more keys
-        #@test "peak_anno_15a" {
-        # result=`gtftk nb_exons -i pygtftk/data/simple_02/simple_02.gtf -g > pygtftk/data/simple_02/simple_02_nbe.gtf`
-        #  [ "$result" = "" ]
-        #}
-
-        #peak_anno: check more keys
-        @test "peak_anno_16" {
-         result=`rm -Rf peak_annotation;  gtftk peak_anno  -i pygtftk/data/simple_02/simple_02_nbe.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed  -K peak_annotation --more-keys nb_exons -c pygtftk/data/simple_02/simple_02.chromInfo`
-          [ "$result" = "" ]
-        }
-
-        #peak_anno: check more keys
-        @test "peak_anno_17" {
-         result=`cat peak_annotation/*txt| grep "nb_exons"| wc -l`
-          [ "$result" -eq 18 ]
-        }
-
-        #peak_anno: check more keys
-        @test "peak_anno_18" {
-         result=`cat peak_annotation/*txt| grep "nb_exons"| wc -l`
-          [ "$result" -eq 18 ]
-        }
-
-        #peak_anno: check no basic feature
-        @test "peak_anno_19" {
-         result=`rm -Rf peak_annotation; gtftk peak_anno  -i pygtftk/data/simple_02/simple_02_nbe.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed  -K peak_annotation --more-keys nb_exons -c pygtftk/data/simple_02/simple_02.chromInfo -n`
-          [ "$result" = "" ]
-        }
-
-        #peak_anno: check no basic feature
-        @test "peak_anno_20" {
-         result=`cat peak_annotation/*txt|  wc -l`
-          [ "$result" -eq 24 ]
         }
         '''
 

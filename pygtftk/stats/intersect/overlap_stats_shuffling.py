@@ -29,10 +29,15 @@ def compute_all_intersections_minibatch(Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2,
                                         use_markov_shuffling,
                                         nb_threads):
     """
-    Main function. Computes a minibatch of shuffles for the given parameters.
+    Main processing function. Computes a minibatch of shuffles for the given parameters.
+
+    This function will be called by the hub function `compute_overlap_stats` to
+    create a batch of shuffled "fake" BED files
 
     Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2 are all outputs from the
-    bed_to_lists_of_intervals function calls right above in the code.
+    bed_to_lists_of_intervals function calls right above in the code : those are
+    the lists of region lenghts, inter-region lengths, and chromosomes for each
+    of the two input files.
 
     'minibatch_size' (int) and 'use_markov_shuffling' (bool) are the other parameters.
 
@@ -128,22 +133,20 @@ def compute_all_intersections_minibatch(Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2,
 
 from pygtftk.utils import message
 
-def compute_overlap_stats(bedA, #
-                        bedB, # corresponds to the old argument 'feature_bo=gtf_sub_bed'
-
+def compute_overlap_stats(bedA, bedB,
                         chrom_len,
                         minibatch_size, minibatch_nb,
                         bed_excl,
                         use_markov_shuffling,
                         nb_threads):
     """
-    This is the hub function to compute overlap statsitics based on Monte Carlo
+    This is the hub function to compute overlap statistics through Monte Carlo
      shuffling with integration of the inter-region lengths.
 
-    The function will generate shuffled BEDs from bedA and bedB indpendantly,
+    The function will generate shuffled BEDs from bedA and bedB independantly,
     and compute intersections between those shuffles. As such, it gives an
     estimation of the intersections under the null hypothesis (the sets of
-    regions A and B are independant).
+    regions given in A and B are independant).
 
     - bedA corresponds to the old argument 'peak_file=region_mid_point.fn'
     - bedB corresponds to the old argument 'feature_bo=gtf_sub_bed'

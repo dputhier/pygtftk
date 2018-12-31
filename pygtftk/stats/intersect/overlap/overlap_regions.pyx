@@ -80,7 +80,7 @@ def find_intersection(fake_bed_A,fake_bed_B, all_chrom):
     When given a fake bed (as a list of tuples, not a text file to avoid text
     overhead) return the intersection computed using our implemented algorithm.
 
-    Both bed files MUST have been sorted beforehand.
+    It will be faster if the BED files were sorted beforehand.
     """
     # Read those fake beds as pandas dataframes
     a_df = pd.DataFrame(fake_bed_A)
