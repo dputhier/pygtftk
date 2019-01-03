@@ -5,6 +5,7 @@ significance overlap of two sets of genomic regions, provided as BED files.
 
 import numpy as np
 import pybedtools
+from collections import OrderedDict
 
 from multiprocessing import Pool
 import functools as ft
@@ -12,18 +13,18 @@ import time
 
 from pygtftk.utils import message
 
-from collections import OrderedDict
-
 from pygtftk.stats.intersect import read_bed_as_list as read_bed
 from pygtftk.stats.intersect.overlap import overlap_regions as oc
 from pygtftk.stats.intersect import create_shuffles as cs
 from pygtftk.stats.intersect import negbin_fit as nf
 
+
+
 ################################################################################
-################################## Functions ###################################
+# -------------------------------- MINIBATCH --------------------------------- #
 ################################################################################
 
-# -------------------------------- MINIBATCH --------------------------------- #
+
 def compute_all_intersections_minibatch(Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2,
                                         minibatch_size,
                                         use_markov_shuffling,
@@ -32,16 +33,14 @@ def compute_all_intersections_minibatch(Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2,
     Main processing function. Computes a minibatch of shuffles for the given parameters.
 
     This function will be called by the hub function `compute_overlap_stats` to
-    create a batch of shuffled "fake" BED files
+    create a batch of shuffled "fake" BED files.
 
     Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2 are all outputs from the
-    bed_to_lists_of_intervals function calls right above in the code : those are
-    the lists of region lenghts, inter-region lengths, and chromosomes for each
-    of the two input files.
+    bed_to_lists_of_intervals function calls : those are the lists of region
+    lengths, inter-region lengths, and chromosomes for each of the two input files.
 
     'minibatch_size' (int) and 'use_markov_shuffling' (bool) are the other parameters.
-
-    'nb_threads' is the nb of threads for the multiprocessing
+    'nb_threads' is the nb of threads for the multiprocessing.
     """
 
     # --------------------- Generate and shuffle batches  ---------------- #
@@ -91,7 +90,7 @@ def compute_all_intersections_minibatch(Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2,
     start = time.time()
     all_intersections = oc.compute_intersections_cython(bedsA, bedsB, all_chroms, nb_threads)
     stop = time.time()
-    message('All intersections computed by our custom Cython in : '+str(stop-start)+' s', type='DEBUG')
+    message('All intersections computed by custom code in : '+str(stop-start)+' s', type='DEBUG')
 
     return all_intersections
 
@@ -104,34 +103,9 @@ def compute_all_intersections_minibatch(Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ################################################################################
+# ---------------------------------- CORE ------------------------------------ #
 ################################################################################
-################################################################################
-
-
-
-
-
-
-
-from pygtftk.utils import message
 
 def compute_overlap_stats(bedA, bedB,
                         chrom_len,
@@ -141,7 +115,7 @@ def compute_overlap_stats(bedA, bedB,
                         nb_threads):
     """
     This is the hub function to compute overlap statistics through Monte Carlo
-     shuffling with integration of the inter-region lengths.
+    shuffling with integration of the inter-region lengths.
 
     The function will generate shuffled BEDs from bedA and bedB independantly,
     and compute intersections between those shuffles. As such, it gives an
@@ -156,15 +130,12 @@ def compute_overlap_stats(bedA, bedB,
     Author : Quentin Ferré <quentin.q.ferre@gmail.com>
     """
 
-
     message('Beginning shuffling for a given set of features...')
     message('BATCHES : '+str(minibatch_nb)+' batches of '+str(minibatch_size)+' shuffles', type='DEBUG')
     message('Total number of shuffles : '+ str(minibatch_nb*minibatch_size), type='DEBUG')
     message('NB_THREADS = ' + str(nb_threads), type='DEBUG')
 
-
     # --------------------- Read list of intervals --------------------------- #
-
     start = time.time()
 
     # Just in case, force type and merge bedA among itself and bedB same.
@@ -180,7 +151,6 @@ def compute_overlap_stats(bedA, bedB,
 
         bed_A_as_pybedtool = read_bed.exclude_concatenate(bed_A_as_pybedtool, exclusion, chrom_len)
         bed_B_as_pybedtool = read_bed.exclude_concatenate(bed_B_as_pybedtool, exclusion, chrom_len)
-
 
 
     # Raise exception if there are less than 2 remainin regions in bedA and bedB (or rather raise an exception with gtftk.error)
@@ -232,7 +202,6 @@ def compute_overlap_stats(bedA, bedB,
     #### Fitting of a Negative Binomial distribution on the shuffles
     # Only relevant for classical shuffle, not Markov
 
-    # TODO : also do that if mean<100 because it can't be approximated by a normal
     if use_markov_shuffling :
         ps = pn = -1 # TODO explain why -1 is returned !
 
@@ -259,7 +228,6 @@ def compute_overlap_stats(bedA, bedB,
     # total number of overlapping base pairs
 
 
-
     ## True intersection
     true_intersection = bedA.intersect(bedB)
 
@@ -277,9 +245,14 @@ def compute_overlap_stats(bedA, bedB,
         pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps,summed_bp_overlaps)
 
     else :
-        pval_intersect_nb = 1 - np.exp(nf.log_nb_pval(true_intersect_nb,esperance_fitted_intersect_nbs,variance_fitted_intersect_nbs))
-        pval_bp_overlaps = 1 - np.exp(nf.log_nb_pval(true_bp_overlaps,esperance_fitted_summed_bp_overlaps,variance_fitted_summed_bp_overlaps))
+        pval_intersect_nb = np.exp(nf.log_nb_pval(true_intersect_nb,esperance_fitted_intersect_nbs,variance_fitted_intersect_nbs))
+        pval_bp_overlaps = np.exp(nf.log_nb_pval(true_bp_overlaps,esperance_fitted_summed_bp_overlaps,variance_fitted_summed_bp_overlaps))
 
+
+    # Number limit : the lower limit for the p-value is roughly 1.11E-16 due to the number format.
+    # As such, if the p-value is under 1.2E-16, round it down to zero anyways.
+    if pval_intersect_nb < 1.2E-16 : pval_intersect_nb = 0
+    if pval_bp_overlaps < 1.2E-16  : pval_bp_overlaps = 0
 
 
 
@@ -289,6 +262,34 @@ def compute_overlap_stats(bedA, bedB,
     message('Total time does not include BED reading, as it does not scale with batch size.', type='DEBUG')
 
 
+
+    # # TODO : add three arguments to this function, outputdir, name and plot (bool)
+    #
+    # ### Print some diagnostic plots to study the distributions
+    # if plot :
+    # ### Plots
+    # import matplotlib.pyplot as plt
+    #
+    # ## Number of overlapping base pairs
+    # # Sum by batch
+    # plt.figure() ; plt.hist(summed_bp_overlaps, bins=50)
+    # plt.savefig(outputdir+'/'+name+'_nb_overlapping_bp_sum_by_batch.png')
+    # # All individual lines across all batches
+    # plt.figure() ; plt.hist(np.array(unlisted_bp_overlaps), bins=300)
+    # plt.savefig(outputdir+'/'+name+'_nb_overlapping_bp_individual.png')
+    #
+    # # Length of overlapping REFERENCE regions (from BED_B) with which the query (from BED_A) intersected
+    # if lengths_wb is not None:
+    #     plt.figure() ; plt.hist(np.array(lengths_wb), bins=300)
+    #     plt.savefig(outputdir+'/'+name+'_length_reference_regions_intersect.png')
+    # # For comparison, length of all REFERENCE regions (from BED_B)
+    # lengths = [r.length for r in pybedtools.BedTool(BED_B)]
+    # plt.figure() ; plt.hist(lengths, bins=300)
+    # plt.savefig(outputdir+'/'+name+'_length_reference_regions_all.png')
+    #
+    # # Number of intersections
+    # plt.figure() ; plt.hist(intersect_nbs, bins=50)
+    # plt.savefig(outputdir+'/'+name+'_nb_intersections.png')
 
 
     # Result as a dictionary of statistics
@@ -304,6 +305,5 @@ def compute_overlap_stats(bedA, bedB,
     result['summed_bp_overlaps_fit'] = ps
     result['summed_bp_overlaps_true'] = true_bp_overlaps
     result['summed_bp_overlaps_pvalue'] = pval_bp_overlaps
-
 
     return result

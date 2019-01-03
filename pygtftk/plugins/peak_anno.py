@@ -1,6 +1,7 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
 from __future__ import division
 from __future__ import print_function
+
 from functools import partial
 
 import argparse
@@ -30,7 +31,7 @@ from pygtftk.stats.intersect.overlap_stats_shuffling import compute_overlap_stat
 
 
 
-__updated__ = "2018-12-20"
+__updated__ = "2019-01-03"
 __doc__ = """
  Annotate peaks (in bed format) with region sets/features computed on the
  fly from a GTF file  (e.g promoter, tts, gene body, UTR...). Custom features
@@ -45,7 +46,10 @@ __doc__ = """
 __notes__ = """
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
 
- -- The program produces a pdf files and a txt file ('_stats_') containing intersection statistics.
+ -- The program produces a pdf file and a txt file ('_stats_') containing intersection statistics.
+ The output figure gives, for both statistics, esperance and standard deviation (error bars)
+ in the shuffles compared to the actual values.
+
 
  -- If -\-more-keys is used additional region sets will be tested based on the associated key value.
  As an example, if -\-more-keys is set to the 'gene_biotype' (a key generally found in ensembl GTF), the
@@ -56,21 +60,22 @@ __notes__ = """
 
  -- TODO: This function does not support a mappability file at the moment...
 
- -- The list of region and inter-region lengths can be independently shuffled or using a Markov model
- of order 2 (only use if you suspect there is a structure to the data, not recommended in the general case).
+ -- The lists of region and inter-region lengths can be shuffled independantly, or by using two independant Markov models
+ of order 2 respectively for each (only use if you suspect there is a structure to the data, not recommended in the general case).
+ Furthermore, this is *very* long (hours ?).
 
- -- The goal of a minibatch is to save RAM. Increase the number of minibatches instead of the size of each. You may need to use very small minibatches if you have large sets of regions.
+ -- The goal of the minibatch is to save RAM. Increase the number of minibatches instead of the size of each. You may need to use very small minibatches if you have large sets of regions.
 
- -- You can exclude regions from the shuffling, but you must exclude the same ones from the peak_file and the GTF.
+ -- You can exclude regions from the shuffling, but the same ones will be excluded from the peak_file and the GTF.
 
- -- The output figure gives, for both statistics, esperance and standard deviation (error bars) in the shuffles compared to the actual values.
+ -- Although peak_anno itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb. It is recommended you do not run other programs in the meantime.
 
+ -- For the p-value Negative Binomial calcuation, if mean > var, the variance will be set to the mean and a message will be sent
  """
 
 
 def make_parser():
-    """The main parser."""
-    # parser = OptionParser()
+    """The main argument parser."""
     parser = argparse.ArgumentParser(add_help=True)
 
     parser_grp = parser.add_argument_group('Arguments')
@@ -128,7 +133,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-ma', '--use-markov',
-                            help='Whether to use Markov shuffling or order 2 instead of independant shuffles of region lenghts and inter-region lengths.',
+                            help='Whether to use Markov shuffling instead of independant shuffles for respectively region lengths and inter-region lengths.',
                             default=False,
                             type=bool,
                             required=False)
@@ -337,7 +342,7 @@ def peak_anno(inputfile=None,
     # -------------------------------------------------------------------------
 
     file_out_list = make_outdir_and_file(out_dir=outputdir,
-                                         alist=["00_peak_anno_stats.txt",
+                                         alist=["00_peak_anno_stats.tsv",
                                                 "00_peak_anno_diagrams." + page_format
                                                 ],
                                          force=True)
@@ -372,7 +377,7 @@ def peak_anno(inputfile=None,
     # Fill the dict with info about basic features include in GTF
     # -------------------------------------------------------------------------
 
-    # Prepare a partial call with all fixed parameters (ie. everything except)
+    # Prepare a partial call with all fixed parameters (ie. everything except
     # the two bed files) for code legibility.
     overlap_partial = partial(compute_overlap_stats, chrom_len=chrom_len,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,

@@ -3,7 +3,6 @@ A module to shuffle BED files and generate new "fake" BED files.
 This shuffle keeps the distribution of regions and inter-region legths.
 """
 
-
 import numpy as np
 cimport numpy as np
 import pybedtools
@@ -130,7 +129,6 @@ cdef generate_markov_cython(int dummy, np.ndarray corpus, dict word_dict):
 
 
 
-
 # Lambda wrapper to be able to use Python multiprocessing
 def generate_markov(arguments):
     dummy, corpus, word_dict = arguments
@@ -174,10 +172,6 @@ def markov_shuffle(arr, nb_threads = 8):
 
 
 
-
-
-
-
 ################################################################################
 # ---------------- Generating bed files from shuffled ones ------------------- #
 ################################################################################
@@ -206,7 +200,6 @@ cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
     for k in rangek :
         start = current_position
         end = start + Lr_shuffled[k]
-        #current_position = end + Li_shuffled[k]
         current_position = end + Li_shuffled[k+1]
 
         fake_bed.append((str(chrom),int(start),int(end)))
@@ -216,7 +209,9 @@ cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
 
 
 def generate_fake_bed_for_i(i,shuffled_Lr1_batches,shuffled_Li1_batches, shuffled_Lr2_batches,shuffled_Li2_batches,all_chroms):
-    # Partial call to the individual function 'generate_fake_bed'. Used in multiprocessing.
+    """
+    Partial call to the individual function 'generate_fake_bed'. Used in multiprocessing.
+    """
 
     current_fake_bed_A = list()
     current_fake_bed_B = list()

@@ -12,7 +12,6 @@ from multiprocessing import Pool
 import pybedtools
 
 
-
 cdef find_overlap(np.ndarray melted):
     """
     Sweep line algorithm mixed with the matching brackets problem to find overlaps.
@@ -36,7 +35,6 @@ cdef find_overlap(np.ndarray melted):
     cdef int overlap_end
     cdef np.ndarray rangei
 
-
     # Start at 0.
     current_position = 0
     openA = False
@@ -58,7 +56,6 @@ cdef find_overlap(np.ndarray melted):
         elif status == 2 : openB = True
         elif status == 3 : openB = False
 
-
         # At any time, if openA & openB : overlap begins
         if (openA & openB) :
             overlapping = True
@@ -70,7 +67,6 @@ cdef find_overlap(np.ndarray melted):
             overlaps.append((overlap_begin,overlap_end))
 
     return overlaps
-
 
 
 
@@ -125,11 +121,13 @@ def find_intersection(fake_bed_A,fake_bed_B, all_chrom):
 
 
 
-
-
 ################################################################################
 # ---------------------- Run and process intersections ----------------------- #
-# Wrappers for code
+################################################################################
+
+"""
+This section contains only wrappers for other code.
+"""
 
 from functools import partial
 

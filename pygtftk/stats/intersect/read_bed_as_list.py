@@ -10,7 +10,6 @@ import pandas as pd
 
 
 
-
 ################################################################################
 # -------------------------- Reading bed files ------------------------------- #
 ################################################################################
@@ -46,7 +45,6 @@ def bed_to_lists_of_intervals(bed,chromsizes):
     # Convert bedfile to pandas array
     bed = bed.to_dataframe()
 
-
     Lr = dict()
     Li = dict()
 
@@ -78,7 +76,6 @@ def bed_to_lists_of_intervals(bed,chromsizes):
         Li[chrom] = np.array(li)
 
     return Lr, Li, all_chrom
-
 
 
 
@@ -170,12 +167,9 @@ def exclude_concatenate(bedfile, exclusion, chromsizes):
             elif (bedfile.at[i,'start'] < excl['start']) & (bedfile.at[i,'end'] >= excl['end']):
                 result.at[i,'end'] = result.at[i,'end'] - excl_length
 
-            # TODO it seems hromsomes are shortened twice instead of once !!
-
             # all regions where region_start > excl_start but region_end < excl_end (so are included) : eliminate those
             elif (bedfile.at[i,'start'] >= excl['start']) & (bedfile.at[i,'end'] < excl['end']) :
                 result.drop(i, inplace=True)
-
 
             # all regions where region_start is higher than excl_start but lower than excl_end and region_end is higher than excl_end : truncate by setting region_start to excl_end and also region_end = region_end - nb_of_nt_of_region_that_are_in_excl
             elif (bedfile.at[i,'start'] >= excl['start']) & (bedfile.at[i,'start'] < excl['end']) & (bedfile.at[i,'end'] >= excl['end']) :
@@ -197,10 +191,10 @@ def exclude_concatenate(bedfile, exclusion, chromsizes):
                 result.at[i,'start'] = result.at[i,'start'] - excl_length
                 result.at[i,'end'] = result.at[i,'end'] - excl_length
 
+
     # Convert the dataframe back into a bedfile and return it
     result_bedfile = pybedtools.BedTool.from_dataframe(result)
     return result_bedfile
-
 
 
 
