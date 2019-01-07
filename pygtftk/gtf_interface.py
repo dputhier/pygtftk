@@ -13,6 +13,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
 import gc
 import glob
 import io
@@ -370,6 +371,38 @@ GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_ke
 GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 """)
 
+
+# ---------------------------------------------------------------
+# Inside a GTF instance, this class will be used to add
+# dynamic attributes to the GTF instances itself (not to the class
+# as with descriptors). This class stores the GTF
+# instance address and the attribute name. When an object of class
+# _AttrGetter is called (through it's '_repr_' method, it will
+# call the GTF instance with the proper method to extract a numpy
+# array representation of the GTF attribute (seqid, source, ...).
+# ---------------------------------------------------------------
+
+'''
+class _AttrGetter(list):
+    def __init__(self, caller, attribute):
+        self.caller = caller
+        self.attribute = attribute
+
+    def __repr__(self):
+        return str(self.caller.extract_data([self.attribute],
+                                        hide_undef=False,
+                                        no_na=False,
+                                        as_list=True))
+
+    def __get__(self):
+        self.caller.extract_data([self.attribute],
+                                 hide_undef=False,
+                                 no_na=False,
+                                 as_list=True)
+
+'''
+
+
 # ---------------------------------------------------------------
 # The GTF class
 # ---------------------------------------------------------------
@@ -386,6 +419,7 @@ class GTF(object):
     _instance_count = 0
     _id_list = []
     _ptr_addr = []
+    _instance_attr = defaultdict(list)
 
     # ---------------------------------------------------------------
     # Constructor
@@ -411,16 +445,28 @@ class GTF(object):
         >>> assert len(a_gtf[("feature","gene")]) == 10
         """
 
+        # ---------------------------------------------------------------
         # Increment the number of instances at the
         # class level
+        # ---------------------------------------------------------------
+
         self._add_instance()
 
+        # ---------------------------------------------------------------
         # The instance number of this object is set to
         # class attribute value
+        # ---------------------------------------------------------------
         self._nb = self._instance_count
 
+        # ---------------------------------------------------------------
         # The list of memory IDs at the class level.
+        # ---------------------------------------------------------------
+
         self._id_list += [id(self)]
+
+        # ---------------------------------------------------------------
+        # Check input_obj
+        # ---------------------------------------------------------------
 
         if isinstance(input_obj, list):
             input_obj = input_obj[0]
@@ -485,11 +531,65 @@ class GTF(object):
         else:
             self._data = new_data
 
-        self.message("GTF created ", type="DEBUG_MEM")
+        # ---------------------------------------------------------------
+        # Add attr_basic, attr_extended and attr_all slots
+        # ---------------------------------------------------------------
+
+        self.update_attr_list()
+
+        # ---------------------------------------------------------------
+        # Allows access to attributes as numpy array
+        # ---------------------------------------------------------------
+
+        for val in self.attr_all:
+            self.__dict__[val] = None
+            GTF._instance_attr[id(self)] += [val]
+
+        # ---------------------------------------------------------------
+        # _data address
+        # ---------------------------------------------------------------
+
         self._ptr_addr += [id(self._data)]
 
+        self.message("GTF created ", type="DEBUG_MEM")
+
+
     # ---------------------------------------------------------------
-    # Constructor
+    # Update or set attribute list
+    # ---------------------------------------------------------------
+
+
+    def update_attr_list(self):
+        self.attr_basic = ['seqid',
+                           'source',
+                           'feature',
+                           'start',
+                           'end',
+                           'score',
+                           'strand',
+                           'phase']
+
+
+        self.attr_extended = self.get_attr_list(add_basic=False, as_dict=False)
+
+        self.attr_all = self.attr_basic + self.attr_extended
+
+    # ---------------------------------------------------------------
+    # extract a numpy array representation of
+    # the GTF attribute (seqid, source, ...).
+    # ---------------------------------------------------------------
+
+    def __getattribute__(self, name):
+        if name in GTF._instance_attr[id(self)]:
+            return np.array(self.extract_data([name],
+                                hide_undef=False,
+                                no_na=False,
+                                as_list=True))
+        else:
+            return super().__getattribute__(name)
+
+    # ---------------------------------------------------------------
+    # merge attributes
     # ---------------------------------------------------------------
 
     def merge_attr(self, feat="*", keys="gene_id,transcript_id",
@@ -938,6 +1038,7 @@ class GTF(object):
         >>> assert [len(x) for x in a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start", as_list_of_list=True)].count(2) == 15
         >>> assert len(a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start", as_list_of_list=True, nr=True)) == 11
         """
+
 
         if keys is None:
             raise GTFtkError("Please provide a key.")
@@ -1699,38 +1800,35 @@ class GTF(object):
 
         return self._clone(new_data)
 
-    def select_by_numeric_value(self,
-                                bool_exp=None,
-                                na_omit=(".", "?")):
-        """Test a numeric value. Select lines using a boolean operation on attributes.
+    def eval(self,
+            bool_exp=None,
+            na_omit=(".", "?")):
+        """Test numeric values. Select lines using a boolean operation on attributes.
         The boolean expression must contain attributes enclosed with braces.
         Example: "cDNA_length > 200 and tx_genomic_length > 2000".
         Note that one can refers to the name of the first columns of the gtf using e.g:
         start, end, score or frame.
-
-        :param bool_exp: A simple boolean operation. And/or operation are not supported at the moment.
+        :param bool_exp: A boolean test. 
         :param na_omit: Any line for which one of the tested value is in this list wont be evaluated (e.g. (".", "?")).
-
-
+        
         :Example:
-
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> b_gtf = a_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=("G0001T001","G0002T001","G0003T001","G0004T001"), new_key="test", new_key_value=("10","11","20","40"))
-        >>> c_list = b_gtf.select_by_key("feature","transcript").select_by_numeric_value("test > 2").extract_data("test", as_list=True)
+        >>> c_list = b_gtf.select_by_key("feature","transcript").eval("test > 2").extract_data("test", as_list=True)
         >>> assert c_list == ['10', '11', '20', '40']
         >>> a_file = get_example_file(datasetname="mini_real", ext="gtf.gz")[0]
         >>> a_gtf = GTF(a_file)
         >>> tx = a_gtf.select_by_key('feature','transcript')
-        >>> assert len(tx.select_by_key("score", "0")) == len(tx.select_by_numeric_value("score == 0"))
-        >>> assert len(tx.select_by_key("start", "1001145")) == len(tx.select_by_numeric_value("start == 1001145"))
-        >>> assert len(tx.select_by_key("start", "1001145", invert_match=True)) == len(tx.select_by_numeric_value("start != 1001145"))
-        >>> assert len(tx.select_by_key("end", "54801291")) == len(tx.select_by_numeric_value("end == 54801291"))
-        >>> assert len(tx.select_by_numeric_value("end == 54801291 and start == 53802771")) == 3
-        >>> assert len(tx.select_by_numeric_value("end == 54801291 and (start == 53802771 or start == 53806156)")) == 4
-        >>> assert len(a_gtf.select_by_numeric_value("phase > 0 and phase < 2", na_omit=".").extract_data('phase', as_list=True,  nr=True)) == 1
+        >>> assert len(tx.select_by_key("score", "0")) == len(tx.eval("score == 0"))
+        >>> assert len(tx.select_by_key("start", "1001145")) == len(tx.eval("start == 1001145"))
+        >>> assert len(tx.select_by_key("start", "1001145", invert_match=True)) == len(tx.eval("start != 1001145"))
+        >>> assert len(tx.select_by_key("end", "54801291")) == len(tx.eval("end == 54801291"))
+        >>> assert len(tx.eval("end == 54801291 and start == 53802771")) == 3
+        >>> assert len(tx.eval("end == 54801291 and (start == 53802771 or start == 53806156)")) == 4
+        >>> assert len(a_gtf.eval("phase > 0 and phase < 2", na_omit=".").extract_data('phase', as_list=True,  nr=True)) == 1
         """
 
         if isinstance(na_omit, str):
@@ -1836,6 +1934,49 @@ class GTF(object):
             return a_gtf
 
         return self.select_by_positions(result)
+    
+    def select(self,
+                bool_exp=None):
+        """A general function to select lines from the GTF using a boolean expression. The bool_exp argument should be a
+        numpy array of boolean type indicating which lines (those 'True') to return. Both basic attributes (seqid,
+        start, end, score or frame) or extended attributes (from the 9th columns) can be tested.
+
+        - Note that when returned as a numpy arrays, the attributes values for which value is undef ('?') or unset ('.') are converted to np.nan and not tested.
+
+        :param bool_exp: A numpy array of size len(self) containing booleans (dtype('bool')).
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> b_gtf = a_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=("G0001T001","G0002T001","G0003T001","G0004T001"), new_key="test", new_key_value=("10","11","20","40"))
+        >>> c_list = b_gtf.select_by_key("feature","transcript").select(b_gtf.test > 2).extract_data("test", as_list=True)
+        >>> assert c_list == ['10', '11', '20', '40']
+        >>> a_file = get_example_file(datasetname="mini_real", ext="gtf.gz")[0]
+        >>> a_gtf = GTF(a_file)
+        >>> tx = a_gtf.select_by_key('feature','transcript')
+        >>> assert len(tx.select_by_key("score", "0")) == len(tx.select(tx.score == 0))
+        >>> assert len(tx.select_by_key("start", "1001145")) == len(tx.select(tx.start == 1001145))
+        >>> assert len(tx.select_by_key("start", "1001145", invert_match=True)) == len(tx.select(tx.start != 1001145))
+        >>> assert len(tx.select_by_key("end", "54801291")) == len(tx.select(tx.end == 54801291))
+        >>> assert len(tx.select((tx.end == 54801291) & (tx.start == 53802771))) == 3
+        >>> assert len(tx.select((tx.end == 54801291) & ((tx.start == 53802771) or (tx.start == 53806156)))) == 4
+        """
+
+        if len(bool_exp) != len(self):
+            raise GTFtkError('The numpy array used for subsetting should be of the same length as the GTF.')
+
+        lines = np.arange(0, len(self))
+        lines = lines[~np.isnan(bool_exp)]
+        bool_exp = bool_exp[~np.isnan(bool_exp)]
+        lines = list(lines[bool_exp])
+        lines = [int(x) for x in lines]
+
+        return self.select_by_positions(lines)
+
+
 
     def nb_exons(self):
         """Return a dict with transcript as key and number of exon as value.
@@ -2248,7 +2389,7 @@ class GTF(object):
         message("Calling del_attr", type="DEBUG")
 
         if keys is None:
-            raise GTFtkError("A key is required.")
+            raise GTFtkError("A key is required. First argument is target feature. Use 'keys='. ")
 
         if not isinstance(keys, list):
             keys = keys.split(",")
@@ -2264,6 +2405,8 @@ class GTF(object):
         new_data = self._dll.del_attributes(self._data,
                                             native_str(",".join(feat)),
                                             native_str(",".join(keys)))
+
+        self.update_attr_list()
 
         return self._clone(new_data)
 
@@ -3074,7 +3217,7 @@ class GTF(object):
                 elif strand == "-":
                     n = nb_introns
                 else:
-                    raise GTFtkError('Strand is undefined !!(' + tx_cur + ')')
+                    continue
 
                 for i in range(0, nb_introns):
 
@@ -3446,6 +3589,82 @@ class GTF(object):
                                              native_str(new_key))
 
         return self._clone(new_data)
+
+
+# ---------------------------------------------------------------
+# A function to prepare a GTF before gffutils database creation.
+# ---------------------------------------------------------------
+
+
+def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
+                                    'exon_id', 'gene_biotype',
+                                    'transcript_biotype', 'gene_name'),
+                        select=None,
+                      convert_ensembl=False):
+    """Returns a function to decorate the create_db() function from gffutils. This novel function will have the same
+    arguments as create_db() but also perform a set preprocessing step to select feature and attributes of interest for the user.
+    This function may also compute gene/transcript features if needed (convert_ensembl).
+
+    :param attr_to_keep: The list of attributes to keep.
+    :param select: The key/values to import. If None, export all lines. Otherwise, a dict (e.g. {'feature':'gene,transcript,exon', 'gene_biotype':'protein_coding,lincRNA'}).
+    :param convert_ensembl: compute gene/transcript feature if required.
+
+    :Example:
+
+    >>> import time
+    >>> import gffutils
+    >>> from  pygtftk.utils import get_example_file
+    >>> from pygtftk.gtf_interface import GTF
+    >>> from pygtftk.gtf_interface import prepare_gffutils_db
+    >>> from pygtftk.utils import make_tmp_file
+    >>> from pygtftk.plugins.retrieve import retrieve
+    >>> a_file = get_example_file(datasetname="mini_real", ext="gtf.gz")[0]
+    >>> db_file = make_tmp_file()
+    >>> # Without pre-processing
+    >>> before = time.clock()
+    >>> gffutils.create_db(data=a_file, dbfn=db_file.name, force=True, verbose=True, disable_infer_genes=True, disable_infer_transcripts=True)
+    >>> after = time.clock()
+    >>> print("Time required without preprocessing: ", round(after - before, 2))
+    >>> # With pre-processing
+    >>> before = time.clock()
+    >>> attr_to_keep=('gene_id', 'transcript_id', 'exon_id', 'gene_biotype', 'transcript_biotype', 'gene_name')
+    >>> prepare_gffutils_db(attr_to_keep=attr_to_keep, convert_ensembl=False)(gffutils.create_db)(data=a_file, dbfn=db_file.name, force=True, verbose=True, disable_infer_genes=True, disable_infer_transcripts=True)
+    >>> after = time.clock()
+    >>> print("Time required with preprocessing (I): ", round(after - before, 2))
+    >>> before = time.clock()
+    >>> select = {'feature':'gene,transcript,exon', 'gene_biotype':'protein_coding,lincRNA'}
+    >>> call_create_db = prepare_gffutils_db(attr_to_keep=attr_to_keep, select=select, convert_ensembl=False)(gffutils.create_db)
+    >>> call_create_db(data=a_file, dbfn=db_file.name, force=True, verbose=True, disable_infer_genes=True, disable_infer_transcripts=True)
+    >>> after = time.clock()
+    >>> print("Time required with preprocessing (II): ", round(after - before, 2))
+    >>> # Connect to the database
+    >>> con=gffutils.interface.FeatureDB(db_file.name)
+    >>> assert con.count_features_of_type('gene') == 27367
+    """
+    def decorated(func):
+        def wrapper(*args, **kwargs):
+            message('Reading GTF.')
+            gtf = GTF(kwargs['data'], check_ensembl_format=False)
+            if convert_ensembl:
+                message('Computing gene/transcript features.')
+                gtf = gtf.convert_to_ensembl()
+            if select is not None:
+                for key,value in select.items():
+                    gtf = gtf.select_by_key(key, value)
+            attr_list = gtf.get_attr_list()
+            attr_list_to_del = [x for x in attr_list if x not in attr_to_keep]
+            if attr_list_to_del:
+                message('Deleting attributes.')
+                gtf = gtf.del_attr(keys=attr_list_to_del)
+            tmp_gtf = make_tmp_file(prefix='select_gtf_attributes', suffix='.gtf')
+            gtf.write(tmp_gtf)
+            message('Temporary GTF file stored at:' + tmp_gtf.name)
+            new_kwargs = kwargs
+            new_kwargs['data'] = tmp_gtf.name
+            response = func(**new_kwargs)
+            return response
+        return wrapper
+    return decorated
 
 
 if __name__ == "__main__":
