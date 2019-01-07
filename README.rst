@@ -26,9 +26,6 @@
 
 
 
-[![GitHub repo size in bytes]()](https://github.com/dputhier/pygtftk)
-
-
 .. highlight-language: shell
 
 
@@ -54,8 +51,11 @@ At the moment, the gtftk program has been tested on:
 - OSX (Yosemite, El Capitan).
 
 
+Installation
+-------------
+
 Installation through conda package building
---------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
 
@@ -72,7 +72,7 @@ Then you can simply install pygtftk in its own isolated environment and activate
 
 
 Installation through setup.py
-------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is not the prefered way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed. ::
 
@@ -84,15 +84,15 @@ This is not the prefered way for installation. Choose conda whenever possible. W
 
 
 Installation through pip
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Prerequesites
-~~~~~~~~~~~~~~
+**Prerequesites**
+
  
 Again, this is not the prefered way for installation. Please choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.
 
-Running pip 
-~~~~~~~~~~~~~
+**Running pip**
+
 
 Installation through pip can be done as follow. ::
 
@@ -104,8 +104,17 @@ Installation through pip can be done as follow. ::
     gtftk -h     
 
 
+
+Documentation
+--------------
+
+Documentation about the latest release is dynamically produced and available at `readthedoc server <https://pygtftk.readthedocs.io/en/master/>`_.
+
+Testing
+--------
+
 Running functional tests
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A lot of functional tests have been developed to ensure consistency with expected results. This does not rule out that bugs may hide throughout the code... In order to check that installation is functional you may be interested in running functional tests. The definition of all functional tests declared in  gtftk commands is accessible using the -p/--plugin-tests argument: ::
 
@@ -135,7 +144,7 @@ Or run tests in parallel using: ::
         
 
 Running unitary tests
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Several unitary tests have been implemented using doctests. You can run them using nose through the following command line: ::
 
