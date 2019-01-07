@@ -13,7 +13,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
 import gc
 import glob
 import io
@@ -28,6 +27,7 @@ from builtins import zip
 from collections import OrderedDict
 from collections import defaultdict
 
+import numpy as np
 from cffi import FFI
 from pybedtools.bedtool import BedTool
 from pyparsing import CaselessLiteral
@@ -371,7 +371,6 @@ GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_ke
 GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 """)
 
-
 # ---------------------------------------------------------------
 # Inside a GTF instance, this class will be used to add
 # dynamic attributes to the GTF instances itself (not to the class
@@ -401,7 +400,6 @@ class _AttrGetter(list):
                                  as_list=True)
 
 '''
-
 
 # ---------------------------------------------------------------
 # The GTF class
@@ -553,11 +551,9 @@ class GTF(object):
 
         self.message("GTF created ", type="DEBUG_MEM")
 
-
     # ---------------------------------------------------------------
     # Update or set attribute list
     # ---------------------------------------------------------------
-
 
     def update_attr_list(self):
         self.attr_basic = ['seqid',
@@ -568,7 +564,6 @@ class GTF(object):
                            'score',
                            'strand',
                            'phase']
-
 
         self.attr_extended = self.get_attr_list(add_basic=False, as_dict=False)
 
@@ -582,9 +577,9 @@ class GTF(object):
     def __getattribute__(self, name):
         if name in GTF._instance_attr[id(self)]:
             return np.array(self.extract_data([name],
-                                hide_undef=False,
-                                no_na=False,
-                                as_list=True))
+                                              hide_undef=False,
+                                              no_na=False,
+                                              as_list=True))
         else:
             return super().__getattribute__(name)
 
@@ -1038,7 +1033,6 @@ class GTF(object):
         >>> assert [len(x) for x in a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start", as_list_of_list=True)].count(2) == 15
         >>> assert len(a_gtf.select_by_key("feature", "transcript").extract_data("seqid,start", as_list_of_list=True, nr=True)) == 11
         """
-
 
         if keys is None:
             raise GTFtkError("Please provide a key.")
@@ -1800,14 +1794,15 @@ class GTF(object):
 
         return self._clone(new_data)
 
-    def eval(self,
-            bool_exp=None,
-            na_omit=(".", "?")):
+    def eval_numeric(self,
+                     bool_exp=None,
+                     na_omit=(".", "?")):
         """Test numeric values. Select lines using a boolean operation on attributes.
         The boolean expression must contain attributes enclosed with braces.
         Example: "cDNA_length > 200 and tx_genomic_length > 2000".
         Note that one can refers to the name of the first columns of the gtf using e.g:
         start, end, score or frame.
+
         :param bool_exp: A boolean test. 
         :param na_omit: Any line for which one of the tested value is in this list wont be evaluated (e.g. (".", "?")).
         
@@ -1934,9 +1929,9 @@ class GTF(object):
             return a_gtf
 
         return self.select_by_positions(result)
-    
+
     def select(self,
-                bool_exp=None):
+               bool_exp=None):
         """A general function to select lines from the GTF using a boolean expression. The bool_exp argument should be a
         numpy array of boolean type indicating which lines (those 'True') to return. Both basic attributes (seqid,
         start, end, score or frame) or extended attributes (from the 9th columns) can be tested.
@@ -1975,8 +1970,6 @@ class GTF(object):
         lines = [int(x) for x in lines]
 
         return self.select_by_positions(lines)
-
-
 
     def nb_exons(self):
         """Return a dict with transcript as key and number of exon as value.
@@ -3597,10 +3590,11 @@ class GTF(object):
 
 
 def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
-                                    'exon_id', 'gene_biotype',
-                                    'transcript_biotype', 'gene_name'),
+                                      'exon_id', 'gene_biotype',
+                                      'transcript_biotype', 'gene_name'),
                         select=None,
-                      convert_ensembl=False):
+
+                        convert_ensembl=False):
     """Returns a function to decorate the create_db() function from gffutils. This novel function will have the same
     arguments as create_db() but also perform a set preprocessing step to select feature and attributes of interest for the user.
     This function may also compute gene/transcript features if needed (convert_ensembl).
@@ -3611,6 +3605,9 @@ def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
 
     :Example:
 
+    >>> # This code is tested. So we are using a lightweight example GTF.
+    >>> # However the gain in pre-processing step are more significant
+    >>> # with large GTF files
     >>> import time
     >>> import gffutils
     >>> from  pygtftk.utils import get_example_file
@@ -3628,19 +3625,16 @@ def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
     >>> # With pre-processing
     >>> before = time.clock()
     >>> attr_to_keep=('gene_id', 'transcript_id', 'exon_id', 'gene_biotype', 'transcript_biotype', 'gene_name')
-    >>> prepare_gffutils_db(attr_to_keep=attr_to_keep, convert_ensembl=False)(gffutils.create_db)(data=a_file, dbfn=db_file.name, force=True, verbose=True, disable_infer_genes=True, disable_infer_transcripts=True)
-    >>> after = time.clock()
-    >>> print("Time required with preprocessing (I): ", round(after - before, 2))
-    >>> before = time.clock()
     >>> select = {'feature':'gene,transcript,exon', 'gene_biotype':'protein_coding,lincRNA'}
     >>> call_create_db = prepare_gffutils_db(attr_to_keep=attr_to_keep, select=select, convert_ensembl=False)(gffutils.create_db)
     >>> call_create_db(data=a_file, dbfn=db_file.name, force=True, verbose=True, disable_infer_genes=True, disable_infer_transcripts=True)
     >>> after = time.clock()
-    >>> print("Time required with preprocessing (II): ", round(after - before, 2))
+    >>> print("Time required with preprocessing (I): ", round(after - before, 2))
     >>> # Connect to the database
     >>> con=gffutils.interface.FeatureDB(db_file.name)
     >>> assert con.count_features_of_type('gene') == 27367
     """
+
     def decorated(func):
         def wrapper(*args, **kwargs):
             message('Reading GTF.')
@@ -3649,7 +3643,7 @@ def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
                 message('Computing gene/transcript features.')
                 gtf = gtf.convert_to_ensembl()
             if select is not None:
-                for key,value in select.items():
+                for key, value in select.items():
                     gtf = gtf.select_by_key(key, value)
             attr_list = gtf.get_attr_list()
             attr_list_to_del = [x for x in attr_list if x not in attr_to_keep]
@@ -3663,7 +3657,9 @@ def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
             new_kwargs['data'] = tmp_gtf.name
             response = func(**new_kwargs)
             return response
+
         return wrapper
+
     return decorated
 
 
