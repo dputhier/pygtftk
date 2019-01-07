@@ -81,9 +81,9 @@ def make_parser():
     return parser
 
 
-def retrieve(species_name=None,
+def retrieve(species_name='homo_sapiens',
              outputfile=None,
-             release='Latest',
+             release=None,
              to_stdout=False,
              list_only=False,
              delete=False,
