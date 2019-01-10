@@ -3598,6 +3598,7 @@ def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
     """Returns a function to decorate the create_db() function from gffutils. This novel function will have the same
     arguments as create_db() but also perform a set preprocessing step to select feature and attributes of interest for the user.
     This function may also compute gene/transcript features if needed (convert_ensembl).
+    WARNING: this function only supports GTF/GFF2.0 at the moment (not GFF3).
 
     :param attr_to_keep: The list of attributes to keep.
     :param select: The key/values to import. If None, export all lines. Otherwise, a dict (e.g. {'feature':'gene,transcript,exon', 'gene_biotype':'protein_coding,lincRNA'}).
