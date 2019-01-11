@@ -2225,6 +2225,7 @@ class GTF(object):
         >>> b_gtf = a_gtf.add_attr_from_file(feat="gene", key="gene_id", new_key="bla", inputfile=join_file)
         >>> b_list = b_gtf.select_by_key("feature", "gene").extract_data("bla", as_list=True, no_na=True, hide_undef=True)
         >>> assert b_list == ['0.2322', '0.999', '0.5555']
+        >>> assert b_gtf.del_attr(keys='bla').get_attr_list() == ['gene_id', 'transcript_id', 'exon_id', 'ccds_id']
 
         """
 
@@ -2304,6 +2305,7 @@ class GTF(object):
         >>> b_gtf = a_gtf.add_attr_from_matrix_file(feat="gene", key="gene_id", inputfile=join_file)
         >>> assert b_gtf.extract_data("S1",as_list=True, no_na=True, hide_undef=True) == ['0.2322', '0.999', '0.5555']
         >>> assert b_gtf.extract_data("S2",as_list=True, no_na=True, hide_undef=True) == ['0.4', '0.6', '0.7']
+        >>> assert b_gtf.del_attr(keys='S1,S2').get_attr_list() == ['gene_id', 'transcript_id', 'exon_id', 'ccds_id']
 
         """
 
@@ -2398,6 +2400,7 @@ class GTF(object):
         >>> assert b_gtf.extract_data(keys="coding_pot", as_list=True, no_na=True, hide_undef=True) == ['0.5', '0.8']
         >>> key_value = tuple(a_gtf.extract_data("transcript_id", no_na=True, as_list=True, nr=True))
         >>> b=a_gtf.add_attr_from_list(None, key="transcript_id", key_value=key_value, new_key="bla", new_key_value=tuple([str(x) for x in range(len(key_value))]))
+        >>> assert b.del_attr(keys='bla').get_attr_list()  == ['gene_id', 'transcript_id', 'exon_id', 'ccds_id']
         """
 
         message("Calling add_attr_from_list", type="DEBUG")
