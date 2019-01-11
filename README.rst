@@ -42,12 +42,12 @@ While the gtftk Unix program comes with hundreds of unitary and functional tests
 System requirements
 --------------------
 
-Depending on the **size of the GTF file**, pygtftk and gtftk may require lot of memory to perform selected tasks. A computer with 16Go is recommended in order to be able to pipe several commands when working with human annotations from ensembl release (e.g. 91).
+Depending on the **size of the GTF file**, pygtftk and gtftk may require lot of memory to perform selected tasks. A computer with 16Go is recommended in order to be able to pipe several commands when working with human annotations from ensembl release (e.g. 91). When working with a cluster think about reserving sufficient memory.
 
 At the moment, the gtftk program has been tested on:
 
 - Linux (Ubuntu 12.04 and 18.04)
-- OSX (Yosemite, El Capitan).
+- OSX (Yosemite, El Capitan, Mojave).
 
 
 Installation
