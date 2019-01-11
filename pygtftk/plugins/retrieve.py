@@ -261,8 +261,8 @@ def retrieve(species_name='homo_sapiens',
         if not list_only:
             message("Downloading GTF file : " + target_gtf)
 
-            ftp.download_if_newer(target_gtf,
-                                  target_gtf)
+            ftp.download(target_gtf,
+                         target_gtf)
 
             os.rename(target_gtf, os.path.join(outputdir, target_gtf))
 
