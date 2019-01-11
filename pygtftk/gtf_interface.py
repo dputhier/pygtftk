@@ -1173,6 +1173,8 @@ class GTF(object):
         :param hide_undef: if hide_undef, then records for which the key does not exists (value = "?") are set to are discarded.
         :param zero_based: If set to True, the start position will be start-1.
 
+        Note: hide_undef and no_na are not supported when a TAB object is returned (default).
+
         :Example:
 
         >>> from  pygtftk.utils import get_example_file
