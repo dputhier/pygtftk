@@ -478,14 +478,13 @@ class FormattedFile(argparse.FileType):
                     tmp_file = make_tmp_file(prefix="bed6_",
                                              suffix=".bed")
                     for record in file_bo:
+                        region_nb += 1
                         if field_count < 4:
-                            record.name = 'region_' + str(region_nb)
+                            name = 'region_' + str(region_nb)
 
                         fields = record.fields[0:3]
-                        fields += [record.name,
-                                   record.score,
-                                   record.strand]
-                        tmp_file.write("\t".join(fields))
+                        fields += [name, '0','.']
+                        tmp_file.write("\t".join(fields)+"\n")
 
                     close_properly(tmp_file)
                     string = tmp_file.name
