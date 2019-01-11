@@ -606,8 +606,8 @@ class GTF(object):
         >>> a_gtf = GTF(a_file)
         >>> b_gtf = a_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=("G0001T001","G0002T001","G0003T001","G0004T001"), new_key="bar", new_key_value=("10","11","20","40"))
         >>> b_gtf = b_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=("G0001T001","G0002T001","G0003T001","G0004T001"), new_key="foo", new_key_value=("?",".","0.1","1e3"))
-        >>> assert len(b_gtf.select(b_gtf.bar > 10)) == len(b_gtf.eval_numeric('bar > 10'))
-        >>> assert len(b_gtf.select(b_gtf.bar > 1e1)) == len(b_gtf.eval_numeric('bar > 1e1'))
+        >>> assert len(b_gtf[b_gtf.bar > 10]) == len(b_gtf.eval_numeric('bar > 10'))
+        >>> assert len(b_gtf[b_gtf.bar > 1e1]) == len(b_gtf.eval_numeric('bar > 1e1'))
         >>>
         '''
         if name in GTF._instance_attr[id(self)]:
@@ -654,7 +654,7 @@ class GTF(object):
         >>> gn_val = ('.', '.', '.', '.', 1, 2, 3, 4, '?', '?')
         >>> gn_ids = tuple(a_gtf.get_gn_ids(nr=True))
         >>> b_gtf = a_gtf.add_attr_from_list(feat="gene", key="gene_id", key_value=(gn_ids), new_key="foo", new_key_value=gn_val)
-        >>> gn_feat = b_gtf.select(b_gtf.feature == 'gene')
+        >>> gn_feat = b_gtf[b_gtf.feature == 'gene']
         >>> assert sum((~gn_feat.is_defined('foo') | ~gn_feat.is_set('foo'))) == 6
         '''
         if key in GTF._instance_attr[id(self)]:
