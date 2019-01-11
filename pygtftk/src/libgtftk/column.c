@@ -53,9 +53,11 @@ void print_string(char *token, FILE *output, COLUMN *col, char delim) {
 void print_attributes(GTF_ROW *row, FILE *output) {
 	int k;
 	if (row->attributes.nb != -1) {
-		fprintf(output, "%s \"%s\";", row->attributes.attr[0]->key, row->attributes.attr[0]->value);
+		//fprintf(output, "%s \"%s\";", row->attributes.attr[0]->key, row->attributes.attr[0]->value);
+		fprintf(output, "%s \"%s\";", row->attributes.attr->key, row->attributes.attr->value);
 		for (k = 1; k < row->attributes.nb; k++)
-			fprintf(output, " %s \"%s\";", row->attributes.attr[k]->key, row->attributes.attr[k]->value);
+			//fprintf(output, " %s \"%s\";", row->attributes.attr[k]->key, row->attributes.attr[k]->value);
+			fprintf(output, " %s \"%s\";", (row->attributes.attr + k)->key, (row->attributes.attr + k)->value);
 	}
 }
 

@@ -13,7 +13,7 @@
  * external functions declaration
  */
 extern GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data);
-extern int update_attribute_table(GTF_ROW * row);
+//extern int update_attribute_table(GTF_ROW * row);
 
 /*
  * global variables declaration
@@ -23,7 +23,7 @@ extern int nb_column;
 
 __attribute__ ((visibility ("default")))
 GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features, char *key, char *txt, int suffix) {
-	int i, ok;
+	int i, k, ok;
 	int target_field = -1;
 	char *str_concat;
 
@@ -65,9 +65,11 @@ GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features, char *key, char *txt, i
 					strcpy(str_concat, txt);
 					strcat(str_concat, row->field[target_field]);
 				}
+				free(row->field[target_field]);
 				row->field[target_field] = str_concat;
 			}
 			else {
+				/*
 				pattr = row->attributes.attr[0];
 				while (pattr != NULL) {
 					if (strstr(key, pattr->key)) {
@@ -84,9 +86,26 @@ GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features, char *key, char *txt, i
 					}
 					pattr = pattr->next;
 				}
+				*/
+				for (k = 0; k < row->attributes.nb; k++) {
+					pattr = row->attributes.attr + k;
+					if (strstr(key, pattr->key)) {
+						str_concat = (char *)calloc(strlen(txt) + strlen(pattr->value) + 1, sizeof(char));
+						if (suffix) {
+							strcpy(str_concat, pattr->value);
+							strcat(str_concat, txt);
+						}
+						else {
+							strcpy(str_concat, txt);
+							strcat(str_concat, pattr->value);
+						}
+						free(pattr->value);
+						pattr->value = str_concat;
+					}
+				}
 			}
 		}
-		update_attribute_table(row);
+		//update_attribute_table(row);
 	}
 	return ret;
 }

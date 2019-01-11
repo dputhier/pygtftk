@@ -33,12 +33,17 @@ GTF_DATA *select_by_positions(GTF_DATA *gtf_data, int *pos, int size) {
 		row->field = (char **)calloc(8, sizeof(char*));
 		for (j = 0; j < 8; j++) row->field[j] = strdup(gtf_data->data[pos[i]]->field[j]);
 		row->attributes.nb = gtf_data->data[pos[i]]->attributes.nb;
-		row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
+		/*row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
 		for (j = 0; j < row->attributes.nb; j++) {
 			row->attributes.attr[j] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
 			row->attributes.attr[j]->key = strdup(gtf_data->data[pos[i]]->attributes.attr[j]->key);
 			row->attributes.attr[j]->value = strdup(gtf_data->data[pos[i]]->attributes.attr[j]->value);
 			if (j > 0) row->attributes.attr[j - 1]->next = row->attributes.attr[j];
+		}*/
+		row->attributes.attr = (ATTRIBUTE *)calloc(row->attributes.nb, sizeof(ATTRIBUTE));
+		for (j = 0; j < row->attributes.nb; j++) {
+			(row->attributes.attr + j)->key = strdup((gtf_data->data[pos[i]]->attributes.attr + j)->key);
+			(row->attributes.attr + j)->value = strdup((gtf_data->data[pos[i]]->attributes.attr + j)->value);
 		}
 		if (i > 0) previous_row->next = row;
 		previous_row = row;
