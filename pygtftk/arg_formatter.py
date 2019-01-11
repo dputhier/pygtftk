@@ -238,6 +238,9 @@ def ranged_num(lowest=-1, highest=1, val_type=("int", "float"),
     else:
         gt = '>='
 
+    if isinstance(val_type, tuple):
+        val_type = val_type[0]
+
     def type_func(a_value):
         if val_type == "int":
             try:
@@ -475,14 +478,13 @@ class FormattedFile(argparse.FileType):
                     tmp_file = make_tmp_file(prefix="bed6_",
                                              suffix=".bed")
                     for record in file_bo:
+                        region_nb += 1
                         if field_count < 4:
-                            record.name = 'region_' + str(region_nb)
+                            name = 'region_' + str(region_nb)
 
                         fields = record.fields[0:3]
-                        fields += [record.name,
-                                   record.score,
-                                   record.strand]
-                        tmp_file.write("\t".join(fields))
+                        fields += [name, '0','.']
+                        tmp_file.write("\t".join(fields)+"\n")
 
                     close_properly(tmp_file)
                     string = tmp_file.name
