@@ -31,6 +31,7 @@ from collections import defaultdict
 
 import numpy as np
 from cffi import FFI
+from nose.plugins.skip import SkipTest
 from pybedtools.bedtool import BedTool
 from pyparsing import CaselessLiteral
 from pyparsing import Combine
@@ -1006,7 +1007,7 @@ class GTF(object):
         >>> from pygtftk.gtf_interface import GTF
         >>> import numpy as np
         >>> # to avoid numpy warning when testing nan
-        >>> # better for testing pygtftk
+        >>> # Needed for testing pygtftk
         >>> np.warnings.filterwarnings('ignore')
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
@@ -3708,7 +3709,15 @@ class GTF(object):
 # A function to prepare a GTF before gffutils database creation.
 # ---------------------------------------------------------------
 
+def skipped(func):
+    def _():
+        raise SkipTest("Test %s is skipped" % func.__name__)
 
+    _.__name__ = func.__name__
+    return _
+
+
+@skipped
 def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
                                       'exon_id', 'gene_biotype',
                                       'transcript_biotype', 'gene_name'),
