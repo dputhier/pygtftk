@@ -153,9 +153,10 @@ def compute_overlap_stats(bedA, bedB,
         bed_B_as_pybedtool = read_bed.exclude_concatenate(bed_B_as_pybedtool, exclusion, chrom_len)
 
 
-    # Raise exception if there are less than 2 remainin regions in bedA and bedB (or rather raise an exception with gtftk.error)
+    # Raise exception if there are less than 2 remaining regions in bedA and bedB
     if (len(bed_A_as_pybedtool) < 2) | (len(bed_B_as_pybedtool) < 2):
-        raise ValueError('Less than 2 remaining regions in either bed.')
+        message('Less than 2 remaining regions in either bed.', type='ERROR')
+        sys.exit()
 
 
     # Proper reading of the bed file as a list of intervals
@@ -249,11 +250,11 @@ def compute_overlap_stats(bedA, bedB,
         pval_bp_overlaps = np.exp(nf.log_nb_pval(true_bp_overlaps,esperance_fitted_summed_bp_overlaps,variance_fitted_summed_bp_overlaps))
 
 
-    # Number limit : the lower limit for the p-value is roughly 1.11E-16 due to the number format.
-    # As such, if the p-value is under 1.2E-16, round it down to zero anyways.
-    if pval_intersect_nb < 1.2E-16 : pval_intersect_nb = 0
-    if pval_bp_overlaps < 1.2E-16  : pval_bp_overlaps = 0
-
+    # # Number limit : the lower limit for the p-value is roughly 1.11E-16 due to the number format.
+    # # As such, if the p-value is under 1.2E-16, round it down to zero anyways.
+    # if pval_intersect_nb < 1.2E-16 : pval_intersect_nb = 0
+    # if pval_bp_overlaps < 1.2E-16  : pval_bp_overlaps = 0
+    # NOTE Removed because it induced confusion
 
 
     grand_stop = time.time()
@@ -292,18 +293,28 @@ def compute_overlap_stats(bedA, bedB,
     # plt.savefig(outputdir+'/'+name+'_nb_intersections.png')
 
 
-    # Result as a dictionary of statistics
+    ### Result as a dictionary of statistics
     result = OrderedDict()
 
+    # Number of intersections
     result['nb_intersections_esperance_shuffled'] = np.mean(intersect_nbs)
     result['nb_intersections_variance_shuffled'] = np.var(intersect_nbs)
+
     result['nb_intersections_fit'] = pn
     result['nb_intersections_true'] = true_intersect_nb
     result['nb_intersections_pvalue'] = pval_intersect_nb
+
+    result['nb_intersections_log2_fold_change'] = true_intersect_nb / (np.mean(intersect_nbs) + 1E-100)
+
+    # Summed number of overlapping basepairs
     result['summed_bp_overlaps_esperance_shuffled'] = np.mean(summed_bp_overlaps)
     result['summed_bp_overlaps_variance_shuffled'] = np.var(summed_bp_overlaps)
     result['summed_bp_overlaps_fit'] = ps
+
     result['summed_bp_overlaps_true'] = true_bp_overlaps
     result['summed_bp_overlaps_pvalue'] = pval_bp_overlaps
+
+    result['nb_intersections_log2_fold_change'] = true_bp_overlaps / (np.mean(summed_bp_overlaps) + 1E-100)
+
 
     return result

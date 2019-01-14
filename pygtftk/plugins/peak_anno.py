@@ -255,6 +255,10 @@ def peak_anno(inputfile=None,
     # Load the peak file as pybedtools.BedTool object
     peak_file = pybedtools.BedTool(peak_file.name)
 
+    # Just in case it was not, sort the file.
+    # In any case, it should be short compared to the expected total running time.
+    peak_file = peak_file.sort()
+
     # -------------------------------------------------------------------------
     # If user wants no basic features (e.g prom, genes, exons) then he
     # needs to provide --more-keys or --more-bed
