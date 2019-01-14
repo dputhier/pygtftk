@@ -1972,10 +1972,11 @@ class GTF(object):
         Note that one can refers to the name of the first columns of the gtf using e.g:
         start, end, score or frame.
 
-        :param bool_exp: A boolean test. 
+        :param bool_exp: A boolean test.
         :param na_omit: Any line for which one of the tested value is in this list wont be evaluated (e.g. (".", "?")).
-        
+
         :Example:
+
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
