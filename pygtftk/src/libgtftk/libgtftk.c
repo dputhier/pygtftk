@@ -250,7 +250,6 @@ void print_raw_data(RAW_DATA *raw_data, char delim, char *output) {
 int is_in_attrs(GTF_ROW *row, char *at) {
 	int ret = -1, i;
 	for (i = 0; i < row->attributes.nb; i++)
-		//if (!strcmp(row->attributes.attr[i]->key, at)) {
 		if (!strcmp((row->attributes.attr + i)->key, at)) {
 			ret = i;
 			break;
@@ -270,7 +269,6 @@ int is_in_attrs(GTF_ROW *row, char *at) {
 char *get_attribute_value(GTF_ROW *row, char *attr) {
 	int k = is_in_attrs(row, attr);
 
-	//if (k != -1) return row->attributes.attr[k]->value;
 	if (k != -1) return (row->attributes.attr + k)->value;
 	return NULL;
 }

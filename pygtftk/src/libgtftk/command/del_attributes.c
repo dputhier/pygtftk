@@ -30,27 +30,6 @@ GTF_DATA *del_attributes(GTF_DATA *gtf_data, char *features, char *keys) {
 		ok = (*features == '*');
 		if (!ok) ok = (strstr(features, row->field[2]) != NULL);
 		if (ok) {
-			/*
-			pattr = row->attributes.attr[0];
-			previous_pattr = NULL;
-			while (pattr != NULL) {
-				if (strstr(keys, pattr->key)) {
-					free(pattr->key);
-					free(pattr->value);
-					if (previous_pattr != NULL)
-						previous_pattr->next = pattr->next;
-					else
-						row->attributes.attr[0] = row->attributes.attr[0]->next;
-					row->attributes.nb--;
-					pattr = pattr->next;
-				}
-				else {
-					previous_pattr = pattr;
-					pattr = pattr->next;
-				}
-			}
-			update_attribute_table(row);
-			*/
 			pattr = row->attributes.attr;
 			pattr_end = pattr + row->attributes.nb;
 			while (pattr != pattr_end) {

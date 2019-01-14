@@ -57,6 +57,7 @@ from pygtftk.utils import chrom_info_to_bed_file
 from pygtftk.utils import flatten_list_recur
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
+from pygtftk.utils import to_list
 
 
 # ---------------------------------------------------------------
@@ -98,7 +99,6 @@ ffi.cdef("""
  */
 typedef struct ATTRIBUTE {
 	char *key, *value;
-//	struct ATTRIBUTE *next;
 } ATTRIBUTE;
 
 /*
@@ -235,6 +235,11 @@ typedef struct COLUMN {
 	 */
 	int nb_index;
 } COLUMN ;
+
+typedef struct STRING_TO_INT_HASH {
+	char *key;
+	int value;
+} STRING_TO_INT_HASH;
 
 /*
  * A list of row numbers associated with a token (the values in the 8 first
@@ -413,6 +418,8 @@ GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_ke
 void clear_indexes(void);
 GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 int int_array_test(int *pos, int size);
+void *print_bed(GTF_DATA *gtf_data, char *output, int add_chr, char *keys, char *sep, char *more_info);
+
 """)
 
 # ---------------------------------------------------------------
@@ -2759,6 +2766,58 @@ class GTF(object):
         else:
             return None
 
+    def write_bed(self,
+                  ouputfile=None,
+                  name=("gene_id"),
+                  sep="|",
+                  add_chr=0,
+                  more_name=None):
+        """Write a GTF file in BED format. This function uses a direct call to the C interface.
+
+        :param ouputfile: The outputfilename.
+        :param name: The keys that should be used to computed the 'name' column (a tuple).
+        :param more_name: Additional text to add to the name (a list).
+        :param sep: The separator used for the name (e.g 'gene_id|transcript_id".
+
+        """
+
+        if isinstance(ouputfile, list):
+            ouputfile = ouputfile[0]
+
+        if isinstance(ouputfile, io.IOBase):
+
+            if ouputfile.name != '<stdout>':
+                fn = ouputfile.name
+            else:
+                fn = "-"
+
+        elif isinstance(ouputfile, str):
+
+            if ouputfile == '-':
+                fn = "-"
+            else:
+                if ouputfile != '<stdout>':
+                    check_file_or_dir_exists(ouputfile)
+                    fn = ouputfile
+                else:
+                    fn = "-"
+        else:
+            raise GTFtkError("Unsupported input type.")
+
+        if pygtftk.utils.ADD_CHR == 1:
+            add_chr = 1
+
+        name = ",".join(to_list(name))
+        more_name = ",".join(to_list(more_name, split_char=None))
+
+        self._dll.print_bed(self._data,
+                            native_str(fn),
+                            add_chr,
+                            native_str(name),
+                            native_str(sep),
+                            native_str(more_name)
+                            )
+
     def to_bed(self,
                name=("gene_id"),
                sep="|",
@@ -2788,14 +2847,12 @@ class GTF(object):
 
         """
 
-        name = list(name)
+        if isinstance(name, str):
+            name = name.split(',')
+        elif isinstance(name, tuple):
+            name = list(name)
 
-        if more_name is None:
-            more_name = []
-        elif isinstance(more_name, str):
-            more_name = list(more_name)
-        elif isinstance(more_name, tuple):
-            more_name = list(more_name)
+        more_name = to_list(more_name, split_char=None)
 
         message("Calling 'to_bed' method.", type="DEBUG")
 

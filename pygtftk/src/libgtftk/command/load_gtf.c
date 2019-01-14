@@ -287,6 +287,12 @@ GTF_DATA *load_GTF(char *input) {
 			free(token);
 			free(attr);
 		}
+		else if (!strncmp(buffer, "##gff-version 3", 15)) {
+			free(ret->data);
+			free(ret);
+			fprintf(stderr, "GFF3 format is not supported by libgtftk !\n");
+			return NULL;
+		}
 	}
 
 	/*
