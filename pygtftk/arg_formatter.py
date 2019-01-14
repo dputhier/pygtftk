@@ -479,12 +479,16 @@ class FormattedFile(argparse.FileType):
                                              suffix=".bed")
                     for record in file_bo:
                         region_nb += 1
+
                         if field_count < 4:
                             name = 'region_' + str(region_nb)
+                        else:
+                            name = record.name
 
                         fields = record.fields[0:3]
-                        fields += [name, '0','.']
-                        tmp_file.write("\t".join(fields)+"\n")
+                        fields += [name, '0', '.']
+
+                        tmp_file.write("\t".join(fields) + "\n")
 
                     close_properly(tmp_file)
                     string = tmp_file.name
