@@ -250,7 +250,7 @@ void print_raw_data(RAW_DATA *raw_data, char delim, char *output) {
 int is_in_attrs(GTF_ROW *row, char *at) {
 	int ret = -1, i;
 	for (i = 0; i < row->attributes.nb; i++)
-		if (!strcmp(row->attributes.attr[i]->key, at)) {
+		if (!strcmp((row->attributes.attr + i)->key, at)) {
 			ret = i;
 			break;
 		}
@@ -269,7 +269,7 @@ int is_in_attrs(GTF_ROW *row, char *at) {
 char *get_attribute_value(GTF_ROW *row, char *attr) {
 	int k = is_in_attrs(row, attr);
 
-	if (k != -1) return row->attributes.attr[k]->value;
+	if (k != -1) return (row->attributes.attr + k)->value;
 	return NULL;
 }
 
@@ -328,7 +328,8 @@ GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data) {
 		/*
 		 * creates the attributes table
 		 */
-		row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
+		//row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
+		row->attributes.attr = (ATTRIBUTE *)calloc(row->attributes.nb, sizeof(ATTRIBUTE));
 		//row->attributes.attr = (ATTRIBUTE **)bookmem(row->attributes.nb, sizeof(ATTRIBUTE *), __FILE__, __func__, __LINE__);
 
 		/*
@@ -338,14 +339,16 @@ GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data) {
 			/*
 			 * create an attribute in the attributes table of the row and fill it
 			 */
-			row->attributes.attr[j] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
-			row->attributes.attr[j]->value = strdup(gtf_data->data[i]->attributes.attr[j]->value);
-			row->attributes.attr[j]->key = strdup(gtf_data->data[i]->attributes.attr[j]->key);
+			//row->attributes.attr[j] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
+			//row->attributes.attr[j]->value = strdup(gtf_data->data[i]->attributes.attr[j]->value);
+			//row->attributes.attr[j]->key = strdup(gtf_data->data[i]->attributes.attr[j]->key);
+			(row->attributes.attr + j)->value = strdup((gtf_data->data[i]->attributes.attr + j)->value);
+			(row->attributes.attr + j)->key = strdup((gtf_data->data[i]->attributes.attr + j)->key);
 
 			/*
 			 * make the attributes linked list at the same time
 			 */
-			if (j > 0) row->attributes.attr[j - 1]->next = row->attributes.attr[j];
+			//if (j > 0) row->attributes.attr[j - 1]->next = row->attributes.attr[j];
 		}
 		/*
 		 * copy the 8 first columns values
@@ -362,10 +365,13 @@ GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data) {
  */
 void add_attribute(GTF_ROW *row, char *key, char *value) {
 	row->attributes.nb++;
-	row->attributes.attr = (ATTRIBUTE **)realloc(row->attributes.attr, row->attributes.nb * sizeof(ATTRIBUTE *));
+	/*row->attributes.attr = (ATTRIBUTE **)realloc(row->attributes.attr, row->attributes.nb * sizeof(ATTRIBUTE *));
 	row->attributes.attr[row->attributes.nb - 1] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
 	row->attributes.attr[row->attributes.nb - 1]->key = strdup(key);
 	row->attributes.attr[row->attributes.nb - 1]->value = strdup(value);
 	if (row->attributes.nb > 1)
-		row->attributes.attr[row->attributes.nb - 2]->next = row->attributes.attr[row->attributes.nb - 1];
+		row->attributes.attr[row->attributes.nb - 2]->next = row->attributes.attr[row->attributes.nb - 1];*/
+	row->attributes.attr = (ATTRIBUTE *)realloc(row->attributes.attr, row->attributes.nb * sizeof(ATTRIBUTE));
+	(row->attributes.attr + row->attributes.nb - 1)->key = strdup(key);
+	(row->attributes.attr + row->attributes.nb - 1)->value = strdup(value);
 }

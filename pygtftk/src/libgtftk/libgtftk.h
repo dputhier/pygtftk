@@ -13,7 +13,7 @@
  * to find memory leaks.
  */
 //#define GTFTOOLKIT_DEBUG
-#define test 1
+
 #ifndef GTFTOOLKIT_GTFTK_SRC_LIB_LIBGTFTK_H_
 #define GTFTOOLKIT_GTFTK_SRC_LIB_LIBGTFTK_H_
 #define _GNU_SOURCE
@@ -24,6 +24,8 @@
 #include <search.h>
 #include <string.h>
 #include <errno.h>
+#include <ctype.h>
+#include <unistd.h>
 
 /*
  * Debug of memory allocation. Must be linked with libmemory.so shared library.
@@ -48,7 +50,21 @@ extern void *F_malloc(int size, char *file, const char *func, int line);
 #define MOST5P_TRANSCRIPT 3
 
 /*
- * some usefull macros used in get_sequences.c
+ * type definition for columns and attributes
+ */
+#define UNSET -100
+#define IRREGULAR -2
+#define UNAVAILABLE -1	// .
+#define UNKNOWN 0 		// ?
+#define INTEGER 1
+#define FLOAT 2
+#define BOOLEAN 3		// 0 or 1
+#define CHAR 4
+#define STRING 5
+#define UNCONSISTENT 100
+
+/*
+ * some useful macros used in get_sequences.c
  */
 #define MIN(x, y) (x <= y ? x : y)
 #define MAX(x, y) (x > y ? x : y)
@@ -64,7 +80,7 @@ extern void *F_malloc(int size, char *file, const char *func, int line);
 /*
  * This structure describes the input (i.e. a GTF/BLASTN plain file or gzipped).
  * It is created by the get_gtf_reader function in get_reader.c source file.
- * gzFile or plainfile are set depending on the kind of input (gzip or plain).
+ * gzFile or plain file are set depending on the kind of input (gzip or plain).
  * Even if these two elements are exclusive, they are not in an union to be
  * sure to be compatible with the most of native interfaces.
  */
@@ -96,17 +112,15 @@ typedef struct TEXTFILE_READER {
  */
 typedef struct ATTRIBUTE {
 	char *key, *value;
-	struct ATTRIBUTE *next;
 } ATTRIBUTE;
 
 /*
  * A set of ATTRIBUTE
  */
 typedef struct ATTRIBUTES {
-	ATTRIBUTE **attr;
+	ATTRIBUTE *attr;
 	int nb;
 } ATTRIBUTES;
-
 
 /*
  * A structure to store a row from a GTF file.
@@ -234,6 +248,11 @@ typedef struct COLUMN {
 	 */
 	int nb_index;
 } COLUMN ;
+
+typedef struct STRING_TO_INT_HASH {
+	char *key;
+	int value;
+} STRING_TO_INT_HASH;
 
 /*
  * A list of row numbers associated with a token (the values in the 8 first
@@ -384,7 +403,6 @@ typedef struct BLAST_HSP {
 GTF_DATA *load_GTF(char *input);
 GTF_DATA *select_by_key(GTF_DATA *gtf_data, char *key, char *value, int not);
 void print_gtf_data(GTF_DATA *gtf_data, char *output, int add_chr);
-void *print_bed(GTF_DATA *gtf_data, char *output, int add_chr, char *keys, char *sep, char *more_info);
 GTF_DATA *select_by_transcript_size(GTF_DATA *gtf_data, int min, int max);
 GTF_DATA *select_by_number_of_exon(GTF_DATA *gtf_data, int min, int max);
 GTF_DATA *select_by_genomic_location(GTF_DATA *gtf_data, int nb_loc, char **chr, int *begin_gl, int *end_gl);
@@ -400,6 +418,7 @@ TTEXT *get_feature_list(GTF_DATA *gtf_data);
 TTEXT *get_seqid_list(GTF_DATA *gtf_data);
 TTEXT *get_attribute_list(GTF_DATA *gtf_data);
 TTEXT *get_attribute_values_list(GTF_DATA *gtf_data, char *attribute);
+int get_type(GTF_DATA *gtf_data, char *key, int ignore_undef);
 GTF_DATA *convert_to_ensembl(GTF_DATA *gtf_data);
 GTF_DATA *add_attributes(GTF_DATA *gtf_data, char *features, char *key, char *new_key, char *inputfile_name);
 GTF_DATA *del_attributes(GTF_DATA *gtf_data, char *features, char *keys);
@@ -412,5 +431,6 @@ GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_ke
 void clear_indexes(void);
 GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 int int_array_test(int *pos, int size);
+void *print_bed(GTF_DATA *gtf_data, char *output, int add_chr, char *keys, char *sep, char *more_info);
 
 #endif /* GTFTOOLKIT_GTFTK_SRC_LIB_LIBGTFTK_H_ */
