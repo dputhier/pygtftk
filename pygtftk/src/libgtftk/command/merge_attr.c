@@ -7,13 +7,13 @@
  *
  */
 
-#include "libgtftk.h"
+#include <libgtftk.h>
 
 /*
  * external functions declaration
  */
 extern GTF_DATA *clone_gtf_data(GTF_DATA *gtf_data);
-extern int update_attribute_table(GTF_ROW * row);
+//extern int update_attribute_table(GTF_ROW * row);
 extern void add_attribute(GTF_ROW *row, char *key, char *value);
 extern int split_ip(char ***tab, char *s, char *delim);
 
@@ -61,7 +61,8 @@ GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_
 			nb_attr = row->attributes.nb;
 			for (k = 0; k < nb_requested_key; k++)	{
 				for (j = 0; j < nb_attr; j++) {
-					pattr = row->attributes.attr[j];
+					//pattr = row->attributes.attr[j];
+					pattr = row->attributes.attr + j;
 					if (strcmp(key_list[k], pattr->key) == 0) {
 						hits[k].value = strdup(pattr->value);
 						break;
@@ -90,7 +91,7 @@ GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_
 			add_attribute(row, dest_key, new_buffer);
 			free(new_buffer);
 		}
-		update_attribute_table(row);
+		//update_attribute_table(row);
 	}
 
 	return ret;

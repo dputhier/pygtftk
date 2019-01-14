@@ -28,13 +28,13 @@ def make_parser():
                         help="Path to the GTF file. Default to STDIN",
                         default=sys.stdin,
                         metavar="GTF",
-                        type=arg_formatter.gtf_rwb('r'))
+                        type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser.add_argument('-o', '--outputfile',
                         help="Output file.",
                         default=sys.stdout,
                         metavar="GTF",
-                        type=arg_formatter.gtf_rw('w'))
+                        type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser.add_argument('-t', '--test',
                         help='The test to be applied.',
@@ -59,10 +59,10 @@ def select_by_numeric_value(inputfile=None,
     """
 
     GTF(inputfile,
-        check_ensembl_format=False).select_by_numeric_value(test,
-                                                            na_omit=na_omit,
-                                                            ).write(outputfile,
-                                                                    gc_off=True)
+        check_ensembl_format=False).eval_numeric(test,
+                                                 na_omit=na_omit,
+                                                 ).write(outputfile,
+                                                         gc_off=True)
     close_properly(outputfile, inputfile)
 
 
@@ -114,10 +114,6 @@ else:
       result=`gtftk join_attr -H  -k gene_id -t gene -j airway_love.txt -i mini_real.gtf.gz -m -V 3 | gtftk select_by_numeric_value -t 'GSM1275862 > 2000 and GSM1275870 > 100 and GSM1275875 <1000 ' -n '.,?' | gtftk tabulate -k gene_name,gene_id,gene_biotype,GSM1275862,GSM1275870,GSM1275875 -H | cut -f1`
       [ "$result" = "CRABP2"  ]
     }
-    
-        
-    
-    
     '''
 
     CmdObject(name="select_by_numeric_value",

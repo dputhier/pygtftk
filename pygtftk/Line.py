@@ -15,7 +15,6 @@ from __future__ import unicode_literals
 from builtins import object
 from builtins import range
 from builtins import str
-from builtins import zip
 from collections import OrderedDict
 
 from cffi import FFI
@@ -309,8 +308,11 @@ class Feature(object):
             self.strand = ffi.string(ptr.field[6]).decode()
             self.frame = ffi.string(ptr.field[7]).decode()
             self.attr = OrderedDict()
-            for k, v in zip(ptr.attributes.attr[0:self.nb_key], ptr.attributes.attr[0:self.nb_key]):
-                self.attr[ffi.string(k.key).decode()] = ffi.string(v.value).decode()
+            n = 0
+            while n < self.nb_key:
+                self.attr[ffi.string(ptr.attributes.attr[n].key).decode()] = ffi.string(
+                    ptr.attributes.attr[n].value).decode()
+                n += 1
         elif alist is not None:
             self.rank = 1
             self.nb_key = len(alist[8])

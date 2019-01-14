@@ -36,7 +36,7 @@ def make_parser():
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file (gtf.gz).",
                             metavar="GTF.GZ",
-                            type=arg_formatter.gtf_rwb('w'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='gtf.gz'))
 
     parser_grp.add_argument('-e', '--ensembl-collection',
                             help="Which ensembl collection to interrogate"
@@ -81,9 +81,9 @@ def make_parser():
     return parser
 
 
-def retrieve(species_name=None,
+def retrieve(species_name='homo_sapiens',
              outputfile=None,
-             release='Latest',
+             release=None,
              to_stdout=False,
              list_only=False,
              delete=False,
@@ -261,8 +261,8 @@ def retrieve(species_name=None,
         if not list_only:
             message("Downloading GTF file : " + target_gtf)
 
-            ftp.download_if_newer(target_gtf,
-                                  target_gtf)
+            ftp.download(target_gtf,
+                         target_gtf)
 
             os.rename(target_gtf, os.path.join(outputdir, target_gtf))
 
@@ -275,6 +275,7 @@ def retrieve(species_name=None,
                 os.remove(os.path.join(outputdir, target_gtf))
             else:
                 if outputfile is not None:
+                    message("Renaming.")
                     os.rename(os.path.join(outputdir, target_gtf),
                               outputfile.name)
 

@@ -37,13 +37,13 @@ def make_parser():
                                  "behave as if it was a GTF.",
                             default=sys.stdin,
                             metavar="BED",
-                            type=arg_formatter.bed_rw('r'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='bed'))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=arg_formatter.gtf_rw('w'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-t', '--ft-type',
                             help="The type of features you are trying to "

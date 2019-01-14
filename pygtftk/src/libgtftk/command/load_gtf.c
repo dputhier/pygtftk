@@ -106,7 +106,7 @@ int update_row_table(GTF_DATA *gtf_data) {
  *
  * Returns:		the number of attributes in the row
  */
-int update_attribute_table(GTF_ROW *row) {
+/*int update_attribute_table(GTF_ROW *row) {
 	int i;
 	ATTRIBUTE *att;
 	att = row->attributes.attr[0];
@@ -117,7 +117,7 @@ int update_attribute_table(GTF_ROW *row) {
 		att = att->next;
 	}
 	return row->attributes.nb;
-}
+}*/
 
 /*
  * The symetric function of update_row_table. This function rebuild the linked
@@ -128,7 +128,7 @@ int update_attribute_table(GTF_ROW *row) {
  *
  * Returns:			0 if success
  */
-int update_linked_list(GTF_DATA *gtf_data) {
+/*int update_linked_list(GTF_DATA *gtf_data) {
 	int i, j;
 	GTF_ROW *row;
 
@@ -148,7 +148,7 @@ int update_linked_list(GTF_DATA *gtf_data) {
 		gtf_data->data[i]->next = gtf_data->data[i + 1];
 	}
 	return 0;
-}
+}*/
 
 /*
  * This function read GTF data from a GTF file (gzipped or not) or standard
@@ -253,14 +253,16 @@ GTF_DATA *load_GTF(char *input) {
 			/*
 			 * allocates memory for the attributes
 			 */
-			row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
+			//row->attributes.attr = (ATTRIBUTE **)calloc(row->attributes.nb, sizeof(ATTRIBUTE *));
+			row->attributes.attr = (ATTRIBUTE *)calloc(row->attributes.nb, sizeof(ATTRIBUTE));
 
 			/*
 			 * store the attributes
 			 */
 			for (i = 0; i < row->attributes.nb; i++) {
-				row->attributes.attr[i] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
-				split_key_value(attr[i], &(row->attributes.attr[i]->key), &(row->attributes.attr[i]->value));
+				//row->attributes.attr[i] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
+				//split_key_value(attr[i], &(row->attributes.attr[i]->key), &(row->attributes.attr[i]->value));
+				split_key_value(attr[i], &((row->attributes.attr + i)->key), &((row->attributes.attr + i)->value));
 			}
 
 			/*
@@ -284,6 +286,12 @@ GTF_DATA *load_GTF(char *input) {
 			 */
 			free(token);
 			free(attr);
+		}
+		else if (!strncmp(buffer, "##gff-version 3", 15)) {
+			free(ret->data);
+			free(ret);
+			fprintf(stderr, "GFF3 format is not supported by libgtftk !\n");
+			return NULL;
 		}
 	}
 
@@ -357,7 +365,8 @@ STRING_LIST *get_all_attributes(GTF_DATA *gtf_data) {
 			/*
 			 * the attribute to look for in the result list
 			 */
-			pkey = &(row->attributes.attr[i]->key);
+			//pkey = &(row->attributes.attr[i]->key);
+			pkey = &((row->attributes.attr + i)->key);
 
 			/*
 			 * If the attribute is not found in the result list, we add it with
@@ -380,7 +389,7 @@ void action_destroy(void *nodep) {
 }
 
 /*
- * this function is used to sort le ROW_LIST elements of a new index because
+ * this function is used to sort ROW_LIST elements of a new index because
  * the rows of the data files are randomized when loaded to avoid a linear
  * research tree
  */
@@ -534,8 +543,12 @@ INDEX_ID *index_gtf(GTF_DATA *gtf_data, char *key) {
 			}
 			for (k = 0; k < gtf_data->size; k++) {
 				for (j = 0; j < gtf_data->data[kk[k]]->attributes.nb; j++)
-					if (!strcmp(key, gtf_data->data[kk[k]]->attributes.attr[j]->key)) {
+					/*if (!strcmp(key, gtf_data->data[kk[k]]->attributes.attr[j]->key)) {
 						index_row(kk[k], gtf_data->data[kk[k]]->attributes.attr[j]->value, column[index_id->column]->index[index_id->index_rank]);
+						break;
+					}*/
+					if (!strcmp(key, (gtf_data->data[kk[k]]->attributes.attr + j)->key)) {
+						index_row(kk[k], (gtf_data->data[kk[k]]->attributes.attr + j)->value, column[index_id->column]->index[index_id->index_rank]);
 						break;
 					}
 			}

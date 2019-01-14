@@ -29,10 +29,13 @@ extern int update_row_table(GTF_DATA *gtf_data);
  */
 void new_attribute(char *key, char *value, GTF_ROW *row) {
 	row->attributes.nb++;
-	row->attributes.attr = (ATTRIBUTE **)realloc(row->attributes.attr, row->attributes.nb * sizeof(ATTRIBUTE *));
-	row->attributes.attr[row->attributes.nb - 1] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
-	row->attributes.attr[row->attributes.nb - 1]->key = strdup(key);
-	row->attributes.attr[row->attributes.nb - 1]->value = strdup(value);
+	//row->attributes.attr = (ATTRIBUTE **)realloc(row->attributes.attr, row->attributes.nb * sizeof(ATTRIBUTE *));
+	//row->attributes.attr[row->attributes.nb - 1] = (ATTRIBUTE *)calloc(1, sizeof(ATTRIBUTE));
+	//row->attributes.attr[row->attributes.nb - 1]->key = strdup(key);
+	//row->attributes.attr[row->attributes.nb - 1]->value = strdup(value);
+	row->attributes.attr = (ATTRIBUTE *)realloc(row->attributes.attr, row->attributes.nb * sizeof(ATTRIBUTE));
+	(row->attributes.attr + row->attributes.nb - 1)->key = strdup(key);
+	(row->attributes.attr + row->attributes.nb - 1)->value = strdup(value);
 }
 
 /*

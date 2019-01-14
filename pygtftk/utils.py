@@ -15,7 +15,7 @@ import time
 from builtins import range
 from builtins import str
 from builtins import zip
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from distutils.spawn import find_executable
 from subprocess import PIPE
 from subprocess import Popen
@@ -489,7 +489,7 @@ def chrom_info_as_dict(chrom_info_file):
     if chrom_info_file.closed:
         chrom_info_file = open(chrom_info_file.name, "r")
 
-    chrom_len = defaultdict(int)
+    chrom_len = OrderedDict()
 
     for line in chrom_info_file:
 
@@ -920,6 +920,20 @@ def left_strip_str(string):
 # ---------------------------------------------------------------
 # Lists and dicts
 # ---------------------------------------------------------------
+
+def to_list(obj, split_char=None):
+    """ Convert a None, str, tuple to list. May also split if required."""
+    if obj is None:
+        obj = []
+    elif isinstance(obj, str):
+        if split_char is None:
+            obj = [obj]
+        else:
+            obj = obj.split(split_char)
+    elif isinstance(obj, tuple):
+        obj = list(obj)
+    return obj
+
 
 def nested_dict(n, type):
     """"http://stackoverflow.com/questions/29348345"""

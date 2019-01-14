@@ -18,6 +18,14 @@
 .. image:: https://travis-ci.org/dputhier/pygtftk.svg?branch=master
     :target: https://travis-ci.org/dputhier/pygtftk
 
+.. image:: https://img.shields.io/github/repo-size/badges/shields.svg
+    :target: https://travis-ci.org/dputhier/pygtftk
+
+.. image:: https://img.shields.io/conda/dn/:channel/:package.svg
+    :target: https://github.com/dputhier/pygtftk
+
+
+
 .. highlight-language: shell
 
 
@@ -25,8 +33,7 @@
 Python GTF toolkit (pygtftk)
 =============================
 
-
-The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF (Gene Transfer Format) files. The pygtftk package is compatible with Python  >=3.5,<3.7 and relies on **libgtftk**, a library of functions **written in C**.
+The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python  >=3.5,<3.7 and relies on **libgtftk**, a library of functions **written in C**.
 
 The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files. The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help sections.
 
@@ -35,16 +42,19 @@ While the gtftk Unix program comes with hundreds of unitary and functional tests
 System requirements
 --------------------
 
-Depending on the **size of the GTF file**, pygtftk and gtftk may require lot of memory to perform selected tasks. A computer with 16Go is recommended in order to be able to pipe several commands when working with human annotations from ensembl release (e.g. 91).
+Depending on the **size of the GTF file**, pygtftk and gtftk may require lot of memory to perform selected tasks. A computer with 16Go is recommended in order to be able to pipe several commands when working with human annotations from ensembl release (e.g. 91). When working with a cluster think about reserving sufficient memory.
 
 At the moment, the gtftk program has been tested on:
 
 - Linux (Ubuntu 12.04 and 18.04)
-- OSX (Yosemite, El Capitan).
+- OSX (Yosemite, El Capitan, Mojave).
 
+
+Installation
+-------------
 
 Installation through conda package building
---------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
 
@@ -61,7 +71,7 @@ Then you can simply install pygtftk in its own isolated environment and activate
 
 
 Installation through setup.py
-------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is not the prefered way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed. ::
 
@@ -73,15 +83,15 @@ This is not the prefered way for installation. Choose conda whenever possible. W
 
 
 Installation through pip
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Prerequesites
-~~~~~~~~~~~~~~
+**Prerequesites**
+
  
 Again, this is not the prefered way for installation. Please choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.
 
-Running pip 
-~~~~~~~~~~~~~
+**Running pip**
+
 
 Installation through pip can be done as follow. ::
 
@@ -93,8 +103,17 @@ Installation through pip can be done as follow. ::
     gtftk -h     
 
 
+
+Documentation
+--------------
+
+Documentation about the latest release is dynamically produced and available at `readthedoc server <https://pygtftk.readthedocs.io/en/master/>`_.
+
+Testing
+--------
+
 Running functional tests
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A lot of functional tests have been developed to ensure consistency with expected results. This does not rule out that bugs may hide throughout the code... In order to check that installation is functional you may be interested in running functional tests. The definition of all functional tests declared in  gtftk commands is accessible using the -p/--plugin-tests argument: ::
 
@@ -124,7 +143,7 @@ Or run tests in parallel using: ::
         
 
 Running unitary tests
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Several unitary tests have been implemented using doctests. You can run them using nose through the following command line: ::
 

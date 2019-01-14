@@ -46,14 +46,14 @@ def make_parser():
 
     parser_grp.add_argument('bigwiglist',
                             help='A list of Bigwig files (last argument).',
-                            type=arg_formatter.bw_rw('r'),
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='bigwig'),
                             nargs='+')
 
     parser_grp.add_argument('-i', '--inputfile',
                             help="A GTF file or bed file. A GTF if <stdin>.",
                             default=sys.stdin,
                             metavar="GTF/BED",
-                            type=arg_formatter.gtf_or_bed_rwb('r'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('bed', 'gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file name (.zip extension will be added).",

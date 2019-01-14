@@ -38,13 +38,13 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF",
                             required=False,
-                            type=arg_formatter.gtf_rwb('r'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=arg_formatter.txt_rw('w'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='txt'))
 
     return parser
 

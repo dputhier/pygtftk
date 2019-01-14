@@ -1,4 +1,4 @@
-{% set version = "0.9.9" %}
+{% set version = "0.9.10" %}
 
 package:
   name: pygtftk
@@ -14,42 +14,42 @@ build:
 
 requirements:
   build:
-    - {{ compiler('c') }}
+  - {{ compiler('c') }}
   host:
-    - python
-    - pip
-    - setuptools
-    - zlib
+  - python
+  - pip
+  - setuptools
+  - zlib
   run:
-    - python >=3.5,<3.7
-    - argparse
-    - bedtools >=2.23
-    - cloudpickle >=0.4.0
-    - ftputil >=3.3.1,<4.0.0
-    - numpy
-    - pandas >=0.23.3
-    - scipy >=1.1.0
-    - pybedtools >=0.7.8
-    - pybigwig >=0.3
-    - pyyaml >=3.12
-    - requests >=2.13.0
-    - cffi >=1.10.0
-    - pyparsing >=2.2.0
-    - biopython >=1.69
-    - matplotlib >=2.0.2
-    - plotnine >=0.4.0
-    - future
+  - python >=3.5,<3.7
+  - bedtools ==2.23
+  - cloudpickle >=0.4.0
+  - ftputil >=3.3.1,<4.0.0
+  - numpy
+  - pandas >=0.23.3
+  - scipy >=1.1.0
+  - pybedtools >=0.7.8
+  - pybigwig >=0.3
+  - pyyaml >=3.12
+  - requests >=2.13.0
+  - cffi >=1.10.0
+  - pyparsing >=2.2.0
+  - biopython >=1.69
+  - matplotlib >=2.0.2
+  - plotnine >=0.4.0
+  - future
+  - nose
 
 test:
   imports:
-    - pygtftk
+  - pygtftk
   commands:
-    - gtftk -h
+  - gtftk -h
   requires:
-    - nose
-    - bats
-    - unzip
-    - perl
+  - nose
+  - bats
+  - unzip
+  - perl
 
 about:
   home: http://github.com/dputhier/pygtftk
