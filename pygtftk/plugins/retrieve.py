@@ -81,9 +81,9 @@ def make_parser():
     return parser
 
 
-def retrieve(species_name=None,
+def retrieve(species_name='homo_sapiens',
              outputfile=None,
-             release='Latest',
+             release=None,
              to_stdout=False,
              list_only=False,
              delete=False,
@@ -261,8 +261,8 @@ def retrieve(species_name=None,
         if not list_only:
             message("Downloading GTF file : " + target_gtf)
 
-            ftp.download_if_newer(target_gtf,
-                                  target_gtf)
+            ftp.download(target_gtf,
+                         target_gtf)
 
             os.rename(target_gtf, os.path.join(outputdir, target_gtf))
 

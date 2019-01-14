@@ -9,9 +9,11 @@ When using gtfk a GTF object methods may return:
 
 """
 
+'''
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+'''
 
 import gc
 import glob
@@ -27,7 +29,9 @@ from builtins import zip
 from collections import OrderedDict
 from collections import defaultdict
 
+import numpy as np
 from cffi import FFI
+from nose.plugins.skip import SkipTest
 from pybedtools.bedtool import BedTool
 from pyparsing import CaselessLiteral
 from pyparsing import Combine
@@ -86,7 +90,6 @@ gtftk_so = ffi.dlopen(dll_path)
 #
 # ---------------------------------------------------------------
 
-c_header = ""
 
 ffi.cdef("""
 /*
@@ -94,69 +97,67 @@ ffi.cdef("""
  * a GTF file.
  */
 typedef struct ATTRIBUTE {
-    char *key, *value;
-    struct ATTRIBUTE *next;
+	char *key, *value;
+//	struct ATTRIBUTE *next;
 } ATTRIBUTE;
 
 /*
  * A set of ATTRIBUTE
  */
 typedef struct ATTRIBUTES {
-    ATTRIBUTE **attr;
-    int nb;
+	ATTRIBUTE *attr;
+	int nb;
 } ATTRIBUTES;
 
-
 /*
- * A structure to store a row from a GTF file. field contains the string values
- * of the 8 first fields. Attributes are stored in the key/value string tables.
+ * A structure to store a row from a GTF file.
  */
 typedef struct GTF_ROW {
-    /*
-     * the 8 first fields of a GTF file row
-     */
-    char **field;
+	/*
+	 * the 8 first fields of a GTF file row
+	 */
+	char **field;
 
-    /*
-     * the attributes
-     */
-    ATTRIBUTES attributes;
+	/*
+	 * the attributes
+	 */
+	ATTRIBUTES attributes;
 
-    /*
-     * the rank number of the row in the GTF file
-     */
-    int rank;
+	/*
+	 * the rank number of the row in the GTF file
+	 */
+	int rank;
 
-    /*
-     * the link to the next row
-     */
-    struct GTF_ROW *next;
+	/*
+	 * the link to the next row
+	 */
+	struct GTF_ROW *next;
 
 } GTF_ROW;
 
 /*
  * This is the structure that holds data in GTF format. It is also the
  * structure used as input/output for most of the functions of the library. To
- * start using the library, one must call the loadGTF() function with a GTF
+ * start using the library, one must call the load_GTF() function with a GTF
  * file name in parameter and gets a pointer on a GTF_DATA in return. Then, all
  * the other functions must be called with this GTF_DATA pointer as input.
  * Their result can be another GTF_DATA pointer that can be used as input for
  * another function of the library.
  */
 typedef struct GTF_DATA {
-    /*
-     * the number of rows
-     */
-    int size;
+	/*
+	 * the number of rows
+	 */
+	int size;
 
-    /*
-     * a table of rows
-     */
-    GTF_ROW **data;
+	/*
+	 * a table of rows
+	 */
+	GTF_ROW **data;
 
-    /*
-     * the comments at the beginning of the file, started with "##"
-     */
+	/*
+	 * the comments at the beginning of the file, started with "##"
+	 */
 
 } GTF_DATA;
 
@@ -165,72 +166,74 @@ typedef struct GTF_DATA {
  * last column.
  */
 typedef struct INDEX {
-    /*
-     * the name of a column (feature, seqid, ...) or of an attribute (gene_id,
-     * transcript_id, ...)
-     */
-    char *key;
+	/*
+	 * the name of a column (feature, seqid, ...) or of an attribute (gene_id,
+	 * transcript_id, ...)
+	 */
+	char *key;
 
-    /*
-     * the pointer on a binary tree created with tsearch C function in
-     * the index_row function in column.c source file. This tree contains
-     * ROW_LIST elements described later in this file and that contains a
-     * token and the associated list of row numbers (the rows containing the
-     * token as the value of the key (a column name or an attribute name).
-     */
-    void *data;
+	/*
+	 * the pointer on a binary tree created with tsearch C function in
+	 * the index_row function in column.c source file. This tree contains
+	 * ROW_LIST elements described later in this file and that contains a
+	 * token and the associated list of row numbers (the rows containing the
+	 * token as the value of the key (a column name or an attribute name).
+	 */
+	void *data;
 
-    /*
-     * a reference to the GTF_DATA on which the index has been made
-     */
-    GTF_DATA *gtf_data;
+	/*
+	 * a reference to the GTF_DATA on which the index has been made
+	 */
+	GTF_DATA *gtf_data;
+
+	/*
+	 * a pointer on the next index
+	 */
+	struct INDEX *next;
+
 } INDEX;
 
+/*
+ * A structure that contains the information about an index in the column model:
+ * the column and the rank as an index can contain several indexes. The index
+ * can be accessed as: column[index_id.column]->index[index_id.index_rank]
+ */
 typedef struct INDEX_ID {
-    int column;
-    int index_rank;
+	int column;
+	int index_rank;
 } INDEX_ID;
 
 /*
- * This is a class-like structure that modelize a column of a GTF file. It
- * contains obvious information like the name of the column, its type and the
- * indexes made on it. It contains also pointers on functions that are intended
- * to work with the corresponding values in the GTF data. There is a particular
- * function for each type of data. For example, the convert function takes a
- * string value and a default value as parameters and returns and integer
- * pointer for columns that contains integers (start, end ...), a float pointer
- * for "score" column and an ATTRIBUTES pointer for the last column. Pointers
- * on functions are initialized in the make_column function in the column.c
- * source file, depending on the type of each column.
+ * This is a structure that modelize a column of a GTF file.
  */
 typedef struct COLUMN {
-    /*
-     * the rank number of the column
-     */
-    int num;
+	/*
+	 * the rank number of the column
+	 */
+	int num;
 
-    /*
-     * the column name : seqid, source, feature, start, end, score, strand,
-     * phase or attributes
-     */
-    char *name;
+	/*
+	 * the column name : seqid, source, feature, start, end, score, strand,
+	 * phase or attributes
+	 */
+	char *name;
 
-    /*
-     * the default value to print if no value is available (".")
-     */
-    char *default_value;
+	/*
+	 * the default value to print if no value is available (".")
+	 */
+	char *default_value;
 
-    /*
-     * a table of indexes. It contains only one pointer for each column except
-     * the attributes column for which there is as needed indexes (one can
-     * index data on several attributes)
-     */
-    INDEX *index;
+	/*
+	 * a linked list of indexes. It contains only one pointer for each column except
+	 * the attributes column for which there is as needed indexes (one can
+	 * index data on several attributes)
+	 */
+	INDEX **index;
 
-    /*
-     * the number of indexes in the previous table
-     */
-    int nb_index;
+	/*
+	 * the number of indexes in the previous table
+	 */
+	int nb_index;
 } COLUMN ;
 
 /*
@@ -239,22 +242,22 @@ typedef struct COLUMN {
  * structure is used in the indexes as elements.
  */
 typedef struct ROW_LIST {
-    /*
-     * the token that is contained in the rows. For example, this can be "gene"
-     * or "transcript" for an index on the column feature, or "protein_coding"
-     * and "lincRNA" for an index on the attribute "gene_biotype".
-     */
-    char *token;
+	/*
+	 * the token that is contained in the rows. For example, this can be "gene"
+	 * or "transcript" for an index on the column feature, or "protein_coding"
+	 * and "lincRNA" for an index on the attribute "gene_biotype".
+	 */
+	char *token;
 
-    /*
-     * the number of rows
-     */
-    int nb_row;
+	/*
+	 * the number of rows
+	 */
+	int nb_row;
 
-    /*
-     * the table of row numbers
-     */
-    int *row;
+	/*
+	 * the table of row numbers
+	 */
+	int *row;
 } ROW_LIST;
 
 /*
@@ -264,82 +267,120 @@ typedef struct ROW_LIST {
  * input of another function.
  */
 typedef struct RAW_DATA {
-    /*
-     * The number of rows and columns
-     */
-    int nb_rows, nb_columns;
+	/*
+	 * The number of rows and columns
+	 */
+	int nb_rows, nb_columns;
 
-    /*
-     * The name of the columns
-     */
-    char **column_name;
+	/*
+	 * The name of the columns
+	 */
+	char **column_name;
 
-    /*
-     * The data (nb_rows x nb_columns character strings)
-     */
-    char ***data;
+	/*
+	 * The data (nb_rows x nb_columns character strings)
+	 */
+	char ***data;
 } RAW_DATA;
 
 /*
  * This structure is used to store a list of strings. Useful as a function
- * return type like get_attribute_list in get_list.c source file.
+ * return type like get_attribute_list in get_list.c source file. Also used as
+ * hashtable elements to discard redundant rows in extract_data.
  */
 typedef struct STRING_LIST {
-    /*
-     * the strings
-     */
-    char **list;
+	/*
+	 * the strings
+	 */
+	char **list;
 
-    /*
-     * the size of the previous list
-     */
-    int nb;
+	/*
+	 * the size of the previous list
+	 */
+	int nb;
 } STRING_LIST;
 
 /*
  * Used by get_sequences function to modelize exons, introns ...
  */
 typedef struct SEQFRAG {
-    int start, end;
-    char strand;
+	int start, end;
+	char strand;
 } SEQFRAG ;
 
 typedef struct FEATURE {
-    char *name;
-    int start, end, tr_start, tr_end;
+	char *name;
+	int start, end, tr_start, tr_end;
 } FEATURE;
 
 typedef struct FEATURES {
-    FEATURE **feature;
-    int nb;
+	FEATURE **feature;
+	int nb;
 } FEATURES;
 
 typedef struct SEQUENCE {
-    char *header, *sequence, strand, *seqid, *gene_id, *transcript_id, *gene_name, *gene_biotype;
-    int start, end;
-    FEATURES *features;
+	char *header, *sequence, strand, *seqid, *gene_id, *transcript_id, *gene_name, *gene_biotype;
+	int start, end;
+	FEATURES *features;
 } SEQUENCE;
 
 typedef struct SEQUENCES {
-    int nb;
-    SEQUENCE **sequence;
+	int nb;
+	SEQUENCE **sequence;
 } SEQUENCES;
 
+/*
+ * Used by get_list function to store an return the results as a matrix of
+ * character strings.
+ */
 typedef struct TTEXT {
-    int size;
-    char ***data;
+	int size;
+	char ***data;
 } TTEXT;
 
 /*
  * used by add_exon_number to sort exons by their start value
  */
 typedef struct SORT_ROW {
-    int row;
-    int value;
+	int row;
+	int value;
 } SORT_ROW;
 
+typedef struct BLAST_HEADER {
+	char *program_name;
+	char *database_name;
+	unsigned int database_length;
+	int database_nb_sequences;
+} BLAST_HEADER;
+
+typedef struct BLAST_QUERY {
+	char *query_name;
+	int query_length;
+	int nb_subject;
+} BLAST_QUERY;
+
+typedef struct BLAST_SUBJECT {
+	char *subject_name;
+	int subject_length;
+	int nb_HSP;
+} BLAST_SUBJECT;
+
+typedef struct BLAST_HSP {
+	BLAST_HEADER bh;
+	BLAST_QUERY bq;
+	BLAST_SUBJECT bs;
+	double score;
+	double expect;
+	char *identities;
+	int identities_percent;
+	char *gaps;
+	int gap_percent;
+	char strand_query, strand_subject;
+	int query_start, query_end, subject_start, subject_end;
+} BLAST_HSP;
+
 /*
- * Prototypes for the visible functions (callable by external cient)
+ * Prototypes for the visible functions (callable by external client)
  */
 GTF_DATA *load_GTF(char *input);
 GTF_DATA *select_by_key(GTF_DATA *gtf_data, char *key, char *value, int not);
@@ -359,15 +400,19 @@ TTEXT *get_feature_list(GTF_DATA *gtf_data);
 TTEXT *get_seqid_list(GTF_DATA *gtf_data);
 TTEXT *get_attribute_list(GTF_DATA *gtf_data);
 TTEXT *get_attribute_values_list(GTF_DATA *gtf_data, char *attribute);
+int get_type(GTF_DATA *gtf_data, char *key, int ignore_undef);
 GTF_DATA *convert_to_ensembl(GTF_DATA *gtf_data);
 GTF_DATA *add_attributes(GTF_DATA *gtf_data, char *features, char *key, char *new_key, char *inputfile_name);
 GTF_DATA *del_attributes(GTF_DATA *gtf_data, char *features, char *keys);
 GTF_DATA *select_by_positions(GTF_DATA *gtf_data, int *pos, int size);
 GTF_DATA *add_exon_number(GTF_DATA *gtf_data, char *exon_number_field);
-GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features,  char *key, char *txt, int suffix);
+GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features, char *key, char *txt, int suffix);
 GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_key, char *sep);
-GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
+GTF_DATA *load_blast(char *input);
 GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
+void clear_indexes(void);
+GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
+int int_array_test(int *pos, int size);
 """)
 
 # ---------------------------------------------------------------
@@ -386,6 +431,8 @@ class GTF(object):
     _instance_count = 0
     _id_list = []
     _ptr_addr = []
+    _instance_attr = defaultdict(list)
+    _instance_dll = defaultdict()
 
     # ---------------------------------------------------------------
     # Constructor
@@ -411,16 +458,28 @@ class GTF(object):
         >>> assert len(a_gtf[("feature","gene")]) == 10
         """
 
+        # ---------------------------------------------------------------
         # Increment the number of instances at the
         # class level
+        # ---------------------------------------------------------------
+
         self._add_instance()
 
+        # ---------------------------------------------------------------
         # The instance number of this object is set to
         # class attribute value
+        # ---------------------------------------------------------------
         self._nb = self._instance_count
 
+        # ---------------------------------------------------------------
         # The list of memory IDs at the class level.
+        # ---------------------------------------------------------------
+
         self._id_list += [id(self)]
+
+        # ---------------------------------------------------------------
+        # Check input_obj
+        # ---------------------------------------------------------------
 
         if isinstance(input_obj, list):
             input_obj = input_obj[0]
@@ -476,7 +535,7 @@ class GTF(object):
                           " line in the file. Is this GTF " + \
                           "file in ensembl format ? Try to convert it with " + \
                           "convert_ensembl command."
-                    GTFtkError(msg)
+                    raise GTFtkError(msg)
 
             # if check_chr_gene_id:
 
@@ -485,11 +544,170 @@ class GTF(object):
         else:
             self._data = new_data
 
-        self.message("GTF created ", type="DEBUG_MEM")
+        # ---------------------------------------------------------------
+        # Add attr_basic, attr_extended and attr_all slots
+        # ---------------------------------------------------------------
+
+        self.update_attr_list()
+
+        # ---------------------------------------------------------------
+        # Allows access to attributes as numpy array
+        # ---------------------------------------------------------------
+
+        for val in self.attr_all:
+            self.__dict__[val] = None
+            GTF._instance_attr[id(self)] += [val]
+
+        # ---------------------------------------------------------------
+        # _data address
+        # ---------------------------------------------------------------
+
         self._ptr_addr += [id(self._data)]
 
+        self.message("GTF created ", type="DEBUG_MEM")
+
     # ---------------------------------------------------------------
-    # Constructor
+    # Update or set attribute list
+    # ---------------------------------------------------------------
+
+    def update_attr_list(self):
+        self.attr_basic = ['seqid',
+                           'source',
+                           'feature',
+                           'start',
+                           'end',
+                           'score',
+                           'strand',
+                           'phase']
+
+        self.attr_extended = self.get_attr_list(add_basic=False, as_dict=False)
+
+        self.attr_all = self.attr_basic + self.attr_extended
+
+    # ---------------------------------------------------------------
+    # extract a numpy array representation of
+    # the GTF attribute (seqid, source, ...).
+    # ---------------------------------------------------------------
+
+    # ---------------------------------------------------------------
+    # extract a numpy array representation of
+    # the GTF attribute (seqid, source, ...).
+    # ---------------------------------------------------------------
+
+    def __getattribute__(self, name):
+        '''
+
+        :param name: "The name of the attribute.
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> b_gtf = a_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=("G0001T001","G0002T001","G0003T001","G0004T001"), new_key="bar", new_key_value=("10","11","20","40"))
+        >>> b_gtf = b_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=("G0001T001","G0002T001","G0003T001","G0004T001"), new_key="foo", new_key_value=("?",".","0.1","1e3"))
+        >>> assert len(b_gtf[b_gtf.bar > 10]) == len(b_gtf.eval_numeric('bar > 10'))
+        >>> assert len(b_gtf[b_gtf.bar > 1e1]) == len(b_gtf.eval_numeric('bar > 1e1'))
+        >>>
+        '''
+        if name in GTF._instance_attr[id(self)]:
+            a_list = self.extract_data([name],
+                                       hide_undef=False,
+                                       no_na=False,
+                                       as_list=True)
+
+            attr_type = self._dll.get_type(self._data, native_str(name), 1)
+
+            if attr_type == 1 or attr_type == 3:
+                a_list = [int(x) if x not in ['?', '.'] else np.nan for x in a_list]
+            elif attr_type == 2:
+                a_list = [float(x) if x not in ['?', '.'] else np.nan for x in a_list]
+            elif attr_type in [4, 100, 0, -1, -2]:
+                a_list = [str(x) if x not in ['?', '.'] else np.nan for x in a_list]
+
+            return np.array(a_list)
+
+        else:
+            return super().__getattribute__(name)
+
+    # ---------------------------------------------------------------
+    # extract a numpy array representation indicating
+    # whether an attribute is defined.
+    # ---------------------------------------------------------------
+
+    def is_defined(self, key=None):
+        '''
+        Extract a numpy array representation of a GTF attribute indicating, for each line, whether the key is defined
+        (i.e. exists). In pygtftk, values for undefined keys are '?'. So in other words this function tests whether
+        each value differs from '?'.
+
+        :param key:
+        :return: a numpy array of booleans.
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> assert sum(a_gtf.is_defined("transcript_id")) == 60
+        >>> gn_val = ('.', '.', '.', '.', 1, 2, 3, 4, '?', '?')
+        >>> gn_ids = tuple(a_gtf.get_gn_ids(nr=True))
+        >>> b_gtf = a_gtf.add_attr_from_list(feat="gene", key="gene_id", key_value=(gn_ids), new_key="foo", new_key_value=gn_val)
+        >>> gn_feat = b_gtf[b_gtf.feature == 'gene']
+        >>> assert sum((~gn_feat.is_defined('foo') | ~gn_feat.is_set('foo'))) == 6
+        '''
+        if key in GTF._instance_attr[id(self)]:
+            a_list = self.extract_data([key],
+                                       hide_undef=False,
+                                       no_na=False,
+                                       as_list=True)
+        else:
+            raise GTFtkError('This key is uknown in the GTF.')
+
+        a_list = [True if x != '?' else False for x in a_list]
+
+        return np.array(a_list)
+
+    # ---------------------------------------------------------------
+    # extract a numpy array representation indicating
+    # whether an attribute is defined.
+    # ---------------------------------------------------------------
+
+    def is_set(self, key=None):
+        '''
+        Extract a numpy array representation of a GTF attribute indicating, for each line, whether the key is set
+        (i.e. is defined with value '.'). In pygtftk, values for unset keys are '.'. So in other words this function
+        tests whether each value for the input key are set.
+
+        :param key:
+        :return: a numpy array of booleans.
+
+        :Example:
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> assert sum(a_gtf.is_defined("transcript_id")) == 60
+
+        '''
+
+        if key in GTF._instance_attr[id(self)]:
+            a_list = self.extract_data([key],
+                                       hide_undef=False,
+                                       no_na=False,
+                                       as_list=True)
+        else:
+            raise GTFtkError('This key is uknown in the GTF.')
+
+        a_list = [True if x != '.' else False for x in a_list]
+
+        return np.array(a_list)
+
+    # ---------------------------------------------------------------
+    # merge attributes
     # ---------------------------------------------------------------
 
     def merge_attr(self, feat="*", keys="gene_id,transcript_id",
@@ -774,14 +992,23 @@ class GTF(object):
             yield feat
 
     def __getitem__(self, x=None):
-        """Redefined indexing operator.
+        """ The indexing function. May accept a tuple (key, val), an integer or a list of integers
+        (indexing is zero-based) or a numpy array with boolean (numpy.bool_) indicating which lines (those 'True') are
+        to be returned.
 
-        :param x: A tuple (key, val), an integer or a list of integers. Indexing is zero-based.
+        - Note that when returned as a numpy arrays, the attributes values for which value is undef ('?') or unset ('.')
+        are converted to np.nan and not tested.
+
+        :param x: A tuple (key, val), an integer or a list of integers (indexing is zero-based) or a numpy array with boolean.
 
         :Example:
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
+        >>> import numpy as np
+        >>> # to avoid numpy warning when testing nan
+        >>> # Needed for testing pygtftk
+        >>> np.warnings.filterwarnings('ignore')
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> assert len(a_gtf) == 70
@@ -789,7 +1016,21 @@ class GTF(object):
         >>> assert len(a_gtf[("feature","transcript")]) == 15
         >>> assert len(a_gtf[("feature","exon")]) == 25
         >>> assert len(a_gtf[("feature","CDS")]) == 20
-
+        >>> from  pygtftk.utils import get_example_file
+        >>> b_gtf = a_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=("G0001T001","G0002T001","G0003T001","G0004T001"), new_key="test", new_key_value=("10","11","20","40"))
+        >>> c_list = b_gtf[(b_gtf.feature == 'transcript') & (b_gtf.test > 2)].extract_data("test", as_list=True)
+        >>> assert c_list == ['10', '11', '20', '40']
+        >>> a_file = get_example_file(datasetname="mini_real", ext="gtf.gz")[0]
+        >>> a_gtf = GTF(a_file)
+        >>> tx = a_gtf.select_by_key('feature','transcript')
+        >>> assert len(tx.select_by_key("score", "0")) == len(tx[tx.score == 0])
+        >>> assert len(tx.select_by_key("start", "1001145")) == len(tx[tx.start == 1001145])
+        >>> assert len(tx.select_by_key("start", "1001145", invert_match=True)) == len(tx[tx.start != 1001145])
+        >>> assert len(tx.select_by_key("end", "54801291")) == len(tx[tx.end == 54801291])
+        >>> assert len(tx[(tx.end == 54801291) & (tx.start == 53802771)]) == 3
+        >>> assert len(tx[(tx.end == 54801291) & ((tx.start == 53802771) | (tx.start == 53806156))]) == 4
+        >>> assert len(tx[(tx.end == 54801291) & ((tx.start == 53802771) | (tx.start == 53806156))]) == 4
+        >>> assert len(tx[(tx.end == 54801291) & ((tx.start == 53802771) | (tx.start == 53806156)) & (tx.transcript_id == 'ENST00000373965')]) == 1
         """
 
         self.message("Subsetting  GTF instance")
@@ -832,6 +1073,21 @@ class GTF(object):
             new_obj = self.select_by_positions([x])
 
             return new_obj
+        elif isinstance(x, np.ndarray):
+
+            if len(x) != len(self):
+                raise GTFtkError('The numpy array used for subsetting should be of the same length as the GTF.')
+            if x.dtype.type is np.bool_:
+                lines = np.arange(0, len(self))
+                lines = lines[~np.isnan(x)]
+                x = x[~np.isnan(x)]
+                x = x[~np.isnan(x)]
+                lines = list(lines[x])
+                lines = [int(x) for x in lines]
+
+            return self.select_by_positions(lines)
+        else:
+            raise GTFtkError('Unsupported type.')
 
     def _clone(self, new_data):
         """internal function to clone a GTF object."""
@@ -869,7 +1125,7 @@ class GTF(object):
                           native_str("gene_id,seqid"),
                           1,
                           0),
-                      dll=GTF._dll)
+                      dll=self._dll)
 
             geneid_to_chr = dict()
 
@@ -916,6 +1172,8 @@ class GTF(object):
         :param nr: in case a as_list or as_list_of_list is choosen, return a non redondant list.
         :param hide_undef: if hide_undef, then records for which the key does not exists (value = "?") are set to are discarded.
         :param zero_based: If set to True, the start position will be start-1.
+
+        Note: hide_undef and no_na are not supported when a TAB object is returned (default).
 
         :Example:
 
@@ -1044,7 +1302,7 @@ class GTF(object):
                       self._dll.extract_data(self._data,
                                              native_str(keys_csv),
                                              base, nr),
-                      dll=GTF._dll)
+                      dll=self._dll)
 
             if tab.ncols < 2:
                 raise GTFtkError(
@@ -1085,7 +1343,7 @@ class GTF(object):
                       self._dll.extract_data(self._data,
                                              native_str(keys_csv),
                                              base, 1),
-                      dll=GTF._dll)
+                      dll=self._dll)
 
             if tab.ncols < 2:
                 raise GTFtkError(
@@ -1117,7 +1375,7 @@ class GTF(object):
                       self._dll.extract_data(self._data,
                                              native_str(keys_csv),
                                              base, nr),
-                      dll=GTF._dll)
+                      dll=self._dll)
 
             if tab.ncols < 2:
                 raise GTFtkError(
@@ -1156,7 +1414,7 @@ class GTF(object):
                                              native_str(keys_csv),
                                              base,
                                              nr),
-                      dll=GTF._dll)
+                      dll=self._dll)
             return tab
 
     def extract_data_iter_list(self, keys=None, zero_based=False, nr=False):
@@ -1386,8 +1644,7 @@ class GTF(object):
             im = 0
 
         if value is not None and file_with_values is not None:
-            GTFtkError(
-                "Please choose between 'value' and 'file_with_values' argument.")
+            raise GTFtkError("Please choose between 'value' and 'file_with_values' argument.")
 
         if invert_match and value is not None:
             value = ",".join(list(set(value.split(','))))
@@ -1405,9 +1662,9 @@ class GTF(object):
                     if (col - 1) <= len(tokens):
                         value_list += [tokens[col - 1].strip()]
                     else:
-                        GTFtkError("check column number please.")
+                        raise GTFtkError("check column number please.")
                 if len(value_list) == 0:
-                    GTFtkError("No value found in input file (-f).")
+                    raise GTFtkError("No value found in input file (-f).")
                 value = ",".join(list(set(value_list)))
 
         if key is None or value is None:
@@ -1699,38 +1956,39 @@ class GTF(object):
 
         return self._clone(new_data)
 
-    def select_by_numeric_value(self,
-                                bool_exp=None,
-                                na_omit=(".", "?")):
-        """Test a numeric value. Select lines using a boolean operation on attributes.
+    def eval_numeric(self,
+                     bool_exp=None,
+                     na_omit=(".", "?")):
+        """Test numeric values. Select lines using a boolean operation on attributes.
         The boolean expression must contain attributes enclosed with braces.
         Example: "cDNA_length > 200 and tx_genomic_length > 2000".
         Note that one can refers to the name of the first columns of the gtf using e.g:
         start, end, score or frame.
 
-        :param bool_exp: A simple boolean operation. And/or operation are not supported at the moment.
+        :param bool_exp: A boolean test. 
         :param na_omit: Any line for which one of the tested value is in this list wont be evaluated (e.g. (".", "?")).
-
-
+        
         :Example:
-
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
         >>> b_gtf = a_gtf.add_attr_from_list(feat="transcript", key="transcript_id", key_value=("G0001T001","G0002T001","G0003T001","G0004T001"), new_key="test", new_key_value=("10","11","20","40"))
-        >>> c_list = b_gtf.select_by_key("feature","transcript").select_by_numeric_value("test > 2").extract_data("test", as_list=True)
+        >>> c_list = b_gtf.select_by_key("feature","transcript").eval_numeric("test > 2").extract_data("test", as_list=True)
         >>> assert c_list == ['10', '11', '20', '40']
+        >>> assert len(b_gtf.eval_numeric('test > 0.1e2 and start < 180 and start >= 50')) == 2
+        >>> assert len(b_gtf.eval_numeric('test > 0.1e2 and start < 180 and start > 50')) == 1
+        >>> assert len(b_gtf.eval_numeric('test > 0.1e2')) == 3
         >>> a_file = get_example_file(datasetname="mini_real", ext="gtf.gz")[0]
         >>> a_gtf = GTF(a_file)
         >>> tx = a_gtf.select_by_key('feature','transcript')
-        >>> assert len(tx.select_by_key("score", "0")) == len(tx.select_by_numeric_value("score == 0"))
-        >>> assert len(tx.select_by_key("start", "1001145")) == len(tx.select_by_numeric_value("start == 1001145"))
-        >>> assert len(tx.select_by_key("start", "1001145", invert_match=True)) == len(tx.select_by_numeric_value("start != 1001145"))
-        >>> assert len(tx.select_by_key("end", "54801291")) == len(tx.select_by_numeric_value("end == 54801291"))
-        >>> assert len(tx.select_by_numeric_value("end == 54801291 and start == 53802771")) == 3
-        >>> assert len(tx.select_by_numeric_value("end == 54801291 and (start == 53802771 or start == 53806156)")) == 4
-        >>> assert len(a_gtf.select_by_numeric_value("phase > 0 and phase < 2", na_omit=".").extract_data('phase', as_list=True,  nr=True)) == 1
+        >>> assert len(tx.select_by_key("score", "0")) == len(tx.eval_numeric("score == 0"))
+        >>> assert len(tx.select_by_key("start", "1001145")) == len(tx.eval_numeric("start == 1001145"))
+        >>> assert len(tx.select_by_key("start", "1001145", invert_match=True)) == len(tx.eval_numeric("start != 1001145"))
+        >>> assert len(tx.select_by_key("end", "54801291")) == len(tx.eval_numeric("end == 54801291"))
+        >>> assert len(tx.eval_numeric("end == 54801291 and start == 53802771")) == 3
+        >>> assert len(tx.eval_numeric("end == 54801291 and (start == 53802771 or start == 53806156)")) == 4
+        >>> assert len(a_gtf.eval_numeric("phase > 0 and phase < 2", na_omit=".").extract_data('phase', as_list=True,  nr=True)) == 1
         """
 
         if isinstance(na_omit, str):
@@ -1807,7 +2065,7 @@ class GTF(object):
 
         for i in attr_used:
             if i not in [x for x in attr_list]:
-                GTFtkError("Your expression seems to contain an unknow key.")
+                raise GTFtkError("Your expression seems to contain an unknow key.")
 
         tab = self.extract_data(",".join(attr_used), hide_undef=False)
 
@@ -1823,9 +2081,8 @@ class GTF(object):
                     if eval(parsed_exp_str):
                         result += [pos]
                 except:
-                    msg = "Found non numeric values in: '%s'." % ",".join(
-                        i)
-                    GTFtkError(msg)
+                    msg = "Found non numeric values in: '%s'." % ",".join(i)
+                    raise GTFtkError(msg)
             pos += 1
         # Call C function
 
@@ -1970,6 +2227,7 @@ class GTF(object):
         >>> b_gtf = a_gtf.add_attr_from_file(feat="gene", key="gene_id", new_key="bla", inputfile=join_file)
         >>> b_list = b_gtf.select_by_key("feature", "gene").extract_data("bla", as_list=True, no_na=True, hide_undef=True)
         >>> assert b_list == ['0.2322', '0.999', '0.5555']
+        >>> assert b_gtf.del_attr(keys='bla').get_attr_list() == ['gene_id', 'transcript_id', 'exon_id', 'ccds_id']
 
         """
 
@@ -2006,7 +2264,7 @@ class GTF(object):
             try:
                 key_to_value[fields[0]] += [fields[1]]
             except:
-                GTFtkError("Does the file to join contains 2 fields ?")
+                raise GTFtkError("Does the file to join contains 2 fields ?")
 
         message("Found " + str(line_nb) + " lines.")
         message("Found " + str(len(key_to_value)) + " different entries.")
@@ -2049,6 +2307,7 @@ class GTF(object):
         >>> b_gtf = a_gtf.add_attr_from_matrix_file(feat="gene", key="gene_id", inputfile=join_file)
         >>> assert b_gtf.extract_data("S1",as_list=True, no_na=True, hide_undef=True) == ['0.2322', '0.999', '0.5555']
         >>> assert b_gtf.extract_data("S2",as_list=True, no_na=True, hide_undef=True) == ['0.4', '0.6', '0.7']
+        >>> assert b_gtf.del_attr(keys='S1,S2').get_attr_list() == ['gene_id', 'transcript_id', 'exon_id', 'ccds_id']
 
         """
 
@@ -2143,6 +2402,7 @@ class GTF(object):
         >>> assert b_gtf.extract_data(keys="coding_pot", as_list=True, no_na=True, hide_undef=True) == ['0.5', '0.8']
         >>> key_value = tuple(a_gtf.extract_data("transcript_id", no_na=True, as_list=True, nr=True))
         >>> b=a_gtf.add_attr_from_list(None, key="transcript_id", key_value=key_value, new_key="bla", new_key_value=tuple([str(x) for x in range(len(key_value))]))
+        >>> assert b.del_attr(keys='bla').get_attr_list()  == ['gene_id', 'transcript_id', 'exon_id', 'ccds_id']
         """
 
         message("Calling add_attr_from_list", type="DEBUG")
@@ -2248,7 +2508,7 @@ class GTF(object):
         message("Calling del_attr", type="DEBUG")
 
         if keys is None:
-            raise GTFtkError("A key is required.")
+            raise GTFtkError("A key is required. First argument is target feature. Use 'keys='. ")
 
         if not isinstance(keys, list):
             keys = keys.split(",")
@@ -2264,6 +2524,8 @@ class GTF(object):
         new_data = self._dll.del_attributes(self._data,
                                             native_str(",".join(feat)),
                                             native_str(",".join(keys)))
+
+        self.update_attr_list()
 
         return self._clone(new_data)
 
@@ -3074,7 +3336,7 @@ class GTF(object):
                 elif strand == "-":
                     n = nb_introns
                 else:
-                    raise GTFtkError('Strand is undefined !!(' + tx_cur + ')')
+                    continue
 
                 for i in range(0, nb_introns):
 
@@ -3446,6 +3708,93 @@ class GTF(object):
                                              native_str(new_key))
 
         return self._clone(new_data)
+
+
+# ---------------------------------------------------------------
+# A function to prepare a GTF before gffutils database creation.
+# ---------------------------------------------------------------
+
+def skipped(func):
+    def _():
+        raise SkipTest("Test %s is skipped" % func.__name__)
+
+    _.__name__ = func.__name__
+    return _
+
+
+@skipped
+def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
+                                      'exon_id', 'gene_biotype',
+                                      'transcript_biotype', 'gene_name'),
+                        select=None,
+
+                        convert_ensembl=False):
+    """Returns a function to decorate the create_db() function from gffutils. This novel function will have the same
+    arguments as create_db() but also perform a set preprocessing step to select feature and attributes of interest for the user.
+    This function may also compute gene/transcript features if needed (convert_ensembl).
+    WARNING: this function only supports GTF/GFF2.0 at the moment (not GFF3).
+
+    :param attr_to_keep: The list of attributes to keep.
+    :param select: The key/values to import. If None, export all lines. Otherwise, a dict (e.g. {'feature':'gene,transcript,exon', 'gene_biotype':'protein_coding,lincRNA'}).
+    :param convert_ensembl: compute gene/transcript feature if required.
+
+    :Example:
+
+    >>> # This code is tested. So we are using a lightweight example GTF.
+    >>> # However the gain in pre-processing step are more significant
+    >>> # with large GTF files
+    >>> import time
+    >>> import gffutils
+    >>> from  pygtftk.utils import get_example_file
+    >>> from pygtftk.gtf_interface import GTF
+    >>> from pygtftk.gtf_interface import prepare_gffutils_db
+    >>> from pygtftk.utils import make_tmp_file
+    >>> from pygtftk.plugins.retrieve import retrieve
+    >>> a_file = get_example_file(datasetname="mini_real", ext="gtf.gz")[0]
+    >>> db_file = make_tmp_file()
+    >>> # Without pre-processing
+    >>> before_1 = time.clock()
+    >>> con_1 = gffutils.create_db(data=a_file, dbfn=db_file.name, force=True, verbose=True, disable_infer_genes=True, disable_infer_transcripts=True)
+    >>> after_1 = time.clock()
+    >>> # With pre-processing
+    >>> before_2 = time.clock()
+    >>> attr_to_keep=('gene_id', 'transcript_id', 'exon_id', 'gene_biotype', 'transcript_biotype', 'gene_name')
+    >>> select = {'feature':'gene,transcript,exon', 'gene_biotype':'protein_coding,lincRNA'}
+    >>> call_create_db = prepare_gffutils_db(attr_to_keep=attr_to_keep, select=select, convert_ensembl=False)(gffutils.create_db)
+    >>> con_2 = call_create_db(data=a_file, dbfn=db_file.name, force=True, verbose=True, disable_infer_genes=True, disable_infer_transcripts=True)
+    >>> after_2 = time.clock()
+    >>> # print("Time required without preprocessing: ", round(after_1 - before_1, 2))
+    >>> # print("Time required with preprocessing (I): ", round(after_2 - before_2, 2))
+    >>> assert con_1.count_features_of_type('gene') == 1058
+    >>> assert con_2.count_features_of_type('gene') == 901
+    """
+
+    def decorated(func):
+        def wrapper(*args, **kwargs):
+            message('Reading GTF.')
+            gtf = GTF(kwargs['data'], check_ensembl_format=False)
+            if convert_ensembl:
+                message('Computing gene/transcript features.')
+                gtf = gtf.convert_to_ensembl()
+            if select is not None:
+                for key, value in select.items():
+                    gtf = gtf.select_by_key(key, value)
+            attr_list = gtf.get_attr_list()
+            attr_list_to_del = [x for x in attr_list if x not in attr_to_keep]
+            if attr_list_to_del:
+                message('Deleting attributes.')
+                gtf = gtf.del_attr(keys=attr_list_to_del)
+            tmp_gtf = make_tmp_file(prefix='select_gtf_attributes', suffix='.gtf')
+            gtf.write(tmp_gtf)
+            message('Temporary GTF file stored at:' + tmp_gtf.name)
+            new_kwargs = kwargs
+            new_kwargs['data'] = tmp_gtf.name
+            response = func(**new_kwargs)
+            return response
+
+        return wrapper
+
+    return decorated
 
 
 if __name__ == "__main__":
