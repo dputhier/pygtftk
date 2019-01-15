@@ -21,10 +21,17 @@
 .. image:: https://img.shields.io/github/repo-size/badges/shields.svg
     :target: https://travis-ci.org/dputhier/pygtftk
 
-.. image:: https://img.shields.io/conda/dn/:channel/:package.svg
-    :target: https://github.com/dputhier/pygtftk
+.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/installer/conda.svg
+    :target: https://conda.anaconda.org/guillaumecharbonnier
 
+.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/platforms.svg
+    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
 
+.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/latest_release_relative_date.svg
+    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
+
+.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/downloads.svg
+    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
 
 .. highlight-language: shell
 
