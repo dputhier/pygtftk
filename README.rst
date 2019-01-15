@@ -27,7 +27,7 @@
 .. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/platforms.svg
     :target: https://anaconda.org/guillaumecharbonnier/pygtftk
 
-.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/latest_release_relative_date.svg
+.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/latest_release_date.svg
     :target: https://anaconda.org/guillaumecharbonnier/pygtftk
 
 .. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/downloads.svg
