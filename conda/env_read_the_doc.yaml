@@ -1,11 +1,12 @@
 name: pygtftk
 
 channels:
+    - conda-forge/label/gcc7
     - conda-forge
     - defaults
     - bioconda
     - auto
-
+    
 dependencies:
     - bedtools ==2.27.1
     - python ==3.5
