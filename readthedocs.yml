@@ -1,5 +1,5 @@
 build:
-    image: 2.0
+    image: 4.0
   
 conda:
    file: conda/env_read_the_doc.yaml
