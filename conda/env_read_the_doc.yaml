@@ -1,7 +1,7 @@
 name: pygtftk
 
 channels:
-    - conda-forge/label/gcc7
+    - conda-forge/label/cf201901
     - conda-forge
     - defaults
     - bioconda
