@@ -48,7 +48,7 @@ def make_parser():
                             required=False)
 
     parser_mut.add_argument('-v', '--value',
-                            help='A comma separated list of values.',
+                            help='A comma-separated list of values.',
                             default=None,
                             metavar="VALUE",
                             type=str)

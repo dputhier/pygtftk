@@ -15,7 +15,7 @@ from pygtftk.utils import message
 
 __updated__ = "2018-01-24"
 __doc__ = """
- Add a new key to transcript features containing a comma separated list of exon sizes.
+ Add a new key to transcript features containing a comma-separated list of exon sizes.
 """
 __notes__ = """
  -- The GTF should be sorted before computation. Use bedtools sortBed.
@@ -57,7 +57,7 @@ def exon_sizes(
         outputfile=None,
         key_name=None):
     """
- Add a new key to transcript features containing a comma separated list of exon-size.
+ Add a new key to transcript features containing a comma-separated list of exon-size.
     """
 
     gtf = GTF(inputfile)
@@ -141,7 +141,7 @@ else:
     """
 
     CMD = CmdObject(name="exon_sizes",
-                    message=" Add a new key to transcript features containing a comma separated list of exon sizes. ",
+                    message=" Add a new key to transcript features containing a comma-separated list of exon sizes. ",
                     parser=make_parser(),
                     fun=os.path.abspath(__file__),
                     updated=__updated__,

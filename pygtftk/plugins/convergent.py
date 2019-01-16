@@ -56,7 +56,7 @@ def make_parser():
                             required=True)
 
     parser_grp.add_argument('-u', '--upstream',
-                            help="Extend the tts in 5' by a given value (int)."
+                            help="Extends the tts in 5' by a given value (int)."
                                  " Defines the region around the tts.",
                             default=1500,
                             metavar="UPSTREAM",
@@ -64,7 +64,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-d', '--downstream',
-                            help="Extend the region in 3' by a given value (int)."
+                            help="Extends the region in 3' by a given value (int)."
                                  " Defines the region around the tts.",
                             default=1500,
                             metavar="DOWNSTREAM",

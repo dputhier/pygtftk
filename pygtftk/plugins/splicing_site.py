@@ -19,9 +19,9 @@ __doc__ = """
 """
 
 __notes__ = """
- This will return a single position which corresponds to the most 5' and/or the most 3' intronic region.
+ This will return a single position, which corresponds to the most 5' and/or the most 3' intronic region.
  If the gtf file does not contain exon numbering you can compute it using the add_exon_nb command.
- The score column of the bed file contain the number of the closest exon relative to the splice site.
+ The score column of the bed file contains the number of the closest exon relative to the splice site.
 """
 
 

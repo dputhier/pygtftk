@@ -62,7 +62,7 @@ def make_parser():
                             type=str)
 
     parser_grp.add_argument('-m', '--more-names',
-                            help="A comma separated list of information to be added to the 'name' column of the bed file.",
+                            help="A comma-separated list of information to be added to the 'name' column of the bed file.",
                             default=None,
                             type=str)
 

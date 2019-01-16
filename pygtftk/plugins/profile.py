@@ -105,7 +105,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-d', '--color-order',
-                            help='Factor ordering. Comma separated bwig labels or tx classes.',
+                            help='Factor ordering. comma-separated bwig labels or tx classes.',
                             default=None,
                             type=str)
 

@@ -75,7 +75,7 @@ def make_parser():
                             required=True)
 
     parser_grp.add_argument('-l', '--labels',
-                            help="A comma separated list of labels of size --nb-levels.",
+                            help="A comma-separated list of labels of size --nb-levels.",
                             default=None,
                             type=str,
                             required=False)

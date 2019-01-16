@@ -94,7 +94,7 @@ The tts to tts distance is also provided as an additional key (dist_to_convergen
 exon_sizes
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Add a new key to transcript features containing a comma separated list of exon sizes.
+**Description:** Add a new key to transcript features containing a comma-separated list of exon sizes.
 
 
 **Example:**
@@ -113,7 +113,7 @@ exon_sizes
 intron_sizes
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Add a new key to transcript features containing a comma separated list of intron sizes.
+**Description:** Add a new key to transcript features containing a comma-separated list of intron sizes.
 
 
 **Example:**

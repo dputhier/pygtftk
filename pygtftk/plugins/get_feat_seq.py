@@ -18,7 +18,7 @@ __doc__ = """
 """
 __notes__ = """
  -- The sequences are returned in 5' to 3' orientation.
- -- If you want to use wildcards, use quotes :e.g. 'foo/bar*.fa'.
+ -- If you want to use wildcards, use quotes: e.g. 'foo/bar*.fa'.
  -- See get_tx_seq for mature RNA sequence.
  -- If -\-unique is used if a header was already encountered the record won't be print. 
  Take care to use unambiguous identifiers in the header.

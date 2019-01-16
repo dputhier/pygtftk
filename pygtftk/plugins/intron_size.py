@@ -12,7 +12,7 @@ from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-24"
 __doc__ = """
- Add a new key to transcript features containing a comma separated list of intron-size.
+ Add a new key to transcript features containing a comma-separated list of intron-size.
 """
 __notes__ = """
  -- The GTF should be sorted before computation. Use bedtools sortBed.
@@ -54,7 +54,7 @@ def intron_sizes(
         outputfile=None,
         key_name=None):
     """
- Add a new key to transcript features containing a comma separated list of intron sizes.
+ Add a new key to transcript features containing a comma-separated list of intron sizes.
     """
 
     gtf = GTF(inputfile, check_ensembl_format=False)
@@ -130,7 +130,7 @@ else:
     """
 
     CMD = CmdObject(name="intron_sizes",
-                    message=" Add a new key to transcript features containing a comma separated list of intron sizes. ",
+                    message=" Add a new key to transcript features containing a comma-separated list of intron sizes. ",
                     parser=make_parser(),
                     fun=os.path.abspath(__file__),
                     updated=__updated__,

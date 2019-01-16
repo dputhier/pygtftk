@@ -40,7 +40,7 @@ def make_parser():
                             type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-k', '--src-key',
-                            help='Comma separated list of keys to join.',
+                            help='comma-separated list of keys to join.',
                             default=None,
                             metavar="KEY",
                             type=str,

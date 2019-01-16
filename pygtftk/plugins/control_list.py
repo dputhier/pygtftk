@@ -140,7 +140,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-c', '--set-colors',
-                            help='Colors for the two sets (comma separated).',
+                            help='Colors for the two sets (comma-separated).',
                             default="#b2df8a,#6a3d9a",
                             type=str,
                             required=False)

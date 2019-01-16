@@ -58,8 +58,7 @@ def make_parser():
                             type=str)
 
     parser_grp.add_argument('-w', '--intron-nb-in-name',
-                            help="By default intron number is written in 'score' column. Force it to be written in 'name' column."
-                                 " transcript.",
+                            help="By default intron number is written in 'score' column. Force it to be written in 'name' column.",
                             action="store_true")
 
     parser_grp.add_argument('-F', '--no-feature-name',

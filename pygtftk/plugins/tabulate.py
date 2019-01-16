@@ -51,7 +51,7 @@ def make_parser():
                             type=str)
 
     parser_grp.add_argument('-k', '--key',
-                            help='A comma separated list of key names.',
+                            help='A comma-separated list of key names.',
                             default="*",
                             metavar="KEY,KEY...",
                             type=str,

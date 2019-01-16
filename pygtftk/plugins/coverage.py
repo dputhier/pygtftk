@@ -134,7 +134,7 @@ def make_parser():
     parser_grp.add_argument('-x',
                             '--matrix-out',
                             action="store_true",
-                            help='Matrix output format. Bigwigs as column names features as rows.',
+                            help='Matrix output format. Bigwigs as column names and  features as rows.',
                             required=False)
 
     parser_grp.add_argument('-zn', '--zero-to-na',

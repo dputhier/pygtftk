@@ -1164,7 +1164,7 @@ class GTF(object):
                      nr=False,
                      hide_undef=False,
                      as_list_of_list=False):
-        """Extract attribute values into containers of various types. Note that in case dict are requested, key are force to no_na.
+        """Extract attribute values into containers of various types. Note that in case dict are requested, keys are force to no_na.
 
         Note: no_na, hide_undef, nr, zero_based are not applied in case a tab object is returned (default).
 
@@ -1833,9 +1833,9 @@ class GTF(object):
     def select_by_loc(self, chr_str, start_str, end_str):
         """Select lines from a GTF based on genomic location.
 
-        :param chr_str: A comma separated list of chromosomes.
-        :param start_str: A comma separated list of starts.
-        :param end_str: A comma separated list of ends.
+        :param chr_str: A comma-separated list of chromosomes.
+        :param start_str: A comma-separated list of starts.
+        :param end_str: A comma-separated list of ends.
 
         :Example:
 
@@ -2219,7 +2219,7 @@ class GTF(object):
                            has_header=False):
         """Add key/value pairs to the GTF object.
 
-        :param feat: The comma separated list of target feature. If None, all the features.
+        :param feat: The comma-separated list of target feature. If None, all the features.
         :param key: The name of the key used for joining (i.e the key corresponding to value provided in the file).
         :param new_key: A name for the novel key.
         :param inputfile: A two column (e.g transcript_id and new value) file.
@@ -2301,7 +2301,7 @@ class GTF(object):
                                   inputfile=None):
         """Add key/value pairs to the GTF file. Expect a matrix with row names as target keys column names as novel key and each cell as value.
 
-        :param feat: The comma separated list of target features. If None, all the features.
+        :param feat: The comma-separated list of target features. If None, all the features.
         :param key: The name of the key to use for joining (i.e the key corresponding to value provided in the file).
         :param inputfile: A two column (e.g transcript_id and new value) file.
 
@@ -2391,7 +2391,7 @@ class GTF(object):
                            new_key_value=()):
         """Add key/value pairs to the GTF object.
 
-        :param feat: The comma separated list of target features. If None, all the features.
+        :param feat: The comma-separated list of target features. If None, all the features.
         :param key: The name of the key to use for joining (e.g 'transcript_id').
         :param key_value: The values for the key (e.g ['tx_1', 'tx_2',...,'tx_n'])
         :param new_key: A name for the novel key.
@@ -2453,7 +2453,7 @@ class GTF(object):
                            new_key="new_key"):
         """Add key/value pairs to the GTF object.
 
-        :param feat: The comma separated list of target feature. If None, all the features.
+        :param feat: The comma-separated list of target feature. If None, all the features.
         :param key: The name of the key used for joining (e.g 'transcript_id').
         :param a_dict: key and values will be used to call add_attr_from_file.
         :param new_key: A name for the novel key.
@@ -2500,7 +2500,7 @@ class GTF(object):
         """Delete an attributes from the GTF file..
 
         :param feat: The target feature.
-        :param keys: Comma separated list or list of target keys.
+        :param keys: comma-separated list or list of target keys.
         :param force: If True, transcript_id and gene_id can be deleted.
 
         :Example:
@@ -3158,7 +3158,7 @@ class GTF(object):
         """Returns a dict with genes as keys and the list of their associated transcripts
         as values.
 
-        params ordered_5p: If True, returns transcript list ordered based on their TSS coordinates (5' to 3'). For ties, value are randomly picked.
+        params ordered_5p: If True, returns transcript list ordered based on their TSS coordinates (5' to 3'). For ties, values are randomly picked.
         params as_dict_of_dict: If True, returns a dict of dict that maps gene_id to transcript_id and transcript_id to TSS numbering (1 for most 5', then 2...).
 
         :Example:

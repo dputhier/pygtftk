@@ -4,10 +4,10 @@ Commands from section 'coordinates'
 midpoints
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Get the genomic midpoint of each features: genes, transcripts, exons or introns. Output is currently in bed format only.
+**Description:** Get the genomic midpoint of each feature: genes, transcripts, exons or introns. Output is currently in bed format only.
 
 
-**Example:** Get mipoints of all transcripts and exons.
+**Example:** Get the midpoints of all transcripts and exons.
 
 .. command-output:: gtftk get_example | gtftk midpoints -t transcript,exon -n transcript_id,feature | head -n 5
 	:shell:
@@ -85,8 +85,8 @@ Otherwise, the intronic regions corresponding to each transcript are returned
 splicing_site
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Compute the locations of donor and acceptor splice sites. This command will return a single position which corresponds to the most 5' and/or the most 3' intronic region. If the gtf file does not contain exon numbering you can compute it using the
-add_exon_nb command. The score column of the bed file contain the number of the closest exon relative to the splice site.
+**Description:** Compute the locations of donor and acceptor splice sites. This command will return a single position, which corresponds to the most 5' and/or the most 3' intronic region. If the gtf file does not contain exon numbering you can compute it using the
+add_exon_nb command. The score column of the bed file contains the number of the closest exon relative to the splice site.
 
 **Example:**
 
