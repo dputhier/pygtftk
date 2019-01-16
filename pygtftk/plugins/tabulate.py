@@ -69,7 +69,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-n', '--no-unset',
-                            help="Don't print lines containing '.' (unsetined values)",
+                            help="Don't print lines containing '.' (unset values)",
                             action="store_true",
                             required=False)
 

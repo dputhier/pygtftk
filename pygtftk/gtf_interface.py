@@ -2768,38 +2768,38 @@ class GTF(object):
             return None
 
     def write_bed(self,
-                  ouputfile=None,
+                  outputfile=None,
                   name=("gene_id"),
                   sep="|",
                   add_chr=0,
                   more_name=None):
         """Write a GTF file in BED format. This function uses a direct call to the C interface.
 
-        :param ouputfile: The outputfilename.
+        :param outputfile: The outputfilename.
         :param name: The keys that should be used to computed the 'name' column (a tuple).
         :param more_name: Additional text to add to the name (a list).
         :param sep: The separator used for the name (e.g 'gene_id|transcript_id".
 
         """
 
-        if isinstance(ouputfile, list):
-            ouputfile = ouputfile[0]
+        if isinstance(outputfile, list):
+            outputfile = outputfile[0]
 
-        if isinstance(ouputfile, io.IOBase):
+        if isinstance(outputfile, io.IOBase):
 
-            if ouputfile.name != '<stdout>':
-                fn = ouputfile.name
+            if outputfile.name != '<stdout>':
+                fn = outputfile.name
             else:
                 fn = "-"
 
-        elif isinstance(ouputfile, str):
+        elif isinstance(outputfile, str):
 
-            if ouputfile == '-':
+            if outputfile == '-':
                 fn = "-"
             else:
-                if ouputfile != '<stdout>':
-                    check_file_or_dir_exists(ouputfile)
-                    fn = ouputfile
+                if outputfile != '<stdout>':
+                    check_file_or_dir_exists(outputfile)
+                    fn = outputfile
                 else:
                     fn = "-"
         else:

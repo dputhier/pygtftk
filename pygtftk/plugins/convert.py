@@ -80,7 +80,7 @@ def convert(inputfile=None,
 
     elif format in ["bed", "bed6"]:
         gtf = GTF(inputfile,
-                  check_ensembl_format=False).write_bed(ouputfile=outputfile,
+                  check_ensembl_format=False).write_bed(outputfile=outputfile,
                                                         name=names,
                                                         sep=separator,
                                                         more_name=more_names)

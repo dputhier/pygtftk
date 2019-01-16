@@ -46,7 +46,7 @@ as those whose promoter region (defined by -u/-d) overlaps with the tss of
 another gene in reverse/antisens orientation. This may be useful to select
 coding genes in head-to-head orientation or LUAT as described in "Divergent
 transcription is associated with promoters of transcriptional regulators"
-(Lepoivre C, BMC Genomics, 2013). The ouput is a GTF with an additional key
+(Lepoivre C, BMC Genomics, 2013). The output is a GTF with an additional key
 ('divergent') whose value is set to '.' if the gene has no antisens transcript
 in its promoter region. If the gene has an antisens transcript in its promoter
 region the 'divergent' key is set to the identifier of the transcript whose tss
@@ -71,7 +71,7 @@ convergent
 
 **Description:** Find transcript with convergent tts. These transcripts will be defined here
 as those whose tts region (defined by -u/-d) overlaps with the tts of
-another gene in reverse/antisens orientation. The ouput is a GTF with an
+another gene in reverse/antisens orientation. The output is a GTF with an
 additional key ('convergent') whose value is set to '.' if the gene has no
 convergent transcript in its tts region. If the gene has an antisens transcript
 in its tts region the 'convergent' key is set to the identifier of the

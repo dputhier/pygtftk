@@ -21,7 +21,7 @@ __doc__ = """
  another gene in reverse/antisens orientation. This may be useful to select
  coding genes in head-to-head orientation or LUAT as described in "Divergent
  transcription is associated with promoters of transcriptional regulators"
- (Lepoivre C, BMC Genomics, 2013). The ouput is a GTF with an additional key
+ (Lepoivre C, BMC Genomics, 2013). The output is a GTF with an additional key
  ('divergent') whose value is set to '.' if the gene has no antisens transcript
  in its promoter region. If the gene has an antisens transcript in its promoter
  region the 'divergent' key is set to the identifier of the transcript whose tss
