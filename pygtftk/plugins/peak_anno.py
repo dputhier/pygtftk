@@ -713,16 +713,52 @@ else:
 
     # TODO Rewrite the conditions based on MY results with trivial data
     test = '''
-        #peak_anno: chr2 len
+        #peak_anno: run on simple test file
         @test "peak_anno_1" {
-             result=`rm -Rf peak_annotation; gtftk peak_anno  -i pygtftk/data/simple_02/simple_02.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed -c pygtftk/data/simple_02/simple_02.chromInfo -u 2 -d 2 -K peak_annotation`
+             result=`rm -Rf peak_annotation; gtftk peak_anno -i pygtftk/data/simple_02/simple_02.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed -c pygtftk/data/simple_02/simple_02.chromInfo -u 2 -d 2 -K peak_annotation`
           [ "$result" = "" ]
         }
 
-        #peak_anno: all_chrom len
+        #peak_anno: proper number of true intersections
         @test "peak_anno_2" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | grep chr2 | cut -f 3 | sort | uniq | perl -npe 's/\\n/,/'`
-          [ "$result" = "1700,400," ]
+         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 5`
+          [ "$result" = "30" ]
+        }
+
+        #peak_anno: proper number of shuffled intersections
+        @test "peak_anno_3" {
+         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 2`
+          [ "$result" = "15.23" ]
+        }
+
+        #peak_anno: overlapping bp
+        @test "peak_anno_4" {
+         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 12`
+          [ "$result" = "107" ]
+        }
+
+        #peak_anno: shuffled overlapping bp
+        @test "peak_anno_5" {
+         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 8`
+          [ "$result" = "62.37" ]
+        }
+
+        #peak_anno: shuffled overlapping bp variance
+        @test "peak_anno_6" {
+         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 9`
+          [ "$result" = "26.56" ]
+        }
+
+        #peak_anno: shuffled overlapping bp fitting
+        @test "peak_anno_7" {
+         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 11`
+          [ "$result" = "0.6142" ]
+        }
+
+        #peak_anno: cleanup
+        @test "peak_anno_cleanup" {
+             result=`rm -Rf peak_annotation`
+          [ "$result" = "" ]
         }
         '''
 
