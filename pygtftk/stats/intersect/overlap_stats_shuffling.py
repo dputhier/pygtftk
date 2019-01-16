@@ -297,24 +297,24 @@ def compute_overlap_stats(bedA, bedB,
     result = OrderedDict()
 
     # Number of intersections
-    result['nb_intersections_esperance_shuffled'] = np.mean(intersect_nbs)
-    result['nb_intersections_variance_shuffled'] = np.var(intersect_nbs)
+    result['nb_intersections_esperance_shuffled'] = '{:.2f}'.format(np.mean(intersect_nbs))
+    result['nb_intersections_variance_shuffled'] = '{:.2f}'.format(np.var(intersect_nbs))
 
-    result['nb_intersections_fit'] = pn
+    result['nb_intersections_fit'] = '{:.5f}'.format(pn)
     result['nb_intersections_true'] = true_intersect_nb
-    result['nb_intersections_pvalue'] = pval_intersect_nb
+    result['nb_intersections_pvalue'] = '{0:.4g}'.format(pval_intersect_nb)
 
-    result['nb_intersections_log2_fold_change'] = true_intersect_nb / (np.mean(intersect_nbs) + 1E-100)
+    result['nb_intersections_log2_fold_change'] = '{:.5f}'.format(true_intersect_nb / (np.mean(intersect_nbs) + 1E-100))
 
     # Summed number of overlapping basepairs
-    result['summed_bp_overlaps_esperance_shuffled'] = np.mean(summed_bp_overlaps)
-    result['summed_bp_overlaps_variance_shuffled'] = np.var(summed_bp_overlaps)
-    result['summed_bp_overlaps_fit'] = ps
+    result['summed_bp_overlaps_esperance_shuffled'] = '{:.2f}'.format(np.mean(summed_bp_overlaps))
+    result['summed_bp_overlaps_variance_shuffled'] = '{:.2f}'.format(np.var(summed_bp_overlaps))
 
+    result['summed_bp_overlaps_fit'] = '{:.5f}'.format(ps)
     result['summed_bp_overlaps_true'] = true_bp_overlaps
-    result['summed_bp_overlaps_pvalue'] = pval_bp_overlaps
+    result['summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(pval_bp_overlaps)
 
-    result['nb_intersections_log2_fold_change'] = true_bp_overlaps / (np.mean(summed_bp_overlaps) + 1E-100)
+    result['nb_intersections_log2_fold_change'] = '{:.5f}'.format(true_bp_overlaps / (np.mean(summed_bp_overlaps) + 1E-100))
 
 
     return result
