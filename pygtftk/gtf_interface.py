@@ -1176,7 +1176,7 @@ class GTF(object):
         :param as_dict_of_lists: if true returns a dict (where the key corresponds to values for the first requested key and the value to the last encountered list of other elements).
         :param as_dict_of_merged_list: if true returns a dict (where the key corresponds to values for the first requested key and the value to the list of other elements encountered throughout any line).
         :param as_list_of_list: if True returns a list for each line.
-        :param nr: in case a as_list or as_list_of_list is choosen, return a non redondant list.
+        :param nr: in case a as_list or as_list_of_list is chosen, return a non redondant list.
         :param hide_undef: if hide_undef, then records for which the key does not exists (value = "?") are set to are discarded.
         :param zero_based: If set to True, the start position will be start-1.
 
@@ -3309,8 +3309,8 @@ class GTF(object):
         """Returns a bedtools object containing the intronic regions.
 
         :param by_transcript: If false (default), merged genic regions with no exonic overlap are returned. Otherwise, the intronic regions corresponding to each transcript are returned (may contain exonic overlap).
-        :param name: The list of ids that should be part of the 4th column of the bed file (if by_transcript is choosen).
-        :param sep: The separator to be used for the name (if by_transcript is choosen).
+        :param name: The list of ids that should be part of the 4th column of the bed file (if by_transcript is chosen).
+        :param sep: The separator to be used for the name (if by_transcript is chosen).
         :param intron_nb_in_name: by default the intron number is added to the score column. If selected, write this information in the 'name' column of the bed file.
         :param feat_name: add the feature name ('intron') in the name column.
         :param feat_name_last: put feat_name in last position (but before intron_nb_in_name).
