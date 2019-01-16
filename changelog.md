@@ -20,7 +20,7 @@
 ### Code changes
 
 - The argformatter module was refactored. Development of FormattedFile(argparse.FileType) that test for file extension and content (at least for bed).
-- The BED convertion is now performed using the C function print_bed().
+- The BED convertion is now performed using the print_bed() C function .
 
 ### New Features
 
