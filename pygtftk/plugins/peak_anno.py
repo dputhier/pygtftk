@@ -733,7 +733,7 @@ else:
 
         #peak_anno: overlapping bp
         @test "peak_anno_4" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 12`
+         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 11`
           [ "$result" = "107" ]
         }
 
@@ -751,14 +751,8 @@ else:
 
         #peak_anno: shuffled overlapping bp fitting
         @test "peak_anno_7" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 11`
+         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 10`
           [ "$result" = "0.6142" ]
-        }
-
-        #peak_anno: cleanup
-        @test "peak_anno_cleanup" {
-             result=`rm -Rf peak_annotation`
-          [ "$result" = "" ]
         }
         '''
 
