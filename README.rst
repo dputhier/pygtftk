@@ -63,7 +63,7 @@ Installation
 Installation through conda package building
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
+Installation through **conda** should be the **preferred install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
 
 If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_ and make sure you have bioconda and conda-forge channels set up in the order below. ::
 
@@ -80,7 +80,7 @@ Then you can simply install pygtftk in its own isolated environment and activate
 Installation through setup.py
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is not the prefered way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed. ::
+This is not the preferred way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed. ::
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
     cd pygtftk
@@ -92,10 +92,10 @@ This is not the prefered way for installation. Choose conda whenever possible. W
 Installation through pip
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Prerequesites**
+**Prerequisites**
 
  
-Again, this is not the prefered way for installation. Please choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.
+Again, this is not the preferred way for installation. Please choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.
 
 **Running pip**
 
