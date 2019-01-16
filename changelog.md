@@ -14,13 +14,13 @@
 
 - Input BED file in bed3 format are now converted to bed6 automatically.
 - The select_by_numeric() function has been renamed eval_numeric()
-- It is now possible to use numpy array of boolean to index the GTF (i.e. using the indexing function).	
+- It is now possible to use numpy array of booleans to index the GTF (i.e. using the indexing function).	
 - the prepare_gffutils_db() function allows one to create a db for gffutils while selecting features and attributes.
 
 ### Code changes
 
 - The argformatter module was refactored. Development of FormattedFile(argparse.FileType) that test for file extension and content (at least for bed).
-- The BED convertion is now performed using the C function print_bed().
+- The BED convertion is now performed using the print_bed() C function .
 
 ### New Features
 
