@@ -97,7 +97,7 @@ def exclude_chromsizes(exclusion,chromsizes):
 
 
 def exclude_concatenate(bedfile, exclusion, chromsizes):
-    """
+    r"""
     When given a bedfile (in pybedtools BedFile format) and an exclusion bed file
     (in pybedtools BedFile format), will shorten the original bedfile by concatenation.
     The chromsizes (must be a dictionary) will also be appropriately shortened.

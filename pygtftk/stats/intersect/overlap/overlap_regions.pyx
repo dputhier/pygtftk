@@ -73,10 +73,21 @@ cdef find_overlap(np.ndarray melted):
 
 def find_intersection(fake_bed_A,fake_bed_B, all_chrom):
     """
-    When given a fake bed (as a list of tuples, not a text file to avoid text
+    When given a fake bed (as a *list of tuples*, not a text file to avoid text
     overhead) return the intersection computed using our implemented algorithm.
 
     It will be faster if the BED files were sorted beforehand.
+
+    >>> import pyximport; pyximport.install(reload_support=True) # doctest: +ELLIPSIS
+    (None, ...
+    >>> from pygtftk.stats.intersect.overlap import overlap_regions as oc
+    >>> bedA = [('chr1',100,200),('chr1',300,400),('chr1',1000,1200)]
+    >>> bedB = [('chr1',150,250),('chr1',350,380)]
+    >>> all_chrom = ['chr1']
+    >>> expected_result = [('chr1', 150, 200), ('chr1', 350, 380)]
+    >>> inter = oc.find_intersection(bedA, bedB, all_chrom)
+    >>> assert expected_result == inter
+
     """
     # Read those fake beds as pandas dataframes
     a_df = pd.DataFrame(fake_bed_A)

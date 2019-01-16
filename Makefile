@@ -59,10 +59,10 @@ pylintshort:
 	@find . -name "*.py"  -exec pylint $(PYLINT_ARGS) {} \; 2>/dev/null |perl -ne  "print if(/(Your code has been rated)|(\*\*\*\* Module)/)"
 
 nose:
-	@cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(bwig)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
+	@cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py*" | perl -ne  'print unless(/(setup)|(plugin)|(bwig)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i --doctest-extension=pyx;   done
 
 nose_travis:
-	@ source activate pygtftk_py3k; mkdir -p ~/tmp; cd ~/tmp ; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; echo $$a; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)||(bwig)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
+	@ source activate pygtftk_py3k; mkdir -p ~/tmp; cd ~/tmp ; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; echo $$a; cd $$a ; for i in `find . -name "*.py*" | perl -ne  'print unless(/(setup)|(plugin)||(bwig)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i --doctest-extension=pyx;   done
 
 
 install:
