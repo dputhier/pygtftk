@@ -45,7 +45,7 @@ Or alternatively
 Getting the list of funtional tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-One can access to the list of implemented  tests through the -p/--plugin-tests arguments. These tests may be run using `bats <https://github.com/sstephenson/bats>`_ (Bash Automated Testing System).
+One can get the list of implemented tests through the -p/--plugin-tests arguments. These tests may be run using `bats <https://github.com/sstephenson/bats>`_ (Bash Automated Testing System).
 
 
 .. code-block:: bash

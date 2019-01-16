@@ -37,7 +37,7 @@ def make_parser():
     parser_grp.add_argument('-k', '--key',
                             help="The name of the attribute for which a "
                                  "prefix/suffix is to be added to the corresponding"
-                                 " values (e.g, gene_id, transcript_id,...).",
+                                 " values (e.g, gene_id, transcript_id...).",
                             default="chrom",
                             metavar="KEY",
                             type=str)

@@ -28,7 +28,7 @@ Table of content
     information
     editing
     selection
-    convertion
+    conversion
     annotation
     coordinates
     sequence

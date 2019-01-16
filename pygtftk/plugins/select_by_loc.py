@@ -22,7 +22,7 @@ __doc__ = """
 """
 __notes__ = """
  -- A transcript is defined here as the genomic region from TSS to TTS including introns.
- -- This function will return the transcript and all its associated elements (exons, utr,...)
+ -- This function will return the transcript and all its associated elements (exons, utr...)
  even if only a fraction (e.g intron) of the transcript is overlapping the feature.
  -- If -/-ft-type is set to 'gene' returns the gene and all its associated elements.
 """

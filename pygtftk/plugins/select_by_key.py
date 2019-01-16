@@ -335,7 +335,7 @@ else:
       [ "$result" -eq 0 ]
     }
     
-    # Select_by_key: bed convertion
+    # Select_by_key: bed conversion
     @test "select_by_key_11" {
      result=`gtftk select_by_key -k feature -v exon -i simple_02.gtf -m transcript_id,gene_id,exon_id  -s "||" -b | wc -l`
       [ "$result" -eq 25 ]
@@ -347,13 +347,13 @@ else:
       [ "$result" -eq 45 ]
     }
     
-    # Select_by_key: bed convertion
+    # Select_by_key: bed conversion
     @test "select_by_key_13" {
      result=`gtftk select_by_key -k feature -v transcript -i simple_02.gtf -m transcript_id,gene_id,exon_id -b  -s "||"| wc -l`
       [ "$result" -eq 15 ]
     }
     
-    # Select_by_key: bed convertion
+    # Select_by_key: bed conversion
     @test "select_by_key_14" {
      result=`gtftk select_by_key -k feature -v transcript -i simple_02.gtf -m transcript_id,gene_id,exon_id  -b -s "||"|  cut -f2 | sort -n| perl -npe 's/\\n/,/'`
       [ "$result" = "2,2,21,27,32,49,64,64,106,106,124,124,175,179,209," ]
