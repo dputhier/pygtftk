@@ -8,6 +8,7 @@ requirements_file: requirements_readthedoc.txt
 
 python:
    pip_install: false
+   use_system_site_packages: false
    version: 3.5
    setup_py_install: true
    extra_requirements:
