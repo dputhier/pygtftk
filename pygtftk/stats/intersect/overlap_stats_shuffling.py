@@ -3,13 +3,14 @@ This is the main function to compute random shuffles to assess statistical
 significance overlap of two sets of genomic regions, provided as BED files.
 """
 
-import numpy as np
-import pybedtools
 from collections import OrderedDict
-
 from multiprocessing import Pool
 import functools as ft
 import time
+import sys
+
+import pybedtools
+import numpy as np
 
 from pygtftk.utils import message
 
@@ -25,7 +26,8 @@ from pygtftk.stats.intersect import negbin_fit as nf
 ################################################################################
 
 
-def compute_all_intersections_minibatch(Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2,
+def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
+                                        all_chrom1, all_chrom2,
                                         minibatch_size,
                                         use_markov_shuffling,
                                         nb_threads):
@@ -59,14 +61,14 @@ def compute_all_intersections_minibatch(Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2,
     # shuffle the rows independantly.
 
     # We can use a classical or a order-2 Markov shuffling. This results in different wrappers here :
-    if not use_markov_shuffling :
-        def batch_and_shuffle_list(l): return cs.shuffle(np.tile(l, (minibatch_size,1)))
-    if use_markov_shuffling :
-        def batch_and_shuffle_list(l): return cs.markov_shuffle(np.tile(l, (minibatch_size,1)), nb_threads = nb_threads)
+    if not use_markov_shuffling:
+        def batch_and_shuffle_list(l): return cs.shuffle(np.tile(l, (minibatch_size, 1)))
+    if use_markov_shuffling:
+        def batch_and_shuffle_list(l): return cs.markov_shuffle(np.tile(l, (minibatch_size, 1)), nb_threads = nb_threads)
 
     # Produce the shuffles on a chromosome basis
     start = time.time()
-    for chrom in all_chroms :
+    for chrom in all_chroms:
         shuffled_Lr1_batches[chrom] = batch_and_shuffle_list(Lr1[chrom])
         shuffled_Li1_batches[chrom] = batch_and_shuffle_list(Li1[chrom])
         shuffled_Lr2_batches[chrom] = batch_and_shuffle_list(Lr2[chrom])
@@ -144,10 +146,10 @@ def compute_overlap_stats(bedA, bedB,
 
 
     # If there is an exclusion to be done, do it
-    if bed_excl != None:
+    if bed_excl is not None:
         exclusion = pybedtools.BedTool(bed_excl) # Just in case, and merge it too.
 
-        chrom_len = read_bed.exclude_chromsizes(exclusion,chrom_len) # Shorten the chrom_len only once, and separately
+        chrom_len = read_bed.exclude_chromsizes(exclusion, chrom_len) # Shorten the chrom_len only once, and separately
 
         bed_A_as_pybedtool = read_bed.exclude_concatenate(bed_A_as_pybedtool, exclusion, chrom_len)
         bed_B_as_pybedtool = read_bed.exclude_concatenate(bed_B_as_pybedtool, exclusion, chrom_len)
@@ -160,8 +162,8 @@ def compute_overlap_stats(bedA, bedB,
 
 
     # Proper reading of the bed file as a list of intervals
-    Lr1, Li1, all_chrom1 = read_bed.bed_to_lists_of_intervals(bed_A_as_pybedtool,chrom_len)
-    Lr2, Li2, all_chrom2 = read_bed.bed_to_lists_of_intervals(bed_B_as_pybedtool,chrom_len)
+    Lr1, Li1, all_chrom1 = read_bed.bed_to_lists_of_intervals(bed_A_as_pybedtool, chrom_len)
+    Lr2, Li2, all_chrom2 = read_bed.bed_to_lists_of_intervals(bed_B_as_pybedtool, chrom_len)
     stop = time.time()
     message('BED files read as lists of intervals in '+str(stop-start)+' s', type='DEBUG')
 
@@ -194,7 +196,7 @@ def compute_overlap_stats(bedA, bedB,
 
     # Unpack the stats
     bp_overlaps = [s[0] for s in stats]
-    unlisted_bp_overlaps = [item for sublist in bp_overlaps for item in sublist]
+    # unlisted_bp_overlaps = [item for sublist in bp_overlaps for item in sublist] # TODO : only useful if we plot them individually
     summed_bp_overlaps = [sum(x) for x in bp_overlaps]
     intersect_nbs = [s[1] for s in stats]
 
@@ -203,10 +205,10 @@ def compute_overlap_stats(bedA, bedB,
     #### Fitting of a Negative Binomial distribution on the shuffles
     # Only relevant for classical shuffle, not Markov
 
-    if use_markov_shuffling :
+    if use_markov_shuffling:
         ps = pn = -1 # TODO explain why -1 is returned !
 
-    else :
+    else:
         # Renaming esperances and variances
         esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(summed_bp_overlaps)
         esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs = np.mean(intersect_nbs), np.var(intersect_nbs)
@@ -215,11 +217,11 @@ def compute_overlap_stats(bedA, bedB,
         # We use a normal law as NB -> norm for large N, but this is irrelevant
         # if the mean is under 50 roughly (should not happen with this kind of
         # data, but just in case)
-        if esperance_fitted_summed_bp_overlaps<50 :
+        if esperance_fitted_summed_bp_overlaps<50:
             ps = pn = -1
-        else :
-            ps = nf.check_negbin_adjustment(summed_bp_overlaps,esperance_fitted_summed_bp_overlaps,variance_fitted_summed_bp_overlaps).pvalue
-            pn = nf.check_negbin_adjustment(intersect_nbs,esperance_fitted_intersect_nbs,variance_fitted_intersect_nbs).pvalue
+        else:
+            ps = nf.check_negbin_adjustment(summed_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps).pvalue
+            pn = nf.check_negbin_adjustment(intersect_nbs, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs).pvalue
 
 
 
@@ -242,12 +244,12 @@ def compute_overlap_stats(bedA, bedB,
     # We can only use a Neg Binom p-val if we can fit it, and that is not the case for
     # the Markov shuffle : we must use an empirical p-value
     if use_markov_shuffling :
-        pval_intersect_nb = nf.empirical_p_val(true_intersect_nb,intersect_nbs)
-        pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps,summed_bp_overlaps)
+        pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
+        pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
 
     else :
-        pval_intersect_nb = np.exp(nf.log_nb_pval(true_intersect_nb,esperance_fitted_intersect_nbs,variance_fitted_intersect_nbs))
-        pval_bp_overlaps = np.exp(nf.log_nb_pval(true_bp_overlaps,esperance_fitted_summed_bp_overlaps,variance_fitted_summed_bp_overlaps))
+        pval_intersect_nb = np.exp(nf.log_nb_pval(true_intersect_nb, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs))
+        pval_bp_overlaps = np.exp(nf.log_nb_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps))
 
 
     # # Number limit : the lower limit for the p-value is roughly 1.11E-16 due to the number format.

@@ -14,7 +14,7 @@ import pandas as pd
 # -------------------------- Reading bed files ------------------------------- #
 ################################################################################
 
-def bed_to_lists_of_intervals(bed,chromsizes):
+def bed_to_lists_of_intervals(bed, chromsizes):
     """
     Reads a bed file (as a pybedtools.BedTool object) and returns respectively
     two dictionaries, with the list of region lengths and interregions lengths
@@ -60,9 +60,9 @@ def bed_to_lists_of_intervals(bed,chromsizes):
 
         previous_feature_stop = 0 # This way, the distance between chromosome beginning and first feature is covered
         for f in features_on_this_chrom:
-            lr.append(bed.at[f,'end'] - bed.at[f,'start'])
-            li.append(bed.at[f,'start'] - previous_feature_stop)
-            previous_feature_stop = bed.at[f,'end']
+            lr.append(bed.at[f, 'end'] - bed.at[f, 'start'])
+            li.append(bed.at[f, 'start'] - previous_feature_stop)
+            previous_feature_stop = bed.at[f, 'end']
 
         # Add the missing inter-region distance between the last feature and the chromosome end
         last_li = chromsizes[chrom] - previous_feature_stop
@@ -84,23 +84,22 @@ def bed_to_lists_of_intervals(bed,chromsizes):
 # ----------------------- Exclusion and concatenation ------------------------ #
 #################################################################################
 
-def exclude_chromsizes(exclusion,chromsizes):
+def exclude_chromsizes(exclusion, chromsizes):
     """
     Shortens the chromsome sizes (given as a dictionary) by the total length of
     each excluded region (given as a BedTool file).
     """
     exclusion = exclusion.to_dataframe()
-    for ie, excl in exclusion.iterrows() :
+    for _, excl in exclusion.iterrows():
         excl_length = abs(excl['end'] - excl['start'])
         chromsizes[excl['chrom']] = chromsizes[excl['chrom']] - excl_length
     return chromsizes
 
 
-def exclude_concatenate(bedfile, exclusion, chromsizes):
+def exclude_concatenate(bedfile, exclusion):
     r"""
     When given a bedfile (in pybedtools BedFile format) and an exclusion bed file
     (in pybedtools BedFile format), will shorten the original bedfile by concatenation.
-    The chromsizes (must be a dictionary) will also be appropriately shortened.
     Those two arguments must be BedTool objects from pybedtools.
 
     This means the regions defined in `exclusion` will be considered removed
@@ -131,9 +130,9 @@ def exclude_concatenate(bedfile, exclusion, chromsizes):
     """
 
     # Raw edition does not work in pybedtools, so need to use pandas dataframe instead.
-    # Also, merge the files before, just in case they were not.
-    bedfile = bedfile.merge().to_dataframe()
-    exclusion = exclusion.merge().to_dataframe()
+    # Also, merge and sort the files before, just in case they were not.
+    bedfile = bedfile.merge().sort().to_dataframe()
+    exclusion = exclusion.merge().sort().to_dataframe()
 
     # WARNING Must use a copy and not remove elements one by one, because that
     # would shift the position and now you are comparing positions in two
@@ -142,7 +141,7 @@ def exclude_concatenate(bedfile, exclusion, chromsizes):
     result = bedfile.copy()
 
     # For each region in 'exclusion' :
-    for ie, excl in exclusion.iterrows() :
+    for _, excl in exclusion.iterrows():
 
         excl_length = abs(excl['end'] - excl['start'])
 
@@ -155,41 +154,45 @@ def exclude_concatenate(bedfile, exclusion, chromsizes):
 
             # Rq : I use '<' and '>=' so do not use '<=' or '>' if you modify this, else not all conditions will be covered
 
-            # WARNING Since this is an iterative algorithm, you must always modify the values from result and always write the new value of result
-            # as a function of the previous value of result, otherwise you are comparing positions from two different coordinates sets.
+            # WARNING Since this is an iterative algorithm, we must always
+            # compute the conditions and deltas from the old values in bedfile,
+            # but modify (ie. apply deltas) the values from result by always
+            # writing the new value of result as a function of the previous
+            # value of result, otherwise you are comparing positions from two
+            # different coordinates sets.
 
             # all regions where region_start is under exclu_start but region_end is higher thean exclu_start : truncate by setting region_end to exclu_start
-            if (bedfile.at[i,'start'] < excl['start']) & (bedfile.at[i,'end'] >= excl['start']) :
-                truncate_by = bedfile.at[i,'end'] - excl['start']
-                result.at[i,'end'] = result.at[i,'end'] - truncate_by
+            if (bedfile.at[i, 'start'] < excl['start']) & (bedfile.at[i, 'end'] >= excl['start']):
+                truncate_by = bedfile.at[i, 'end'] - excl['start']
+                result.at[i, 'end'] = result.at[i, 'end'] - truncate_by
 
             # all which contain the excluded region (start before and end after) : shorten the end by the region length
-            elif (bedfile.at[i,'start'] < excl['start']) & (bedfile.at[i,'end'] >= excl['end']):
-                result.at[i,'end'] = result.at[i,'end'] - excl_length
+            elif (bedfile.at[i, 'start'] < excl['start']) & (bedfile.at[i, 'end'] >= excl['end']):
+                result.at[i, 'end'] = result.at[i, 'end'] - excl_length
 
             # all regions where region_start > excl_start but region_end < excl_end (so are included) : eliminate those
-            elif (bedfile.at[i,'start'] >= excl['start']) & (bedfile.at[i,'end'] < excl['end']) :
+            elif (bedfile.at[i, 'start'] >= excl['start']) & (bedfile.at[i, 'end'] < excl['end']):
                 result.drop(i, inplace=True)
 
             # all regions where region_start is higher than excl_start but lower than excl_end and region_end is higher than excl_end : truncate by setting region_start to excl_end and also region_end = region_end - nb_of_nt_of_region_that_are_in_excl
-            elif (bedfile.at[i,'start'] >= excl['start']) & (bedfile.at[i,'start'] < excl['end']) & (bedfile.at[i,'end'] >= excl['end']) :
+            elif (bedfile.at[i, 'start'] >= excl['start']) & (bedfile.at[i, 'start'] < excl['end']) & (bedfile.at[i, 'end'] >= excl['end']):
 
                 # Compute some utils
-                region_length_before_truncating = result.at[i,'end'] - result.at[i,'start']
-                nb_of_bp_of_region_that_are_in_excl = (excl['end'] - bedfile.at[i,'start'])
+                region_length_before_truncating = result.at[i, 'end'] - result.at[i, 'start']
+                nb_of_bp_of_region_that_are_in_excl = (excl['end'] - bedfile.at[i, 'start'])
 
                 # Move start point
-                forward_by = bedfile.at[i,'start'] - excl['start']
-                result.at[i,'start'] = result.at[i,'start'] - forward_by
+                forward_by = bedfile.at[i, 'start'] - excl['start']
+                result.at[i, 'start'] = result.at[i, 'start'] - forward_by
 
                 # Move end point to 'new start point + new length'
                 new_length = region_length_before_truncating - nb_of_bp_of_region_that_are_in_excl
-                result.at[i,'end'] = result.at[i,'start'] + new_length
+                result.at[i, 'end'] = result.at[i, 'start'] + new_length
 
             # all regions where region_start and region_end are both higher than excl_end : move by setting region_start = region_start - excl_length and region_end = region_end - excl_length
-            elif (bedfile.at[i,'start'] >= excl['end']) :
-                result.at[i,'start'] = result.at[i,'start'] - excl_length
-                result.at[i,'end'] = result.at[i,'end'] - excl_length
+            elif (bedfile.at[i, 'start'] >= excl['end']):
+                result.at[i, 'start'] = result.at[i, 'start'] - excl_length
+                result.at[i, 'end'] = result.at[i, 'end'] - excl_length
 
 
     # Convert the dataframe back into a bedfile and return it

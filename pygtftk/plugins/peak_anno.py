@@ -548,7 +548,7 @@ def peak_anno(inputfile=None,
 
     d = pd.read_csv(data_file.name, sep="\t", header=0)
 
-    plot_results(d,data_file,pdf_file,pdf_width,pdf_height,dpi)
+    plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi)
 
 
 
@@ -613,7 +613,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
                            position=position_dodge(.6))
 
         # Text for the p-value
-        text = dm[statname + '_pvalue'].append(na_series);
+        text = dm[statname + '_pvalue'].append(na_series)
         text.index = range(len(text))
         text = text.apply(lambda x: 'p=' + '{0:.3g}'.format(x))  # Add 'p=' before and format the p value
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
