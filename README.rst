@@ -114,7 +114,7 @@ Installation through pip can be done as follow. ::
 Documentation
 --------------
 
-Documentation about the latest release is dynamically produced and available at `readthedoc server <https://pygtftk.readthedocs.io/en/master/>`_.
+Documentation about the latest release is dynamically produced and available at `readthedoc server <https://pygtftk.readthedocs.io/en/latest/>`_.
 
 Testing
 --------
