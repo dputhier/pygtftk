@@ -13,7 +13,7 @@
 
 .. image:: https://readthedocs.org/projects/pygtftk/badge/?version=master
     :alt: Documentation Status
-    :target: https://pygtftk.readthedocs.io/en/master/
+    :target: https://pygtftk.readthedocs.io/en/latest/
 
 .. image:: https://travis-ci.org/dputhier/pygtftk.svg?branch=master
     :target: https://travis-ci.org/dputhier/pygtftk
