@@ -2,7 +2,7 @@ build:
     image: 2.0
   
 conda:
-   file: conda/env.yaml
+   file: conda/env_rtfd.yaml
 
 requirements_file: requirements.txt
 
