@@ -11,7 +11,7 @@ for PYBIN in `ls --color=none -d1 /opt/python/*/bin| grep -P "(35)|(36)"`; do
     echo ""
     "${PYBIN}/pip" install -U pip
     "${PYBIN}/pip" install numpy>=1.10.0
-    "${PYBIN}/pip" install -r /io/requirements_developers.txt
+    "${PYBIN}/pip" install -r /io/requirements.txt
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done
 

@@ -3,11 +3,13 @@ build:
   
 conda:
    file: conda/env.yaml
-    
-requirements_file: requirements_readthedoc.txt
+
+requirements_file: requirements.txt
 
 python:
    pip_install: false
    version: 3.5
-   setup_py_install: false
+   setup_py_install: true
+   extra_requirements:
+      - dev
 formats: []
