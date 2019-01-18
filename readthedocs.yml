@@ -1,15 +1,12 @@
 build:
     image: 2.0
-  
 conda:
-   file: conda/env_rtfd.yaml
-
+  file: conda/env_rtfd.yaml
 requirements_file: requirements.txt
-
 python:
-   pip_install: false
-   version: 3.5
-   setup_py_install: true
-   extra_requirements:
-      - dev
+  pip_install: false
+  version: 3.5
+  setup_py_install: true
+  extra_requirements:
+    - dev
 formats: []
