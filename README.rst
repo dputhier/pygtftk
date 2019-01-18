@@ -22,7 +22,7 @@
     :target: https://travis-ci.org/dputhier/pygtftk
 
 .. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/installer/conda.svg
-    :target: https://conda.anaconda.org/guillaumecharbonnier
+    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
 
 .. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/platforms.svg
     :target: https://anaconda.org/guillaumecharbonnier/pygtftk
