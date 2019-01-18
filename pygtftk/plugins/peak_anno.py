@@ -8,6 +8,7 @@ import argparse
 import os
 import re
 import sys
+import time
 import warnings
 
 import numpy as np
@@ -28,6 +29,7 @@ from pygtftk.utils import message
 
 # Import the main function from the stats.intersect module
 from pygtftk.stats.intersect.overlap_stats_shuffling import compute_overlap_stats
+from pygtftk.stats.intersect import read_bed_as_list as read_bed # Only used here for exclusions
 
 
 
@@ -62,15 +64,16 @@ __notes__ = """
 
  -- The lists of region and inter-region lengths can be shuffled independantly, or by using two independant Markov models
  of order 2 respectively for each (only use if you suspect there is a structure to the data, not recommended in the general case).
- Furthermore, this is *very* long (hours ?).
+ Furthermore, this is *very* time-consuming (hours ?).
 
  -- The goal of the minibatch is to save RAM. Increase the number of minibatches instead of the size of each. You may need to use very small minibatches if you have large sets of regions.
 
  -- You can exclude regions from the shuffling, but the same ones will be excluded from the peak_file and the GTF.
+ This in Beta for now and will be very time-consuming (hours) especially if you have few CPU cores. Try using an exclusion file that is as small (at most a thousand lines) as possible.
 
  -- Although peak_anno itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb. It is recommended you do not run other programs in the meantime.
 
- -- For the p-value Negative Binomial calcuation, if mean > var, the variance will be set to the mean and a message will be sent
+ -- For the p-value Negative Binomial calcuation, if mean > var, the variance will be set to the mean and a message will be sent.
  """
 
 
@@ -100,44 +103,6 @@ def make_parser():
                             action=arg_formatter.CheckChromFile,
                             required=False)
 
-    parser_grp.add_argument('-k', '--nb-threads',
-                            help='Number of threads for multiprocessing.',
-                            type=arg_formatter.ranged_num(0, None),
-                            default=8,
-                            required=False)
-
-    parser_grp.add_argument('-s', '--seed',
-                            help='Numpy random seed.',
-                            type=arg_formatter.ranged_num(None, None),
-                            default=42,
-                            required=False)
-
-    parser_grp.add_argument('-mn', '--minibatch-nb',
-                            help='Number of minibatches of shuffles.',
-                            type=arg_formatter.ranged_num(0, None),
-                            default=8,
-                            required=False)
-
-    parser_grp.add_argument('-ms', '--minibatch-size',
-                            help='Size of each minibatch, in number of shuffles.',
-                            type=arg_formatter.ranged_num(0, None),
-                            default=25,
-                            required=False)
-
-    parser_grp.add_argument('-e', '--bed-excl',
-                            help='Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features.'
-                                 ' (bed format).',
-                            default=None,
-                            metavar="BED",
-                            type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
-                            required=False)
-
-    parser_grp.add_argument('-ma', '--use-markov',
-                            help='Whether to use Markov shuffling instead of independant shuffles for respectively region lengths and inter-region lengths.',
-                            default=False,
-                            type=bool,
-                            required=False)
-
     parser_grp.add_argument('-p', '--peak-file',
                             help='The file containing the peaks/regions to be annotated.'
                                  ' (bed format).',
@@ -164,10 +129,48 @@ def make_parser():
                             type=int,
                             required=False)
 
+    parser_grp.add_argument('-k', '--nb-threads',
+                            help='Number of threads for multiprocessing.',
+                            type=arg_formatter.ranged_num(0, None),
+                            default=8,
+                            required=False)
+
+    parser_grp.add_argument('-s', '--seed',
+                            help='Numpy random seed.',
+                            type=arg_formatter.ranged_num(None, None),
+                            default=42,
+                            required=False)
+
+    parser_grp.add_argument('-mn', '--minibatch-nb',
+                            help='Number of minibatches of shuffles.',
+                            type=arg_formatter.ranged_num(0, None),
+                            default=10,
+                            required=False)
+
+    parser_grp.add_argument('-ms', '--minibatch-size',
+                            help='Size of each minibatch, in number of shuffles.',
+                            type=arg_formatter.ranged_num(0, None),
+                            default=20,
+                            required=False)
+
     parser_grp.add_argument('-d', '--downstream',
                             help="Extend the TSS and TTS of in  3' by a given value. ",
                             default=1000,
                             type=int,
+                            required=False)
+
+    parser_grp.add_argument('-e', '--bed-excl',
+                            help='Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features. Can take a long time.'
+                                 ' (bed format).',
+                            default=None,
+                            metavar="BED",
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
+                            required=False)
+
+    parser_grp.add_argument('-ma', '--use-markov',
+                            help='Whether to use Markov shuffling instead of independant shuffles for respectively region lengths and inter-region lengths. Not recommended in the general case. Can take a *very* long time.',
+                            default=False,
+                            type=bool,
                             required=False)
 
     parser_grp.add_argument('-pw', '--pdf-width',
@@ -255,9 +258,11 @@ def peak_anno(inputfile=None,
     # Load the peak file as pybedtools.BedTool object
     peak_file = pybedtools.BedTool(peak_file.name)
 
-    # Just in case it was not, sort the file.
+    # Just in case it was not, sort and merge the file.
     # In any case, it should be short compared to the expected total running time.
-    peak_file = peak_file.sort()
+    peak_file = peak_file.sort().merge()
+
+
 
     # -------------------------------------------------------------------------
     # If user wants no basic features (e.g prom, genes, exons) then he
@@ -288,6 +293,41 @@ def peak_anno(inputfile=None,
     # -------------------------------------------------------------------------
 
     chrom_len = chrom_info_as_dict(chrom_info)
+
+
+
+    # -------------------------------------------------------------------------
+    # Region exclusion
+    # -------------------------------------------------------------------------
+
+    # If there is an exclusion of certain regions to be done, do it.
+    # Here, we do exclusion on the peak file ('bedA') and the chrom sizes.
+    # Exclusion on the other bed files or gtf extracted bed files ('bedB') is
+    # done once we get to them.
+    # overlap_stats_shuffling() will handle that, with the same condition : that bed_excl != None
+
+    # WARNING : do not modify chrom_info or peak_file afterwards !
+    # We can afford to modify chrom_len because we only modify its values, and the
+    # rest of the peak_anno code relie otherwise only on its keys.
+
+    if bed_excl is not None:
+
+        # Treating bed_excl once and for all : turning it into a pybedtools file, merging it and sorting it.
+        # NOTE This will prevent later conflicts, if two different pybedtools objects try to access it.
+        bed_excl = pybedtools.BedTool(bed_excl)
+        bed_excl = bed_excl.sort().merge()
+        # Split in its constituent commands in case of very large files
+
+        exclstart = time.time()
+        message('Exclusion BED found, proceeding on the BED peaks file. This may take a few minutes.', type='INFO')
+
+        chrom_len = read_bed.exclude_chromsizes(bed_excl, chrom_len) # Shorten the chrom_len only once, and separately
+        peak_file = read_bed.exclude_concatenate(pybedtools.BedTool(peak_file), bed_excl, nb_threads)
+
+        exclstop = time.time()
+        message('Exclusion completed for the BED PEAKS file in '+str(exclstop-exclstart)+' s', type='DEBUG')
+
+
 
     # -------------------------------------------------------------------------
     # Read the gtf file and discard any records corresponding to chr not declared

@@ -145,19 +145,23 @@ def compute_overlap_stats(bedA, bedB,
     bed_B_as_pybedtool = pybedtools.BedTool(bedB).merge()
 
 
-    # If there is an exclusion to be done, do it
+    # If there is an exclusion to be done, do it.
+
+    # NOTE : exclusion on the peak file (bedA) has been moved to peak_anno itself to avoid repetition. Same thing for the chromsizes.
+    # This means that when there is an exclusion to be done, this function must do in on bedB only.
     if bed_excl is not None:
-        exclusion = pybedtools.BedTool(bed_excl) # Just in case, and merge it too.
+        exclstart = time.time()
+        message('Performing exclusion on the second file, proceeding. This may take a few minutes.', type='INFO')
 
-        chrom_len = read_bed.exclude_chromsizes(exclusion, chrom_len) # Shorten the chrom_len only once, and separately
+        bed_B_as_pybedtool = read_bed.exclude_concatenate(bed_B_as_pybedtool, bed_excl, nb_threads)
 
-        bed_A_as_pybedtool = read_bed.exclude_concatenate(bed_A_as_pybedtool, exclusion, chrom_len)
-        bed_B_as_pybedtool = read_bed.exclude_concatenate(bed_B_as_pybedtool, exclusion, chrom_len)
+        exclstop = time.time()
+        message('Exclusion completed in '+str(exclstop-exclstart)+' s', type='DEBUG')
 
 
     # Raise exception if there are less than 2 remaining regions in bedA and bedB
     if (len(bed_A_as_pybedtool) < 2) | (len(bed_B_as_pybedtool) < 2):
-        message('Less than 2 remaining regions in either bed.', type='ERROR')
+        message('Less than 2 remaining regions in one of the BED files.', type='ERROR')
         sys.exit()
 
 

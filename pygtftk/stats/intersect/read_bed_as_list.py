@@ -3,9 +3,15 @@ A set of functions to turn a BED file into a list of intervals, and exclude
 certain regions to create concatenated sub-chromosomes.
 """
 
+from multiprocessing import Pool
+from functools import partial
+from collections import Counter
+
 import pybedtools
 import numpy as np
 import pandas as pd
+
+from pygtftk.utils import message
 
 
 
@@ -80,6 +86,8 @@ def bed_to_lists_of_intervals(bed, chromsizes):
 
 
 
+
+
 ################################################################################
 # ----------------------- Exclusion and concatenation ------------------------ #
 #################################################################################
@@ -88,6 +96,20 @@ def exclude_chromsizes(exclusion, chromsizes):
     """
     Shortens the chromsome sizes (given as a dictionary) by the total length of
     each excluded region (given as a BedTool file).
+
+
+    >>> from pygtftk.utils import get_example_file
+    >>> from collections import OrderedDict
+    >>> from pygtftk.stats.intersect.read_bed_as_list import exclude_chromsizes
+    >>> import pybedtools
+    >>> import numpy.testing as npt
+    >>> c = get_example_file(ext="chromInfo")[0]
+    >>> from pygtftk.utils import chrom_info_as_dict
+    >>> cl = chrom_info_as_dict(open(c, "r"))
+    >>> e_string = 'chr1\t0\t100\nchr2\t0\t300'
+    >>> e = pybedtools.BedTool(e_string,from_string=True).sort().merge()
+    >>> result = exclude_chromsizes(e,cl)
+    >>> assert result == OrderedDict([('chr1', 200), ('chr2', 300), ('all_chrom', 900)])
     """
     exclusion = exclusion.to_dataframe()
     for _, excl in exclusion.iterrows():
@@ -96,49 +118,31 @@ def exclude_chromsizes(exclusion, chromsizes):
     return chromsizes
 
 
-def exclude_concatenate(bedfile, exclusion):
-    r"""
-    When given a bedfile (in pybedtools BedFile format) and an exclusion bed file
-    (in pybedtools BedFile format), will shorten the original bedfile by concatenation.
-    Those two arguments must be BedTool objects from pybedtools.
 
-    This means the regions defined in `exclusion` will be considered removed
-    and the chromosme stitched back in a shorter version of itself, with the
-    coordinates shifted backwards to represent that.
-    Example :
-        chr1 100 200
-        chr1 300 400
-    If we exclude 'chr1 150 300' the file becomes :
-        chr1 100 150
-        chr1 150 250
 
-    Remark : This version is highly inefficient (1 second per excluded feature)
-    but is only run once per analysis, so it will be improved later.
 
-    >>> from pygtftk.utils import get_example_file
-    >>> from pygtftk.stats.intersect.read_bed_as_list import exclude_concatenate
-    >>> import pybedtools
-    >>> import numpy.testing as npt
-    >>> f = pybedtools.BedTool(get_example_file("simple","bed")[0])
-    >>> c = get_example_file(ext="chromInfo")[0]
-    >>> from pygtftk.utils import chrom_info_as_dict
-    >>> cl = chrom_info_as_dict(open(c, "r"))
-    >>> e = pybedtools.BedTool('chr1\t12\t45',from_string=True)
-    >>> result = exclude_concatenate(f,e,cl)
-    >>> assert str(result[0]) == 'chr1\t10\t12\n'
-    >>> assert str(result[1]) == 'chr1\t12\t17\n'
+
+def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
+    """
+    Subfunction of exclude_concatenate, for one chromosome only. Used for
+    multiprocessing.
+
+    Please see the documentation and code comments of exclude_concatenate
+    for more information.
     """
 
-    # Raw edition does not work in pybedtools, so need to use pandas dataframe instead.
-    # Also, merge and sort the files before, just in case they were not.
-    bedfile = bedfile.merge().sort().to_dataframe()
-    exclusion = exclusion.merge().sort().to_dataframe()
+    message('Exclusion for chrom : '+str(chrom),type='DEBUG')
+
+    ### Take PARTIAL bedfiles and exclusion : only for the current chromosome
+    bedfile = bedfile[bedfile.chrom == chrom]
+    exclusion = exclusion[exclusion.chrom == chrom]
+
 
     # WARNING Must use a copy and not remove elements one by one, because that
     # would shift the position and now you are comparing positions in two
-    # different coodinates systems (between 'exclusion' with the original ones
+    # different coordinates systems (between 'exclusion' with the original ones
     # and the shifted 'bedfile')
-    result = bedfile.copy()
+    partial_result = bedfile.copy()
 
     # For each region in 'exclusion' :
     for _, excl in exclusion.iterrows():
@@ -146,8 +150,7 @@ def exclude_concatenate(bedfile, exclusion):
         excl_length = abs(excl['end'] - excl['start'])
 
         # Gain some time by selecting only the rows on which we will operate
-        filtered_rows = bedfile[(bedfile.chrom == excl.chrom) & (bedfile.end >= excl['start'])]
-        filtered_rows = filtered_rows.index
+        filtered_rows = bedfile[(bedfile.chrom == excl.chrom) & (bedfile.end >= excl['start'])].index
 
         ### TREATING BEDFILE
         for i in filtered_rows:
@@ -164,39 +167,105 @@ def exclude_concatenate(bedfile, exclusion):
             # all regions where region_start is under exclu_start but region_end is higher thean exclu_start : truncate by setting region_end to exclu_start
             if (bedfile.at[i, 'start'] < excl['start']) & (bedfile.at[i, 'end'] >= excl['start']):
                 truncate_by = bedfile.at[i, 'end'] - excl['start']
-                result.at[i, 'end'] = result.at[i, 'end'] - truncate_by
+                partial_result.at[i, 'end'] = partial_result.at[i, 'end'] - truncate_by
 
             # all which contain the excluded region (start before and end after) : shorten the end by the region length
             elif (bedfile.at[i, 'start'] < excl['start']) & (bedfile.at[i, 'end'] >= excl['end']):
-                result.at[i, 'end'] = result.at[i, 'end'] - excl_length
+                partial_result.at[i, 'end'] = partial_result.at[i, 'end'] - excl_length
 
             # all regions where region_start > excl_start but region_end < excl_end (so are included) : eliminate those
             elif (bedfile.at[i, 'start'] >= excl['start']) & (bedfile.at[i, 'end'] < excl['end']):
-                result.drop(i, inplace=True)
+                partial_result.drop(i, inplace=True)
 
             # all regions where region_start is higher than excl_start but lower than excl_end and region_end is higher than excl_end : truncate by setting region_start to excl_end and also region_end = region_end - nb_of_nt_of_region_that_are_in_excl
             elif (bedfile.at[i, 'start'] >= excl['start']) & (bedfile.at[i, 'start'] < excl['end']) & (bedfile.at[i, 'end'] >= excl['end']):
 
                 # Compute some utils
-                region_length_before_truncating = result.at[i, 'end'] - result.at[i, 'start']
+                region_length_before_truncating = partial_result.at[i, 'end'] - partial_result.at[i, 'start']
                 nb_of_bp_of_region_that_are_in_excl = (excl['end'] - bedfile.at[i, 'start'])
 
                 # Move start point
                 forward_by = bedfile.at[i, 'start'] - excl['start']
-                result.at[i, 'start'] = result.at[i, 'start'] - forward_by
+                partial_result.at[i, 'start'] = partial_result.at[i, 'start'] - forward_by
 
                 # Move end point to 'new start point + new length'
                 new_length = region_length_before_truncating - nb_of_bp_of_region_that_are_in_excl
-                result.at[i, 'end'] = result.at[i, 'start'] + new_length
+                partial_result.at[i, 'end'] = partial_result.at[i, 'start'] + new_length
 
             # all regions where region_start and region_end are both higher than excl_end : move by setting region_start = region_start - excl_length and region_end = region_end - excl_length
             elif (bedfile.at[i, 'start'] >= excl['end']):
-                result.at[i, 'start'] = result.at[i, 'start'] - excl_length
-                result.at[i, 'end'] = result.at[i, 'end'] - excl_length
+                partial_result.at[i, 'start'] = partial_result.at[i, 'start'] - excl_length
+                partial_result.at[i, 'end'] = partial_result.at[i, 'end'] - excl_length
 
+    return partial_result
+
+
+
+def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
+    r"""
+    When given a bedfile (in pybedtools BedFile format) and an exclusion bed file
+    (in pybedtools BedFile format), will shorten the original bedfile by concatenation.
+    Those two arguments must be BedTool objects from pybedtools.
+
+    This means the regions defined in `exclusion` will be considered removed
+    and the chromosme stitched back in a shorter version of itself, with the
+    coordinates shifted backwards to represent that.
+    Example :
+        chr1 100 200
+        chr1 300 400
+    If we exclude 'chr1 150 300' the file becomes :
+        chr1 100 150
+        chr1 150 250
+
+    Remarks :
+        - This version is highly inefficient (1 second per excluded feature)
+        but is only run once per analysis, so it will be improved later.
+        - The multiprocessing will pass a copy of the BED file to each process,
+        which can consume a lot of RAM.
+
+
+    >>> from pygtftk.utils import get_example_file
+    >>> from pygtftk.stats.intersect.read_bed_as_list import exclude_concatenate
+    >>> import pybedtools
+    >>> import numpy.testing as npt
+    >>> f = pybedtools.BedTool(get_example_file("simple","bed")[0])
+    >>> e = pybedtools.BedTool('chr1\t12\t45',from_string=True)
+    >>> result = exclude_concatenate(f,e)
+    >>> assert str(result[0]) == 'chr1\t10\t12\n'
+    >>> assert str(result[1]) == 'chr1\t12\t17\n'
+    """
+
+    # Raw edition does not work in pybedtools, so need to use pandas dataframe instead.
+    # Also, merge and sort the files before, just in case they were not.
+    bedfile = bedfile.sort().merge()
+    bedfile = bedfile.to_dataframe()
+    exclusion = exclusion.sort().merge()
+    exclusion = exclusion.to_dataframe()
+
+    ### Exclude regions chromosome by chromosome, with multiprocessing
+    all_chroms = list(exclusion.chrom) # All chromosomes in exclusion
+
+    # To avoid wasted time in the multiprocessing, sort the chromosomes by number of peaks
+    # Furthermore, python Pool map() function will split the list of arguments into chunks which can be a problem since it can result in one thread having only short chromosomes
+    # and one only long chromosome, resulting in wasting the first thred's potential. To correct this, chunksize is set to 1. This will be sligtly less efficient but saves time
+    # here because not all tasks are as computationally expensive.
+    occ = dict(Counter(all_chroms))
+    all_chroms = sorted(occ.keys(), key = lambda k: occ[k])
+    all_chroms.reverse()
+
+    # TODO for later : if RAM turns out to be critical, do not pass the entire
+    # 'exclusion' and 'bedfile' dataframes but subset by chromosome before.
+    # In most use cases however it should be sufficient.
+
+    with Pool(nb_threads) as p:
+        partial_exclusion = partial(exclude_concatenate_for_this_chrom,exclusion=exclusion,bedfile=bedfile)
+        list_of_partial_results = p.map(partial_exclusion, all_chroms, chunksize=1)
+
+    result = pd.concat(list_of_partial_results, ignore_index = True)
 
     # Convert the dataframe back into a bedfile and return it
     result_bedfile = pybedtools.BedTool.from_dataframe(result)
+    result_bedfile = result_bedfile.sort().merge() # Needed due to multiprocessing
     return result_bedfile
 
 

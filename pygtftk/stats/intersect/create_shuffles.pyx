@@ -204,6 +204,12 @@ cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
 
         fake_bed.append((str(chrom),int(start),int(end)))
 
+
+    # REMARK : as a perspective, we could use the same algorithm but keep the
+    # negative inter-region lengths, to generate non-merged beds : this way,
+    # we could work with peaks that have some overlp and not juste merge them,
+    # and do some statistics on this within-set overlap. Something to consider.
+
     return fake_bed
 
 
