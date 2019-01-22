@@ -415,15 +415,11 @@ GTF_DATA *add_prefix(GTF_DATA *gtf_data, char *features, char *key, char *txt, i
 GTF_DATA *merge_attr(GTF_DATA *gtf_data, char *features, char *keys, char *dest_key, char *sep);
 GTF_DATA *load_blast(char *input);
 GTF_DATA *add_attr_to_pos(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
-<<<<<<< HEAD
-GTF_DATA *load_blast(char *input);
-=======
 void clear_indexes(void);
 GTF_DATA *add_attr_column(GTF_DATA *gtf_data, char *inputfile_name, char *new_key);
 int int_array_test(int *pos, int size);
 void *print_bed(GTF_DATA *gtf_data, char *output, int add_chr, char *keys, char *sep, char *more_info);
 
->>>>>>> develop
 """)
 
 # ---------------------------------------------------------------
@@ -450,17 +446,13 @@ class GTF(object):
     # ---------------------------------------------------------------
 
     def __init__(
-            self, input_obj=None,
-            check_ensembl_format=True,
-            from_blast=False,
-            new_data=None):
+            self, input_obj=None, check_ensembl_format=True, new_data=None):
         """
         The constructor.
 
         :param input_obj: A File, a GTF or a string object (path).
         :param check_ensembl_format: Whether the method should search for gene/transcript feature
         to 'validate' that at least one of them can be found.
-        :param from_blast: If True the GTF will be created from a blast output.
         :param new_data: Pass a pointer to a GTF_DATA to the constructor.
 
         :Example:
@@ -529,34 +521,15 @@ class GTF(object):
 
         if new_data is None:
 
-            if  from_blast:
-                self._data = self._dll.load_blast(native_str(self.fn))
-            else:
+            self._data = self._dll.load_GTF(native_str(self.fn))
 
-                self._data = self._dll.load_GTF(native_str(self.fn))
+            if check_ensembl_format:
 
-                if check_ensembl_format:
+                tab = self.extract_data_iter_list("feature")
 
-                    tab = self.extract_data_iter_list("feature")
+                not_found = True
+                n = 0
 
-<<<<<<< HEAD
-                    not_found = True
-                    n = 0
-
-                    for i in tab:
-                        n += 1
-                        if i[0] in ["transcript", "gene"]:
-                            message("Ensembl format detected.", type="DEBUG")
-                            not_found = False
-                            break
-
-                    if not_found:
-                        msg = "Could not find any 'transcript' or 'gene' " + \
-                              " line in the file. Is this GTF " + \
-                              "file in ensembl format ? Try to convert it with " + \
-                              "convert_ensembl command."
-                        GTFtkError(msg)
-=======
                 for i in tab:
                     n += 1
                     if i[0] in ["transcript", "gene"]:
@@ -570,11 +543,10 @@ class GTF(object):
                           "file in ensembl format ? Try to convert it with " + \
                           "convert_ensembl command."
                     raise GTFtkError(msg)
->>>>>>> develop
 
-                # if check_chr_gene_id:
+            # if check_chr_gene_id:
 
-                #    gene_to_chr = gtf.extract_data("gene_id,seqid")
+            #    gene_to_chr = gtf.extract_data("gene_id,seqid")
 
         else:
             self._data = new_data
