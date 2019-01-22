@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
@@ -9,7 +8,8 @@ import sys
 import ftputil
 from ftputil.error import FTPOSError
 
-from pygtftk.arg_formatter import FileWithExtension
+import pygtftk
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import message
@@ -36,8 +36,7 @@ def make_parser():
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file (gtf.gz).",
                             metavar="GTF.GZ",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]\.[Gg][Zz]$'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='gtf.gz'))
 
     parser_grp.add_argument('-e', '--ensembl-collection',
                             help="Which ensembl collection to interrogate"
@@ -82,17 +81,14 @@ def make_parser():
     return parser
 
 
-def retrieve(species_name=None,
+def retrieve(species_name='homo_sapiens',
              outputfile=None,
-             release='Latest',
-             tmp_dir=None,
+             release=None,
              to_stdout=False,
              list_only=False,
-             logger_file=None,
              delete=False,
              hide_species_name=None,
-             ensembl_collection='vertebrate',
-             verbosity=0):
+             ensembl_collection='vertebrate'):
     """Retrieve a GTF file from ensembl.
 
     :Example:
@@ -136,7 +132,7 @@ def retrieve(species_name=None,
 
     try:
         ftp = ftputil.FTPHost(host, user, password)
-        if verbosity:
+        if pygtftk.utils.VERBOSITY:
             message("Connected to ensembl FTP website.")
     except FTPOSError as err:
         message(str(err))
@@ -265,8 +261,8 @@ def retrieve(species_name=None,
         if not list_only:
             message("Downloading GTF file : " + target_gtf)
 
-            ftp.download_if_newer(target_gtf,
-                                  target_gtf)
+            ftp.download(target_gtf,
+                         target_gtf)
 
             os.rename(target_gtf, os.path.join(outputdir, target_gtf))
 
@@ -279,6 +275,7 @@ def retrieve(species_name=None,
                 os.remove(os.path.join(outputdir, target_gtf))
             else:
                 if outputfile is not None:
+                    message("Renaming.")
                     os.rename(os.path.join(outputdir, target_gtf),
                               outputfile.name)
 

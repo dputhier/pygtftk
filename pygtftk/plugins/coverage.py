@@ -10,8 +10,9 @@ from builtins import range
 import pandas as pd
 from pybedtools import BedTool
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import checkChromFile
+import pygtftk
+from pygtftk import arg_formatter
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.bwig.bw_coverage import bw_cov_mp
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -48,8 +49,7 @@ def make_parser():
     parser_grp.add_argument(
         'bw_list',
         help='A list of Bigwig file (last argument).',
-        type=FileWithExtension('r', valid_extensions=('\.[Bb][Ww]$',
-                                                      '\.[Bb][Ii][Gg][Ww][Ii][Gg]$')),
+        type=arg_formatter.FormattedFile(mode='r', file_ext='bigwig'),
         nargs='+')
 
     parser_grp.add_argument('-i', '--inputfile',
@@ -57,126 +57,104 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF/BED",
                             required=False,
-                            type=FileWithExtension('r',
-                                                   valid_extensions=('\.[Gg][Tt][Ff](\.[Gg][Zz])?$',
-                                                                     '\.[Bb][Ee][Dd]$',
-                                                                     '\.[Bb][Ee][Dd]3$',
-                                                                     '\.[Bb][Ee][Dd]6$')))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('bed', 'gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Tt][Xx][Tt]',
-                                                                     '\.[Cc][Ss][Vv]',
-                                                                     '\.[Tt][Aa][Bb]',
-                                                                     '\.[Tt][Ss][Vv]',
-                                                                     '\.[Cc][Oo][Vv]')))
-    parser_grp.add_argument(
-        '-c', '--chrom-info',
-        help="Tabulated two-columns file. Chromosomes"
-             " as column 1 and sizes as"
-             " column 2 ",
-        default=None,
-        metavar="CHROMINFO",
-        action=checkChromFile,
-        required=True)
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='txt'))
 
-    parser_grp.add_argument(
-        '-u', '--upstream',
-        help="Extend the regions in 5' by a given value (int).",
-        default=0,
-        metavar="UPSTREAM",
-        type=int,
-        required=False)
+    parser_grp.add_argument('-c', '--chrom-info',
+                            help="Tabulated two-columns file. Chromosomes"
+                                 " as column 1 and sizes as"
+                                 " column 2 ",
+                            default=None,
+                            metavar="CHROMINFO",
+                            action=CheckChromFile,
+                            required=True)
 
-    parser_grp.add_argument(
-        '-d', '--downstream',
-        help="Extend the regions in 3' by a given value (int).",
-        default=0,
-        metavar="DOWNSTREAM",
-        type=int,
-        required=False)
+    parser_grp.add_argument('-u', '--upstream',
+                            help="Extend the regions in 5' by a given value (int).",
+                            default=0,
+                            metavar="UPSTREAM",
+                            type=int,
+                            required=False)
 
-    parser_grp.add_argument(
-        '-w', '--nb-window',
-        type=int,
-        default=1,
-        help='Split the region into w bins (see -n).',
-        required=False)
+    parser_grp.add_argument('-d', '--downstream',
+                            help="Extend the regions in 3' by a given value (int).",
+                            default=0,
+                            metavar="DOWNSTREAM",
+                            type=int,
+                            required=False)
 
-    parser_grp.add_argument(
-        '-k', '--nb-proc',
-        type=int,
-        default=1,
-        help='Use this many threads to compute coverage.',
-        required=False)
+    parser_grp.add_argument('-w', '--nb-window',
+                            type=int,
+                            default=1,
+                            help='Split the region into w bins (see -n).',
+                            required=False)
 
-    parser_grp.add_argument(
-        '-f', '--ft-type',
-        type=str,
-        default="promoter",
-        help="Region in which coverage is to be computed (promoter, intron, intergenic, tts or any feature defined in the column 3 of the GTF).",
-        required=False)
+    parser_grp.add_argument('-k', '--nb-proc',
+                            type=int,
+                            default=1,
+                            help='Use this many threads to compute coverage.',
+                            required=False)
 
-    parser_grp.add_argument(
-        '-l', '--labels',
-        help='Bigwig labels.',
-        default=None,
-        type=str,
-        required=False)
+    parser_grp.add_argument('-f', '--ft-type',
+                            type=str,
+                            default="promoter",
+                            help="Region in which coverage is to be computed (promoter, intron, intergenic, tts or any feature defined in the column 3 of the GTF).",
+                            required=False)
 
-    parser_grp.add_argument(
-        '-m', '--name-column',
-        type=str,
-        default="transcript_id",
-        help="Use this ids to compute the name (4th column in "
-             "bed output).",
-        required=False)
+    parser_grp.add_argument('-l', '--labels',
+                            help='Bigwig labels.',
+                            default=None,
+                            type=str,
+                            required=False)
 
-    parser_grp.add_argument(
-        '-p',
-        '--pseudo-count',
-        type=int,
-        default=1,
-        help='A pseudo-count to add in case count is equal to 0.')
+    parser_grp.add_argument('-m', '--name-column',
+                            type=str,
+                            default="transcript_id",
+                            help="Use this ids to compute the name (4th column in "
+                                 "bed output).",
+                            required=False)
 
-    parser_grp.add_argument(
-        '-n', '--n-highest',
-        type=int,
-        default=None,
-        help='For each bigwig, use the n windows with higher values to compute coverage.',
-        required=False)
+    parser_grp.add_argument('-p',
+                            '--pseudo-count',
+                            type=int,
+                            default=1,
+                            help='A pseudo-count to add in case count is equal to 0.')
 
-    parser_grp.add_argument(
-        '-x',
-        '--matrix-out',
-        action="store_true",
-        help='Matrix output format. Bigwigs as column names features as rows.',
-        required=False)
+    parser_grp.add_argument('-n', '--n-highest',
+                            type=int,
+                            default=None,
+                            help='For each bigwig, use the n windows with higher values to compute coverage.',
+                            required=False)
 
-    parser_grp.add_argument(
-        '-zn', '--zero-to-na',
-        help='Use NA not zero when region is undefined in bigwig or below window size.',
-        action='store_true',
-        required=False)
+    parser_grp.add_argument('-x',
+                            '--matrix-out',
+                            action="store_true",
+                            help='Matrix output format. Bigwigs as column names features as rows.',
+                            required=False)
 
-    parser_grp.add_argument(
-        '-a',
-        '--key-name',
-        type=str,
-        default="cov",
-        help="If gtf format is requested, the name of the key.",
-        required=False)
+    parser_grp.add_argument('-zn', '--zero-to-na',
+                            help='Use NA not zero when region is undefined in bigwig or below window size.',
+                            action='store_true',
+                            required=False)
 
-    parser_grp.add_argument(
-        '-s', '--stat',
-        type=str,
-        choices=['mean', 'sum'],
-        default='mean',
-        help='The statistics to be computed for each region.',
-        required=False)
+    parser_grp.add_argument('-a',
+                            '--key-name',
+                            type=str,
+                            default="cov",
+                            help="If gtf format is requested, the name of the key.",
+                            required=False)
+
+    parser_grp.add_argument('-s', '--stat',
+                            type=str,
+                            choices=['mean', 'sum'],
+                            default='mean',
+                            help='The statistics to be computed for each region.',
+                            required=False)
 
     return parser
 
@@ -202,10 +180,7 @@ def coverage(
         chrom_info=None,
         nb_proc=1,
         matrix_out=False,
-        tmp_dir=None,
-        logger_file=None,
-        stat='mean',
-        verbosity=True):
+        stat='mean'):
     """
     Compute transcript coverage with one or several bigWig.
     """
@@ -283,18 +258,20 @@ def coverage(
     #
     # -------------------------------------------------------------------------
 
+    name_column = name_column.split(",")
+
     if is_gtf:
 
         message("Getting regions of interest...")
 
-        if ft_type == "intergenic":
+        if ft_type.lower() == "intergenic":
 
             region_bo = gtf.get_intergenic(chrom_info, 0, 0).slop(s=True,
                                                                   l=upstream,
                                                                   r=downstream,
                                                                   g=chrom_info.name).sort()
 
-        elif ft_type == "intron":
+        elif ft_type.lower() == "intron":
 
             region_bo = gtf.get_introns().slop(s=True,
                                                l=upstream,
@@ -303,28 +280,29 @@ def coverage(
 
         elif ft_type == "intron_by_tx":
 
-            region_bo = gtf.get_introns(by_transcript=True
+            region_bo = gtf.get_introns(by_transcript=True,
+                                        name=name_column,
                                         ).slop(s=True,
                                                l=upstream,
                                                r=downstream,
                                                g=chrom_info.name).sort()
 
-        elif ft_type == "promoter":
+        elif ft_type.lower() in ["promoter", "tss"]:
 
-            region_bo = gtf.get_tss(name=["transcript_id"]).slop(s=True,
-                                                                 l=upstream,
-                                                                 r=downstream,
-                                                                 g=chrom_info.name).sort()
+            region_bo = gtf.get_tss(name=name_column, ).slop(s=True,
+                                                             l=upstream,
+                                                             r=downstream,
+                                                             g=chrom_info.name).sort()
 
-        elif ft_type == "tts":
+        elif ft_type.lower() in ["tts", "terminator"]:
 
-            region_bo = gtf.get_tts(name=["transcript_id"]).slop(s=True,
-                                                                 l=upstream,
-                                                                 r=downstream,
-                                                                 g=chrom_info.name).sort()
+            region_bo = gtf.get_tts(name=name_column).slop(s=True,
+                                                           l=upstream,
+                                                           r=downstream,
+                                                           g=chrom_info.name).sort()
 
         else:
-            name_column = name_column.split(",")
+
             region_bo = gtf.select_by_key(
                 "feature",
                 ft_type, 0
@@ -361,7 +339,7 @@ def coverage(
                            nb_proc=nb_proc,
                            n_highest=n_highest,
                            stat=stat,
-                           verbose=verbosity)
+                           verbose=pygtftk.utils.VERBOSITY)
 
     if matrix_out:
         result_bed.close()
@@ -369,15 +347,9 @@ def coverage(
         df_first = pd.read_csv(result_bed.name, sep="\t", header=None)
 
         df_first = df_first.ix[:, [0, 1, 2, 3, 5, 4]]
-        """
-        bwig = [z.split("|")[0] for z in df_first[3]]
-        bwig_nr = list(set(bwig))
-        """
 
         df_list = []
-        """
-        for i in range(len(bwig_nr)):
-        """
+
         for i in range(len(labels)):
             # create a sub data frame containing the coverage values of the
             # current bwig

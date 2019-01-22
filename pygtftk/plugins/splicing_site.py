@@ -1,21 +1,23 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 import argparse
 import os
 import sys
 from builtins import str
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
+
 __doc__ = """
   Compute the locations of donor and acceptor splice sites.
 """
+
 __notes__ = """
  This will return a single position which corresponds to the most 5' and/or the most 3' intronic region.
  If the gtf file does not contain exon numbering you can compute it using the add_exon_nb command.
@@ -33,16 +35,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$')
-                            )
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="BED",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[bB][eE][dD]$')
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='bed')
                             )
 
     parser_grp.add_argument('-k', '--exon-numbering-key',
@@ -68,10 +67,7 @@ def splicing_site(inputfile=None,
                   outputfile=None,
                   exon_numbering_key=False,
                   names="exon_id,transcript_id,gene_id",
-                  separator="\t",
-                  tmp_dir=None,
-                  logger_file=None,
-                  verbosity=0):
+                  separator="\t"):
     """
     Compute the locations of splice donor are acceptor  sites. You may extend them in 3' and 5' depending on your needs.
     """

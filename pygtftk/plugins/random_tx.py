@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
@@ -7,12 +6,9 @@ import random
 import sys
 from builtins import range
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import int_greater_than_null
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
-from pygtftk.utils import PY2
-from pygtftk.utils import PY3
 from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
@@ -32,28 +28,32 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-m', '--max-transcript',
                             help="The maximum number of transcripts to select for each gene.",
                             default=1,
                             metavar="MAX",
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=1,
+                                                          highest=None,
+                                                          linc=True,
+                                                          val_type='int'),
                             required=False)
 
     parser_grp.add_argument('-s', '--seed-value',
                             help="Seed value for the random number generator.",
                             default=None,
                             metavar="SEED",
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=1,
+                                                          highest=None,
+                                                          linc=True,
+                                                          val_type='int'),
                             required=False)
 
     return parser
@@ -63,10 +63,7 @@ def random_tx(
         inputfile=None,
         outputfile=None,
         max_transcript=None,
-        seed_value=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        seed_value=None):
     """
     Select randomly up to m transcript for each gene.
     """
@@ -88,12 +85,7 @@ def random_tx(
     message("Selecting random transcript")
 
     if seed_value is not None:
-        if PY3:
-            # Unfortunatly 'version 1'
-            # is not back-compatible...
-            random.seed(seed_value, version=1)
-        elif PY2:
-            random.seed(seed_value)
+        random.seed(seed_value, version=1)
 
     tx_to_delete = []
 
@@ -108,11 +100,11 @@ def random_tx(
     message("Printing results")
 
     message("Selecting transcript.")
-    gtf = gtf.select_by_key("transcript_id",
-                            ",".join(tx_to_delete),
-                            invert_match=True
-                            ).write(outputfile,
-                                    gc_off=True)
+    gtf.select_by_key("transcript_id",
+                      ",".join(tx_to_delete),
+                      invert_match=True
+                      ).write(outputfile,
+                              gc_off=True)
 
     close_properly(outputfile, inputfile)
 

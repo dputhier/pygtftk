@@ -1,23 +1,24 @@
 #!/usr/bin/env python
-from __future__ import division
-from __future__ import print_function
 
 import argparse
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import int_greater_than_null
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-31"
-__doc__ = """
+__doc__ = '''
  Select lines from a GTF file based on attributes and
  associated values.
-"""
+'''
+
+__notes__ = '''
+-- select_by_key only returns lines for which the key is defined (i.e. exists) even with -\-invert-match.
+'''
 
 
 def make_parser():
@@ -31,15 +32,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-k', '--key',
                             help='The key name.',
@@ -64,7 +63,10 @@ def make_parser():
                             help='The column number (one-based) that contains the values in the file. File is tab-delimited.',
                             default=1,
                             metavar="COL",
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=1,
+                                                          highest=None,
+                                                          linc=True,
+                                                          val_type='int'),
                             required=False)
 
     parser_grp.add_argument('-n', '--invert-match',
@@ -126,7 +128,6 @@ def select_by_key(inputfile=None,
                   key=None,
                   value=None,
                   invert_match=False,
-                  tmp_dir=None,
                   file_with_values=None,
                   col=0,
                   select_transcripts=False,
@@ -137,9 +138,7 @@ def select_by_key(inputfile=None,
                   bed_format=False,
                   log=False,
                   separator="|",
-                  names="transcript_id",
-                  logger_file=None,
-                  verbosity=0):
+                  names="transcript_id"):
     """Select lines from a GTF file based on attributes and
     associated values.
     """
@@ -168,18 +167,16 @@ def select_by_key(inputfile=None,
         key = "feature"
         value = "exon"
 
-    elif value is not None and key is None:
-        message("Please set -k.",
-                type="ERROR")
-
-    elif value is None and file_with_values is None:
-        if key is not None:
-            message("Key and value are mandatory. Alternatively use -e/t/g/f.",
+    elif file_with_values is None:
+        if key is None or value is None:
+            message("Key and value are mandatory. Alternatively use -e/t/g/f or -f with -k.",
                     type="ERROR")
 
     elif file_with_values is not None:
         if key is None:
             message("Please set -k.", type="ERROR")
+        if value is not None:
+            message("The -f and -v arguments are mutually exclusive.", type="ERROR")
 
     # ----------------------------------------------------------------------
     # Load file with value
@@ -309,7 +306,7 @@ else:
     
     # Select_by_key: Feature selection. --file-with-values -col
     @test "select_by_key_6" {
-     result=`gtftk select_by_key  -k gene_id  -i simple.gtf  -f simple.geneList -c 3| wc -l`
+     result=`rm -f /tmp/test_select_by_key.gtf; gtftk select_by_key  -k gene_id  -i simple.gtf  -f simple.geneList -c 3| wc -l`
       [ "$result" -eq 18 ]
     }
     

@@ -34,7 +34,6 @@ print(sys.version)
 # -------------------------------------------------------------------------
 
 
-PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 
 if PY2:
@@ -223,6 +222,7 @@ setup(name="pygtftk",
                 'pygtftk/data/simple_05',
                 'pygtftk/data/simple_06',
                 'pygtftk/data/mini_real',
+                'pygtftk/data/mini_real_10M',
                 'pygtftk/data/mini_real_noov_rnd_tx',
                 'pygtftk/data/control_list',
                 'pygtftk/src/',
@@ -236,6 +236,7 @@ setup(name="pygtftk",
                     'pygtftk/data/simple_05': ['*.*'],
                     'pygtftk/data/simple_06': ['*.*'],
                     'pygtftk/data/mini_real': ['*.*'],
+                    'pygtftk/data/mini_real_10M': ['*.*'],
                     'pygtftk/data/mini_real_noov_rnd_tx': ['*.*'],
                     'pygtftk/data/control_list': ['*.*'],
                     'pygtftk/plugins': ['*.*'],
@@ -250,14 +251,13 @@ setup(name="pygtftk",
       classifiers=__classifiers__,
       long_description=long_description,
       extras_require={
-          'dev': [
-              'nose',
-              'pycodestyle >= 2.1.0',
-              'sphinx >=1.5.2',
-              'sphinxcontrib-programoutput >=0.8',
-              'sphinx_bootstrap_theme >=0.4.9']},
-      install_requires=['pyyaml >=3.12',
-                        'argparse',
+          'dev': ['pycodestyle >= 2.1.0',
+                  'sphinx >=1.5.2',
+                  'sphinxcontrib-programoutput >=0.8',
+                  'sphinx_bootstrap_theme >=0.4.9'],
+          'gffutils': ['gffutils']},
+      install_requires=['nose',
+                        'pyyaml >=3.12',
                         'cloudpickle >=0.5.6',
                         'ftputil >=3.3.1',
                         'pybedtools >=0.7.8',

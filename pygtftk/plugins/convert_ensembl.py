@@ -5,7 +5,7 @@ import argparse
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -39,15 +39,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-n', '--no-check-gene-chr',
                             help="By default the command raise an error if several chromosomes are associated with the same gene_id. Disable this behaviour (but you should better think about what it means...).",
@@ -56,21 +54,17 @@ def make_parser():
     return parser
 
 
-def convert_ensembl(
-        inputfile=None,
-        outputfile=None,
-        tmp_dir=None,
-        logger_file=None,
-        no_check_gene_chr=False,
-        verbosity=0):
+def convert_ensembl(inputfile=None,
+                    outputfile=None,
+                    no_check_gene_chr=False):
     """
     Convert the GTF file to ensembl format.
     """
 
-    gtf = GTF(inputfile,
-              check_ensembl_format=False
-              ).convert_to_ensembl(check_gene_chr=not no_check_gene_chr,
-                                   ).write(outputfile, gc_off=True)
+    GTF(inputfile,
+        check_ensembl_format=False
+        ).convert_to_ensembl(check_gene_chr=not no_check_gene_chr,
+                             ).write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 
@@ -80,7 +74,7 @@ def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    count(**args)
+    convert_ensembl(**args)
 
 
 if __name__ == '__main__':

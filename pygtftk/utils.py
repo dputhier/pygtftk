@@ -5,13 +5,17 @@ from __future__ import print_function
 
 import datetime
 import glob
+import io
 import os
 import random
 import re
 import string
 import sys
 import time
-from collections import defaultdict
+from builtins import range
+from builtins import str
+from builtins import zip
+from collections import defaultdict, OrderedDict
 from distutils.spawn import find_executable
 from subprocess import PIPE
 from subprocess import Popen
@@ -20,18 +24,6 @@ from tempfile import NamedTemporaryFile, mkdtemp
 from future.utils import old_div
 
 import pygtftk
-
-# -------------------------------------------------------------------------
-# Python Version
-# -------------------------------------------------------------------------
-
-
-PY3 = sys.version_info[0] == 3
-PY2 = sys.version_info[0] == 2
-if PY3:
-    from builtins import range
-    from builtins import str
-    from builtins import zip
 
 # -------------------------------------------------------------------------
 # VARIABLES
@@ -59,24 +51,6 @@ CHROM_CHECKED = False
 # Characters
 TAB = '\t'
 NEWLINE = '\n'
-
-# R libraries
-R_LIB = defaultdict(list)
-
-# ---------------------------------------------------------------
-# Python2/3  compatibility
-# ---------------------------------------------------------------
-
-
-try:
-    basestring
-except NameError:
-    basestring = str
-
-if PY3:
-    from io import IOBase
-
-    file = IOBase
 
 
 # ---------------------------------------------------------------
@@ -305,7 +279,7 @@ def add_prefix_to_file(infile, prefix=None):
     if prefix is None:
         return infile
 
-    if isinstance(infile, file):
+    if isinstance(infile, io.IOBase):
         new_file = infile.name
     else:
         new_file = infile
@@ -313,7 +287,7 @@ def add_prefix_to_file(infile, prefix=None):
     new_file = os.path.join(os.path.dirname(new_file),
                             prefix + os.path.basename(new_file))
 
-    if isinstance(infile, file):
+    if isinstance(infile, io.IOBase):
         return open(new_file, "w")
     else:
         return new_file
@@ -438,7 +412,6 @@ def check_file_or_dir_exists(file_or_dir=None):
     """Check if a file/directory or a list of files/directories exist. Raise error if a file is not found.
 
     :param file_or_dir: file object or a list of file object.
-    :param  is_list: Is file_or_dir a list ?
 
     :Example:
 
@@ -449,18 +422,17 @@ def check_file_or_dir_exists(file_or_dir=None):
 
     """
 
-    test_list = []
-
     # Convert to a list
     if not isinstance(file_or_dir, list):
         file_or_dir = [file_or_dir]
 
     # Convert to filename
-    file_or_dir = [x.name if isinstance(x, file) else x for x in file_or_dir]
+    file_or_dir = [x.name if isinstance(x, io.IOBase) else x for x in file_or_dir]
 
     for file_or_dir_cur in file_or_dir:
+
         if not os.path.exists(file_or_dir_cur):
-            raise GTFtkError("File not found: " + file_or_dir_cur)
+            message("File not found: " + file_or_dir_cur, type="ERROR")
 
         else:
             message("Found file " + file_or_dir_cur)
@@ -517,7 +489,7 @@ def chrom_info_as_dict(chrom_info_file):
     if chrom_info_file.closed:
         chrom_info_file = open(chrom_info_file.name, "r")
 
-    chrom_len = defaultdict(int)
+    chrom_len = OrderedDict()
 
     for line in chrom_info_file:
 
@@ -573,27 +545,19 @@ def chrom_info_to_bed_file(chrom_file, chr_list=None):
 
     >>> from  pygtftk.utils import chrom_info_to_bed_file
     >>> from  pygtftk.utils import get_example_file
-    >>> from pygtftk.utils import PY3
-    >>> from pygtftk.utils import PY2
     >>> from pybedtools import  BedTool
     >>> a = get_example_file(ext='chromInfo')
     >>> b = chrom_info_to_bed_file(open(a[0], 'r'))
     >>> c = BedTool(b.name)
-    >>> d = c.__iter__()
-    >>> i = next(d)
-    >>> if PY2: assert str(i.chrom) == 'chr2'
-    >>> if PY2: assert i.start == 0
-    >>> if PY2: assert i.end == 600
-    >>> if PY3: assert str(i.chrom) == 'chr1'
-    >>> if PY3: assert i.start == 0
-    >>> if PY3: assert i.end == 300
-    >>> i = next(d)
-    >>> if PY3: assert str(i.chrom) == 'chr2'
-    >>> if PY3: assert i.start == 0
-    >>> if PY3: assert i.end == 600
-    >>> if PY2: assert str(i.chrom) == 'chr1'
-    >>> if PY2: assert i.start == 0
-    >>> if PY2: assert i.end == 300
+    >>> chrs = []
+    >>> for i in c: chrs += [i.chrom]
+    >>> assert 'chr1' in chrs and 'chr2' in chrs
+    >>> starts = []
+    >>> for i in c: starts += [i.start]
+    >>> assert 0 in starts
+    >>> ends = []
+    >>> for i in c: ends += [i.end]
+    >>> assert 300 in ends and 600 in ends
     """
 
     message("Converting chrom info to bed format")
@@ -719,7 +683,7 @@ def silentremove(filename):
     >>> assert not os.path.exists(a.name)
 
     """
-    if isinstance(filename, file):
+    if isinstance(filename, io.IOBase):
         filename = filename.name
 
     try:
@@ -741,7 +705,12 @@ def message(msg, nl=True, type="INFO", force=False):
     """
 
     now = datetime.datetime.now()
-    ho_min = str(now.hour) + ":" + str(now.minute).zfill(2)
+
+    if pygtftk.utils.VERBOSITY > 2:
+        ho_min = str(now.hour) + ":" + str(now.minute).zfill(2) + ":" + str(now.second).zfill(2)
+    else:
+        ho_min = str(now.hour) + ":" + str(now.minute).zfill(2)
+
     do_it = False
 
     if type not in ["INFO", "ERROR", "WARNING", "DEBUG", "DEBUG_MEM"]:
@@ -835,22 +804,6 @@ def message(msg, nl=True, type="INFO", force=False):
 # Line type
 # ---------------------------------------------------------------
 
-def add_r_lib(cmd=None, libs=None):
-    """Declare a new set of required R libraries.
-
-    :param libs: Comma separated list of R libraries.
-    :param cmd: The target command.
-
-    """
-
-    for lib in libs.split(","):
-        R_LIB[cmd] += [lib]
-
-
-# ---------------------------------------------------------------
-# Line type
-# ---------------------------------------------------------------
-
 
 def is_exon(string):
     """Does the string contains 'exon' preceded or not by spaces.
@@ -924,7 +877,7 @@ def to_alphanum(string):
     are found at the beginning or end of the string, they are deleted.
 
     :param string: A character string in which non alphanumeric char have to be replaced.
-    :param replacement_list:
+
 
     :Example :
 
@@ -956,7 +909,7 @@ def left_strip_str(string):
 
     for pos, line in enumerate(string.split("\n")):
         if line == "":
-            if new_line == []:
+            if not new_line:
                 continue
         line = " " + re.sub("^\s+", "", line)
         new_line += [line.lstrip("\n")]
@@ -968,6 +921,20 @@ def left_strip_str(string):
 # Lists and dicts
 # ---------------------------------------------------------------
 
+def to_list(obj, split_char=None):
+    """ Convert a None, str, tuple to list. May also split if required."""
+    if obj is None:
+        obj = []
+    elif isinstance(obj, str):
+        if split_char is None:
+            obj = [obj]
+        else:
+            obj = obj.split(split_char)
+    elif isinstance(obj, tuple):
+        obj = list(obj)
+    return obj
+
+
 def nested_dict(n, type):
     """"http://stackoverflow.com/questions/29348345"""
     if n == 1:
@@ -975,10 +942,12 @@ def nested_dict(n, type):
     else:
         return defaultdict(lambda: nested_dict(n - 1, type))
 
-def flatten_list(x, outlist=[]):
+
+def flatten_list(x, outlist=None):
     """Flatten a list of lists.
 
     :param x: a list or list of list.
+    :param outlist: The output list.
 
     :Example:
 
@@ -993,6 +962,9 @@ def flatten_list(x, outlist=[]):
     >>> assert flatten_list("string", outlist=[]) == ['string']
 
     """
+
+    if outlist is None:
+        outlist = []
 
     if not isinstance(x, (list, tuple)):
         outlist += [x]
@@ -1010,16 +982,16 @@ def flatten_list_recur(a_list, sep=" "):
 
     """
 
-    def _iterFlatten(root):
+    def _iter_flatten(root):
 
         if isinstance(root, (list, tuple)):
             for element in root:
-                for e in _iterFlatten(element):
+                for e in _iter_flatten(element):
                     yield e
         else:
             yield root
 
-    return sep.join(list(_iterFlatten(a_list)))
+    return sep.join(list(_iter_flatten(a_list)))
 
 
 def sort_2_lists(list1, list2):
@@ -1053,7 +1025,10 @@ def print_table(table):
                                 for i, x in enumerate(line)) + " |")
 
 
-def call_nested_dict_from_list(data, args=[]):
+def call_nested_dict_from_list(data, args=None):
+    if args is None:
+        args = []
+
     if args and data:
         element = args[0]
         if element:
@@ -1180,3 +1155,25 @@ def check_r_packages(r_pkg_list=None, no_error=True):
                     type="ERROR")
         return False
     return True
+
+
+# ---------------------------------------------------------------
+# COLORS
+# ---------------------------------------------------------------
+
+
+ALL_MPL_PALETTES = ['viridis', 'plasma', 'inferno', 'magma',
+                    'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
+                    'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
+                    'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn',
+                    'binary', 'gist_yarg', 'gist_gray', 'gray', 'bone', 'pink',
+                    'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia',
+                    'hot', 'afmhot', 'gist_heat', 'copper',
+                    'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
+                    'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic',
+                    'Pastel1', 'Pastel2', 'Paired', 'Accent',
+                    'Dark2', 'Set1', 'Set2', 'Set3',
+                    'tab10', 'tab20', 'tab20b', 'tab20c',
+                    'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
+                    'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg', 'hsv',
+                    'gist_rainbow', 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar']

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-from __future__ import division
 
 import argparse
 import os
 import re
 import shutil
+import sys
 import warnings
 import zipfile
 from builtins import range
@@ -25,12 +25,11 @@ from plotnine import geom_line
 from plotnine import ggplot
 from plotnine import xlab
 from plotnine import ylab
+from plotnine.exceptions import PlotnineError
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import float_greater_than_null
-from pygtftk.arg_formatter import float_grt_than_null_and_lwr_than_one
-from pygtftk.arg_formatter import int_greater_than_null
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
+from pygtftk.utils import ALL_MPL_PALETTES
 from pygtftk.utils import GTFtkError
 from pygtftk.utils import chomp
 from pygtftk.utils import is_hex_color
@@ -45,12 +44,15 @@ __doc__ = """
 """
 
 __notes__ = """
- -- The ranging normalization method [1] implies the following transformation: 
- -- -  (x_i - min(x))/(max(x) - min(x)).
  -- Think about using normalized bigWig files as input to mk_matrix. This
  will limit the requirement for an additional normalization step (see
  Deeptools for a set of useful methods implemented in bamCoverage/bamCompare).
 """
+
+'''
+ -- The ranging normalization method [1] implies the following transformation: 
+ -- -  (x_i - min(x))/(max(x) - min(x)).
+'''
 
 __references__ = """
  -- [1] Numerical Ecology - second Edition - P. Legendre, L. Legendre (1998) Elsevier.
@@ -68,7 +70,7 @@ def make_parser():
                             help='A zip file containing a matrix as produced by mk_matrix.',
                             default=None,
                             metavar='MATRIX',
-                            type=FileWithExtension('r', '\.[Zz][Ii][Pp]'),
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='zip'),
                             required=True)
 
     parser_grp.add_argument('-o', '--out-dir',
@@ -123,13 +125,19 @@ def make_parser():
 
     parser_grp.add_argument('-pw', '--page-width',
                             help='Output pdf file width (e.g. 7 inches).',
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=None,
+                                                          val_type="float",
+                                                          linc=False),
                             default=None,
                             required=False)
 
     parser_grp.add_argument('-ph', '--page-height',
                             help='Output  file height (e.g. 5 inches).',
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=None,
+                                                          val_type="float",
+                                                          linc=False),
                             default=None,
                             required=False)
 
@@ -141,7 +149,10 @@ def make_parser():
 
     parser_grp.add_argument('-lw', '--line-width',
                             help='Line width.',
-                            type=float_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=None,
+                                                          val_type="float",
+                                                          linc=False),
                             default=1.25,
                             required=False)
 
@@ -178,12 +189,10 @@ def make_parser():
     parser_grp.add_argument('-fc', '--facet-col',
                             help='Number of facet columns.',
                             default=4,
-                            type=int_greater_than_null,
-                            required=False)
-
-    parser_grp.add_argument('-fo', '--force-tx-class',
-                            help='Force even if some transcripts from --transcript-file were not found.',
-                            action="store_true",
+                            type=arg_formatter.ranged_num(lowest=1,
+                                                          highest=None,
+                                                          val_type="int",
+                                                          linc=True),
                             required=False)
 
     parser_grp.add_argument('-w', '--show-group-number',
@@ -199,7 +208,10 @@ def make_parser():
 
     parser_grp.add_argument('-ul',
                             '--upper-limit',
-                            type=float_grt_than_null_and_lwr_than_one,
+                            type=arg_formatter.ranged_num(lowest=0,
+                                                          highest=1,
+                                                          val_type="float",
+                                                          linc=False),
                             default=0.95,
                             help='Upper limit based on quantile computed from unique values.',
                             required=False)
@@ -224,7 +236,10 @@ def make_parser():
 
     parser_grp.add_argument('-dpi', '--dpi',
                             help='Dpi to use.',
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=50,
+                                                          highest=None,
+                                                          val_type="int",
+                                                          linc=True),
                             default=300,
                             required=False)
 
@@ -252,6 +267,10 @@ def make_parser():
                             default="nipy_spectral",
                             required=False)
 
+    parser_grp.add_argument('-l', '--list-bwig',
+                            help='List the bigwig files in the matrix file..',
+                            action="store_true")
+
     return parser
 
 
@@ -260,11 +279,9 @@ def profile(inputfile=None,
             group_by='bwig',
             color_order=None,
             transcript_file=None,
-            transform=None,
             normalization_method=None,
             to_log=False,
             upper_limit=0.95,
-            quantiles=False,
             profile_colors=None,
             palette='nipy_spectral',
             page_width=None,
@@ -272,10 +289,8 @@ def profile(inputfile=None,
             page_height=None,
             page_format='pdf',
             user_img_file=None,
-            tmp_dir=None,
             facet_col=None,
             border_color="#BBBBBB",
-            force_tx_class=False,
             stat="mean",
             facet_var=None,
             x_lab="Selected genomic regions",
@@ -285,11 +300,9 @@ def profile(inputfile=None,
             show_group_number=False,
             line_width=1,
             theme_plotnine='bw',
+            list_bwig=False,
             confidence_interval=False,
-            dpi=300,
-            logger_file=None,
-            verbosity=False
-            ):
+            dpi=300):
     # -------------------------------------------------------------------------
     #
     # Pandas version is sometimes problematic
@@ -384,6 +397,10 @@ def profile(inputfile=None,
             input_file_tx.add(tx_id)
             input_file_chrom.add(chrom)
             input_file_bwig.add(field[0])
+
+    if list_bwig:
+        message("Bigwig list: " + ",".join(input_file_bwig), force=True)
+        sys.exit(0)
 
     # -------------------------------------------------------------------------
     #
@@ -484,11 +501,11 @@ def profile(inputfile=None,
             # Select the transcript of interest and add classes info to the data.frame
             # -------------------------------------------------------------------------
 
-            message("Checking how many genes where found in the transcript list.")
+            message("Checking how many transcript where found in the transcript list.")
 
             nb_retained = len([x for x in all_tx if x in tx_ordering])
 
-            msg = "Keeping {a} transcript out of {b}.".format(a=nb_retained, b=len(all_tx))
+            msg = "Keeping {a} transcript out of {b} in input transcript list.".format(a=nb_retained, b=len(all_tx))
             message(msg)
 
             # subsetting
@@ -507,23 +524,7 @@ def profile(inputfile=None,
     #
     # -------------------------------------------------------------------------
 
-    all_palettes = ['viridis', 'plasma', 'inferno', 'magma',
-                    'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
-                    'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-                    'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn',
-                    'binary', 'gist_yarg', 'gist_gray', 'gray', 'bone', 'pink',
-                    'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia',
-                    'hot', 'afmhot', 'gist_heat', 'copper',
-                    'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
-                    'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic',
-                    'Pastel1', 'Pastel2', 'Paired', 'Accent',
-                    'Dark2', 'Set1', 'Set2', 'Set3',
-                    'tab10', 'tab20', 'tab20b', 'tab20c',
-                    'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
-                    'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg', 'hsv',
-                    'gist_rainbow', 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar']
-
-    if palette not in all_palettes:
+    if palette not in ALL_MPL_PALETTES:
         message("Sorry but the palette is unknown.")
 
     def get_list_of_colors_mpl(number, pal=palette):
@@ -620,7 +621,7 @@ def profile(inputfile=None,
             if curr_item not in input_file_bwig:
                 message("Color order: Found undefined bigwig labels (" + curr_item + ")... Please Check.",
                         type="WARNING")
-                message("Use one of :" + ",".join(input_file_bwig) + ".",
+                message("Use one of : " + ",".join(input_file_bwig) + ".",
                         type="ERROR")
 
     elif group_by == 'tx_classes':
@@ -649,8 +650,8 @@ def profile(inputfile=None,
     if len(color_order) < len(profile_colors):
         profile_colors = profile_colors[:len(color_order)]
 
-    message("Color order :" + str(color_order), type="DEBUG")
-    message("Profile color :" + str(profile_colors), type="DEBUG")
+    message("Color order : " + str(color_order), type="DEBUG")
+    message("Profile color : " + str(profile_colors), type="DEBUG")
 
     # -------------------------------------------------------------------------
     #
@@ -1218,7 +1219,12 @@ def profile(inputfile=None,
         fxn()
         message("Saving diagram to file : " + img_file.name)
         message("Be patient. This may be long for large datasets.")
-        p.save(filename=img_file.name, width=page_width, height=page_height, dpi=dpi, limitsize=False)
+        try:
+            p.save(filename=img_file.name, width=page_width, height=page_height, dpi=dpi, limitsize=False)
+        except PlotnineError as err:
+            message("Plotnine message: " + err.message)
+            message("Plotnine encountered an error.", type="ERROR")
+
         dm.to_csv(data_file, sep="\t", header=True, index=False)
 
     # Delete temporary dir
@@ -1229,7 +1235,7 @@ if __name__ == '__main__':
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    draw_profile(**args)
+    profile(**args)
 
 else:
 

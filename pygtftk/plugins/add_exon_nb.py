@@ -5,7 +5,7 @@ import argparse
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -27,15 +27,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-k', '--exon-numbering-key',
                             help="The name of the key containing the exon numbering.",
@@ -47,18 +45,15 @@ def make_parser():
 
 def add_exon_nb(inputfile=None,
                 outputfile=None,
-                exon_numbering_key=None,
-                tmp_dir=None,
-                logger_file=None,
-                verbosity=0):
+                exon_numbering_key=None):
     """Add the exon number to each exon (based on 5' to 3' orientation)."""
 
     message("Calling nb_exons.", type="DEBUG")
 
-    gtf = GTF(inputfile.name,
-              check_ensembl_format=False
-              ).add_exon_number(exon_numbering_key
-                                ).write(outputfile, gc_off=True)
+    GTF(inputfile.name,
+        check_ensembl_format=False
+        ).add_exon_number(exon_numbering_key
+                          ).write(outputfile, gc_off=True)
 
     close_properly(inputfile, outputfile)
 

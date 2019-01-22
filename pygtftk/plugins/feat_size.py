@@ -6,7 +6,7 @@ import os
 import sys
 from builtins import str
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import chomp
@@ -35,16 +35,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file (BED).",
                             default=sys.stdout,
                             metavar="GTF/BED",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Gg][Tt][Ff]$',
-                                                                     '\.[Bb][Ee][Dd]$')))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('bed', 'gtf')))
 
     parser_grp.add_argument('-t', '--ft-type',
                             help="A target feature (as found in the 3rd "
@@ -86,10 +83,7 @@ def feature_size(
         names="transcript_id",
         key_name='feature_size',
         separator="|",
-        bed=False,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        bed=False):
     """
  Get the size and limits (start/end) of features enclosed in the GTF. If bed
  format is requested returns the limits zero-based half open and the size as a score.
@@ -106,8 +100,6 @@ def feature_size(
         message("Unable to find requested feature.", type="ERROR")
 
     names = names.split(",")
-
-    tmp_file = make_tmp_file(prefix="feature_size_", suffix=".txt")
 
     if ft_type != 'mature_rna':
 

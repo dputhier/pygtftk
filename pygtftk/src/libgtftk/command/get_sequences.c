@@ -5,7 +5,7 @@
  *      Author: fafa
  */
 
-#include  "libgtftk.h"
+#include "libgtftk.h"
 #include <sys/stat.h>
 
 extern int split_ip(char ***tab, char *s, char *delim);
@@ -41,7 +41,8 @@ void print_attribute(GTF_ROW *row, char *attr, char *output, char delim) {
 	int k = is_in_attrs(row, attr);
 
 	if (k != -1)
-		delim != 0 ? sprintf(output, "%s%c", row->attributes.attr[k]->value, delim) : sprintf(output, "%s", row->attributes.attr[k]->value);
+		//delim != 0 ? sprintf(output, "%s%c", row->attributes.attr[k]->value, delim) : sprintf(output, "%s", row->attributes.attr[k]->value);
+		delim != 0 ? sprintf(output, "%s%c", (row->attributes.attr + k)->value, delim) : sprintf(output, "%s", (row->attributes.attr + k)->value);
 	else
 		delim != 0 ? sprintf(output, "NA%c", delim) : sprintf(output, "NA");
 }
@@ -84,7 +85,7 @@ void get_chunk(char *ret, FILE *fasta_file, long seqpos, int L, int N, int p, ch
 				fseek(fasta_file, -1, SEEK_CUR);
 				reste_row_file = L;
 			}
-		} while (reste_row & !eof);
+		} while (reste_row && !eof);
 	}
 }
 

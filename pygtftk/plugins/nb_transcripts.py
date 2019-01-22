@@ -1,13 +1,11 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
 import sys
 from builtins import str
-from collections import OrderedDict
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -29,19 +27,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF/TXT",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('(\.[Gg][Tt][Ff])$',
-                                                                     '\.[Tt][Xx][Tt]$',
-                                                                     '\.[Cc][Ss][Vv]$',
-                                                                     '\.[Tt][Aa][Bb]$',
-                                                                     '\.[Tt][Ss][Vv]$')))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf', 'txt')))
 
     parser_grp.add_argument('-f', '--text-format',
                             help="Return a text format.",
@@ -59,17 +51,13 @@ def make_parser():
 
 def nb_transcripts(inputfile=None,
                    outputfile=None,
-                   tmp_dir=None,
                    text_format=False,
-                   key_name="",
-                   logger_file=None,
-                   verbosity=0):
+                   key_name=""):
     """
     Compute the number of transcript per gene.
     """
 
     gtf = GTF(inputfile)
-    n_tx = OrderedDict()
 
     message("Computing the number of transcript per gene in input GTF file.")
 

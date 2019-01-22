@@ -6,8 +6,8 @@ import os
 import sys
 from builtins import str
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import checkChromFile
+from pygtftk import arg_formatter
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -38,15 +38,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-c', '--chrom-info',
                             help="Tabulated two-columns file. Chromosomes"
@@ -54,7 +52,7 @@ def make_parser():
                                  " column 2 ",
                             default=None,
                             metavar="CHROMINFO",
-                            action=checkChromFile,
+                            action=CheckChromFile,
                             required=True)
 
     parser_grp.add_argument('-u', '--upstream',
@@ -81,10 +79,7 @@ def convergent(
         outputfile=None,
         upstream=1500,
         downstream=1500,
-        chrom_info=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        chrom_info=None):
     """
     Find transcript with convergent tts.
     """

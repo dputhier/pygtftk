@@ -7,7 +7,7 @@ from __future__ import print_function
 import argparse
 import errno
 import glob
-import imp
+import io
 import logging
 import os
 import re
@@ -19,7 +19,7 @@ from argparse import Action
 from builtins import object
 from builtins import range
 from builtins import str
-from subprocess import Popen, PIPE
+from importlib.machinery import SourceFileLoader
 from sys import platform
 
 import cloudpickle
@@ -31,25 +31,11 @@ import pygtftk.plugins
 import pygtftk.settings
 import pygtftk.utils
 from pygtftk.arg_formatter import ArgFormatter
-from pygtftk.utils import PY2
-from pygtftk.utils import PY3
-from pygtftk.utils import add_r_lib
-from pygtftk.utils import check_r_packages
 from pygtftk.utils import left_strip_str
 from pygtftk.utils import make_tmp_dir
 from pygtftk.utils import message
 from pygtftk.utils import mkdir_p
-from pygtftk.utils import print_table
 from pygtftk.version import __version__
-
-# ---------------------------------------------------------------
-# Python2/3  compatibility
-# ---------------------------------------------------------------
-
-if PY3:
-    from io import IOBase
-
-    file = IOBase
 
 
 # ---------------------------------------------------------------
@@ -109,7 +95,6 @@ class BashCompletionAction(argparse._StoreTrueAction):
             option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        reload(pygtftk.settings)
         print(pygtftk.settings.get_completion_script())
         sys.exit()
 
@@ -128,35 +113,6 @@ class ListPlugins(argparse._StoreTrueAction):
 
     def __call__(self, parser, namespace, values, option_string=None):
         print("\n".join(list(CmdManager.cmd_obj_list.keys())))
-        sys.exit()
-
-
-# ---------------------------------------------------------------
-# An additional action that print required R libraries
-# ---------------------------------------------------------------
-# Deprecated
-
-class RequiredRLib(argparse._StoreTrueAction):
-    """A class to be used by argparser to get bash completion."""
-
-    def __init__(self, option_strings, dest, nargs=None, **kwargs):
-        super(RequiredRLib, self).__init__(
-            option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-
-        table = []
-        table += [("Plugin", "R_library", "Found")]
-        print("")
-
-        for i in pygtftk.utils.R_LIB:
-            for j in pygtftk.utils.R_LIB[i]:
-                found = check_r_packages([j], no_error=True)
-                if found:
-                    table += [(i, j, "YES")]
-                else:
-                    table += [(i, j, "NO")]
-        print_table(table)
         sys.exit()
 
 
@@ -343,16 +299,16 @@ class UpdatePlugin(argparse._StoreTrueAction):
 # An additional action to get information about the environment
 # ---------------------------------------------------------------
 
-class getSysInfo(argparse._StoreTrueAction):
+class GetSysInfo(argparse._StoreTrueAction):
     """A class to be used by argparser to get information about the environment."""
 
     def __init__(self, option_strings, dest, nargs='+', **kwargs):
-        super(getSysInfo, self).__init__(option_strings, dest, **kwargs)
+        super(GetSysInfo, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
         from pandas import __version__ as pandas_ver
         from pybedtools import __version__ as pybedtools_ver
-        from pyBigWig import __version__ as pyBigWig_ver
+        from pyBigWig import __version__ as bigwig_ver
         from pygtftk import __path__ as pygtftk_path
         import subprocess
         from pygtftk.utils import chomp
@@ -367,7 +323,7 @@ class getSysInfo(argparse._StoreTrueAction):
                                               stdout=subprocess.PIPE).stdout.read().decode())
         info_sys += ['- Bedtools version : ' + bedtools_ver]
         info_sys += ['- pybedtools version : ' + pybedtools_ver]
-        info_sys += ['- pyBigWig version : ' + pyBigWig_ver]
+        info_sys += ['- pyBigWig version : ' + bigwig_ver]
         info_sys += ['- uname : ' + str(os.uname())]
         print("\n".join(info_sys))
         sys.exit()
@@ -377,11 +333,11 @@ class getSysInfo(argparse._StoreTrueAction):
 # An additional action to get plugin path
 # ---------------------------------------------------------------
 
-class getPluginPath(argparse._StoreTrueAction):
+class GetPluginPath(argparse._StoreTrueAction):
     """A class to be used by argparser to plugin path."""
 
     def __init__(self, option_strings, dest, nargs='+', **kwargs):
-        super(getPluginPath, self).__init__(option_strings, dest, **kwargs)
+        super(GetPluginPath, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
         print(CmdManager.config_dir)
@@ -435,19 +391,12 @@ class CmdManager(object):
 
     """
 
-    if PY2:
-        parser = argparse.ArgumentParser(
-            formatter_class=ArgFormatter,
-            description=prg_desc,
-            epilog="------------------------\n",
-            version='%(prog)s v{0}'.format(__version__)
-        )
-    if PY3:
-        parser = argparse.ArgumentParser(
-            formatter_class=ArgFormatter,
-            description=prg_desc,
-            epilog="------------------------\n"
-        )
+    parser = argparse.ArgumentParser(
+        formatter_class=ArgFormatter,
+        description=prg_desc,
+        epilog="------------------------\n",
+        allow_abbrev=False
+    )
 
     parser._optionals.title = "Main command arguments"
 
@@ -469,36 +418,16 @@ class CmdManager(object):
     parser.add_argument('-s', '--system-info',
                         nargs=0,
                         help="Display some info about the system.",
-                        action=getSysInfo)
+                        action=GetSysInfo)
 
     parser.add_argument('-d', '--plugin-path',
                         nargs=0,
                         help="Print plugin path",
-                        action=getPluginPath)
+                        action=GetPluginPath)
 
-    if PY3:
-        parser.add_argument('-v', '--version',
-                            action='version',
-                            version='%(prog)s v{0}'.format(__version__))
-
-    """
-    parser.add_argument('-r', '--r-libs',
-                        nargs=0,
-                        help="Print required R libraries.",
-                        action=RequiredRLib)
-
-
-    parser.add_argument('-a', '--add-plugin',
-                        nargs=3,
-                        help="Add plugins from a git repository: -a repository[,relative/path][,*.py].",
-                        action=AddPlugin)
-
-    parser.add_argument('-u', '--update-plugins',
-                        nargs=0,
-                        help="Enforce gtftk to search for new plugins in dedicated folders.",
-                        action=UpdatePlugin)
-
-    """
+    parser.add_argument('-v', '--version',
+                        action='version',
+                        version='%(prog)s v{0}'.format(__version__))
 
     parser.add_argument('-l', '--list-plugins',
                         nargs=0,
@@ -522,16 +451,11 @@ class CmdManager(object):
     # Declare subparser groups
 
     # geno_info, edition, selection, conversion, annotation, info, coverage, sequence
-    grp_editing = sub_parsers.add_parser_group(
-        '\n------- Editing --------\n')
-    grp_info = sub_parsers.add_parser_group(
-        '\n----- Information ------\n')
-    grp_select = sub_parsers.add_parser_group(
-        '\n------ Selection -------\n')
-    grp_convert = sub_parsers.add_parser_group(
-        '\n------ Conversion ------\n')
-    grp_annot = sub_parsers.add_parser_group(
-        '\n------ Annotation ------\n')
+    grp_editing = sub_parsers.add_parser_group('\n------- Editing --------\n')
+    grp_info = sub_parsers.add_parser_group('\n----- Information ------\n')
+    grp_select = sub_parsers.add_parser_group('\n------ Selection -------\n')
+    grp_convert = sub_parsers.add_parser_group('\n------ Conversion ------\n')
+    grp_annot = sub_parsers.add_parser_group('\n------ Annotation ------\n')
     grp_seq = sub_parsers.add_parser_group('\n------- Sequence -------\n')
     grp_coord = sub_parsers.add_parser_group('\n----- Coordinates ------\n')
     grp_cov = sub_parsers.add_parser_group('\n------- Coverage -------\n')
@@ -770,91 +694,44 @@ class CmdManager(object):
 
         # Update the global argument parser
 
+        arg_dict = {'name': cmd.name,
+                    'formatter_class': ArgFormatter,
+                    'parents': [cmd.parser],
+                    'help': cmd.message,
+                    'add_help': False,
+                    'description': cmd.desc}
         if cmd.group == 'editing':
-            cls.grp_editing.add_parser(
-                cmd.name,
-                formatter_class=ArgFormatter,
-                parents=[cmd.parser],
-                help=cmd.message,
-                add_help=False,
-                description=cmd.desc)
+            cls.grp_editing.add_parser(**arg_dict)
 
         elif cmd.group == 'information':
-            cls.grp_info.add_parser(
-                cmd.name,
-                formatter_class=ArgFormatter,
-                parents=[cmd.parser],
-                help=cmd.message,
-                add_help=False,
-                description=cmd.desc)
+            cls.grp_info.add_parser(**arg_dict)
 
         elif cmd.group == 'selection':
-            cls.grp_select.add_parser(
-                cmd.name,
-                formatter_class=ArgFormatter,
-                parents=[cmd.parser],
-                help=cmd.message,
-                add_help=False,
-                description=cmd.desc)
+            cls.grp_select.add_parser(**arg_dict)
 
         elif cmd.group == 'conversion':
-            cls.grp_convert.add_parser(
-                cmd.name,
-                formatter_class=ArgFormatter,
-                parents=[cmd.parser],
-                help=cmd.message,
-                add_help=False,
-                description=cmd.desc)
+            cls.grp_convert.add_parser(**arg_dict)
 
         elif cmd.group == 'coordinates':
-            cls.grp_coord.add_parser(
-                cmd.name,
-                formatter_class=ArgFormatter,
-                parents=[cmd.parser],
-                help=cmd.message,
-                add_help=False,
-                description=cmd.desc)
+            cls.grp_coord.add_parser(**arg_dict)
 
         elif cmd.group == 'annotation':
-            cls.grp_annot.add_parser(
-                cmd.name,
-                formatter_class=ArgFormatter,
-                parents=[cmd.parser],
-                help=cmd.message,
-                add_help=False,
-                description=cmd.desc)
+            cls.grp_annot.add_parser(**arg_dict)
 
         elif cmd.group == 'sequences':
-            cls.grp_seq.add_parser(
-                cmd.name,
-                formatter_class=ArgFormatter,
-                parents=[cmd.parser],
-                help=cmd.message,
-                add_help=False,
-                description=cmd.desc)
+            cls.grp_seq.add_parser(**arg_dict)
 
         elif cmd.group == 'coverage':
-            cls.grp_cov.add_parser(
-                cmd.name,
-                formatter_class=ArgFormatter,
-                parents=[cmd.parser],
-                help=cmd.message,
-                add_help=False,
-                description=cmd.desc)
+            cls.grp_cov.add_parser(**arg_dict)
 
         elif cmd.group == 'miscellaneous':
-            cls.grp_misc.add_parser(
-                cmd.name,
-                formatter_class=ArgFormatter,
-                parents=[cmd.parser],
-                help=cmd.message,
-                add_help=False,
-                description=cmd.desc)
+            cls.grp_misc.add_parser(**arg_dict)
 
         else:
             raise ValueError("Unknow group for commande : %s" % cmd.name)
 
-    def _find_plugins(self):
+    @staticmethod
+    def _find_plugins():
 
         message("Searching plugins", force=True)
         config_file = CmdManager.config_file
@@ -887,7 +764,8 @@ class CmdManager(object):
 
                 try:
 
-                    imp.load_source(module_name, plug)
+                    SourceFileLoader(module_name, plug).load_module()
+
                 except Exception as e:
                     message("Failed to load plugin :" + plug, type="WARNING")
                     print(e)
@@ -906,10 +784,7 @@ class CmdManager(object):
 
         message("Dumping plugins", force=True)
 
-        if PY2:
-            f_handler = open(CmdManager.dumped_plugin_path, "w")
-        if PY3:
-            f_handler = open(CmdManager.dumped_plugin_path, "wb")
+        f_handler = open(CmdManager.dumped_plugin_path, "wb")
 
         pick = cloudpickle.CloudPickler(f_handler)
         pick.dump((self.cmd_obj_list, self.parser))
@@ -934,25 +809,16 @@ class CmdManager(object):
 
         self._load_dumped_plugins()
 
-    def _load_dumped_plugins(self):
+    @staticmethod
+    def _load_dumped_plugins():
 
-        if PY2:
-            f_handler = open(CmdManager.dumped_plugin_path, "r")
-            CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
-        if PY3:
-            f_handler = open(CmdManager.dumped_plugin_path, "rb")
-            CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
+        f_handler = open(CmdManager.dumped_plugin_path, "rb")
+        CmdManager.cmd_obj_list, CmdManager.parser = cloudpickle.load(f_handler)
         f_handler.close()
 
         for cur_cmd in sorted(CmdManager.cmd_obj_list):
 
-            # Update the list of required R libraries
-
-            # message("Loading " + cur_cmd, type="DEBUG", force=True)
-            if CmdManager.cmd_obj_list[cur_cmd].rlib is not None:
-                add_r_lib(libs=CmdManager.cmd_obj_list[cur_cmd].rlib,
-                          cmd=cur_cmd)
-
+            # fix some issues related to dumping of the parser
             for cur_arg in CmdManager.cmd_obj_list[cur_cmd].parser._option_string_actions:
 
                 obj = CmdManager.cmd_obj_list[
@@ -1016,7 +882,7 @@ class CmdManager(object):
 
         # .pyc -> .py
         fun_path = cmd_ob.fun.rstrip("c")
-        tmp_module = imp.load_source('tmp_module', fun_path)
+        tmp_module = SourceFileLoader('tmp_module', fun_path).load_module()
         fun = getattr(tmp_module, args['command'])
 
         # Save args to log file
@@ -1048,33 +914,13 @@ class CmdManager(object):
                 cmd_ob.logger.info("Command: " + " ".join(sys.argv))
                 cmd_ob.logger.info("Argument: " + 'command=' + args['command'])
 
-                del args['command']
-
                 for key, value in list(args.items()):
-                    if isinstance(value, file):
+                    if isinstance(value, io.IOBase):
                         value = value.name
                     else:
                         value = str(value)
 
                     cmd_ob.logger.info("Argument: " + key + "=" + value)
-
-        try:
-            del args['command']
-        except KeyError:
-            pass
-
-        # Delete arg that won't be used by supparsers
-        for key_arg in ['bash_comp', 'add_chr', 'version', 'help',
-                        'plugin_tests', 'list_plugins', 'plugin_tests_no_conn',
-                        'r_libs', 'add_plugin', 'update_plugins', 'system_info',
-                        'plugin_path']:
-            try:
-                del args[key_arg]
-            except:
-                pass
-
-        # Call the command function
-        if cmd_ob.lang == "Python":
 
             # Set the level of verbosity
             # Can be None if -V is used without value
@@ -1088,26 +934,20 @@ class CmdManager(object):
             # output file
             if args['no_date']:
                 pygtftk.utils.ADD_DATE = False
-            del args['no_date']
 
-            del args['keep_all']
+            arg_list_to_del = ['bash_comp', 'add_chr', 'version', 'help',
+                               'plugin_tests', 'list_plugins', 'plugin_tests_no_conn',
+                               'r_libs', 'add_plugin', 'update_plugins', 'system_info',
+                               'plugin_path', 'no_date', 'keep_all', 'logger_file',
+                               'tmp_dir', 'verbosity', 'command']
+            for cur_arg in arg_list_to_del:
+                try:
+                    del args[cur_arg]
+                except KeyError:
+                    pass
+
             # Run the command
             fun(**args)
 
-        elif cmd_ob.lang == "R":
-
-            sys_cmd = ""
-            for k, a_value in list(args.items()):
-
-                if a_value is not False and a_value is not True:
-                    sys_cmd += " --" + k.replace("_", "-") + " " + str(a_value)
-                else:
-                    sys_cmd += " --" + k.replace("_", "-") + " "
-
-            sys_cmd = "Rscript " + cmd_ob.fun + " " + sys_cmd
-            shell_out = Popen(sys_cmd, shell=True, stdout=PIPE)
-
-            for line in shell_out.stdout:
-                sys.stderr.write(line)
         else:
             raise ValueError("Unknow language.")

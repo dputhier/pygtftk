@@ -65,9 +65,11 @@ int free_gtf_data(GTF_DATA *gtf_data) {
 			free(row->field);
 
 			for (j = 0; j < row->attributes.nb; j++) {
-				if (row->attributes.attr[j]->key != NULL) free(row->attributes.attr[j]->key);
-				if (row->attributes.attr[j]->value != NULL) free(row->attributes.attr[j]->value);
-				free(row->attributes.attr[j]);
+				//if (row->attributes.attr[j]->key != NULL) free(row->attributes.attr[j]->key);
+				//if (row->attributes.attr[j]->value != NULL) free(row->attributes.attr[j]->value);
+				//free(row->attributes.attr[j]);
+				if ((row->attributes.attr + j)->key != NULL) free((row->attributes.attr + j)->key);
+				if ((row->attributes.attr + j)->value != NULL) free((row->attributes.attr + j)->value);
 			}
 			free(row->attributes.attr);
 			free(row);

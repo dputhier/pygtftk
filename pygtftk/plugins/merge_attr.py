@@ -1,11 +1,10 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -32,15 +31,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-k', '--src-key',
                             help='Comma separated list of keys to join.',
@@ -76,21 +73,18 @@ def merge_attr(
         src_key="gene_id,transcript_id",
         separator="|",
         target_feature="*",
-        dest_key="gene_tx_ids",
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=None):
+        dest_key="gene_tx_ids"):
     """
     Merge a set of attributes into a destination attribute.
     """
 
-    gtf = GTF(inputfile,
-              check_ensembl_format=False
-              ).merge_attr(target_feature,
-                           src_key,
-                           dest_key,
-                           separator).write(outputfile,
-                                            gc_off=True)
+    GTF(inputfile,
+        check_ensembl_format=False
+        ).merge_attr(target_feature,
+                     src_key,
+                     dest_key,
+                     separator).write(outputfile,
+                                      gc_off=True)
 
     close_properly(outputfile, inputfile)
 

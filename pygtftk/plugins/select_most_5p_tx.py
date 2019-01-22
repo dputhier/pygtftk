@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 import argparse
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import message
@@ -30,15 +30,13 @@ def make_parser():
                         help="Path to the GTF file. Default to STDIN",
                         default=sys.stdin,
                         metavar="GTF",
-                        type=FileWithExtension('r',
-                                               valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                        type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser.add_argument('-o', '--outputfile',
                         help="Output file.",
                         default=sys.stdout,
                         metavar="GTF",
-                        type=FileWithExtension('w',
-                                               valid_extensions='\.[Gg][Tt][Ff]$'))
+                        type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser.add_argument('-g', '--keep-gene-lines',
                         help="Add gene lines to the output",
@@ -48,10 +46,7 @@ def make_parser():
 
 def select_most_5p_tx(inputfile=None,
                       outputfile=None,
-                      keep_gene_lines=False,
-                      tmp_dir=None,
-                      logger_file=None,
-                      verbosity=0):
+                      keep_gene_lines=False):
     """
     Select the most 5' transcript of each gene.
     """

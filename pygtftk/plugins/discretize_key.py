@@ -12,8 +12,7 @@ from builtins import zip
 import numpy as np
 import pandas
 
-from pygtftk.arg_formatter import FileWithExtension
-from pygtftk.arg_formatter import int_greater_than_null
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -45,15 +44,13 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="GTF",
-                            type=FileWithExtension('w',
-                                                   valid_extensions='\.[Gg][Tt][Ff]$'))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-k', '--src-key',
                             help='The name of the source key',
@@ -71,7 +68,10 @@ def make_parser():
                             help='The number of levels/classes to create.',
                             default=2,
                             metavar="KEY",
-                            type=int_greater_than_null,
+                            type=arg_formatter.ranged_num(lowest=1,
+                                                          highest=None,
+                                                          linc=True,
+                                                          val_type='int'),
                             required=True)
 
     parser_grp.add_argument('-l', '--labels',
@@ -106,10 +106,7 @@ def discretize_key(inputfile=None,
                    percentiles=False,
                    percentiles_of_uniq=False,
                    log=False,
-                   labels=None,
-                   tmp_dir=None,
-                   logger_file=None,
-                   verbosity=0):
+                   labels=None):
     """
     Create a new key by discretizing a numeric key.
     """
@@ -218,7 +215,7 @@ def discretize_key(inputfile=None,
         q = q + [np.percentile(dest_values_tmp, 100)]
 
         if len(q) != len(set(q)):
-            message("No ties are accepted in  percentiles :",
+            message("No ties are accepted in  percentiles.",
                     type="WARNING",
                     force=True)
             message("Breaks: " + str(q), type="WARNING", force=True)
@@ -258,7 +255,7 @@ def discretize_key(inputfile=None,
 
     with tmp_file as tp_file:
         for p, v in zip(dest_pos, breaks):
-            tmp_file.write(str(p) + "\t" + str(v) + '\n')
+            tp_file.write(str(p) + "\t" + str(v) + '\n')
 
     gtf.add_attr_to_pos(tmp_file,
                         new_key=dest_key).write(outputfile,

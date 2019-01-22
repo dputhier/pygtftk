@@ -59,10 +59,10 @@ pylintshort:
 	@find . -name "*.py"  -exec pylint $(PYLINT_ARGS) {} \; 2>/dev/null |perl -ne  "print if(/(Your code has been rated)|(\*\*\*\* Module)/)"
 
 nose:
-	@cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
+	@cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(bwig)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
 
 nose_travis:
-	@ source activate pygtftk_py3k; mkdir -p ~/tmp; cd ~/tmp ; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; echo $$a; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
+	@ source activate pygtftk_py3k; mkdir -p ~/tmp; cd ~/tmp ; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; echo $$a; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)||(bwig)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
 
 
 install:
@@ -94,10 +94,10 @@ test_cmd:
 	make bats_cmd CMD=$(CMD)
 
 %.bats:
-	@gtftk -l > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
+	@gtftk -l |sort -r > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
 
 %.bats_travis:
-	@gtftk -l | grep -v select_by_go | grep -v retrieve > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
+	@gtftk -l |sort -r | grep -v select_by_go | grep -v retrieve > prgm_list.txt; gtftk -p > test_list.txt; for i in $$(cat prgm_list.txt); do  cat test_list.txt | grep -E "@test \"$$i" -A 3  | grep -v "^\-\-$$" > $$i.bats; done
 
 %.completed : %.bats
 	@bats -t $<
@@ -107,13 +107,13 @@ test_cmd:
 	@bats -t $<
 	@echo "completed" > $@
 
-OUTPUT = $(eval OUTPUT := $$(shell gtftk -l 2>/dev/null))$(OUTPUT)
+OUTPUT = $(eval OUTPUT := $$(shell gtftk -l |sort -r 2>/dev/null))$(OUTPUT)
 OUTPUT2 = $(addsuffix .completed, $(OUTPUT))
 
 
 test_para: $(OUTPUT2)
 
-OUTPUT3 = $(eval OUTPUT3 := $$(shell gtftk -l | grep -v select_by_go | grep -v retrieve 2>/dev/null))$(OUTPUT3)
+OUTPUT3 = $(eval OUTPUT3 := $$(shell gtftk -l |sort -r | grep -v select_by_go | grep -v retrieve 2>/dev/null))$(OUTPUT3)
 OUTPUT4 = $(addsuffix .completed, $(OUTPUT3))
 
 test_para_travis: $(OUTPUT4)
@@ -121,14 +121,14 @@ test_para_travis: $(OUTPUT4)
 
 clean:
 	@make bats_cmd CMD=clean
-	@git checkout docs/source/conf.py pygtftk/version.py; rm -rf simple* control_list_reference.txt control_list_data.txt add_attr_to_pos.tab test.py pygtftk.egg-info build airway_love.txt* ENCFF630HEX_Total_RNAseq_K562_count_mini.txt STDIN.e* closest_1.tsv STDIN.o* dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/; make clean; cd ..; find . -type f -name '*~' -exec rm -f '{}' \;
+	@git checkout docs/source/conf.py pygtftk/version.py; rm -rf mk_matrix_6 expected_s* ids* diff_fasta.py chr1_hg38_10M.fa* observed_s* order_fasta.py simple* control_list_reference.txt control_list_data.txt add_attr_to_pos.tab test.py pygtftk.egg-info build airway_love.txt* ENCFF630HEX_Total_RNAseq_K562_count_mini.txt STDIN.e* closest_1.tsv STDIN.o* dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/; make clean; cd ..; find . -type f -name '*~' -exec rm -f '{}' \;
 
 check_cmd_has_example:
-	@for i in $$(gtftk -l); do if grep -q  "^$$i" docs/source/presentation.rst; then echo "" >/dev/null; else echo $$i; fi; done
+	@for i in $$(gtftk -l); do if grep -q  "^$$i" docs/source/*.rst; then echo "" >/dev/null; else echo $$i; fi; done
 
 check_example_has_cmd:
 	@gtftk -l > cmd_list.txt
-	@grep "~~" -B 1 docs/source/presentation.rst | grep -v "^$$" | grep -v " " |grep -v "^~~" | grep -v  "^\-\-" > example_list.txt
+	@grep "~~" -B 1 docs/source/*.rst | grep -v "^$$" | grep -v " " |grep -v "^~~" | grep -v  "^\-\-" > example_list.txt
 	@for i in $$(cat example_list.txt); do if $$(cat cmd_list.txt  | grep -q "^$$i")  ; then echo "" >/dev/null; else echo $$i; fi; done
 	@#rm -f cmd_list.txt example_list.txt tmp_list.txt
 

@@ -30,9 +30,11 @@ int get_trid_list(ROW_LIST *rl, char ***tr_list) {
 	for (i = 0; i < rl->nb_row; i++) {
 		row = gtf_d->data[rl->row[i]];
 		for (j = 0; j < row->attributes.nb; j++)
-			if (!strcmp(row->attributes.attr[j]->key, "transcript_id")) {
+			//if (!strcmp(row->attributes.attr[j]->key, "transcript_id")) {
+			if (!strcmp((row->attributes.attr + j)->key, "transcript_id")) {
 				*tr_list = (char **)realloc(*tr_list, (n + 1) * sizeof(char *));
-				lsearch(&(row->attributes.attr[j]->value), *tr_list, &n, sizeof(char *), string_cmp);
+				//lsearch(&(row->attributes.attr[j]->value), *tr_list, &n, sizeof(char *), string_cmp);
+				lsearch(&((row->attributes.attr + j)->value), *tr_list, &n, sizeof(char *), string_cmp);
 				break;
 			}
 	}
@@ -140,7 +142,7 @@ static void action_st(const void *nodep, const VISIT which, const int depth) {
 
 					/*
 					 * now we check if it is the current shortest
-					 * transcript and, if it is the case, we store:
+					 * transcript and, if it is the case, we storelsearch(&(row->attributes.attr[j]->value), *tr_list, &n, sizeof(char *), string_cmp);:
 					 * 	the length
 					 * 	the rank of the first row
 					 * 	the rank of the transcript_id attribute
@@ -253,8 +255,10 @@ GTF_DATA *select_transcript(GTF_DATA *gtf_data, int type) {
 		row->field = (char **)calloc(8, sizeof(char *));
 		if (i == 0) ret->data[0] = row;
 			for (k = 0; k < gtf_data->data[row_list->row[i]]->attributes.nb; k++)
-			add_attribute(row, gtf_data->data[row_list->row[i]]->attributes.attr[k]->key,
-				gtf_data->data[row_list->row[i]]->attributes.attr[k]->value);
+			//add_attribute(row, gtf_data->data[row_list->row[i]]->attributes.attr[k]->key,
+			//	gtf_data->data[row_list->row[i]]->attributes.attr[k]->value);
+			add_attribute(row, (gtf_data->data[row_list->row[i]]->attributes.attr + k)->key,
+				(gtf_data->data[row_list->row[i]]->attributes.attr + k)->value);
 			for (k = 0; k < 8; k++)
 			row->field[k] = strdup(gtf_data->data[row_list->row[i]]->field[k]);
 		row->rank = gtf_data->data[row_list->row[i]]->rank;

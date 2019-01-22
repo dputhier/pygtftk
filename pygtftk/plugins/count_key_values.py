@@ -8,7 +8,7 @@ from builtins import str
 from builtins import zip
 from collections import defaultdict
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -36,19 +36,13 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF",
                             required=False,
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Tt][Xx][Tt]',
-                                                                     '\.[Cc][Ss][Vv]',
-                                                                     '\.[Tt][Aa][Bb]',
-                                                                     '\.[Tt][Ss][Vv]',
-                                                                     '\.[Cc][Oo][Vv]')))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='txt'))
 
     parser_grp.add_argument('-k', '--keys',
                             default="*",
@@ -76,10 +70,7 @@ def count_key_values(
         outputfile=None,
         keys="gene_id,transcript_id",
         uniq=True,
-        tmp_dir=None,
-        additional_text=None,
-        logger_file=None,
-        verbosity=0):
+        additional_text=None):
     """
  Count the number values for a set of keys.
     """

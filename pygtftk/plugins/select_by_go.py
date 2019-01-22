@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
 import sys
 from collections import OrderedDict
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.biomart import Biomart
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -27,15 +26,13 @@ def make_parser():
                         help="Path to the GTF file. Default to STDIN",
                         default=sys.stdin,
                         metavar="GTF",
-                        type=FileWithExtension('r',
-                                               valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                        type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser.add_argument('-o', '--outputfile',
                         help="Output file.",
                         default=sys.stdout,
                         metavar="GTF",
-                        type=FileWithExtension('w',
-                                               valid_extensions='\.[Gg][Tt][Ff]$'))
+                        type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser.add_argument('-g', '--go-id',
                         help='The GO ID (with or without "GO:" prefix).',
@@ -92,10 +89,7 @@ def select_by_go(inputfile=None,
                  http_proxy=None,
                  list_datasets=None,
                  species=None,
-                 invert_match=False,
-                 tmp_dir=None,
-                 logger_file=None,
-                 verbosity=0):
+                 invert_match=False):
     """ Select lines from a GTF file based using a Gene Ontology ID (e.g GO:0050789).
     """
 

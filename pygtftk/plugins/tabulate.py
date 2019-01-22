@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
-
 import argparse
-import errno
 import os
 import sys
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
@@ -15,9 +12,11 @@ from pygtftk.utils import message
 from pygtftk.utils import write_properly
 
 __updated__ = "2018-01-20"
+
 __doc__ = """
  Convert a GTF to tabulated format.
 """
+
 __notes__ = """
  -- Warning: by default tabulate will discard any line for which one of the selected key is not defined. Use -x (-\-accept-undef) to print them.
  -- To refer to default keys use: seqid,source,feature,start,end,frame,gene_id...
@@ -37,18 +36,14 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Tt][Xx][Tt]',
-                                                                     '\.[Cc][Ss][Vv]',
-                                                                     '\.[Tt][Aa][Bb]',
-                                                                     '\.[Tt][Ss][Vv]')))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='txt'))
+
     parser_grp.add_argument('-s', '--separator',
                             help="The output field separator.",
                             default="\t",
@@ -114,7 +109,6 @@ def make_parser():
 def tabulate(inputfile=None,
              outputfile=None,
              key=None,
-             tmp_dir=None,
              no_unset=False,
              unique=False,
              no_basic=False,
@@ -124,9 +118,7 @@ def tabulate(inputfile=None,
              select_transcript_ids=False,
              select_exon_ids=False,
              separator="\t",
-             logger_file=None,
-             no_header=False,
-             verbosity=0):
+             no_header=False):
     """Convert a GTF to tabulated format.
     """
 
@@ -229,9 +221,14 @@ def tabulate(inputfile=None,
                         if t not in printed:
                             i.write(outputfile, separator)
                         printed[t] = 1
-    except IOError as e:
-        if e.errno == errno.EPIPE:
-            message("Received a boken pipe signal", type="WARNING")
+
+    except (BrokenPipeError, IOError):
+        def _void_f(*args, **kwargs):
+            pass
+
+        message("Received a boken pipe signal", type="WARNING")
+        sys.stdout.write = _void_f
+        sys.stdout.flush = _void_f
 
     close_properly(outputfile, inputfile)
 

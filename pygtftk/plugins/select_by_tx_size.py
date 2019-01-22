@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
 import sys
 from builtins import str
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import message
@@ -26,15 +25,13 @@ def make_parser():
                         help="Path to the GTF file. Default to STDIN",
                         default=sys.stdin,
                         metavar="GTF",
-                        type=FileWithExtension('r',
-                                               valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                        type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser.add_argument('-o', '--outputfile',
                         help="Output file.",
                         default=sys.stdout,
                         metavar="GTF",
-                        type=FileWithExtension('w',
-                                               valid_extensions='\.[Gg][Tt][Ff]$'))
+                        type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser.add_argument('-m', '--min-size',
                         help="Minimum size.",
@@ -52,10 +49,7 @@ def make_parser():
 def select_by_tx_size(inputfile=None,
                       outputfile=None,
                       min_size=None,
-                      max_size=None,
-                      tmp_dir=None,
-                      logger_file=None,
-                      verbosity=0):
+                      max_size=None):
     """
     Select features by size.
     """
@@ -65,18 +59,18 @@ def select_by_tx_size(inputfile=None,
                      M=str(max_size))
     message(msg)
 
-    gtf = GTF(inputfile
-              ).select_by_transcript_size(min_size,
-                                          max_size
-                                          ).write(outputfile,
-                                                  gc_off=True)
+    GTF(inputfile
+        ).select_by_transcript_size(min_size,
+                                    max_size
+                                    ).write(outputfile,
+                                            gc_off=True)
 
 
 def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    select_by_transcript_size(**args)
+    select_by_tx_size(**args)
 
 
 if __name__ == '__main__':

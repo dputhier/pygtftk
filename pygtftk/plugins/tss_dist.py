@@ -1,21 +1,21 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 import argparse
-import errno
 import os
 import sys
 from builtins import range
 from builtins import str
 from collections import defaultdict
 
-from pygtftk.arg_formatter import FileWithExtension
+from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
+
 __doc__ = """
  Computes the distance between TSSs of pairs of gene transcripts.
 """
@@ -38,29 +38,20 @@ def make_parser():
                             default=sys.stdin,
                             metavar="GTF",
                             required=False,
-                            type=FileWithExtension('r',
-                                                   valid_extensions='\.[Gg][Tt][Ff](\.[Gg][Zz])?$'))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
 
     parser_grp.add_argument('-o', '--outputfile',
                             help="Output file.",
                             default=sys.stdout,
                             metavar="TXT",
-                            type=FileWithExtension('w',
-                                                   valid_extensions=('\.[Tt][Xx][Tt]',
-                                                                     '\.[Cc][Ss][Vv]',
-                                                                     '\.[Tt][Aa][Bb]',
-                                                                     '\.[Tt][Ss][Vv]',
-                                                                     '\.[Cc][Oo][Vv]')))
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='txt'))
 
     return parser
 
 
 def tss_dist(
         inputfile=None,
-        outputfile=None,
-        tmp_dir=None,
-        logger_file=None,
-        verbosity=0):
+        outputfile=None):
     """
     Computes the distance between TSS of gene transcripts.
     """
@@ -87,7 +78,7 @@ def tss_dist(
                                 "tss_num_1",
                                 "tss_num_2"]) + "\n")
     try:
-        for gn_id in gn_tss_dist:
+        for gn_id in sorted(gn_tss_dist.keys()):
             tx_list = sorted(list(gn_tss_dist[gn_id].keys()))
             for i in range(len(tx_list) - 1):
 
@@ -112,9 +103,15 @@ def tss_dist(
                                              str(tss_2),
                                              str(tss_1)]) + "\n"
                         outputfile.write(str_out)
-    except IOError as e:
-        if e.errno == errno.EPIPE:
-            message("Received a boken pipe signal", type="WARNING")
+
+
+    except (BrokenPipeError, IOError):
+        def _void_f(*args, **kwargs):
+            pass
+
+        message("Received a boken pipe signal", type="WARNING")
+        sys.stdout.write = _void_f
+        sys.stdout.flush = _void_f
 
     close_properly(outputfile, inputfile)
 
