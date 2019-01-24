@@ -93,7 +93,7 @@ def bed_to_lists_of_intervals(bed, chromsizes):
 #################################################################################
 
 def exclude_chromsizes(exclusion, chromsizes):
-    """
+    r"""
     Shortens the chromsome sizes (given as a dictionary) by the total length of
     each excluded region (given as a BedTool file).
 
@@ -231,8 +231,7 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
     >>> f = pybedtools.BedTool(get_example_file("simple","bed")[0])
     >>> e = pybedtools.BedTool('chr1\t12\t45',from_string=True)
     >>> result = exclude_concatenate(f,e)
-    >>> assert str(result[0]) == 'chr1\t10\t12\n'
-    >>> assert str(result[1]) == 'chr1\t12\t17\n'
+    >>> assert str(result[0]) == 'chr1\t10\t17\n'
     """
 
     # Raw edition does not work in pybedtools, so need to use pandas dataframe instead.

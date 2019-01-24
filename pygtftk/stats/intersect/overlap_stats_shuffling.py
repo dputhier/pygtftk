@@ -190,7 +190,10 @@ def compute_overlap_stats(bedA, bedB,
 
 
 
-    # ----------------- Compute statistics on the intersections ------------------ #
+    # --------------- Compute statistics on the intersections ---------------- #
+
+    # NOTE For future improvement, since the shuffling itself is done chromosome
+    # by chromosome, making some statistics 'by chromosome' should be possible.
 
     start = time.time()
     with Pool(nb_threads) as p:

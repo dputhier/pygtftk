@@ -74,6 +74,8 @@ __notes__ = """
  -- Although peak_anno itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb. It is recommended you do not run other programs in the meantime.
 
  -- For the p-value Negative Binomial calcuation, if mean > var, the variance will be set to the mean and a message will be sent.
+
+ -- If you are using the --no-basic-features argument *without* --more-keys, you can supply an empty file as the GTF, since it will be disregarded in the code.
  """
 
 
