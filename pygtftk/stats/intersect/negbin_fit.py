@@ -2,9 +2,9 @@
 Contains various utility functions relative to the negative binomial distribution.
 """
 
+import numpy as np
 import scipy
 import scipy.stats
-import numpy as np
 
 from pygtftk.utils import message
 

@@ -33,7 +33,6 @@ def bed_to_lists_of_intervals(bed, chromsizes):
 
     For example, Li['chr1'] is the list of distances between regions in chr1.
 
-    Tests :
     >>> from pygtftk.utils import get_example_file
     >>> from pygtftk.stats.intersect.read_bed_as_list import bed_to_lists_of_intervals
     >>> import pybedtools
@@ -74,7 +73,7 @@ def bed_to_lists_of_intervals(bed, chromsizes):
         last_li = chromsizes[chrom] - previous_feature_stop
         if last_li < 0:
             last_li = 0
-            print('Warning - You have a bed file with features after the end of chromosome "'+str(chrom)+'" !')
+            message('Warning - You have a bed file with features after the end of chromosome "'+str(chrom)+'" !', type='INFO')
         li.append(last_li)
 
 
@@ -97,7 +96,6 @@ def exclude_chromsizes(exclusion, chromsizes):
     Shortens the chromsome sizes (given as a dictionary) by the total length of
     each excluded region (given as a BedTool file).
 
-
     >>> from pygtftk.utils import get_example_file
     >>> from collections import OrderedDict
     >>> from pygtftk.stats.intersect.read_bed_as_list import exclude_chromsizes
@@ -116,8 +114,6 @@ def exclude_chromsizes(exclusion, chromsizes):
         excl_length = abs(excl['end'] - excl['start'])
         chromsizes[excl['chrom']] = chromsizes[excl['chrom']] - excl_length
     return chromsizes
-
-
 
 
 
@@ -222,7 +218,6 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
         but is only run once per analysis, so it will be improved later.
         - The multiprocessing will pass a copy of the BED file to each process,
         which can consume a lot of RAM.
-
 
     >>> from pygtftk.utils import get_example_file
     >>> from pygtftk.stats.intersect.read_bed_as_list import exclude_concatenate

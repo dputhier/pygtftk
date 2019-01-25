@@ -78,7 +78,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
 
 
 
-    # --------------------- Convert batches into BED files ----------------------- #
+    # -------------------- Convert batches into BED files -------------------- #
     start = time.time()
     batch_to_bedlist_with_params = ft.partial(cs.batch_to_bedlist,all_chroms=all_chroms, minibatch_size=minibatch_size, nb_threads = nb_threads)
     bedsA, bedsB = batch_to_bedlist_with_params(shuffled_Lr1_batches, shuffled_Li1_batches, shuffled_Lr2_batches, shuffled_Li2_batches)
@@ -86,7 +86,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     message('Batch converted to fake beds in : '+str(stop-start)+' s', type='DEBUG')
 
 
-    # --------------------- Processing intersections ----------------------------- #
+    # -------------------- Processing intersections -------------------------- #
     # Using our custom cython intersect, process intersection between each pair of
     # 'fake bed files'
     start = time.time()
@@ -127,7 +127,8 @@ def compute_overlap_stats(bedA, bedB,
     - bedA corresponds to the old argument 'peak_file=region_mid_point.fn'
     - bedB corresponds to the old argument 'feature_bo=gtf_sub_bed'
     - chrom_len is the dictionary of chromosome lengths
-    See the peak_anno module for more documentation on the significance of each argument.
+    See the peak_anno module for more documentation on the significance of
+    each argument.
 
     Author : Quentin Ferré <quentin.q.ferre@gmail.com>
     """
@@ -140,7 +141,7 @@ def compute_overlap_stats(bedA, bedB,
     # --------------------- Read list of intervals --------------------------- #
     start = time.time()
 
-    # Just in case, force type and merge bedA among itself and bedB same.
+    # Just in case, force type and merge bedA ; same for bedB
     bed_A_as_pybedtool = pybedtools.BedTool(bedA).merge()
     bed_B_as_pybedtool = pybedtools.BedTool(bedB).merge()
 
@@ -213,7 +214,7 @@ def compute_overlap_stats(bedA, bedB,
     # Only relevant for classical shuffle, not Markov
 
     if use_markov_shuffling:
-        ps = pn = -1 # TODO explain why -1 is returned !
+        ps = pn = -1
 
     else:
         # Renaming esperances and variances
@@ -232,7 +233,6 @@ def compute_overlap_stats(bedA, bedB,
 
 
 
-
     # ---------------------------- True intersections ---------------------------- #
     # Now, calculating the actual p-value for the number of intersections and the
     # total number of overlapping base pairs
@@ -244,13 +244,12 @@ def compute_overlap_stats(bedA, bedB,
     true_intersect_nb = len(true_intersection)
     true_bp_overlaps = sum([x.length for x in true_intersection])
 
-
     # Compute the p-values using the distribution fitted on the shuffles
     # Do not do this for the Markov shuffling, as it is likely a multi-variable fit (see notes)
 
     # We can only use a Neg Binom p-val if we can fit it, and that is not the case for
-    # the Markov shuffle : we must use an empirical p-value
-    if use_markov_shuffling :
+    # the Markov shuffle or if the esperance is too small : we must use an empirical p-value
+    if (ps == -1) | (pn == -1) :
         pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
         pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
 
@@ -259,25 +258,16 @@ def compute_overlap_stats(bedA, bedB,
         pval_bp_overlaps = np.exp(nf.log_nb_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps))
 
 
-    # # Number limit : the lower limit for the p-value is roughly 1.11E-16 due to the number format.
-    # # As such, if the p-value is under 1.2E-16, round it down to zero anyways.
-    # if pval_intersect_nb < 1.2E-16 : pval_intersect_nb = 0
-    # if pval_bp_overlaps < 1.2E-16  : pval_bp_overlaps = 0
-    # NOTE Removed because it induced confusion
-
-
     grand_stop = time.time()
 
     message('--- Total time : '+str(grand_stop-grand_start)+' s ---')
     message('Total time does not include BED reading, as it does not scale with batch size.', type='DEBUG')
 
 
-
-    # # TODO : add three arguments to this function, outputdir, name and plot (bool)
-    #
-    # ### Print some diagnostic plots to study the distributions
-    # if plot :
-    # ### Plots
+    # ------------------------------------------------------------------------
+    # Draft code for diagnostic plots of the distribution of each statistic in
+    # the shuffles. Kept for potential future improvement.
+    # ------------------------------------------------------------------------
     # import matplotlib.pyplot as plt
     #
     # ## Number of overlapping base pairs

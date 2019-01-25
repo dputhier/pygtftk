@@ -3,11 +3,12 @@ Algorithm to compute the overlap between two sets of genomic regions (as BED fil
 Meant to achieve the same functionality as `bedtools intersect --sorted`.
 """
 
+from multiprocessing import Pool
+
 import numpy as np
 cimport numpy as np
-import pandas as pd
 
-from multiprocessing import Pool
+import pandas as pd
 
 import pybedtools
 

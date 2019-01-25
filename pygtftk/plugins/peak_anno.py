@@ -27,31 +27,38 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
 
-# Import the main function from the stats.intersect module
-from pygtftk.stats.intersect.overlap_stats_shuffling import compute_overlap_stats
+from pygtftk.stats.intersect.overlap_stats_shuffling import compute_overlap_stats # Main function from the stats.intersect module
 from pygtftk.stats.intersect import read_bed_as_list as read_bed # Only used here for exclusions
 
 
 
-__updated__ = "2019-01-03"
+__updated__ = "2019-01-25"
 __doc__ = """
  Annotate peaks (in bed format) with region sets/features computed on the
  fly from a GTF file  (e.g promoter, tts, gene body, UTR...). Custom features
  are supported.
 
- Each couple peak file/feature is randomly shuffled across the genome (exclusion
- is possible and inter-region lengths are considered). Then the probability of
- intersection under the null hypothesis (the peaks and this feature are
- independant) is deduced thanks to this Monte Carlo approach.
+ Each couple peak file/feature is randomly shuffled across the genome (inter-region
+ lengths are considered). Then the probability of intersection under the null
+ hypothesis (the peaks and this feature are independant) is deduced thanks to
+ this Monte Carlo approach.
+
+ Authors : Quentin Ferré <quentin.q.ferre@gmail.com> and Denis Puthier <denis.puthier@univ-amu.fr>
  """
 
 __notes__ = """
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
 
- -- The program produces a pdf file and a txt file ('_stats_') containing intersection statistics.
+ -- The program produces a pdf file and a txt file ('_stats_') containing intersection statistics
+ for the shuffled BEDs under H0 (peak_file and the considered genomic region are independant):
+ number of intersections (= number of lines in the bed intersect) and total number of overlapping
+ base pairs.
  The output figure gives, for both statistics, esperance and standard deviation (error bars)
  in the shuffles compared to the actual values.
-
+    It also gives, under the 'fit' label for each statistic, the goodness of fit of the statistic under (H0)
+ to a Negative Binomial (normal equivalent) assessed by a KS test. The p-value of the true intersection
+ under the distribution characterized by the shuffles is also given, under 'p_value'.
+    Finally, the log2 fold change between true and shuffles is also given.
 
  -- If -\-more-keys is used additional region sets will be tested based on the associated key value.
  As an example, if -\-more-keys is set to the 'gene_biotype' (a key generally found in ensembl GTF), the
@@ -63,17 +70,18 @@ __notes__ = """
  -- TODO: This function does not support a mappability file at the moment...
 
  -- The lists of region and inter-region lengths can be shuffled independantly, or by using two independant Markov models
- of order 2 respectively for each (only use if you suspect there is a structure to the data, not recommended in the general case).
- Furthermore, this is *very* time-consuming (hours ?).
+ of order 2 respectively for each. This is not recommended in the general case and can *very* time-consuming (hours).
 
- -- The goal of the minibatch is to save RAM. Increase the number of minibatches instead of the size of each. You may need to use very small minibatches if you have large sets of regions.
+ -- The goal of the minibatch is to save RAM. Increase the number of minibatches, instead of their size.
+ You may need to use very small minibatches if you have large sets of regions.
 
- -- You can exclude regions from the shuffling, but the same ones will be excluded from the peak_file and the GTF.
- This in Beta for now and will be very time-consuming (hours) especially if you have few CPU cores. Try using an exclusion file that is as small (at most a thousand lines) as possible.
+ -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
+ the excluded regions, but the same ones will be excluded from the peak_file and the GTF.
+ This in Beta for now and will be very time-consuming (hours), especially if you have few CPU cores.
+ Try using an exclusion file that is as small (around a thousand elements) as possible.
 
- -- Although peak_anno itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb. It is recommended you do not run other programs in the meantime.
-
- -- For the p-value Negative Binomial calcuation, if mean > var, the variance will be set to the mean and a message will be sent.
+ -- Although peak_anno itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb.
+ It is recommended you do not run other programs in the meantime.
 
  -- If you are using the --no-basic-features argument *without* --more-keys, you can supply an empty file as the GTF, since it will be disregarded in the code.
  """
@@ -753,7 +761,7 @@ if __name__ == '__main__':
 
 else:
 
-    # TODO Rewrite the conditions based on MY results with trivial data
+    # 'Bats' tests
     test = '''
         #peak_anno: run on simple test file
         @test "peak_anno_1" {

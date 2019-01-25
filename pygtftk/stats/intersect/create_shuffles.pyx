@@ -5,6 +5,7 @@ This shuffle keeps the distribution of regions and inter-region legths.
 
 import numpy as np
 cimport numpy as np
+
 import pybedtools
 
 from functools import partial
@@ -18,7 +19,6 @@ from multiprocessing import Pool
 
 # ------------------------ Custom simple permutation ------------------------- #
 
-
 def shuffle(arr):
     """
     Given a numpy array, will shuffle its rows independantly.
@@ -31,8 +31,21 @@ def shuffle(arr):
     return result
 
 
-
 # ------------------------ Custom Markov shuffling --------------------------- #
+
+"""
+This will shuffle lists using an order 2 Markov model.
+
+This is not recommended in the general case, and should only be used if you
+suspect there is an order to the data that you want to keep.
+
+Please note that :
+  - This will be very time consuming (hours).
+  - A negative binomial cannot be used here, the resulting distribution is often
+  multimodal and not a good fit for any of the basic probability distributions.
+  - This will result in a higher number of intersections and number of overlapping
+  base pairs than the basic shuffle.
+"""
 
 cdef noise(int x, int factor=1000):
     """
@@ -44,7 +57,6 @@ cdef noise(int x, int factor=1000):
     Generates random uniform noise between 0 and factor-1, and substract it to x.
     """
     cdef int noise
-    # TODO Maybe don't use uniform noise ?
     noise = int(np.random.uniform() * abs(factor-1))
     return x - noise
 
@@ -53,7 +65,6 @@ cdef roundup(int x, int factor=1000):
     We round up the lengths to the thousands to avoir overfitting the model by
     learning the exact values.
     """
-    # TODO Maybe revise this paradigm
     return x if x % factor == 0 else x + factor - x % factor
 
 
@@ -67,7 +78,8 @@ def learn_word_dict(corpus):
 
     def make_trios(corpus):
         # Must have at least 3 features
-        if len(corpus) < 3 : raise ValueError('At least one chromosome in one of the input bed files has fewer than 3 features. You cannot use Markov shuffling in this case.')
+        if len(corpus) < 3 :
+          raise ValueError('At least one chromosome in one of the input bed files has fewer than 3 features. You cannot use Markov shuffling in this case.')
 
         for i in range(len(corpus)-2):
             yield (corpus[i], corpus[i+1], corpus[i+2])
