@@ -127,7 +127,7 @@ def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
     for more information.
     """
 
-    message('Exclusion for chrom : '+str(chrom),type='DEBUG')
+    message('Exclusion in progress for '+str(chrom),type='DEBUG')
 
     ### Take PARTIAL bedfiles and exclusion : only for the current chromosome
     bedfile = bedfile[bedfile.chrom == chrom]

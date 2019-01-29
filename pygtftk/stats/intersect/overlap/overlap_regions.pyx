@@ -22,9 +22,17 @@ cdef find_overlap(np.ndarray melted):
     2 means 'Beginning of a region in B' ; 3 means 'Ending of a region in B'
     The array MUST be sorted by its first column (position).
 
+    This is an algorithm of the "sweep line" family, which entails using
+    "event points" (see code). The problem itself is akin to the "matching brackets"
+    problem.
+
     This function benefits massively from Cython implementation, as it is a
     comparatively simple algorithm where Python overhead is most damning and
     Cython translation is very straightforward.
+
+    Remark : as overlaps will only be computed once per shuffle, the use of
+    Interval Trees (whose cost would be offset by faster interval query) is
+    not justified.
     """
     cdef int current_position
     cdef bint openA
@@ -43,7 +51,7 @@ cdef find_overlap(np.ndarray melted):
     overlapping = False
     overlaps = list()
 
-    # Continue until we hit a remarkable point : start or end of anyone in A or B
+    # Continue until we hit an event point : start or end of anyone in A or B
     rangei = np.arange(melted.shape[0])
     for i in rangei:
 

@@ -142,8 +142,8 @@ def compute_overlap_stats(bedA, bedB,
     start = time.time()
 
     # Just in case, force type and merge bedA ; same for bedB
-    bed_A_as_pybedtool = pybedtools.BedTool(bedA).merge()
-    bed_B_as_pybedtool = pybedtools.BedTool(bedB).merge()
+    bed_A_as_pybedtool = pybedtools.BedTool(bedA).sort().merge()
+    bed_B_as_pybedtool = pybedtools.BedTool(bedB).sort().merge()
 
 
     # If there is an exclusion to be done, do it.
