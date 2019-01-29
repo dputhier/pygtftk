@@ -239,7 +239,9 @@ def compute_overlap_stats(bedA, bedB,
 
 
     ## True intersection
-    true_intersection = bedA.intersect(bedB)
+    #true_intersection = bedA.intersect(bedB)
+    true_intersection = bed_A_as_pybedtool.intersect(bed_B_as_pybedtool) # Perform intersection with the exclusion regions removed !
+
 
     true_intersect_nb = len(true_intersection)
     true_bp_overlaps = sum([x.length for x in true_intersection])
