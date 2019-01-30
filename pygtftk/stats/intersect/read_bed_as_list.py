@@ -170,6 +170,7 @@ def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
                 partial_result.at[i, 'end'] = partial_result.at[i, 'end'] - excl_length
 
             # all regions where region_start > excl_start but region_end < excl_end (so are included) : eliminate those
+            # Warning : must be before the 5th test
             elif (bedfile.at[i, 'start'] >= excl['start']) & (bedfile.at[i, 'end'] < excl['end']):
                 partial_result.drop(i, inplace=True)
 
@@ -192,6 +193,12 @@ def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
             elif (bedfile.at[i, 'start'] >= excl['end']):
                 partial_result.at[i, 'start'] = partial_result.at[i, 'start'] - excl_length
                 partial_result.at[i, 'end'] = partial_result.at[i, 'end'] - excl_length
+
+
+            # Sanity check : pybedtools does not like if both start and end are equal to zero
+            if (partial_result.at[i, 'start'] == 0) & (partial_result.at[i, 'end'] == 0) :
+                partial_result.at[i, 'start'] = 1
+                partial_result.at[i, 'end'] = 1
 
     return partial_result
 
