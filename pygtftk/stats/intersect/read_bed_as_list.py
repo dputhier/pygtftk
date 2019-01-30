@@ -160,6 +160,10 @@ def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
             # value of result, otherwise you are comparing positions from two
             # different coordinates sets.
 
+            # For sanity check : do not check a line if it has been removed
+            do_not_check_for_zero = False
+
+
             # all regions where region_start is under exclu_start but region_end is higher than exclu_start BUT lower than excl_end: truncate by setting region_end to exclu_start
             if (bedfile.at[i, 'start'] < excl['start']) & (excl['end'] >= bedfile.at[i, 'end'] >= excl['start']):
                 truncate_by = bedfile.at[i, 'end'] - excl['start']
