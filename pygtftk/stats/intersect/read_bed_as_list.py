@@ -197,7 +197,6 @@ def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
 
 
             # Sanity check : pybedtools does not like if both start and end are equal to zero
-            if (partial_result.at[i, 'start'] == 0) & (partial_result.at[i, 'end'] == 0) :
             if (partial_result.at[i, 'start'] == 0) & (partial_result.at[i, 'end'] == 0) & (not do_not_check_for_zero) :
                 partial_result.at[i, 'start'] = 1
                 partial_result.at[i, 'end'] = 1
