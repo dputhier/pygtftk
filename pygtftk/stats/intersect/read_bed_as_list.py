@@ -161,7 +161,7 @@ def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
             # different coordinates sets.
 
             # For sanity check : do not check a line if it has been removed
-            do_not_check_for_zero = False
+            check_for_zero = True
 
 
             # all regions where region_start is under exclu_start but region_end is higher than exclu_start BUT lower than excl_end: truncate by setting region_end to exclu_start
@@ -176,7 +176,7 @@ def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
             # all regions where region_start > excl_start but region_end < excl_end (so are included) : eliminate those
             # Warning : must be before the 5th test
             elif (bedfile.at[i, 'start'] >= excl['start']) & (bedfile.at[i, 'end'] < excl['end']):
-                do_not_check_for_zero = True
+                check_for_zero = False
                 partial_result.drop(i, inplace=True)
 
             # all regions where region_start is higher than excl_start but lower than excl_end and region_end is higher than excl_end : truncate by setting region_start to excl_end and also region_end = region_end - nb_of_nt_of_region_that_are_in_excl
@@ -201,10 +201,11 @@ def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
 
 
             # Sanity check : pybedtools does not like if both start and end are equal to zero
-            if (partial_result.at[i, 'start'] == 0) & (partial_result.at[i, 'end'] == 0) & (not do_not_check_for_zero) :
-                partial_result.at[i, 'start'] = 1
-                partial_result.at[i, 'end'] = 1
-            do_not_check_for_zero = False
+            if check_for_zero : # Do not check if the line has been dropped
+                if (partial_result.at[i, 'start'] == 0) & (partial_result.at[i, 'end'] == 0):
+                    partial_result.at[i, 'start'] = 1
+                    partial_result.at[i, 'end'] = 1
+
 
     return partial_result
 
