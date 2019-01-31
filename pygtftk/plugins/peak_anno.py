@@ -455,7 +455,7 @@ def peak_anno(inputfile=None,
             del gtf_sub
 
             hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-            message("Working on : "+str(feat_type), type="DEBUG")
+            message("Working on : "+str(feat_type), type="INFO")
 
         # -------------------------------------------------------------------------
         # Get the intergenic regions
@@ -467,7 +467,7 @@ def peak_anno(inputfile=None,
                                          chrom_len.keys()).merge()
 
         hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-        message("Working on : Intergenic", type="DEBUG")
+        message("Working on : Intergenic", type="INFO")
 
         # -------------------------------------------------------------------------
         # Get the intronic regions
@@ -476,7 +476,7 @@ def peak_anno(inputfile=None,
         gtf_sub_bed = gtf.get_introns()
 
         hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-        message("Working on : Introns", type="DEBUG")
+        message("Working on : Introns", type="INFO")
 
         # -------------------------------------------------------------------------
         # Get the promoter regions
@@ -489,7 +489,7 @@ def peak_anno(inputfile=None,
                                                                  3, 4, 5]).sort().merge()
 
         hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-        message("Working on : Promoters", type="DEBUG")
+        message("Working on : Promoters", type="INFO")
 
         # -------------------------------------------------------------------------
         # Get the tts regions
@@ -502,7 +502,7 @@ def peak_anno(inputfile=None,
                                                                  3, 4, 5]).sort().merge()
 
         hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-        message("Working on : Terminator", type="DEBUG")
+        message("Working on : Terminator", type="INFO")
 
     # -------------------------------------------------------------------------
     # if the user request --more-keys (e.g. gene_biotype)
@@ -540,7 +540,7 @@ def peak_anno(inputfile=None,
                     ft_type = ":".join([user_key, val])  # Key for the dictionary
                     hits[ft_type] = overlap_partial(bedA=peak_file,
                                                     bedB=gtf_sub_bed)
-                    message("Working on : "+str(feat_type), type="DEBUG")
+                    message("Working on : "+str(feat_type), type="INFO")
 
     # -------------------------------------------------------------------------
     # Process user defined annotations
@@ -561,7 +561,7 @@ def peak_anno(inputfile=None,
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
                                             bedB=BedTool(bed_anno.name))
-            message("Working on : "+str(bed_lab), type="DEBUG")
+            message("Working on : "+str(bed_lab), type="INFO")
 
     # ------------------ Treating the 'hits' dictionary --------------------- #
 
