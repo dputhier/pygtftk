@@ -26,7 +26,7 @@ Just do the following things to declare a new command named **'print_gtf'**:
    import argparse
    from pygtftk.cmd_object import CmdObject
    from pygtftk.gtf_interface import GTF
-   from pygtftk.arg_formatter import FileWithExtension
+   from pygtftk import arg_formatter
 
    #-------------------------------------------------------------------------
    # NOTES: Just place this file into ~/.gtftk/plugins
@@ -87,16 +87,14 @@ Just do the following things to declare a new command named **'print_gtf'**:
                               help="Path to the GTF file. Default to STDIN",
                               default=sys.stdin,
                               metavar="GTF",
-                              type=FileWithExtension('r',
-                                                        valid_extensions=('\.[Gg][Tt][Ff](\.[Gg][Zz])?$')))
-         
-            
+                              type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
+
+
       parser_grp.add_argument('-o', '--outputfile',
                               help="Output file.",
                               default=sys.stdout,
                               metavar="GTF",
-                              type=FileWithExtension('w',
-                                                     valid_extensions=('\.[Gg][Tt][Ff]$')))
+                              type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
          
        return parser
    
