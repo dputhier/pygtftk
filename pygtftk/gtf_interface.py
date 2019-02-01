@@ -3855,6 +3855,28 @@ def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
     return decorated
 
 
+# ---------------------------------------------------------------
+# A function to load a blast into a GTF object
+# ---------------------------------------------------------------
+
+def blast_to_gtf(input_blast=None):
+    """Convert a blast result into a GTF object.
+
+    :param input_blast: The path to the blast result file.
+
+    :Example:
+
+    >>> from pygtftk.gtf_interface import blast_to_gtf
+    >>> blast_to_gtf()
+
+    """
+
+    new_data = GTF._dll.load_blast(native_str(input_blast))
+
+    # return GTF(input_obj=input_blast, new_data=new_data)
+    return new_data
+
+
 if __name__ == "__main__":
 
     from pygtftk.utils import get_example_file

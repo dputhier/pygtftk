@@ -136,8 +136,9 @@ char *get_next_blast_hsp(TEXTFILE_READER *gr, BLAST_HSP *hsp, char *buffer) {
 			hsp->bq.query_name = strdup(strchr(tmp, ' ') + 1);
 			free(tmp);
 			tmp = readline(gr);
-			*strchr(tmp, ' ') = 0;
-			hsp->bq.query_length = atoi(tmp + 1);
+			tmp = readline(gr);
+			//*strchr(tmp, ' ') = 0;
+			hsp->bq.query_length = atoi(strchr(tmp, '=') + 1);
 		}
 		else if (*tmp == '>') {
 			if (hsp->bs.subject_name != NULL) free(hsp->bs.subject_name);
@@ -188,7 +189,7 @@ char *get_next_blast_hsp(TEXTFILE_READER *gr, BLAST_HSP *hsp, char *buffer) {
 				free(field);
 			}
 		}
-		else if (!strncmp("Query:", tmp, 6)) {
+		else if (!strncmp("Query", tmp, 5)) {
 			split_ip(&field, tmp, " ");
 			k = atoi(field[1]);
 			if ((hsp->query_start == -1) || (hsp->query_start > k))	hsp->query_start = k;
@@ -198,7 +199,7 @@ char *get_next_blast_hsp(TEXTFILE_READER *gr, BLAST_HSP *hsp, char *buffer) {
 			if ((hsp->query_end == -1) || (hsp->query_end < k))	hsp->query_end = k;
 			free(field);
 		}
-		else if (!strncmp("Sbjct:", tmp, 6)) {
+		else if (!strncmp("Sbjct", tmp, 5)) {
 			split_ip(&field, tmp, " ");
 			k = atoi(field[1]);
 			if ((hsp->subject_start == -1) || (hsp->subject_start > k))	hsp->subject_start = k;
