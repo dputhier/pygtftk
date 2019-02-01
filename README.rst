@@ -2,14 +2,13 @@
     :alt: Licence
     :target: https://github.com/dputhier/pygtftk
 
-
 .. image:: https://badge.fury.io/py/pygtftk.svg
     :alt: PyPI
     :target: https://badge.fury.io/py/pygtftk
 
 .. image::  https://img.shields.io/badge/contributions-welcome-brightgreen.svg
     :alt: GitHub
-    :target: https://github.com/dputhier/pygtftk
+    :target: https://github.com/dputhier/pygtftk/blob/master/CONTRIBUTING.rst
 
 .. image:: https://readthedocs.org/projects/pygtftk/badge/?version=master
     :alt: Documentation Status
