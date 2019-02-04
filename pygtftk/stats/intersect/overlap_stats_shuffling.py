@@ -187,7 +187,7 @@ def compute_overlap_stats(bedA, bedB,
 
         all_intersections = all_intersections + compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2, all_chrom1, all_chrom2,
                                                                     minibatches[k], use_markov_shuffling, nb_threads)
-    message('All intersections have been generated.')
+    message('All intersections have been generated.', type='DEBUG')
 
 
 
@@ -221,15 +221,15 @@ def compute_overlap_stats(bedA, bedB,
         esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(summed_bp_overlaps)
         esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs = np.mean(intersect_nbs), np.var(intersect_nbs)
 
-        # Check that there is a good adjustment
-        # We use a normal law as NB -> norm for large N, but this is irrelevant
-        # if the mean is under 50 roughly (should not happen with this kind of
-        # data, but just in case)
-        if esperance_fitted_summed_bp_overlaps<50:
-            ps = pn = -1
-        else:
-            ps = nf.check_negbin_adjustment(summed_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps).pvalue
-            pn = nf.check_negbin_adjustment(intersect_nbs, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs).pvalue
+        # Check that there is a good adjustment. If the p-value is under 0.05
+        # roughly, it is not a good adjustment.
+        ps = nf.check_negbin_adjustment(summed_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps).pvalue
+        pn = nf.check_negbin_adjustment(intersect_nbs, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs).pvalue
+
+        # We use a Normal law, as Neg Binom -> Normal for large N, but this is
+        # irrelevant if the mean is under roughly 50
+        if esperance_fitted_summed_bp_overlaps<50: ps = -1
+        if esperance_fitted_intersect_nbs<50: pn = -1
 
 
 
@@ -293,9 +293,10 @@ def compute_overlap_stats(bedA, bedB,
     # plt.figure() ; plt.hist(intersect_nbs, bins=50)
     # plt.savefig(outputdir+'/'+name+'_nb_intersections.png')
 
-
     ### Result as a dictionary of statistics
     result = OrderedDict()
+
+    # Remark : to avoid division by zero, an epsilon of 1E100 is added when needed
 
     # Number of intersections
     result['nb_intersections_esperance_shuffled'] = '{:.2f}'.format(np.mean(intersect_nbs))
@@ -305,7 +306,8 @@ def compute_overlap_stats(bedA, bedB,
     result['nb_intersections_true'] = true_intersect_nb
     result['nb_intersections_pvalue'] = '{0:.4g}'.format(pval_intersect_nb)
 
-    result['nb_intersections_log2_fold_change'] = '{:.5f}'.format(true_intersect_nb / (np.mean(intersect_nbs) + 1E-100))
+    ni_fc = true_intersect_nb / (np.mean(intersect_nbs) + 1E-100)
+    result['nb_intersections_log2_fold_change'] = '{:.5f}'.format(np.log2(ni_fc + 1E-100))
 
     # Summed number of overlapping basepairs
     result['summed_bp_overlaps_esperance_shuffled'] = '{:.2f}'.format(np.mean(summed_bp_overlaps))
@@ -315,7 +317,8 @@ def compute_overlap_stats(bedA, bedB,
     result['summed_bp_overlaps_true'] = true_bp_overlaps
     result['summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(pval_bp_overlaps)
 
-    result['nb_intersections_log2_fold_change'] = '{:.5f}'.format(true_bp_overlaps / (np.mean(summed_bp_overlaps) + 1E-100))
+    sbp_fc = true_bp_overlaps / (np.mean(summed_bp_overlaps) + 1E-100)
+    result['summed_bp_overlaps_log2_fold_change'] = '{:.5f}'.format(np.log2(sbp_fc + 1E-100))
 
 
     return result
