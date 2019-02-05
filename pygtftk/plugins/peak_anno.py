@@ -56,8 +56,8 @@ __notes__ = """
  The output figure gives, for both statistics, esperance and standard deviation (error bars)
  in the shuffles compared to the actual values.
     It also gives, under the 'fit' label for each statistic, the goodness of fit of the statistic under (H0)
- to a Negative Binomial (normal equivalent) assessed by a KS test. The p-value of the true intersection
- under the distribution characterized by the shuffles is also given, under 'p_value'.
+ to a Negative Binomial assessed by a Cramer's V score (fit_quality gives 1-V ; as per Cramer (1948) a good fit should have a fit quality above 1 - 0.25 = 0.75).
+    The p-value of the true intersection under the distribution characterized by the shuffles is also given, under 'p_value'.
     Finally, the log2 fold change between true and shuffles is also given.
 
  -- If -\-more-keys is used additional region sets will be tested based on the associated key value.
