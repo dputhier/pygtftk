@@ -79,8 +79,11 @@ static void action_transcript(const void *nodep, const VISIT which, const int de
 					if (!ok)
 						if (strcmp(feature, "gene") && strcmp(feature, "transcript")) {
 							for (k = 0; k < row->attributes.nb; k++)
-								if (strncmp(row->attributes.attr[k]->key, "exon", 4))
-									add_attribute(tr_row, row->attributes.attr[k]->key, row->attributes.attr[k]->value);
+								//if (strncmp(row->attributes.attr[k]->key, "exon", 4))
+								//	add_attribute(tr_row, row->attributes.attr[k]->key, row->attributes.attr[k]->value);
+								if (strncmp((row->attributes.attr + k)->key, "exon", 4))
+									add_attribute(tr_row, (row->attributes.attr + k)->key, (row->attributes.attr + k)->value);
+
 							tr_row->field[0] = strdup(row->field[0]);
 							tr_row->field[1] = get_attribute_value(row, "transcript_source");
 							if (tr_row->field[1] == NULL)
@@ -167,10 +170,15 @@ static void action_gene(const void *nodep, const VISIT which, const int depth) {
 					if (!strcmp(feature, "exon") || !strcmp(feature, "transcript")) {
 						if (!ok) {
 							for (k = 0; k < row->attributes.nb; k++)
-								if (!strncmp(row->attributes.attr[k]->key, "gene", 4) ||
-										strstr(row->attributes.attr[k]->key, "_gene_") ||
-										!strncmp(strlen(row->attributes.attr[k]->key) >= 5 ? row->attributes.attr[k]->key + strlen(row->attributes.attr[k]->key) - 5 : row->attributes.attr[k]->key, "_gene", 5))
-									add_attribute(g_row, row->attributes.attr[k]->key, row->attributes.attr[k]->value);
+								//if (!strncmp(row->attributes.attr[k]->key, "gene", 4) ||
+								//		strstr(row->attributes.attr[k]->key, "_gene_") ||
+								//		!strncmp(strlen(row->attributes.attr[k]->key) >= 5 ? row->attributes.attr[k]->key + strlen(row->attributes.attr[k]->key) - 5 : row->attributes.attr[k]->key, "_gene", 5))
+								//	add_attribute(g_row, row->attributes.attr[k]->key, row->attributes.attr[k]->value);
+								if (!strncmp((row->attributes.attr + k)->key, "gene", 4) ||
+									strstr((row->attributes.attr + k)->key, "_gene_") ||
+									!strncmp(strlen((row->attributes.attr + k)->key) >= 5 ? (row->attributes.attr + k)->key + strlen((row->attributes.attr + k)->key) - 5 : (row->attributes.attr + k)->key, "_gene", 5))
+								add_attribute(g_row, (row->attributes.attr + k)->key, (row->attributes.attr + k)->value);
+
 							g_row->field[0] = strdup(row->field[0]);
 							g_row->field[1] = get_attribute_value(row, "gene_source");
 							if (g_row->field[1] == NULL)

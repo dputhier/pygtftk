@@ -21,6 +21,11 @@
 COLUMN **column = NULL;
 
 /*
+ * A hashtable used to get a column rank from its name.
+ */
+struct hsearch_data *column_rank;
+
+/*
  * The number of columns, that is set to 9 for GTF files in column.c source
  * file.
  */

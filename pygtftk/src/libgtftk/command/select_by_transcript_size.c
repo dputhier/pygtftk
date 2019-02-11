@@ -133,8 +133,10 @@ GTF_DATA *select_by_transcript_size(GTF_DATA *gtf_data, int min, int max) {
 		row->field = (char **)calloc(8, sizeof(char *));
 		if (i == 0) ret->data[0] = row;
 		for (k = 0; k < gtf_data->data[row_list->row[i]]->attributes.nb; k++)
-			add_attribute(row, gtf_data->data[row_list->row[i]]->attributes.attr[k]->key,
-							gtf_data->data[row_list->row[i]]->attributes.attr[k]->value);
+			//add_attribute(row, gtf_data->data[row_list->row[i]]->attributes.attr[k]->key,
+			//				gtf_data->data[row_list->row[i]]->attributes.attr[k]->value);
+			add_attribute(row, (gtf_data->data[row_list->row[i]]->attributes.attr + k)->key,
+							(gtf_data->data[row_list->row[i]]->attributes.attr + k)->value);
 		for (k = 0; k < 8; k++)
 			row->field[k] = strdup(gtf_data->data[row_list->row[i]]->field[k]);
 		row->rank = gtf_data->data[row_list->row[i]]->rank;

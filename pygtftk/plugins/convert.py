@@ -10,7 +10,6 @@ from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
-from pygtftk.utils import is_comment
 
 __updated__ = "2018-01-20"
 __doc__ = """Convert a GTF to various format (still limited)."""
@@ -75,108 +74,17 @@ def convert(inputfile=None,
     if format == "bed3":
         gtf = GTF(inputfile, check_ensembl_format=False)
 
-        for i in gtf.extract_data("seqid,start,end"):
-            # First line is the header (#...)
-            # Should be skipped
-            if not is_comment(i[0]):
-                # Should be zero based
-                i[1] = str(int(i[1]) - 1)
-                i.write(outputfile)
+        for i in gtf.extract_data("seqid,start,end", as_list_of_list=True, hide_undef=False, no_na=False):
+            i[1] = str(int(i[1]) - 1)
+            outputfile.write("\t".join(i) + "\n")
 
     elif format in ["bed", "bed6"]:
-        gtf = GTF(inputfile, check_ensembl_format=False)
+        gtf = GTF(inputfile,
+                  check_ensembl_format=False).write_bed(ouputfile=outputfile,
+                                                        name=names,
+                                                        sep=separator,
+                                                        more_name=more_names)
 
-        nb_tokens = len(names.split(",")) + len(more_names.split(','))
-
-        keys = "seqid,start,end," + names + ",score,strand"
-
-        data = gtf.extract_data(keys)
-
-        for i in data:
-            i[1] = str(int(i[1]) - 1)
-
-            if len(more_names):
-                i[3:(2 + nb_tokens)] = [separator.join(more_names.split(',') +
-                                                       i[3:(2 + nb_tokens)])]
-            else:
-                i[3:(2 + nb_tokens)] = [separator.join(i[3:(2 + nb_tokens)])]
-
-            i.write(outputfile)
-
-    """
-    if format == "bed12":
-        
-        if inputfile.name == "<stdin>":
-            tmp_file = make_tmp_file(suffix=".bed")
-            with tmp_file as tf:
-                for i in inputfile:
-                    tf.write(i)
-            tmp_file.close()
-            inputfile = tmp_file
-
-        gtf = GTF(inputfile.name)
-        all_tx_id = gtf.get_tx_ids(nr=True)
-        
-        a_bedtool = BedTool(inputfile.name).sort()
-
-        gtf = GTF(a_bedtool.fn)
-
-        exons = gtf.select_by_key("feature", "exon")
-        
-        starts = exons.extract_data("transcript_id,start",
-                                    zero_based=True,
-                                    as_dict_of_merged_list=True)
-
-        ends = exons.extract_data("transcript_id,end",
-                                  as_dict_of_merged_list=True)
-
-        info = gtf.select_by_key("feature",
-                                 "transcript").extract_data("transcript_id,seqid,start,end,score,strand",
-                                                            zero_based=True,
-                                                            as_dict_of_lists=True)
-
-
-        cds_start_dict = gtf.select_by_key("feature",
-                                           "CDS").extract_data("transcript_id,start",
-                                                         zero_based=True,
-                                                         as_dict_of_merged_list=True)
-        cds_end_dict = gtf.select_by_key("feature",
-                                           "CDS").extract_data("transcript_id,end",
-                                                         zero_based=True,
-                                                         as_dict_of_merged_list=True)
-                                           
-        for tx_id in cds_start_dict:
-            cds_start_dict[tx_id] = sorted(cds_start_dict[tx_id])[0]
-            
-
-        for tx_id in cds_end_dict:
-            cds_end_dict[tx_id] = sorted(cds_end_dict[tx_id], reverse=True)[0]
-            
-            
-        for tx_id in all_tx_id:
-            
-            exon_size = []
-            for start, end in zip(starts[tx_id], ends[tx_id]):
-                exon_size += [str(int(end) - int(start) + 1)]
-
-            if tx_id not in cds_start_dict:
-                cds_start_dict[tx_id] = "."
-                cds_end_dict[tx_id] = "."
-
-            token = [info[tx_id][0],
-                     str(info[tx_id][1]),
-                     str(info[tx_id][2]),
-                     tx_id,
-                     str(info[tx_id][3]),
-                     str(info[tx_id][4]),
-                     str(cds_start_dict[tx_id]),
-                     str(cds_end_dict[tx_id]),
-                     '255,0,0',
-                     str(len(exon_size)),
-                     ",".join(starts[tx_id]) + ",",
-                     ",".join(ends[tx_id]) + ","]
-            write_properly("\t".join(token), outputfile)
-    """
     close_properly(outputfile, inputfile)
 
 
@@ -220,9 +128,14 @@ else:
       [ "$result" -eq 3 ]
     }
     
-    # Convert: check zero based
+    # Convert: check zero based (bed6)
     @test "convert_4" {
      result=`gtftk convert -i simple.gtf -n gene_id,transcript_id,start | cut -f2| head -n 1`
+      [ "$result" -eq 124 ]
+    }
+    # Convert: check zero based (bed3)
+    @test "convert_4" {
+     result=`gtftk convert -i simple.gtf -f bed3 | cut -f2| head -n 1`
       [ "$result" -eq 124 ]
     }
     '''

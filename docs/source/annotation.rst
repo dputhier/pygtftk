@@ -2,28 +2,6 @@ Commands from section 'annotation'
 ------------------------------------
 
 
-closest_gn_to_feat
-~~~~~~~~~~~~~~~~~~~~~~
-
-**Description:** Find the n closest genes/transcripts for each peak (or the oppposite).
-
-**Example:** Find the closest tss to a set of  peak
-
-.. command-output:: gtftk closest_gn_to_feat -t tss -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -K toto -n transcript_id,gene_id
-	:shell:
-
-**Example:** Find the closest tss to a set of  peak. Use the gene-centric and uncollapsed outout.
-
-.. command-output:: gtftk closest_gn_to_feat -t tss -r simple_peaks.bed6 -i simple.gtf -c simple.chromInfo -p 10 -K toto -n transcript_id,gene_id -gu
-	:shell:
-
-
-**Arguments:**
-
-.. command-output:: gtftk closest_gn_to_feat -h
-	:shell:
-
-
 closest_genes
 ~~~~~~~~~~~~~~~~~~~~~~
 
