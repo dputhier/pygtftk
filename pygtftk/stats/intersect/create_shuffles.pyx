@@ -79,7 +79,7 @@ def learn_word_dict(corpus):
     def make_trios(corpus):
         # Must have at least 3 features
         if len(corpus) < 3 :
-          raise ValueError('At least one chromosome in one of the input bed files has fewer than 3 features. You cannot use Markov shuffling in this case.')
+          raise ValueError('At least one chromosome in one of the input bed files had fewer than 3 features. You cannot use Markov shuffling (order 2) in this case.')
 
         for i in range(len(corpus)-2):
             yield (corpus[i], corpus[i+1], corpus[i+2])
@@ -207,7 +207,7 @@ cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
 
     # We must begin with an inter-region length. Indeed, Li_shuffled has one
     # more element than Lr_shuffled, so we set before the loop current_position = Li_shuffled[0]
-    # and use Li_shuffler[k+1] in the loop and carry on from here
+    # and use Li_shuffled[k+1] in the loop and carry on from here.
     current_position = Li_shuffled[0]
     for k in rangek :
         start = current_position

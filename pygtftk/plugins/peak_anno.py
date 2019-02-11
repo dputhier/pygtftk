@@ -179,8 +179,7 @@ def make_parser():
 
     parser_grp.add_argument('-ma', '--use-markov',
                             help='Whether to use Markov shuffling instead of independant shuffles for respectively region lengths and inter-region lengths. Not recommended in the general case. Can take a *very* long time.',
-                            default=False,
-                            type=bool,
+                            action='store_true',
                             required=False)
 
     parser_grp.add_argument('-pw', '--pdf-width',
@@ -271,6 +270,10 @@ def peak_anno(inputfile=None,
     # Just in case it was not, sort and merge the file.
     # In any case, it should be short compared to the expected total running time.
     peak_file = peak_file.sort().merge()
+
+
+    # Are we using markov shuffling ?
+    if use_markov: message('Using Markov order 2 shuffling.', type='INFO')
 
 
 
