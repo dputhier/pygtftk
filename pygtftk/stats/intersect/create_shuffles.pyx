@@ -51,7 +51,10 @@ Please note that :
   - A negative binomial cannot be used here, the resulting distribution is often
   multimodal and not a good fit for any of the basic probability distributions.
   - This will result in a higher number of intersections and number of overlapping
-  base pairs than the basic shuffle.
+  base pairs than the basic shuffle. Even when comparing a BED file against itself,
+  you may find the BED file to be "significantly anticorrelated with itself" because
+  the Markov shuffle will generate a new BED file based on the characteristics
+  of the old one, resulting in a more patterned distribution.
 """
 
 cdef noise(int x, int factor=1000):

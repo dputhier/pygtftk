@@ -273,8 +273,10 @@ def peak_anno(inputfile=None,
 
 
     # Are we using markov shuffling ?
-    if use_markov: message('Using Markov order 2 shuffling.', type='INFO')
-
+    # If yes, send a warning to the user.
+    if use_markov:
+        message('Using Markov order 2 shuffling.', type='INFO')
+        message('Markov shuffling is still in beta at the moment and tends to biais the null hypothesis towards association.', type='WARNING')
 
 
     # -------------------------------------------------------------------------
