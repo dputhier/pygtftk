@@ -69,7 +69,7 @@ __notes__ = """
 
  -- TODO: This function does not support a mappability file at the moment...
 
- -- The lists of region and inter-region lengths can be shuffled independantly, or by using two independant Markov models
+ -- BETA : The lists of region and inter-region lengths can be shuffled independantly, or by using two independant Markov models
  of order 2 respectively for each. This is not recommended in the general case and can *very* time-consuming (hours).
 
  -- The goal of the minibatch is to save RAM. Increase the number of minibatches, instead of their size.

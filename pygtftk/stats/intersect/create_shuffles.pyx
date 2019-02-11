@@ -39,6 +39,9 @@ This will shuffle lists using an order 2 Markov model.
 This is not recommended in the general case, and should only be used if you
 suspect there is an order to the data that you want to keep.
 
+Markov shuffling is very much in BETA-TEST at the moment. You should not rely on
+it just yet.
+
 Please note that :
   - This will be very time consuming (hours).
   - A negative binomial cannot be used here, the resulting distribution is often
