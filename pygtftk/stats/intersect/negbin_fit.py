@@ -24,8 +24,8 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 15):
     the 20-30 range.
     Target bin number is ajustable, final bin number may vary due to rounding.
 
-    Futhermore, the Chi-Squares test can artifiially return (H0 false) if n is
-    too large. Hnce, we use Cramer's V test instead.
+    Futhermore, the Chi-Squares test can artificially return (H0 false) if n is
+    too large. Hence, we use Cramer's V test instead.
 
     The function returns 1 - V, where V is the Cramer's V test of a crosstab
     made by concatenating the observed counts and expected counts vectors.
@@ -71,13 +71,10 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 15):
     # Remove leading zero in f_exp and f_obs and cast to a np array of integers
     f_exp = np.array(f_exp[1:]).astype(int) ; f_obs = np.array(f_obs[1:]).astype(int)
 
+    f_exp = f_exp + 1E-100 # The table of expected frequencies must have no zeros.
+
     # Fuse them in a crosstab for Cramer's V test
     crosstab = np.concatenate([f_obs[:,np.newaxis], f_exp[:,np.newaxis]], axis=1)
-
-    # If f_exp is full of zeros, Cramer's V test would bug. In any case, this would
-    # mean there is clearly no fitting if no values were expected by the neg binom.
-    # Return a fit quality of zero.
-    if sum(f_exp) == 0 : return 0
 
     # Compute the test
     def cramers_V(crosstab):
@@ -85,7 +82,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 15):
         n = crosstab.sum()
         return np.sqrt(chi2 / (n*(min(crosstab.shape)-1)))
 
-    # Return 1 - V_score
+    ## Return (1 - V_score)
     # This way, a good fit has a score around 1 and a bad fit a score around 0
     result = 1 - cramers_V(crosstab)
 
