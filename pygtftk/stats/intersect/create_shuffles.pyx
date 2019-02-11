@@ -36,6 +36,10 @@ def shuffle(arr):
 """
 This will shuffle lists using an order 2 Markov model.
 
+WARNING : A Markov shuffling here is not strictly a shuffle, since the resulting
+arrays will have different elements. It is more akin to generating a new array
+based on the Markovian characteristics of the old one.
+
 This is not recommended in the general case, and should only be used if you
 suspect there is an order to the data that you want to keep.
 
