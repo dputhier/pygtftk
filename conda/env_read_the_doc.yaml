@@ -17,3 +17,4 @@ dependencies:
     - pyyaml
     - nose
     - numpy >=1.10.0
+    - cython

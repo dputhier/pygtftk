@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# Cython modules translated into C
+# Eveyrtime you create a new one, remember to add it to the gitignore.
+*create_shuffles.c
+*overlap_regions.c
+
 # Distribution / packaging
 .Python
 build/
@@ -24,6 +29,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+release_in_progress
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

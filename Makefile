@@ -59,10 +59,10 @@ pylintshort:
 	@find . -name "*.py"  -exec pylint $(PYLINT_ARGS) {} \; 2>/dev/null |perl -ne  "print if(/(Your code has been rated)|(\*\*\*\* Module)/)"
 
 nose:
-	@cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)|(bwig)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
+	@cd /tmp; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; cd $$a ; for i in `find . -name "*.py*" | perl -ne  'print unless(/(setup)|(plugin)|(bwig)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i --doctest-extension=pyx;   done
 
 nose_travis:
-	@ source activate pygtftk_py3k; mkdir -p ~/tmp; cd ~/tmp ; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; echo $$a; cd $$a ; for i in `find . -name "*.py" | perl -ne  'print unless(/(setup)|(plugin)||(bwig)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i;   done
+	@ source activate pygtftk_py3k; mkdir -p ~/tmp; cd ~/tmp ; mkdir -p gtftk_test; cd gtftk_test; a=`python -c "import os,pygtftk; print(os.path.dirname(pygtftk.__file__))"`; echo $$a; cd $$a ; for i in `find . -name "*.py*" | perl -ne  'print unless(/(setup)|(plugin)||(bwig)|(libgtftk.py)|(__)/)'`; do echo "================="; echo $$i; nosetests --with-doctest $$i --doctest-extension=pyx;   done
 
 
 install:
@@ -121,7 +121,7 @@ test_para_travis: $(OUTPUT4)
 
 clean:
 	@make bats_cmd CMD=clean
-	@git checkout docs/source/conf.py pygtftk/version.py; rm -rf mk_matrix_6 expected_s* ids* diff_fasta.py chr1_hg38_10M.fa* observed_s* order_fasta.py simple* control_list_reference.txt control_list_data.txt add_attr_to_pos.tab test.py pygtftk.egg-info build airway_love.txt* ENCFF630HEX_Total_RNAseq_K562_count_mini.txt STDIN.e* closest_1.tsv STDIN.o* dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/; make clean; cd ..; find . -type f -name '*~' -exec rm -f '{}' \;
+	@git checkout docs/source/conf.py pygtftk/version.py; rm -rf mk_matrix_6 peak_annotation* expected_s* ids* diff_fasta.py chr1_hg38_10M.fa* observed_s* order_fasta.py simple* control_list_reference.txt control_list_data.txt add_attr_to_pos.tab test.py pygtftk.egg-info build airway_love.txt* ENCFF630HEX_Total_RNAseq_K562_count_mini.txt STDIN.e* closest_1.tsv STDIN.o* dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/; make clean; cd ..; find . -type f -name '*~' -exec rm -f '{}' \;
 
 check_cmd_has_example:
 	@for i in $$(gtftk -l); do if grep -q  "^$$i" docs/source/*.rst; then echo "" >/dev/null; else echo $$i; fi; done
