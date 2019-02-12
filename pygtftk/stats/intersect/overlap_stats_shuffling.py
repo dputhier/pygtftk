@@ -71,7 +71,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
         shuffled_Lr2_batches[chrom] = batch_and_shuffle_list(Lr2[chrom])
         shuffled_Li2_batches[chrom] = batch_and_shuffle_list(Li2[chrom])
     stop = time.time()
-    message('Batch generated and shuffled in ' + str(stop - start) + ' s', type='DEBUG')
+    message('Batch generated and shuffled in ' + str(stop - start) + ' s.', type='DEBUG')
 
     # -------------------- Convert batches into BED files -------------------- #
     start = time.time()
@@ -80,7 +80,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     bedsA, bedsB = batch_to_bedlist_with_params(shuffled_Lr1_batches, shuffled_Li1_batches, shuffled_Lr2_batches,
                                                 shuffled_Li2_batches)
     stop = time.time()
-    message('Batch converted to fake beds in : ' + str(stop - start) + ' s', type='DEBUG')
+    message('Batch converted to fake beds in : ' + str(stop - start) + ' s.', type='DEBUG')
 
     # -------------------- Processing intersections -------------------------- #
     # Using our custom cython intersect, process intersection between each pair of
@@ -88,7 +88,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     start = time.time()
     all_intersections = oc.compute_intersections_cython(bedsA, bedsB, all_chroms, nb_threads)
     stop = time.time()
-    message('All intersections computed by custom code in : ' + str(stop - start) + ' s', type='DEBUG')
+    message('All intersections computed by custom code in : ' + str(stop - start) + ' s.', type='DEBUG')
 
     return all_intersections
 
@@ -122,9 +122,9 @@ def compute_overlap_stats(bedA, bedB,
     """
 
     message('Beginning shuffling for a given set of features...')
-    message('BATCHES : ' + str(minibatch_nb) + ' batches of ' + str(minibatch_size) + ' shuffles', type='DEBUG')
-    message('Total number of shuffles : ' + str(minibatch_nb * minibatch_size), type='DEBUG')
-    message('NB_THREADS = ' + str(nb_threads), type='DEBUG')
+    message('BATCHES : ' + str(minibatch_nb) + ' batches of ' + str(minibatch_size) + ' shuffles.', type='DEBUG')
+    message('Total number of shuffles : ' + str(minibatch_nb * minibatch_size + '.'), type='DEBUG')
+    message('NB_THREADS = ' + str(nb_threads) + '.', type='DEBUG')
 
     # --------------------- Read list of intervals --------------------------- #
     start = time.time()
@@ -144,7 +144,7 @@ def compute_overlap_stats(bedA, bedB,
         bed_B_as_pybedtool = read_bed.exclude_concatenate(bed_B_as_pybedtool, bed_excl, nb_threads)
 
         exclstop = time.time()
-        message('Exclusion completed in ' + str(exclstop - exclstart) + ' s', type='DEBUG')
+        message('Exclusion completed in ' + str(exclstop - exclstart) + ' s.', type='DEBUG')
 
     # Raise exception if there are less than 2 remaining regions in bedA and bedB
     if (len(bed_A_as_pybedtool) < 2) | (len(bed_B_as_pybedtool) < 2):
@@ -184,7 +184,7 @@ def compute_overlap_stats(bedA, bedB,
     with Pool(nb_threads) as p:
         stats = p.map(read_bed.compute_stats_for_intersection, all_intersections)
     stop = time.time()
-    message('Statistics on overlaps computed in : ' + str(stop - start) + ' s', type='DEBUG')
+    message('Statistics on overlaps computed in : ' + str(stop - start) + ' s.', type='DEBUG')
 
     # Unpack the stats
     bp_overlaps = [s[0] for s in stats]
