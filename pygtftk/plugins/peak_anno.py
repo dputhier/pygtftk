@@ -2,14 +2,13 @@
 from __future__ import division
 from __future__ import print_function
 
-from functools import partial
-
 import argparse
 import os
 import re
 import sys
 import time
 import warnings
+from functools import partial
 
 import numpy as np
 import pandas as pd
@@ -22,15 +21,13 @@ from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
+from pygtftk.stats.intersect import read_bed_as_list as read_bed  # Only used here for exclusions
+from pygtftk.stats.intersect.overlap_stats_shuffling import \
+    compute_overlap_stats  # Main function from the stats.intersect module
 from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import close_properly
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
-
-from pygtftk.stats.intersect.overlap_stats_shuffling import compute_overlap_stats # Main function from the stats.intersect module
-from pygtftk.stats.intersect import read_bed_as_list as read_bed # Only used here for exclusions
-
-
 
 __updated__ = "2019-01-25"
 __doc__ = """
@@ -271,13 +268,13 @@ def peak_anno(inputfile=None,
     # In any case, it should be short compared to the expected total running time.
     peak_file = peak_file.sort().merge()
 
-
     # Are we using markov shuffling ?
     # If yes, send a warning to the user.
     if use_markov:
         message('Using Markov order 2 shuffling.', type='INFO')
-        message('Markov shuffling is still in beta at the moment and tends to biais the null hypothesis towards association.', type='WARNING')
-
+        message(
+            'Markov shuffling is still in beta at the moment and tends to biais the null hypothesis towards association.',
+            type='WARNING')
 
     # -------------------------------------------------------------------------
     # If user wants no basic features (e.g prom, genes, exons) then he
@@ -309,8 +306,6 @@ def peak_anno(inputfile=None,
 
     chrom_len = chrom_info_as_dict(chrom_info)
 
-
-
     # -------------------------------------------------------------------------
     # Region exclusion
     # -------------------------------------------------------------------------
@@ -326,7 +321,6 @@ def peak_anno(inputfile=None,
     # rest of the peak_anno code relie otherwise only on its keys.
 
     if bed_excl is not None:
-
         # Treating bed_excl once and for all : turning it into a pybedtools file, merging it and sorting it.
         # NOTE This will prevent later conflicts, if two different pybedtools objects try to access it.
         bed_excl = pybedtools.BedTool(bed_excl)
@@ -336,13 +330,11 @@ def peak_anno(inputfile=None,
         exclstart = time.time()
         message('Exclusion BED found, proceeding on the BED peaks file. This may take a few minutes.', type='INFO')
 
-        chrom_len = read_bed.exclude_chromsizes(bed_excl, chrom_len) # Shorten the chrom_len only once, and separately
+        chrom_len = read_bed.exclude_chromsizes(bed_excl, chrom_len)  # Shorten the chrom_len only once, and separately
         peak_file = read_bed.exclude_concatenate(pybedtools.BedTool(peak_file), bed_excl, nb_threads)
 
         exclstop = time.time()
-        message('Exclusion completed for the BED PEAKS file in '+str(exclstop-exclstart)+' s', type='DEBUG')
-
-
+        message('Exclusion completed for the BED PEAKS file in ' + str(exclstop - exclstart) + ' s', type='DEBUG')
 
     # -------------------------------------------------------------------------
     # Read the gtf file and discard any records corresponding to chr not declared
@@ -443,16 +435,13 @@ def peak_anno(inputfile=None,
                               bed_excl=bed_excl, use_markov_shuffling=use_markov,
                               nb_threads=nb_threads)
 
-
-
     # Initialize result dict
     hits = dict()
 
-
     if not no_basic_feature:
         for feat_type in gtf.get_feature_list(nr=True):
+            message("Processing " + str(feat_type), type="INFO")
             gtf_sub = gtf.select_by_key("feature", feat_type, 0)
-
             gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
                                                "gene_id",
                                                "exon_id"]).sort().merge()  # merging bed file !
@@ -460,33 +449,33 @@ def peak_anno(inputfile=None,
             del gtf_sub
 
             hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-            message("Working on : "+str(feat_type), type="INFO")
 
         # -------------------------------------------------------------------------
         # Get the intergenic regions
         # -------------------------------------------------------------------------
 
+        message("Processing intergenic regions", type="INFO")
         gtf_sub_bed = gtf.get_intergenic(chrom_info,
                                          0,
                                          0,
                                          chrom_len.keys()).merge()
 
         hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-        message("Working on : Intergenic", type="INFO")
 
         # -------------------------------------------------------------------------
         # Get the intronic regions
         # -------------------------------------------------------------------------
 
+        message("Processing on : Introns", type="INFO")
         gtf_sub_bed = gtf.get_introns()
 
         hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-        message("Working on : Introns", type="INFO")
 
         # -------------------------------------------------------------------------
         # Get the promoter regions
         # -------------------------------------------------------------------------
 
+        message("Processing promoters", type="INFO")
         gtf_sub_bed = gtf.get_tss().slop(s=True,
                                          l=upstream,
                                          r=downstream,
@@ -494,12 +483,12 @@ def peak_anno(inputfile=None,
                                                                  3, 4, 5]).sort().merge()
 
         hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-        message("Working on : Promoters", type="INFO")
 
         # -------------------------------------------------------------------------
         # Get the tts regions
         # -------------------------------------------------------------------------
 
+        message("Processing terminator", type="INFO")
         gtf_sub_bed = gtf.get_tts().slop(s=True,
                                          l=upstream,
                                          r=downstream,
@@ -507,7 +496,6 @@ def peak_anno(inputfile=None,
                                                                  3, 4, 5]).sort().merge()
 
         hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-        message("Working on : Terminator", type="INFO")
 
     # -------------------------------------------------------------------------
     # if the user request --more-keys (e.g. gene_biotype)
@@ -521,6 +509,7 @@ def peak_anno(inputfile=None,
             message("The selected key in --more-keys should be "
                     "associated with less than 50 different values.",
                     type="ERROR")
+
         for user_key in more_keys_list:
             user_key_values = set(gtf.extract_data(user_key,
                                                    as_list=True,
@@ -545,7 +534,7 @@ def peak_anno(inputfile=None,
                     ft_type = ":".join([user_key, val])  # Key for the dictionary
                     hits[ft_type] = overlap_partial(bedA=peak_file,
                                                     bedB=gtf_sub_bed)
-                    message("Working on : "+str(feat_type), type="INFO")
+                    message("Processing " + str(ft_type), type="INFO")
 
     # -------------------------------------------------------------------------
     # Process user defined annotations
@@ -554,7 +543,7 @@ def peak_anno(inputfile=None,
     if more_bed is not None:
         message("Processing user-defined regions (bed format).")
         for bed_anno, bed_lab in zip(more_bed, more_bed_labels):
-
+            message("Processing " + str(bed_lab), type="INFO")
             chrom_list = set()
             for i in BedTool(bed_anno.name):
                 chrom_list.add(i.chrom)
@@ -566,7 +555,6 @@ def peak_anno(inputfile=None,
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
                                             bedB=BedTool(bed_anno.name))
-            message("Working on : "+str(bed_lab), type="INFO")
 
     # ------------------ Treating the 'hits' dictionary --------------------- #
 
@@ -596,7 +584,6 @@ def peak_anno(inputfile=None,
 
     close_properly(data_file)
 
-
     # -------------------------------------------------------------------------
     # Read the data set and plot it
     # -------------------------------------------------------------------------
@@ -604,10 +591,6 @@ def peak_anno(inputfile=None,
     d = pd.read_csv(data_file.name, sep="\t", header=0)
 
     plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi)
-
-
-
-
 
 
 def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
@@ -621,7 +604,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
 
     # Save the data file
     d.to_csv(open(data_file.name, 'w'), sep="\t", header=True, index=False)
-
 
     # -------------------------------------------------------------------------
     # Copy the data
@@ -701,7 +683,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
     # Compute the plots for both statistics
     p1 = plot_this('nb_intersections') + ylab("Number of intersections")
     p2 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs")
-
 
     # -------------------------------------------------------------------------
     # Computing page size
