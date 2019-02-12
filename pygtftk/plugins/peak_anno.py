@@ -379,7 +379,7 @@ def peak_anno(inputfile=None,
             if len(more_bed_labels) != len(more_bed):
                 message("--more-bed-labels: the number of labels should be"
                         " the same as the number of bed files "
-                        "( see --bedAnnotationList).", type="ERROR")
+                        "(see --more-bed-labels).", type="ERROR")
 
             if len(more_bed_labels) != len(set(more_bed_labels)):
                 message("Redundant labels not allowed.", type="ERROR")
