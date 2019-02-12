@@ -3,22 +3,19 @@ This is the main function to compute random shuffles to assess statistical
 significance overlap of two sets of genomic regions, provided as BED files.
 """
 
-from collections import OrderedDict
-from multiprocessing import Pool
 import functools as ft
 import time
-import sys
+from collections import OrderedDict
+from multiprocessing import Pool
 
-import pybedtools
 import numpy as np
+import pybedtools
 
-from pygtftk.utils import message
-
-from pygtftk.stats.intersect import read_bed_as_list as read_bed
-from pygtftk.stats.intersect.overlap import overlap_regions as oc
 from pygtftk.stats.intersect import create_shuffles as cs
 from pygtftk.stats.intersect import negbin_fit as nf
-
+from pygtftk.stats.intersect import read_bed_as_list as read_bed
+from pygtftk.stats.intersect.overlap import overlap_regions as oc
+from pygtftk.utils import message
 
 
 ################################################################################
@@ -51,7 +48,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
 
     # Get chromosomes that are common between both BEDs
     all_chroms = np.intersect1d(all_chrom1, all_chrom2)
-    all_chroms = [str(x) for x in all_chroms] # Revert from numpy list to traditional python list
+    all_chroms = [str(x) for x in all_chroms]  # Revert from numpy list to traditional python list
 
     shuffled_Lr1_batches, shuffled_Li1_batches = dict(), dict()
     shuffled_Lr2_batches, shuffled_Li2_batches = dict(), dict()
@@ -64,7 +61,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     if not use_markov_shuffling:
         def batch_and_shuffle_list(l): return cs.shuffle(np.tile(l, (minibatch_size, 1)))
     if use_markov_shuffling:
-        def batch_and_shuffle_list(l): return cs.markov_shuffle(np.tile(l, (minibatch_size, 1)), nb_threads = nb_threads)
+        def batch_and_shuffle_list(l): return cs.markov_shuffle(np.tile(l, (minibatch_size, 1)), nb_threads=nb_threads)
 
     # Produce the shuffles on a chromosome basis
     start = time.time()
@@ -74,17 +71,16 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
         shuffled_Lr2_batches[chrom] = batch_and_shuffle_list(Lr2[chrom])
         shuffled_Li2_batches[chrom] = batch_and_shuffle_list(Li2[chrom])
     stop = time.time()
-    message('Batch generated and shuffled in '+str(stop-start)+' s', type='DEBUG')
-
-
+    message('Batch generated and shuffled in ' + str(stop - start) + ' s', type='DEBUG')
 
     # -------------------- Convert batches into BED files -------------------- #
     start = time.time()
-    batch_to_bedlist_with_params = ft.partial(cs.batch_to_bedlist,all_chroms=all_chroms, minibatch_size=minibatch_size, nb_threads = nb_threads)
-    bedsA, bedsB = batch_to_bedlist_with_params(shuffled_Lr1_batches, shuffled_Li1_batches, shuffled_Lr2_batches, shuffled_Li2_batches)
+    batch_to_bedlist_with_params = ft.partial(cs.batch_to_bedlist, all_chroms=all_chroms, minibatch_size=minibatch_size,
+                                              nb_threads=nb_threads)
+    bedsA, bedsB = batch_to_bedlist_with_params(shuffled_Lr1_batches, shuffled_Li1_batches, shuffled_Lr2_batches,
+                                                shuffled_Li2_batches)
     stop = time.time()
-    message('Batch converted to fake beds in : '+str(stop-start)+' s', type='DEBUG')
-
+    message('Batch converted to fake beds in : ' + str(stop - start) + ' s', type='DEBUG')
 
     # -------------------- Processing intersections -------------------------- #
     # Using our custom cython intersect, process intersection between each pair of
@@ -92,17 +88,9 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     start = time.time()
     all_intersections = oc.compute_intersections_cython(bedsA, bedsB, all_chroms, nb_threads)
     stop = time.time()
-    message('All intersections computed by custom code in : '+str(stop-start)+' s', type='DEBUG')
+    message('All intersections computed by custom code in : ' + str(stop - start) + ' s', type='DEBUG')
 
     return all_intersections
-
-
-
-
-
-
-
-
 
 
 ################################################################################
@@ -110,11 +98,11 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
 ################################################################################
 
 def compute_overlap_stats(bedA, bedB,
-                        chrom_len,
-                        minibatch_size, minibatch_nb,
-                        bed_excl,
-                        use_markov_shuffling,
-                        nb_threads):
+                          chrom_len,
+                          minibatch_size, minibatch_nb,
+                          bed_excl,
+                          use_markov_shuffling,
+                          nb_threads):
     """
     This is the hub function to compute overlap statistics through Monte Carlo
     shuffling with integration of the inter-region lengths.
@@ -134,8 +122,8 @@ def compute_overlap_stats(bedA, bedB,
     """
 
     message('Beginning shuffling for a given set of features...')
-    message('BATCHES : '+str(minibatch_nb)+' batches of '+str(minibatch_size)+' shuffles', type='DEBUG')
-    message('Total number of shuffles : '+ str(minibatch_nb*minibatch_size), type='DEBUG')
+    message('BATCHES : ' + str(minibatch_nb) + ' batches of ' + str(minibatch_size) + ' shuffles', type='DEBUG')
+    message('Total number of shuffles : ' + str(minibatch_nb * minibatch_size), type='DEBUG')
     message('NB_THREADS = ' + str(nb_threads), type='DEBUG')
 
     # --------------------- Read list of intervals --------------------------- #
@@ -144,7 +132,6 @@ def compute_overlap_stats(bedA, bedB,
     # Just in case, force type and merge bedA ; same for bedB
     bed_A_as_pybedtool = pybedtools.BedTool(bedA).sort().merge()
     bed_B_as_pybedtool = pybedtools.BedTool(bedB).sort().merge()
-
 
     # If there is an exclusion to be done, do it.
 
@@ -157,21 +144,19 @@ def compute_overlap_stats(bedA, bedB,
         bed_B_as_pybedtool = read_bed.exclude_concatenate(bed_B_as_pybedtool, bed_excl, nb_threads)
 
         exclstop = time.time()
-        message('Exclusion completed in '+str(exclstop-exclstart)+' s', type='DEBUG')
-
+        message('Exclusion completed in ' + str(exclstop - exclstart) + ' s', type='DEBUG')
 
     # Raise exception if there are less than 2 remaining regions in bedA and bedB
     if (len(bed_A_as_pybedtool) < 2) | (len(bed_B_as_pybedtool) < 2):
-        message('Less than 2 remaining regions in one of the BED files. This is likely due to them being all in regions marked in the exclusion file.', type='ERROR')
-        sys.exit()
-
+        message(
+            'Less than 2 remaining regions in one of the BED files. This is likely due to them being all in regions marked in the exclusion file.',
+            type='ERROR')
 
     # Proper reading of the bed file as a list of intervals
     Lr1, Li1, all_chrom1 = read_bed.bed_to_lists_of_intervals(bed_A_as_pybedtool, chrom_len)
     Lr2, Li2, all_chrom2 = read_bed.bed_to_lists_of_intervals(bed_B_as_pybedtool, chrom_len)
     stop = time.time()
-    message('BED files read as lists of intervals in '+str(stop-start)+' s', type='DEBUG')
-
+    message('BED files read as lists of intervals in ' + str(stop - start) + ' s', type='DEBUG')
 
     grand_start = time.time()
 
@@ -181,15 +166,14 @@ def compute_overlap_stats(bedA, bedB,
     minibatches = [minibatch_size for i in range(minibatch_nb)]
     all_intersections = list()
     for k in range(len(minibatches)):
-
         # Display of current progress
-        message("--- Minibatch nb. : " + str(k+1)+" / "+str(minibatch_nb))
+        message("--- Minibatch nb. : " + str(k + 1) + " / " + str(minibatch_nb))
 
-        all_intersections = all_intersections + compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2, all_chrom1, all_chrom2,
-                                                                    minibatches[k], use_markov_shuffling, nb_threads)
+        all_intersections = all_intersections + compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2, all_chrom1,
+                                                                                    all_chrom2,
+                                                                                    minibatches[k],
+                                                                                    use_markov_shuffling, nb_threads)
     message('All intersections have been generated.', type='DEBUG')
-
-
 
     # --------------- Compute statistics on the intersections ---------------- #
 
@@ -200,15 +184,13 @@ def compute_overlap_stats(bedA, bedB,
     with Pool(nb_threads) as p:
         stats = p.map(read_bed.compute_stats_for_intersection, all_intersections)
     stop = time.time()
-    message('Statistics on overlaps computed in : '+str(stop-start)+' s', type='DEBUG')
+    message('Statistics on overlaps computed in : ' + str(stop - start) + ' s', type='DEBUG')
 
     # Unpack the stats
     bp_overlaps = [s[0] for s in stats]
     # unlisted_bp_overlaps = [item for sublist in bp_overlaps for item in sublist] # TODO : only useful if we plot them individually
     summed_bp_overlaps = [sum(x) for x in bp_overlaps]
     intersect_nbs = [s[1] for s in stats]
-
-
 
     #### Fitting of a Negative Binomial distribution on the shuffles
     # Only relevant for classical shuffle, not Markov
@@ -218,32 +200,33 @@ def compute_overlap_stats(bedA, bedB,
 
     else:
         # Renaming esperances and variances
-        esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(summed_bp_overlaps)
+        esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(
+            summed_bp_overlaps)
         esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs = np.mean(intersect_nbs), np.var(intersect_nbs)
 
         # Check that there is a good adjustment.
         # This is done using 1 minus Cramer's V score ; a good adjustment should return a value close to 1
         # NOTE Checking adjustment is meaningless if the esperance is zero
-        if esperance_fitted_summed_bp_overlaps == 0: ps = -1
+        if esperance_fitted_summed_bp_overlaps == 0:
+            ps = -1
         else:
-            ps = nf.check_negbin_adjustment(summed_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps)#.pvalue
+            ps = nf.check_negbin_adjustment(summed_bp_overlaps, esperance_fitted_summed_bp_overlaps,
+                                            variance_fitted_summed_bp_overlaps)  # .pvalue
 
-        if esperance_fitted_intersect_nbs == 0: pn = -1
+        if esperance_fitted_intersect_nbs == 0:
+            pn = -1
         else:
-            pn = nf.check_negbin_adjustment(intersect_nbs, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs)#.pvalue
-
-
-
+            pn = nf.check_negbin_adjustment(intersect_nbs, esperance_fitted_intersect_nbs,
+                                            variance_fitted_intersect_nbs)  # .pvalue
 
     # ---------------------------- True intersections ---------------------------- #
     # Now, calculating the actual p-value for the number of intersections and the
     # total number of overlapping base pairs
 
-
     ## True intersection
-    #true_intersection = bedA.intersect(bedB)
-    true_intersection = bed_A_as_pybedtool.intersect(bed_B_as_pybedtool) # Perform intersection with the exclusion regions removed !
-
+    # true_intersection = bedA.intersect(bedB)
+    true_intersection = bed_A_as_pybedtool.intersect(
+        bed_B_as_pybedtool)  # Perform intersection with the exclusion regions removed !
 
     true_intersect_nb = len(true_intersection)
     true_bp_overlaps = sum([x.length for x in true_intersection])
@@ -253,20 +236,20 @@ def compute_overlap_stats(bedA, bedB,
 
     # We can only use a Neg Binom p-val if we can fit it, and that is not the case for
     # the Markov shuffle or if the esperance is too small : we must use an empirical p-value
-    if (ps == -1) | (pn == -1) :
+    if (ps == -1) | (pn == -1):
         pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
         pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
 
-    else :
-        pval_intersect_nb = np.exp(nf.log_nb_pval(true_intersect_nb, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs))
-        pval_bp_overlaps = np.exp(nf.log_nb_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps))
-
+    else:
+        pval_intersect_nb = np.exp(
+            nf.log_nb_pval(true_intersect_nb, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs))
+        pval_bp_overlaps = np.exp(
+            nf.log_nb_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps))
 
     grand_stop = time.time()
 
-    message('--- Total time : '+str(grand_stop-grand_start)+' s ---')
+    message('--- Total time : ' + str(grand_stop - grand_start) + ' s ---')
     message('Total time does not include BED reading, as it does not scale with batch size.', type='DEBUG')
-
 
     # ------------------------------------------------------------------------
     # Draft code for diagnostic plots of the distribution of each statistic in
@@ -321,6 +304,5 @@ def compute_overlap_stats(bedA, bedB,
 
     sbp_fc = true_bp_overlaps / (np.mean(summed_bp_overlaps) + 1E-100)
     result['summed_bp_overlaps_log2_fold_change'] = '{:.5f}'.format(np.log2(sbp_fc + 1E-100))
-
 
     return result
