@@ -122,6 +122,8 @@ def compute_overlap_stats(bedA, bedB,
     """
 
     message('Beginning shuffling for a given set of features...')
+    message('BedA: ' + bedA.fn, type='DEBUG')
+    message('BedB: ' + bedB.fn, type='DEBUG')
     message('BATCHES : ' + str(minibatch_nb) + ' batches of ' + str(minibatch_size) + ' shuffles.', type='DEBUG')
     message('Total number of shuffles : ' + str(minibatch_nb * minibatch_size) + '.', type='DEBUG')
     message('NB_THREADS = ' + str(nb_threads) + '.', type='DEBUG')
