@@ -205,13 +205,7 @@ def make_parser():
     parser_grp.add_argument('-if', '--user-img-file',
                             help="Provide an alternative path for the main image.",
                             default=None,
-                            type=argparse.FileType("w"),
-                            required=False)
-
-    parser_grp.add_argument('-pf', '--page-format',
-                            help='Output file format.',
-                            choices=['pdf', 'png'],
-                            default='pdf',
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='pdf'),
                             required=False)
 
     parser_grp.add_argument('-dpi', '--dpi',
@@ -245,7 +239,6 @@ def peak_anno(inputfile=None,
               pdf_width=None,
               pdf_height=None,
               user_img_file=None,
-              page_format=None,
               dpi=300,
 
               nb_threads=8,
@@ -379,7 +372,8 @@ def peak_anno(inputfile=None,
             if len(more_bed_labels) != len(more_bed):
                 message("--more-bed-labels: the number of labels should be"
                         " the same as the number of bed files "
-                        "(see --more-bed-labels).", type="ERROR")
+                        "("
+                        "see --more-bed-labels).", type="ERROR")
 
             if len(more_bed_labels) != len(set(more_bed_labels)):
                 message("Redundant labels not allowed.", type="ERROR")
@@ -394,7 +388,7 @@ def peak_anno(inputfile=None,
 
     file_out_list = make_outdir_and_file(out_dir=outputdir,
                                          alist=["00_peak_anno_stats.tsv",
-                                                "00_peak_anno_diagrams." + page_format
+                                                "00_peak_anno_diagrams.pdf"
                                                 ],
                                          force=True)
 

@@ -402,6 +402,7 @@ class FormattedFile(argparse.FileType):
         txt_regexp_gz = re.sub("\$", "\.[Gg][Zz]$", txt_regexp)
         bigwig_regexp = '(\.[Bb][Ww]$)|(\.[Bb][Ii][Gg][Ww][Ii][Gg]$)'
         zip_regexp = '\.[Zz][Ii][Pp]$'
+        pdf_regexp = '\.[Pp][Dd][Ff]$'
 
         ext2regexp = {'bed': bed_regexp,
                       'bed.gz': bed_regexp_gz,
@@ -412,7 +413,8 @@ class FormattedFile(argparse.FileType):
                       'txt': txt_regexp,
                       'txt.gz': txt_regexp_gz,
                       'bigwig': bigwig_regexp,
-                      'zip': zip_regexp}
+                      'zip': zip_regexp,
+                      'pdf': pdf_regexp}
 
         match = False
 
