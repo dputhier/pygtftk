@@ -18,8 +18,6 @@ from subprocess import PIPE
 from subprocess import Popen
 from tempfile import NamedTemporaryFile, mkdtemp
 
-from future.utils import old_div
-
 import pygtftk
 
 # -------------------------------------------------------------------------

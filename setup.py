@@ -11,19 +11,19 @@ Authors: D. Puthier and F. Lopez
 # A set of builtin packages
 # -------------------------------------------------------------------------
 
-import sys
-
 import glob
 import hashlib
-import numpy as np
 import os
 import platform
 import re
 import shutil
 import subprocess
-from Cython.Distutils import build_ext
+import sys
 from subprocess import DEVNULL
 from tempfile import NamedTemporaryFile
+
+import numpy as np
+from Cython.Distutils import build_ext
 
 # -------------------------------------------------------------------------
 # Python compiler version
@@ -303,7 +303,6 @@ setup(name="pygtftk",
                         'pyparsing',
                         'matplotlib >=3.0.0',
                         'plotnine >=0.5.1',
-                        'future',
                         'setuptools',
                         'cython'],
       ext_modules=[lib_pygtftk] + [cython_peak_anno] + [cython_peak_anno_2])
