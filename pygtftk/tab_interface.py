@@ -1,7 +1,6 @@
 """
 Class declaration of the TAB object (may be returned by a GTF instance).
 """
-from __future__ import absolute_import
 
 import textwrap
 from builtins import object

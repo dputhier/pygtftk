@@ -1,7 +1,6 @@
 """
 A module to compute bigwig coverage over a set of regions (bed).
 """
-from __future__ import division
 
 import multiprocessing
 import os

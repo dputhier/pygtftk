@@ -2,8 +2,6 @@
 Class declaration of the FASTA object (may be returned by GTF object methods).
 """
 
-from __future__ import absolute_import
-
 import textwrap
 from builtins import object
 from builtins import range

@@ -1,9 +1,6 @@
 """ The command manager is intended to store command object
 and their associated functions."""
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import argparse
 import errno
 import glob
