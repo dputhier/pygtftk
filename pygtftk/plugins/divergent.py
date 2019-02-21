@@ -99,11 +99,8 @@ def divergent(
         upstream=1500,
         downstream=1500,
         chrom_info=None,
-        tmp_dir=None,
-        no_strandness=True,
-        logger_file=None,
-        no_annotation=False,
-        verbosity=0):
+        no_strandness=False,
+        no_annotation=False):
     """
 Find transcript with divergent promoters.
     """
@@ -147,7 +144,7 @@ Find transcript with divergent promoters.
         prom_with_tss_bo = promoter_bo.intersect(tss_bo,
                                                  wb=True,
                                                  s=False,
-                                                 S=True)
+                                                 S=False)
     else:
         prom_with_tss_bo = promoter_bo.intersect(tss_bo,
                                                  wb=True,
