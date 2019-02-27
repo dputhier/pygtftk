@@ -52,6 +52,9 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 15):
     bin_size = max(1,int(step_size)) # If obs_range < bins_number, step size will be set to 1
     bins = range(min(obs),max(obs),bin_size)
 
+    # There can be a bug later in the count table generation if the range is only 1
+    if obs_range < 2 : bins = range(min(obs),min(obs)+2,bin_size)
+    
     # Turn this binned distribution into frequencies
     obs_binned = np.digitize(obs, bins)
 
