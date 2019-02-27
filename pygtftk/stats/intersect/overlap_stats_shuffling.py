@@ -148,11 +148,24 @@ def compute_overlap_stats(bedA, bedB,
         exclstop = time.time()
         message('Exclusion completed in ' + str(exclstop - exclstart) + ' s.', type='DEBUG')
 
-    # Raise exception if there are less than 2 remaining regions in bedA and bedB
+    # Abort if there are less than 2 remaining regions in bedA and bedB
     if (len(bed_A_as_pybedtool) < 2) | (len(bed_B_as_pybedtool) < 2):
         message(
             'Less than 2 remaining regions in one of the BED files. This is likely due to them being all in regions marked in the exclusion file.',
-            type='ERROR')
+            type='WARNING')
+        message('peak_anno will discard this particular pair, resulting in a "0" line.', type = 'WARNING')
+
+        # Return a result dict full of -1
+        result_abort = OrderedDict()
+        result_abort['nb_intersections_esperance_shuffled'] = 0 ; result_abort['nb_intersections_variance_shuffled'] = 0
+        result_abort['nb_intersections_negbinom_fit_quality'] = -1 ; result_abort['nb_intersections_log2_fold_change'] = 0
+        result_abort['nb_intersections_true'] = 0 ; result_abort['nb_intersections_pvalue'] = 0
+        result_abort['summed_bp_overlaps_esperance_shuffled'] = 0 ; result_abort['summed_bp_overlaps_variance_shuffled'] = 0
+        result_abort['summed_bp_overlaps_negbinom_fit_quality'] = -1 ; result_abort['summed_bp_overlaps_log2_fold_change'] = 0
+        result_abort['summed_bp_overlaps_true'] = 0 ; result_abort['summed_bp_overlaps_pvalue'] = 0
+        return result_abort
+
+
 
     # Proper reading of the bed file as a list of intervals
     Lr1, Li1, all_chrom1 = read_bed.bed_to_lists_of_intervals(bed_A_as_pybedtool, chrom_len)
