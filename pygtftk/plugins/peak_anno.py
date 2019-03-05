@@ -644,7 +644,14 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         # Text for the p-value
         text = dm[statname + '_pvalue'].append(na_series)
         text.index = range(len(text))
-        text = text.apply(lambda x: 'p=' + '{0:.3g}'.format(x))  # Add 'p=' before and format the p value
+
+        # Format the text
+        def format_pvalue(x):
+            if x < 1.12E-16 : r = 'p<1.12E-16' # If the p-value is under 1.12E-16 (log precision limit), say so
+            else: r = 'p=' + '{0:.3g}'.format(x) # Add 'p=' before and format the p value
+            return r
+
+        text = text.apply(format_pvalue)
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
         text_pos.index = range(len(text_pos))
         aes_plot = aes(x='Feature', y=text_pos, label=text, fill='Type')
