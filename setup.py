@@ -176,8 +176,6 @@ cython_peak_anno_2 = Extension(name='pygtftk.stats.intersect.overlap.overlap_reg
                                extra_compile_args=extra_comp_cython,
                                language='c')
 
-print(cython_peak_anno)
-print(cython_peak_anno_2)
 
 # ----------------------------------------------------------------------
 # Description
