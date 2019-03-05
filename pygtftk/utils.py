@@ -247,7 +247,7 @@ def get_example_file(datasetname="simple", ext="gtf"):
                                        datasetname,
                                        "*" + ext))
 
-    return file_path
+    return sorted(file_path)
 
 
 # ---------------------------------------------------------------
