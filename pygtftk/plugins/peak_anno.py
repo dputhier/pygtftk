@@ -750,37 +750,37 @@ else:
         #peak_anno: proper number of true intersections
         @test "peak_anno_2" {
          result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 5`
-          [ "$result" = "30" ]
+          [ "$result" = "16" ]
         }
 
         #peak_anno: proper number of shuffled intersections
         @test "peak_anno_3" {
          result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 2`
-          [ "$result" = "15.23" ]
+          [ "$result" = "14.97" ]
         }
 
         #peak_anno: overlapping bp
         @test "peak_anno_4" {
          result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 11`
-          [ "$result" = "107" ]
+          [ "$result" = "75" ]
         }
 
         #peak_anno: shuffled overlapping bp
         @test "peak_anno_5" {
          result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 8`
-          [ "$result" = "62.37" ]
+          [ "$result" = "61.35" ]
         }
 
         #peak_anno: shuffled overlapping bp variance
         @test "peak_anno_6" {
          result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 9`
-          [ "$result" = "26.56" ]
+          [ "$result" = "32.94" ]
         }
 
         #peak_anno: shuffled overlapping bp fitting
         @test "peak_anno_7" {
          result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 10`
-          [ "$result" = "0.6142" ]
+          [ "$result" = "0.8227700000000001" ]
         }
         '''
 
