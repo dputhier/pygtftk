@@ -748,9 +748,15 @@ else:
 
     # 'Bats' tests
     test = '''
+        #peak_anno: get example files
+        @test "peak_anno_0" {
+             result=`gtftk get_example -d simple_02 -f '*'`
+          [ "$result" = "" ]
+        }
+
         #peak_anno: run on simple test file
         @test "peak_anno_1" {
-             result=`rm -Rf peak_annotation; gtftk peak_anno -i pygtftk/data/simple_02/simple_02.gtf -p pygtftk/data/simple_02/simple_02_peaks.bed -c pygtftk/data/simple_02/simple_02.chromInfo -u 2 -d 2 -K peak_annotation`
+             result=`rm -Rf peak_annotation; gtftk peak_anno -i simple_02.gtf -p simple_02_peaks.bed -c simple_02.chromInfo -u 2 -d 2 -K peak_annotation`
           [ "$result" = "" ]
         }
 
