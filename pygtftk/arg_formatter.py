@@ -12,6 +12,7 @@ import re
 import sys
 from builtins import str
 
+import pybedtools
 from pybedtools import BedTool
 
 from pygtftk.utils import check_file_or_dir_exists, make_tmp_file, close_properly
@@ -307,9 +308,22 @@ class CheckChromFile(argparse.Action):
                  namespace,
                  values,
                  option_string=None):
-        check_file_or_dir_exists(values)
-        values = open(values, "r")
-        chrom_info_as_dict(values)
+        if values in ["mm8", "mm9", "mm10", "hg19", "hg38", "rn3", "rn4"]:
+            chr_size = pybedtools.helpers.chromsizes(values)
+            ## Delete haplotype chromosome
+            ## unplaced contig and unlocalized contig
+            regexp = re.compile('(_random)|(^chrUn)|(_hap\d+)|(_alt)|(^chrM$)')
+            chr_size = {key: chr_size[key] for key in chr_size if not regexp.search(key)}
+            tmp_file_chr = make_tmp_file(prefix='chromsize', suffix='.txt')
+            for chrom, size in chr_size.items():
+                tmp_file_chr.write(chrom + "\t" + str(size[1]) + "\n")
+            tmp_file_chr.close()
+            values = open(tmp_file_chr.name, 'r')
+
+        else:
+            check_file_or_dir_exists(values)
+            values = open(values, "r")
+            chrom_info_as_dict(values)
 
         # Add the attribute
         setattr(namespace, self.dest, values)

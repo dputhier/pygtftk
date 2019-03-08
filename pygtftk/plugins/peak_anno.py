@@ -43,7 +43,8 @@ __doc__ = """
 
 __notes__ = """
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
-
+ -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the corresponding 
+ size of conventional chromosomes are used. ChrM is not used.  
  -- The program produces a pdf file and a txt file ('_stats_') containing intersection statistics
  for the shuffled BEDs under H0 (peak_file and the considered genomic region are independant):
  number of intersections (= number of lines in the bed intersect) and total number of overlapping
@@ -60,9 +61,8 @@ __notes__ = """
  region related to 'protein_coding', 'lncRNA' or any other values for that key will be retrieved merged and tested
  for enrichment.
 
- -- Use -\no-basic-feature if you want to perform enrichment analysis on focused annotations only (-\-more-bed or -\-more-key).
+ -- Use -\-no-basic-feature if you want to perform enrichment analysis on focused annotations only (-\-more-bed or -\-more-key).
 
- -- TODO: This function does not support a mappability file at the moment...
 
  -- BETA : The lists of region and inter-region lengths can be shuffled independantly, or by using two independant Markov models
  of order 2 respectively for each. This is not recommended in the general case and can *very* time-consuming (hours).
@@ -647,8 +647,10 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
 
         # Format the text
         def format_pvalue(x):
-            if x < 1.12E-16 : r = 'p<1.12E-16' # If the p-value is under 1.12E-16 (log precision limit), say so
-            else: r = 'p=' + '{0:.3g}'.format(x) # Add 'p=' before and format the p value
+            if x < 1.12E-16:
+                r = 'p<1.12E-16'  # If the p-value is under 1.12E-16 (log precision limit), say so
+            else:
+                r = 'p=' + '{0:.3g}'.format(x)  # Add 'p=' before and format the p value
             return r
 
         text = text.apply(format_pvalue)
