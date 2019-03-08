@@ -46,18 +46,22 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 15):
 
     rv = scipy.stats.nbinom(r, p)
 
-    # Unitary frequencies are too low, we must use bins.
+    # We cannot compare unitary frequencies (frequencies of each individual
+    # number), as they are too low. We must use bins.
     obs_range = max(obs) - min(obs)
     step_size = np.around(obs_range/bins_number)
     bin_size = max(1,int(step_size)) # If obs_range < bins_number, step size will be set to 1
     bins = range(min(obs),max(obs),bin_size)
 
-    # There can be a bug later in the count table generation if the range is only 1
-    if obs_range < 2 : bins = range(min(obs),min(obs)+2,bin_size)
-    
+
+    # There can be a bug later in the count table generation if the range is only 1 or 2
+    if obs_range < 3 : bins = range(min(obs),min(obs)+3,bin_size)
+
+
     # Turn this binned distribution into frequencies
     obs_binned = np.digitize(obs, bins)
 
+    # Remark : the last bin (maximum) will disappear. This is an acceptable loss on this kind of distribution.
     counts = []
     for binned_value in range(len(bins)):
         count = sum(obs_binned == binned_value)
