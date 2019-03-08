@@ -122,10 +122,10 @@ def log_nb_pval(k, mean, var):
     # p and k, the log of the p value can return a '-inf'. This will not impact
     # the calculation of the true p value, since np.exp(-np.inf) = 0, so we
     # silence the warnings temporarily.
-    numpy.seterr(divide = 'ignore')
+    np.seterr(divide = 'ignore')
     left_pval = rv.logcdf(k)
     right_pval = rv.logsf(k)
-    numpy.seterr(divide = 'warn')
+    np.seterr(divide = 'warn')
 
     twosided_pval = min(left_pval, right_pval)
 
