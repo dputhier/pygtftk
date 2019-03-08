@@ -151,9 +151,8 @@ def compute_overlap_stats(bedA, bedB,
     # Abort if there are less than 2 remaining regions in bedA and bedB
     if (len(bed_A_as_pybedtool) < 2) | (len(bed_B_as_pybedtool) < 2):
         message(
-            'Less than 2 remaining regions in one of the BED files. This is likely due to them being all in regions marked in the exclusion file.',
+            'Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. peak_anno will discard this particular pair.',
             type='WARNING')
-        message('peak_anno will discard this particular pair, resulting in a "0" line.', type = 'WARNING')
 
         # Return a result dict full of -1
         result_abort = OrderedDict()
@@ -294,30 +293,37 @@ def compute_overlap_stats(bedA, bedB,
     # plt.savefig(outputdir+'/'+name+'_nb_intersections.png')
 
     ### Result as a dictionary of statistics
+    # WARNING Be careful to use the same order as result_abort, above !
     result = OrderedDict()
-
-    # Remark : to avoid division by zero, an epsilon of 1E100 is added when needed
 
     # Number of intersections
     result['nb_intersections_esperance_shuffled'] = '{:.2f}'.format(np.mean(intersect_nbs))
     result['nb_intersections_variance_shuffled'] = '{:.2f}'.format(np.var(intersect_nbs))
 
     result['nb_intersections_negbinom_fit_quality'] = '{:.5f}'.format(pn)
+
+
+
+    if np.mean(intersect_nbs) == 0: ni_fc = 0 # Do not divide by zero !
+    else: ni_fc = true_intersect_nb / np.mean(intersect_nbs)
+    if ni_fc != 0 : ni_fc = np.log2(ni_fc) # Apply log transformation
+    result['nb_intersections_log2_fold_change'] = '{:.5f}'.format(ni_fc)
+
     result['nb_intersections_true'] = true_intersect_nb
     result['nb_intersections_pvalue'] = '{0:.4g}'.format(pval_intersect_nb)
-
-    ni_fc = true_intersect_nb / (np.mean(intersect_nbs) + 1E-100)
-    result['nb_intersections_log2_fold_change'] = '{:.5f}'.format(np.log2(ni_fc + 1E-100))
 
     # Summed number of overlapping basepairs
     result['summed_bp_overlaps_esperance_shuffled'] = '{:.2f}'.format(np.mean(summed_bp_overlaps))
     result['summed_bp_overlaps_variance_shuffled'] = '{:.2f}'.format(np.var(summed_bp_overlaps))
 
     result['summed_bp_overlaps_negbinom_fit_quality'] = '{:.5f}'.format(ps)
+
+    if np.mean(summed_bp_overlaps) == 0: sbp_fc = 0 # Do not divide by zero !
+    else: sbp_fc = true_bp_overlaps / np.mean(summed_bp_overlaps)
+    if sbp_fc != 0 : sbp_fc = np.log2(sbp_fc) # Apply log transformation
+    result['summed_bp_overlaps_log2_fold_change'] = '{:.5f}'.format(sbp_fc)
+
     result['summed_bp_overlaps_true'] = true_bp_overlaps
     result['summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(pval_bp_overlaps)
-
-    sbp_fc = true_bp_overlaps / (np.mean(summed_bp_overlaps) + 1E-100)
-    result['summed_bp_overlaps_log2_fold_change'] = '{:.5f}'.format(np.log2(sbp_fc + 1E-100))
 
     return result
