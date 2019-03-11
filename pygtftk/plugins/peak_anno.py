@@ -12,8 +12,9 @@ import numpy as np
 import pandas as pd
 import pybedtools
 from plotnine import (ggplot, aes, position_dodge,
-                      geom_bar, ylab, theme, element_blank, element_text, geom_text, geom_errorbar)
-from plotnine.ggplot import save_as_pdf_pages
+                      geom_bar, ylab, theme, element_blank,
+                      element_text, geom_errorbar, theme_bw,
+                      geom_label, save_as_pdf_pages, scale_fill_manual)
 
 from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
@@ -63,10 +64,6 @@ __notes__ = """
 
  -- Use -\-no-basic-feature if you want to perform enrichment analysis on focused annotations only (-\-more-bed or -\-more-key).
 
-
- -- BETA : The lists of region and inter-region lengths can be shuffled independantly, or by using two independant Markov models
- of order 2 respectively for each. This is not recommended in the general case and can *very* time-consuming (hours).
-
  -- The goal of the minibatch is to save RAM. Increase the number of minibatches, instead of their size.
  You may need to use very small minibatches if you have large sets of regions.
 
@@ -78,7 +75,11 @@ __notes__ = """
  -- Although peak_anno itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb.
  It is recommended you do not run other programs in the meantime.
 
- -- If you are using the --no-basic-features argument *without* --more-keys, you can supply an empty file as the GTF, since it will be disregarded in the code.
+ -- TODO: Change this. If you are using the --no-basic-features argument *without* --more-keys, you can supply an empty file as the GTF, since it will be disregarded in the code.
+ 
+ -- BETA : The lists of region and inter-region lengths can be shuffled independantly, or by using two independant Markov models
+ of order 2 respectively for each. This is not recommended in the general case and can *very* time-consuming (hours).
+
  """
 
 
@@ -600,13 +601,23 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
     # -------------------------------------------------------------------------
     # Copy the data
     # -------------------------------------------------------------------------
+
     dm = d.copy()
 
-    message('Adding bar plot.')
+    # -------------------------------------------------------------------------
+    # Rename the feature type.
+    # When --more-keys is used the key and value are separated by ":".
+    # This give rise to long name whose display in the plot is ugly.
+    # We can break these names using a "\n".
+    # -------------------------------------------------------------------------
+
+    dm["feature_type"] = [x.replace(":", "\n") for x in dm["feature_type"]]
 
     # -------------------------------------------------------------------------
     # Create a new plot
     # -------------------------------------------------------------------------
+
+    message('Adding bar plot.')
 
     def plot_this(statname):
 
@@ -622,6 +633,10 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
 
         # Create plot
         p = ggplot(dmm)
+
+        # Add the black & white
+
+        p += theme_bw()
 
         # Bar plot of shuffled vs true
         aes_plot = aes(x='Feature', y=statname, fill='Type')
@@ -639,7 +654,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         errorbar_maxs.index = range(len(errorbar_maxs))
 
         p += geom_errorbar(aes(x='Feature', ymin=errorbar_mins, ymax=errorbar_maxs, fill='Type'), width=.5,
-                           position=position_dodge(.6))
+                           position=position_dodge(.6), size=0.3)
 
         # Text for the p-value
         text = dm[statname + '_pvalue'].append(na_series)
@@ -656,8 +671,10 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         text = text.apply(format_pvalue)
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
         text_pos.index = range(len(text_pos))
-        aes_plot = aes(x='Feature', y=text_pos, label=text, fill='Type')
-        p += geom_text(mapping=aes_plot, stat='identity', size=5)
+        aes_plot = aes(x='Feature', y=text_pos, label=text)
+        p += geom_label(mapping=aes_plot, stat='identity',
+                        size=5, boxstyle='round', label_size=0.2,
+                        fill='#000000', color='white')
 
         # Theme
         p += theme(legend_title=element_blank(),
@@ -678,6 +695,10 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
                    axis_text_x=element_text(size=5,
                                             angle=45)
                    )
+
+        # Add a nicer set of colors.
+
+        p += scale_fill_manual(values={'Shuffled': '#808080', 'True': 'blue'})
 
         return p
 
