@@ -9,8 +9,8 @@ import scipy.stats
 from pygtftk.utils import message
 
 
-def check_negbin_adjustment(obs, mean, var, bins_number = 15):
-    """
+def check_negbin_adjustment(obs, mean, var, bins_number = 16):
+    r"""
     Considers a Negative Binomial distribution of given mean and var, and
     performs an adjustement test of this distrubution with regards to obs.
 
@@ -34,11 +34,34 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 15):
     counts distribution and the status as 'expected' or 'observed'.
     As per Cramer (1948) a good fit should have a fit quality above 1 - 0.25 = 0.75
     because V > 0.25 would mean association in most cases.
+    Typically, you will observe good association when len(obs) is in the thousands.
+    When it is in the hundreds only, random chance may result in a okay-ish
+    association (around 0.8). Conversely, if len(obs) is in the thousands, only
+    fits above 0.9 should be considered good.
+
+    >>> import numpy as np
+    >>> import scipy.stats
+    >>> np.random.seed(42)
+    >>> mean = 100 ; var = 200
+    >>> r = mean**2 / (var-mean) ; p = 1/(mean/r + 1)
+    >>> rv = scipy.stats.nbinom(r, p)
+    >>> obs = rv.rvs(2000)
+    >>> fit = np.around(check_negbin_adjustment(obs, mean, var),2)
+    >>> assert fit > 0.95
     """
 
+    # Force cast obs to integers, just in case.
+    obs = [int(x) for x in obs]
+
+    if mean == 0:
+        mean = 1
+        message("Computing adjustment to a Neg Binom with mean = 0 ; mean was set to 1")
+        # This is necessary, since r must be above 0.
+
     if mean >= var:
-        var = mean + 1E-4
-        message("Computing log(p-val) for a Neg Binom with mean >= var ; var was set to mean + 1E-4")
+        var = mean + 1
+        message("Computing adjustment to a Neg Binom with mean >= var ; var was set to mean+1")
+
 
     # Calculate r and p based on mean and var
     r = mean**2 / (var-mean)
@@ -70,10 +93,11 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 15):
 
     # Compute the expected frequencies : for each bin, sum the pmf
     f_exp = []
-    for i in range(len(bins)) :
+    for i in range(len(bins)):
         total_freq = sum([rv.pmf(x) for x in range(bins[i-1],bins[i])]) # Same formula as np.digitize ; special case i=0 will return empty range
         f_exp.append(total_freq)
     f_exp = np.array(f_exp) * len(obs)
+
 
     # Remove leading zero in f_exp and f_obs and cast to a np array of integers
     f_exp = np.array(f_exp[1:]).astype(int) ; f_obs = np.array(f_obs[1:]).astype(int)
@@ -87,6 +111,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 15):
     def cramers_V(crosstab):
         chi2 = scipy.stats.chi2_contingency(crosstab)[0]
         n = crosstab.sum()
+        #print(crosstab.astype(int)) # For debug
         return np.sqrt(chi2 / (n*(min(crosstab.shape)-1)))
 
     ## Return (1 - V_score)
@@ -94,7 +119,6 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 15):
     result = 1 - cramers_V(crosstab)
 
     return result
-
 
 
 def log_nb_pval(k, mean, var):
@@ -108,9 +132,14 @@ def log_nb_pval(k, mean, var):
     or equal to the variance, set the variance to mean + epsilon and send a warning
     """
 
+    if mean == 0:
+        mean = 1
+        message("Computing log(p-val) for a Neg Binom with mean = 0 ; mean was set to 1")
+        # This is necessary, since r must be above 0.
+
     if mean >= var:
-        var = mean + 1E-4
-        message("Computing log(p-val) for a Neg Binom with mean >= var ; var was set to mean + 1E-4")
+        var = mean + 1
+        message("Computing log(p-val) for a Neg Binom with mean >= var ; var was set to mean+1")
 
     # Calculate r and p based on mean and var
     r = mean**2 / (var-mean)

@@ -209,6 +209,8 @@ def compute_overlap_stats(bedA, bedB,
     #### Fitting of a Negative Binomial distribution on the shuffles
     # Only relevant for classical shuffle, not Markov
 
+    start = time.time()
+
     if use_markov_shuffling:
         ps = pn = -1
 
@@ -259,6 +261,9 @@ def compute_overlap_stats(bedA, bedB,
             nf.log_nb_pval(true_intersect_nb, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs))
         pval_bp_overlaps = np.exp(
             nf.log_nb_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps))
+
+    stop = time.time()
+    message('Negative Binomial distributions fitted in : ' + str(stop - start) + ' s.', type='DEBUG')
 
     grand_stop = time.time()
 
