@@ -28,6 +28,11 @@ __doc__ = """
  Create a matrix storing the bigwig coverage computed from binned regions.
 """
 
+__notes__ = """
+ -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
+ corresponding size of conventional chromosomes are used. ChrM is not used.  
+"""
+
 
 # NEED TO CHECK wether region names are uniq. Or force them to be ...
 
@@ -689,4 +694,5 @@ else:
               group="coverage",
               updated=__updated__,
               desc=__doc__,
+              notes=__notes__,
               test=test)

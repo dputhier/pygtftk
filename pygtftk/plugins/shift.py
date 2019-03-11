@@ -22,6 +22,8 @@ __notes__ = """
  -- If -\-stranded is true, features are transposed in 5' direction relative to their associated strand.
  -- By default, features are not allowed to go outside the genome coordinates. In the current implementation, in case this would happen (using a very large -\shift-value), feature would accumulate at the ends of chromosomes irrespectively of gene or transcript structures giving rise, ultimately, to several exons from the same transcript having the same starts or ends. 
  -- One can forced features to go outside the genome and ultimatly dissapear with large -\-shift-value by using -a.
+ -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
+ corresponding size of conventional chromosomes are used. ChrM is not used.
 """
 
 

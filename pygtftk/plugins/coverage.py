@@ -29,6 +29,8 @@ __notes__ = """
 introns, intron_by_tx, intergenic regions or any feature available in the GTF file (transcript, exon, gene...).
 -- If -\-matrix-out is selected, the signal for each bigwig will be provided in a dedicated column. Otherwise, signal for each bigwig is provided through a dedicated line.
 -- If bed is used as input, each region should have its own name (column 4).
+-- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
+ corresponding size of conventional chromosomes are used. ChrM is not used.
 """
 
 

@@ -138,43 +138,105 @@ peak_anno
  feature f), the number of trials (number of peaks) and the number of successes (number of intersections).
 
 
-**Example:** Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements.
+We will first request a lightweight example dataset.
 
-.. command-output:: gtftk get_example -d mini_real | gtftk peak_anno -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.png
+
+.. command-output:: gtftk get_example -d mini_real -f '*'
 	:shell:
 
-.. image:: _static/example_pa_01.png
-    :width: 75%
-    :target: _static/example_pa_01.png
+
+**Example:** Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements.
+
+
+.. command-output:: gtftk get_example -d mini_real | gtftk peak_anno -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.pdf -k 4
+	:shell:
+
+Download :download:`pdf <_static/example_pa_01.pdf>`.
+
+
+
+.. raw:: html
+
+  <br>
+  <table>
+  <tr>
+  <td valign="top">
+  <iframe src="_static/example_pa_01.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  </iframe>
+  </td>
+  </tr>
+  </table>
+  <br>
+  <br>
 
 **Example:** Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs...). The --no-basic-feature argument tells peak_anno not to test basic genomic elements (gene, transcripts...).
 
-.. command-output:: gtftk get_example -d mini_real | gtftk peak_anno -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n  -if example_pa_02.png
+.. command-output:: gtftk get_example -d mini_real | gtftk peak_anno -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n  -if example_pa_02.pdf
 	:shell:
 
-.. image:: _static/example_pa_02.png
-    :width: 75%
-    :target: _static/example_pa_02.png
+Download :download:`pdf <_static/example_pa_02.pdf>`.
+
+
+
+.. raw:: html
+
+  <br>
+  <table>
+  <tr>
+  <td valign="top">
+  <iframe src="_static/example_pa_02.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  </iframe>
+  </td>
+  </tr>
+  </table>
+  <br>
+  <br>
 
 **Example:** A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K4me3.
 
-.. command-output:: gtftk get_example -d mini_real |  gtftk join_attr -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6   | gtftk peak_anno -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exprs_class -if example_pa_03.png
+.. command-output:: gtftk get_example -d mini_real |  gtftk join_attr -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6   | gtftk peak_anno -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exprs_class -if example_pa_03.pdf
 	:shell:
 
-.. image:: _static/example_pa_03.png
-    :width: 75%
-    :target: _static/example_pa_03.png
+Download :download:`pdf <_static/example_pa_03.pdf>`.
+
+
+
+.. raw:: html
+
+  <br>
+  <table>
+  <tr>
+  <td valign="top">
+  <iframe src="_static/example_pa_03.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  </iframe>
+  </td>
+  </tr>
+  </table>
+  <br>
+  <br>
 
 **Example:** Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5' to 3') and discretize this novel key into 5 classes tested for enrichment.
 
-.. command-output:: gtftk get_example -d mini_real | gtftk add_exon_nb -k exon_nbr | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk peak_anno -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exon_nbr_cat -if example_pa_04.png
+.. command-output:: gtftk get_example -d mini_real | gtftk add_exon_nb -k exon_nbr | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk peak_anno -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exon_nbr_cat -if example_pa_04.pdf
 	:shell:
 
-.. image:: _static/example_pa_04.png
-    :width: 75%
-    :target: _static/example_pa_04.png
+Download :download:`pdf <_static/example_pa_04.pdf>`.
 
 
+
+.. raw:: html
+
+  <br>
+  <table>
+  <tr>
+  <td valign="top">
+  <iframe src="_static/example_pa_04.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  </iframe>
+  </td>
+  </tr>
+  </table>
+  <br>
+  <br>
 
 
 **Arguments:**
