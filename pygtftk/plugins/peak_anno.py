@@ -53,7 +53,10 @@ __notes__ = """
  The output figure gives, for both statistics, esperance and standard deviation (error bars)
  in the shuffles compared to the actual values.
     It also gives, under the 'fit' label for each statistic, the goodness of fit of the statistic under (H0)
- to a Negative Binomial assessed by a Cramer's V score (fit_quality gives 1-V ; as per Cramer (1948) a good fit should have a fit quality above 1 - 0.25 = 0.75).
+    to a Negative Binomial assessed by a Cramer's V score (fit_quality gives 1-V ; as per Cramer (1948) a good fit
+    should have a fit quality above 1 - 0.25 = 0.75) if your nb. of shuffles is in the hundreds, but closer to 0.9
+    if it is in the thousands or above.
+
     The p-value of the true intersection under the distribution characterized by the shuffles is also given, under 'p_value'.
     Finally, the log2 fold change between true and shuffles is also given.
 
@@ -779,43 +782,43 @@ else:
 
         #peak_anno: run on simple test file
         @test "peak_anno_1" {
-             result=`rm -Rf peak_annotation; gtftk peak_anno -i simple_02.gtf -p simple_02_peaks.bed -c simple_02.chromInfo -u 2 -d 2 -K peak_annotation`
+             result=`rm -Rf peak_annotation; gtftk peak_anno -i simple_02.gtf -p simple_02_peaks.bed -c simple_02.chromInfo -u 2 -d 2 -K peak_annotation --no-date`
           [ "$result" = "" ]
         }
 
         #peak_anno: proper number of true intersections
         @test "peak_anno_2" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 5`
+         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 6`
           [ "$result" = "16" ]
         }
 
         #peak_anno: proper number of shuffled intersections
         @test "peak_anno_3" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 2`
+         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 2`
           [ "$result" = "14.97" ]
         }
 
         #peak_anno: overlapping bp
         @test "peak_anno_4" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 11`
+         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 12`
           [ "$result" = "75" ]
         }
 
         #peak_anno: shuffled overlapping bp
         @test "peak_anno_5" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 8`
+         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 8`
           [ "$result" = "61.35" ]
         }
 
         #peak_anno: shuffled overlapping bp variance
         @test "peak_anno_6" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 9`
+         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 9`
           [ "$result" = "32.94" ]
         }
 
         #peak_anno: shuffled overlapping bp fitting
         @test "peak_anno_7" {
-         result=`cat peak_annotation/00_peak_anno_stats_* | grep gene | cut -f 10`
+         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 10`
           [ "$result" = "0.8227700000000001" ]
         }
         '''
