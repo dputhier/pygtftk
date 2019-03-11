@@ -11,7 +11,7 @@ from functools import partial
 import numpy as np
 import pandas as pd
 import pybedtools
-from plotnine import (ggplot, aes, position_dodge,
+from plotnine import (ggplot, aes, position_dodge, ggtitle,
                       geom_bar, ylab, theme, element_blank,
                       element_text, geom_errorbar, theme_bw,
                       geom_label, save_as_pdf_pages, scale_fill_manual)
@@ -706,8 +706,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         return p
 
     # Compute the plots for both statistics
-    p1 = plot_this('nb_intersections') + ylab("Number of intersections")
-    p2 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs")
+    p1 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs") + ggtitle('Total overlap length per region type')
+    p2 = plot_this('nb_intersections') + ylab("Number of intersections") + ggtitle('Total nb. of intersections per region type')
 
     # -------------------------------------------------------------------------
     # Computing page size
