@@ -97,7 +97,8 @@ def make_parser():
                             help="Path to the GTF file. Default to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
-                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')),
+                            required=False)
 
     parser_grp.add_argument('-o', '--outputdir',
                             help='Output directory name.',
@@ -229,6 +230,11 @@ def make_parser():
                             default=300,
                             required=False)
 
+    parser_grp.add_argument('-z', '--no-gtf',
+                            help="No gtf file is provide as input.",
+                            action='store_true',
+                            required=False)
+
     return parser
 
 
@@ -244,6 +250,7 @@ def peak_anno(inputfile=None,
               tsv_file_path=None,
               more_bed=None,
               more_bed_labels=None,
+              no_gtf=False,
               upstream=1000,
               more_keys=None,
               downstream=1000,
@@ -251,11 +258,10 @@ def peak_anno(inputfile=None,
               bed_excl=None,
               use_markov=False,
               no_pdf=None,
-              pdf_width=None,
-              pdf_height=None,
+              pdf_width=5,
+              pdf_height=5,
               user_img_file=None,
               dpi=300,
-
               nb_threads=8,
               seed=42,
               minibatch_nb=8,
@@ -283,6 +289,21 @@ def peak_anno(inputfile=None,
         message(
             'Markov shuffling is still in beta at the moment and tends to biais the null hypothesis towards association.',
             type='WARNING')
+
+    # -------------------------------------------------------------------------
+    # If user wants don't provide a GTF
+    # -------------------------------------------------------------------------
+
+    if no_gtf:
+        if more_keys is not None:
+            message("If --more-keys should be used with a GTF.",
+                    type="ERROR")
+        if no_basic_feature:
+            message("If --no-basic-feature should be used with a GTF.",
+                    type="ERROR")
+        if more_bed is None:
+            message("If --no-gtf is set to True provide --more-bed.",
+                    type="ERROR")
 
     # -------------------------------------------------------------------------
     # If user wants no basic features (e.g prom, genes, exons) then he
@@ -350,24 +371,25 @@ def peak_anno(inputfile=None,
     # (default) or more-keys (e.g gene_biotype)
     # -------------------------------------------------------------------------
 
-    if not no_basic_feature or more_keys:
-        gtf = GTF(inputfile).select_by_key("seqid", ",".join(chrom_len.keys()))
+    if not no_gtf:
+        if not no_basic_feature or more_keys:
+            gtf = GTF(inputfile).select_by_key("seqid", ",".join(chrom_len.keys()))
 
-        if len(gtf) == 0:
-            message("The GTF file does not contain any genomic feature "
-                    "falling in chromosomes declared in chromInfo file.",
-                    type="ERROR")
-
-        chrom_list = gtf.get_chroms(nr=True)
-
-        # -------------------------------------------------------------------------
-        # Check chromosomes are defined in the chrom-info file
-        # -------------------------------------------------------------------------
-
-        for i in chrom_list:
-            if i not in chrom_len:
-                message("Chromosome " + " i from GTF is undefined in --chrom-info file.",
+            if len(gtf) == 0:
+                message("The GTF file does not contain any genomic feature "
+                        "falling in chromosomes declared in chromInfo file.",
                         type="ERROR")
+
+            chrom_list = gtf.get_chroms(nr=True)
+
+            # -------------------------------------------------------------------------
+            # Check chromosomes are defined in the chrom-info file
+            # -------------------------------------------------------------------------
+
+            for i in chrom_list:
+                if i not in chrom_len:
+                    message("Chromosome " + " i from GTF is undefined in --chrom-info file.",
+                            type="ERROR")
 
     # -------------------------------------------------------------------------
     # Check user provided annotations
@@ -469,105 +491,106 @@ def peak_anno(inputfile=None,
     # Initialize result dict
     hits = dict()
 
-    if not no_basic_feature:
-        for feat_type in gtf.get_feature_list(nr=True):
-            message("Processing " + str(feat_type), type="INFO")
-            gtf_sub = gtf.select_by_key("feature", feat_type, 0)
-            gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
-                                               "gene_id",
-                                               "exon_id"]).sort().merge()  # merging bed file !
-            tmp_file = make_tmp_file(prefix=str(feat_type), suffix='.bed')
-            gtf_sub_bed.saveas(tmp_file.name)
+    if not no_gtf:
+        if not no_basic_feature:
+            for feat_type in gtf.get_feature_list(nr=True):
+                message("Processing " + str(feat_type), type="INFO")
+                gtf_sub = gtf.select_by_key("feature", feat_type, 0)
+                gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
+                                                   "gene_id",
+                                                   "exon_id"]).sort().merge()  # merging bed file !
+                tmp_file = make_tmp_file(prefix=str(feat_type), suffix='.bed')
+                gtf_sub_bed.saveas(tmp_file.name)
 
-            del gtf_sub
+                del gtf_sub
 
-            hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+                hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+
+            # -------------------------------------------------------------------------
+            # Get the intergenic regions
+            # -------------------------------------------------------------------------
+
+            message("Processing intergenic regions", type="INFO")
+            gtf_sub_bed = gtf.get_intergenic(chrom_info,
+                                             0,
+                                             0,
+                                             chrom_len.keys()).merge()
+
+            hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+
+            # -------------------------------------------------------------------------
+            # Get the intronic regions
+            # -------------------------------------------------------------------------
+
+            message("Processing on : Introns", type="INFO")
+            gtf_sub_bed = gtf.get_introns()
+
+            hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+
+            # -------------------------------------------------------------------------
+            # Get the promoter regions
+            # -------------------------------------------------------------------------
+
+            message("Processing promoters", type="INFO")
+            gtf_sub_bed = gtf.get_tss().slop(s=True,
+                                             l=upstream,
+                                             r=downstream,
+                                             g=chrom_info.name).cut([0, 1, 2,
+                                                                     3, 4, 5]).sort().merge()
+
+            hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+
+            # -------------------------------------------------------------------------
+            # Get the tts regions
+            # -------------------------------------------------------------------------
+
+            message("Processing terminator", type="INFO")
+            gtf_sub_bed = gtf.get_tts().slop(s=True,
+                                             l=upstream,
+                                             r=downstream,
+                                             g=chrom_info.name).cut([0, 1, 2,
+                                                                     3, 4, 5]).sort().merge()
+
+            hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
 
         # -------------------------------------------------------------------------
-        # Get the intergenic regions
+        # if the user request --more-keys (e.g. gene_biotype)
         # -------------------------------------------------------------------------
 
-        message("Processing intergenic regions", type="INFO")
-        gtf_sub_bed = gtf.get_intergenic(chrom_info,
-                                         0,
-                                         0,
-                                         chrom_len.keys()).merge()
+        if more_keys is not None:
 
-        hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+            more_keys_list = more_keys.split(",")
 
-        # -------------------------------------------------------------------------
-        # Get the intronic regions
-        # -------------------------------------------------------------------------
-
-        message("Processing on : Introns", type="INFO")
-        gtf_sub_bed = gtf.get_introns()
-
-        hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-
-        # -------------------------------------------------------------------------
-        # Get the promoter regions
-        # -------------------------------------------------------------------------
-
-        message("Processing promoters", type="INFO")
-        gtf_sub_bed = gtf.get_tss().slop(s=True,
-                                         l=upstream,
-                                         r=downstream,
-                                         g=chrom_info.name).cut([0, 1, 2,
-                                                                 3, 4, 5]).sort().merge()
-
-        hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-
-        # -------------------------------------------------------------------------
-        # Get the tts regions
-        # -------------------------------------------------------------------------
-
-        message("Processing terminator", type="INFO")
-        gtf_sub_bed = gtf.get_tts().slop(s=True,
-                                         l=upstream,
-                                         r=downstream,
-                                         g=chrom_info.name).cut([0, 1, 2,
-                                                                 3, 4, 5]).sort().merge()
-
-        hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
-
-    # -------------------------------------------------------------------------
-    # if the user request --more-keys (e.g. gene_biotype)
-    # -------------------------------------------------------------------------
-
-    if more_keys is not None:
-
-        more_keys_list = more_keys.split(",")
-
-        if len(more_keys_list) > 50:
-            message("The selected key in --more-keys should be "
-                    "associated with less than 50 different values.",
-                    type="ERROR")
-
-        for user_key in more_keys_list:
-            user_key_values = set(gtf.extract_data(user_key,
-                                                   as_list=True,
-                                                   hide_undef=True,
-                                                   no_na=True,
-                                                   nr=True))
-
-            if len(user_key_values) > 50:
-                message("The selected key in --more-keys "
-                        "should be associated with less than 50 different values.",
+            if len(more_keys_list) > 50:
+                message("The selected key in --more-keys should be "
+                        "associated with less than 50 different values.",
                         type="ERROR")
 
-            for val in user_key_values:
+            for user_key in more_keys_list:
+                user_key_values = set(gtf.extract_data(user_key,
+                                                       as_list=True,
+                                                       hide_undef=True,
+                                                       no_na=True,
+                                                       nr=True))
 
-                gtf_sub = gtf.select_by_key(user_key, val, 0)
+                if len(user_key_values) > 50:
+                    message("The selected key in --more-keys "
+                            "should be associated with less than 50 different values.",
+                            type="ERROR")
 
-                if len(gtf_sub) > 0:
-                    gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
-                                                       "gene_id",
-                                                       "exon_id"]).sort().merge()  # merging bed file !
-                    del gtf_sub
-                    ft_type = ":".join([user_key, val])  # Key for the dictionary
-                    hits[ft_type] = overlap_partial(bedA=peak_file,
-                                                    bedB=gtf_sub_bed)
-                    message("Processing " + str(ft_type), type="INFO")
+                for val in user_key_values:
+
+                    gtf_sub = gtf.select_by_key(user_key, val, 0)
+
+                    if len(gtf_sub) > 0:
+                        gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
+                                                           "gene_id",
+                                                           "exon_id"]).sort().merge()  # merging bed file !
+                        del gtf_sub
+                        ft_type = ":".join([user_key, val])  # Key for the dictionary
+                        hits[ft_type] = overlap_partial(bedA=peak_file,
+                                                        bedB=gtf_sub_bed)
+                        message("Processing " + str(ft_type), type="INFO")
 
     # -------------------------------------------------------------------------
     # Process user defined annotations
