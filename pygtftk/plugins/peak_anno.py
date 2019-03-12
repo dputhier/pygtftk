@@ -20,15 +20,14 @@ from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
-
-from pygtftk.utils import chrom_info_as_dict
-from pygtftk.utils import close_properly
-from pygtftk.utils import make_outdir_and_file
-from pygtftk.utils import message
-
 from pygtftk.stats.intersect import read_bed_as_list as read_bed  # Only used here for exclusions
 from pygtftk.stats.intersect.overlap_stats_shuffling import \
     compute_overlap_stats  # Main function from the stats.intersect module
+from pygtftk.utils import chrom_info_as_dict
+from pygtftk.utils import close_properly
+from pygtftk.utils import make_outdir_and_file
+from pygtftk.utils import make_tmp_file
+from pygtftk.utils import message
 
 __updated__ = "2019-03-12"
 __doc__ = """
@@ -207,9 +206,16 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-if', '--user-img-file',
-                            help="Provide an alternative path for the main image.",
-                            default=None,
+                            help="Provide an alternative path for the main image. If used but not set no image file will be produced.",
+                            default=False,
+                            nargs='?',
                             type=arg_formatter.FormattedFile(mode='w', file_ext='pdf'),
+                            required=False)
+
+    parser_grp.add_argument('-tp', '--tsv-file-path',
+                            help="Provide an alternative path for text output file.",
+                            default=None,
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='tsv'),
                             required=False)
 
     parser_grp.add_argument('-dpi', '--dpi',
@@ -230,7 +236,7 @@ def peak_anno(inputfile=None,
               outputdir=None,
               peak_file=None,
               chrom_info=None,
-
+              tsv_file_path=None,
               more_bed=None,
               more_bed_labels=None,
               upstream=1000,
@@ -398,12 +404,32 @@ def peak_anno(inputfile=None,
 
     data_file, pdf_file = file_out_list
 
-    if user_img_file is not None:
+    ## --user-img-file is a nargs='?' argument.
+    ## - If the argument is used (-if) but not set its value is False.
+    ## - If the argument used (-if) and set it is a file.
+    ## - If the argument is unused its value is False.
+
+    if user_img_file is None:
+        os.unlink(pdf_file.name)
+        pdf_file = None
+
+    elif user_img_file != False:
 
         os.unlink(pdf_file.name)
         pdf_file = user_img_file
 
         test_path = os.path.abspath(pdf_file.name)
+        test_path = os.path.dirname(test_path)
+
+        if not os.path.exists(test_path):
+            os.makedirs(test_path)
+
+    if tsv_file_path is not None:
+
+        os.unlink(data_file.name)
+        data_file = tsv_file_path
+
+        test_path = os.path.abspath(data_file.name)
         test_path = os.path.dirname(test_path)
 
         if not os.path.exists(test_path):
@@ -443,6 +469,8 @@ def peak_anno(inputfile=None,
             gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
                                                "gene_id",
                                                "exon_id"]).sort().merge()  # merging bed file !
+            tmp_file = make_tmp_file(prefix=str(feat_type), suffix='.bed')
+            gtf_sub_bed.saveas(tmp_file.name)
 
             del gtf_sub
 
@@ -588,7 +616,10 @@ def peak_anno(inputfile=None,
 
     d = pd.read_csv(data_file.name, sep="\t", header=0)
 
-    plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi)
+    if pdf_file is not None:
+        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi)
+        close_properly(pdf_file)
+    close_properly(data_file)
 
 
 def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
@@ -636,7 +667,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         data_ni.columns = ['Feature', 'Shuffled', 'True']  # Rename columns
 
         # For later purposes (p-value display), collect the fold change.
-        fc = data_ni['True']/(data_ni['Shuffled']+1)
+        fc = data_ni['True'] / (data_ni['Shuffled'] + 1)
 
         # Now melt the dataframe
         dmm = data_ni.melt(id_vars='Feature')
@@ -646,7 +677,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
 
         # Create plot
         p = ggplot(dmm)
-        p += theme_bw() # Add the black & white theme
+        p += theme_bw()  # Add the black & white theme
 
         # Bar plot of shuffled vs true
         aes_plot = aes(x='Feature', y=statname, fill='Type')
@@ -683,10 +714,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         # p<0.05 counts as significant.
         signif_color = pd.Series(['#000000'] * len(text))
         for i in range(len(text)):
-            if text[i] < 0.05 : # If significant
-                if fc[i] < 1 : signif_color[i] = '#f57c00'
-                if fc[i] > 1 : signif_color[i] = '#43a047'
-
+            if text[i] < 0.05:  # If significant
+                if fc[i] < 1: signif_color[i] = '#f57c00'
+                if fc[i] > 1: signif_color[i] = '#43a047'
 
         text = text.apply(format_pvalue)
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
@@ -694,7 +724,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         aes_plot = aes(x='Feature', y=text_pos, label=text)
         p += geom_label(mapping=aes_plot, stat='identity',
                         size=5, boxstyle='round', label_size=0.2,
-                        color='white', fill = signif_color)
+                        color='white', fill=signif_color)
 
         # Theme
         p += theme(legend_title=element_blank(),
@@ -722,8 +752,10 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         return p
 
     # Compute the plots for both statistics
-    p1 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs") + ggtitle('Total overlap length per region type')
-    p2 = plot_this('nb_intersections') + ylab("Number of intersections") + ggtitle('Total nb. of intersections per region type')
+    p1 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs") + ggtitle(
+        'Total overlap length per region type')
+    p2 = plot_this('nb_intersections') + ylab("Number of intersections") + ggtitle(
+        'Total nb. of intersections per region type')
 
     # -------------------------------------------------------------------------
     # Computing page size
@@ -761,6 +793,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         fxn()
+
         message("Saving diagram to file : " + pdf_file.name)
         message("Be patient. This may be long for large datasets.")
 
@@ -769,8 +802,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
                           width=pdf_width,
                           height=pdf_height,
                           dpi=dpi)
-
-    close_properly(pdf_file, data_file)
 
 
 def main():
