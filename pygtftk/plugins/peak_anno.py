@@ -208,7 +208,7 @@ def make_parser():
 
     parser_grp.add_argument('-if', '--user-img-file',
                             help="Provide an alternative path for the main image. ",
-                            default=False,
+                            default=None,
                             nargs=None,
                             type=arg_formatter.FormattedFile(mode='w', file_ext='pdf'),
                             required=False)
