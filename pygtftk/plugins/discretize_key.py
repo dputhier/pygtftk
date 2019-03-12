@@ -93,16 +93,23 @@ def make_parser():
                             action="store_true",
                             required=False)
 
+    parser_grp.add_argument('-r', '--precision',
+                            help="The precision used in naming intervals.",
+                            type=int,
+                            default=2,
+                            required=False)
+
     return parser
 
 
 def discretize_key(inputfile=None,
                    outputfile=None,
                    src_key=None,
-                   dest_key=None,
-                   nb_levels=None,
+                   dest_key="disc_key",
+                   nb_levels=2,
                    percentiles=False,
                    percentiles_of_uniq=False,
+                   precision=2,
                    log=False,
                    labels=None):
     """
@@ -227,17 +234,29 @@ def discretize_key(inputfile=None,
 
     if percentiles:
 
-        breaks = pandas.cut(dest_values,
-                            bins=q,
-                            labels=labels
-                            )
+        (breaks, cat_label) = pandas.cut(dest_values,
+                                         bins=q,
+                                         labels=labels,
+                                         retbins=True)
     else:
-        breaks = pandas.cut(dest_values,
-                            bins=nb_levels,
-                            labels=labels
-                            )
+        (breaks, cat_label) = pandas.cut(dest_values,
+                                         bins=nb_levels,
+                                         labels=labels,
+                                         retbins=True)
+
+    # The include_lowest argument of pandas is not working.
+    # Using this workaround to avoid minimum value outside of data range.
+    cat_label[0] = min(dest_values)
+    cat_label = [round(x, precision) for x in cat_label]
+    if precision == 0:
+        cat_label = [int(x) for x in cat_label]
+    cat_label = [str(x) for x in list(zip(cat_label[:-1], cat_label[1:]))]
+    cat_label[0] = cat_label[0].replace("(", "[")
+    cat_label = [x.replace(")", "]") for x in cat_label]
+    cat_label = [str(x).replace(", ", "_") for x in cat_label]
+
     # The string can be very problematic later...
-    breaks.categories = [str(x).replace(", ", "_") for x in breaks.categories]
+    breaks.categories = cat_label
 
     message("Categories: " + str(list(breaks.categories)),
             type="INFO",
