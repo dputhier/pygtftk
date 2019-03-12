@@ -206,10 +206,15 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-if', '--user-img-file',
-                            help="Provide an alternative path for the main image. If used but not set no image file will be produced.",
+                            help="Provide an alternative path for the main image. ",
                             default=False,
-                            nargs='?',
+                            nargs=None,
                             type=arg_formatter.FormattedFile(mode='w', file_ext='pdf'),
+                            required=False)
+
+    parser_grp.add_argument('-x', '--no-pdf',
+                            help="Do not produce any image file. ",
+                            action='store_true',
                             required=False)
 
     parser_grp.add_argument('-tp', '--tsv-file-path',
@@ -245,7 +250,7 @@ def peak_anno(inputfile=None,
               no_basic_feature=False,
               bed_excl=None,
               use_markov=False,
-
+              no_pdf=None,
               pdf_width=None,
               pdf_height=None,
               user_img_file=None,
@@ -409,20 +414,22 @@ def peak_anno(inputfile=None,
     ## - If the argument used (-if) and set it is a file.
     ## - If the argument is unused its value is False.
 
-    if user_img_file is None:
+    if no_pdf:
+        if user_img_file:
+            os.unlink(user_img_file.name)
         os.unlink(pdf_file.name)
         pdf_file = None
+    else:
+        if user_img_file is not None:
 
-    elif user_img_file != False:
+            os.unlink(pdf_file.name)
+            pdf_file = user_img_file
 
-        os.unlink(pdf_file.name)
-        pdf_file = user_img_file
+            test_path = os.path.abspath(pdf_file.name)
+            test_path = os.path.dirname(test_path)
 
-        test_path = os.path.abspath(pdf_file.name)
-        test_path = os.path.dirname(test_path)
-
-        if not os.path.exists(test_path):
-            os.makedirs(test_path)
+            if not os.path.exists(test_path):
+                os.makedirs(test_path)
 
     if tsv_file_path is not None:
 
