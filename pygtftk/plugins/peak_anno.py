@@ -20,15 +20,17 @@ from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
-from pygtftk.stats.intersect import read_bed_as_list as read_bed  # Only used here for exclusions
-from pygtftk.stats.intersect.overlap_stats_shuffling import \
-    compute_overlap_stats  # Main function from the stats.intersect module
+
 from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import close_properly
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
 
-__updated__ = "2019-01-25"
+from pygtftk.stats.intersect import read_bed_as_list as read_bed  # Only used here for exclusions
+from pygtftk.stats.intersect.overlap_stats_shuffling import \
+    compute_overlap_stats  # Main function from the stats.intersect module
+
+__updated__ = "2019-03-12"
 __doc__ = """
  Annotate peaks (in bed format) with region sets/features computed on the
  fly from a GTF file  (e.g promoter, tts, gene body, UTR...). Custom features
@@ -44,8 +46,8 @@ __doc__ = """
 
 __notes__ = """
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
- -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the corresponding 
- size of conventional chromosomes are used. ChrM is not used.  
+ -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the corresponding
+ size of conventional chromosomes are used. ChrM is not used.
  -- The program produces a pdf file and a txt file ('_stats_') containing intersection statistics
  for the shuffled BEDs under H0 (peak_file and the considered genomic region are independant):
  number of intersections (= number of lines in the bed intersect) and total number of overlapping
@@ -79,7 +81,7 @@ __notes__ = """
  It is recommended you do not run other programs in the meantime.
 
  -- TODO: Change this. If you are using the --no-basic-features argument *without* --more-keys, you can supply an empty file as the GTF, since it will be disregarded in the code.
- 
+
  -- BETA : The lists of region and inter-region lengths can be shuffled independantly, or by using two independant Markov models
  of order 2 respectively for each. This is not recommended in the general case and can *very* time-consuming (hours).
 
@@ -622,24 +624,29 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
 
     message('Adding bar plot.')
 
+    # This can be used to plot either 'summed_bp_overlaps' or 'nb_intersections'
     def plot_this(statname):
 
-        # -------------- First plot : number of intersections ---------------- #
+        ## DATA PROCESSING
 
-        # Collect true and shuffled number of intersections
+        # Collect true and shuffled number of the stat being plotted
         data_ni = dm[['feature_type', statname + '_esperance_shuffled', statname + '_true']]
         maximum = data_ni[[statname + '_esperance_shuffled', statname + '_true']].max(axis=1)
 
         data_ni.columns = ['Feature', 'Shuffled', 'True']  # Rename columns
+
+        # For later purposes (p-value display), collect the fold change.
+        fc = data_ni['True']/(data_ni['Shuffled']+1)
+
+        # Now melt the dataframe
         dmm = data_ni.melt(id_vars='Feature')
         dmm.columns = ['Feature', 'Type', statname]
 
+        ## PLOTTING
+
         # Create plot
         p = ggplot(dmm)
-
-        # Add the black & white
-
-        p += theme_bw()
+        p += theme_bw() # Add the black & white theme
 
         # Bar plot of shuffled vs true
         aes_plot = aes(x='Feature', y=statname, fill='Type')
@@ -671,13 +678,23 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
                 r = 'p=' + '{0:.3g}'.format(x)  # Add 'p=' before and format the p value
             return r
 
+        # Compute the colors for the text box : orange if significantly depleted,
+        # green if significantly enriched, black otherwise. For display purposes,
+        # p<0.05 counts as significant.
+        signif_color = pd.Series(['#000000'] * len(text))
+        for i in range(len(text)):
+            if text[i] < 0.05 : # If significant
+                if fc[i] < 1 : signif_color[i] = '#f57c00'
+                if fc[i] > 1 : signif_color[i] = '#43a047'
+
+
         text = text.apply(format_pvalue)
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
         text_pos.index = range(len(text_pos))
         aes_plot = aes(x='Feature', y=text_pos, label=text)
         p += geom_label(mapping=aes_plot, stat='identity',
                         size=5, boxstyle='round', label_size=0.2,
-                        fill='#000000', color='white')
+                        color='white', fill = signif_color)
 
         # Theme
         p += theme(legend_title=element_blank(),
@@ -700,8 +717,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
                    )
 
         # Add a nicer set of colors.
-
-        p += scale_fill_manual(values={'Shuffled': '#808080', 'True': 'blue'})
+        p += scale_fill_manual(values={'Shuffled': '#757575', 'True': '#0288d1'})
 
         return p
 

@@ -181,7 +181,7 @@ def compute_overlap_stats(bedA, bedB,
     all_intersections = list()
     for k in range(len(minibatches)):
         # Display of current progress
-        message("--- Minibatch nb. : " + str(k + 1) + " / " + str(minibatch_nb))
+        message("--- Minibatch nb. : " + str(k + 1) + " / " + str(minibatch_nb), type='DEBUG')
 
         all_intersections = all_intersections + compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2, all_chrom1,
                                                                                     all_chrom2,
