@@ -91,11 +91,20 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 16):
         counts.append(count)
     f_obs = np.array(counts)
 
-    # Compute the expected frequencies : for each bin, sum the pmf
+    ## Compute the expected frequencies : across each bin, "sum the pmf" (obviously done by the difference of two cdf)
     f_exp = []
     for i in range(len(bins)):
-        total_freq = sum([rv.pmf(x) for x in range(bins[i-1],bins[i])]) # Same formula as np.digitize ; special case i=0 will return empty range
+
+        # Same formula as np.digitize ; special case i=0 will return empty range
+        if i == 0 : bin_left = bin_right = 0
+        else:
+            bin_left = bins[i-1]
+            bin_right = bins[i]
+
+        total_freq = rv.cdf(bin_right-1) - rv.cdf(bin_left-1)
+
         f_exp.append(total_freq)
+
     f_exp = np.array(f_exp) * len(obs)
 
 
