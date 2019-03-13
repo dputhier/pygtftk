@@ -797,8 +797,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         panel_width = 0.5
         pdf_width = panel_width * nb_ft
 
-        if panel_width > 25:
-            panel_width = 25
+        if pdf_width > 25:
+            pdf_width = 25
             message("Setting --pdf-width to 25 (limit)")
 
     if pdf_height is None:
@@ -806,6 +806,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
 
     message("Page width set to " + str(pdf_width))
     message("Page height set to " + str(pdf_height))
+    figsize = (pdf_width, pdf_height)
+
 
     # -------------------------------------------------------------------------
     # Turn warning off. Both pandas and plotnine use warnings for deprecated
@@ -827,8 +829,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         message("Saving diagram to file : " + pdf_file.name)
         message("Be patient. This may be long for large datasets.")
 
+        # NOTE : We must manually specify figure size with save_as_pdf_pages
         save_as_pdf_pages(filename=pdf_file.name,
-                          plots=[p1, p2],
+                          plots=[p1 + theme(figure_size=figsize), p2 + theme(figure_size=figsize)],
                           width=pdf_width,
                           height=pdf_height,
                           dpi=dpi)
