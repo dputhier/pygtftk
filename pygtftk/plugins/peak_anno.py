@@ -794,7 +794,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
     nb_ft = len(list(d['feature_type'].unique()))
 
     if pdf_width is None:
-        panel_width = 0.5
+        panel_width = 0.6
         pdf_width = panel_width * nb_ft
 
         if pdf_width > 25:
