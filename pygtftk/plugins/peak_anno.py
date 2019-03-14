@@ -474,7 +474,7 @@ def peak_anno(inputfile=None,
 
     for i in chrom_list:
         if i not in chrom_len:
-            message("Chromosome " + " i from GTF is undefined in --chrom-info file.",
+            message("Chromosome " + str(i) + " from GTF is undefined in --chrom-info file.",
                     type="ERROR")
 
     # -------------------------------------------------------------------------
