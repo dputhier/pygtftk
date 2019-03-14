@@ -234,17 +234,17 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-f', '--force-chrom-gtf',
-                            help="Discard silently from GTF genes outside chromosomes defined in --chrom-info.",
+                            help="Discard silently, from GTF, genes outside chromosomes defined in --chrom-info.",
                             action='store_true',
                             required=False)
 
     parser_grp.add_argument('-w', '--force-chrom-peak',
-                            help="Discard silently from --peak-file peaks outside chromosomes defined in --chrom-info.",
+                            help="Discard silently, from --peak-file, peaks outside chromosomes defined in --chrom-info.",
                             action='store_true',
                             required=False)
 
     parser_grp.add_argument('-q', '--force-chrom-more-bed',
-                            help="Discard silently from --more-bed files regions outside chromosomes defined in --chrom-info.",
+                            help="Discard silently, from --more-bed files, regions outside chromosomes defined in --chrom-info.",
                             action='store_true',
                             required=False)
     return parser
