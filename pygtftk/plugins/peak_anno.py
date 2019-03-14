@@ -44,6 +44,9 @@ __doc__ = """
  """
 
 __notes__ = """
+ -- Although peak_anno itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb.
+ It is recommended you do not run other programs in the meantime on a laptop.
+
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
  -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the corresponding
  size of conventional chromosomes are used. ChrM is not used.
@@ -76,13 +79,8 @@ __notes__ = """
  This in Beta for now and will be very time-consuming (hours), especially if you have few CPU cores.
  Try using an exclusion file that is as small (around a thousand elements) as possible.
 
- -- Although peak_anno itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb.
- It is recommended you do not run other programs in the meantime.
-
- -- TODO: Change this. If you are using the --no-basic-features argument *without* --more-keys, you can supply an empty file as the GTF, since it will be disregarded in the code.
-
- -- BETA : The lists of region and inter-region lengths can be shuffled independantly, or by using two independant Markov models
- of order 2 respectively for each. This is not recommended in the general case and can *very* time-consuming (hours).
+ -- BETA : About -\-use-markov. This arguments control whether to use Markov shuffling instead of independant shuffles 
+ for respectively region lengths and inter-region lengthsT. This is not recommended in the general case and can *very* time-consuming (hours).
 
  """
 
@@ -122,7 +120,7 @@ def make_parser():
                             type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
                             required=True)
 
-    parser_grp.add_argument('--more-bed',
+    parser_grp.add_argument('-b', '--more-bed',
                             help="A list of bed files to be considered as additional genomic annotations.",
                             type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
                             nargs='*',
@@ -179,7 +177,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-ma', '--use-markov',
-                            help='Whether to use Markov shuffling instead of independant shuffles for respectively region lengths and inter-region lengths. Not recommended in the general case. Can take a *very* long time.',
+                            help='Whether to use Markov shuffling instead of independant shuffles. See notes.',
                             action='store_true',
                             required=False)
 
@@ -202,7 +200,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-n', '--no-basic-feature',
-                            help="Don't compute statistics for genomic features but concentrates on --more-bed and --more-keys.",
+                            help="No statistics for basic features of GTF. Concentrates on --more-bed and --more-keys.",
                             action="store_true",
                             required=False)
 
@@ -236,7 +234,17 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-f', '--force-chrom-gtf',
-                            help="Discard silently gene from GTF located on chromosomes undefined in --chrom-info.",
+                            help="Discard silently from GTF genes outside chromosomes defined in --chrom-info.",
+                            action='store_true',
+                            required=False)
+
+    parser_grp.add_argument('-w', '--force-chrom-peak',
+                            help="Discard silently from --peak-file peaks outside chromosomes defined in --chrom-info.",
+                            action='store_true',
+                            required=False)
+
+    parser_grp.add_argument('-q', '--force-chrom-more-bed',
+                            help="Discard silently from --more-bed files regions outside chromosomes defined in --chrom-info.",
                             action='store_true',
                             required=False)
     return parser
@@ -265,6 +273,8 @@ def peak_anno(inputfile=None,
               pdf_width=5,
               pdf_height=5,
               force_chrom_gtf=False,
+              force_chrom_peak=False,
+              force_chrom_more_bed=False,
               user_img_file=None,
               dpi=300,
               nb_threads=8,
@@ -277,18 +287,17 @@ def peak_anno(inputfile=None,
     classical features (e.g promoter, tts, gene body, UTR,...) and to sets of user provided peaks.
     """
 
+    # -------------------------------------------------------------------------
     # Set random seed
+    # -------------------------------------------------------------------------
+
     np.random.seed(seed)
 
-    # Load the peak file as pybedtools.BedTool object
-    peak_file = pybedtools.BedTool(peak_file.name)
-
-    # Just in case it was not, sort and merge the file.
-    # In any case, it should be short compared to the expected total running time.
-    peak_file = peak_file.sort().merge()
-
+    # -------------------------------------------------------------------------
     # Are we using markov shuffling ?
     # If yes, send a warning to the user.
+    # -------------------------------------------------------------------------
+
     if use_markov:
         message('Using Markov order 2 shuffling.', type='INFO')
         message(
@@ -339,6 +348,47 @@ def peak_anno(inputfile=None,
     # -------------------------------------------------------------------------
 
     chrom_len = chrom_info_as_dict(chrom_info)
+
+    # -------------------------------------------------------------------------
+    # Load the peak file as pybedtools.BedTool object
+    # -------------------------------------------------------------------------
+
+    peak_file = pybedtools.BedTool(peak_file.name)
+
+    # -------------------------------------------------------------------------
+    # Check chromosomes for peaks are defined in the chrom-info file
+    # Depending on force_chrom_peak, peaks undefined in peak_file may
+    # be silently removed.
+    # -------------------------------------------------------------------------
+
+    peak_chrom_list = set()
+
+    for i in pybedtools.BedTool(peak_file):
+        peak_chrom_list.add(i.chrom)
+
+    if not force_chrom_peak:
+        for i in peak_chrom_list:
+            if i not in chrom_len:
+                msg = "Chromosome " + str(i) + " from peak file is undefined in --chrom-info file. "
+                message(msg + 'Please fix --chrom-info file or use --force-chrom-peak.',
+                        type="ERROR")
+    else:
+        peak_file_sub = make_tmp_file(prefix='peaks_x_chrom_info', suffix='.bed')
+
+        for i in peak_file:
+            if i.chrom in chrom_len:
+                peak_file_sub.write("\t".join(i.fields) + "\n")
+
+        peak_file_sub.close()
+        peak_file = BedTool(peak_file_sub.name)
+
+    # -------------------------------------------------------------------------
+    # Sort and merge the peaks
+    # -------------------------------------------------------------------------
+    # Just in case it was not, sort and merge the file.
+    # In any case, it should be short compared to the
+    # expected total running time.
+    peak_file = peak_file.sort().merge()
 
     # -------------------------------------------------------------------------
     # Region exclusion
@@ -443,11 +493,6 @@ def peak_anno(inputfile=None,
 
     data_file, pdf_file = file_out_list
 
-    ## --user-img-file is a nargs='?' argument.
-    ## - If the argument is used (-if) but not set its value is False.
-    ## - If the argument used (-if) and set it is a file.
-    ## - If the argument is unused its value is False.
-
     if no_pdf:
         if user_img_file:
             os.unlink(user_img_file.name)
@@ -475,19 +520,6 @@ def peak_anno(inputfile=None,
 
         if not os.path.exists(test_path):
             os.makedirs(test_path)
-
-    # -------------------------------------------------------------------------
-    # Check chromosomes for peaks are defined in the chrom-info file
-    # -------------------------------------------------------------------------
-
-    peak_chrom_list = set()
-    for i in pybedtools.BedTool(peak_file):
-        peak_chrom_list.add(i.chrom)
-
-    for i in peak_chrom_list:
-        if i not in chrom_len:
-            message("Chromosome " + str(i) + " from peak file is undefined in --chrom-info file.",
-                    type="ERROR")
 
     # -------------------------------------------------------------------------
     # Fill the dict with info about basic features include in GTF
@@ -612,14 +644,31 @@ def peak_anno(inputfile=None,
         message("Processing user-defined regions (bed format).")
         for bed_anno, bed_lab in zip(more_bed, more_bed_labels):
             message("Processing " + str(bed_lab), type="INFO")
-            chrom_list = set()
-            for i in BedTool(bed_anno.name):
-                chrom_list.add(i.chrom)
 
-            for i in chrom_list:
-                if i not in chrom_len:
-                    message("Chromosome " + " i from GTF is undefined in " + bed_anno.name + " file.",
+            if not force_chrom_more_bed:
+                chrom_list = set()
+                for i in BedTool(bed_anno.name):
+                    chrom_list.add(i.chrom)
+
+                for i in chrom_list:
+                    if i not in chrom_len:
+                        message("Chromosome " + str(i) + " is undefined in --more-bed with label " + bed_lab + ".",
+                                type="ERROR")
+            else:
+                bed_anno_sub = make_tmp_file(prefix='more_bed_x_chrom_info' + bed_lab, suffix='.bed')
+
+                n = 0
+                for i in BedTool(bed_anno.name):
+                    if i.chrom in chrom_len:
+                        bed_anno_sub.write("\t".join(i.fields) + "\n")
+                        n += 1
+                if n == 0:
+                    msg = "The --more-bed file " + bed_lab + " is empty after checking for --chrom-info."
+                    message(msg + "Please check your --chrom-info file or use --force-chrom-more-bed",
                             type="ERROR")
+
+                bed_anno_sub.close()
+                bed_anno = bed_anno_sub
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
                                             bedB=BedTool(bed_anno.name))
