@@ -166,16 +166,15 @@ extra_comp_cython = ['-W']
 if platform.system() == 'Darwin':
     extra_comp_cython += ['-Wno-#warnings']
 
-cython_peak_anno = Extension(name='pygtftk.stats.intersect.create_shuffles',
-                             sources=["pygtftk/stats/intersect/create_shuffles.pyx"],
+cython_ologram = Extension(name='pygtftk.stats.intersect.create_shuffles',
+                           sources=["pygtftk/stats/intersect/create_shuffles.pyx"],
+                           extra_compile_args=extra_comp_cython,
+                           language='c')
+
+cython_ologram_2 = Extension(name='pygtftk.stats.intersect.overlap.overlap_regions',
+                             sources=["pygtftk/stats/intersect/overlap/overlap_regions.pyx"],
                              extra_compile_args=extra_comp_cython,
                              language='c')
-
-cython_peak_anno_2 = Extension(name='pygtftk.stats.intersect.overlap.overlap_regions',
-                               sources=["pygtftk/stats/intersect/overlap/overlap_regions.pyx"],
-                               extra_compile_args=extra_comp_cython,
-                               language='c')
-
 
 # ----------------------------------------------------------------------
 # Description
@@ -303,7 +302,7 @@ setup(name="pygtftk",
                         'plotnine >=0.5.1',
                         'setuptools',
                         'cython'],
-      ext_modules=[lib_pygtftk] + [cython_peak_anno] + [cython_peak_anno_2])
+      ext_modules=[lib_pygtftk] + [cython_ologram] + [cython_ologram_2])
 
 # ----------------------------------------------------------------------
 # Update gtftk config directory

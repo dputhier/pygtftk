@@ -31,6 +31,9 @@ from pygtftk.utils import message
 
 __updated__ = "2019-03-12"
 __doc__ = """
+ 
+ OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo
+ 
  Annotate peaks (in bed format) with region sets/features computed on the
  fly from a GTF file  (e.g promoter, tts, gene body, UTR...). Custom features
  are supported.
@@ -44,7 +47,7 @@ __doc__ = """
  """
 
 __notes__ = """
- -- Although peak_anno itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb.
+ -- Although ologram itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb.
  It is recommended you do not run other programs in the meantime on a laptop.
 
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
@@ -101,7 +104,7 @@ def make_parser():
     parser_grp.add_argument('-o', '--outputdir',
                             help='Output directory name.',
                             metavar="DIR",
-                            default="peak_annotation",
+                            default="ologram_output",
                             type=str)
 
     parser_grp.add_argument('-c', '--chrom-info',
@@ -255,33 +258,33 @@ def make_parser():
 # -------------------------------------------------------------------------
 
 
-def peak_anno(inputfile=None,
-              outputdir=None,
-              peak_file=None,
-              chrom_info=None,
-              tsv_file_path=None,
-              more_bed=None,
-              more_bed_labels=None,
-              no_gtf=False,
-              upstream=1000,
-              more_keys=None,
-              downstream=1000,
-              no_basic_feature=False,
-              bed_excl=None,
-              use_markov=False,
-              no_pdf=None,
-              pdf_width=5,
-              pdf_height=5,
-              force_chrom_gtf=False,
-              force_chrom_peak=False,
-              force_chrom_more_bed=False,
-              user_img_file=None,
-              dpi=300,
-              nb_threads=8,
-              seed=42,
-              minibatch_nb=8,
-              minibatch_size=25,
-              ):
+def ologram(inputfile=None,
+            outputdir=None,
+            peak_file=None,
+            chrom_info=None,
+            tsv_file_path=None,
+            more_bed=None,
+            more_bed_labels=None,
+            no_gtf=False,
+            upstream=1000,
+            more_keys=None,
+            downstream=1000,
+            no_basic_feature=False,
+            bed_excl=None,
+            use_markov=False,
+            no_pdf=None,
+            pdf_width=5,
+            pdf_height=5,
+            force_chrom_gtf=False,
+            force_chrom_peak=False,
+            force_chrom_more_bed=False,
+            user_img_file=None,
+            dpi=300,
+            nb_threads=8,
+            seed=42,
+            minibatch_nb=8,
+            minibatch_size=25,
+            ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
     classical features (e.g promoter, tts, gene body, UTR,...) and to sets of user provided peaks.
@@ -402,7 +405,7 @@ def peak_anno(inputfile=None,
 
     # WARNING : do not modify chrom_info or peak_file afterwards !
     # We can afford to modify chrom_len because we only modify its values, and the
-    # rest of the peak_anno code relie otherwise only on its keys.
+    # rest of the ologram code relie otherwise only on its keys.
 
     if bed_excl is not None:
         # Treating bed_excl once and for all : turning it into a pybedtools file, merging it and sorting it.
@@ -486,8 +489,8 @@ def peak_anno(inputfile=None,
     # -------------------------------------------------------------------------
 
     file_out_list = make_outdir_and_file(out_dir=outputdir,
-                                         alist=["00_peak_anno_stats.tsv",
-                                                "00_peak_anno_diagrams.pdf"
+                                         alist=["00_ologram_stats.tsv",
+                                                "00_ologram_diagrams.pdf"
                                                 ],
                                          force=True)
 
@@ -903,7 +906,7 @@ def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    peak_anno(**args)
+    ologram(**args)
 
 
 if __name__ == '__main__':
@@ -914,56 +917,56 @@ else:
 
     # 'Bats' tests
     test = '''
-        #peak_anno: get example files
-        @test "peak_anno_0" {
+        #ologram: get example files
+        @test "ologram_0" {
              result=`gtftk get_example -d simple_02 -f '*'`
           [ "$result" = "" ]
         }
 
-        #peak_anno: run on simple test file
-        @test "peak_anno_1" {
-             result=`rm -Rf peak_annotation; gtftk peak_anno -i simple_02.gtf -p simple_02_peaks.bed -c simple_02.chromInfo -u 2 -d 2 -K peak_annotation --no-date`
+        #ologram: run on simple test file
+        @test "ologram_1" {
+             result=`rm -Rf ologram_output; gtftk ologram -i simple_02.gtf -p simple_02_peaks.bed -c simple_02.chromInfo -u 2 -d 2 -K ologram_output --no-date`
           [ "$result" = "" ]
         }
 
-        #peak_anno: proper number of true intersections
-        @test "peak_anno_2" {
-         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 6`
+        #ologram: proper number of true intersections
+        @test "ologram_2" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 6`
           [ "$result" = "16" ]
         }
 
-        #peak_anno: proper number of shuffled intersections
-        @test "peak_anno_3" {
-         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 2`
+        #ologram: proper number of shuffled intersections
+        @test "ologram_3" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 2`
           [ "$result" = "14.97" ]
         }
 
-        #peak_anno: overlapping bp
-        @test "peak_anno_4" {
-         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 12`
+        #ologram: overlapping bp
+        @test "ologram_4" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 12`
           [ "$result" = "75" ]
         }
 
-        #peak_anno: shuffled overlapping bp
-        @test "peak_anno_5" {
-         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 8`
+        #ologram: shuffled overlapping bp
+        @test "ologram_5" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
           [ "$result" = "61.35" ]
         }
 
-        #peak_anno: shuffled overlapping bp variance
-        @test "peak_anno_6" {
-         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 9`
+        #ologram: shuffled overlapping bp variance
+        @test "ologram_6" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 9`
           [ "$result" = "32.94" ]
         }
 
-        #peak_anno: shuffled overlapping bp fitting
-        @test "peak_anno_7" {
-         result=`cat peak_annotation/00_peak_anno_stats.tsv | grep gene | cut -f 10`
+        #ologram: shuffled overlapping bp fitting
+        @test "ologram_7" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10`
           [ "$result" = "0.8227700000000001" ]
         }
         '''
 
-    cmd = CmdObject(name="peak_anno",
+    cmd = CmdObject(name="ologram",
                     message="Statistics on bed file intersections with genomic features.",
                     parser=make_parser(),
                     fun=os.path.abspath(__file__),

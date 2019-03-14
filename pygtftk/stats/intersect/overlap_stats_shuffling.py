@@ -115,7 +115,7 @@ def compute_overlap_stats(bedA, bedB,
     - bedA corresponds to the old argument 'peak_file=region_mid_point.fn'
     - bedB corresponds to the old argument 'feature_bo=gtf_sub_bed'
     - chrom_len is the dictionary of chromosome lengths
-    See the peak_anno module for more documentation on the significance of
+    See the ologram module for more documentation on the significance of
     each argument.
 
     Author : Quentin Ferré <quentin.q.ferre@gmail.com>
@@ -137,7 +137,7 @@ def compute_overlap_stats(bedA, bedB,
 
     # If there is an exclusion to be done, do it.
 
-    # NOTE : exclusion on the peak file (bedA) has been moved to peak_anno itself to avoid repetition. Same thing for the chromsizes.
+    # NOTE : exclusion on the peak file (bedA) has been moved to ologram itself to avoid repetition. Same thing for the chromsizes.
     # This means that when there is an exclusion to be done, this function must do in on bedB only.
     if bed_excl is not None:
         exclstart = time.time()
@@ -151,20 +151,24 @@ def compute_overlap_stats(bedA, bedB,
     # Abort if there are less than 2 remaining regions in bedA and bedB
     if (len(bed_A_as_pybedtool) < 2) | (len(bed_B_as_pybedtool) < 2):
         message(
-            'Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. peak_anno will discard this particular pair.',
+            'Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.',
             type='WARNING')
 
         # Return a result dict full of -1
         result_abort = OrderedDict()
-        result_abort['nb_intersections_esperance_shuffled'] = 0 ; result_abort['nb_intersections_variance_shuffled'] = 0
-        result_abort['nb_intersections_negbinom_fit_quality'] = -1 ; result_abort['nb_intersections_log2_fold_change'] = 0
-        result_abort['nb_intersections_true'] = 0 ; result_abort['nb_intersections_pvalue'] = 0
-        result_abort['summed_bp_overlaps_esperance_shuffled'] = 0 ; result_abort['summed_bp_overlaps_variance_shuffled'] = 0
-        result_abort['summed_bp_overlaps_negbinom_fit_quality'] = -1 ; result_abort['summed_bp_overlaps_log2_fold_change'] = 0
-        result_abort['summed_bp_overlaps_true'] = 0 ; result_abort['summed_bp_overlaps_pvalue'] = 0
+        result_abort['nb_intersections_esperance_shuffled'] = 0;
+        result_abort['nb_intersections_variance_shuffled'] = 0
+        result_abort['nb_intersections_negbinom_fit_quality'] = -1;
+        result_abort['nb_intersections_log2_fold_change'] = 0
+        result_abort['nb_intersections_true'] = 0;
+        result_abort['nb_intersections_pvalue'] = 0
+        result_abort['summed_bp_overlaps_esperance_shuffled'] = 0;
+        result_abort['summed_bp_overlaps_variance_shuffled'] = 0
+        result_abort['summed_bp_overlaps_negbinom_fit_quality'] = -1;
+        result_abort['summed_bp_overlaps_log2_fold_change'] = 0
+        result_abort['summed_bp_overlaps_true'] = 0;
+        result_abort['summed_bp_overlaps_pvalue'] = 0
         return result_abort
-
-
 
     # Proper reading of the bed file as a list of intervals
     Lr1, Li1, all_chrom1 = read_bed.bed_to_lists_of_intervals(bed_A_as_pybedtool, chrom_len)
@@ -307,11 +311,11 @@ def compute_overlap_stats(bedA, bedB,
 
     result['nb_intersections_negbinom_fit_quality'] = '{:.5f}'.format(pn)
 
-
-
-    if np.mean(intersect_nbs) == 0: ni_fc = 0 # Do not divide by zero !
-    else: ni_fc = true_intersect_nb / np.mean(intersect_nbs)
-    if ni_fc != 0 : ni_fc = np.log2(ni_fc) # Apply log transformation
+    if np.mean(intersect_nbs) == 0:
+        ni_fc = 0  # Do not divide by zero !
+    else:
+        ni_fc = true_intersect_nb / np.mean(intersect_nbs)
+    if ni_fc != 0: ni_fc = np.log2(ni_fc)  # Apply log transformation
     result['nb_intersections_log2_fold_change'] = '{:.5f}'.format(ni_fc)
 
     result['nb_intersections_true'] = true_intersect_nb
@@ -323,9 +327,11 @@ def compute_overlap_stats(bedA, bedB,
 
     result['summed_bp_overlaps_negbinom_fit_quality'] = '{:.5f}'.format(ps)
 
-    if np.mean(summed_bp_overlaps) == 0: sbp_fc = 0 # Do not divide by zero !
-    else: sbp_fc = true_bp_overlaps / np.mean(summed_bp_overlaps)
-    if sbp_fc != 0 : sbp_fc = np.log2(sbp_fc) # Apply log transformation
+    if np.mean(summed_bp_overlaps) == 0:
+        sbp_fc = 0  # Do not divide by zero !
+    else:
+        sbp_fc = true_bp_overlaps / np.mean(summed_bp_overlaps)
+    if sbp_fc != 0: sbp_fc = np.log2(sbp_fc)  # Apply log transformation
     result['summed_bp_overlaps_log2_fold_change'] = '{:.5f}'.format(sbp_fc)
 
     result['summed_bp_overlaps_true'] = true_bp_overlaps
