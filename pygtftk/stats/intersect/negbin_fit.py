@@ -156,10 +156,11 @@ def log_nb_pval(k, mean, var):
 
     rv = scipy.stats.nbinom(r, p)
 
-    # Due to scipy's log cdf implementaiton, with sufficienly large values of r,
+    # NOTE Due to scipy's log cdf implementaiton, with sufficienly large values of r,
     # p and k, the log of the p value can return a '-inf'. This will not impact
     # the calculation of the true p value, since np.exp(-np.inf) = 0, so we
     # silence the warnings temporarily.
+    # NOTE 2 Again, due to numpy's precision, p-values floor at ~= 1.11E-16
     np.seterr(divide = 'ignore')
     left_pval = rv.logcdf(k)
     right_pval = rv.logsf(k)
