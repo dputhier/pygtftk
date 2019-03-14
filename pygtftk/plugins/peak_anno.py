@@ -388,7 +388,7 @@ def peak_anno(inputfile=None,
 
             for i in chrom_list:
                 if i not in chrom_len:
-                    message("Chromosome " + " i from GTF is undefined in --chrom-info file.",
+                    message("Chromosome " + str(i) + " from GTF is undefined in --chrom-info file.",
                             type="ERROR")
 
     # -------------------------------------------------------------------------
@@ -807,7 +807,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
     message("Page width set to " + str(pdf_width))
     message("Page height set to " + str(pdf_height))
     figsize = (pdf_width, pdf_height)
-
 
     # -------------------------------------------------------------------------
     # Turn warning off. Both pandas and plotnine use warnings for deprecated
