@@ -235,6 +235,10 @@ def make_parser():
                             action='store_true',
                             required=False)
 
+    parser_grp.add_argument('-f', '--force-chrom-gtf',
+                            help="Discard silently gene from GTF located on chromosomes undefined in --chrom-info.",
+                            action='store_true',
+                            required=False)
     return parser
 
 
@@ -260,6 +264,7 @@ def peak_anno(inputfile=None,
               no_pdf=None,
               pdf_width=5,
               pdf_height=5,
+              force_chrom_gtf=False,
               user_img_file=None,
               dpi=300,
               nb_threads=8,
@@ -373,23 +378,30 @@ def peak_anno(inputfile=None,
 
     if not no_gtf:
         if not no_basic_feature or more_keys:
-            gtf = GTF(inputfile).select_by_key("seqid", ",".join(chrom_len.keys()))
+            gtf = GTF(inputfile)
+            gtf_chrom_list = gtf.get_chroms(nr=True)
+
+            # -------------------------------------------------------------------------
+            # Check chromosomes from the GTF are defined in the chrom-info file
+            # -------------------------------------------------------------------------
+
+            if not force_chrom_gtf:
+                for i in gtf_chrom_list:
+                    if i not in chrom_len:
+                        msg = "Chromosome " + str(i) + " from GTF is undefined in --chrom-info file. "
+                        message(msg + "Please check your --chrom-info file or use --force-chrom-gtf",
+                                type="ERROR")
+
+            # -------------------------------------------------------------------------
+            # Subset the GTF using chromosomes defined in chrom-info file.
+            # -------------------------------------------------------------------------
+
+            gtf = gtf.select_by_key("seqid", ",".join(chrom_len.keys()))
 
             if len(gtf) == 0:
                 message("The GTF file does not contain any genomic feature "
-                        "falling in chromosomes declared in chromInfo file.",
+                        "falling in chromosomes declared in --chrom-info.",
                         type="ERROR")
-
-            chrom_list = gtf.get_chroms(nr=True)
-
-            # -------------------------------------------------------------------------
-            # Check chromosomes are defined in the chrom-info file
-            # -------------------------------------------------------------------------
-
-            for i in chrom_list:
-                if i not in chrom_len:
-                    message("Chromosome " + str(i) + " from GTF is undefined in --chrom-info file.",
-                            type="ERROR")
 
     # -------------------------------------------------------------------------
     # Check user provided annotations
@@ -468,13 +480,13 @@ def peak_anno(inputfile=None,
     # Check chromosomes for peaks are defined in the chrom-info file
     # -------------------------------------------------------------------------
 
-    chrom_list = set()
+    peak_chrom_list = set()
     for i in pybedtools.BedTool(peak_file):
-        chrom_list.add(i.chrom)
+        peak_chrom_list.add(i.chrom)
 
-    for i in chrom_list:
+    for i in peak_chrom_list:
         if i not in chrom_len:
-            message("Chromosome " + str(i) + " from GTF is undefined in --chrom-info file.",
+            message("Chromosome " + str(i) + " from peak file is undefined in --chrom-info file.",
                     type="ERROR")
 
     # -------------------------------------------------------------------------
