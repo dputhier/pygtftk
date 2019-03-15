@@ -44,6 +44,7 @@ help:
 	@echo -e "\tbats_cmd Usage: make bats_cmd CMD=select_by_key"
 	@echo ""
 	@echo -e "\ttest_para Usage: make test_para -j 10"
+	@echo -e "\release_all Usage: make release_all VER=1.0.0""
 
 doc:
 	@rm -Rf docs/build/
@@ -134,8 +135,96 @@ check_example_has_cmd:
 
 nb_test:
 	@gtftk -p| perl -ne 'BEGIN{$$/="{"}{/\@test\s+"(\w+)_\d+"/; print $$1,"\n"}'| sort | uniq -c | sort -nr
+
+
+
+#------------------------------------------------------------------
+# Creating a release
+#------------------------------------------------------------------
+
+
 release:
+	@ echo "#-----------------------------------------------#"
+	@ echo "# Starting the release $(VER)                   #"
+	@ echo "#-----------------------------------------------#"
 	@touch release_in_progress
+
+release_bump: release
+	@ echo "#-----------------------------------------------#"
+	@ echo "# Bumping the program version                   #"
+	@ echo "#-----------------------------------------------#"
+	@ git checkout docs/source/conf.py
+	@ git checkout setup.cfg
+	@ git checkout pygtftk/version.py
+	@python setup.py install
+	@cat pygtftk/version.py | perl -npe "s/='(.*)'/='$(VER)'/" > /tmp/pygtftk.bump
+	@mv /tmp/pygtftk.bump pygtftk/version.py
+	@cat setup.cfg | perl -npe 's/^version = .*/version = $(VER)/' > /tmp/pygtftk.bump
+	@mv /tmp/pygtftk.bump setup.cfg
+	@cat docs/source/conf.py | perl -npe "s/version = u'\d+\.\d+\.\d+'$$/version = u'$(VER)'/" | perl -npe "s/release = u'\d+\.\d+\.\d+'$$/release = u'$(VER)'/"  > /tmp/pygtftk.bump
+	@mv /tmp/pygtftk.bump docs/source/conf.py
+	@echo "Version was bump to $(VER)"
+
+release_test:
+	@ echo "#-----------------------------------------------#"
+	@ echo "# Performing tests (bats)                       #"
+	@ echo "#-----------------------------------------------#"
+	@ make test_para -j 6
+
+release_nose:
+	@ echo "#-----------------------------------------------#"
+	@ echo "# Performing tests  (nose)                      #"
+	@ echo "#-----------------------------------------------#"
+	@ make nose
+
+release_doc:
+	@ echo "#-----------------------------------------------#"
+	@ echo "# Building doc                                  #"
+	@ echo "#-----------------------------------------------#"
+	@ make doc
+	@ git pull
+	@ git add docs/source/_static/*png
+	@ git add docs/source/_static/*pdf
+	@ git commit -m "Updated img in source/_static"
+	@git push
+
+
+release_pip_unix: release_bump release_nose release_test release_doc
+	@ echo "#-----------------------------------------------#"
+	@ echo "# Creating manylinux compliant package (pip)    #"
+	@ echo "#-----------------------------------------------#"
+	@rm -rf /tmp/tmp                                            ; \
+ 	rm -f manylinux/pygtftk-*whl                                ; \
+	cd manylinux                                                ; \
+	docker rmi -f manylinux                                     ; \
+	docker stop imanylinux  || true && docker rm -f imanylinux || true  ; \                                      ;\
+	docker build -t manylinux .                                 ; \
+	docker create  -t --name imanylinux  manylinux /bin/bash    ; \
+	docker cp  imanylinux:/tmp/ /tmp                            ; \
+	rm -rf ../wheels                                            ; \
+	mkdir -p ../wheels                                          ; \
+	cp /tmp/tmp/wheelhouse_manylinux/pygtftk-*whl ../wheels     ; \
+	cp /tmp/tmp/log ../wheels/log_unix.txt                      ; \
+	echo "Manylinux wheels should be in wheels folder."         ; \
+	echo "Have a look at log in wheels/log and upload user twine if OK."
+
+release_pip_osx: release_pip_unix
+	@ echo "#-----------------------------------------------#"
+	@ echo "# Creating osx compliant package (pip)          #"
+	@ echo "#-----------------------------------------------#"
+	@rm -rf dist build; python setup.py bdist_wheel             ; \
+	cd dist                                                     ; \
+	mv *whl ../wheels                                           ; \
+	cd ..; rm -rf dist build
+
+release_all: release_pip_osx
+
+release_conda_osx:
+	@ echo "#-----------------------------------------------#"
+	@ echo "# Creating OSX conda release                    #"
+	@ echo "#-----------------------------------------------#"
+	@ #TODO
+
 
 unrelease:
 	@rm -f release_in_progress
