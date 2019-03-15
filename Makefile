@@ -156,14 +156,21 @@ release_bump: release
 	@ git checkout docs/source/conf.py
 	@ git checkout setup.cfg
 	@ git checkout pygtftk/version.py
-	@python setup.py install
-	@cat pygtftk/version.py | perl -npe "s/='(.*)'/='$(VER)'/" > /tmp/pygtftk.bump
-	@mv /tmp/pygtftk.bump pygtftk/version.py
-	@cat setup.cfg | perl -npe 's/^version = .*/version = $(VER)/' > /tmp/pygtftk.bump
-	@mv /tmp/pygtftk.bump setup.cfg
-	@cat docs/source/conf.py | perl -npe "s/version = u'\d+\.\d+\.\d+'$$/version = u'$(VER)'/" | perl -npe "s/release = u'\d+\.\d+\.\d+'$$/release = u'$(VER)'/"  > /tmp/pygtftk.bump
-	@mv /tmp/pygtftk.bump docs/source/conf.py
-	@echo "Version was bump to $(VER)"
+	@ python setup.py install
+	@ cat pygtftk/version.py | perl -npe "s/='(.*)'/='$(VER)'/" > /tmp/pygtftk.bump
+	@ mv /tmp/pygtftk.bump pygtftk/version.py
+	@ cat setup.cfg | perl -npe 's/^version = .*/version = $(VER)/' > /tmp/pygtftk.bump
+	@ mv /tmp/pygtftk.bump setup.cfg
+	@ cat docs/source/conf.py | perl -npe "s/version = u'\d+\.\d+\.\d+'$$/version = u'$(VER)'/" | perl -npe "s/release = u'\d+\.\d+\.\d+'$$/release = u'$(VER)'/"  > /tmp/pygtftk.bump
+	@ mv /tmp/pygtftk.bump docs/source/conf.py
+	@ echo "Version was bump to $(VER)"
+	@ make install
+	@ echo "#-----------------------------------------------#"
+	@ echo "# Check gtftk version                           #"
+	@ echo "#-----------------------------------------------#"
+	@ echo `gtftk -v`
+	@ git add docs/source/conf.py pygtftk/version.py setup.cfg
+	@ git commit -m 'Bumped version $(VER)'
 
 release_test:
 	@ echo "#-----------------------------------------------#"
@@ -186,10 +193,10 @@ release_doc:
 	@ git add docs/source/_static/*png
 	@ git add docs/source/_static/*pdf
 	@ git commit -m "Updated img in source/_static"
-	@git push
+	@ git push
 
 
-release_pip_unix: release_bump release_nose release_test release_doc
+release_pip_unix:
 	@ echo "#-----------------------------------------------#"
 	@ echo "# Creating manylinux compliant package (pip)    #"
 	@ echo "#-----------------------------------------------#"
@@ -208,7 +215,7 @@ release_pip_unix: release_bump release_nose release_test release_doc
 	echo "Manylinux wheels should be in wheels folder."         ; \
 	echo "Have a look at log in wheels/log and upload user twine if OK."
 
-release_pip_osx: release_pip_unix
+release_pip_osx:
 	@ echo "#-----------------------------------------------#"
 	@ echo "# Creating osx compliant package (pip)          #"
 	@ echo "#-----------------------------------------------#"
@@ -216,14 +223,6 @@ release_pip_osx: release_pip_unix
 	cd dist                                                     ; \
 	mv *whl ../wheels                                           ; \
 	cd ..; rm -rf dist build
-
-release_all: release_pip_osx
-
-release_conda_osx:
-	@ echo "#-----------------------------------------------#"
-	@ echo "# Creating OSX conda release                    #"
-	@ echo "#-----------------------------------------------#"
-	@ #TODO
 
 
 unrelease:
