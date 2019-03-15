@@ -192,6 +192,8 @@ release_doc:
 	@ git pull
 	@ git add docs/source/_static/*png
 	@ git add docs/source/_static/*pdf
+	@ git add docs/source/example*png
+	@ git add docs/source/example*pdf
 	@ git commit -m "Updated img in source/_static"
 	@ git push
 
