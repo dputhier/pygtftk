@@ -222,7 +222,7 @@ def make_parser():
     parser_grp.add_argument('-tp', '--tsv-file-path',
                             help="Provide an alternative path for text output file.",
                             default=None,
-                            type=arg_formatter.FormattedFile(mode='w', file_ext='tsv'),
+                            type=arg_formatter.FormattedFile(mode='w', file_ext='txt'),
                             required=False)
 
     parser_grp.add_argument('-dpi', '--dpi',
