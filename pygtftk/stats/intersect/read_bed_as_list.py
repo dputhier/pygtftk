@@ -200,7 +200,7 @@ def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
                 partial_result.at[i, 'end'] = partial_result.at[i, 'end'] - excl_length
 
 
-            # Sanity check : pybedtools does not like if both start and end are equal to zero
+            # WARNING pybedtools does not like when both start and end are equal to zero. Set them to 1 if that's the case.
             if check_for_zero : # Do not check if the line has been dropped
                 if (partial_result.at[i, 'start'] == 0) & (partial_result.at[i, 'end'] == 0):
                     partial_result.at[i, 'start'] = 1

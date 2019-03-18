@@ -29,11 +29,11 @@ from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
-__updated__ = "2019-03-12"
+__updated__ = "2019-03-18"
 __doc__ = """
- 
+
  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo
- 
+
  Annotate peaks (in bed format) with region sets/features computed on the
  fly from a GTF file  (e.g promoter, tts, gene body, UTR...). Custom features
  are supported.
@@ -42,6 +42,9 @@ __doc__ = """
  lengths are considered). Then the probability of intersection under the null
  hypothesis (the peaks and this feature are independant) is deduced thanks to
  this Monte Carlo approach.
+
+ The program will return statistics for both the number of intersections and the
+ total lengths (in basepairs) of all intersections.
 
  Authors : Quentin Ferré <quentin.q.ferre@gmail.com> and Denis Puthier <denis.puthier@univ-amu.fr>
  """
@@ -61,7 +64,7 @@ __notes__ = """
  in the shuffles compared to the actual values.
     It also gives, under the 'fit' label for each statistic, the goodness of fit of the statistic under (H0)
     to a Negative Binomial assessed by a Cramer's V score (fit_quality gives 1-V ; as per Cramer (1948) a good fit
-    should have a fit quality above 1 - 0.25 = 0.75) if your nb. of shuffles is in the hundreds, but closer to 0.9
+    should have a fit quality above (1 - 0.25 = 0.75) if your nb. of shuffles is in the hundreds, but closer to 0.9
     if it is in the thousands or above.
 
     The p-value of the true intersection under the distribution characterized by the shuffles is also given, under 'p_value'.
@@ -82,8 +85,8 @@ __notes__ = """
  This in Beta for now and will be very time-consuming (hours), especially if you have few CPU cores.
  Try using an exclusion file that is as small (around a thousand elements) as possible.
 
- -- BETA : About -\-use-markov. This arguments control whether to use Markov shuffling instead of independant shuffles 
- for respectively region lengths and inter-region lengthsT. This is not recommended in the general case and can *very* time-consuming (hours).
+ -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations instead of independant shuffles
+ for respectively region lengths and inter-region lengths. This is not recommended in the general case and can *very* time-consuming (hours).
 
  """
 
@@ -94,18 +97,14 @@ def make_parser():
 
     parser_grp = parser.add_argument_group('Arguments')
 
+    # --------------------- Main arguments ----------------------------------- #
+
     parser_grp.add_argument('-i', '--inputfile',
-                            help="Path to the GTF file. Default to STDIN",
+                            help="Path to the GTF file. Defaults to STDIN",
                             default=sys.stdin,
                             metavar="GTF",
                             type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')),
                             required=False)
-
-    parser_grp.add_argument('-o', '--outputdir',
-                            help='Output directory name.',
-                            metavar="DIR",
-                            default="ologram_output",
-                            type=str)
 
     parser_grp.add_argument('-c', '--chrom-info',
                             help="Tabulated two-columns file. "
@@ -123,6 +122,8 @@ def make_parser():
                             type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
                             required=True)
 
+    # --------------------- More regions ------------------------------------- #
+
     parser_grp.add_argument('-b', '--more-bed',
                             help="A list of bed files to be considered as additional genomic annotations.",
                             type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
@@ -135,11 +136,38 @@ def make_parser():
                             type=str,
                             required=False)
 
+    parser_grp.add_argument('-e', '--bed-excl',
+                            help='Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features. Can take a long time.'
+                                 ' (bed format).',
+                            default=None,
+                            metavar="BED",
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
+                            required=False)
+
     parser_grp.add_argument('-u', '--upstream',
                             help="Extend the TSS and TTS of in 5' by a given value.",
                             default=1000,
                             type=int,
                             required=False)
+
+    parser_grp.add_argument('-d', '--downstream',
+                            help="Extend the TSS and TTS of in  3' by a given value. ",
+                            default=1000,
+                            type=int,
+                            required=False)
+
+    parser_grp.add_argument('-m', '--more-keys',
+                            help='A comma separated list of key used for labeling the genome. See Notes.',
+                            type=str,
+                            default=None,
+                            required=False)
+
+    parser_grp.add_argument('-n', '--no-basic-feature',
+                            help="No statistics for basic features of GTF. Concentrates on --more-bed and --more-keys.",
+                            action="store_true",
+                            required=False)
+
+    # --------------------- Backend ------------------------------------------ #
 
     parser_grp.add_argument('-k', '--nb-threads',
                             help='Number of threads for multiprocessing.',
@@ -165,24 +193,18 @@ def make_parser():
                             default=20,
                             required=False)
 
-    parser_grp.add_argument('-d', '--downstream',
-                            help="Extend the TSS and TTS of in  3' by a given value. ",
-                            default=1000,
-                            type=int,
-                            required=False)
-
-    parser_grp.add_argument('-e', '--bed-excl',
-                            help='Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features. Can take a long time.'
-                                 ' (bed format).',
-                            default=None,
-                            metavar="BED",
-                            type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
-                            required=False)
-
     parser_grp.add_argument('-ma', '--use-markov',
-                            help='Whether to use Markov shuffling instead of independant shuffles. See notes.',
+                            help='Whether to use Markov model realisations instead of independant shuffles. See notes.',
                             action='store_true',
                             required=False)
+
+    # --------------------- Output ------------------------------------------- #
+
+    parser_grp.add_argument('-o', '--outputdir',
+                            help='Output directory name.',
+                            metavar="DIR",
+                            default="ologram_output",
+                            type=str)
 
     parser_grp.add_argument('-pw', '--pdf-width',
                             help='Output pdf file width (inches).',
@@ -194,17 +216,6 @@ def make_parser():
                             help='Output pdf file height (inches).',
                             type=arg_formatter.ranged_num(0, None),
                             default=None,
-                            required=False)
-
-    parser_grp.add_argument('-m', '--more-keys',
-                            help='A comma separated list of key used for labeling the genome. See Notes.',
-                            type=str,
-                            default=None,
-                            required=False)
-
-    parser_grp.add_argument('-n', '--no-basic-feature',
-                            help="No statistics for basic features of GTF. Concentrates on --more-bed and --more-keys.",
-                            action="store_true",
                             required=False)
 
     parser_grp.add_argument('-if', '--user-img-file',
@@ -230,6 +241,8 @@ def make_parser():
                             type=arg_formatter.ranged_num(0, None),
                             default=300,
                             required=False)
+
+    # --------------------- Other input arguments----------------------------- #
 
     parser_grp.add_argument('-z', '--no-gtf',
                             help="No gtf file is provide as input.",
@@ -304,7 +317,7 @@ def ologram(inputfile=None,
     if use_markov:
         message('Using Markov order 2 shuffling.', type='INFO')
         message(
-            'Markov shuffling is still in beta at the moment and tends to biais the null hypothesis towards association.',
+            'Markov-based null is still in beta at the moment and tends to biais the "null" hypothesis towards association.',
             type='WARNING')
 
     # -------------------------------------------------------------------------

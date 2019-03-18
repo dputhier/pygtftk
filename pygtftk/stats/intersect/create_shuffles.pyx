@@ -273,6 +273,7 @@ def batch_to_bedlist(shuffled_Lr1_batches, shuffled_Li1_batches,
     bedsB = list()
 
     # Multiprocess
+    # TODO If RAM turns out to be critical, map() could be replaced by imap(). To investigate.
     with Pool(nb_threads) as p:
         AB_tuples = p.map(generate_for_them,np.arange(minibatch_size))
 
