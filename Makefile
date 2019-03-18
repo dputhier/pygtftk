@@ -44,7 +44,7 @@ help:
 	@echo -e "\tbats_cmd Usage: make bats_cmd CMD=select_by_key"
 	@echo ""
 	@echo -e "\ttest_para Usage: make test_para -j 10"
-	@echo -e "\release_all Usage: make release_all VER=1.0.0""
+	@echo -e "\release_all Usage: make release_all VER=1.0.0"
 
 doc:
 	@rm -Rf docs/build/
