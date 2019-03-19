@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.0.0
+
+### Bug Fixes
+
+- Fix --no-strandness in divergent.
+
+### API Changes
+
+### Code changes
+
+- Many typo detected and fixed.
+
+### New Features
+
+- This version now integrates ologram (OverLap Of Genomic Regions Analysis using Monte Carlo). Ologram annotates peaks (in BED format) with region sets/features extracted from (i) GTF file features (e.g promoter, tts, gene body, UTR...) (ii) GTF file keys (e.g. gene_biotype, user defined keys...) (iii) or from a BED file.
+
+- The user can now use --chrom-info to provide the command with a file or a string. The string should be one of 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. When a genome version is requested as a string, the conventional chromosomes are used (chrM is discarded together with alternative haplotypes, unlocalized regions...).
+
+
 ## v0.9.10
 
 ### Bug Fixes
