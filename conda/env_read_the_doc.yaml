@@ -2,15 +2,14 @@ name: pygtftk
 
 channels:
     - bioconda
-    - auto
 
 dependencies:
-    - bedtools ==2.27.1
-    - pyBigWig >=0.3.12
-    - pybedtools >=0.7.8
     - sphinx_bootstrap_theme >=0.4.9
     - sphinxcontrib-programoutput >=0.8
     - pyyaml
     - nose
     - numpy >=1.10.0
     - cython
+    - bedtools ==2.27.1
+    - pyBigWig >=0.3.12
+    - pybedtools >=0.7.8
