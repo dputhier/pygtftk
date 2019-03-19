@@ -70,7 +70,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-t', '--target-feature',
-                            help='The name(s) of the target feature(s). Comma separated.',
+                            help='The name(s) of the target feature(s). comma-separated.',
                             default=None,
                             type=str,
                             required=False)

@@ -1,4 +1,4 @@
-Commands from section 'convertion'
+Commands from section 'conversion'
 -----------------------------------
 
 convert

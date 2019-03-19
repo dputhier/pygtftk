@@ -108,7 +108,7 @@ def _big_wig_coverage_worker(input_values):
     :param stranded: controls whether the profile should be ordered based on
     strand.
     :param type: This string will be added to the output to indicate the type
-    of region (e.g tss, promoter,...).
+    of region (e.g tss, promoter...).
     :param label: Bigwig labels (i.e short name version)
     :param zero_to_na: Use NA not zero when region is undefined in bigwig.
     :param stat: mean (default) or sum.
@@ -389,7 +389,7 @@ def bw_profile_mp(in_bed_file=None,
     :param bin_nb: The number of bin into which the region should be splitted.
     :param pseudo_count: The value for a pseudo-count.
     :param stranded: controls whether the profile should be ordered based on strand.
-    :param type: This string will be added to the output to indicate the type of region (e.g tss, promoter,...).
+    :param type: This string will be added to the output to indicate the type of region (e.g tss, promoter...).
     :param labels: shortname for bigwigs.
     :param outputfile: output file name.
     :param zero_to_na: Convert missing values to NA, not zero.

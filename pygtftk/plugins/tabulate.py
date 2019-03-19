@@ -51,9 +51,9 @@ def make_parser():
                             type=str)
 
     parser_grp.add_argument('-k', '--key',
-                            help='A comma separated list of key names.',
+                            help='A comma-separated list of key names.',
                             default="*",
-                            metavar="KEY,KEY,...",
+                            metavar="KEY,KEY...",
                             type=str,
                             required=False)
 
@@ -69,7 +69,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-n', '--no-unset',
-                            help="Don't print lines containing '.' (unsetined values)",
+                            help="Don't print lines containing '.' (unset values)",
                             action="store_true",
                             required=False)
 

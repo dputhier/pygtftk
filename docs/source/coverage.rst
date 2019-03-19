@@ -46,7 +46,7 @@ Now we can have a look at the result:
 mk_matrix
 ~~~~~~~~~~
 
-Description: Gtftk implements commands that can be used to produce coverage profiles around genomic features or inside user-defined regions. A coverage matrix need first to  be produced from a bwig using the mk_matrix command.
+Description: Gtftk implements commands that can be used to produce coverage profiles around genomic features or inside user-defined regions. A coverage matrix needs first to  be produced from a bwig using the mk_matrix command.
 
 **Example:**
 
@@ -72,7 +72,7 @@ First we will create a coverage matrix around promoter based on a subset of rand
 
 
 
-The following command compute coverage profil along the whole transcript.
+The following command computes coverage profil along the whole transcript.
 
 
 .. command-output:: gtftk mk_matrix -k 5 --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx
@@ -90,7 +90,7 @@ profile
 
 
 Description: This command is used to create profil diagrams from a *mk_matrix* output. The two important arguments for
-this command are *---group-by*, that defines the variable controling the set of colored lines and *---facet-var* that defines the variable controling the way the plot is facetted . Both *---group-by* and *---facet-var* should be set to one of *bwig*, *tx_classes* or *chrom*.
+this command are *---group-by*, that defines the variable controling the set of colored lines and *---facet-var* that defines the variable controling the way the plot is facetted. Both *---group-by* and *---facet-var* should be set to one of *bwig*, *tx_classes* or *chrom*.
 
 
 **Basic profiles**

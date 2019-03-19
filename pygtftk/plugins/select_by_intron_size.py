@@ -58,7 +58,7 @@ def make_parser():
                             action="store_true")
 
     parser_grp.add_argument('-a', '--add-intron-size',
-                            help="Add a new key containing intron_size (comma separated in order of apppearance) or the sum of intron size (see -m).",
+                            help="Add a new key containing intron_size (comma-separated in order of apppearance) or the sum of intron size (see -m).",
                             action="store_true")
 
     parser_grp.add_argument('-v', '--invert-match',

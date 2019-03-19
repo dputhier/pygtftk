@@ -2,7 +2,7 @@
 Warning about supported GTF file formats
 ===============================================
 
-.. warning:: Most of the commands of the gtftk suite are designed to handle files in **Ensembl** GTF format and thus require **transcript and gene features/lines** in the GTF. All lines must contain a transcript_id and gene_id value except the **gene feature** that should contain only the gene_id (**see get_example command for an example**). Transcript and gene lines will be used when required to get access to transcript and gene coordinates. This solution was choosen to define a reference GTF file format for (py)gtftk (since Ensembl format is probably the most widely used).
+.. warning:: Most of the commands of the gtftk suite are designed to handle files in **Ensembl** GTF format and thus require **transcript and gene features/lines** in the GTF. All lines must contain a transcript_id and gene_id value except the **gene feature** that should contain only the gene_id (**see get_example command for an example**). Transcript and gene lines will be used when required to get access to transcript and gene coordinates. This solution was chosen to define a reference GTF file format for (py)gtftk (since Ensembl format is probably the most widely used).
 
 You can use the **convert_ensembl** subcommand to convert your non- (or old) ensembl format to current ensembl format.
 

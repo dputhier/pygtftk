@@ -40,7 +40,7 @@ Just do the following things to declare a new command named **'print_gtf'**:
    #-------------------------------------------------------------------------
    # Message can be of type "INFO" (default), "WARNING" or "ERROR"
    # When using message it will adapt to the user-declared level of
-   # verbosity
+   # verbosity (as passed through the -V argument of the CLI).
    #-------------------------------------------------------------------------
    
    from pygtftk.utils import message
@@ -88,8 +88,8 @@ Just do the following things to declare a new command named **'print_gtf'**:
                               default=sys.stdin,
                               metavar="GTF",
                               type=arg_formatter.FormattedFile(mode='r', file_ext=('gtf', 'gtf.gz')))
-
-
+         
+            
       parser_grp.add_argument('-o', '--outputfile',
                               help="Output file.",
                               default=sys.stdout,

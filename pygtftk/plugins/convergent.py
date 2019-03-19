@@ -18,7 +18,7 @@ __updated__ = "2018-01-20"
 __doc__ = """
  Find transcripts with convergent tts. These transcripts will be defined here
  as those whose tts region (defined by -u/-d) overlaps with the tts of
- another gene in reverse/antisens orientation. The ouput is a GTF with an
+ another gene in reverse/antisens orientation. The output is a GTF with an
  additional key ('convergent') whose value is set to '.' if the gene has no
  convergent transcript in its tts region. If the gene has an antisens transcript
  in its tts region the 'convergent' key is set to the identifier of the
@@ -60,7 +60,7 @@ def make_parser():
                             required=True)
 
     parser_grp.add_argument('-u', '--upstream',
-                            help="Extend the tts in 5' by a given value (int)."
+                            help="Extends the tts in 5' by a given value (int)."
                                  " Defines the region around the tts.",
                             default=1500,
                             metavar="UPSTREAM",
@@ -68,7 +68,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-d', '--downstream',
-                            help="Extend the region in 3' by a given value (int)."
+                            help="Extends the region in 3' by a given value (int)."
                                  " Defines the region around the tts.",
                             default=1500,
                             metavar="DOWNSTREAM",

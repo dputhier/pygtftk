@@ -1158,7 +1158,7 @@ class GTF(object):
                      nr=False,
                      hide_undef=False,
                      as_list_of_list=False):
-        """Extract attribute values into containers of various types. Note that in case dict are requested, key are force to no_na.
+        """Extract attribute values into containers of various types. Note that in case dict are requested, keys are force to no_na.
 
         Note: no_na, hide_undef, nr, zero_based are not applied in case a tab object is returned (default).
 
@@ -1170,7 +1170,7 @@ class GTF(object):
         :param as_dict_of_lists: if true returns a dict (where the key corresponds to values for the first requested key and the value to the last encountered list of other elements).
         :param as_dict_of_merged_list: if true returns a dict (where the key corresponds to values for the first requested key and the value to the list of other elements encountered throughout any line).
         :param as_list_of_list: if True returns a list for each line.
-        :param nr: in case a as_list or as_list_of_list is choosen, return a non redondant list.
+        :param nr: in case a as_list or as_list_of_list is chosen, return a non redondant list.
         :param hide_undef: if hide_undef, then records for which the key does not exists (value = "?") are set to are discarded.
         :param zero_based: If set to True, the start position will be start-1.
 
@@ -1827,9 +1827,9 @@ class GTF(object):
     def select_by_loc(self, chr_str, start_str, end_str):
         """Select lines from a GTF based on genomic location.
 
-        :param chr_str: A comma separated list of chromosomes.
-        :param start_str: A comma separated list of starts.
-        :param end_str: A comma separated list of ends.
+        :param chr_str: A comma-separated list of chromosomes.
+        :param start_str: A comma-separated list of starts.
+        :param end_str: A comma-separated list of ends.
 
         :Example:
 
@@ -2213,7 +2213,7 @@ class GTF(object):
                            has_header=False):
         """Add key/value pairs to the GTF object.
 
-        :param feat: The comma separated list of target feature. If None, all the features.
+        :param feat: The comma-separated list of target feature. If None, all the features.
         :param key: The name of the key used for joining (i.e the key corresponding to value provided in the file).
         :param new_key: A name for the novel key.
         :param inputfile: A two column (e.g transcript_id and new value) file.
@@ -2295,7 +2295,7 @@ class GTF(object):
                                   inputfile=None):
         """Add key/value pairs to the GTF file. Expect a matrix with row names as target keys column names as novel key and each cell as value.
 
-        :param feat: The comma separated list of target features. If None, all the features.
+        :param feat: The comma-separated list of target features. If None, all the features.
         :param key: The name of the key to use for joining (i.e the key corresponding to value provided in the file).
         :param inputfile: A two column (e.g transcript_id and new value) file.
 
@@ -2385,7 +2385,7 @@ class GTF(object):
                            new_key_value=()):
         """Add key/value pairs to the GTF object.
 
-        :param feat: The comma separated list of target features. If None, all the features.
+        :param feat: The comma-separated list of target features. If None, all the features.
         :param key: The name of the key to use for joining (e.g 'transcript_id').
         :param key_value: The values for the key (e.g ['tx_1', 'tx_2',...,'tx_n'])
         :param new_key: A name for the novel key.
@@ -2447,7 +2447,7 @@ class GTF(object):
                            new_key="new_key"):
         """Add key/value pairs to the GTF object.
 
-        :param feat: The comma separated list of target feature. If None, all the features.
+        :param feat: The comma-separated list of target feature. If None, all the features.
         :param key: The name of the key used for joining (e.g 'transcript_id').
         :param a_dict: key and values will be used to call add_attr_from_file.
         :param new_key: A name for the novel key.
@@ -2494,7 +2494,7 @@ class GTF(object):
         """Delete an attributes from the GTF file..
 
         :param feat: The target feature.
-        :param keys: Comma separated list or list of target keys.
+        :param keys: comma-separated list or list of target keys.
         :param force: If True, transcript_id and gene_id can be deleted.
 
         :Example:
@@ -2762,38 +2762,38 @@ class GTF(object):
             return None
 
     def write_bed(self,
-                  ouputfile=None,
+                  outputfile=None,
                   name=("gene_id"),
                   sep="|",
                   add_chr=0,
                   more_name=None):
         """Write a GTF file in BED format. This function uses a direct call to the C interface.
 
-        :param ouputfile: The outputfilename.
+        :param outputfile: The outputfilename.
         :param name: The keys that should be used to computed the 'name' column (a tuple).
         :param more_name: Additional text to add to the name (a list).
         :param sep: The separator used for the name (e.g 'gene_id|transcript_id".
 
         """
 
-        if isinstance(ouputfile, list):
-            ouputfile = ouputfile[0]
+        if isinstance(outputfile, list):
+            outputfile = outputfile[0]
 
-        if isinstance(ouputfile, io.IOBase):
+        if isinstance(outputfile, io.IOBase):
 
-            if ouputfile.name != '<stdout>':
-                fn = ouputfile.name
+            if outputfile.name != '<stdout>':
+                fn = outputfile.name
             else:
                 fn = "-"
 
-        elif isinstance(ouputfile, str):
+        elif isinstance(outputfile, str):
 
-            if ouputfile == '-':
+            if outputfile == '-':
                 fn = "-"
             else:
-                if ouputfile != '<stdout>':
-                    check_file_or_dir_exists(ouputfile)
-                    fn = ouputfile
+                if outputfile != '<stdout>':
+                    check_file_or_dir_exists(outputfile)
+                    fn = outputfile
                 else:
                     fn = "-"
         else:
@@ -3152,7 +3152,7 @@ class GTF(object):
         """Returns a dict with genes as keys and the list of their associated transcripts
         as values.
 
-        params ordered_5p: If True, returns transcript list ordered based on their TSS coordinates (5' to 3'). For ties, value are randomly picked.
+        params ordered_5p: If True, returns transcript list ordered based on their TSS coordinates (5' to 3'). For ties, values are randomly picked.
         params as_dict_of_dict: If True, returns a dict of dict that maps gene_id to transcript_id and transcript_id to TSS numbering (1 for most 5', then 2...).
 
         :Example:
@@ -3303,8 +3303,8 @@ class GTF(object):
         """Returns a bedtools object containing the intronic regions.
 
         :param by_transcript: If false (default), merged genic regions with no exonic overlap are returned. Otherwise, the intronic regions corresponding to each transcript are returned (may contain exonic overlap).
-        :param name: The list of ids that should be part of the 4th column of the bed file (if by_transcript is choosen).
-        :param sep: The separator to be used for the name (if by_transcript is choosen).
+        :param name: The list of ids that should be part of the 4th column of the bed file (if by_transcript is chosen).
+        :param sep: The separator to be used for the name (if by_transcript is chosen).
         :param intron_nb_in_name: by default the intron number is added to the score column. If selected, write this information in the 'name' column of the bed file.
         :param feat_name: add the feature name ('intron') in the name column.
         :param feat_name_last: put feat_name in last position (but before intron_nb_in_name).

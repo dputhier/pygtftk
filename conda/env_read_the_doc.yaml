@@ -1,11 +1,11 @@
 name: pygtftk
 
 channels:
-    - conda-forge
+#    - conda-forge
     - defaults
     - bioconda
     - auto
-
+    
 dependencies:
     - bedtools ==2.27.1
     - python ==3.5
@@ -13,7 +13,7 @@ dependencies:
     - pybedtools >=0.7.8
     - sphinx_bootstrap_theme >=0.4.9
     - sphinxcontrib-programoutput >=0.8
-    - pyproj
+ #   - pyproj
     - pyyaml
     - nose
     - numpy >=1.10.0

@@ -39,7 +39,7 @@ def make_parser():
                             type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
 
     parser_grp.add_argument('-k', '--key',
-                            help='Comma separated list of attribute names or a '
+                            help='comma-separated list of attribute names or a '
                                  'regular expression (see -r).',
                             default=None,
                             metavar="KEY",

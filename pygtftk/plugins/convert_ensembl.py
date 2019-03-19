@@ -18,7 +18,7 @@ __doc__ = """
 __notes__ = """
     -- The gtftk program is designed to handle files in ensembl GTF format. This means that the GTF file provided to
     gtftk must contain transcript and gene feature/lines. They will be used to get access to transcript and gene
-    coordinates whenever needed. This solution was choosen to define a reference GTF file format for gtftk (since Ensembl format is probably the most widely used).
+    coordinates whenever needed. This solution was chosen to define a reference GTF file format for gtftk (since Ensembl format is probably the most widely used).
     
     -- Almost all commands of gtftk use transcript_id or gene_id as keys to perform operation on genomic coordinates.
     One of the most common issue when working with  gene coordinates is the lack  of non ambiguous gene or transcript names

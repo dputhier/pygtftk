@@ -2,18 +2,17 @@
     :alt: Licence
     :target: https://github.com/dputhier/pygtftk
 
-
 .. image:: https://badge.fury.io/py/pygtftk.svg
     :alt: PyPI
     :target: https://badge.fury.io/py/pygtftk
 
 .. image::  https://img.shields.io/badge/contributions-welcome-brightgreen.svg
     :alt: GitHub
-    :target: https://github.com/dputhier/pygtftk
+    :target: https://github.com/dputhier/pygtftk/blob/master/CONTRIBUTING.rst
 
 .. image:: https://readthedocs.org/projects/pygtftk/badge/?version=master
     :alt: Documentation Status
-    :target: https://pygtftk.readthedocs.io/en/master/
+    :target: https://pygtftk.readthedocs.io/en/latest/
 
 .. image:: https://travis-ci.org/dputhier/pygtftk.svg?branch=master
     :target: https://travis-ci.org/dputhier/pygtftk
@@ -21,10 +20,17 @@
 .. image:: https://img.shields.io/github/repo-size/badges/shields.svg
     :target: https://travis-ci.org/dputhier/pygtftk
 
-.. image:: https://img.shields.io/conda/dn/:channel/:package.svg
-    :target: https://github.com/dputhier/pygtftk
+.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/installer/conda.svg
+    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
 
+.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/platforms.svg
+    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
 
+.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/latest_release_date.svg
+    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
+
+.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/downloads.svg
+    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
 
 .. highlight-language: shell
 
@@ -56,7 +62,7 @@ Installation
 Installation through conda package building
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Installation through **conda** should be the **prefered install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
+Installation through **conda** should be the **preferred install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
 
 If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_ and make sure you have bioconda and conda-forge channels set up in the order below. ::
 
@@ -73,7 +79,7 @@ Then you can simply install pygtftk in its own isolated environment and activate
 Installation through setup.py
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is not the prefered way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed. ::
+This is not the preferred way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed. ::
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
     cd pygtftk
@@ -85,10 +91,10 @@ This is not the prefered way for installation. Choose conda whenever possible. W
 Installation through pip
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Prerequesites**
+**Prerequisites**
 
  
-Again, this is not the prefered way for installation. Please choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.
+Again, this is not the preferred way for installation. Please choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.
 
 **Running pip**
 
@@ -98,7 +104,8 @@ Installation through pip can be done as follow. ::
     pip install -r requirements.txt
     pip install pygtftk
     # It is important to call gtftk -h
-    # to find and dump plugin parsers
+    # to look for plugins and their
+    # CLI in ~/.gtftk
     # before going further
     gtftk -h     
 
@@ -107,7 +114,7 @@ Installation through pip can be done as follow. ::
 Documentation
 --------------
 
-Documentation about the latest release is dynamically produced and available at `readthedoc server <https://pygtftk.readthedocs.io/en/master/>`_.
+Documentation about the latest release is dynamically produced and available at `readthedoc server <https://pygtftk.readthedocs.io/en/latest/>`_.
 
 Testing
 --------
