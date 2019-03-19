@@ -98,7 +98,8 @@ Installation through pip can be done as follow. ::
     pip install -r requirements.txt
     pip install pygtftk
     # It is important to call gtftk -h
-    # to find and dump plugin parsers
+    # to look for plugins and their
+    # CLI in ~/.gtftk
     # before going further
     gtftk -h     
 
