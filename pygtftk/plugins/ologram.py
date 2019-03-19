@@ -32,9 +32,8 @@ from pygtftk.utils import message
 __updated__ = "2019-03-18"
 __doc__ = """
 
- OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo
-
- Ologram annotate peaks (in bed format) with (i) genomic features extracted 
+ OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram 
+ annotates peaks (in bed format) using (i) genomic features extracted 
  from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with 
   particular keys/values in a GTF file (e.g. gene_biotype "protein_coding", 
   gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
@@ -47,7 +46,7 @@ __doc__ = """
  The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
 
- Authors : Quentin Ferré <quentin.q.ferre@gmail.com> and Denis Puthier <denis.puthier@univ-amu.fr>
+ Authors : Quentin Ferré <quentin.q.ferre@gmail.com> and Denis Puthier <denis.puthier@univ-amu.fr>.
  """
 
 __notes__ = """
