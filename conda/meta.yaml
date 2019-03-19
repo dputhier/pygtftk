@@ -6,7 +6,7 @@ package:
 
 source:
   url: 'https://github.com/dputhier/pygtftk/archive/{{ version }}.tar.gz'
-  sha256: 88686cb3212319cde8469a355d0362c8d22a8850de00e5cb1b7018bc5123aae1
+  sha256: 66ae5f709a453b6096675b04052479d9e489595baa0178673c441226c6a497cd
 
 build:
   number: 0
