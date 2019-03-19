@@ -49,7 +49,7 @@ help:
 doc:
 	@rm -Rf docs/build/
 	@rm -Rf  dist build *.egg*
-	@cd docs/; make html; cd ../..;
+	@cd docs/; make html -j 4; cd ../..;
 	@echo ">>>> Docs is available in: docs/build/html/index.html"
 
 pylint:
@@ -190,11 +190,15 @@ release_doc:
 	@ echo "#-----------------------------------------------#"
 	@ make doc
 	@ git pull
+	@ git add docs/source/example*png
+	@ git add docs/source/example*pdf
+	@ cp docs/source/example*png docs/source/_static
+	@ cp docs/source/example*pdf docs/source/_static
 	@ git add docs/source/_static/*png
 	@ git add docs/source/_static/*pdf
 	@ git add docs/source/example*png
 	@ git add docs/source/example*pdf
-	@ git commit -m "Updated img in source/_static"
+	@ git commit -m "Updated img in source and source/_static "
 	@ git push
 
 
@@ -226,6 +230,10 @@ release_pip_osx:
 	mv *whl ../wheels                                           ; \
 	cd ..; rm -rf dist build
 
+release_pip: release_pip_unix release_pip_osx
+	@ echo "#-----------------------------------------------#"
+	@ echo "# Creating unix/osx pip compliant package       #"
+	@ echo "#-----------------------------------------------#"
 
 unrelease:
 	@rm -f release_in_progress
