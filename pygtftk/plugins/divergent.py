@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
@@ -28,6 +27,11 @@ __doc__ = """
  is the closest relative to the considered promoter. The tss to tss distance is
  also provided as an additional key (dist_to_divergent).
 """
+
+__notes__ = '''
+ -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
+ corresponding size of conventional chromosomes are used. ChrM is not used.  
+'''
 
 
 def make_parser():
@@ -100,11 +104,8 @@ def divergent(
         upstream=1500,
         downstream=1500,
         chrom_info=None,
-        tmp_dir=None,
-        no_strandness=True,
-        logger_file=None,
-        no_annotation=False,
-        verbosity=0):
+        no_strandness=False,
+        no_annotation=False):
     """
 Find transcript with divergent promoters.
     """
@@ -148,7 +149,7 @@ Find transcript with divergent promoters.
         prom_with_tss_bo = promoter_bo.intersect(tss_bo,
                                                  wb=True,
                                                  s=False,
-                                                 S=True)
+                                                 S=False)
     else:
         prom_with_tss_bo = promoter_bo.intersect(tss_bo,
                                                  wb=True,
@@ -263,4 +264,5 @@ else:
               desc=__doc__,
               updated=__updated__,
               group="annotation",
+              notes=__notes__,
               test=test)

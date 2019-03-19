@@ -1,9 +1,6 @@
 """ The command manager is intended to store command object
 and their associated functions."""
 
-from __future__ import absolute_import
-from __future__ import print_function
-
 import argparse
 import errno
 import glob
@@ -150,7 +147,7 @@ class GetTests(argparse._StoreTrueAction):
 
         #clean all
         @test "clean" {
-         result=`rm -Rf H3K4me3_cond_* control_list \#H3K4me3_cond_1.bed# *.bw *.bed *.pdf *.png *.genome* *gtf.gz *bed.gz *gtf  *.toto* simpl_* simple_join.txt simple_mat.zip simple_mat simple.2.bw simple.3.bw  peak_annotation *_test.bats *simple_mat* simple*.bw`
+         result=`rm -Rf H3K4me3_cond_* control_list \#H3K4me3_cond_1.bed# *.bw *.bed *.pdf *.png *.genome* *gtf.gz *bed.gz *gtf  *.toto* simpl_* simple_join.txt simple_mat.zip simple_mat simple.2.bw simple.3.bw  ologram_output *_test.bats *simple_mat* simple*.bw`
           [ "$result" = "" ]
         }
 
@@ -194,7 +191,7 @@ class GetTestsNoCon(argparse._StoreTrueAction):
 
         #clean all
         @test "clean" {
-         result=`rm -Rf H3K4me3_cond_* control_list \#H3K4me3_cond_1.bed# *.bw *.bed *.pdf *.png *.genome* *gtf.gz *bed.gz *gtf  *.toto* simpl_* simple_join.txt simple_mat.zip simple_mat simple.2.bw simple.3.bw  peak_annotation *_test.bats *simple_mat* simple*.bw`
+         result=`rm -Rf H3K4me3_cond_* control_list \#H3K4me3_cond_1.bed# *.bw *.bed *.pdf *.png *.genome* *gtf.gz *bed.gz *gtf  *.toto* simpl_* simple_join.txt simple_mat.zip simple_mat simple.2.bw simple.3.bw  ologram_output *_test.bats *simple_mat* simple*.bw`
           [ "$result" = "" ]
         }
 
@@ -394,8 +391,7 @@ class CmdManager(object):
     parser = argparse.ArgumentParser(
         formatter_class=ArgFormatter,
         description=prg_desc,
-        epilog="------------------------\n",
-        allow_abbrev=False
+        epilog="------------------------\n"
     )
 
     parser._optionals.title = "Main command arguments"

@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-from __future__ import division
-from __future__ import print_function
 
 import argparse
 import os
@@ -95,16 +93,23 @@ def make_parser():
                             action="store_true",
                             required=False)
 
+    parser_grp.add_argument('-r', '--precision',
+                            help="The precision used in naming intervals.",
+                            type=int,
+                            default=2,
+                            required=False)
+
     return parser
 
 
 def discretize_key(inputfile=None,
                    outputfile=None,
                    src_key=None,
-                   dest_key=None,
-                   nb_levels=None,
+                   dest_key="disc_key",
+                   nb_levels=2,
                    percentiles=False,
                    percentiles_of_uniq=False,
+                   precision=2,
                    log=False,
                    labels=None):
     """
@@ -229,17 +234,30 @@ def discretize_key(inputfile=None,
 
     if percentiles:
 
-        breaks = pandas.cut(dest_values,
-                            bins=q,
-                            labels=labels
-                            )
+        (breaks, cat_label) = pandas.cut(dest_values,
+                                         bins=q,
+                                         labels=labels,
+                                         retbins=True)
     else:
-        breaks = pandas.cut(dest_values,
-                            bins=nb_levels,
-                            labels=labels
-                            )
-    # The string can be very problematic later...
-    breaks.categories = [str(x).replace(", ", "_") for x in breaks.categories]
+        (breaks, cat_label) = pandas.cut(dest_values,
+                                         bins=nb_levels,
+                                         labels=labels,
+                                         retbins=True)
+
+    if labels is None:
+        # The include_lowest argument of pandas is not working.
+        # Using this workaround to avoid minimum value outside of data range.
+        cat_label[0] = min(dest_values)
+        cat_label = [round(x, precision) for x in cat_label]
+        if precision == 0:
+            cat_label = [int(x) for x in cat_label]
+        cat_label = [str(x) for x in list(zip(cat_label[:-1], cat_label[1:]))]
+        cat_label[0] = cat_label[0].replace("(", "[")
+        cat_label = [x.replace(")", "]") for x in cat_label]
+        cat_label = [str(x).replace(", ", "_") for x in cat_label]
+
+        # The string can be very problematic later...
+        breaks.categories = cat_label
 
     message("Categories: " + str(list(breaks.categories)),
             type="INFO",
@@ -294,14 +312,14 @@ else:
     # discretize_key
     @test "discretize_key_2" {
      result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 3 -V 2  | gtftk tabulate  -k S1_d -Hun| perl -npe 's/\\n/,/'`
-      [ "$result" = "(0.231_0.488],(0.743_0.999],(0.488_0.743]," ]
+      [ "$result" = "[0.23_0.49],(0.74_1.0],(0.49_0.74]," ]
     }
 
 
     # discretize_key
     @test "discretize_key_3" {
      result=`gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -V 2  | gtftk tabulate  -k S1_d -Hun| perl -npe 's/\\n/,/'`
-      [ "$result" = "(0.231_0.616],(0.616_0.999]," ]
+      [ "$result" = "[0.23_0.62],(0.62_1.0]," ]
     }
 
    """

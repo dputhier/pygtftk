@@ -1,7 +1,5 @@
 """ A container for a command."""
 
-from __future__ import absolute_import
-
 import argparse
 import re
 import sys

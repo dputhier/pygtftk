@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 
 import argparse
 import os
@@ -26,6 +25,11 @@ __doc__ = """
  transcript whose tts is the closest relative to the considered tts.
  The tts to tts distance is also provided as an additional key (dist_to_convergent).
 """
+
+__notes__ = '''
+ -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
+ corresponding size of conventional chromosomes are used. ChrM is not used.  
+'''
 
 
 def make_parser():
@@ -210,4 +214,5 @@ else:
               updated=__updated__,
               desc=__doc__,
               group="annotation",
+              notes=__notes__,
               test=test)

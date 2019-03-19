@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-from __future__ import division
-from __future__ import print_function
+
 
 import argparse
 import os
@@ -27,6 +26,11 @@ __updated__ = "2018-01-20"
 
 __doc__ = """
  Create a matrix storing the bigwig coverage computed from binned regions.
+"""
+
+__notes__ = """
+ -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
+ corresponding size of conventional chromosomes are used. ChrM is not used.  
 """
 
 
@@ -690,4 +694,5 @@ else:
               group="coverage",
               updated=__updated__,
               desc=__doc__,
+              notes=__notes__,
               test=test)

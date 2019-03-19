@@ -1,7 +1,4 @@
 """A set of useful functions."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 import datetime
 import glob
@@ -20,8 +17,6 @@ from distutils.spawn import find_executable
 from subprocess import PIPE
 from subprocess import Popen
 from tempfile import NamedTemporaryFile, mkdtemp
-
-from future.utils import old_div
 
 import pygtftk
 
@@ -252,7 +247,7 @@ def get_example_file(datasetname="simple", ext="gtf"):
                                        datasetname,
                                        "*" + ext))
 
-    return file_path
+    return sorted(file_path)
 
 
 # ---------------------------------------------------------------
@@ -1055,9 +1050,9 @@ def median_comp(alist):
 
     """
     if len(alist) % 2 != 0:
-        return sorted(alist)[old_div(len(alist), 2)]
+        return sorted(alist)[len(alist) // 2]
     else:
-        midavg = old_div((sorted(alist)[old_div(len(alist), 2)] + sorted(alist)[old_div(len(alist), 2) - 1]), 2.0)
+        midavg = (sorted(alist)[len(alist) // 2] + sorted(alist)[len(alist) // 2 - 1]) / 2
         return midavg
 
 
@@ -1095,7 +1090,7 @@ def intervals(l, n, silent=False):
         """ Yield n successive chunks from l.
         """
 
-        newn = int(old_div(len(l), n))
+        newn = int(len(l) // n)
         for i in range(0, n - 1):
             yield l[i * newn:i * newn + newn + 1]
         yield l[n * newn - newn:]

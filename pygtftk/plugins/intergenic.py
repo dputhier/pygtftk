@@ -21,6 +21,11 @@ __doc__ = """
  regions without any transcript features.
 """
 
+__notes__ = '''
+ -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
+ corresponding size of conventional chromosomes are used. ChrM is not used.  
+'''
+
 
 def make_parser():
     """The program parser."""
@@ -122,4 +127,5 @@ else:
               group="coordinates",
               desc=__doc__,
               updated=__updated__,
+              notes=__notes__,
               test=test)
