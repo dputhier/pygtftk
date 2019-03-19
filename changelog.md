@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.0.0
+
+### Bug Fixes
+
+
+
+### API Changes
+
+
+### Code changes
+
+- Many typo detected.
+
+### New Features
+
+- This version now integrates ologram (OverLap Of Genomic Regions Analysis using Monte Carlo). Ologram annotates peaks (in BED format) with region sets/features extracted from (i) GTF file features (e.g promoter, tts, gene body, UTR...) (ii) GTF file keys (e.g. gene_biotype, user defined keys...) (iii) or from a BED file.
+
+
 ## v0.9.10
 
 ### Bug Fixes

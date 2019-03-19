@@ -34,13 +34,14 @@ __doc__ = """
 
  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo
 
- Annotate peaks (in bed format) with region sets/features computed on the
- fly from a GTF file  (e.g promoter, tts, gene body, UTR...). Custom features
- are supported.
+ Ologram annotate peaks (in bed format) with (i) genomic features extracted 
+ from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with 
+  particular keys/values in a GTF file (e.g. gene_biotype "protein_coding", 
+  gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
 
- Each couple peak file/feature is randomly shuffled across the genome (inter-region
+ Each couple peak file/region is randomly shuffled across the genome (inter-region
  lengths are considered). Then the probability of intersection under the null
- hypothesis (the peaks and this feature are independant) is deduced thanks to
+ hypothesis (the peaks and this feature are independent) is deduced thanks to
  this Monte Carlo approach.
 
  The program will return statistics for both the number of intersections and the
