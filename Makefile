@@ -52,6 +52,7 @@ doc:
 	@cd docs/; make html -j 4; cd ../..;
 	@echo ">>>> Docs is available in: docs/build/html/index.html"
 
+
 pylint:
 	@find . -name "*.py"  -exec pylint $(PYLINT_ARGS) {} \;
 
@@ -142,8 +143,10 @@ nb_test:
 # Creating a release
 #------------------------------------------------------------------
 
+__check_defined_VER:
+	@[ "$(VER)" ] || ( echo ">> VER is not set"; exit 1 )
 
-release:
+release: __check_defined_VER
 	@ echo "#-----------------------------------------------#"
 	@ echo "# Starting the release $(VER)                   #"
 	@ echo "#-----------------------------------------------#"
@@ -202,7 +205,7 @@ release_doc:
 	@ git push
 
 
-release_pip_unix:
+release_pip_unix: 
 	@ echo "#-----------------------------------------------#"
 	@ echo "# Creating manylinux compliant package (pip)    #"
 	@ echo "#-----------------------------------------------#"
@@ -210,7 +213,7 @@ release_pip_unix:
  	rm -f manylinux/pygtftk-*whl                                ; \
 	cd manylinux                                                ; \
 	docker rmi -f manylinux                                     ; \
-	docker stop imanylinux  || true && docker rm -f imanylinux || true  ; \                                      ;\
+	docker rm -f imanylinux || true  ; \                                      ;\
 	docker build -t manylinux .                                 ; \
 	docker create  -t --name imanylinux  manylinux /bin/bash    ; \
 	docker cp  imanylinux:/tmp/ /tmp                            ; \
@@ -221,13 +224,13 @@ release_pip_unix:
 	echo "Manylinux wheels should be in wheels folder."         ; \
 	echo "Have a look at log in wheels/log and upload user twine if OK."
 
-release_pip_osx:
+release_pip_osx: release_bump
 	@ echo "#-----------------------------------------------#"
 	@ echo "# Creating osx compliant package (pip)          #"
 	@ echo "#-----------------------------------------------#"
+	@ mkdir -p wheels
 	@rm -rf dist build; python setup.py bdist_wheel             ; \
-	cd dist                                                     ; \
-	mv *whl ../wheels                                           ; \
+	cp dist/*whl wheels                                         ; \
 	cd ..; rm -rf dist build
 
 release_pip: release_pip_unix release_pip_osx
