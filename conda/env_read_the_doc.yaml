@@ -6,6 +6,7 @@ channels:
 dependencies:
     - sphinx_bootstrap_theme >=0.4.9
     - sphinxcontrib-programoutput >=0.8
+    - python =3.6
     - pyyaml
     - nose
     - numpy >=1.10.0
