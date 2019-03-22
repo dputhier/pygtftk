@@ -34,7 +34,7 @@ help:
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 	@echo "  clean    	to clean..."
 clean:
-	@cd  source/; rm -Rf  `ls | perl -ne 'print unless(/(\.rst$$)|(conf\.py$$)|(\.png$$)|(_static)/)'`
+	@cd  source/; rm -Rf  `ls | perl -ne 'print unless(/(\.rst$$)|(conf\.py$$)|(\.png$$)|(\.pdf$$)|(_static)/)'`
 
 html:
 	@cd source ; for i in *.rst; do perl -npe 's/^\:shell\:/\t:shell:/' $$i > $$i.tmp; done
