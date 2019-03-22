@@ -41,8 +41,10 @@ html:
 	@cd source ; for i in *.tmp; do n=`echo $$i | sed 's/.tmp//'`; mv $$i $$n;done 
 	@mkdir -p source/_static
 	@$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	@#cp source/*png $(BUILDDIR)/html
 	@echo
+	@echo "Updating files in source/_static"
+	@cp source/*pdf source/_static
+	@cp source/*png source/_static
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 dirhtml:
