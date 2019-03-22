@@ -153,7 +153,7 @@ def get_example(outputfile=None,
                 if not os.path.exists(os.path.join(os.getcwd(), os.path.basename(i))):
                     if not quiet:
                         message("Copying file : " + os.path.basename(i), force=True)
-                        shutil.copy(i, ".")
+                    shutil.copy(i, ".")
                 else:
                     if not quiet:
                         message("Copy canceled, file already exist: " + os.path.basename(i), force=True)
@@ -175,7 +175,7 @@ def get_example(outputfile=None,
                 if not os.path.exists(os.path.join(os.getcwd(), os.path.basename(i))):
                     if not quiet:
                         message("Copying file : " + os.path.basename(i), force=True)
-                        shutil.copy(i, ".")
+                    shutil.copy(i, ".")
                 else:
                     if not quiet:
                         message("Copy canceled, file already exist:" + os.path.basename(i), force=True)
