@@ -46,7 +46,8 @@ __doc__ = """
  The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
 
- Authors : Quentin Ferré <quentin.q.ferre@gmail.com> and Denis Puthier <denis.puthier@univ-amu.fr>.
+ Authors : Quentin Ferré <quentin.q.ferre@gmail.com>, Guillaume Charbonnier 
+ <guillaume.charbonnier@outlook.com> and Denis Puthier <denis.puthier@univ-amu.fr>.
  """
 
 __notes__ = """

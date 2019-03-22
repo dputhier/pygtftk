@@ -104,14 +104,17 @@ sha = ""
 
 try:
     import git
+    from git import InvalidGitRepositoryError
+    try:
+        repo = git.Repo(search_parent_directories=True)
+        sha = repo.head.object.hexsha
+        sha = repo.git.rev_parse(sha, short=4)
 
-    repo = git.Repo(search_parent_directories=True)
-    sha = repo.head.object.hexsha
-    sha = repo.git.rev_parse(sha, short=4)
-
-    if sha != "" and not os.path.exists("release_in_progress"):
-        __version__ = base_version + ".dev0+" + sha
-    else:
+        if sha != "" and not os.path.exists("release_in_progress"):
+            __version__ = base_version + ".dev0+" + sha
+        else:
+            __version__ = base_version
+    except InvalidGitRepositoryError:
         __version__ = base_version
 
 except ImportError:
