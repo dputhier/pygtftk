@@ -160,6 +160,8 @@ release_bump: release
 	@ git checkout setup.cfg
 	@ git checkout pygtftk/version.py
 	@ python setup.py install
+	@ cat conda/$(VER)/meta.yaml | perl -npe 's/set version = "(.*)"/set version = "$(VER)"/' > /tmp/pygtftk.bump
+	@ mv /tmp/pygtftk.bump  conda/$(VER)/meta.yaml
 	@ cat pygtftk/version.py | perl -npe "s/='(.*)'/='$(VER)'/" > /tmp/pygtftk.bump
 	@ mv /tmp/pygtftk.bump pygtftk/version.py
 	@ cat setup.cfg | perl -npe 's/^version = .*/version = $(VER)/' > /tmp/pygtftk.bump
@@ -172,7 +174,7 @@ release_bump: release
 	@ echo "# Check gtftk version                           #"
 	@ echo "#-----------------------------------------------#"
 	@ echo `gtftk -v`
-	@ git add docs/source/conf.py pygtftk/version.py setup.cfg
+	@ git add docs/source/conf.py pygtftk/version.py setup.cfg conda/$(VER)/meta.yaml
 	@ git commit -m 'Bumped version $(VER)'
 
 release_test:
@@ -201,6 +203,10 @@ release_doc:
 	@ git add docs/source/_static/*pdf
 	@ git add docs/source/example*png
 	@ git add docs/source/example*pdf
+	@ cp  docs/source/example*png docs/build/html/_static
+	@ cp  docs/source/example*pdf docs/build/html/_static
+	@ cp  -r docs/build/html/* docs
+	@ git add docs/*
 	@ git commit -m "Updated img in source and source/_static "
 	@ git push
 
@@ -224,19 +230,25 @@ release_pip_unix:
 	echo "Manylinux wheels should be in wheels folder."         ; \
 	echo "Have a look at log in wheels/log and upload user twine if OK."
 
-release_pip_osx: release_bump
+release_pip_osx:
 	@ echo "#-----------------------------------------------#"
 	@ echo "# Creating osx compliant package (pip)          #"
 	@ echo "#-----------------------------------------------#"
 	@ mkdir -p wheels
-	@rm -rf dist build; python setup.py bdist_wheel             ; \
-	cp dist/*whl wheels                                         ; \
-	cd ..; rm -rf dist build
+	@ rm -rf dist build; python setup.py bdist_wheel             ; \
+	cp dist/*whl wheels                                          ; \
+	rm -rf dist build
+	@ conda activate pygtftk_python_3.5                          ; \
+	rm -rf dist build; python setup.py bdist_wheel               ; \
+    cp dist/*whl wheels                                          ; \
+    rm -rf dist build
+
 
 release_pip: release_pip_unix release_pip_osx
 	@ echo "#-----------------------------------------------#"
 	@ echo "# Creating unix/osx pip compliant package       #"
 	@ echo "#-----------------------------------------------#"
+
 
 unrelease:
 	@rm -f release_in_progress

@@ -1,0 +1,421 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Commands from section ‘coordinates’ &#8212; gtftk 1.0.2 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Commands from section ‘sequence’" href="sequence.html" />
+    <link rel="prev" title="Commands from section ‘annotation’" href="annotation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sequence.html" title="Commands from section ‘sequence’"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="annotation.html" title="Commands from section ‘annotation’"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.2 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="commands-from-section-coordinates">
+<h1>Commands from section ‘coordinates’<a class="headerlink" href="#commands-from-section-coordinates" title="Permalink to this headline">¶</a></h1>
+<p>In this section we will require the following datasets:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
+</pre></div>
+</div>
+<div class="section" id="midpoints">
+<h2>midpoints<a class="headerlink" href="#midpoints" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Get the genomic midpoint of each feature: genes, transcripts, exons or introns. Output is currently in bed format only.</p>
+<p><strong>Example:</strong> Get the midpoints of all transcripts and exons.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk midpoints -i simple.gtf -t transcript,exon -n transcript_id,feature | head -n 5
+chr1	7	9	G0009T002|transcript	.	-
+chr1	7	9	G0009T001|exon	.	-
+chr1	7	9	G0009T001|transcript	.	-
+chr1	7	9	G0009T002|exon	.	-
+chr1	27	29	G0006T001|transcript	.	-
+</pre></div>
+</div>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk midpoints -h
+  Usage: gtftk midpoints [-i GTF/BED] [-o BED] [-t ft_type] [-n NAME] [-s SEP] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+
+  Description: 
+     *  Get the midpoint coordinates for the requested feature. Output is bed format.
+
+  Version:  2018-01-20
+
+Arguments:
+ -i, --inputfile    Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile   Output file (BED). (default: &lt;stdout&gt;)
+ -t, --ft-type      The target feature (as found in the 3rd column of the GTF). (default: transcript)
+ -n, --names        The key(s) that should be used as name. (default: transcript_id)
+ -s, --separator    The separator to be used for separating name elements (see -n). (default: |)
+
+Command-wise optional arguments:
+ -h, --help         Show this help message and exit.
+ -V, --verbosity    Increase output verbosity. (default: 0)
+ -D, --no-date      Do not add date to output file names. (default: False)
+ -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
+ -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="get-5p-3p-coords">
+<h2>get_5p_3p_coords<a class="headerlink" href="#get-5p-3p-coords" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Get the 5p or 3p coordinates for each feature (e.g TSS or TTS for a transcript).
+Output is bed format.</p>
+<p><strong>Example:</strong> Get the 5p ends of transcripts and exons.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_5p_3p_coords  -i simple.gtf  -t transcript,exon -n transcript_id,gene_id,feature | head -n 5
+chr1	124	125	G0001T002|G0001|transcript	.	+
+chr1	124	125	G0001T002|G0001|exon	.	+
+chr1	124	125	G0001T001|G0001|transcript	.	+
+chr1	124	125	G0001T001|G0001|exon	.	+
+chr1	179	180	G0002T001|G0002|transcript	.	+
+</pre></div>
+</div>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_5p_3p_coords -h
+  Usage: gtftk get_5p_3p_coords [-i GTF] [-o BED] [-t ft_type] [-v] [-p transpose] [-n NAME] [-m more_names] [-s SEP] [-e] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+
+  Description: 
+     *  Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
+
+  Notes:
+     *  Output is in BED format.
+
+  Version:  2018-01-20
+
+Arguments:
+ -i, --inputfile    Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile   Output file (BED). (default: &lt;stdout&gt;)
+ -t, --ft-type      The target feature (as found in the 3rd column of the GTF). (default: transcript)
+ -v, --invert       Get 3&#39; coordinate. (default: False)
+ -p, --transpose    Transpose coordinate in 5&#39; (use negative value) or in 3&#39; (use positive values). (default: 0)
+ -n, --names        The key(s) that should be used as name. (default: gene_id,transcript_id)
+ -m, --more-names   A comma-separated list of information to be added to the &#39;name&#39; column of the bed file. (default: None)
+ -s, --separator    The separator to be used for separating name elements (see -n). (default: |)
+ -e, --explicit     Write explicitly the name of the keys in the header. (default: False)
+
+Command-wise optional arguments:
+ -h, --help         Show this help message and exit.
+ -V, --verbosity    Increase output verbosity. (default: 0)
+ -D, --no-date      Do not add date to output file names. (default: False)
+ -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
+ -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="intergenic">
+<h2>intergenic<a class="headerlink" href="#intergenic" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Extract intergenic regions. This command requires a chromInfo file to compute
+the bed file boundaries. The command will print the coordinates of genomic
+regions without transcript features.</p>
+<p><strong>Example:</strong> Simply get intergenic regions.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intergenic -i simple.gtf -c simple.chromInfo
+chr1	0	2	region_1	0	.
+chr1	14	21	region_2	0	.
+chr1	47	49	region_3	0	.
+chr1	61	64	region_4	0	.
+chr1	76	106	region_5	0	.
+chr1	116	124	region_6	0	.
+chr1	138	175	region_7	0	.
+chr1	189	209	region_8	0	.
+chr1	222	300	region_9	0	.
+chr2	0	600	region_10	0	.
+</pre></div>
+</div>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intergenic -h
+  Usage: gtftk intergenic [-i GTF] [-o BED] -c CHROMINFO [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+
+  Description: 
+     *  Extract intergenic regions. This command requires a chromInfo file to compute the bed file
+     boundaries. The command will print the coordinates of genomic regions without any transcript
+     features.
+
+  Notes:
+     *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
+     case the  corresponding size of conventional chromosomes are used. ChrM is not used.
+
+  Version:  2018-01-20
+
+Arguments:
+ -i, --inputfile    Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile   Output file (BED). (default: &lt;stdout&gt;)
+ -c, --chrom-info   Tabulated two-columns file. Chromosomes as column 1 and their sizes as column 2 (default: None)
+
+Command-wise optional arguments:
+ -h, --help         Show this help message and exit.
+ -V, --verbosity    Increase output verbosity. (default: 0)
+ -D, --no-date      Do not add date to output file names. (default: False)
+ -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
+ -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="intronic">
+<h2>intronic<a class="headerlink" href="#intronic" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Returns a bed file containing the intronic regions. If by_transcript is false
+(default), returns merged genic regions with no exonic overlap (“strict” mode).
+Otherwise, the intronic regions corresponding to each transcript are returned
+(may contain exonic overlap and redundancy).</p>
+<p><strong>Example:</strong> Simply get intronic regions.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intronic -i simple.gtf | head -n 5
+chr1	25	27
+chr1	30	32
+chr1	35	41
+chr1	54	56
+chr1	68	70
+</pre></div>
+</div>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intronic -h
+  Usage: gtftk intronic [-i GTF] [-o BED] [-b] [-n NAME] [-s SEP] [-w] [-F] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+
+  Description: 
+     *  Returns a bed file containing the intronic regions. If by_transcript is false (default), returns
+     merged genic regions with no exonic overlap (&quot;strict&quot; mode). Otherwise, the intronic regions
+     corresponding to each transcript are returned (may contain exonic overlap and redundancy).
+
+  Version:  2018-01-20
+
+Arguments:
+ -i, --inputfile          Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile         Output file (BED). (default: &lt;stdout&gt;)
+ -b, --by-transcript      The intronic regions are returned for each transcript. (default: False)
+ -n, --names              The key(s) that should be used as name (if -b is used). (default: gene_id,transcript_id)
+ -s, --separator          The separator to be used for separating name elements (if -b is used). (default: |)
+ -w, --intron-nb-in-name  By default intron number is written in &#39;score&#39; column. Force it to be written in &#39;name&#39; column. (default: False)
+ -F, --no-feature-name    Don&#39;t add the feature name (&#39;intron&#39;) in the name column. (default: False)
+
+Command-wise optional arguments:
+ -h, --help               Show this help message and exit.
+ -V, --verbosity          Increase output verbosity. (default: 0)
+ -D, --no-date            Do not add date to output file names. (default: False)
+ -C, --add-chr            Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir            Keep all temporary files into this folder. (default: None)
+ -A, --keep-all           Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file        Stores the arguments passed to the command into a file. (default: None)
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="splicing-site">
+<h2>splicing_site<a class="headerlink" href="#splicing-site" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Compute the locations of donor and acceptor splice sites. This command will return a single position, which corresponds to the most 5’ and/or the most 3’ intronic region. If the gtf file does not contain exon numbering you can compute it using the
+add_exon_nb command. The score column of the bed file contains the number of the closest exon relative to the splice site.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -i simple.gtf -k exon_nbr | gtftk splicing_site  -k exon_nbr| head
+chr1	54	55	acceptor|G0003T001E001|G0003T001|G0003	2	-
+chr1	55	56	donor|G0003T001E002|G0003T001|G0003	1	-
+chr1	68	69	donor|G0004T002E001|G0004T002|G0004	1	+
+chr1	71	72	donor|G0004T002E002|G0004T002|G0004	2	+
+chr1	69	70	acceptor|G0004T002E002|G0004T002|G0004	2	+
+chr1	72	73	acceptor|G0004T002E003|G0004T002|G0004	3	+
+chr1	68	69	donor|G0004T001E001|G0004T001|G0004	1	+
+chr1	71	72	donor|G0004T001E002|G0004T001|G0004	2	+
+chr1	69	70	acceptor|G0004T001E002|G0004T001|G0004	2	+
+chr1	72	73	acceptor|G0004T001E003|G0004T001|G0004	3	+
+</pre></div>
+</div>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk splicing_site -h
+  Usage: gtftk splicing_site [-i GTF] [-o BED] [-k exon_numbering_key] [-n NAME] [-s SEP] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+
+  Description: 
+     *  Compute the locations of donor and acceptor splice sites.
+
+  Notes:
+     *  This will return a single position, which corresponds to the most 5&#39; and/or the most 3&#39;
+     intronic region. If the gtf file does not contain exon numbering you can compute it using the
+     add_exon_nb command. The score column of the bed file contains the number of the closest exon
+     relative to the splice site.
+
+  Version:  2018-01-20
+
+Arguments:
+ -i, --inputfile           Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile          Output file. (default: &lt;stdout&gt;)
+ -k, --exon-numbering-key  The name of the key containing the exon numbering (exon_number in ensembl) (default: exon_number)
+ -n, --names               The key(s) that should be used as name. (default: exon_id,transcript_id,gene_id)
+ -s, --separator           The separator to be used for separating name elements (see -n). (default: |)
+
+Command-wise optional arguments:
+ -h, --help                Show this help message and exit.
+ -V, --verbosity           Increase output verbosity. (default: 0)
+ -D, --no-date             Do not add date to output file names. (default: False)
+ -C, --add-chr             Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir             Keep all temporary files into this folder. (default: None)
+ -A, --keep-all            Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file         Stores the arguments passed to the command into a file. (default: None)
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="shift">
+<h2>shift<a class="headerlink" href="#shift" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Shift coordinates in 3’ or 5’ direction.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example|  head -n 1
+chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk shift -i simple.gtf  -s -10 -c simple.chromInfo | head -n 1
+chr1	gtftk	gene	115	128	.	+	.	gene_id &quot;G0001&quot;;
+</pre></div>
+</div>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk shift -h
+  Usage: gtftk shift [-i GTF] [-o GTF] -s shift_value [-d] [-a] -c CHROMINFO [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+
+  Description: 
+     *  Transpose coordinates in 3&#39; or 5&#39; direction.
+
+  Notes:
+     *  By default shift is not strand specific. Meaning that if -\shift-value is set to 10, all
+     coordinates will be moved 10 bases in 5&#39; direction relative to the forward/watson/plus/top
+     strand.
+     *  Use a negative value to shift in 3&#39; direction, a positive value to shift in 5&#39; direction.
+     *  If --stranded is true, features are transposed in 5&#39; direction relative to their associated
+     strand.
+     *  By default, features are not allowed to go outside the genome coordinates. In the current
+     implementation, in case this would happen (using a very large -\shift-value), feature would
+     accumulate at the ends of chromosomes irrespectively of gene or transcript structures giving
+     rise, ultimately, to several exons from the same transcript having the same starts or ends.
+     *  One can forced features to go outside the genome and ultimatly dissapear with large
+     --shift-value by using -a.
+     *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
+     case the  corresponding size of conventional chromosomes are used. ChrM is not used.
+
+  Version:  2018-01-20
+
+Arguments:
+ -i, --inputfile      Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile     Output file. (default: &lt;stdout&gt;)
+ -s, --shift-value    Shift coordinate by s nucleotides. (default: 0)
+ -d, --stranded       By default shift not . (default: False)
+ -a, --allow-outside  Accept the partial or total disappearance of a feature upon shifting. (default: False)
+ -c, --chrom-info     Tabulated two-columns file. Chromosomes as column 1 and sizes as column 2 (default: None)
+
+Command-wise optional arguments:
+ -h, --help           Show this help message and exit.
+ -V, --verbosity      Increase output verbosity. (default: 0)
+ -D, --no-date        Do not add date to output file names. (default: False)
+ -C, --add-chr        Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir        Keep all temporary files into this folder. (default: None)
+ -A, --keep-all       Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file    Stores the arguments passed to the command into a file. (default: None)
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Commands from section ‘coordinates’</a><ul>
+<li><a class="reference internal" href="#midpoints">midpoints</a></li>
+<li><a class="reference internal" href="#get-5p-3p-coords">get_5p_3p_coords</a></li>
+<li><a class="reference internal" href="#intergenic">intergenic</a></li>
+<li><a class="reference internal" href="#intronic">intronic</a></li>
+<li><a class="reference internal" href="#splicing-site">splicing_site</a></li>
+<li><a class="reference internal" href="#shift">shift</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="annotation.html"
+                        title="previous chapter">Commands from section ‘annotation’</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sequence.html"
+                        title="next chapter">Commands from section ‘sequence’</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/coordinates.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sequence.html" title="Commands from section ‘sequence’"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="annotation.html" title="Commands from section ‘annotation’"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.2 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, F. Lopez and D. Puthier.
+      Last updated on Mar 22, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+    </div>
+  </body>
+</html>

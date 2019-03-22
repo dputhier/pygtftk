@@ -37,6 +37,7 @@ def make_parser():
                                 "simple",
                                 "mini_real",
                                 "mini_real_noov_rnd_tx",
+                                "tiny_real",
                                 "simple_02",
                                 "simple_03",
                                 "simple_04",
@@ -73,12 +74,18 @@ def make_parser():
                             help="Get the list of all datasets.",
                             action="store_true",
                             required=False)
+
+    parser_grp.add_argument('-q', '--quiet',
+                            help="Don't write any message when copying files.",
+                            action="store_true",
+                            required=False)
     return parser
 
 
 def get_example(outputfile=None,
                 dataset=None,
                 format="gtf",
+                quiet=False,
                 list=False,
                 all_dataset=False):
     """
@@ -139,18 +146,22 @@ def get_example(outputfile=None,
                                                "*"))
             file_path = [x for x in file_path if "__" not in x]
             target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
-            message("Copying from :" + target_path)
+            if not quiet:
+                message("Copying from :" + target_path)
 
             for i in file_path:
                 if not os.path.exists(os.path.join(os.getcwd(), os.path.basename(i))):
-                    message("Copying file : " + os.path.basename(i), force=True)
+                    if not quiet:
+                        message("Copying file : " + os.path.basename(i), force=True)
                     shutil.copy(i, ".")
                 else:
-                    message("Copy canceled, file already exist: " + os.path.basename(i), force=True)
+                    if not quiet:
+                        message("Copy canceled, file already exist: " + os.path.basename(i), force=True)
 
         else:
 
-            message("Copying ", force=True)
+            if not quiet:
+                message("Copying ", force=True)
             file_path = glob.glob(os.path.join(pygtftk.__path__[0],
                                                'data',
                                                dataset,
@@ -162,10 +173,12 @@ def get_example(outputfile=None,
 
             for i in file_path:
                 if not os.path.exists(os.path.join(os.getcwd(), os.path.basename(i))):
-                    message("Copying file : " + os.path.basename(i), force=True)
+                    if not quiet:
+                        message("Copying file : " + os.path.basename(i), force=True)
                     shutil.copy(i, ".")
                 else:
-                    message("Copy canceled, file already exist:" + os.path.basename(i), force=True)
+                    if not quiet:
+                        message("Copy canceled, file already exist:" + os.path.basename(i), force=True)
 
     close_properly(outputfile)
 

@@ -2,6 +2,14 @@ Commands from section 'information'
 --------------------------------------
 
 
+In this section we will require the following datasets:
+
+.. command-output:: gtftk get_example -q -d simple -f '*'
+	:shell:
+
+.. command-output:: gtftk get_example -q -d mini_real -f '*'
+	:shell:
+
 apropos
 ~~~~~~~~~
 
@@ -54,13 +62,13 @@ We can see from the example below that this gtf file **follows the ensembl forma
 
 **Example:** The very basic (and artificial) example.
 
-.. command-output:: gtftk get_example| head -2
+.. command-output:: gtftk get_example | head -2
     :shell:
 
 
 let's get all files from the *simple* dataset.
 
-.. command-output:: gtftk get_example -d simple -f '*'
+.. command-output:: gtftk get_example -q -d simple -f '*'
     :shell:
 
 **Arguments:**
@@ -77,7 +85,7 @@ add_exon_nb
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk add_exon_nb  -k exon_number | gtftk select_by_key -k feature -v exon | gtftk tabulate -k chrom,start,end,exon_number,transcript_id | head -n 20
+.. command-output:: gtftk add_exon_nb -i simple.gtf -k exon_number | gtftk select_by_key -k feature -v exon | gtftk tabulate -k chrom,start,end,exon_number,transcript_id | head -n 20
     :shell:
 
 
@@ -97,7 +105,7 @@ count
 
 **Example:**
 
-.. command-output:: gtftk  get_example | gtftk count  -t example_gtf
+.. command-output:: gtftk count -i simple.gtf -t example_gtf
     :shell:
 
 
@@ -117,7 +125,7 @@ count_key_values
 **Example:** Count the number of non-redondant entries for chromosomes and transcript_id.
 
 
-.. command-output:: gtftk get_example | gtftk count_key_values -k chrom,transcript_id -u
+.. command-output:: gtftk count_key_values -i simple.gtf -k chrom,transcript_id -u
     :shell:
 
 
@@ -135,7 +143,7 @@ get_attr_list
 
 **Example:** Get the list of attributes in the "simple" dataset.
 
-.. command-output:: gtftk get_example | gtftk get_attr_list
+.. command-output:: gtftk get_attr_list -i simple.gtf
     :shell:
 
 **Arguments:**
@@ -153,7 +161,7 @@ get_attr_value_list
 
 **Example:** Get the number of time each gene_id is used.
 
-.. command-output:: gtftk get_example | gtftk get_attr_value_list -k gene_id -c -s ';'
+.. command-output:: gtftk get_attr_value_list -i simple.gtf -k gene_id -c -s ';'
     :shell:
 
 
@@ -171,7 +179,7 @@ get_feature_list
 
 **Example:** Get the list of features enclosed in the GTF.
 
-.. command-output:: gtftk get_example | gtftk get_feature_list
+.. command-output:: gtftk get_feature_list -i simple.gtf
     :shell:
 
 **Arguments:**
@@ -188,7 +196,7 @@ nb_exons
 
 **Example:**
 
-.. command-output:: gtftk  get_example -f gtf | gtftk nb_exons | head -n 5
+.. command-output:: gtftk nb_exons -i simple.gtf | head -n 5
     :shell:
 
 **Arguments:**
@@ -206,7 +214,7 @@ nb_transcripts
 
 **Example:** Count the number of transcript per gene.
 
-.. command-output:: gtftk get_example |  gtftk nb_transcripts  | gtftk select_by_key -g
+.. command-output:: gtftk nb_transcripts -i simple.gtf | gtftk select_by_key -g
     :shell:
 
 
@@ -224,7 +232,7 @@ seqid_list
 
 **Example:** Return the chromosome list.
 
-.. command-output:: gtftk get_example |  gtftk seqid_list
+.. command-output:: gtftk seqid_list -i simple.gtf
     :shell:
 
 
@@ -242,7 +250,7 @@ tss_dist
 
 **Example:** An example on the mini_real dataset.
 
-.. command-output:: gtftk get_example -d mini_real |  gtftk tss_dist | head -n 10
+.. command-output:: gtftk random_list -i mini_real.gtf.gz -t gene -n 1 -s 2 | gtftk tss_dist
     :shell:
 
 
@@ -262,7 +270,7 @@ feature_size
 
 **Example:** Add trancript size (mature RNA) to the gtf.
 
-.. command-output:: gtftk get_example | gtftk feature_size -t mature_rna | gtftk select_by_key -k feature -v transcript | head -n 5
+.. command-output:: gtftk feature_size -i simple.gtf -t mature_rna | gtftk select_by_key -k feature -v transcript | head -n 5
     :shell:
 
 **Arguments:**

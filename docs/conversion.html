@@ -1,0 +1,322 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Commands from section ‘conversion’ &#8212; gtftk 1.0.2 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Commands from section ‘annotation’" href="annotation.html" />
+    <link rel="prev" title="Commands from section ‘selection’" href="selection.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="annotation.html" title="Commands from section ‘annotation’"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="selection.html" title="Commands from section ‘selection’"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.2 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="commands-from-section-conversion">
+<h1>Commands from section ‘conversion’<a class="headerlink" href="#commands-from-section-conversion" title="Permalink to this headline">¶</a></h1>
+<p>In this section we will require the following datasets:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
+</pre></div>
+</div>
+<div class="section" id="convert">
+<h2>convert<a class="headerlink" href="#convert" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> This command can be used to convert to various formats. Currently only a limited number is supported.</p>
+<ul class="simple">
+<li><strong>bed</strong>:  classical bed6 format.</li>
+<li><strong>bed6</strong>: classical bed6 format.</li>
+<li><strong>bed3</strong>: bed3 format.</li>
+</ul>
+<p><strong>Example:</strong> Get the gene features and convert them to bed6.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k feature -v gene | gtftk convert -n gene_id  -f bed6| head -n 3
+chr1	124	138	G0001	.	+
+chr1	179	189	G0002	.	+
+chr1	49	61	G0003	.	-
+</pre></div>
+</div>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk convert -h
+  Usage: gtftk convert [-i GTF] [-o BED/BED3/BED6] [-n NAME] [-s SEP] [-m more_names] [-f {bed,bed3,bed6}] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+
+  Description: 
+     *  Convert a GTF to various format (still limited).
+
+  Version:  2018-01-20
+
+Arguments:
+ -i, --inputfile    Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
+ -o, --outputfile   Output file. (default: &lt;stdout&gt;)
+ -n, --names        The key(s) that should be used as name. (default: gene_id,transcript_id)
+ -s, --separator    The separator to be used for separating name elements (see -n). (default: |)
+ -m, --more-names   Add this information to the &#39;name&#39; column of the BED file. (default: )
+ -f, --format       Currently one of bed3, bed6 (default: bed6)
+
+Command-wise optional arguments:
+ -h, --help         Show this help message and exit.
+ -V, --verbosity    Increase output verbosity. (default: 0)
+ -D, --no-date      Do not add date to output file names. (default: False)
+ -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
+ -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="tabulate">
+<h2>tabulate<a class="headerlink" href="#tabulate" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Extract key/values from the GTF and convert them to tabulated format. When requesting coordinates they will be provided in 1-based format.</p>
+<p><strong>Example:</strong> Simply get the list of transcripts and gene.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id -s &quot;|&quot;
+gene_id|transcript_id
+G0001|G0001T002
+G0001|G0001T001
+G0002|G0002T001
+G0003|G0003T001
+G0004|G0004T002
+G0004|G0004T001
+G0005|G0005T001
+G0006|G0006T001
+G0006|G0006T002
+G0007|G0007T001
+G0007|G0007T002
+G0008|G0008T001
+G0009|G0009T002
+G0009|G0009T001
+G0010|G0010T001
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">By default tabulate will discard any line for which one of the selected key is not defined. Use -x (–accept-undef) to print them.</p>
+</div>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk tabulate -h
+  Usage: gtftk tabulate [-i GTF] [-o TXT] [-s SEPARATOR] [-k KEY,KEY...] [-u] [-H] [-n] [-x] [-b] [-t | -g | -a | -e] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+
+  Description: 
+     *  Convert a GTF to tabulated format.
+
+  Notes:
+     *  Warning: by default tabulate will discard any line for which one of the selected key is not
+     defined. Use -x (--accept-undef) to print them.
+     *  To refer to default keys use: seqid,source,feature,start,end,frame,gene_id...
+     *  Note that &#39;all&#39; or &#39;*&#39; are special keys that can be used to convert the whole GTF into a
+     tabulated file. Thanks @fafa13.
+
+  Version:  2018-01-20
+
+optional arguments:
+ -t, --select-transcript-ids  A shortcuts for &quot;-k transcript_id&quot;. (default: False)
+ -g, --select-gene_ids        A shortcuts for &quot;-k gene_id&quot;. (default: False)
+ -a, --select-gene-names      A shortcuts for &quot;-k gene_name&quot;. (default: False)
+ -e, --select-exon-ids        A shortcuts for &quot;-k exon_ids&quot;. (default: False)
+
+Arguments:
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -s, --separator              The output field separator. (default: )
+ -k, --key                    A comma-separated list of key names. (default: *)
+ -u, --unique                 Print a non redondant list of lines. (default: False)
+ -H, --no-header              Don&#39;t print the header line. (default: False)
+ -n, --no-unset               Don&#39;t print lines containing &#39;.&#39; (unset values) (default: False)
+ -x, --accept-undef           Print line for which the key is undefined (i.e, &#39;?&#39;, does not exists). (default: False)
+ -b, --no-basic               In case key is set to &#39;all&#39; or &#39;*&#39;, don&#39;t write basic attributes. (default: False)
+
+Command-wise optional arguments:
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Increase output verbosity. (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="bed-to-gtf">
+<h2>bed_to_gtf<a class="headerlink" href="#bed-to-gtf" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Convert a bed file to gtf-like format.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk convert -i simple.gtf | gtftk bed_to_gtf -t transcript | head -n 5
+chr1	Unknown	transcript	125	138	.	+	.	gene_id &quot;G0001|?&quot;; transcript_id &quot;G0001|?&quot;;
+chr1	Unknown	transcript	125	138	.	+	.	gene_id &quot;G0001|G0001T002&quot;; transcript_id &quot;G0001|G0001T002&quot;;
+chr1	Unknown	transcript	125	138	.	+	.	gene_id &quot;G0001|G0001T002&quot;; transcript_id &quot;G0001|G0001T002&quot;;
+chr1	Unknown	transcript	125	130	.	+	.	gene_id &quot;G0001|G0001T002&quot;; transcript_id &quot;G0001|G0001T002&quot;;
+chr1	Unknown	transcript	125	138	.	+	.	gene_id &quot;G0001|G0001T001&quot;; transcript_id &quot;G0001|G0001T001&quot;;
+</pre></div>
+</div>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk bed_to_gtf -h
+  Usage: gtftk bed_to_gtf [-i BED] [-o GTF] [-t ft_type] [-s source] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+
+  Description: 
+     *  Convert a bed file to a gtf. This will make the poor bed feel as if it was a big/fat gtf (but with
+     lots of empty fields...sniff). May be helpful sometimes...
+
+  Version:  2018-02-11
+
+Arguments:
+ -i, --inputfile    Path to the poor BED file to would like to behave as if it was a GTF. (default: &lt;stdin&gt;)
+ -o, --outputfile   Output file. (default: &lt;stdout&gt;)
+ -t, --ft-type      The type of features you are trying to mimic... (default: transcript)
+ -s, --source       The source of annotation. (default: Unknown)
+
+Command-wise optional arguments:
+ -h, --help         Show this help message and exit.
+ -V, --verbosity    Increase output verbosity. (default: 0)
+ -D, --no-date      Do not add date to output file names. (default: False)
+ -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
+ -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="convert-ensembl">
+<h2>convert_ensembl<a class="headerlink" href="#convert-ensembl" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Convert the GTF file to ensembl format. Essentially add ‘transcript’/’gene’ features.</p>
+<p><strong>Example:</strong> Delete gene and transcript feature. Regenerate them.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k feature -v gene,transcript -n| gtftk convert_ensembl | gtftk select_by_key -k gene_id -v G0001
+chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
+chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;;
+chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;; exon_id &quot;G0001T002E001&quot;;
+chr1	gtftk	CDS	125	130	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;; ccds_id &quot;CDS_G0001T002&quot;;
+chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T001&quot;;
+chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T001&quot;; exon_id &quot;G0001T001E001&quot;;
+chr1	gtftk	CDS	130	132	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T001&quot;; ccds_id &quot;CDS_G0001T001&quot;;
+</pre></div>
+</div>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk bed_to_gtf -h
+  Usage: gtftk bed_to_gtf [-i BED] [-o GTF] [-t ft_type] [-s source] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+
+  Description: 
+     *  Convert a bed file to a gtf. This will make the poor bed feel as if it was a big/fat gtf (but with
+     lots of empty fields...sniff). May be helpful sometimes...
+
+  Version:  2018-02-11
+
+Arguments:
+ -i, --inputfile    Path to the poor BED file to would like to behave as if it was a GTF. (default: &lt;stdin&gt;)
+ -o, --outputfile   Output file. (default: &lt;stdout&gt;)
+ -t, --ft-type      The type of features you are trying to mimic... (default: transcript)
+ -s, --source       The source of annotation. (default: Unknown)
+
+Command-wise optional arguments:
+ -h, --help         Show this help message and exit.
+ -V, --verbosity    Increase output verbosity. (default: 0)
+ -D, --no-date      Do not add date to output file names. (default: False)
+ -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
+ -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Commands from section ‘conversion’</a><ul>
+<li><a class="reference internal" href="#convert">convert</a></li>
+<li><a class="reference internal" href="#tabulate">tabulate</a></li>
+<li><a class="reference internal" href="#bed-to-gtf">bed_to_gtf</a></li>
+<li><a class="reference internal" href="#convert-ensembl">convert_ensembl</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="selection.html"
+                        title="previous chapter">Commands from section ‘selection’</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="annotation.html"
+                        title="next chapter">Commands from section ‘annotation’</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/conversion.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="annotation.html" title="Commands from section ‘annotation’"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="selection.html" title="Commands from section ‘selection’"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.2 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, F. Lopez and D. Puthier.
+      Last updated on Mar 22, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+    </div>
+  </body>
+</html>
