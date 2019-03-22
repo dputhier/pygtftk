@@ -2,6 +2,11 @@ Commands from section 'Editing'
 ----------------------------------
 
 
+In this section we will require the following datasets:
+
+.. command-output:: gtftk get_example -d simple -f '*'
+	:shell:
+
 add_prefix
 ~~~~~~~~~~~~~~~~~~~~~~
 

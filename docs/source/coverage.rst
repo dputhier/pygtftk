@@ -1,6 +1,16 @@
 Commands from section 'coverage'
 ----------------------------------
 
+In this section we will require the following datasets:
+
+
+.. command-output:: gtftk get_example -d mini_real -f '*'
+	:shell:
+
+.. command-output:: gtftk get_example -d mini_real_noov_rnd_tx -f '*'
+	:shell:
+
+
 coverage
 ~~~~~~~~
 
@@ -9,20 +19,7 @@ Regions were signal can be computed (if GTF file as input) are promoter, tts, in
 If --matrix-out is selected, the signal for each bigwig will be provided in a dedicated column. Otherwise, signal for each bigwig is provided through a dedicated line.
 
 
- **Example:**
-
-We will first request a lightweight example dataset (but more realistic than the 'simple' dataset).
-
-
-.. command-output:: gtftk get_example -d mini_real_noov_rnd_tx -f '*'
-	:shell:
-
-
-.. command-output:: gtftk get_example -d mini_real -f '*'
-	:shell:
-
-
-Now we will compute coverage of promoters regions using 3 bigWig files as input.
+We will compute coverage of promoters regions using 3 bigWig files as input.
 
 
 .. command-output:: gtftk coverage -l H3K4me3,H3K79me2,H3K36me3 -u 5000 -d 5000 -i mini_real_noov_rnd_tx.gtf.gz -c hg38.genome -m transcript_id,gene_name -x ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -k 4 > coverage.bed
@@ -58,13 +55,6 @@ want to use your own, user-specific, regions.
 Will will create tree example datasets:
 
 First we will create a coverage matrix around promoter based on a subset of randomly choose transcripts (one per gene) from the 'mini_real' dataset (see section on the *coverage* command to get info about the construction of the *mini_real_noov_rnd_tx.gtf.gz* dataset).
-
-.. command-output::  gtftk get_example -f '*' -d mini_real
-	:shell:
-
-
-.. command-output::  gtftk get_example -f '*' -d mini_real_noov_rnd_tx
-	:shell:
 
 
 .. command-output:: gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf.gz -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter

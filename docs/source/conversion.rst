@@ -1,6 +1,11 @@
 Commands from section 'conversion'
 -----------------------------------
 
+In this section we will require the following datasets:
+
+.. command-output:: gtftk get_example -d simple -f '*'
+	:shell:
+
 convert
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -13,7 +18,7 @@ convert
 
 **Example:** Get the gene features and convert them to bed6.
 
-.. command-output:: gtftk get_example | gtftk select_by_key -k feature -v gene | gtftk convert -n gene_id  -f bed6| head -n 3
+.. command-output::  gtftk select_by_key -i simple.gtf -k feature -v gene | gtftk convert -n gene_id  -f bed6| head -n 3
 	:shell:
 
 
@@ -32,7 +37,7 @@ tabulate
 
 **Example:** Simply get the list of transcripts and gene.
 
-.. command-output:: gtftk get_example -f gtf | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id -s "|"
+.. command-output:: gtftk select_by_key -i simple.gtf -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id -s "|"
 	:shell:
 
 .. warning:: By default tabulate will discard any line for which one of the selected key is not defined. Use -x (--accept-undef) to print them.
@@ -54,7 +59,7 @@ bed_to_gtf
 
 **Example:**
 
-.. command-output:: gtftk get_example |gtftk convert| gtftk bed_to_gtf -t transcript | head -n 5
+.. command-output:: gtftk convert -i simple.gtf | gtftk bed_to_gtf -t transcript | head -n 5
 	:shell:
 
 
@@ -75,7 +80,7 @@ convert_ensembl
 
 **Example:** Delete gene and transcript feature. Regenerate them.
 
-.. command-output:: gtftk get_example | gtftk select_by_key -k feature -v gene,transcript -n| gtftk convert_ensembl | gtftk select_by_key -k gene_id -v G0001
+.. command-output:: gtftk select_by_key -i simple.gtf -k feature -v gene,transcript -n| gtftk convert_ensembl | gtftk select_by_key -k gene_id -v G0001
 	:shell:
 
 

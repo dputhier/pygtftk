@@ -14,7 +14,7 @@ get_tx_seq
 
 Note that the format is rather flexible and any combination of key can be exported to the header.
 
-.. command-output:: gtftk get_example | gtftk get_tx_seq -g simple.fa  -l gene_id,transcript_id,feature,chrom,start,end,strand  | head -n 2
+.. command-output:: gtftk get_tx_seq -i simple.gtf -g simple.fa  -l gene_id,transcript_id,feature,chrom,start,end,strand  | head -n 2
 	:shell:
 
 

@@ -1,6 +1,15 @@
 Commands from section 'annotation'
 ------------------------------------
 
+In the example of this section we will need the following example files:
+
+.. command-output:: gtftk get_example -d simple -f '*'
+	:shell:
+
+
+.. command-output:: gtftk get_example -d tiny_real -f '*'
+	:shell:
+
 
 closest_genes
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -9,7 +18,7 @@ closest_genes
 
 **Example:**
 
-.. command-output:: gtftk get_example |  bedtools sort | gtftk closest_genes -f
+.. command-output:: gtftk closest_genes  -i simple.gtf -f
 	:shell:
 
 
@@ -27,7 +36,7 @@ overlapping
 
 **Example:** Find transcript whose promoter overlap transcript from other genes.
 
-.. command-output:: gtftk get_example -f chromInfo > simple_join_chromInfo.txt;  gtftk get_example | gtftk overlapping -c simple_join_chromInfo.txt -t promoter -u 10 -d 10 -a    | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,overlap_promoter_u0.01k_d0.01k | head
+.. command-output:: gtftk overlapping -i simple.gtf -c simple.chromInfo -t promoter -u 10 -d 10 -a    | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,overlap_promoter_u0.01k_d0.01k | head
 	:shell:
 
 
@@ -56,7 +65,7 @@ also provided as an additional key (dist_to_divergent).
 
 **Example:** Flag divergent transcripts in the example dataset. Select them and produce a tabulated output.
 
-.. command-output:: gtftk get_example -f chromInfo > simple_join_chromInfo.txt;  gtftk get_example |  gtftk divergent -c simple_join_chromInfo.txt -u 10 -d 10| gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,divergent,dist_to_divergent | head  -n 7
+.. command-output:: gtftk divergent -i simple.gtf -c simple.chromInfo -u 10 -d 10| gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,divergent,dist_to_divergent | head  -n 7
 	:shell:
 
 **Arguments:**
@@ -81,7 +90,7 @@ The tts to tts distance is also provided as an additional key (dist_to_convergen
 
 **Example:** Flag divergent transcripts in the example dataset. Select them and produce a tabulated output.
 
-.. command-output:: gtftk get_example -f chromInfo > simple_join_chromInfo.txt;  gtftk get_example |  gtftk convergent -c simple_join_chromInfo.txt -u 25 -d 25| gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,convergent,dist_to_convergent| head -n 4
+.. command-output:: gtftk convergent -i simple.gtf -c simple.chromInfo -u 25 -d 25| gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,convergent,dist_to_convergent| head -n 4
 	:shell:
 
 **Arguments:**
@@ -99,7 +108,7 @@ exon_sizes
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk exon_sizes | gtftk select_by_key -t
+.. command-output:: gtftk exon_sizes -i simple.gtf | gtftk select_by_key -t | gtftk tabulate -k transcript_id,exon_sizes
 	:shell:
 
 **Arguments:**
@@ -118,7 +127,7 @@ intron_sizes
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk intron_sizes | gtftk select_by_key -t
+.. command-output:: gtftk intron_sizes -i simple.gtf | gtftk select_by_key -t | gtftk tabulate -k transcript_id,intron_sizes
 	:shell:
 
 **Arguments:**
@@ -133,23 +142,13 @@ intron_sizes
 ologram
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo.
-	Ologram annotates peaks (in bed format) using (i) genomic features extracted
-  from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions
-	tagged with particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
-  gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
-
-  Each couple peak file/region is randomly shuffled across the genome (inter-region
-	lengths are considered). Then the probability of intersection under the null
-  hypothesis (the peaks and this feature are independent) is deduced thanks to
-	this Monte Carlo approach. The program will return statistics for both the
-	number of intersections and the total lengths (in basepairs) of all intersections.
-
-We will first request a lightweight example dataset.
-
-
-.. command-output:: gtftk get_example -d tiny_real -f '*'
-	:shell:
+**Description:** OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks
+(in bed format) using (i) genomic features extracted from a GTF file (e.g promoter, tts, gene body, UTR...)
+(ii) genomic regions tagged with particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
+gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions). Each couple peak file/region
+is randomly shuffled across the genome (inter-region lengths are considered). Then the probability of intersection
+under the null hypothesis (the peaks and this feature are independent) is deduced thanks to this Monte Carlo approach.
+The program will return statistics for both the number of intersections and the total lengths (in basepairs) of all intersections.
 
 
 **Example:** Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements.
