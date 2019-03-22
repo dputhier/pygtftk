@@ -203,6 +203,10 @@ release_doc:
 	@ git add docs/source/_static/*pdf
 	@ git add docs/source/example*png
 	@ git add docs/source/example*pdf
+	@ cp  docs/source/example*png docs/build/html/_static
+	@ cp  docs/source/example*pdf docs/build/html/_static
+	@ cp  -r docs/build/html/* docs
+	@ git add docs/*
 	@ git commit -m "Updated img in source and source/_static "
 	@ git push
 
