@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.0.2
+
+### Bug Fixes
+
+### API Changes
+
+### Code changes
+
+- Many typo detected and fixed.
+
+### New Features
+
+- Added tiny_real dataset
+- Added -q argument (--quiet) to get_example.
+
+# Changelog
+
 ## v1.0.0
 
 ### Bug Fixes
