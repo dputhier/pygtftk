@@ -84,11 +84,11 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i mini_real.gtf.gz -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n  -if example_pa_02.pdf -k 8
- |-- 16:55-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 16:55-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 16:55-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 16:55-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 16:56-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 17:05-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 17:05-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 17:05-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 17:05-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 17:05-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
 </pre></div>
 </div>
 <p>Download <a class="reference download internal" download="" href="_downloads/6a22a2c6705c1421955406a0316272f5/example_pa_02.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>.</p>
@@ -104,7 +104,7 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K4me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6   | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exprs_class -if example_pa_03.pdf -k 8
- |-- 16:56-INFO-discretize_key : Categories: [&#39;[0.0_10.0]&#39;, &#39;(10.0_149.0]&#39;, &#39;(149.0_585.0]&#39;, &#39;(585.0_1171.0]&#39;, &#39;(1171.0_2486.83]&#39;, &#39;(2486.83_41703.0]&#39;]
+ |-- 17:06-INFO-discretize_key : Categories: [&#39;[0.0_10.0]&#39;, &#39;(10.0_149.0]&#39;, &#39;(149.0_585.0]&#39;, &#39;(585.0_1171.0]&#39;, &#39;(1171.0_2486.83]&#39;, &#39;(2486.83_41703.0]&#39;]
 </pre></div>
 </div>
 <p>Download <a class="reference download internal" download="" href="_downloads/959e411f4470e8e1330736497073c14d/example_pa_03.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>.</p>
@@ -120,7 +120,7 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exon_nbr_cat -if example_pa_04.pdf -k 8
- |-- 16:57-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 17:07-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
 </pre></div>
 </div>
 <p>Download <a class="reference download internal" download="" href="_downloads/614b25d8398e8c669baa9f24c80a4a3f/example_pa_04.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>.</p>
@@ -147,8 +147,9 @@ The program will return statistics for both the number of intersections and the 
      region lengths are considered). Then the probability of intersection under the null hypothesis
      (the peaks and this feature are independent) is deduced thanks to this Monte Carlo approach.
      The program will return statistics for both the number of intersections and the total lengths
-     (in basepairs) of all intersections.  Authors : Quentin Ferré &lt;quentin.q.ferre@gmail.com&gt; and
-     Denis Puthier &lt;denis.puthier@univ-amu.fr&gt;.
+     (in basepairs) of all intersections.  Authors : Quentin Ferré &lt;quentin.q.ferre@gmail.com&gt;,
+     Guillaume Charbonnier  &lt;guillaume.charbonnier@outlook.com&gt; and Denis Puthier
+     &lt;denis.puthier@univ-amu.fr&gt;.
 
   Notes:
      *  Although ologram itself is not RAM-intensive, base pygtftk processing of a full human GTF

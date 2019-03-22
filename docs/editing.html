@@ -345,7 +345,7 @@ G0009	0.5555	0.7
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i simple.gtf -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
- |-- 16:50-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
+ |-- 17:00-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; S1 &quot;0.2322&quot;; S2 &quot;0.4&quot;; S1_d &quot;A&quot;;
@@ -364,7 +364,7 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 <p class="last">The <em>profile</em> command that could be used to asses the associated epigenetic marks of these 10 gene classes.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
- |-- 16:50-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
+ |-- 17:00-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
   96 A
   83 B
   89 C
