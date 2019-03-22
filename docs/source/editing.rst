@@ -4,8 +4,12 @@ Commands from section 'Editing'
 
 In this section we will require the following datasets:
 
-.. command-output:: gtftk get_example -d simple -f '*'
+.. command-output:: gtftk get_example -q -d simple -f '*'
 	:shell:
+
+.. command-output:: gtftk get_example -q -d mini_real -f "*"
+    :shell:
+
 
 add_prefix
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -14,7 +18,7 @@ add_prefix
 
 **Example:**
 
-.. command-output:: gtftk get_example| gtftk add_prefix -k transcript_id -t "novel_"| head -2
+.. command-output:: gtftk add_prefix -i simple.gtf -k transcript_id -t "novel_"| head -2
     :shell:
 
 **Arguments:**
@@ -31,7 +35,7 @@ del_attr
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk del_attr -k transcript_id,gene_id,exon_id | head -3
+.. command-output:: gtftk del_attr -i simple.gtf -k transcript_id,gene_id,exon_id | head -3
     :shell:
 
 **Arguments:**
@@ -61,24 +65,19 @@ join_attr
 
 **Example:** With a 2-columns file.
 
-.. command-output:: gtftk get_example -f join > simple_join.txt
+
+.. command-output:: cat simple.join
     :shell:
 
-.. command-output:: cat simple_join.txt
-    :shell:
-
-.. command-output::  gtftk get_example -f gtf | gtftk join_attr -k gene_id -j simple_join.txt -n a_score -t gene| gtftk select_by_key -k feature -v gene
+.. command-output::  gtftk join_attr -i simple.gtf -k gene_id -j simple.join -n a_score -t gene| gtftk select_by_key -k feature -v gene
     :shell:
 
 **Example:** With a matrix-like file.
 
-.. command-output:: gtftk get_example -f join_mat  >  simple_join_mat.txt
+.. command-output:: cat simple.join_mat
     :shell:
 
-.. command-output:: cat simple_join_mat.txt
-    :shell:
-
-.. command-output:: gtftk get_example -f gtf | gtftk join_attr -k gene_id -j simple_join_mat.txt -m -t gene| gtftk select_by_key -k feature -v gene
+.. command-output:: gtftk join_attr -i simple.gtf -k gene_id -j simple.join_mat -m -t gene| gtftk select_by_key -k feature -v gene
     :shell:
 
 
@@ -98,7 +97,14 @@ join_multi_file
 
 **Example:** Add key/value to gene features.
 
-.. command-output:: gtftk get_example |  gtftk join_multi_file -k gene_id -t gene simple.join_mat_2 simple.join_mat_3| gtftk select_by_key -g
+
+.. command-output:: cat simple.join_mat_2
+    :shell:
+
+.. command-output:: cat simple.join_mat_3
+    :shell:
+
+.. command-output:: gtftk join_multi_file -i simple.gtf -k gene_id -t gene simple.join_mat_2 simple.join_mat_3| gtftk select_by_key -g
     :shell:
 
 **Arguments:**
@@ -118,7 +124,7 @@ merge_attr
 
 **Example:** Merge gene_id and transcript_id into a new key associated to transcript features.
 
-.. command-output:: gtftk get_example |  gtftk merge_attr -k transcript_id,gene_id -d txgn_id -s "|" -f transcript | gtftk select_by_key -t
+.. command-output:: gtftk merge_attr -i simple.gtf -k transcript_id,gene_id -d txgn_id -s "|" -f transcript | gtftk select_by_key -t
     :shell:
 
 
@@ -140,8 +146,11 @@ The default is to create equally spaced interval. The intervals can also be crea
 
 **Example:** Let say we have the following matrix giving expression level of genes (rows) in samples (columns). We could join this information to the GTF and later choose to transform key *S1* into a new discretized key *S1_d*. We may apply particular labels to this factor using *-l*.
 
+.. command-output:: cat simple.join_mat
+    :shell:
 
-.. command-output:: gtftk get_example |  gtftk join_attr -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
+
+.. command-output:: gtftk join_attr -i simple.gtf -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
     :shell:
 
 **Example:** We want to load RNA-seq data in the GTF (obtained through the get_example command) and discretize the expression values according to deciles (-p and -n set to 10). Classes will be labeled from A to J. The example below shows how balanced these classes will be.
@@ -149,10 +158,8 @@ The default is to create equally spaced interval. The intervals can also be crea
 .. seealso:: The *profile* command that could be used to asses the associated epigenetic marks of these 10 gene classes.
 
 
-.. command-output:: gtftk get_example -d mini_real -f "*"
-    :shell:
 
-.. command-output:: gtftk get_example -d mini_real |  gtftk join_attr -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
+.. command-output:: gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
     :shell:
 
 **Arguments:**

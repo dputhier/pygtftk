@@ -1,6 +1,13 @@
 Commands from section 'sequence'
 ---------------------------------
 
+In this section we will require the following datasets:
+
+
+
+.. command-output:: gtftk get_example -q -d simple -f '*'
+	:shell:
+
 
 get_tx_seq
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -9,7 +16,7 @@ get_tx_seq
 
 **Example:** Get sequences of transcripts in 5' to 3' orientation
 
-.. command-output:: gtftk get_example -f fa > simple.fa; gtftk get_example | gtftk get_tx_seq -g simple.fa | head -n 4
+.. command-output:: gtftk get_tx_seq -g simple.fa -i simple.gtf | head -n 4
 	:shell:
 
 Note that the format is rather flexible and any combination of key can be exported to the header.

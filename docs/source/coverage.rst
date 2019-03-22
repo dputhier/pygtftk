@@ -4,10 +4,10 @@ Commands from section 'coverage'
 In this section we will require the following datasets:
 
 
-.. command-output:: gtftk get_example -d mini_real -f '*'
+.. command-output:: gtftk get_example -q -d mini_real -f '*'
 	:shell:
 
-.. command-output:: gtftk get_example -d mini_real_noov_rnd_tx -f '*'
+.. command-output:: gtftk get_example -q  -d mini_real_noov_rnd_tx -f '*'
 	:shell:
 
 
