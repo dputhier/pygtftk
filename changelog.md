@@ -2,6 +2,8 @@
 
 ## v1.0.2
 
+- No more using readthedoc as the doc is becoming too long to process.
+
 ### Bug Fixes
 
 ### API Changes
@@ -12,7 +14,7 @@
 
 ### New Features
 
-- Added tiny_real dataset
+- Added tiny_real dataset.
 - Added -q argument (--quiet) to get_example.
 
 # Changelog
