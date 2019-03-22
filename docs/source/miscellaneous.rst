@@ -1,6 +1,16 @@
 Commands from section 'miscellaneous'
 -------------------------------------
 
+In this section we will require the following datasets:
+
+
+.. command-output:: gtftk get_example -q -d mini_real -f '*'
+	:shell:
+
+.. command-output:: gtftk get_example -q -d simple -f '*'
+	:shell:
+
+
 control_list
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -31,7 +41,7 @@ col_from_tab
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk select_by_key -t | gtftk tabulate -k '*' -x | gtftk col_from_tab -c transcript_id,gene_id
+.. command-output:: gtftk select_by_key -t -i simple.gtf | gtftk tabulate -k '*' -x | gtftk col_from_tab -c transcript_id,gene_id
 	:shell:
 
 

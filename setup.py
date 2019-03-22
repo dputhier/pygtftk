@@ -104,14 +104,17 @@ sha = ""
 
 try:
     import git
+    from git import InvalidGitRepositoryError
+    try:
+        repo = git.Repo(search_parent_directories=True)
+        sha = repo.head.object.hexsha
+        sha = repo.git.rev_parse(sha, short=4)
 
-    repo = git.Repo(search_parent_directories=True)
-    sha = repo.head.object.hexsha
-    sha = repo.git.rev_parse(sha, short=4)
-
-    if sha != "" and not os.path.exists("release_in_progress"):
-        __version__ = base_version + ".dev0+" + sha
-    else:
+        if sha != "" and not os.path.exists("release_in_progress"):
+            __version__ = base_version + ".dev0+" + sha
+        else:
+            __version__ = base_version
+    except InvalidGitRepositoryError:
         __version__ = base_version
 
 except ImportError:
@@ -252,6 +255,7 @@ setup(name="pygtftk",
                 'pygtftk/data/mini_real',
                 'pygtftk/data/mini_real_10M',
                 'pygtftk/data/mini_real_noov_rnd_tx',
+                'pygtftk/data/tiny_real',
                 'pygtftk/data/control_list',
                 'pygtftk/src/',
                 'pygtftk/src/libgtftk',
@@ -266,6 +270,7 @@ setup(name="pygtftk",
                     'pygtftk/data/mini_real': ['*.*'],
                     'pygtftk/data/mini_real_10M': ['*.*'],
                     'pygtftk/data/mini_real_noov_rnd_tx': ['*.*'],
+                    'pygtftk/data/tiny_real': ['*.*'],
                     'pygtftk/data/control_list': ['*.*'],
                     'pygtftk/plugins': ['*.*'],
                     'docs': ['Makefile'],

@@ -1,6 +1,137 @@
 Commands from section 'annotation'
 ------------------------------------
 
+In the example of this section we will need the following example files:
+
+.. command-output:: gtftk get_example -q -d simple -f '*'
+	:shell:
+
+
+.. command-output:: gtftk get_example -q -d mini_real -f '*'
+	:shell:
+
+
+------------------------------------------------------------------------------------------------------------------
+
+
+ologram
+~~~~~~~~~~~~~~~~~~~~~~
+
+**Description:** OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks
+(in bed format) using (i) genomic features extracted from a GTF file (e.g promoter, tts, gene body, UTR...)
+(ii) genomic regions tagged with particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
+gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions). Each couple peak file/region
+is randomly shuffled across the genome (inter-region lengths are considered). Then the probability of intersection
+under the null hypothesis (the peaks and this feature are independent) is deduced thanks to this Monte Carlo approach.
+The program will return statistics for both the number of intersections and the total lengths (in basepairs) of all intersections.
+
+.. warning:: The ologram examples below use 8 CPUs. Please adapt.
+
+
+
+**Example:** Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements.
+
+
+.. command-output:: gtftk ologram -i mini_real.gtf.gz -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.pdf -k 8
+	:shell:
+
+Download :download:`pdf <_static/example_pa_01.pdf>`.
+
+
+
+.. raw:: html
+
+  <br>
+  <table>
+  <tr>
+  <td valign="top">
+  <iframe src="_static/example_pa_01.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  </iframe>
+  </td>
+  </tr>
+  </table>
+  <br>
+  <br>
+
+**Example:** Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs...). The --no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts...).
+
+.. command-output:: gtftk ologram -i mini_real.gtf.gz -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n  -if example_pa_02.pdf -k 8
+	:shell:
+
+Download :download:`pdf <_static/example_pa_02.pdf>`.
+
+
+
+.. raw:: html
+
+  <br>
+  <table>
+  <tr>
+  <td valign="top">
+  <iframe src="_static/example_pa_02.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  </iframe>
+  </td>
+  </tr>
+  </table>
+  <br>
+  <br>
+
+**Example:** A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K4me3.
+
+.. command-output:: gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6   | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exprs_class -if example_pa_03.pdf -k 8
+	:shell:
+
+Download :download:`pdf <_static/example_pa_03.pdf>`.
+
+
+
+.. raw:: html
+
+  <br>
+  <table>
+  <tr>
+  <td valign="top">
+  <iframe src="_static/example_pa_03.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  </iframe>
+  </td>
+  </tr>
+  </table>
+  <br>
+  <br>
+
+**Example:** Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5' to 3') and discretize this novel key into 5 classes tested for enrichment.
+
+.. command-output:: gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exon_nbr_cat -if example_pa_04.pdf -k 8
+	:shell:
+
+Download :download:`pdf <_static/example_pa_04.pdf>`.
+
+
+
+.. raw:: html
+
+  <br>
+  <table>
+  <tr>
+  <td valign="top">
+  <iframe src="_static/example_pa_04.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  </iframe>
+  </td>
+  </tr>
+  </table>
+  <br>
+  <br>
+
+
+**Arguments:**
+
+.. command-output:: gtftk ologram -h
+	:shell:
+
+
+
+------------------------------------------------------------------------------------------------------------------
+
 
 closest_genes
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -9,7 +140,7 @@ closest_genes
 
 **Example:**
 
-.. command-output:: gtftk get_example |  bedtools sort | gtftk closest_genes -f
+.. command-output:: gtftk closest_genes  -i simple.gtf -f
 	:shell:
 
 
@@ -17,6 +148,11 @@ closest_genes
 
 .. command-output:: gtftk closest_genes -h
 	:shell:
+
+
+
+------------------------------------------------------------------------------------------------------------------
+
 
 
 overlapping
@@ -27,7 +163,7 @@ overlapping
 
 **Example:** Find transcript whose promoter overlap transcript from other genes.
 
-.. command-output:: gtftk get_example -f chromInfo > simple_join_chromInfo.txt;  gtftk get_example | gtftk overlapping -c simple_join_chromInfo.txt -t promoter -u 10 -d 10 -a    | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,overlap_promoter_u0.01k_d0.01k | head
+.. command-output:: gtftk overlapping -i simple.gtf -c simple.chromInfo -t promoter -u 10 -d 10 -a    | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,overlap_promoter_u0.01k_d0.01k | head
 	:shell:
 
 
@@ -56,7 +192,7 @@ also provided as an additional key (dist_to_divergent).
 
 **Example:** Flag divergent transcripts in the example dataset. Select them and produce a tabulated output.
 
-.. command-output:: gtftk get_example -f chromInfo > simple_join_chromInfo.txt;  gtftk get_example |  gtftk divergent -c simple_join_chromInfo.txt -u 10 -d 10| gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,divergent,dist_to_divergent | head  -n 7
+.. command-output:: gtftk divergent -i simple.gtf -c simple.chromInfo -u 10 -d 10| gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,divergent,dist_to_divergent | head  -n 7
 	:shell:
 
 **Arguments:**
@@ -81,7 +217,7 @@ The tts to tts distance is also provided as an additional key (dist_to_convergen
 
 **Example:** Flag divergent transcripts in the example dataset. Select them and produce a tabulated output.
 
-.. command-output:: gtftk get_example -f chromInfo > simple_join_chromInfo.txt;  gtftk get_example |  gtftk convergent -c simple_join_chromInfo.txt -u 25 -d 25| gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,convergent,dist_to_convergent| head -n 4
+.. command-output:: gtftk convergent -i simple.gtf -c simple.chromInfo -u 25 -d 25| gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,convergent,dist_to_convergent| head -n 4
 	:shell:
 
 **Arguments:**
@@ -99,7 +235,7 @@ exon_sizes
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk exon_sizes | gtftk select_by_key -t
+.. command-output:: gtftk exon_sizes -i simple.gtf | gtftk select_by_key -t | gtftk tabulate -k transcript_id,exon_sizes
 	:shell:
 
 **Arguments:**
@@ -118,130 +254,11 @@ intron_sizes
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk intron_sizes | gtftk select_by_key -t
+.. command-output:: gtftk intron_sizes -i simple.gtf | gtftk select_by_key -t | gtftk tabulate -k transcript_id,intron_sizes
 	:shell:
 
 **Arguments:**
 
 .. command-output:: gtftk intron_sizes -h
 	:shell:
-
-
-------------------------------------------------------------------------------------------------------------------
-
-
-ologram
-~~~~~~~~~~~~~~~~~~~~~~
-
-**Description:** Annotate peaks (in bed format) with region sets computed on the fly from a GTF file  (e.g promoter, tts, gene body, UTR...). By default, the midpoint of
- each peak is considered and intersected iteratively with region sets. A binomial p-value is computed based on hypothesized probability of success p (fraction of genome covered by the
- feature f), the number of trials (number of peaks) and the number of successes (number of intersections).
-
-
-We will first request a lightweight example dataset.
-
-
-.. command-output:: gtftk get_example -d mini_real -f '*'
-	:shell:
-
-
-**Example:** Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements.
-
-
-.. command-output:: gtftk get_example -d mini_real | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.pdf -k 4
-	:shell:
-
-Download :download:`pdf <_static/example_pa_01.pdf>`.
-
-
-
-.. raw:: html
-
-  <br>
-  <table>
-  <tr>
-  <td valign="top">
-  <iframe src="_static/example_pa_01.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
-  </iframe>
-  </td>
-  </tr>
-  </table>
-  <br>
-  <br>
-
-**Example:** Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs...). The --no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts...).
-
-.. command-output:: gtftk get_example -d mini_real | gtftk ologram -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n  -if example_pa_02.pdf
-	:shell:
-
-Download :download:`pdf <_static/example_pa_02.pdf>`.
-
-
-
-.. raw:: html
-
-  <br>
-  <table>
-  <tr>
-  <td valign="top">
-  <iframe src="_static/example_pa_02.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
-  </iframe>
-  </td>
-  </tr>
-  </table>
-  <br>
-  <br>
-
-**Example:** A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K4me3.
-
-.. command-output:: gtftk get_example -d mini_real |  gtftk join_attr -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6   | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exprs_class -if example_pa_03.pdf
-	:shell:
-
-Download :download:`pdf <_static/example_pa_03.pdf>`.
-
-
-
-.. raw:: html
-
-  <br>
-  <table>
-  <tr>
-  <td valign="top">
-  <iframe src="_static/example_pa_03.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
-  </iframe>
-  </td>
-  </tr>
-  </table>
-  <br>
-  <br>
-
-**Example:** Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5' to 3') and discretize this novel key into 5 classes tested for enrichment.
-
-.. command-output:: gtftk get_example -d mini_real | gtftk add_exon_nb -k exon_nbr | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exon_nbr_cat -if example_pa_04.pdf
-	:shell:
-
-Download :download:`pdf <_static/example_pa_04.pdf>`.
-
-
-
-.. raw:: html
-
-  <br>
-  <table>
-  <tr>
-  <td valign="top">
-  <iframe src="_static/example_pa_04.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
-  </iframe>
-  </td>
-  </tr>
-  </table>
-  <br>
-  <br>
-
-
-**Arguments:**
-
-.. command-output:: gtftk ologram -h
-	:shell:
-
 

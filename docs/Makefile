@@ -3,7 +3,7 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build -j 8
+SPHINXBUILD   = sphinx-build -j 4
 PAPER         =
 BUILDDIR      = build
 
@@ -34,15 +34,17 @@ help:
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 	@echo "  clean    	to clean..."
 clean:
-	@cd  source/; rm -Rf  `ls | perl -ne 'print unless(/(\.rst$$)|(conf\.py$$)|(\.png$$)|(_static)/)'`
+	@cd  source/; rm -Rf  `ls | perl -ne 'print unless(/(\.rst$$)|(conf\.py$$)|(\.png$$)|(\.pdf$$)|(_static)/)'`
 
 html:
 	@cd source ; for i in *.rst; do perl -npe 's/^\:shell\:/\t:shell:/' $$i > $$i.tmp; done
 	@cd source ; for i in *.tmp; do n=`echo $$i | sed 's/.tmp//'`; mv $$i $$n;done 
 	@mkdir -p source/_static
 	@$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	@#cp source/*png $(BUILDDIR)/html
 	@echo
+	@echo "Updating files in source/_static"
+	@cp source/*pdf source/_static
+	@cp source/*png source/_static
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 dirhtml:

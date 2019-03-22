@@ -1,0 +1,222 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to pygtftk documentation page &#8212; gtftk 1.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Warning about supported GTF file formats" href="about.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="about.html" title="Warning about supported GTF file formats"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">gtftk 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-pygtftk-documentation-page">
+<h1>Welcome to pygtftk documentation page<a class="headerlink" href="#welcome-to-pygtftk-documentation-page" title="Permalink to this headline">¶</a></h1>
+<p>The <strong>Python GTF toolkit (pygtftk) package</strong> is intented to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python &gt;=3.5,&lt;3.7 and relies on <strong>libgtftk</strong>, a library of functions <strong>written in C</strong>.</p>
+<p>The package comes with a set of <strong>UNIX commands</strong> that can be accessed through the <strong>gtftk main Unix program</strong>. The gtftk program exposes several subcommands than can be piped, for instance, to filter, convert, extract or delete data from GTF files. The gtftk set of Unix commands, can be easily extended using a basic plugin architecture. All these aspects are covered in the help section.</p>
+<p>While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon  active development thus feel free to post any problem or required enhancement through the github interface.</p>
+<a class="reference external image-reference" href="_static/example_07.png"><img alt="_images/example_07.png" src="_images/example_07.png" style="width: 85%;" /></a>
+</div>
+<div class="section" id="table-of-content">
+<h1>Table of content<a class="headerlink" href="#table-of-content" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">Warning about supported GTF file formats</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="about.html#naming-conventions">Naming conventions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pygtftk/gtftk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gtftk_args.html">Help on gtftk Unix commands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gtftk_args.html#main-parser-arguments-of-gtftk">Main parser arguments of gtftk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gtftk_args.html#command-wide-arguments">Command-wide arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="information.html">Commands from section ‘information’</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="information.html#apropos">apropos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#retrieve">retrieve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#get-example">get_example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#add-exon-nb">add_exon_nb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#count">count</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#count-key-values">count_key_values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#get-attr-list">get_attr_list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#get-attr-value-list">get_attr_value_list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#get-feature-list">get_feature_list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#nb-exons">nb_exons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#nb-transcripts">nb_transcripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#seqid-list">seqid_list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#tss-dist">tss_dist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="information.html#feature-size">feature_size</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="editing.html">Commands from section ‘Editing’</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="editing.html#add-prefix">add_prefix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="editing.html#del-attr">del_attr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="editing.html#join-attr">join_attr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="editing.html#join-multi-file">join_multi_file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="editing.html#merge-attr">merge_attr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="editing.html#discretize-key">discretize_key</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="selection.html">Commands from section ‘selection’</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#select-by-key">select_by_key</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#select-by-regexp">select_by_regexp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#select-by-intron-size">select_by_intron_size</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#select-by-max-exon-nb">select_by_max_exon_nb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#select-by-loc">select_by_loc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#select-by-nb-exon">select_by_nb_exon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#select-by-numeric-value">select_by_numeric_value</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#random-list">random_list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#random-tx">random_tx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#rm-dup-tss">rm_dup_tss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#select-by-go">select_by_go</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#select-by-tx-size">select_by_tx_size</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#select-most-5p-tx">select_most_5p_tx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#short-long">short_long</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conversion.html">Commands from section ‘conversion’</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="conversion.html#convert">convert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conversion.html#tabulate">tabulate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conversion.html#bed-to-gtf">bed_to_gtf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conversion.html#convert-ensembl">convert_ensembl</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annotation.html">Commands from section ‘annotation’</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annotation.html#ologram">ologram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotation.html#closest-genes">closest_genes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotation.html#overlapping">overlapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotation.html#divergent">divergent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotation.html#convergent">convergent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotation.html#exon-sizes">exon_sizes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotation.html#intron-sizes">intron_sizes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="coordinates.html">Commands from section ‘coordinates’</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html#midpoints">midpoints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html#get-5p-3p-coords">get_5p_3p_coords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html#intergenic">intergenic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html#intronic">intronic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html#splicing-site">splicing_site</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coordinates.html#shift">shift</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sequence.html">Commands from section ‘sequence’</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sequence.html#get-tx-seq">get_tx_seq</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sequence.html#get-feat-seq">get_feat_seq</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="coverage.html">Commands from section ‘coverage’</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#coverage">coverage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#mk-matrix">mk_matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#profile">profile</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Commands from section ‘miscellaneous’</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html#control-list">control_list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html#col-from-tab">col_from_tab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Help on Python package (pygtftk)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.gtf_interface">The GTF class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.fasta_interface">The FASTA class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.tab_interface">The TAB class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.Line">The Line module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.utils">The gtftk.utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bwig_coverage.html">The pygtftk.bwig.bw_coverage module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Writing your own commands</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to pygtftk documentation page</a></li>
+<li><a class="reference internal" href="#table-of-content">Table of content</a></li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="about.html"
+                        title="next chapter">Warning about supported GTF file formats</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="about.html" title="Warning about supported GTF file formats"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">gtftk 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, F. Lopez and D. Puthier.
+      Last updated on Mar 22, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+    </div>
+  </body>
+</html>

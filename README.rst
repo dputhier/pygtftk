@@ -10,10 +10,6 @@
     :alt: GitHub
     :target: https://github.com/dputhier/pygtftk/blob/master/CONTRIBUTING.rst
 
-.. image:: https://readthedocs.org/projects/pygtftk/badge/?version=master
-    :alt: Documentation Status
-    :target: https://pygtftk.readthedocs.io/en/latest/
-
 .. image:: https://travis-ci.org/dputhier/pygtftk.svg?branch=master
     :target: https://travis-ci.org/dputhier/pygtftk
 
@@ -44,6 +40,8 @@ The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF
 The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files. The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help sections.
 
 While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon  active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository. 
+
+The **Documentation** about the latest release is available as a `github page <https://dputhier.github.io/pygtftk/>`_.
 
 System requirements
 --------------------
@@ -114,7 +112,7 @@ Installation through pip can be done as follow. ::
 Documentation
 --------------
 
-Documentation about the latest release is dynamically produced and available at `readthedoc server <https://pygtftk.readthedocs.io/en/latest/>`_.
+Documentation about the latest release is available as a `github page <https://dputhier.github.io/pygtftk/>`_.
 
 Testing
 --------

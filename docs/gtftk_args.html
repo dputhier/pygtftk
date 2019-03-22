@@ -1,0 +1,290 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Help on gtftk Unix commands &#8212; gtftk 1.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Commands from section ‘information’" href="information.html" />
+    <link rel="prev" title="Installing pygtftk/gtftk" href="installation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="information.html" title="Commands from section ‘information’"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installing pygtftk/gtftk"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="help-on-gtftk-unix-commands">
+<h1>Help on gtftk Unix commands<a class="headerlink" href="#help-on-gtftk-unix-commands" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="main-parser-arguments-of-gtftk">
+<h2>Main parser arguments of gtftk<a class="headerlink" href="#main-parser-arguments-of-gtftk" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="getting-help-with-h">
+<h3>Getting help with -h<a class="headerlink" href="#getting-help-with-h" title="Permalink to this headline">¶</a></h3>
+<p>The -h argument can be used to get a synopsis for implemented commands.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk -h
+  Usage: gtftk [-h] [-b] [-p] [-u] [-s] [-d] [-v] [-l]  ...
+
+  A toolbox to handle GTF files.
+
+  Example:
+
+  gtftk get_example -f chromInfo -o simple.chromInfo ; 
+  gtftk get_example  | gtftk feature_size -t mature_rna | gtftk nb_exons |\
+  gtftk intron_sizes | gtftk exon_sizes | gtftk convergent -u 24 -d 24  -c simple.chromInfo | \
+  gtftk divergent -u 101 -d 10  -c simple.chromInfo  | \
+  gtftk overlapping -u 0 -d 0 -t transcript -c simple.chromInfo -a |  \
+  gtftk select_by_key -k feature -v transcript |   gtftk tabulate -k &quot;*&quot; -b -x
+  
+
+  Type &#39;gtftk sub-command -h&#39; for more information.
+
+    
+
+Main command arguments:
+ -h, --help                   show this help message and exit
+ -b, --bash-comp              Get a script to activate bash completion. (default: False)
+ -p, --plugin-tests           Display bats tests for all plugin. (default: False)
+ -u, --plugin-tests-no-conn   Display bats tests for plugins not relying on server conn. (default: False)
+ -s, --system-info            Display some info about the system. (default: False)
+ -d, --plugin-path            Print plugin path (default: False)
+ -v, --version                show program&#39;s version number and exit
+ -l, --list-plugins           Get the list of plugins. (default: False)
+
+Available sub-commands/plugins:
+ 
+  
+------- editing --------
+
+   add_prefix                 Add a prefix or suffix to target values.
+   del_attr                   Delete attributes in the target gtf file.
+   discretize_key             Create a new key through discretization of a numeric key.
+   join_attr                  Join attributes from a tabulated file.
+   join_multi_file            Join attributes from mutiple files.
+   merge_attr                 Merge a set of attributes into a destination attribute.
+  
+----- information ------
+
+   add_exon_nb                Add exon number transcript-wise.
+   apropos                    Search in all command description files those related to a user-defined keyword.
+   count                      Count the number of features in the gtf file.
+   count_key_values           Count the number values for a set of keys.
+   feature_size               Compute the size of features enclosed in the GTF.
+   get_attr_list              Get the list of attributes from a GTF file.
+   get_attr_value_list        Get the list of values observed for an attributes.
+   get_example                Get example files including GTF.
+   get_feature_list           Get the list of features enclosed in the GTF.
+   nb_exons                   Count the number of exons by transcript.
+   nb_transcripts             Count the number of transcript per gene.
+   retrieve                   Retrieve a GTF file from ensembl.
+   seqid_list                 Returns the chromosome list.
+   tss_dist                   Computes the distance between TSS of gene transcripts.
+  
+------ selection -------
+
+   random_list                Select a random list of genes or transcripts.
+   random_tx                  Select randomly up to m transcript for each gene.
+   rm_dup_tss                 If several transcripts of a gene share the same TSS, select only one representative.
+   select_by_go               Select lines from a GTF file using a Gene Ontology ID.
+   select_by_intron_size      Select transcripts by intron size.
+   select_by_key              Select lines from a GTF based on attributes and values.
+   select_by_loc              Select transcript/gene overlapping a genomic feature.
+   select_by_max_exon_nb      For each gene select the transcript with the highest number of exons.
+   select_by_nb_exon          Select transcripts based on the number of exons.
+   select_by_numeric_value    Select lines from a GTF file based on a boolean test on numeric values.
+   select_by_regexp           Select lines from a GTF file based on a regexp.
+   select_by_tx_size          Select transcript based on their size (i.e size of mature/spliced transcript).
+   select_most_5p_tx          Select the most 5&#39; transcript of each gene.
+   short_long                 Get the shortest or longest transcript of each gene
+  
+------ conversion ------
+
+   bed_to_gtf                 Convert a bed file to a gtf but with lots of empty fields...
+   convert                    Convert a GTF to various format including bed.
+   convert_ensembl            Convert the GTF file to ensembl format. Essentially add &#39;transcript&#39;/&#39;gene&#39; features.
+   tabulate                   Convert a GTF to tabulated format.
+  
+------ annotation ------
+
+   closest_genes              Find the n closest genes for each transcript.
+   convergent                 Find transcripts with convergent tts.
+   divergent                  Find transcripts with divergent promoters.
+   exon_sizes                 Add a new key to transcript features containing a comma-separated list of exon sizes.
+   intron_sizes               Add a new key to transcript features containing a comma-separated list of intron sizes.
+   ologram                    Statistics on bed file intersections with genomic features.
+   overlapping                Find (non)overlapping transcripts.
+  
+------- sequence -------
+
+   get_feat_seq               Get feature sequence (e.g exon, UTR...).
+   get_tx_seq                 Get transcript sequences in fasta format.
+  
+----- coordinates ------
+
+   get_5p_3p_coords           Get the 5p or 3p coordinate for each feature. TSS or TTS for a transcript.
+   intergenic                 Extract intergenic regions.
+   intronic                   Extract intronic regions.
+   midpoints                  Get the midpoint coordinates for the requested feature.
+   shift                      Transpose coordinates.
+   splicing_site              Compute the locations of donor and acceptor splice sites.
+  
+------- coverage -------
+
+   coverage                   Compute bigwig coverage in body, promoter, tts...
+   mk_matrix                  Compute a coverage matrix (see profile).
+   profile                    Create coverage profile using a bigWig as input.
+  
+----- miscellaneous ----
+
+   col_from_tab               Select columns from a tabulated file based on their names.
+   control_list               Returns a list of gene matched for expression based on reference values.
+
+------------------------
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="activating-bash-completion">
+<h3>Activating Bash completion<a class="headerlink" href="#activating-bash-completion" title="Permalink to this headline">¶</a></h3>
+<p>The code provided below can be useful to activate bash completion.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use the -b argument of gtftk</span>
+<span class="c1"># This will produce a script that you</span>
+<span class="c1"># should store in your .bashrc</span>
+gtftk -b
+</pre></div>
+</div>
+<p>Or alternatively</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">&quot;&quot;</span> &gt;&gt; ~/.bashrc
+gtftk -b &gt;&gt; ~/.bashrc
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="getting-the-list-of-funtional-tests">
+<h3>Getting the list of funtional tests<a class="headerlink" href="#getting-the-list-of-funtional-tests" title="Permalink to this headline">¶</a></h3>
+<p>One can get the list of implemented tests through the -p/–plugin-tests arguments. These tests may be run using <a class="reference external" href="https://github.com/sstephenson/bats">bats</a> (Bash Automated Testing System).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># gtftk --plugin-tests</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="command-wide-arguments">
+<h2>Command-wide arguments<a class="headerlink" href="#command-wide-arguments" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> The following arguments are available in almost all gtftk commands :</p>
+<ul class="simple">
+<li>-h, –help : Argument list and details.</li>
+<li>-i, –inputfile: The input file (may be &lt;stdin&gt;).</li>
+<li>-o, –outputfile: The output file (may be &lt;stdout&gt;).</li>
+<li>-D, –no-date: Do not add date to output file names.</li>
+<li>-C, –add-chr: Add ‘chr’ to chromosome names before printing output.</li>
+<li>-V, –verbosity: Increases output verbosity (can take value from 0 to 4).</li>
+<li>-K –tmp-dir: Keep all temporary files into this folder.</li>
+<li>-L, –logger-file: Stores the values of all command line arguments into a file.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Help on gtftk Unix commands</a><ul>
+<li><a class="reference internal" href="#main-parser-arguments-of-gtftk">Main parser arguments of gtftk</a><ul>
+<li><a class="reference internal" href="#getting-help-with-h">Getting help with -h</a></li>
+<li><a class="reference internal" href="#activating-bash-completion">Activating Bash completion</a></li>
+<li><a class="reference internal" href="#getting-the-list-of-funtional-tests">Getting the list of funtional tests</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#command-wide-arguments">Command-wide arguments</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installing pygtftk/gtftk</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="information.html"
+                        title="next chapter">Commands from section ‘information’</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/gtftk_args.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="information.html" title="Commands from section ‘information’"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installing pygtftk/gtftk"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, F. Lopez and D. Puthier.
+      Last updated on Mar 22, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+    </div>
+  </body>
+</html>

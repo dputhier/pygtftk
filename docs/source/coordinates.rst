@@ -1,6 +1,12 @@
 Commands from section 'coordinates'
 -----------------------------------
 
+In this section we will require the following datasets:
+
+.. command-output:: gtftk get_example -q -d simple -f '*'
+	:shell:
+
+
 midpoints
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -9,7 +15,7 @@ midpoints
 
 **Example:** Get the midpoints of all transcripts and exons.
 
-.. command-output:: gtftk get_example | gtftk midpoints -t transcript,exon -n transcript_id,feature | head -n 5
+.. command-output:: gtftk midpoints -i simple.gtf -t transcript,exon -n transcript_id,feature | head -n 5
 	:shell:
 
 
@@ -28,7 +34,7 @@ Output is bed format.
 
 **Example:** Get the 5p ends of transcripts and exons.
 
-.. command-output:: gtftk get_example | gtftk get_5p_3p_coords -t transcript,exon -n transcript_id,gene_id,feature | head -n 5
+.. command-output:: gtftk get_5p_3p_coords  -i simple.gtf  -t transcript,exon -n transcript_id,gene_id,feature | head -n 5
 	:shell:
 
 
@@ -50,8 +56,9 @@ regions without transcript features.
 
 **Example:** Simply get intergenic regions.
 
-.. command-output::  gtftk get_example -f chromInfo > simple_join_chromInfo.txt; gtftk get_example |  gtftk intergenic   -c simple_join_chromInfo.txt
+.. command-output:: gtftk intergenic -i simple.gtf -c simple.chromInfo
 	:shell:
+
 
 **Arguments:**
 
@@ -70,7 +77,7 @@ Otherwise, the intronic regions corresponding to each transcript are returned
 
 **Example:** Simply get intronic regions.
 
-.. command-output:: gtftk get_example |  gtftk intronic | head -n 5
+.. command-output:: gtftk intronic -i simple.gtf | head -n 5
 	:shell:
 
 
@@ -90,7 +97,7 @@ add_exon_nb command. The score column of the bed file contains the number of the
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk add_exon_nb -k exon_nbr | gtftk splicing_site  -k exon_nbr| head
+.. command-output:: gtftk add_exon_nb -i simple.gtf -k exon_nbr | gtftk splicing_site  -k exon_nbr| head
 	:shell:
 
 **Arguments:**
@@ -110,7 +117,7 @@ shift
 .. command-output:: gtftk get_example|  head -n 1
 	:shell:
 
-.. command-output:: gtftk get_example -f chromInfo > simple.chromInfo; gtftk get_example |  gtftk shift -s -10 -c simple.chromInfo | head -n 1
+.. command-output:: gtftk shift -i simple.gtf  -s -10 -c simple.chromInfo | head -n 1
 	:shell:
 
 

@@ -1,6 +1,17 @@
 Commands from section 'selection'
 ---------------------------------
 
+In this section we will require the following datasets:
+
+
+.. command-output:: gtftk get_example -q -d mini_real -f '*'
+	:shell:
+
+.. command-output:: gtftk get_example -q -d tiny_real -f '*'
+	:shell:
+
+.. command-output:: gtftk get_example -q -d simple -f '*'
+	:shell:
 
 select_by_key
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -10,7 +21,7 @@ select_by_key
 
 **Example:** Select some features (genes) then some gene_id.
 
-.. command-output:: gtftk get_example |gtftk select_by_key -k feature -v gene | gtftk select_by_key -k gene_id -v G0002,G0003,G0004
+.. command-output:: gtftk select_by_key -i simple.gtf -k feature -v gene | gtftk select_by_key -k gene_id -v G0002,G0003,G0004
 	:shell:
 
 
@@ -28,7 +39,7 @@ select_by_regexp
 
 **Example:** Select lines corresponding to gene_names matching the regular expression 'G.*9$'.
 
-.. command-output:: gtftk get_example |  gtftk select_by_regexp -k gene_id -r 'G.*9$'
+.. command-output:: gtftk select_by_regexp -i simple.gtf -k gene_id -r 'G.*9$'
 	:shell:
 
 **Arguments:**
@@ -45,7 +56,9 @@ select_by_intron_size
 
 **Example:** Some genes having transcripts containing an intron whose size is below 80 nucleotides
 
-.. command-output:: gtftk get_example -d mini_real |  gtftk select_by_intron_size -s 80 -vd | gtftk intron_sizes | gtftk tabulate -k gene_name,transcript_id,intron_sizes -Hun
+
+
+.. command-output:: gtftk select_by_intron_size -s 200 -vd -i tiny_real.gtf.gz | gtftk intron_sizes | gtftk tabulate -k gene_name,transcript_id,intron_sizes -Hun
 	:shell:
 
 **Arguments:**
@@ -63,7 +76,7 @@ select_by_max_exon_nb
 
 **Example:** Select lines corresponding to gene_names matching the regular expression 'BCL.*'.
 
-.. command-output:: gtftk get_example |  gtftk select_by_max_exon_nb | gtftk select_by_key -t
+.. command-output:: gtftk select_by_max_exon_nb -i simple.gtf | gtftk select_by_key -t
 	:shell:
 
 **Arguments:**
@@ -81,7 +94,7 @@ select_by_loc
 
 **Example:** Select transcripts at a given location.
 
-.. command-output:: gtftk get_example | gtftk select_by_key -k feature -v transcript | gtftk  select_by_loc -l chr1:10-15
+.. command-output:: gtftk select_by_key -k feature -v transcript -i simple.gtf | gtftk  select_by_loc -l chr1:10-15
 	:shell:
 
 **Arguments:**
@@ -98,7 +111,7 @@ select_by_nb_exon
 
 **Example:**
 
-.. command-output::  gtftk get_example |  gtftk select_by_nb_exon -m 2 | gtftk nb_exons| gtftk select_by_key -t
+.. command-output::  gtftk select_by_nb_exon -m 2 -i simple.gtf | gtftk nb_exons| gtftk select_by_key -t
 	:shell:
 
 **Arguments:**
@@ -135,7 +148,7 @@ random_list
 
 **Example:** Select randomly 3 transcripts.
 
-.. command-output:: gtftk get_example | gtftk random_list -n 3| gtftk count
+.. command-output:: gtftk random_list -n 3 -i simple.gtf | gtftk count
 	:shell:
 
 
@@ -153,7 +166,7 @@ random_tx
 
 **Example:** Select randomly 1 transcript per gene (*-m 1*).
 
-.. command-output:: gtftk get_example |  gtftk random_tx -m 1| gtftk select_by_key -k feature -v gene,transcript| gtftk tabulate -k gene_id,transcript_id
+.. command-output:: gtftk random_tx -m 1 -i simple.gtf | gtftk select_by_key -k feature -v gene,transcript| gtftk tabulate -k gene_id,transcript_id
 	:shell:
 
 **Arguments:**
@@ -170,7 +183,7 @@ rm_dup_tss
 
 **Example:** Use rm_dup_tss to select transcripts that will be used for mk_matrix -k 5 (see later).
 
-.. command-output:: gtftk get_example |  gtftk rm_dup_tss| gtftk select_by_key -k feature -v transcript
+.. command-output:: gtftk rm_dup_tss -i simple.gtf | gtftk select_by_key -k feature -v transcript
 	:shell:
 
 
@@ -189,7 +202,7 @@ select_by_go
 
 **Example:** Select genes with transcription factor activity from the GTF. They could be used subsequently to test their epigenetic features (see later).
 
-.. command-output:: # gtftk get_example -d mini_real -f gtf| gtftk select_by_go -s hsapiens | gtftk select_by_key -k feature -v gene | gtftk tabulate -k gene_id,gene_name -Hun | head -6
+.. command-output:: # gtftk select_by_go -s hsapiens -i mini_real.gtf.gz | gtftk select_by_key -k feature -v gene | gtftk tabulate -k gene_id,gene_name -Hun | head -6
 	:shell:
 
 **Arguments:**
@@ -207,7 +220,7 @@ select_by_tx_size
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk feature_size -t mature_rna |  gtftk select_by_tx_size -m 14 | gtftk tabulate -n -k gene_id,transcript_id,feat_size
+.. command-output:: gtftk feature_size -t mature_rna -i simple.gtf |  gtftk select_by_tx_size -m 14 | gtftk tabulate -n -k gene_id,transcript_id,feat_size
 	:shell:
 
 
@@ -225,7 +238,7 @@ select_most_5p_tx
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk select_most_5p_tx | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id
+.. command-output:: gtftk select_most_5p_tx -i simple.gtf | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id
 	:shell:
 
 **Arguments:**
@@ -242,7 +255,7 @@ short_long
 
 **Example:**
 
-.. command-output:: gtftk get_example | gtftk short_long | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id
+.. command-output:: gtftk short_long -i simple.gtf | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id
 	:shell:
 
 **Arguments:**
