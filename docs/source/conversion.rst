@@ -3,7 +3,7 @@ Commands from section 'conversion'
 
 In this section we will require the following datasets:
 
-.. command-output:: gtftk get_example -d simple -f '*'
+.. command-output:: gtftk get_example -q -d simple -f '*'
 	:shell:
 
 convert

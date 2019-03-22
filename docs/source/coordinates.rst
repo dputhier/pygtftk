@@ -3,7 +3,7 @@ Commands from section 'coordinates'
 
 In this section we will require the following datasets:
 
-.. command-output:: gtftk get_example -d simple -f '*'
+.. command-output:: gtftk get_example -q -d simple -f '*'
 	:shell:
 
 
@@ -117,7 +117,7 @@ shift
 .. command-output:: gtftk get_example|  head -n 1
 	:shell:
 
-.. command-output:: gtftk get_example -i simple.gtf |  gtftk shift -s -10 -c simple.chromInfo | head -n 1
+.. command-output:: gtftk shift -i simple.gtf  -s -10 -c simple.chromInfo | head -n 1
 	:shell:
 
 

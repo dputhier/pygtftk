@@ -4,10 +4,11 @@ Commands from section 'information'
 
 In this section we will require the following datasets:
 
-.. command-output:: gtftk get_example -d simple -f '*'
+.. command-output:: gtftk get_example -q -d simple -f '*'
 	:shell:
 
-
+.. command-output:: gtftk get_example -q -d mini_real -f '*'
+	:shell:
 
 apropos
 ~~~~~~~~~
@@ -67,7 +68,7 @@ We can see from the example below that this gtf file **follows the ensembl forma
 
 let's get all files from the *simple* dataset.
 
-.. command-output:: gtftk get_example -d simple -f '*'
+.. command-output:: gtftk get_example -q -d simple -f '*'
     :shell:
 
 **Arguments:**
@@ -249,7 +250,7 @@ tss_dist
 
 **Example:** An example on the mini_real dataset.
 
-.. command-output:: gtftk get_example -d mini_real |  gtftk random_list -t gene -n 1 -s 2 | gtftk tss_dist
+.. command-output:: gtftk random_list -i mini_real.gtf.gz -t gene -n 1 -s 2 | gtftk tss_dist
     :shell:
 
 

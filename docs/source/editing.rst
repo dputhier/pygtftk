@@ -153,7 +153,7 @@ The default is to create equally spaced interval. The intervals can also be crea
 .. command-output:: gtftk join_attr -i simple.gtf -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
     :shell:
 
-**Example:** We want to load RNA-seq data in the GTF (obtained through the get_example command) and discretize the expression values according to deciles (-p and -n set to 10). Classes will be labeled from A to J. The example below shows how balanced these classes will be.
+**Example:** We want to load RNA-seq data in the GTF and discretize the expression values according to deciles (-p and -n set to 10). Classes will be labeled from A to J. The example below shows how balanced these classes will be.
 
 .. seealso:: The *profile* command that could be used to asses the associated epigenetic marks of these 10 gene classes.
 

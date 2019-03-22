@@ -4,13 +4,13 @@ Commands from section 'selection'
 In this section we will require the following datasets:
 
 
-.. command-output:: gtftk get_example -d mini_real -f '*'
+.. command-output:: gtftk get_example -q -d mini_real -f '*'
 	:shell:
 
-.. command-output:: gtftk get_example -d tiny_real -f '*'
+.. command-output:: gtftk get_example -q -d tiny_real -f '*'
 	:shell:
 
-.. command-output:: gtftk get_example -d simple -f '*'
+.. command-output:: gtftk get_example -q -d simple -f '*'
 	:shell:
 
 select_by_key
