@@ -41,7 +41,7 @@ The package comes with a set of **UNIX commands** that can be accessed through t
 
 While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon  active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository. 
 
-The **Documentation** about the latest release is available as a `github page <https://dputhier.github.io/pygtftk/>`_.
+**NB:** The **Documentation** about the latest release is available as a `github page <https://dputhier.github.io/pygtftk/>`_. The readthedoc version won't be maintained and will be close in the near future. This choice was motivated by the impossibility to maintain a dynamic documentation (using sphinx/sphinxcontrib-programoutput) given the computing time provided by readthedoc server.
 
 System requirements
 --------------------
