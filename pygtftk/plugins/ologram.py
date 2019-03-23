@@ -32,10 +32,10 @@ from pygtftk.utils import message
 __updated__ = "2019-03-18"
 __doc__ = """
 
- OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram 
- annotates peaks (in bed format) using (i) genomic features extracted 
- from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with 
-  particular keys/values in a GTF file (e.g. gene_biotype "protein_coding", 
+ OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
+ annotates peaks (in bed format) using (i) genomic features extracted
+ from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with
+  particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
   gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
 
  Each couple peak file/region is randomly shuffled across the genome (inter-region
@@ -78,7 +78,7 @@ __notes__ = """
 
  -- Use -\-no-basic-feature if you want to perform enrichment analysis on focused annotations only (-\-more-bed or -\-more-key).
 
- -- The goal of the minibatch is to save RAM. Increase the number of minibatches, instead of their size.
+ -- The goal of the minibatches is to save RAM. You should increase the number of minibatches, instead of their size.
  You may need to use very small minibatches if you have large sets of regions.
 
  -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
@@ -86,8 +86,8 @@ __notes__ = """
  This in Beta for now and will be very time-consuming (hours), especially if you have few CPU cores.
  Try using an exclusion file that is as small (around a thousand elements) as possible.
 
- -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations instead of independant shuffles
- for respectively region lengths and inter-region lengths. This is not recommended in the general case and can *very* time-consuming (hours).
+ -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
+ for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic reions repartitions. This is not recommended in the general case and can *very* time-consuming (hours).
 
  """
 
@@ -195,7 +195,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-ma', '--use-markov',
-                            help='Whether to use Markov model realisations instead of independant shuffles. See notes.',
+                            help='Whether to use Markov model (order 2) realisations instead of independant shuffles. See notes.',
                             action='store_true',
                             required=False)
 
