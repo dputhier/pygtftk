@@ -84,6 +84,10 @@ def learn_word_dict(corpus):
     found following this pair in the corpus.
     """
 
+    # NOTE FOR IMPROVEMENT : this could be adapted to work with a Markov model
+    # of order k : replace `yield (corpus[i], corpus[i+1], corpus[i+2])` with
+    # `yield (corpus[i+j] for j in range(k))`
+
     def make_trios(corpus):
         # Must have at least 3 features
         if len(corpus) < 3 :
@@ -225,10 +229,14 @@ cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
         fake_bed.append((str(chrom),int(start),int(end)))
 
 
-    # REMARK : as a perspective, we could use the same algorithm but keep the
+    # NOTE for improvement : we could use the same algorithm but keep the
     # negative inter-region lengths, to generate non-merged beds : this way,
-    # we could work with peaks that have some overlp and not juste merge them,
+    # we could work with peaks that have some overlap and not juste merge them,
     # and do some statistics on this within-set overlap. Something to consider.
+    # The only sanity check required is making sure negative `current_position`
+    # are not possible.
+    # Rq : this would require changing the algorithm that computes the overlaps,
+    # see relevant notes there
 
     return fake_bed
 
