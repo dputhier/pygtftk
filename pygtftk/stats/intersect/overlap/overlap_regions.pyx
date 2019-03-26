@@ -78,6 +78,18 @@ cdef find_overlap(np.ndarray melted):
     return overlaps
 
 
+    ### NOTES for improvement
+
+    # This algorithm could be adapted for N-fold intersection by replacing openA
+    # and openB with a vector of open flags (1 flag per set) and replacing conditions :
+    #   'openA & openB' becomes 'at least one open'
+    #   when any `open` flag changes (any region in any set opens or closes), record overlap
+
+    # If the sets are not merged and can have overlapping regions, the algorithm
+    # could use a stack : incrementing a 'currently_open' variable whenever a
+    # 'start' position is found and reducing it if a 'stop' position is found.
+
+
 
 
 def find_intersection(fake_bed_A,fake_bed_B, all_chrom):
@@ -165,6 +177,7 @@ def compute_intersections_cython(beds_A, beds_B,all_chroms, nb_threads = 8):
     """
     data = [(beds_A[i], beds_B[i]) for i in range(len(beds_A))]
 
+    # NOTE for improvement : we could return the intersections separately for each chromosme
     run_intersect_partial = partial(run_intersect_cython, all_chroms = all_chroms)
 
     with Pool(nb_threads) as p:

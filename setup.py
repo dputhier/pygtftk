@@ -306,7 +306,8 @@ setup(name="pygtftk",
                         'matplotlib >=3.0.0',
                         'plotnine >=0.5.1',
                         'setuptools',
-                        'cython'],
+                        'cython',
+                        'mpmath'],
       ext_modules=[lib_pygtftk] + [cython_ologram] + [cython_ologram_2])
 
 # ----------------------------------------------------------------------
