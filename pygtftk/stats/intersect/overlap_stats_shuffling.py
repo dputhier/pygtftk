@@ -267,10 +267,8 @@ def compute_overlap_stats(bedA, bedB,
         pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
 
     else:
-        pval_intersect_nb = np.exp(
-            nf.log_nb_pval(true_intersect_nb, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs))
-        pval_bp_overlaps = np.exp(
-            nf.log_nb_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps))
+        pval_intersect_nb = nf.negbin_pval(true_intersect_nb, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs)
+        pval_bp_overlaps = nf.negbin_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps)
 
     stop = time.time()
     message('Negative Binomial distributions fitted in : ' + str(stop - start) + ' s.', type='DEBUG')

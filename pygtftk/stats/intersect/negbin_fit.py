@@ -5,6 +5,7 @@ Contains various utility functions relative to the negative binomial distributio
 import numpy as np
 import scipy
 import scipy.stats
+import mpmath
 
 from pygtftk.utils import message
 
@@ -130,45 +131,59 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 16):
     return result
 
 
-def log_nb_pval(k, mean, var):
-    """
-    Log p-value for a negative binomial of those moments.
+
+def negbin_pval(k, mean, var):
+    r"""
+    P-value for a negative binomial distribution of the given moments (mean, var).
+
+    This uses a (very precise) approximation via integrals in mpmath to circumvent
+    floating point precision issues.
 
     This is the two-sided p-value : it will return the minimum of the left-sided
     and right-sided p-value
 
     NOTE : To prevent division by zero or negative r, if the mean is higher than
     or equal to the variance, set the variance to mean + epsilon and send a warning
+
+    >>> mean = 65501.64
+    >>> var = 296918076.91
+    >>> k = 1388283
+    >>> pval = negbin_pval(k, mean, var)
+    >>> assert(pval == 1.3574030599876457E-110)
     """
 
     if mean == 0:
         mean = 1
-        message("Computing log(p-val) for a Neg Binom with mean = 0 ; mean was set to 1")
+        message("Computing log(p-val) for a Neg Binom with mean = 0 ; mean was set to 1", type='WARNING')
         # This is necessary, since r must be above 0.
 
     if mean >= var:
         var = mean + 1
-        message("Computing log(p-val) for a Neg Binom with mean >= var ; var was set to mean+1")
+        message("Computing log(p-val) for a Neg Binom with mean >= var ; var was set to mean+1", type='WARNING')
+
+
+    mpmath.mp.dps = 300 # Floating point precision of mpmath - Same as in R
 
     # Calculate r and p based on mean and var
-    r = mean**2 / (var-mean)
-    p = 1/(mean/r + 1)
+    r = mpmath.mpf(mean**2 / (var-mean))
+    p = mpmath.mpf(1/(mean/r + 1))
 
-    rv = scipy.stats.nbinom(r, p)
+    # To circumvent scipy floating point precision issues, we implement an
+    # "approximate" (but very precise) caculation of the p-value using integral
+    # approximation via mpmath
+    incomplete_beta = mpmath.quad(lambda t: t**(r-1) * (1-t)**((k+1)-1), [0, p])
+    complete_beta = mpmath.quad(lambda t: t**(r-1) * (1-t)**((k+1)-1), [0, 1])
 
-    # NOTE Due to scipy's log cdf implementaiton, with sufficienly large values of r,
-    # p and k, the log of the p value can return a '-inf'. This will not impact
-    # the calculation of the true p value, since np.exp(-np.inf) = 0, so we
-    # silence the warnings temporarily.
-    # NOTE 2 Again, due to numpy's precision, p-values floor at ~= 1.11E-16
-    np.seterr(divide = 'ignore')
-    left_pval = rv.logcdf(k)
-    right_pval = rv.logsf(k)
-    np.seterr(divide = 'warn')
+    pval = 1 - (incomplete_beta / complete_beta)
 
-    twosided_pval = min(left_pval, right_pval)
+    twosided_pval = min(pval, 1-pval) # Take the minimum of CDF and SF
 
-    return twosided_pval
+    # Convert back to Python float and return
+    # Also floor at zero : with extreme values, floating point precision may
+    # result in a p-value of a very slight negative
+    return max(0,float(twosided_pval))
+
+
 
 
 
