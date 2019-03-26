@@ -210,6 +210,11 @@ def compute_overlap_stats(bedA, bedB,
     summed_bp_overlaps = [sum(x) for x in bp_overlaps]
     intersect_nbs = [s[1] for s in stats]
 
+    # NOTE FOR IMPROVEMENT : it would be interesting to return the average size
+    # of an overlap as well, per shuffle. Since our intersection algorithm returns
+    # details about the intersections like `bedtools intersect` would, this could
+    # be computed without much hassle.
+
     #### Fitting of a Negative Binomial distribution on the shuffles
     # Only relevant for classical shuffle, not Markov
 
