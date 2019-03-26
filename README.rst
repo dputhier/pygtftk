@@ -10,6 +10,7 @@ Latest conda              |latestconda|
 Downloads                 |downloads|_
 Contribution              |contrib|_
 Github hits               |hits|_
+Issues                    |issues|_
 Documentation             `Documentation <https://dputhier.github.io/pygtftk/>`_
 =================         =================
 
@@ -43,6 +44,11 @@ Documentation             `Documentation <https://dputhier.github.io/pygtftk/>`_
 .. |hits| image:: http://hits.dwyl.io/dputhier/pygtftk.svg
 .. _hits: http://hits.dwyl.io/dputhier/pygtftk
 
+.. |reference| image:: https://img.shields.io/reference-yes-green.svg
+.. _reference: http://hits.dwyl.io/dputhier/pygtftk
+
+.. |issues| image:: https://img.shields.io/github/issues-raw/dputhier/pygtftk.svg
+.. _issues: https://github.com/dputhier/pygtftk/issues
 
 
 
