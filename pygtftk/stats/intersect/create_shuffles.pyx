@@ -34,22 +34,20 @@ def shuffle(arr):
 # ------------------------ Custom Markov shuffling --------------------------- #
 
 """
-This will shuffle lists using an order 2 Markov model.
+This will "shuffle" lists using an order 2 Markov model.
 
-WARNING : A Markov shuffling here is not strictly a shuffle, since the resulting
-arrays will have different elements. It is more akin to generating a new array
-based on the Markovian characteristics of the old one.
+WARNING : This is not strictly a shuffle, since the resulting arrays will have
+different elements. It is more akin to generating a new array based on the
+"Markovian" characteristics of the old one, in terms of order of elements.
 
 This is not recommended in the general case, and should only be used if you
 suspect there is an order to the data that you want to keep.
 
-Markov shuffling is very much in BETA-TEST at the moment. You should not rely on
-it just yet.
-
-Please note that :
+Markov shuffling is very much in BETA-TEST at the moment. Please note that :
   - This will be very time consuming (hours).
-  - A negative binomial cannot be used here, the resulting distribution is often
-  multimodal and not a good fit for any of the basic probability distributions.
+  - When modeling overlap statistics (such as total overlap length), a negative
+  binomial cannot be used here, the resulting distribution is often multimodal
+  and not a good fit for any of the basic probability distributions.
   - This will result in a higher number of intersections and number of overlapping
   base pairs than the basic shuffle. Even when comparing a BED file against itself,
   you may find the BED file to be "significantly anticorrelated with itself" because

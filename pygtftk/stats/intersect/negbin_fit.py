@@ -24,7 +24,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 16):
     the 20-30 range.
     Target bin number is ajustable, final bin number may vary due to rounding.
 
-    Futhermore, the Chi-Squares test can artificially return (H0 false) if n is
+    Futhermore, the Chi-Squared test can artificially return (H0 false) if n is
     too large. Hence, we use Cramer's V test instead.
 
     The function returns 1 - V, where V is the Cramer's V test of a crosstab
