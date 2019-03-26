@@ -1,5 +1,35 @@
 # Changelog
 
+## v1.0.4
+
+- Updated changelog
+
+### Bug Fixes
+
+### API Changes
+
+### Code changes
+
+### New Features
+
+## v1.0.3
+
+- Improved p-value precision in ologram.
+
+### Bug Fixes
+
+### API Changes
+
+### Code changes
+
+- Improved p-value precision in ologram.
+- Added mpmath as dependency.
+
+### New Features
+
+- Added tiny_real dataset.
+- Added -q argument (--quiet) to get_example.
+
 ## v1.0.2
 
 - No more using readthedoc as the doc is becoming too long to process.
@@ -16,8 +46,6 @@
 
 - Added tiny_real dataset.
 - Added -q argument (--quiet) to get_example.
-
-# Changelog
 
 ## v1.0.0
 
