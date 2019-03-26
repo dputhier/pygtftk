@@ -35,9 +35,6 @@ The program will return statistics for both the number of intersections and the 
 .. command-output:: gtftk ologram -i mini_real.gtf.gz -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.pdf -k 8
 	:shell:
 
-Download :download:`pdf <_static/example_pa_01.pdf>`.
-
-
 
 .. raw:: html
 
@@ -57,9 +54,6 @@ Download :download:`pdf <_static/example_pa_01.pdf>`.
 
 .. command-output:: gtftk ologram -i mini_real.gtf.gz -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n  -if example_pa_02.pdf -k 8
 	:shell:
-
-Download :download:`pdf <_static/example_pa_02.pdf>`.
-
 
 
 .. raw:: html
@@ -81,9 +75,6 @@ Download :download:`pdf <_static/example_pa_02.pdf>`.
 .. command-output:: gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6   | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exprs_class -if example_pa_03.pdf -k 8
 	:shell:
 
-Download :download:`pdf <_static/example_pa_03.pdf>`.
-
-
 
 .. raw:: html
 
@@ -103,9 +94,6 @@ Download :download:`pdf <_static/example_pa_03.pdf>`.
 
 .. command-output:: gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exon_nbr_cat -if example_pa_04.pdf -k 8
 	:shell:
-
-Download :download:`pdf <_static/example_pa_04.pdf>`.
-
 
 
 .. raw:: html

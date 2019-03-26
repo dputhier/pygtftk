@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Commands from section ‘annotation’ &#8212; gtftk 1.0.2 documentation</title>
+    <title>Commands from section ‘annotation’ &#8212; gtftk 1.0.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="conversion.html" title="Commands from section ‘conversion’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -69,9 +69,12 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i mini_real.gtf.gz -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.pdf -k 8
+ |-- 19:40-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
+ |-- 19:41-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
+ |-- 19:41-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
+ |-- 19:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
 </pre></div>
 </div>
-<p>Download <a class="reference download internal" download="" href="_downloads/b84afafd9fd8ce1317545d9e1eba3df6/example_pa_01.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>.</p>
 <br>
 <table>
 <tr>
@@ -84,14 +87,16 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i mini_real.gtf.gz -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n  -if example_pa_02.pdf -k 8
- |-- 17:05-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 17:05-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 17:05-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 17:05-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 17:05-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 19:43-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 19:43-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
+ |-- 19:43-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 19:45-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 19:45-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
+ |-- 19:45-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 19:45-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 19:46-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
 </pre></div>
 </div>
-<p>Download <a class="reference download internal" download="" href="_downloads/6a22a2c6705c1421955406a0316272f5/example_pa_02.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>.</p>
 <br>
 <table>
 <tr>
@@ -104,10 +109,9 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K4me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6   | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exprs_class -if example_pa_03.pdf -k 8
- |-- 17:06-INFO-discretize_key : Categories: [&#39;[0.0_10.0]&#39;, &#39;(10.0_149.0]&#39;, &#39;(149.0_585.0]&#39;, &#39;(585.0_1171.0]&#39;, &#39;(1171.0_2486.83]&#39;, &#39;(2486.83_41703.0]&#39;]
+ |-- 19:46-INFO-discretize_key : Categories: [&#39;[0.0_10.0]&#39;, &#39;(10.0_149.0]&#39;, &#39;(149.0_585.0]&#39;, &#39;(585.0_1171.0]&#39;, &#39;(1171.0_2486.83]&#39;, &#39;(2486.83_41703.0]&#39;]
 </pre></div>
 </div>
-<p>Download <a class="reference download internal" download="" href="_downloads/959e411f4470e8e1330736497073c14d/example_pa_03.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>.</p>
 <br>
 <table>
 <tr>
@@ -120,10 +124,9 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exon_nbr_cat -if example_pa_04.pdf -k 8
- |-- 17:07-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 19:48-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
 </pre></div>
 </div>
-<p>Download <a class="reference download internal" download="" href="_downloads/614b25d8398e8c669baa9f24c80a4a3f/example_pa_04.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>.</p>
 <br>
 <table>
 <tr>
@@ -139,16 +142,16 @@ The program will return statistics for both the number of intersections and the 
   Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-if user_img_file] [-x] [-tp tsv_file_path] [-dpi dpi] [-z] [-f] [-w] [-q] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
 
   Description: 
-     *  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram  annotates peaks (in bed
-     format) using (i) genomic features extracted  from a GTF file (e.g promoter, tts, gene body,
-     UTR...) (ii) genomic regions tagged with  particular keys/values in a GTF file (e.g.
-     gene_biotype &quot;protein_coding&quot;,  gene_biotype &quot;LncRNA&quot;...) or (iii) from a BED file (e.g. user-
+     *  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks (in bed
+     format) using (i) genomic features extracted from a GTF file (e.g promoter, tts, gene body,
+     UTR...) (ii) genomic regions tagged with particular keys/values in a GTF file (e.g.
+     gene_biotype &quot;protein_coding&quot;, gene_biotype &quot;LncRNA&quot;...) or (iii) from a BED file (e.g. user-
      defined regions).  Each couple peak file/region is randomly shuffled across the genome (inter-
      region lengths are considered). Then the probability of intersection under the null hypothesis
      (the peaks and this feature are independent) is deduced thanks to this Monte Carlo approach.
      The program will return statistics for both the number of intersections and the total lengths
      (in basepairs) of all intersections.  Authors : Quentin Ferré &lt;quentin.q.ferre@gmail.com&gt;,
-     Guillaume Charbonnier  &lt;guillaume.charbonnier@outlook.com&gt; and Denis Puthier
+     Guillaume Charbonnier &lt;guillaume.charbonnier@outlook.com&gt; and Denis Puthier
      &lt;denis.puthier@univ-amu.fr&gt;.
 
   Notes:
@@ -162,11 +165,11 @@ The program will return statistics for both the number of intersections and the 
      *  The program produces a pdf file and a txt file (&#39;_stats_&#39;) containing intersection
      statistics for the shuffled BEDs under H0 (peak_file and the considered genomic region are
      independant): number of intersections (= number of lines in the bed intersect) and total number
-     of overlapping base pairs. The output figure gives, for both statistics, esperance and standard
-     deviation (error bars) in the shuffles compared to the actual values. It also gives, under the
-     &#39;fit&#39; label for each statistic, the goodness of fit of the statistic under (H0) to a Negative
-     Binomial assessed by a Cramer&#39;s V score (fit_quality gives 1-V ; as per Cramer (1948) a good
-     fit should have a fit quality above (1 - 0.25 = 0.75) if your nb. of shuffles is in the
+     of overlapping base pairs.  The output figure gives, for both statistics, esperance and
+     standard deviation (error bars) in the shuffles compared to the actual values.  It also gives,
+     under the &#39;fit&#39; label for each statistic, the goodness of fit of the statistic under (H0) to a
+     Negative Binomial assessed by a Cramer&#39;s V score (fit_quality gives 1-V ; as per Cramer (1948)
+     a good fit should have a fit quality above (1 - 0.25 = 0.75) if your nb. of shuffles is in the
      hundreds, but closer to 0.9 if it is in the thousands or above.  The p-value of the true
      intersection under the distribution characterized by the shuffles is also given, under
      &#39;p_value&#39;. Finally, the log2 fold change between true and shuffles is also given.
@@ -176,16 +179,18 @@ The program will return statistics for both the number of intersections and the 
      will be retrieved merged and tested for enrichment.
      *  Use --no-basic-feature if you want to perform enrichment analysis on focused annotations
      only (--more-bed or --more-key).
-     *  The goal of the minibatch is to save RAM. Increase the number of minibatches, instead of
-     their size. You may need to use very small minibatches if you have large sets of regions.
+     *  The goal of the minibatches is to save RAM. You should increase the number of minibatches,
+     instead of their size. You may need to use very small minibatches if you have large sets of
+     regions.
      *  You can exclude regions from the shuffling. This is done by shuffling across a concatenated
      &quot;sub-genome&quot; obtained by removing the excluded regions, but the same ones will be excluded from
-     the peak_file and the GTF. This in Beta for now and will be very time-consuming (hours),
-     especially if you have few CPU cores. Try using an exclusion file that is as small (around a
-     thousand elements) as possible.
+     the peak_file and the GTF. This in Beta for now and can be very time-consuming (minutes or
+     hours), especially if you have few CPU cores. Try using an exclusion file that is as small
+     (around a thousand elements) as possible.
      *  BETA : About --use-markov. This arguments control whether to use Markov model realisations
-     instead of independant shuffles for respectively region lengths and inter-region lengths. This
-     is not recommended in the general case and can *very* time-consuming (hours).
+     (of order 2) instead of independant shuffles for respectively region lengths and inter-region
+     lengths. This can better capture the structure of the genomic regions repartitions. This is not
+     recommended in the general case and can be *very* time-consuming (hours).
 
   Version:  2019-03-18
 
@@ -204,7 +209,7 @@ Arguments:
  -s, --seed                  Numpy random seed. (default: 42)
  -mn, --minibatch-nb         Number of minibatches of shuffles. (default: 10)
  -ms, --minibatch-size       Size of each minibatch, in number of shuffles. (default: 20)
- -ma, --use-markov           Whether to use Markov model realisations instead of independant shuffles. See notes. (default: False)
+ -ma, --use-markov           Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes. (default: False)
  -o, --outputdir             Output directory name. (default: ologram_output)
  -pw, --pdf-width            Output pdf file width (inches). (default: None)
  -ph, --pdf-height           Output pdf file height (inches). (default: None)
@@ -632,12 +637,12 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="conversion.html" title="Commands from section ‘conversion’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Mar 22, 2019.
+      Last updated on Mar 26, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
     </div>
   </body>
