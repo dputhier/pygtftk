@@ -46,7 +46,7 @@ __doc__ = """
  The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
 
- Authors : Quentin Ferré <quentin.q.ferre@gmail.com>, Guillaume Charbonnier 
+ Authors : Quentin Ferré <quentin.q.ferre@gmail.com>, Guillaume Charbonnier
  <guillaume.charbonnier@outlook.com> and Denis Puthier <denis.puthier@univ-amu.fr>.
  """
 
@@ -55,21 +55,25 @@ __notes__ = """
  It is recommended you do not run other programs in the meantime on a laptop.
 
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
+
  -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the corresponding
  size of conventional chromosomes are used. ChrM is not used.
+
  -- The program produces a pdf file and a txt file ('_stats_') containing intersection statistics
  for the shuffled BEDs under H0 (peak_file and the considered genomic region are independant):
  number of intersections (= number of lines in the bed intersect) and total number of overlapping
  base pairs.
+
  The output figure gives, for both statistics, esperance and standard deviation (error bars)
  in the shuffles compared to the actual values.
-    It also gives, under the 'fit' label for each statistic, the goodness of fit of the statistic under (H0)
-    to a Negative Binomial assessed by a Cramer's V score (fit_quality gives 1-V ; as per Cramer (1948) a good fit
-    should have a fit quality above (1 - 0.25 = 0.75) if your nb. of shuffles is in the hundreds, but closer to 0.9
-    if it is in the thousands or above.
 
-    The p-value of the true intersection under the distribution characterized by the shuffles is also given, under 'p_value'.
-    Finally, the log2 fold change between true and shuffles is also given.
+ It also gives, under the 'fit' label for each statistic, the goodness of fit of the statistic under (H0)
+ to a Negative Binomial assessed by a Cramer's V score (fit_quality gives 1-V ; as per Cramer (1948) a good fit
+ should have a fit quality above (1 - 0.25 = 0.75) if your nb. of shuffles is in the hundreds, but closer to 0.9
+ if it is in the thousands or above.
+
+ The p-value of the true intersection under the distribution characterized by the shuffles is also given, under 'p_value'.
+ Finally, the log2 fold change between true and shuffles is also given.
 
  -- If -\-more-keys is used additional region sets will be tested based on the associated key value.
  As an example, if -\-more-keys is set to the 'gene_biotype' (a key generally found in ensembl GTF), the
@@ -83,11 +87,13 @@ __notes__ = """
 
  -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
  the excluded regions, but the same ones will be excluded from the peak_file and the GTF.
- This in Beta for now and will be very time-consuming (hours), especially if you have few CPU cores.
+ This in Beta for now and can be very time-consuming (minutes or hours), especially if you have few CPU cores.
  Try using an exclusion file that is as small (around a thousand elements) as possible.
 
  -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
- for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic reions repartitions. This is not recommended in the general case and can *very* time-consuming (hours).
+ for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
+ This is not recommended in the general case and can be *very* time-consuming (hours).
+
 
  """
 
@@ -195,7 +201,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-ma', '--use-markov',
-                            help='Whether to use Markov model (order 2) realisations instead of independant shuffles. See notes.',
+                            help='Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes.',
                             action='store_true',
                             required=False)
 
@@ -311,7 +317,7 @@ def ologram(inputfile=None,
     np.random.seed(seed)
 
     # -------------------------------------------------------------------------
-    # Are we using markov shuffling ?
+    # Are we using Markov model realisations instead of shuffling ?
     # If yes, send a warning to the user.
     # -------------------------------------------------------------------------
 
@@ -322,7 +328,7 @@ def ologram(inputfile=None,
             type='WARNING')
 
     # -------------------------------------------------------------------------
-    # If user wants don't provide a GTF
+    # If the user wishes, don't provide a GTF to the tool
     # -------------------------------------------------------------------------
 
     if no_gtf:
@@ -419,7 +425,7 @@ def ologram(inputfile=None,
 
     # WARNING : do not modify chrom_info or peak_file afterwards !
     # We can afford to modify chrom_len because we only modify its values, and the
-    # rest of the ologram code relie otherwise only on its keys.
+    # rest of the ologram code relies otherwise only on its keys.
 
     if bed_excl is not None:
         # Treating bed_excl once and for all : turning it into a pybedtools file, merging it and sorting it.
@@ -539,7 +545,7 @@ def ologram(inputfile=None,
             os.makedirs(test_path)
 
     # -------------------------------------------------------------------------
-    # Fill the dict with info about basic features include in GTF
+    # Fill the dict with info about basic features included in GTF
     # -------------------------------------------------------------------------
 
     # Prepare a partial call with all fixed parameters (ie. everything except
@@ -766,7 +772,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
     # This can be used to plot either 'summed_bp_overlaps' or 'nb_intersections'
     def plot_this(statname):
 
-        ## DATA PROCESSING
+        # ------------------------- DATA PROCESSING -------------------------- #
 
         # Collect true and shuffled number of the stat being plotted
         data_ni = dm[['feature_type', statname + '_esperance_shuffled', statname + '_true']]
@@ -781,7 +787,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         dmm = data_ni.melt(id_vars='Feature')
         dmm.columns = ['Feature', 'Type', statname]
 
-        ## PLOTTING
+        # ------------------------- PLOTTING --------------------------------- #
 
         # Create plot
         p = ggplot(dmm)
@@ -811,20 +817,24 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
 
         # Format the text
         def format_pvalue(x):
-            if x < 1.12E-16:
-                r = 'p<1.12E-16'  # If the p-value is under 1.12E-16 (log precision limit), say so
+            if x == 0.0:
+                r = 'p~0'  # If the p-value is ~0 (precision limit), say so
             else:
-                r = 'p=' + '{0:.3g}'.format(x)  # Add 'p=' before and format the p value
+                r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
             return r
 
         # Compute the colors for the text box : orange if significantly depleted,
         # green if significantly enriched, black otherwise. For display purposes,
         # p<0.05 counts as significant.
-        signif_color = pd.Series(['#000000'] * len(text))
+        signif_color = pd.Series(['#b3b3b3'] * len(text))
         for i in range(len(text)):
             if text[i] < 0.05:  # If significant
-                if fc[i] < 1: signif_color[i] = '#f57c00'
-                if fc[i] > 1: signif_color[i] = '#43a047'
+                if fc[i] < 1: signif_color[i] = '#ffa64d'
+                if fc[i] > 1: signif_color[i] = '#6cc67b'
+
+            if text[i] < 1E-10: # Moreover, if very significant
+                if fc[i] < 1: signif_color[i] = '#cc6600'
+                if fc[i] > 1: signif_color[i] = '#3c9040'
 
         text = text.apply(format_pvalue)
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)

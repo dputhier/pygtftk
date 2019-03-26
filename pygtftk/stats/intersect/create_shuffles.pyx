@@ -34,22 +34,20 @@ def shuffle(arr):
 # ------------------------ Custom Markov shuffling --------------------------- #
 
 """
-This will shuffle lists using an order 2 Markov model.
+This will "shuffle" lists using an order 2 Markov model.
 
-WARNING : A Markov shuffling here is not strictly a shuffle, since the resulting
-arrays will have different elements. It is more akin to generating a new array
-based on the Markovian characteristics of the old one.
+WARNING : This is not strictly a shuffle, since the resulting arrays will have
+different elements. It is more akin to generating a new array based on the
+"Markovian" characteristics of the old one, in terms of order of elements.
 
 This is not recommended in the general case, and should only be used if you
 suspect there is an order to the data that you want to keep.
 
-Markov shuffling is very much in BETA-TEST at the moment. You should not rely on
-it just yet.
-
-Please note that :
+Markov shuffling is very much in BETA-TEST at the moment. Please note that :
   - This will be very time consuming (hours).
-  - A negative binomial cannot be used here, the resulting distribution is often
-  multimodal and not a good fit for any of the basic probability distributions.
+  - When modeling overlap statistics (such as total overlap length), a negative
+  binomial cannot be used here, the resulting distribution is often multimodal
+  and not a good fit for any of the basic probability distributions.
   - This will result in a higher number of intersections and number of overlapping
   base pairs than the basic shuffle. Even when comparing a BED file against itself,
   you may find the BED file to be "significantly anticorrelated with itself" because
@@ -85,6 +83,10 @@ def learn_word_dict(corpus):
     The dictionary gives, for each pair of elements, all the elements that were
     found following this pair in the corpus.
     """
+
+    # NOTE FOR IMPROVEMENT : this could be adapted to work with a Markov model
+    # of order k : replace `yield (corpus[i], corpus[i+1], corpus[i+2])` with
+    # `yield (corpus[i+j] for j in range(k))`
 
     def make_trios(corpus):
         # Must have at least 3 features
@@ -227,10 +229,14 @@ cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
         fake_bed.append((str(chrom),int(start),int(end)))
 
 
-    # REMARK : as a perspective, we could use the same algorithm but keep the
+    # NOTE for improvement : we could use the same algorithm but keep the
     # negative inter-region lengths, to generate non-merged beds : this way,
-    # we could work with peaks that have some overlp and not juste merge them,
+    # we could work with peaks that have some overlap and not juste merge them,
     # and do some statistics on this within-set overlap. Something to consider.
+    # The only sanity check required is making sure negative `current_position`
+    # are not possible.
+    # Rq : this would require changing the algorithm that computes the overlaps,
+    # see relevant notes there
 
     return fake_bed
 

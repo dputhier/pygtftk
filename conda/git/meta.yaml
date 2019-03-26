@@ -24,6 +24,7 @@ requirements:
     - setuptools
     - numpy
     - cython
+    - mpmath
     - zlib
   run:
     - python >=3.5,<3.7
@@ -33,6 +34,7 @@ requirements:
     - ftputil >=3.3.1,<4.0.0
     - numpy
     - cython
+    - mpmath
     - pandas >=0.23.3
     - scipy >=1.1.0
     - pybedtools >=0.7.8
@@ -62,4 +64,3 @@ about:
   home: http://github.com/dputhier/pygtftk
   license: MIT
   summary: 'The gtftk suite providing facilities to manipulate genomic annotations in gtf format.'
-
