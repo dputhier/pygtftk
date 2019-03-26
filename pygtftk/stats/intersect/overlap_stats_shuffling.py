@@ -220,12 +220,12 @@ def compute_overlap_stats(bedA, bedB,
 
     else:
         # Renaming esperances and variances
-        esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(
-            summed_bp_overlaps)
+        esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(summed_bp_overlaps)
         esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs = np.mean(intersect_nbs), np.var(intersect_nbs)
 
-        # Check that there is a good adjustment.
+        ## Check that there is a good adjustment.
         # This is done using 1 minus Cramer's V score ; a good adjustment should return a value close to 1
+        # See doc of check_negbin_adjustment() for details
         # NOTE Checking adjustment is meaningless if the esperance is zero
         if esperance_fitted_summed_bp_overlaps == 0:
             ps = -1
@@ -238,6 +238,12 @@ def compute_overlap_stats(bedA, bedB,
         else:
             pn = nf.check_negbin_adjustment(intersect_nbs, esperance_fitted_intersect_nbs,
                                             variance_fitted_intersect_nbs)  # .pvalue
+
+
+    # Send warnings when there is a poor fit
+    if (ps < 0.75) | (pn < 0.75):
+        message('There may be at least one poor fit. Check fit quality in the results.',
+                    type='WARNING')
 
     # ---------------------------- True intersections ---------------------------- #
     # Now, calculating the actual p-value for the number of intersections and the
