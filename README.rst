@@ -1,34 +1,54 @@
-.. image:: https://img.shields.io/github/license/mashape/apistatus.svg
-    :alt: Licence
-    :target: https://github.com/dputhier/pygtftk
 
-.. image:: https://badge.fury.io/py/pygtftk.svg
-    :alt: PyPI
-    :target: https://badge.fury.io/py/pygtftk
+=================         =================
+Pip package               |Pippackage|_
+Platforms                 |platform|_
+License                   |license|_
+Build status              |build|_
+Repository size           |size|_
+Conda                     |conda|_
+Latest conda              |latestconda|
+Downloads                 |downloads|_
+Contribution              |contrib|_
+Github hits               |hits|_
+Issues                    |issues|_
+Documentation             `Documentation <https://dputhier.github.io/pygtftk/>`_
+=================         =================
 
-.. image::  https://img.shields.io/badge/contributions-welcome-brightgreen.svg
-    :alt: GitHub
-    :target: https://github.com/dputhier/pygtftk/blob/master/CONTRIBUTING.rst
+.. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg
+.. _license: https://github.com/dputhier/pygtftk
 
-.. image:: https://travis-ci.org/dputhier/pygtftk.svg?branch=master
-    :target: https://travis-ci.org/dputhier/pygtftk
+.. |pippackage| image:: https://badge.fury.io/py/pygtftk.svg
+.. _pippackage: https://badge.fury.io/py/pygtftk
 
-.. image:: https://img.shields.io/github/repo-size/badges/shields.svg
-    :target: https://travis-ci.org/dputhier/pygtftk
+.. |contrib| image::  https://img.shields.io/badge/contributions-welcome-brightgreen.svg
+.. _contrib: https://github.com/dputhier/pygtftk/blob/master/CONTRIBUTING.rst
 
-.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/installer/conda.svg
-    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
+.. |build| image:: https://travis-ci.org/dputhier/pygtftk.svg?branch=master
+.. _build: https://travis-ci.org/dputhier/pygtftk
 
-.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/platforms.svg
-    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
+.. |size| image:: https://img.shields.io/github/repo-size/badges/shields.svg
+.. _size: https://travis-ci.org/dputhier/pygtftk
 
-.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/latest_release_date.svg
-    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
+.. |conda| image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/installer/conda.svg
+.. _conda: https://anaconda.org/guillaumecharbonnier/pygtftk
 
-.. image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/downloads.svg
-    :target: https://anaconda.org/guillaumecharbonnier/pygtftk
+.. |platform| image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/platforms.svg
+.. _platform: https://anaconda.org/guillaumecharbonnier/pygtftk
 
-.. highlight-language: shell
+.. |latestconda| image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/latest_release_date.svg
+.. _latestconda: https://anaconda.org/guillaumecharbonnier/pygtftk
+
+.. |downloads| image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/downloads.svg
+.. _downloads: https://anaconda.org/guillaumecharbonnier/pygtftk
+
+.. |hits| image:: http://hits.dwyl.io/dputhier/pygtftk.svg
+.. _hits: http://hits.dwyl.io/dputhier/pygtftk
+
+.. |reference| image:: https://img.shields.io/reference-yes-green.svg
+.. _reference: http://hits.dwyl.io/dputhier/pygtftk
+
+.. |issues| image:: https://img.shields.io/github/issues-raw/dputhier/pygtftk.svg
+.. _issues: https://github.com/dputhier/pygtftk/issues
 
 
 
