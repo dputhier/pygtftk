@@ -816,20 +816,24 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
 
         # Format the text
         def format_pvalue(x):
-            if x < 1.12E-16:
-                r = 'p<1.12E-16'  # If the p-value is under 1.12E-16 (log precision limit), say so
+            if x == 0.0:
+                r = 'p~0'  # If the p-value is ~0 (precision limit), say so
             else:
-                r = 'p=' + '{0:.3g}'.format(x)  # Add 'p=' before and format the p value
+                r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
             return r
 
         # Compute the colors for the text box : orange if significantly depleted,
         # green if significantly enriched, black otherwise. For display purposes,
         # p<0.05 counts as significant.
-        signif_color = pd.Series(['#000000'] * len(text))
+        signif_color = pd.Series(['#b3b3b3'] * len(text))
         for i in range(len(text)):
             if text[i] < 0.05:  # If significant
-                if fc[i] < 1: signif_color[i] = '#f57c00'
-                if fc[i] > 1: signif_color[i] = '#43a047'
+                if fc[i] < 1: signif_color[i] = '#ffa64d'
+                if fc[i] > 1: signif_color[i] = '#6cc67b'
+
+            if text[i] < 1E-10: # Moreover, if very significant
+                if fc[i] < 1: signif_color[i] = '#cc6600'
+                if fc[i] > 1: signif_color[i] = '#3c9040'
 
         text = text.apply(format_pvalue)
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
