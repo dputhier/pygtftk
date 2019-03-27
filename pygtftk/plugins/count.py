@@ -3,7 +3,6 @@
 import argparse
 import os
 import sys
-from builtins import str
 from collections import OrderedDict
 
 from pygtftk import arg_formatter

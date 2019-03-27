@@ -4,8 +4,6 @@
 import argparse
 import os
 import sys
-from builtins import range
-from builtins import str
 from collections import defaultdict
 
 from pygtftk import arg_formatter

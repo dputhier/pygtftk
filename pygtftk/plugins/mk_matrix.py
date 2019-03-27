@@ -6,8 +6,6 @@ import os
 import pyBigWig
 import sys
 import zipfile
-from builtins import range
-from builtins import str
 
 import pandas as pd
 from pybedtools import BedTool

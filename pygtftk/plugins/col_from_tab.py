@@ -5,7 +5,6 @@ import argparse
 import os
 import re
 import sys
-from builtins import range
 
 from pygtftk import arg_formatter
 from pygtftk.utils import chomp

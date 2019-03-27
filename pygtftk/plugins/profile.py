@@ -7,9 +7,7 @@ import shutil
 import sys
 import warnings
 import zipfile
-from builtins import range
-from builtins import str
-from builtins import zip
+from zipfile import BadZipFile
 from collections import OrderedDict
 
 import matplotlib as mpl
@@ -50,7 +48,7 @@ __notes__ = """
 """
 
 '''
- -- The ranging normalization method [1] implies the following transformation: 
+ -- The ranging normalization method [1] implies the following transformation:
  -- -  (x_i - min(x))/(max(x) - min(x)).
 '''
 
@@ -360,7 +358,7 @@ def profile(inputfile=None,
         with zipfile.ZipFile(inputfile.name) as zf:
             zf.extractall(dir_name)
 
-    except:
+    except BadZipFile:
         message("Problem encountered when unzipping...",
                 type="ERROR")
 

@@ -7,7 +7,7 @@ import sys
 import time
 import warnings
 from functools import partial
-from pygtftk.utils import sort_2_lists
+
 import numpy as np
 import pandas as pd
 import pybedtools
@@ -28,6 +28,7 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
+from pygtftk.utils import sort_2_lists
 
 __updated__ = "2019-03-18"
 __doc__ = """
@@ -875,7 +876,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_ord
                 if fc[i] < 1: signif_color[i] = '#ffa64d'
                 if fc[i] > 1: signif_color[i] = '#6cc67b'
 
-            if text[i] < 1E-10: # Moreover, if very significant
+            if text[i] < 1E-10:  # Moreover, if very significant
                 if fc[i] < 1: signif_color[i] = '#cc6600'
                 if fc[i] > 1: signif_color[i] = '#3c9040'
 

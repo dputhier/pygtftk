@@ -5,8 +5,6 @@ import os
 import re
 import shutil
 import sys
-from builtins import str
-from builtins import zip
 
 from pygtftk import arg_formatter
 from pygtftk.arg_formatter import globbedFileList

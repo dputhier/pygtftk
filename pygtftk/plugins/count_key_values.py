@@ -3,8 +3,6 @@
 import argparse
 import os
 import sys
-from builtins import str
-from builtins import zip
 from collections import defaultdict
 
 from pygtftk import arg_formatter

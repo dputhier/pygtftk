@@ -3,9 +3,6 @@
 import argparse
 import os
 import sys
-from builtins import range
-from builtins import str
-from builtins import zip
 
 import numpy as np
 import pandas
@@ -167,7 +164,7 @@ def discretize_key(inputfile=None,
 
             dest_values += [a]
             dest_pos += [p]
-        except:
+        except ValueError:
             pass
 
     if min_val is None:

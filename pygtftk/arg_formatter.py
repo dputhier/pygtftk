@@ -148,8 +148,6 @@ class ArgFormatter(argparse.HelpFormatter):
                 pos_usage = format_fun(positionals, groups)
                 opt_parts = re.findall(part_regexp, opt_usage)
                 pos_parts = re.findall(part_regexp, pos_usage)
-                assert ' '.join(opt_parts) == opt_usage
-                assert ' '.join(pos_parts) == pos_usage
 
                 # helper for wrapping lines
                 def get_lines(parts, indent, prefix=None):
@@ -248,7 +246,7 @@ def ranged_num(lowest=-1, highest=1, val_type=("int", "float"),
         else:
             try:
                 a_value = float(a_value)
-            except:
+            except ValueError:
                 raise argparse.ArgumentTypeError("Not a float.")
 
         if lowest is None:
