@@ -11,7 +11,8 @@ Downloads                 |downloads|_
 Contribution              |contrib|_
 Github hits               |hits|_
 Issues                    |issues|_
-Documentation             `Documentation <https://dputhier.github.io/pygtftk/>`_
+Citing                    |citing|_
+Documentation             |documentation|_
 =================         =================
 
 .. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg
@@ -49,6 +50,12 @@ Documentation             `Documentation <https://dputhier.github.io/pygtftk/>`_
 
 .. |issues| image:: https://img.shields.io/github/issues-raw/dputhier/pygtftk.svg
 .. _issues: https://github.com/dputhier/pygtftk/issues
+
+.. |citing| image:: https://img.shields.io/badge/doi-https%3A%2F%2Fdoi.org%2F10.1093%2Fbioinformatics%2Fbtz116-blue.svg
+.. _citing: https://doi.org/10.1093/bioinformatics/btz116
+
+.. |documentation| image:: https://img.shields.io/badge/Documentation-https%3A%2F%2Fdputhier.github.io%2Fpygtftk%2F-blue.svg
+.. _documentation: https://dputhier.github.io/pygtftk/
 
 
 
