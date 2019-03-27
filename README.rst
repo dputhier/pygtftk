@@ -77,8 +77,8 @@ Depending on the **size of the GTF file**, pygtftk and gtftk may require lot of 
 
 At the moment, the gtftk program has been tested on:
 
-- Linux (Ubuntu 12.04 and 18.04)
-- OSX (Yosemite, El Capitan, Mojave).
+  - Linux (Ubuntu 12.04 and 18.04)
+  - OSX (Yosemite, El Capitan, Mojave).
 
 
 Installation
