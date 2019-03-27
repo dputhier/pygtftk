@@ -7,7 +7,7 @@ import sys
 import time
 import warnings
 from functools import partial
-
+from pygtftk.utils import sort_2_lists
 import numpy as np
 import pandas as pd
 import pybedtools
@@ -270,6 +270,24 @@ def make_parser():
                             help="Discard silently, from --more-bed files, regions outside chromosomes defined in --chrom-info.",
                             action='store_true',
                             required=False)
+
+    parser_grp.add_argument('-j', '--sort-features',
+                            help="Whether to sort features in diagrams according to a computed statistic.",
+                            choices=[None, "nb_intersections_esperance_shuffled",
+                                     "nb_intersections_variance_shuffled",
+                                     "nb_intersections_negbinom_fit_quality",
+                                     "nb_intersections_log2_fold_change",
+                                     "nb_intersections_true",
+                                     "nb_intersections_pvalue",
+                                     "summed_bp_overlaps_esperance_shuffled",
+                                     "summed_bp_overlaps_variance_shuffled",
+                                     "summed_bp_overlaps_negbinom_fit_quality",
+                                     "summed_bp_overlaps_log2_fold_change",
+                                     "summed_bp_overlaps_true",
+                                     "summed_bp_overlaps_pvalue"],
+                            default=None,
+                            type=str,
+                            required=False)
     return parser
 
 
@@ -302,6 +320,7 @@ def ologram(inputfile=None,
             dpi=300,
             nb_threads=8,
             seed=42,
+            sort_features=False,
             minibatch_nb=8,
             minibatch_size=25,
             ):
@@ -725,18 +744,47 @@ def ologram(inputfile=None,
     close_properly(data_file)
 
     # -------------------------------------------------------------------------
-    # Read the data set and plot it
+    # Read the data
     # -------------------------------------------------------------------------
 
     d = pd.read_csv(data_file.name, sep="\t", header=0)
 
+    # -------------------------------------------------------------------------
+    # Rename the feature type.
+    # When --more-keys is used the key and value are separated by ":".
+    # This give rise to long name whose display in the plot is ugly.
+    # We can break these names using a "\n".
+    # -------------------------------------------------------------------------
+
+    d["feature_type"] = [x.replace(":", "\n") for x in d["feature_type"]]
+
+    # -------------------------------------------------------------------------
+    # Compute feature order for plotting according to sort_features
+    # -------------------------------------------------------------------------
+
+    if sort_features is not None:
+        sorted_feat = sort_2_lists(d[sort_features].tolist(),
+                                   d.feature_type.tolist())[1]
+        feature_order = []
+        for x in sorted_feat:
+            if x not in feature_order:
+                feature_order += [x]
+
+
+    else:
+        feature_order = None
+
+    # -------------------------------------------------------------------------
+    # Plot the diagram
+    # -------------------------------------------------------------------------
+
     if pdf_file is not None:
-        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi)
+        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_order)
         close_properly(pdf_file)
     close_properly(data_file)
 
 
-def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
+def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_order):
     """
     Main plotting function by Q. Ferré and D. Puthier
     """
@@ -753,15 +801,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
     # -------------------------------------------------------------------------
 
     dm = d.copy()
-
-    # -------------------------------------------------------------------------
-    # Rename the feature type.
-    # When --more-keys is used the key and value are separated by ":".
-    # This give rise to long name whose display in the plot is ugly.
-    # We can break these names using a "\n".
-    # -------------------------------------------------------------------------
-
-    dm["feature_type"] = [x.replace(":", "\n") for x in dm["feature_type"]]
 
     # -------------------------------------------------------------------------
     # Create a new plot
@@ -786,6 +825,10 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         # Now melt the dataframe
         dmm = data_ni.melt(id_vars='Feature')
         dmm.columns = ['Feature', 'Type', statname]
+
+        # reorder features if required
+        if feature_order is not None:
+            dmm.Feature = pd.Categorical(dmm.Feature.tolist(), categories=feature_order, ordered=True)
 
         # ------------------------- PLOTTING --------------------------------- #
 
