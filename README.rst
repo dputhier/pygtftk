@@ -97,7 +97,7 @@ If conda is not available on your system, first install miniconda from the offic
 
 Then you can simply install pygtftk in its own isolated environment and activate it. ::
 
-    conda create -n pygtftk -c guillaumecharbonnier pygtftk
+    conda create -n pygtftk -c bioconda pygtftk
     conda activate pygtftk
 
 
