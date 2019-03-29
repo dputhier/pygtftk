@@ -5,7 +5,7 @@ import os
 import sys
 
 from pygtftk import arg_formatter
-from pygtftk.arg_formatter import chromFileAsDict
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import GTFtkError
@@ -65,7 +65,7 @@ def make_parser():
                                  " column 2 ",
                             default=None,
                             metavar="CHROMINFO",
-                            action=chromFileAsDict,
+                            action=CheckChromFile,
                             required=True)
 
     return parser
