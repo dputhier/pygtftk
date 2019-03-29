@@ -413,7 +413,7 @@ def ologram(inputfile=None,
         for i in peak_chrom_list:
             if i not in chrom_len:
                 msg = "Chromosome " + str(i) + " from peak file is undefined in --chrom-info file. "
-                message(msg + 'Please fix --chrom-info file or use --force-chrom-peak.',
+                message(msg + 'Please fix or use --force-chrom-peak.',
                         type="ERROR")
     else:
         peak_file_sub = make_tmp_file(prefix='peaks_x_chrom_info', suffix='.bed')
@@ -695,7 +695,8 @@ def ologram(inputfile=None,
 
                 for i in chrom_list:
                     if i not in chrom_len:
-                        message("Chromosome " + str(i) + " is undefined in --more-bed with label " + bed_lab + ".",
+                        message("Chromosome " + str(
+                            i) + " is undefined in --more-bed with label " + bed_lab + ". Maybe use --force-chrom-more-bed.",
                                 type="ERROR")
             else:
                 bed_anno_sub = make_tmp_file(prefix='more_bed_x_chrom_info' + bed_lab, suffix='.bed')
@@ -859,12 +860,11 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_ord
         text = dm[statname + '_pvalue'].append(na_series)
         text.index = range(len(text))
 
-
         # Format the text
         def format_pvalue(x):
-            #if x == 0.0:
+            # if x == 0.0:
             #    r = 'p~0'  # If the p-value is ~0 (precision limit), say so
-            #else:
+            # else:
             r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
             return r
 

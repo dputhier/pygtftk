@@ -462,6 +462,9 @@ class FormattedFile(argparse.FileType):
         if self._mode == 'r':
             if self.file_ext == 'bed':
 
+                message("Checking BED file format.",
+                        type="INFO")
+
                 try:
                     file_bo = BedTool(string)
                     nb_line = len(file_bo)
