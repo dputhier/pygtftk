@@ -105,6 +105,7 @@ sha = ""
 try:
     import git
     from git import InvalidGitRepositoryError
+
     try:
         repo = git.Repo(search_parent_directories=True)
         sha = repo.head.object.hexsha
@@ -288,8 +289,7 @@ setup(name="pygtftk",
           'dev': ['pycodestyle >= 2.1.0',
                   'sphinx >=1.5.2',
                   'sphinxcontrib-programoutput >=0.8',
-                  'sphinx_bootstrap_theme >=0.4.9',
-                  'sphinxcontrib-googleanalytics >=0.1']
+                  'sphinx_bootstrap_theme >=0.4.9']
           'gffutils': ['gffutils']},
       install_requires=['nose',
                         'pyyaml >=3.12',
