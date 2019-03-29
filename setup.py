@@ -289,7 +289,7 @@ setup(name="pygtftk",
           'dev': ['pycodestyle >= 2.1.0',
                   'sphinx >=1.5.2',
                   'sphinxcontrib-programoutput >=0.8',
-                  'sphinx_bootstrap_theme >=0.4.9']
+                  'sphinx_bootstrap_theme >=0.4.9'],
           'gffutils': ['gffutils']},
       install_requires=['nose',
                         'pyyaml >=3.12',
