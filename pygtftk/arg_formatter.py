@@ -414,7 +414,7 @@ class FormattedFile(argparse.FileType):
         if self._mode == 'r':
             if self.file_ext == 'bed':
 
-                message("Checking BED file format.",
+                message("Checking BED file format (" + string + ").",
                         type="INFO", force=True)
 
                 try:
@@ -440,7 +440,7 @@ class FormattedFile(argparse.FileType):
                 field_count = file_bo.field_count()
 
                 if field_count != 6:
-                    message("Converting to bed6 format, file: " + string, type="INFO", force=True)
+                    message("Converting to bed6 format (" + string + ").", type="INFO", force=True)
                     tmp_file = make_tmp_file(prefix="bed6_",
                                              suffix=".bed")
                     for record in file_bo:
