@@ -161,13 +161,13 @@ def compute_overlap_stats(bedA, bedB,
         result_abort['nb_intersections_negbinom_fit_quality'] = -1;
         result_abort['nb_intersections_log2_fold_change'] = 0
         result_abort['nb_intersections_true'] = 0;
-        result_abort['nb_intersections_pvalue'] = 0
+        result_abort['nb_intersections_pvalue'] = np.nan
         result_abort['summed_bp_overlaps_esperance_shuffled'] = 0;
         result_abort['summed_bp_overlaps_variance_shuffled'] = 0
         result_abort['summed_bp_overlaps_negbinom_fit_quality'] = -1;
         result_abort['summed_bp_overlaps_log2_fold_change'] = 0
         result_abort['summed_bp_overlaps_true'] = 0;
-        result_abort['summed_bp_overlaps_pvalue'] = 0
+        result_abort['summed_bp_overlaps_pvalue'] = np.nan
         return result_abort
 
     # Proper reading of the bed file as a list of intervals
@@ -267,9 +267,13 @@ def compute_overlap_stats(bedA, bedB,
 
     # We can only use a Neg Binom p-val if we can fit it, and that is not the case for
     # the Markov shuffle or if the esperance is too small : we must use an empirical p-value
+
     if (ps == -1) | (pn == -1):
-        pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
-        pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
+        # NOTE : maybe re-use the empirical p-value later. For now return NaN
+        #pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
+        #pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
+        pval_intersect_nb = np.nan
+        pval_bp_overlaps = np.nan
 
     else:
         pval_intersect_nb = nf.negbin_pval(true_intersect_nb, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs)

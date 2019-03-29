@@ -132,7 +132,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 16):
 
 
 
-def negbin_pval(k, mean, var):
+def negbin_pval(k, mean, var, precision = 1200):
     r"""
     P-value for a negative binomial distribution of the given moments (mean, var).
 
@@ -145,6 +145,7 @@ def negbin_pval(k, mean, var):
     NOTE : To prevent division by zero or negative r, if the mean is higher than
     or equal to the variance, set the variance to mean + epsilon and send a warning
 
+    >>> from pygtftk.stats.intersect.negbin_fit import negbin_pval
     >>> mean = 65501.64
     >>> var = 296918076.91
     >>> k = 1388283
@@ -152,9 +153,9 @@ def negbin_pval(k, mean, var):
     >>> assert(pval == 1.3574030599876457E-110)
     """
 
-    if mean == 0:
+    if mean < 1:
         mean = 1
-        message("Computing log(p-val) for a Neg Binom with mean = 0 ; mean was set to 1", type='WARNING')
+        message("Computing log(p-val) for a Neg Binom with mean < 1 ; mean was set to 1", type='WARNING')
         # This is necessary, since r must be above 0.
 
     if mean >= var:
@@ -162,7 +163,9 @@ def negbin_pval(k, mean, var):
         message("Computing log(p-val) for a Neg Binom with mean >= var ; var was set to mean+1", type='WARNING')
 
 
-    mpmath.mp.dps = 300 # Floating point precision of mpmath - Same as in R
+    mpmath.mp.dps = precision # Floating point precision of mpmath
+    # Should be at least 1000. Incorrect results have been observed with
+    # lower precisions.
 
     # Calculate r and p based on mean and var
     r = mpmath.mpf(mean**2 / (var-mean))
@@ -172,19 +175,26 @@ def negbin_pval(k, mean, var):
     # "approximate" (but very precise) caculation of the p-value using integral
     # approximation via mpmath
     incomplete_beta = mpmath.quad(lambda t: t**(r-1) * (1-t)**((k+1)-1), [0, p])
-    complete_beta = mpmath.quad(lambda t: t**(r-1) * (1-t)**((k+1)-1), [0, 1])
+    complete_beta   = mpmath.quad(lambda t: t**(r-1) * (1-t)**((k+1)-1), [0, 1])
 
     pval = 1 - (incomplete_beta / complete_beta)
 
+    # WARNING : if after calculation either integral has gone below the precision
+    # threshold, the results of the division are not relaible and may cause a
+    # strangely high p-value. Return a p-value of zero in that case.
+    floor_precision = mpmath.mpf("10E-"+str(mpmath.mp.dps))
+    if (incomplete_beta <= floor_precision) | (complete_beta <= floor_precision):
+        message("p-val approximation was below precision threshold. Falling back on p=0", type='INFO')
+        pval = 0
+
+
     twosided_pval = min(pval, 1-pval) # Take the minimum of CDF and SF
+    # The p-value may be a slight negative due to precision errors. Fix that.
+    # Furthermore, if the p-value has been rounded below 1E-320, put it at 1E-320
+    twosided_pval = max(1E-320, twosided_pval)
 
     # Convert back to Python float and return
-    # Also floor at zero : with extreme values, floating point precision may
-    # result in a p-value of a very slight negative
-    return max(0,float(twosided_pval))
-
-
-
+    return float(twosided_pval)
 
 
 def empirical_p_val(x, data):

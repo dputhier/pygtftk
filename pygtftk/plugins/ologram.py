@@ -859,12 +859,13 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_ord
         text = dm[statname + '_pvalue'].append(na_series)
         text.index = range(len(text))
 
+
         # Format the text
         def format_pvalue(x):
-            if x == 0.0:
-                r = 'p~0'  # If the p-value is ~0 (precision limit), say so
-            else:
-                r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
+            #if x == 0.0:
+            #    r = 'p~0'  # If the p-value is ~0 (precision limit), say so
+            #else:
+            r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
             return r
 
         # Compute the colors for the text box : orange if significantly depleted,
