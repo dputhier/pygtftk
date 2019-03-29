@@ -418,11 +418,19 @@ def ologram(inputfile=None,
     else:
         peak_file_sub = make_tmp_file(prefix='peaks_x_chrom_info', suffix='.bed')
 
+        n = 0
         for i in peak_file:
             if i.chrom in chrom_len:
                 peak_file_sub.write("\t".join(i.fields) + "\n")
+                n += 1
 
         peak_file_sub.close()
+
+        if n == 0:
+            message("The --peak-file file does not contain any genomic feature "
+                    "falling in chromosomes declared in --chrom-info.",
+                    type="ERROR")
+
         peak_file = BedTool(peak_file_sub.name)
 
     # -------------------------------------------------------------------------
@@ -707,8 +715,8 @@ def ologram(inputfile=None,
                         bed_anno_sub.write("\t".join(i.fields) + "\n")
                         n += 1
                 if n == 0:
-                    msg = "The --more-bed file " + bed_lab + " is empty after checking for --chrom-info."
-                    message(msg + "Please check your --chrom-info file or use --force-chrom-more-bed",
+                    message("The --more-bed file does not contain any genomic feature "
+                            "falling in chromosomes declared in --chrom-info.",
                             type="ERROR")
 
                 bed_anno_sub.close()
