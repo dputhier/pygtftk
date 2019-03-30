@@ -132,7 +132,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number = 16):
 
 
 
-def negbin_pval(k, mean, var, precision = 1200):
+def negbin_pval(k, mean, var, precision):
     r"""
     P-value for a negative binomial distribution of the given moments (mean, var).
 
@@ -146,11 +146,11 @@ def negbin_pval(k, mean, var, precision = 1200):
     or equal to the variance, set the variance to mean + epsilon and send a warning
 
     >>> from pygtftk.stats.intersect.negbin_fit import negbin_pval
-    >>> mean = 65501.64
-    >>> var = 296918076.91
-    >>> k = 1388283
-    >>> pval = negbin_pval(k, mean, var)
-    >>> assert(pval == 1.3574030599876457E-110)
+    >>> mean = 18400
+    >>> var = 630200
+    >>> k = 65630
+    >>> pval = negbin_pval(k, mean, var, precision = 1500)
+    >>> assert(pval == 1.1999432787236828e-307)
     """
 
     if mean < 1:
@@ -162,9 +162,8 @@ def negbin_pval(k, mean, var, precision = 1200):
         var = mean + 1
         message("Computing log(p-val) for a Neg Binom with mean >= var ; var was set to mean+1", type='WARNING')
 
-
     mpmath.mp.dps = precision # Floating point precision of mpmath
-    # Should be at least 1000. Incorrect results have been observed with
+    # Should be at least 1500. Incorrect results have been observed with
     # lower precisions.
 
     # Calculate r and p based on mean and var
