@@ -423,16 +423,24 @@ def ologram(inputfile=None,
         for i in peak_chrom_list:
             if i not in chrom_len:
                 msg = "Chromosome " + str(i) + " from peak file is undefined in --chrom-info file. "
-                message(msg + 'Please fix --chrom-info file or use --force-chrom-peak.',
+                message(msg + 'Please fix or use --force-chrom-peak.',
                         type="ERROR")
     else:
         peak_file_sub = make_tmp_file(prefix='peaks_x_chrom_info', suffix='.bed')
 
+        n = 0
         for i in peak_file:
             if i.chrom in chrom_len:
                 peak_file_sub.write("\t".join(i.fields) + "\n")
+                n += 1
 
         peak_file_sub.close()
+
+        if n == 0:
+            message("The --peak-file file does not contain any genomic feature "
+                    "falling in chromosomes declared in --chrom-info.",
+                    type="ERROR")
+
         peak_file = BedTool(peak_file_sub.name)
 
     # -------------------------------------------------------------------------
@@ -705,7 +713,8 @@ def ologram(inputfile=None,
 
                 for i in chrom_list:
                     if i not in chrom_len:
-                        message("Chromosome " + str(i) + " is undefined in --more-bed with label " + bed_lab + ".",
+                        message("Chromosome " + str(
+                            i) + " is undefined in --more-bed with label " + bed_lab + ". Maybe use --force-chrom-more-bed.",
                                 type="ERROR")
             else:
                 bed_anno_sub = make_tmp_file(prefix='more_bed_x_chrom_info' + bed_lab, suffix='.bed')
@@ -716,8 +725,8 @@ def ologram(inputfile=None,
                         bed_anno_sub.write("\t".join(i.fields) + "\n")
                         n += 1
                 if n == 0:
-                    msg = "The --more-bed file " + bed_lab + " is empty after checking for --chrom-info."
-                    message(msg + "Please check your --chrom-info file or use --force-chrom-more-bed",
+                    message("The --more-bed file does not contain any genomic feature "
+                            "falling in chromosomes declared in --chrom-info.",
                             type="ERROR")
 
                 bed_anno_sub.close()
@@ -869,12 +878,11 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_ord
         text = dm[statname + '_pvalue'].append(na_series)
         text.index = range(len(text))
 
-
         # Format the text
         def format_pvalue(x):
-            #if x == 0.0:
+            # if x == 0.0:
             #    r = 'p~0'  # If the p-value is ~0 (precision limit), say so
-            #else:
+            # else:
             r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
             return r
 

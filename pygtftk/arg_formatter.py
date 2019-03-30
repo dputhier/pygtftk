@@ -328,53 +328,6 @@ class CheckChromFile(argparse.Action):
 
 
 # ---------------------------------------------------------------
-# Returns chromfile as a dict
-# ---------------------------------------------------------------
-
-
-class chromFileAsDict(argparse.Action):
-    """
-    Check the chromosome file exists and has the proper format.
-    """
-
-    def __init__(self,
-                 option_strings,
-                 dest,
-                 nargs=None,
-                 const=None,
-                 default=None,
-                 type=None,
-                 choices=None,
-                 required=False,
-                 help=None,
-                 metavar=None):
-        argparse.Action.__init__(self,
-                                 option_strings=option_strings,
-                                 dest=dest,
-                                 nargs=nargs,
-                                 const=const,
-                                 default=default,
-                                 type=type,
-                                 choices=choices,
-                                 required=required,
-                                 help=help,
-                                 metavar=metavar,
-                                 )
-
-    def __call__(self,
-                 parser,
-                 namespace,
-                 values,
-                 option_string=None):
-        check_file_or_dir_exists(values)
-        values = open(values, "r")
-        values = chrom_info_as_dict(values)
-
-        # Add the attribute
-        setattr(namespace, self.dest, values)
-
-
-# ---------------------------------------------------------------
 # Check file extension and format
 # ---------------------------------------------------------------
 
@@ -393,7 +346,6 @@ class FormattedFile(argparse.FileType):
         self.file_ext = file_ext
 
     def __call__(self, string):
-        match = False
 
         # ---------------------------------------------------------------
         # Check file extension
@@ -462,6 +414,9 @@ class FormattedFile(argparse.FileType):
         if self._mode == 'r':
             if self.file_ext == 'bed':
 
+                message("Checking BED file format (" + string + ").",
+                        type="INFO", force=True)
+
                 try:
                     file_bo = BedTool(string)
                     nb_line = len(file_bo)
@@ -485,7 +440,7 @@ class FormattedFile(argparse.FileType):
                 field_count = file_bo.field_count()
 
                 if field_count != 6:
-                    message("Converting to bed6 format, file: " + string, type="DEBUG")
+                    message("Converting to bed6 format (" + string + ").", type="INFO", force=True)
                     tmp_file = make_tmp_file(prefix="bed6_",
                                              suffix=".bed")
                     for record in file_bo:
