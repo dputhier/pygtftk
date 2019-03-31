@@ -878,7 +878,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_ord
         # Format the text
         def format_pvalue(x):
             if x == 0.0:
-               r = 'p~0'  # If the p-value is ~0 (precision limit), say so
+                r = 'p~0'  # If the p-value is ~0 (precision limit), say so
+            elif x == -1:
+                r = 'p=NA' # If the p-value was -1, we write 'Not applicable'
             else:
                 r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
             return r
