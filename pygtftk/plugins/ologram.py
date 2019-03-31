@@ -76,9 +76,6 @@ __notes__ = """
  The p-value of the true intersection under the distribution characterized by the shuffles is also given, under 'p_value'.
  Finally, the log2 fold change between true and shuffles is also given.
 
- As the p-value is computed using an integral approximation, You may change the precision if you find it too time consuming
- or not precise enough, or recalculate the p-values using the tsv.
-
  -- If -\-more-keys is used additional region sets will be tested based on the associated key value.
  As an example, if -\-more-keys is set to the 'gene_biotype' (a key generally found in ensembl GTF), the
  region related to 'protein_coding', 'lncRNA' or any other values for that key will be retrieved merged and tested
