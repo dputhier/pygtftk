@@ -169,7 +169,7 @@ def negbin_pval(k, mean, var, precision):
 
     # To circumvent scipy floating point precision issues, we implement a
     # custom p-value calcualtion (see 'beta.py' for details)
-    mybetacalc = BetaCalculator(use_log = True, itermax = 2*precision, precision = precision)
+    mybetacalc = BetaCalculator(use_log = True, precision = precision)
     incomplete_beta = mybetacalc.betainc(a = r, b = k+1, x = p)
     complete_beta   = mybetacalc.beta(a = r, b = k+1)
 

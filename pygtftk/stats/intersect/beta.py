@@ -1,5 +1,7 @@
 import mpmath
 
+from pygtftk.utils import message
+
 class BetaCalculator:
     """
     Computing the beta distribution in Python using mpmath.
@@ -7,13 +9,13 @@ class BetaCalculator:
     Adapted from https://malishoaib.wordpress.com/2014/04/15/the-beautiful-beta-functions-in-raw-python/
     Comments deduced from "Numerical Recipes: The Art of Scientific Computing", Third Edition (2007), Teukolsky et al.
 
-    Formulas : 
+    Formulas :
         self.betainc(A, B, p) <-->
         mpmath.betainc(A, B, 0, p) <-->
         mpmath.quad(lambdat: t**(A-1)*(1-t)**(B-1), [0, p])
     """
 
-    def __init__(self, precision = 1000, use_log = True, itermax = 1000):
+    def __init__(self, precision = 1000, use_log = True, itermax = 10000):
         """
         Parameters :
         - precision is the number of significant digits in mpmath.
@@ -29,6 +31,8 @@ class BetaCalculator:
         # Incomplete beta estimation
         self.epsilon = mpmath.mpf("10E-"+str(precision))
         self.itermax = itermax
+
+        # NOTE : default itermax (10000) is suggested in "Numerical Recipes", Third Edition
 
 
 
@@ -92,9 +96,9 @@ class BetaCalculator:
             if (abs(az-aold)<(self.epsilon*abs(az))):
                 return az
 
-        # If failed to converge
-        raise ValueError('a or b too large or given itermax too small for computing incomplete beta function.')
-
+        # If failed to converge, return our best guess but send a warning
+        message('a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous', type='WARNING')
+        return az
 
     def betaincreg(self, a, b, x):
         ''' betaincreg(a,b,x) evaluates the incomplete beta function (regularized)
