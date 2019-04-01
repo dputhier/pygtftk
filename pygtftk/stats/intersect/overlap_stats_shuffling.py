@@ -102,7 +102,8 @@ def compute_overlap_stats(bedA, bedB,
                           minibatch_size, minibatch_nb,
                           bed_excl,
                           use_markov_shuffling,
-                          nb_threads):
+                          nb_threads,
+                          pval_precision):
     """
     This is the hub function to compute overlap statistics through Monte Carlo
     shuffling with integration of the inter-region lengths.
@@ -161,13 +162,13 @@ def compute_overlap_stats(bedA, bedB,
         result_abort['nb_intersections_negbinom_fit_quality'] = -1;
         result_abort['nb_intersections_log2_fold_change'] = 0
         result_abort['nb_intersections_true'] = 0;
-        result_abort['nb_intersections_pvalue'] = np.nan
+        result_abort['nb_intersections_pvalue'] = -1;
         result_abort['summed_bp_overlaps_esperance_shuffled'] = 0;
         result_abort['summed_bp_overlaps_variance_shuffled'] = 0
         result_abort['summed_bp_overlaps_negbinom_fit_quality'] = -1;
         result_abort['summed_bp_overlaps_log2_fold_change'] = 0
         result_abort['summed_bp_overlaps_true'] = 0;
-        result_abort['summed_bp_overlaps_pvalue'] = np.nan
+        result_abort['summed_bp_overlaps_pvalue'] = -1
         return result_abort
 
     # Proper reading of the bed file as a list of intervals
@@ -269,15 +270,15 @@ def compute_overlap_stats(bedA, bedB,
     # the Markov shuffle or if the esperance is too small : we must use an empirical p-value
 
     if (ps == -1) | (pn == -1):
-        # NOTE : maybe re-use the empirical p-value later. For now return NaN
+        # NOTE : maybe re-use the empirical p-value later. For now return -1
         #pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
         #pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
-        pval_intersect_nb = np.nan
-        pval_bp_overlaps = np.nan
+        pval_intersect_nb = -1
+        pval_bp_overlaps = -1
 
     else:
-        pval_intersect_nb = nf.negbin_pval(true_intersect_nb, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs)
-        pval_bp_overlaps = nf.negbin_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps)
+        pval_intersect_nb = nf.negbin_pval(true_intersect_nb, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs, precision = pval_precision)
+        pval_bp_overlaps = nf.negbin_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps, precision = pval_precision)
 
     stop = time.time()
     message('Negative Binomial distributions fitted in : ' + str(stop - start) + ' s.', type='DEBUG')

@@ -94,8 +94,6 @@ __notes__ = """
  -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
  for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
  This is not recommended in the general case and can be *very* time-consuming (hours).
-
-
  """
 
 
@@ -206,6 +204,12 @@ def make_parser():
                             action='store_true',
                             required=False)
 
+    parser_grp.add_argument('-pp', '--pval-precision',
+                            help='Precision of p-val calculation in dps.',
+                            type=arg_formatter.ranged_num(0, None),
+                            default=1500,
+                            required=False)
+
     # --------------------- Output ------------------------------------------- #
 
     parser_grp.add_argument('-o', '--outputdir',
@@ -250,6 +254,24 @@ def make_parser():
                             default=300,
                             required=False)
 
+    parser_grp.add_argument('-j', '--sort-features',
+                            help="Whether to sort features in diagrams according to a computed statistic.",
+                            choices=[None, "nb_intersections_esperance_shuffled",
+                                     "nb_intersections_variance_shuffled",
+                                     "nb_intersections_negbinom_fit_quality",
+                                     "nb_intersections_log2_fold_change",
+                                     "nb_intersections_true",
+                                     "nb_intersections_pvalue",
+                                     "summed_bp_overlaps_esperance_shuffled",
+                                     "summed_bp_overlaps_variance_shuffled",
+                                     "summed_bp_overlaps_negbinom_fit_quality",
+                                     "summed_bp_overlaps_log2_fold_change",
+                                     "summed_bp_overlaps_true",
+                                     "summed_bp_overlaps_pvalue"],
+                            default=None,
+                            type=str,
+                            required=False)
+
     # --------------------- Other input arguments----------------------------- #
 
     parser_grp.add_argument('-z', '--no-gtf',
@@ -272,23 +294,7 @@ def make_parser():
                             action='store_true',
                             required=False)
 
-    parser_grp.add_argument('-j', '--sort-features',
-                            help="Whether to sort features in diagrams according to a computed statistic.",
-                            choices=[None, "nb_intersections_esperance_shuffled",
-                                     "nb_intersections_variance_shuffled",
-                                     "nb_intersections_negbinom_fit_quality",
-                                     "nb_intersections_log2_fold_change",
-                                     "nb_intersections_true",
-                                     "nb_intersections_pvalue",
-                                     "summed_bp_overlaps_esperance_shuffled",
-                                     "summed_bp_overlaps_variance_shuffled",
-                                     "summed_bp_overlaps_negbinom_fit_quality",
-                                     "summed_bp_overlaps_log2_fold_change",
-                                     "summed_bp_overlaps_true",
-                                     "summed_bp_overlaps_pvalue"],
-                            default=None,
-                            type=str,
-                            required=False)
+
     return parser
 
 
@@ -324,6 +330,7 @@ def ologram(inputfile=None,
             sort_features=False,
             minibatch_nb=8,
             minibatch_size=25,
+            pval_precision=1500
             ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
@@ -581,7 +588,7 @@ def ologram(inputfile=None,
     overlap_partial = partial(compute_overlap_stats, chrom_len=chrom_len,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
                               bed_excl=bed_excl, use_markov_shuffling=use_markov,
-                              nb_threads=nb_threads)
+                              nb_threads=nb_threads, pval_precision=pval_precision)
 
     # Initialize result dict
     hits = dict()
@@ -870,10 +877,12 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_ord
 
         # Format the text
         def format_pvalue(x):
-            # if x == 0.0:
-            #    r = 'p~0'  # If the p-value is ~0 (precision limit), say so
-            # else:
-            r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
+            if x == 0.0:
+                r = 'p~0'  # If the p-value is ~0 (precision limit), say so
+            elif x == -1:
+                r = 'p=NA' # If the p-value was -1, we write 'Not applicable'
+            else:
+                r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
             return r
 
         # Compute the colors for the text box : orange if significantly depleted,
