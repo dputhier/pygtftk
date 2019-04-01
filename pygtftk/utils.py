@@ -523,8 +523,7 @@ def chrom_info_as_dict(chrom_info_file):
                 msg = mes.format(i=i,
                                  size=chrom_len[i],
                                  file=chrom_info_file.name)
-                message(msg,
-                        type="INFO")
+                message(msg, type="DEBUG")
         pygtftk.utils.CHROM_CHECKED = True
 
     close_properly(chrom_info_file)

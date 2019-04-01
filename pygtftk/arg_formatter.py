@@ -15,6 +15,7 @@ from builtins import str
 import pybedtools
 from pybedtools import BedTool
 
+import pygtftk
 from pygtftk.utils import check_file_or_dir_exists, make_tmp_file, close_properly
 from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import message
@@ -376,6 +377,17 @@ class FormattedFile(argparse.FileType):
                       'bigwig': bigwig_regexp,
                       'zip': zip_regexp,
                       'pdf': pdf_regexp}
+
+        # Set verbosity system wide as depending on
+        # command line argument order, VERBOSITY (-V) can
+        # be evaluated later...
+        if '-V' in sys.argv:
+            sys_args = ' '.join(sys.argv)
+            verbosity_val = re.search('-V ?([01234])?', sys_args)
+            if verbosity_val:
+                pygtftk.utils.VERBOSITY = int(verbosity_val.group(1))
+            else:
+                pygtftk.utils.VERBOSITY = 1
 
         match = False
 
