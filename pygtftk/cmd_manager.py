@@ -567,9 +567,6 @@ class CmdManager(object):
         """ Add new argument parser for a command. Note that
         verbosity, keep-temp and help arguments are added by default."""
 
-        message("First installation. Building CLI for command : %s." %
-                cmd.name)
-
         # ----------------------------------------------------------------------
         # Command help display
         # ----------------------------------------------------------------------
