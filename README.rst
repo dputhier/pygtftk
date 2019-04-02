@@ -39,8 +39,8 @@ Documentation             |documentation|_
 .. |latestconda| image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/latest_release_date.svg
 .. _latestconda: https://anaconda.org/guillaumecharbonnier/pygtftk
 
-.. |downloads| image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/downloads.svg
-.. _downloads: https://anaconda.org/guillaumecharbonnier/pygtftk
+.. |downloads| image:: https://anaconda.org/bioconda/pygtftk/badges/downloads.svg
+.. _downloads: https://anaconda.org/bioconda/pygtftk
 
 .. |hits| image:: http://hits.dwyl.io/dputhier/pygtftk.svg
 .. _hits: http://hits.dwyl.io/dputhier/pygtftk
