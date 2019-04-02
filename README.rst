@@ -2,6 +2,7 @@
 Pip package               |Pippackage|_
 Platforms                 |platform|_
 License                   |license|_
+Languages                 |lang|_
 Build status              |build|_
 Repository size           |size|_
 Conda                     |conda|_
@@ -14,7 +15,7 @@ Citing                    |citing|_
 Documentation             |documentation|_
 =================         =================
 
-.. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg
+.. |license| image:: https://img.shields.io/github/license/dputhier/pygtftk.svg
 .. _license: https://github.com/dputhier/pygtftk
 
 .. |pippackage| image:: https://badge.fury.io/py/pygtftk.svg
@@ -56,6 +57,8 @@ Documentation             |documentation|_
 .. |documentation| image:: https://img.shields.io/badge/Documentation-https%3A%2F%2Fdputhier.github.io%2Fpygtftk%2F-blue.svg
 .. _documentation: https://dputhier.github.io/pygtftk/
 
+.. |lang| image:: https://img.shields.io/badge/Languages-Python%2C%20Cython%2C%20C-blue.svg
+.. _lang: https://github.com/dputhier/pygtftk
 
 
 Python GTF toolkit (pygtftk)
