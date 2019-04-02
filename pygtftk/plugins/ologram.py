@@ -28,6 +28,7 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
+from pygtftk.utils import sort_2_lists
 
 __updated__ = "2019-03-18"
 __doc__ = """
@@ -93,8 +94,6 @@ __notes__ = """
  -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
  for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
  This is not recommended in the general case and can be *very* time-consuming (hours).
-
-
  """
 
 
@@ -205,6 +204,12 @@ def make_parser():
                             action='store_true',
                             required=False)
 
+    parser_grp.add_argument('-pp', '--pval-precision',
+                            help='Precision of p-val calculation in dps.',
+                            type=arg_formatter.ranged_num(0, None),
+                            default=1500,
+                            required=False)
+
     # --------------------- Output ------------------------------------------- #
 
     parser_grp.add_argument('-o', '--outputdir',
@@ -249,6 +254,24 @@ def make_parser():
                             default=300,
                             required=False)
 
+    parser_grp.add_argument('-j', '--sort-features',
+                            help="Whether to sort features in diagrams according to a computed statistic.",
+                            choices=[None, "nb_intersections_esperance_shuffled",
+                                     "nb_intersections_variance_shuffled",
+                                     "nb_intersections_negbinom_fit_quality",
+                                     "nb_intersections_log2_fold_change",
+                                     "nb_intersections_true",
+                                     "nb_intersections_pvalue",
+                                     "summed_bp_overlaps_esperance_shuffled",
+                                     "summed_bp_overlaps_variance_shuffled",
+                                     "summed_bp_overlaps_negbinom_fit_quality",
+                                     "summed_bp_overlaps_log2_fold_change",
+                                     "summed_bp_overlaps_true",
+                                     "summed_bp_overlaps_pvalue"],
+                            default=None,
+                            type=str,
+                            required=False)
+
     # --------------------- Other input arguments----------------------------- #
 
     parser_grp.add_argument('-z', '--no-gtf',
@@ -270,6 +293,8 @@ def make_parser():
                             help="Discard silently, from --more-bed files, regions outside chromosomes defined in --chrom-info.",
                             action='store_true',
                             required=False)
+
+
     return parser
 
 
@@ -302,8 +327,10 @@ def ologram(inputfile=None,
             dpi=300,
             nb_threads=8,
             seed=42,
+            sort_features=False,
             minibatch_nb=8,
             minibatch_size=25,
+            pval_precision=1500
             ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
@@ -393,16 +420,24 @@ def ologram(inputfile=None,
         for i in peak_chrom_list:
             if i not in chrom_len:
                 msg = "Chromosome " + str(i) + " from peak file is undefined in --chrom-info file. "
-                message(msg + 'Please fix --chrom-info file or use --force-chrom-peak.',
+                message(msg + 'Please fix or use --force-chrom-peak.',
                         type="ERROR")
     else:
         peak_file_sub = make_tmp_file(prefix='peaks_x_chrom_info', suffix='.bed')
 
+        n = 0
         for i in peak_file:
             if i.chrom in chrom_len:
                 peak_file_sub.write("\t".join(i.fields) + "\n")
+                n += 1
 
         peak_file_sub.close()
+
+        if n == 0:
+            message("The --peak-file file does not contain any genomic feature "
+                    "falling in chromosomes declared in --chrom-info.",
+                    type="ERROR")
+
         peak_file = BedTool(peak_file_sub.name)
 
     # -------------------------------------------------------------------------
@@ -553,7 +588,7 @@ def ologram(inputfile=None,
     overlap_partial = partial(compute_overlap_stats, chrom_len=chrom_len,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
                               bed_excl=bed_excl, use_markov_shuffling=use_markov,
-                              nb_threads=nb_threads)
+                              nb_threads=nb_threads, pval_precision=pval_precision)
 
     # Initialize result dict
     hits = dict()
@@ -675,7 +710,8 @@ def ologram(inputfile=None,
 
                 for i in chrom_list:
                     if i not in chrom_len:
-                        message("Chromosome " + str(i) + " is undefined in --more-bed with label " + bed_lab + ".",
+                        message("Chromosome " + str(
+                            i) + " is undefined in --more-bed with label " + bed_lab + ". Maybe use --force-chrom-more-bed.",
                                 type="ERROR")
             else:
                 bed_anno_sub = make_tmp_file(prefix='more_bed_x_chrom_info' + bed_lab, suffix='.bed')
@@ -686,8 +722,8 @@ def ologram(inputfile=None,
                         bed_anno_sub.write("\t".join(i.fields) + "\n")
                         n += 1
                 if n == 0:
-                    msg = "The --more-bed file " + bed_lab + " is empty after checking for --chrom-info."
-                    message(msg + "Please check your --chrom-info file or use --force-chrom-more-bed",
+                    message("The --more-bed file does not contain any genomic feature "
+                            "falling in chromosomes declared in --chrom-info.",
                             type="ERROR")
 
                 bed_anno_sub.close()
@@ -725,18 +761,47 @@ def ologram(inputfile=None,
     close_properly(data_file)
 
     # -------------------------------------------------------------------------
-    # Read the data set and plot it
+    # Read the data
     # -------------------------------------------------------------------------
 
     d = pd.read_csv(data_file.name, sep="\t", header=0)
 
+    # -------------------------------------------------------------------------
+    # Rename the feature type.
+    # When --more-keys is used the key and value are separated by ":".
+    # This give rise to long name whose display in the plot is ugly.
+    # We can break these names using a "\n".
+    # -------------------------------------------------------------------------
+
+    d["feature_type"] = [x.replace(":", "\n") for x in d["feature_type"]]
+
+    # -------------------------------------------------------------------------
+    # Compute feature order for plotting according to sort_features
+    # -------------------------------------------------------------------------
+
+    if sort_features is not None:
+        sorted_feat = sort_2_lists(d[sort_features].tolist(),
+                                   d.feature_type.tolist())[1]
+        feature_order = []
+        for x in sorted_feat:
+            if x not in feature_order:
+                feature_order += [x]
+
+
+    else:
+        feature_order = None
+
+    # -------------------------------------------------------------------------
+    # Plot the diagram
+    # -------------------------------------------------------------------------
+
     if pdf_file is not None:
-        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi)
+        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_order)
         close_properly(pdf_file)
     close_properly(data_file)
 
 
-def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
+def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_order):
     """
     Main plotting function by Q. Ferré and D. Puthier
     """
@@ -753,15 +818,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
     # -------------------------------------------------------------------------
 
     dm = d.copy()
-
-    # -------------------------------------------------------------------------
-    # Rename the feature type.
-    # When --more-keys is used the key and value are separated by ":".
-    # This give rise to long name whose display in the plot is ugly.
-    # We can break these names using a "\n".
-    # -------------------------------------------------------------------------
-
-    dm["feature_type"] = [x.replace(":", "\n") for x in dm["feature_type"]]
 
     # -------------------------------------------------------------------------
     # Create a new plot
@@ -786,6 +842,10 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         # Now melt the dataframe
         dmm = data_ni.melt(id_vars='Feature')
         dmm.columns = ['Feature', 'Type', statname]
+
+        # reorder features if required
+        if feature_order is not None:
+            dmm.Feature = pd.Categorical(dmm.Feature.tolist(), categories=feature_order, ordered=True)
 
         # ------------------------- PLOTTING --------------------------------- #
 
@@ -819,6 +879,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
         def format_pvalue(x):
             if x == 0.0:
                 r = 'p~0'  # If the p-value is ~0 (precision limit), say so
+            elif x == -1:
+                r = 'p=NA' # If the p-value was -1, we write 'Not applicable'
             else:
                 r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
             return r
@@ -832,7 +894,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi):
                 if fc[i] < 1: signif_color[i] = '#ffa64d'
                 if fc[i] > 1: signif_color[i] = '#6cc67b'
 
-            if text[i] < 1E-10: # Moreover, if very significant
+            if text[i] < 1E-10:  # Moreover, if very significant
                 if fc[i] < 1: signif_color[i] = '#cc6600'
                 if fc[i] > 1: signif_color[i] = '#3c9040'
 

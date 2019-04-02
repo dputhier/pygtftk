@@ -7,10 +7,8 @@ import shutil
 import sys
 import warnings
 import zipfile
-from builtins import range
-from builtins import str
-from builtins import zip
 from collections import OrderedDict
+from zipfile import BadZipFile
 
 import matplotlib as mpl
 import numpy as np
@@ -50,7 +48,7 @@ __notes__ = """
 """
 
 '''
- -- The ranging normalization method [1] implies the following transformation: 
+ -- The ranging normalization method [1] implies the following transformation:
  -- -  (x_i - min(x))/(max(x) - min(x)).
 '''
 
@@ -360,7 +358,7 @@ def profile(inputfile=None,
         with zipfile.ZipFile(inputfile.name) as zf:
             zf.extractall(dir_name)
 
-    except:
+    except BadZipFile:
         message("Problem encountered when unzipping...",
                 type="ERROR")
 
@@ -1253,7 +1251,7 @@ else:
                             
     #profile: prepare dataset
     @test "profile_3" {
-     result=`gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter_pr`
+     result=`gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter_pr`
       [ -s "mini_real_promoter_pr.zip" ]
     }
 
@@ -1278,7 +1276,7 @@ else:
 
     #profile: make single_nuc
     @test "profile_7" {
-     result=`gtftk mk_matrix -u 5000 -d 5000 -i tss.bed -w 200 -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_single_nuc_pr -c hg38.genome -t single_nuc`
+     result=`gtftk mk_matrix -u 5000 -d 5000 -i tss.bed -w 200 -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_single_nuc_pr -c hg38.genome -t single_nuc`
       [ -s "mini_real_single_nuc_pr.zip" ]
     }
 
@@ -1290,7 +1288,7 @@ else:
 
     #profile: make mini_real_tx
     @test "profile_9" {
-     result=`gtftk mk_matrix  -k 5  -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr`
+     result=`gtftk mk_matrix  -k 5  -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr`
       [ -s "mini_real_tx_pr.zip" ]
     }
 
@@ -1308,7 +1306,7 @@ else:
 
     #profile: make mini_real_user_def
     @test "profile_12" {
-     result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_rnd_tx.bed -t user_regions  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_user_def`
+     result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_rnd_tx.bed -t user_regions  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_user_def`
       [ -s "mini_real_user_def.zip" ]
     }
 
@@ -1356,7 +1354,7 @@ else:
 
     #profile: create dataset
     @test "profile_20" {
-     result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr_2`
+     result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr_2`
       [ -s "mini_real_tx_pr_2.zip" ]
     }
     

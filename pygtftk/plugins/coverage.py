@@ -3,7 +3,6 @@
 import argparse
 import os
 import sys
-from builtins import range
 
 import pandas as pd
 from pybedtools import BedTool

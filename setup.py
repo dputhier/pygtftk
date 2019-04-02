@@ -105,6 +105,7 @@ sha = ""
 try:
     import git
     from git import InvalidGitRepositoryError
+
     try:
         repo = git.Repo(search_parent_directories=True)
         sha = repo.head.object.hexsha

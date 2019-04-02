@@ -5,10 +5,11 @@ import os
 import sys
 
 from pygtftk import arg_formatter
-from pygtftk.arg_formatter import chromFileAsDict
+from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import GTFtkError
+from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
@@ -65,7 +66,7 @@ def make_parser():
                                  " column 2 ",
                             default=None,
                             metavar="CHROMINFO",
-                            action=chromFileAsDict,
+                            action=CheckChromFile,
                             required=True)
 
     return parser
@@ -83,6 +84,7 @@ def shift(inputfile=None,
     gtf = GTF(inputfile, check_ensembl_format=False)
 
     chrom_list_gtf = gtf.get_chroms(nr=True)
+    chrom_info = chrom_info_as_dict(chrom_info)
 
     for chr in chrom_list_gtf:
         if chr not in chrom_info:

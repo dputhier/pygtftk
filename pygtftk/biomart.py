@@ -1,12 +1,11 @@
 import re
 import textwrap
 import xml.etree.ElementTree as ElementTree
-from builtins import object
 from builtins import str
 from collections import defaultdict
 
 import requests
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError as ConErr
 
 from pygtftk.utils import message
 
@@ -62,7 +61,7 @@ class Biomart(object):
         message("Listing available databases", type="DEBUG")
         try:
             self.query(query={'type': 'registry'})
-        except ConnectionError:
+        except ConErr:
             message("Raised a connection Error.", type="ERROR")
 
         tree = ElementTree.fromstring(self.response.content)

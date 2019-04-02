@@ -28,6 +28,7 @@ import pygtftk.plugins
 import pygtftk.settings
 import pygtftk.utils
 from pygtftk.arg_formatter import ArgFormatter
+from pygtftk.arg_formatter import ranged_num
 from pygtftk.utils import left_strip_str
 from pygtftk.utils import make_tmp_dir
 from pygtftk.utils import message
@@ -643,8 +644,12 @@ class CmdManager(object):
                            "--verbosity",
                            default=0,
                            metavar="",
-                           type=int,
-                           help="Increase output verbosity.",
+                           type=ranged_num(lowest=0,
+                                           highest=3,
+                                           val_type="int",
+                                           linc=True,
+                                           hinc=True),
+                           help="Set output verbosity ([0-3]).",
                            nargs='?',
                            required=False)
 

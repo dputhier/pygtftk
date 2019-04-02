@@ -4,7 +4,6 @@ import argparse
 import os
 import sys
 from _collections import defaultdict
-from builtins import zip
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject

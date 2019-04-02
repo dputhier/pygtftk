@@ -46,10 +46,9 @@ def make_parser():
                             type=str,
                             required=False)
 
-    parser_grp.add_argument('matrix_files',
-                            help="'A set of "
-                                 "matrix files with row names as target keys column names as novel "
-                                 "key and each cell as value.",
+    parser_grp.add_argument('-m', '--matrix-files',
+                            help="A set of matrix files with row names as "
+                                 "target keys column names as novel key and each cell as value.",
                             type=argparse.FileType('r'),
                             nargs='+')
 
@@ -124,13 +123,13 @@ else:
                 
     #join_attr: simple test
     @test "join_multi_file_1" {
-     result=`gtftk join_multi_file -i simple.gtf -k gene_id -t gene simple.join_mat simple.join_mat_2| gtftk select_by_key -g| grep G0003 | gtftk tabulate -k all -s "|"| tail -n 1`
+     result=`gtftk join_multi_file -i simple.gtf -k gene_id -t gene -m simple.join_mat simple.join_mat_2| gtftk select_by_key -g| grep G0003 | gtftk tabulate -k all -s "|"| tail -n 1`
       [ "$result" = "chr1|gtftk|gene|50|61|.|-|.|G0003|0.2322|0.4|A|B" ]
     }
     
     #join_attr: simple test
     @test "join_multi_file_2" {
-     result=`gtftk join_multi_file -i simple.gtf -k gene_id  -t gene  -V 2 simple.join_mat simple.join_mat_2 simple.join_mat_3 | gtftk select_by_regexp  -k S5 -r "\d+"| gtftk tabulate -Hun -k S5,S6| perl -npe 's/\\t/_/g; s/\\n/;/'`
+     result=`gtftk join_multi_file -i simple.gtf -k gene_id  -t gene  -V 2 -m simple.join_mat simple.join_mat_2 simple.join_mat_3 | gtftk select_by_regexp  -k S5 -r "\d+"| gtftk tabulate -Hun -k S5,S6| perl -npe 's/\\t/_/g; s/\\n/;/'`
       [ "$result" = "0.2322_0.4;0.999|0.999_0.6|0.6;0.5555|20_0.7|30;" ]
     }
  

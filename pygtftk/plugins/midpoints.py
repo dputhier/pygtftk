@@ -3,7 +3,6 @@
 import argparse
 import os
 import sys
-from builtins import str
 
 from pybedtools import BedTool
 

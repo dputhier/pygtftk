@@ -3,7 +3,6 @@
 import argparse
 import os
 import sys
-from builtins import str
 
 from pygtftk import arg_formatter
 from pygtftk.arg_formatter import CheckChromFile

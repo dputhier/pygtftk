@@ -4,7 +4,6 @@ import argparse
 import os
 import random
 import sys
-from builtins import range
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject

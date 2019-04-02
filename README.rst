@@ -1,8 +1,8 @@
-
 =================         =================
 Pip package               |Pippackage|_
 Platforms                 |platform|_
 License                   |license|_
+Languages                 |lang|_
 Build status              |build|_
 Repository size           |size|_
 Conda                     |conda|_
@@ -15,7 +15,7 @@ Citing                    |citing|_
 Documentation             |documentation|_
 =================         =================
 
-.. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg
+.. |license| image:: https://img.shields.io/github/license/dputhier/pygtftk.svg
 .. _license: https://github.com/dputhier/pygtftk
 
 .. |pippackage| image:: https://badge.fury.io/py/pygtftk.svg
@@ -51,12 +51,14 @@ Documentation             |documentation|_
 .. |issues| image:: https://img.shields.io/github/issues-raw/dputhier/pygtftk.svg
 .. _issues: https://github.com/dputhier/pygtftk/issues
 
-.. |citing| image:: https://img.shields.io/badge/doi-https%3A%2F%2Fdoi.org%2F10.1093%2Fbioinformatics%2Fbtz116-blue.svg
+.. |citing| image:: https://img.shields.io/badge/pygtftk-https%3A%2F%2Fdoi.org%2F10.1093%2Fbioinformatics%2Fbtz116-blue.svg
 .. _citing: https://doi.org/10.1093/bioinformatics/btz116
 
 .. |documentation| image:: https://img.shields.io/badge/Documentation-https%3A%2F%2Fdputhier.github.io%2Fpygtftk%2F-blue.svg
 .. _documentation: https://dputhier.github.io/pygtftk/
 
+.. |lang| image:: https://img.shields.io/badge/Languages-Python%2C%20Cython%2C%20C-blue.svg
+.. _lang: https://github.com/dputhier/pygtftk
 
 
 Python GTF toolkit (pygtftk)
@@ -77,8 +79,8 @@ Depending on the **size of the GTF file**, pygtftk and gtftk may require lot of 
 
 At the moment, the gtftk program has been tested on:
 
-- Linux (Ubuntu 12.04 and 18.04)
-- OSX (Yosemite, El Capitan, Mojave).
+  - Linux (Ubuntu 12.04 and 18.04)
+  - OSX (Yosemite, El Capitan, Mojave).
 
 
 Installation
