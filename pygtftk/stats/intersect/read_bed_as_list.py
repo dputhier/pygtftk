@@ -70,15 +70,15 @@ def bed_to_lists_of_intervals(bed, chromsizes):
             previous_feature_stop = bed.at[f, 'end']
 
         # Add the missing inter-region distance between the last feature and the chromosome end
-        last_li = chromsizes[chrom] - previous_feature_stop
+        last_li = chromsizes[str(chrom)] - previous_feature_stop # Query str(chrom) because chrom may be numeric, but the keys of chromsizes passed by pytftk are always strings.
         if last_li < 0:
             last_li = 0
             message('Warning - You have a bed file with features after the end of chromosome "'+str(chrom)+'" !', type='INFO')
         li.append(last_li)
 
-
-        Lr[chrom] = np.array(lr)
-        Li[chrom] = np.array(li)
+        # Remember to convert chrom to a string (it may have been a numeric, but the rest of the program requires it to be a string)
+        Lr[str(chrom)] = np.array(lr)
+        Li[str(chrom)] = np.array(li)
 
     return Lr, Li, all_chrom
 
