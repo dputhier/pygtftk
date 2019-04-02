@@ -452,7 +452,7 @@ class FormattedFile(argparse.FileType):
                 field_count = file_bo.field_count()
 
                 if field_count != 6:
-                    message("Converting to bed6 format (" + string + ").", type="INFO", force=True)
+                    message("Converting to bed6 format (" + string + ").", type="WARNING")
                     tmp_file = make_tmp_file(prefix="bed6_",
                                              suffix=".bed")
                     for record in file_bo:
