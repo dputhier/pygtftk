@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Commands from section ‘annotation’ &#8212; gtftk 1.0.4 documentation</title>
+    <title>Commands from section ‘annotation’ &#8212; gtftk 1.0.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="conversion.html" title="Commands from section ‘conversion’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,12 +67,15 @@ The program will return statistics for both the number of intersections and the 
 <p class="first admonition-title">Warning</p>
 <p class="last">The ologram examples below use 8 CPUs. Please adapt.</p>
 </div>
-<p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i mini_real.gtf.gz -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.pdf -k 8
- |-- 9:19-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
- |-- 9:20-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
- |-- 9:21-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
- |-- 9:21-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
+<p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in
+the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i mini_real.gtf.gz -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 13:35-INFO : Checking BED file format (ENCFF112BHN_H3K4me3_K562_sub.bed).
+ |-- 13:38-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
+ |-- 13:39-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:39-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
+ |-- 13:39-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
+ |-- 13:39-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
 </pre></div>
 </div>
 <br>
@@ -86,15 +89,32 @@ The program will return statistics for both the number of intersections and the 
 </table>
 <br>
 <br><p><strong>Example:</strong> Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i mini_real.gtf.gz -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n  -if example_pa_02.pdf -k 8
- |-- 9:23-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 9:23-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 9:23-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 9:23-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
- |-- 9:24-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 9:24-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
- |-- 9:25-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 9:25-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i mini_real.gtf.gz -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n  -if example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 13:41-INFO : Checking BED file format (ENCFF112BHN_H3K4me3_K562_sub.bed).
+ |-- 13:41-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:41-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 13:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
+ |-- 13:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
+ |-- 13:41-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:41-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 13:41-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 13:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
+ |-- 13:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
+ |-- 13:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
+ |-- 13:42-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
+ |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
+ |-- 13:42-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
+ |-- 13:42-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
+ |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
+ |-- 13:42-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:42-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
+ |-- 13:42-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+ |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
+ |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
+ |-- 13:43-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
 </pre></div>
 </div>
 <br>
@@ -108,8 +128,14 @@ The program will return statistics for both the number of intersections and the 
 </table>
 <br>
 <br><p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K4me3.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6   | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exprs_class -if example_pa_03.pdf -k 8
- |-- 9:26-INFO-discretize_key : Categories: [&#39;[0.0_10.0]&#39;, &#39;(10.0_149.0]&#39;, &#39;(149.0_585.0]&#39;, &#39;(585.0_1171.0]&#39;, &#39;(1171.0_2486.83]&#39;, &#39;(2486.83_41703.0]&#39;]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6   | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exprs_class -if example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 13:43-INFO-discretize_key : Categories: [&#39;[0.0_10.0]&#39;, &#39;(10.0_149.0]&#39;, &#39;(149.0_585.0]&#39;, &#39;(585.0_1171.0]&#39;, &#39;(1171.0_2486.83]&#39;, &#39;(2486.83_41703.0]&#39;]
+ |-- 13:43-INFO : Checking BED file format (ENCFF112BHN_H3K4me3_K562_sub.bed).
+ |-- 13:43-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:43-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:44-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:44-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:45-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
 </pre></div>
 </div>
 <br>
@@ -123,8 +149,12 @@ The program will return statistics for both the number of intersections and the 
 </table>
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exon_nbr_cat -if example_pa_04.pdf -k 8
- |-- 9:27-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exon_nbr_cat -if example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 13:45-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 13:45-INFO : Checking BED file format (ENCFF112BHN_H3K4me3_K562_sub.bed).
+ |-- 13:45-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:46-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+ |-- 13:46-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
 </pre></div>
 </div>
 <br>
@@ -139,7 +169,7 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -h
-  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-if user_img_file] [-x] [-tp tsv_file_path] [-dpi dpi] [-z] [-f] [-w] [-q] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-pp pval_precision] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-if user_img_file] [-x] [-tp tsv_file_path] [-dpi dpi] [-j {None,nb_intersections_esperance_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_esperance_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-z] [-f] [-w] [-q] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
 
   Description: 
      *  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks (in bed
@@ -210,6 +240,7 @@ Arguments:
  -mn, --minibatch-nb         Number of minibatches of shuffles. (default: 10)
  -ms, --minibatch-size       Size of each minibatch, in number of shuffles. (default: 20)
  -ma, --use-markov           Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes. (default: False)
+ -pp, --pval-precision       Precision of p-val calculation in dps. (default: 1500)
  -o, --outputdir             Output directory name. (default: ologram_output)
  -pw, --pdf-width            Output pdf file width (inches). (default: None)
  -ph, --pdf-height           Output pdf file height (inches). (default: None)
@@ -217,6 +248,7 @@ Arguments:
  -x, --no-pdf                Do not produce any image file. (default: False)
  -tp, --tsv-file-path        Provide an alternative path for text output file. (default: None)
  -dpi, --dpi                 Dpi to use. (default: 300)
+ -j, --sort-features         Whether to sort features in diagrams according to a computed statistic. (default: None)
  -z, --no-gtf                No gtf file is provide as input. (default: False)
  -f, --force-chrom-gtf       Discard silently, from GTF, genes outside chromosomes defined in --chrom-info. (default: False)
  -w, --force-chrom-peak      Discard silently, from --peak-file, peaks outside chromosomes defined in --chrom-info. (default: False)
@@ -224,7 +256,7 @@ Arguments:
 
 Command-wise optional arguments:
  -h, --help                  Show this help message and exit.
- -V, --verbosity             Increase output verbosity. (default: 0)
+ -V, --verbosity             Set output verbosity ([0-3]). (default: 0)
  -D, --no-date               Do not add date to output file names. (default: False)
  -C, --add-chr               Add &#39;chr&#39; to chromosome names before printing output. (default: False)
  -K, --tmp-dir               Keep all temporary files into this folder. (default: None)
@@ -284,7 +316,7 @@ Arguments:
 
 Command-wise optional arguments:
  -h, --help               Show this help message and exit.
- -V, --verbosity          Increase output verbosity. (default: 0)
+ -V, --verbosity          Set output verbosity ([0-3]). (default: 0)
  -D, --no-date            Do not add date to output file names. (default: False)
  -C, --add-chr            Add &#39;chr&#39; to chromosome names before printing output. (default: False)
  -K, --tmp-dir            Keep all temporary files into this folder. (default: None)
@@ -344,7 +376,7 @@ Arguments:
 
 Command-wise optional arguments:
  -h, --help               Show this help message and exit.
- -V, --verbosity          Increase output verbosity. (default: 0)
+ -V, --verbosity          Set output verbosity ([0-3]). (default: 0)
  -D, --no-date            Do not add date to output file names. (default: False)
  -C, --add-chr            Add &#39;chr&#39; to chromosome names before printing output. (default: False)
  -K, --tmp-dir            Keep all temporary files into this folder. (default: None)
@@ -408,7 +440,7 @@ Arguments:
 
 Command-wise optional arguments:
  -h, --help           Show this help message and exit.
- -V, --verbosity      Increase output verbosity. (default: 0)
+ -V, --verbosity      Set output verbosity ([0-3]). (default: 0)
  -D, --no-date        Do not add date to output file names. (default: False)
  -C, --add-chr        Add &#39;chr&#39; to chromosome names before printing output. (default: False)
  -K, --tmp-dir        Keep all temporary files into this folder. (default: None)
@@ -464,7 +496,7 @@ Arguments:
 
 Command-wise optional arguments:
  -h, --help         Show this help message and exit.
- -V, --verbosity    Increase output verbosity. (default: 0)
+ -V, --verbosity    Set output verbosity ([0-3]). (default: 0)
  -D, --no-date      Do not add date to output file names. (default: False)
  -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
  -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
@@ -513,7 +545,7 @@ Arguments:
 
 Command-wise optional arguments:
  -h, --help         Show this help message and exit.
- -V, --verbosity    Increase output verbosity. (default: 0)
+ -V, --verbosity    Set output verbosity ([0-3]). (default: 0)
  -D, --no-date      Do not add date to output file names. (default: False)
  -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
  -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
@@ -562,7 +594,7 @@ Arguments:
 
 Command-wise optional arguments:
  -h, --help         Show this help message and exit.
- -V, --verbosity    Increase output verbosity. (default: 0)
+ -V, --verbosity    Set output verbosity ([0-3]). (default: 0)
  -D, --no-date      Do not add date to output file names. (default: False)
  -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
  -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
@@ -637,12 +669,12 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="conversion.html" title="Commands from section ‘conversion’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Mar 27, 2019.
+      Last updated on Apr 02, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
     </div>
   </body>

@@ -33,7 +33,7 @@ The program will return statistics for both the number of intersections and the 
 the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
 
 
-.. command-output:: gtftk ologram -i mini_real.gtf.gz -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue.
+.. command-output:: gtftk ologram -i mini_real.gtf.gz -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
 	:shell:
 
 

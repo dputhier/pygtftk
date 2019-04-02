@@ -1,17 +1,27 @@
 # Changelog
 
+This version provides several improvements and bug fix to ologram. The CLI of mk_matrix and join_multi_file have slightly changed. An int ([0-4]) is now mandatory to control verbosity level.
+
 ## v1.0.5
 
 ### Bug Fixes
 
+  - Fix #76 (issue with chromosomes in ensembl format when using ologram).
+  - Fix #72 (P-values equal to zero when nb_intersections_true and nb_intersections_esperance_shuffled are equal to zero).
+   
 ### API Changes
 
 ### Code changes
 
+  - Improved p-value precision in ologram.
+
 ### New Features
 
   - Added -j/--sort-features to ologram. Controls the feature sorting in barplot diagram. Changed doc accordingly.
-
+  - The positional argument 'bigwiglist' in mk_matrix has been replaced by -y.
+  - The verbosity argument now must take a value (0-4).
+  - The positional argument in join_multi_file has been replaced by -m.
+    
 ## v1.0.4
 
   - Updated changelog

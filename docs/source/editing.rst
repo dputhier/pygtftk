@@ -104,7 +104,7 @@ join_multi_file
 .. command-output:: cat simple.join_mat_3
     :shell:
 
-.. command-output:: gtftk join_multi_file -i simple.gtf -k gene_id -t gene simple.join_mat_2 simple.join_mat_3| gtftk select_by_key -g
+.. command-output:: gtftk join_multi_file -i simple.gtf -k gene_id -t gene -m simple.join_mat_2 simple.join_mat_3| gtftk select_by_key -g
     :shell:
 
 **Arguments:**
