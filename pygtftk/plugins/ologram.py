@@ -30,7 +30,7 @@ from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 from pygtftk.utils import sort_2_lists
 
-__updated__ = "2019-03-18"
+__updated__ = "2019-04-02"
 __doc__ = """
 
  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram

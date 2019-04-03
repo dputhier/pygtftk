@@ -8,7 +8,7 @@ class BetaCalculator:
 
     Using routines from the GNU Scientific Library (`beta_inc.c`):
     <Copyright (C) 2007 Brian Gough and  Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman>
-
+    
     Available under the GNU GPL v3 license.
 
     Formulas :
@@ -108,19 +108,19 @@ class BetaCalculator:
                 return cf
 
         # If failed to converge, return our best guess but send a warning
-        message('a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous', type='WARNING')
+        message('a or b too large or given itermax too small for computing incomplete beta function ; pval may be slightly erroneous', type='WARNING')
         return cf
 
 
     def betaincreg(self, a, b, x):
         """
-        betaincreg(a,b,x) evaluates the incomplete beta function (regularized)
+        betaincreg(a,b,x) evaluates the incomplete beta function (regularized).
         It requires a, b > 0 and 0 <= x <= 1.
 
         Code translated from: GNU Scientific Library
-
-        This function requires contfractbeta defined above.
         """
+
+        # In terms of routines, this function requires contfractbeta(), defined above.
 
         a,b,x = mpmath.mpf(a), mpmath.mpf(b), mpmath.mpf(x)
 
@@ -156,6 +156,6 @@ class BetaCalculator:
 
     def betainc(self, a, b, x):
         """
-        Non-regularized incomplete beta.
+        Non-regularized incomplete beta. See betaincreg().
         """
         return self.betaincreg(a, b, x) * self.beta(a, b)

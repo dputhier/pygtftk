@@ -42,7 +42,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     'nb_threads' is the nb of threads for the multiprocessing.
     """
 
-    # --------------------- Generate and shuffle batches  ---------------- #
+    # --------------------- Generate and shuffle batches  -------------------- #
     # We generate a matrix with the batches and shuffle them independantly
     # for both bed files
 
@@ -83,8 +83,8 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     message('Batch converted to fake beds in : ' + str(stop - start) + ' s.', type='DEBUG')
 
     # -------------------- Processing intersections -------------------------- #
-    # Using our custom cython intersect, process intersection between each pair of
-    # 'fake bed files'
+    # Using our custom cython intersect, process intersection between each pair
+    # of 'fake bed files'
     start = time.time()
     all_intersections = oc.compute_intersections_cython(bedsA, bedsB, all_chroms, nb_threads)
     stop = time.time()
@@ -179,7 +179,7 @@ def compute_overlap_stats(bedA, bedB,
 
     grand_start = time.time()
 
-    ################################### MINIBATCH  #################################
+    ################################ MINIBATCH  ################################
     # Generate all intersections for a shuffled batch of size n
 
     minibatches = [minibatch_size for i in range(minibatch_nb)]
@@ -216,11 +216,13 @@ def compute_overlap_stats(bedA, bedB,
     # details about the intersections like `bedtools intersect` would, this could
     # be computed without much hassle.
 
-    #### Fitting of a Negative Binomial distribution on the shuffles
-    # Only relevant for classical shuffle, not Markov
 
+
+    # ------ Fitting of a Negative Binomial distribution on the shuffles ----- #
+    # Only relevant for classical shuffle, not Markov
     start = time.time()
 
+    # We saw experimentally that Markov shuffles do not fit the Neg Binom model.
     if use_markov_shuffling:
         ps = pn = -1
 
@@ -237,21 +239,21 @@ def compute_overlap_stats(bedA, bedB,
             ps = -1
         else:
             ps = nf.check_negbin_adjustment(summed_bp_overlaps, esperance_fitted_summed_bp_overlaps,
-                                            variance_fitted_summed_bp_overlaps)  # .pvalue
+                                            variance_fitted_summed_bp_overlaps)
 
         if esperance_fitted_intersect_nbs == 0:
             pn = -1
         else:
             pn = nf.check_negbin_adjustment(intersect_nbs, esperance_fitted_intersect_nbs,
-                                            variance_fitted_intersect_nbs)  # .pvalue
+                                            variance_fitted_intersect_nbs)
 
 
     # Send warnings when there is a poor fit
     if (ps < 0.75) | (pn < 0.75):
-        message('There may be at least one poor fit. Check fit quality in the results.',
+        message('There may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.',
                     type='WARNING')
 
-    # ---------------------------- True intersections ---------------------------- #
+    # -------------------------- True intersections -------------------------- #
     # Now, calculating the actual p-value for the number of intersections and the
     # total number of overlapping base pairs
 
