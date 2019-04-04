@@ -190,7 +190,9 @@ def markov_shuffle(arr, nb_threads = 8):
 
 
 
-
+# NOTE for improvement : it is very possible to add new types of shuffles here.
+# Just remember to update the wrappers in overlap_stats_shuffling (see the
+# corresponding note)
 
 
 

@@ -63,6 +63,9 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     if use_markov_shuffling:
         def batch_and_shuffle_list(l): return cs.markov_shuffle(np.tile(l, (minibatch_size, 1)), nb_threads=nb_threads)
 
+    # NOTE for improvement : if new types of shuffles are added, the corresponding
+    # wrappers should be added here.
+
     # Produce the shuffles on a chromosome basis
     start = time.time()
     for chrom in all_chroms:
