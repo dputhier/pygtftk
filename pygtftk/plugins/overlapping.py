@@ -107,6 +107,19 @@ def make_parser():
                             default=None,
                             help="The name of the key.",
                             required=False)
+
+    parser_grp.add_argument('-b',
+                            '--bool',
+                            action="store_true",
+                            help="When --annotate-gtf is used use 0 or 1 as key values (instead of overlapping transcripts id).",
+                            required=False)
+
+    parser_grp.add_argument('-@',
+                            '--annotate-all',
+                            action="store_true",
+                            help="When --annotate-gtf annotate all transcripts (default value would be '0').",
+                            required=False)
+
     return parser
 
 
@@ -121,6 +134,8 @@ def overlapping(
         same_strandedness=False,
         diff_strandedness=False,
         annotate_gtf=False,
+        bool=False,
+        annotate_all=False,
         invert_match=False):
     """
 Description: Find transcripts whose body/TSS/TTS do or do not overlap with any
@@ -163,6 +178,11 @@ transcript from another gene.
 
     tx_feat = gtf.select_by_key("feature",
                                 "transcript")
+
+    if annotate_all:
+        overlapping_tx = gtf.extract_data(keys=["transcript_id"], as_dict=True, default_val="0")
+        for i in overlapping_tx:
+            overlapping_tx[i] = []
 
     # ----------------------------------------------------------------------
     # Get transcript limits
@@ -218,6 +238,13 @@ transcript from another gene.
         tx_id, gene_id = i.fields[3].split("||")
         if gene_id != gn_other:
             overlapping_tx[tx_id] += [tx_other]
+
+    if bool:
+        for k, v in overlapping_tx.items():
+            if not len(overlapping_tx[k]):
+                overlapping_tx[k] = "0"
+            else:
+                overlapping_tx[k] = "1"
 
     if not invert_match:
 
@@ -322,7 +349,20 @@ else:
      result=`gtftk overlapping -i simple.gtf -c  simple.chromInfo  -t tts -u 2 -d 2  --annotate-gtf | grep overlap_tts | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id| grep -v transcript_id| perl -npe 's/\\n/,/'`
       [ "$result" = "G0005T001,G0010T001," ]
     }
-    
+
+    #Check -b -@
+    @test "overlapping_10" {
+     result=`gtftk overlapping -i simple.gtf -c  simple.chromInfo -V 1 -t tts -u 2 -d 2 -k over -a -@ -b | gtftk tabulate -H -k transcript_id,over| awk '$2==1'| cut -f 1 | sort | uniq| perl -npe 's/\\n/,/'`
+      [ "$result" = "G0005T001,G0010T001," ]
+    }
+        
+
+    #Check -b -@
+    @test "overlapping_11" {
+     result=`gtftk overlapping -i simple.gtf -c  simple.chromInfo -V 1 -t tts -u 2 -d 2 -k over -a -@ -b | gtftk tabulate -H -k transcript_id,over| awk '$2==0'| cut -f 1 | sort | uniq| wc -l`
+      [ "$result" -eq 13     ]
+    }
+        
     """
 
     CmdObject(name="overlapping",

@@ -294,7 +294,6 @@ def make_parser():
                             action='store_true',
                             required=False)
 
-
     return parser
 
 
@@ -606,7 +605,7 @@ def ologram(inputfile=None,
 
                 del gtf_sub
 
-                hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+                hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type=feat_type)
 
             # -------------------------------------------------------------------------
             # Get the intergenic regions
@@ -618,7 +617,7 @@ def ologram(inputfile=None,
                                              0,
                                              chrom_len.keys()).merge()
 
-            hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+            hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Intergenic")
 
             # -------------------------------------------------------------------------
             # Get the intronic regions
@@ -627,7 +626,7 @@ def ologram(inputfile=None,
             message("Processing on : Introns", type="INFO")
             gtf_sub_bed = gtf.get_introns()
 
-            hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+            hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Introns")
 
             # -------------------------------------------------------------------------
             # Get the promoter regions
@@ -640,7 +639,7 @@ def ologram(inputfile=None,
                                              g=chrom_info.name).cut([0, 1, 2,
                                                                      3, 4, 5]).sort().merge()
 
-            hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+            hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Promoter")
 
             # -------------------------------------------------------------------------
             # Get the tts regions
@@ -653,7 +652,7 @@ def ologram(inputfile=None,
                                              g=chrom_info.name).cut([0, 1, 2,
                                                                      3, 4, 5]).sort().merge()
 
-            hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed)
+            hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Terminator")
 
         # -------------------------------------------------------------------------
         # if the user request --more-keys (e.g. gene_biotype)
@@ -691,7 +690,8 @@ def ologram(inputfile=None,
                         del gtf_sub
                         ft_type = ":".join([user_key, val])  # Key for the dictionary
                         hits[ft_type] = overlap_partial(bedA=peak_file,
-                                                        bedB=gtf_sub_bed)
+                                                        bedB=gtf_sub_bed,
+                                                        ft_type=ft_type)
                         message("Processing " + str(ft_type), type="INFO")
 
     # -------------------------------------------------------------------------
@@ -730,7 +730,8 @@ def ologram(inputfile=None,
                 bed_anno = bed_anno_sub
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
-                                            bedB=BedTool(bed_anno.name))
+                                            bedB=BedTool(bed_anno.name),
+                                            ft_type=bed_lab)
 
     # ------------------ Treating the 'hits' dictionary --------------------- #
 
@@ -880,7 +881,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_ord
             if x == 0.0:
                 r = 'p~0'  # If the p-value is ~0 (precision limit), say so
             elif x == -1:
-                r = 'p=NA' # If the p-value was -1, we write 'Not applicable'
+                r = 'p=NA'  # If the p-value was -1, we write 'Not applicable'
             else:
                 r = 'p=' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
             return r

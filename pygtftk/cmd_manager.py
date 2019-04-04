@@ -726,7 +726,7 @@ class CmdManager(object):
             cls.grp_misc.add_parser(**arg_dict)
 
         else:
-            raise ValueError("Unknow group for commande : %s" % cmd.name)
+            raise ValueError("Unknow group for command : %s" % cmd.name)
 
     @staticmethod
     def _find_plugins():
