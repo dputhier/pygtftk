@@ -299,7 +299,7 @@ def compute_overlap_stats(bedA, bedB,
 
     grand_stop = time.time()
 
-    message('--- Total time : ' + str(grand_stop - grand_start) + ' s ' + ft_type + ' ---')
+    message('--- Total time : ' + str(grand_stop - grand_start) + ' s for feature : ' + ft_type + ' ---')
     message('Total time does not include BED reading, as it does not scale with batch size.', type='DEBUG')
 
     # ------------------------------------------------------------------------
