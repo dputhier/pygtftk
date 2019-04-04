@@ -18,6 +18,9 @@ from subprocess import PIPE
 from subprocess import Popen
 from tempfile import NamedTemporaryFile, mkdtemp
 
+from pyparsing import Literal, CaselessLiteral, oneOf, nums, Word, Combine, Optional, operatorPrecedence, opAssoc, \
+    Forward, ParseException
+
 import pygtftk
 
 # -------------------------------------------------------------------------
@@ -1149,6 +1152,63 @@ def check_r_packages(r_pkg_list=None, no_error=True):
                     type="ERROR")
         return False
     return True
+
+
+# ---------------------------------------------------------------
+# Check boolean expression
+# ---------------------------------------------------------------
+
+def check_boolean_exprs(exprs=None, operand=(), send_error=True):
+    '''
+    Check whether a boolean expression is properly formed.
+
+    :param exprs: The string to evaluate.
+    :param operand: The name of the operands.
+    :param send_error: Whether to throw an error if expression is malformed.
+    :return: A boolean.
+
+    :Example:
+
+    >>> from pygtftk.utils import check_boolean_exprs
+    >>> assert check_boolean_exprs('s > 1 and (s < 2 or y < 2.5)', operand=['s', 'y'])
+
+    '''
+    lparen = Literal("(")
+    rparen = Literal(")")
+    and_operator = CaselessLiteral("and")
+    or_operator = CaselessLiteral("or")
+    comparison_operator = oneOf(['==', '!=', '>', '>=', '<', '<='])
+    point = Literal('.')
+    exponent = CaselessLiteral('E')
+    plusorminus = Literal('+') | Literal('-')
+    number = Word(nums)
+    integer = Combine(Optional(plusorminus) + number)
+    float_nb = Combine(integer +
+                       Optional(point + Optional(number)) +
+                       Optional(exponent + integer))
+    value = float_nb
+    identifier = oneOf(operand, caseless=False)  # .setParseAction(_embed)
+    group_1 = identifier + comparison_operator + value
+    group_2 = value + comparison_operator + identifier
+    comparison = group_1 | group_2
+    boolean_expr = operatorPrecedence(comparison,
+                                      [(and_operator, 2, opAssoc.LEFT),
+                                       (or_operator, 2, opAssoc.LEFT)])
+
+    boolean_expr_par = lparen + boolean_expr + rparen
+
+    expression = Forward()
+    expression << boolean_expr | boolean_expr_par
+
+    try:
+        expression.parseString(exprs, parseAll=True)
+        return True
+    except ParseException as err:
+        if send_error:
+            message(err.msg, force=True)
+            message('Operand should be one of: ' + ", ".join(operand))
+            message("Boolean expression not supported.", type="ERROR")
+        return False
 
 
 # ---------------------------------------------------------------

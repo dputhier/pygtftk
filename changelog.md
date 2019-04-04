@@ -16,7 +16,8 @@
 
   - Added -b/--bool argument to *overlapping*.
   - Added -@/--annotate-all to *overlapping*.
-
+  - Added bigwig_to_bed.
+  
 ## v1.0.5
 
 This version provides several improvements and bug fix to ologram. The CLI of *mk_matrix* and *join_multi_file* have slightly changed. An int ([0-4]) is now mandatory to control verbosity level.
