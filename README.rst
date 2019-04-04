@@ -30,17 +30,17 @@ Documentation             |documentation|_
 .. |size| image:: https://img.shields.io/github/repo-size/badges/shields.svg
 .. _size: https://travis-ci.org/dputhier/pygtftk
 
-.. |conda| image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/installer/conda.svg
-.. _conda: https://anaconda.org/guillaumecharbonnier/pygtftk
+.. |conda| image:: https://anaconda.org/bioconda/pygtftk/badges/installer/conda.svg
+.. _conda: https://anaconda.org/bioconda/pygtftk
 
-.. |platform| image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/platforms.svg
-.. _platform: https://anaconda.org/guillaumecharbonnier/pygtftk
+.. |platform| image:: https://anaconda.org/bioconda/pygtftk/badges/platforms.svg
+.. _platform: https://anaconda.org/bioconda/pygtftk
 
-.. |latestconda| image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/latest_release_date.svg
-.. _latestconda: https://anaconda.org/guillaumecharbonnier/pygtftk
+.. |latestconda| image:: https://anaconda.org/bioconda/pygtftk/badges/latest_release_date.svg
+.. _latestconda: https://anaconda.org/bioconda/pygtftk
 
-.. |downloads| image:: https://anaconda.org/guillaumecharbonnier/pygtftk/badges/downloads.svg
-.. _downloads: https://anaconda.org/guillaumecharbonnier/pygtftk
+.. |downloads| image:: https://anaconda.org/bioconda/pygtftk/badges/downloads.svg
+.. _downloads: https://anaconda.org/bioconda/pygtftk
 
 .. |hits| image:: http://hits.dwyl.io/dputhier/pygtftk.svg
 .. _hits: http://hits.dwyl.io/dputhier/pygtftk
