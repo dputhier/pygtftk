@@ -1157,7 +1157,8 @@ class GTF(object):
                      as_dict_of_merged_list=False,
                      nr=False,
                      hide_undef=False,
-                     as_list_of_list=False):
+                     as_list_of_list=False,
+                     default_val=1):
         """Extract attribute values into containers of various types. Note that in case dict are requested, keys are force to no_na.
 
         Note: no_na, hide_undef, nr, zero_based are not applied in case a tab object is returned (default).
@@ -1173,6 +1174,7 @@ class GTF(object):
         :param nr: in case a as_list or as_list_of_list is chosen, return a non redondant list.
         :param hide_undef: if hide_undef, then records for which the key does not exists (value = "?") are set to are discarded.
         :param zero_based: If set to True, the start position will be start-1.
+        :param default_val: The default value for the dict if as_dict is chosen.
 
         Note: hide_undef and no_na are not supported when a TAB object is returned (default).
 
@@ -1295,7 +1297,7 @@ class GTF(object):
             # no_na and explicit have no effect if as_dict is requested
             res_list = [x for x in res_list if x not in [".", "?"]]
 
-            return OrderedDict.fromkeys(res_list, 1)
+            return OrderedDict.fromkeys(res_list, default_val)
 
         elif as_dict_of_lists:
 
