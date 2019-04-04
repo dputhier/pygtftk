@@ -103,7 +103,8 @@ def compute_overlap_stats(bedA, bedB,
                           bed_excl,
                           use_markov_shuffling,
                           nb_threads,
-                          pval_precision):
+                          pval_precision,
+                          ft_type):
     """
     This is the hub function to compute overlap statistics through Monte Carlo
     shuffling with integration of the inter-region lengths.
@@ -122,7 +123,7 @@ def compute_overlap_stats(bedA, bedB,
     Author : Quentin Ferré <quentin.q.ferre@gmail.com>
     """
 
-    message('Beginning shuffling for a given set of features...')
+    message('Beginning shuffling for ' + ft_type)
     message('BedA: ' + bedA.fn, type='DEBUG')
     message('BedB: ' + bedB.fn, type='DEBUG')
     message('BATCHES : ' + str(minibatch_nb) + ' batches of ' + str(minibatch_size) + ' shuffles.', type='DEBUG')
@@ -216,8 +217,6 @@ def compute_overlap_stats(bedA, bedB,
     # details about the intersections like `bedtools intersect` would, this could
     # be computed without much hassle.
 
-
-
     # ------ Fitting of a Negative Binomial distribution on the shuffles ----- #
     # Only relevant for classical shuffle, not Markov
     start = time.time()
@@ -228,7 +227,8 @@ def compute_overlap_stats(bedA, bedB,
 
     else:
         # Renaming esperances and variances
-        esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(summed_bp_overlaps)
+        esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(
+            summed_bp_overlaps)
         esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs = np.mean(intersect_nbs), np.var(intersect_nbs)
 
         ## Check that there is a good adjustment.
@@ -247,11 +247,12 @@ def compute_overlap_stats(bedA, bedB,
             pn = nf.check_negbin_adjustment(intersect_nbs, esperance_fitted_intersect_nbs,
                                             variance_fitted_intersect_nbs)
 
-
     # Send warnings when there is a poor fit
     if (ps < 0.75) | (pn < 0.75):
-        message('There may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.',
-                    type='WARNING')
+        message(ft_type + ': there may be a poor fit for this feature.'
+                          'Check fit quality in the results. This is likely due '
+                          'to there being too few regions.',
+                type='WARNING')
 
     # -------------------------- True intersections -------------------------- #
     # Now, calculating the actual p-value for the number of intersections and the
@@ -273,21 +274,23 @@ def compute_overlap_stats(bedA, bedB,
 
     if (ps == -1) | (pn == -1):
         # NOTE : maybe re-use the empirical p-value later. For now return -1
-        #pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
-        #pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
+        # pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
+        # pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
         pval_intersect_nb = -1
         pval_bp_overlaps = -1
 
     else:
-        pval_intersect_nb = nf.negbin_pval(true_intersect_nb, esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs, precision = pval_precision)
-        pval_bp_overlaps = nf.negbin_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps, precision = pval_precision)
+        pval_intersect_nb = nf.negbin_pval(true_intersect_nb, esperance_fitted_intersect_nbs,
+                                           variance_fitted_intersect_nbs, precision=pval_precision)
+        pval_bp_overlaps = nf.negbin_pval(true_bp_overlaps, esperance_fitted_summed_bp_overlaps,
+                                          variance_fitted_summed_bp_overlaps, precision=pval_precision)
 
     stop = time.time()
-    message('Negative Binomial distributions fitted in : ' + str(stop - start) + ' s.', type='DEBUG')
+    message('Negative Binomial distributions fitted in : ' + str(stop - start) + ' s (' + ft_type + ').', type='DEBUG')
 
     grand_stop = time.time()
 
-    message('--- Total time : ' + str(grand_stop - grand_start) + ' s ---')
+    message('--- Total time : ' + str(grand_stop - grand_start) + ' s ' + ft_type + ' ---')
     message('Total time does not include BED reading, as it does not scale with batch size.', type='DEBUG')
 
     # ------------------------------------------------------------------------
