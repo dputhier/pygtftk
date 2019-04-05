@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import argparse
+import multiprocessing
 import os
 import re
 import sys
 import time
 import warnings
-import multiprocessing
 from functools import partial
 
 import numpy as np
@@ -226,7 +226,7 @@ def make_parser():
                             default=None,
                             required=False)
 
-    parser_grp.add_argument('-if', '--user-img-file',
+    parser_grp.add_argument('-pf', '--pdf-file-alt',
                             help="Provide an alternative path for the main image. ",
                             default=None,
                             nargs=None,
@@ -242,12 +242,6 @@ def make_parser():
                             help="Provide an alternative path for text output file.",
                             default=None,
                             type=arg_formatter.FormattedFile(mode='w', file_ext='txt'),
-                            required=False)
-
-    parser_grp.add_argument('-dpi', '--dpi',
-                            help='Dpi to use.',
-                            type=arg_formatter.ranged_num(0, None),
-                            default=300,
                             required=False)
 
     parser_grp.add_argument('-j', '--sort-features',
@@ -318,8 +312,7 @@ def ologram(inputfile=None,
             force_chrom_gtf=False,
             force_chrom_peak=False,
             force_chrom_more_bed=False,
-            user_img_file=None,
-            dpi=300,
+            pdf_file_alt=None,
             nb_threads=1,
             seed=42,
             sort_features=False,
@@ -346,12 +339,12 @@ def ologram(inputfile=None,
             'Markov-based null is still in beta at the moment and tends to biais the "null" hypothesis towards association.',
             type='WARNING')
 
-
     # Send a warning is nb_threads < available cpu cores
     available_cores = multiprocessing.cpu_count()
     if nb_threads < available_cores:
         message(
-            'Using only '+str(nb_threads)+' threads, but '+str(available_cores)+' cores are available. Consider changing the --nb-threads parameter.',
+            'Using only ' + str(nb_threads) + ' threads, but ' + str(
+                available_cores) + ' cores are available. Consider changing the --nb-threads parameter.',
             type='WARNING')
 
     # -------------------------------------------------------------------------
@@ -552,15 +545,15 @@ def ologram(inputfile=None,
     data_file, pdf_file = file_out_list
 
     if no_pdf:
-        if user_img_file:
-            os.unlink(user_img_file.name)
+        if pdf_file_alt:
+            os.unlink(pdf_file_alt.name)
         os.unlink(pdf_file.name)
         pdf_file = None
     else:
-        if user_img_file is not None:
+        if pdf_file_alt is not None:
 
             os.unlink(pdf_file.name)
-            pdf_file = user_img_file
+            pdf_file = pdf_file_alt
 
             test_path = os.path.abspath(pdf_file.name)
             test_path = os.path.dirname(test_path)
@@ -675,7 +668,7 @@ def ologram(inputfile=None,
                                                        no_na=True,
                                                        nr=True))
 
-                if len(user_key_values) > 50:
+                if len(user_key_values) > 500:
                     message("The selected key in --more-keys "
                             "should be associated with less than 50 different values.",
                             type="ERROR")
@@ -798,12 +791,12 @@ def ologram(inputfile=None,
     # -------------------------------------------------------------------------
 
     if pdf_file is not None:
-        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_order)
+        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order)
         close_properly(pdf_file)
     close_properly(data_file)
 
 
-def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_order):
+def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
     """
     Main plotting function by Q. Ferré and D. Puthier
     """
@@ -984,8 +977,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, dpi, feature_ord
         save_as_pdf_pages(filename=pdf_file.name,
                           plots=[p1 + theme(figure_size=figsize), p2 + theme(figure_size=figsize)],
                           width=pdf_width,
-                          height=pdf_height,
-                          dpi=dpi)
+                          height=pdf_height)
 
 
 def main():

@@ -17,6 +17,8 @@
   - Added -b/--bool argument to *overlapping*.
   - Added -@/--annotate-all to *overlapping*.
   - Added bigwig_to_bed.
+  - The --dpi has been removed from ologram.
+  - The --user-img-file argument in ologram has become pdf_file.
   
 ## v1.0.5
 
