@@ -206,12 +206,6 @@ def make_parser():
                             action='store_true',
                             required=False)
 
-    parser_grp.add_argument('-pp', '--pval-precision',
-                            help='Precision of p-val calculation in dps.',
-                            type=arg_formatter.ranged_num(0, None),
-                            default=1500,
-                            required=False)
-
     # --------------------- Output ------------------------------------------- #
 
     parser_grp.add_argument('-o', '--outputdir',
@@ -330,8 +324,7 @@ def ologram(inputfile=None,
             seed=42,
             sort_features=False,
             minibatch_nb=8,
-            minibatch_size=25,
-            pval_precision=1500
+            minibatch_size=25
             ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
@@ -595,7 +588,7 @@ def ologram(inputfile=None,
     overlap_partial = partial(compute_overlap_stats, chrom_len=chrom_len,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
                               bed_excl=bed_excl, use_markov_shuffling=use_markov,
-                              nb_threads=nb_threads, pval_precision=pval_precision)
+                              nb_threads=nb_threads)
 
     # Initialize result dict
     hits = dict()
