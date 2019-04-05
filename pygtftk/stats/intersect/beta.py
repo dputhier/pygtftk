@@ -9,7 +9,7 @@ class BetaCalculator:
 
     Using routines from the GNU Scientific Library (`beta_inc.c`):
     <Copyright (C) 2007 Brian Gough and  Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman>
-    
+
     Available under the GNU GPL v3 license.
 
     Formulas :
@@ -28,7 +28,7 @@ class BetaCalculator:
     >>> assert(res_A == res_B)
     """
 
-    def __init__(self, precision=1000,
+    def __init__(self, precision=1500,
                  use_log=True,
                  itermax=10000,
                  ft_type="Unknown"):

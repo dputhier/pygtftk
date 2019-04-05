@@ -63,6 +63,9 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     if use_markov_shuffling:
         def batch_and_shuffle_list(l): return cs.markov_shuffle(np.tile(l, (minibatch_size, 1)), nb_threads=nb_threads)
 
+    # NOTE for improvement : if new types of shuffles are added, the corresponding
+    # wrappers should be added here.
+
     # Produce the shuffles on a chromosome basis
     start = time.time()
     for chrom in all_chroms:
@@ -103,7 +106,6 @@ def compute_overlap_stats(bedA, bedB,
                           bed_excl,
                           use_markov_shuffling,
                           nb_threads,
-                          pval_precision,
                           ft_type):
     """
     This is the hub function to compute overlap statistics through Monte Carlo
@@ -283,12 +285,10 @@ def compute_overlap_stats(bedA, bedB,
         pval_intersect_nb = nf.negbin_pval(true_intersect_nb,
                                            esperance_fitted_intersect_nbs,
                                            variance_fitted_intersect_nbs,
-                                           precision=pval_precision,
                                            ft_type=ft_type)
         pval_bp_overlaps = nf.negbin_pval(true_bp_overlaps,
                                           esperance_fitted_summed_bp_overlaps,
                                           variance_fitted_summed_bp_overlaps,
-                                          precision=pval_precision,
                                           ft_type=ft_type)
 
     stop = time.time()
@@ -296,7 +296,7 @@ def compute_overlap_stats(bedA, bedB,
 
     grand_stop = time.time()
 
-    message('--- Total time : ' + str(grand_stop - grand_start) + ' s ' + ft_type + ' ---')
+    message('--- Total time : ' + str(grand_stop - grand_start) + ' s for feature : ' + ft_type + ' ---')
     message('Total time does not include BED reading, as it does not scale with batch size.', type='DEBUG')
 
     # ------------------------------------------------------------------------

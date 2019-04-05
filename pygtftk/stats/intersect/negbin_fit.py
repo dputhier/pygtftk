@@ -130,7 +130,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     return result
 
 
-def negbin_pval(k, mean, var, precision, ft_type="Unknown"):
+def negbin_pval(k, mean, var, precision = 1500, ft_type="Unknown"):
     r"""
     P-value for a negative binomial distribution of the given moments (mean, var).
 
@@ -144,7 +144,7 @@ def negbin_pval(k, mean, var, precision, ft_type="Unknown"):
     >>> mean = 18400
     >>> var = 630200
     >>> k = 65630
-    >>> pval = negbin_pval(k, mean, var, precision = 1500)
+    >>> pval = negbin_pval(k, mean, var)
     >>> assert(pval == 1.1999432787236828e-307)
     """
 

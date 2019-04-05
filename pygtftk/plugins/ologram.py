@@ -6,6 +6,7 @@ import re
 import sys
 import time
 import warnings
+import multiprocessing
 from functools import partial
 
 import numpy as np
@@ -52,7 +53,8 @@ __doc__ = """
  """
 
 __notes__ = """
- -- Although ologram itself is not RAM-intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb.
+ -- Ologram is multithreaded and can use many cores. Although ologram itself is not RAM-intensive,
+ base pygtftk processing of a full human GTF can require upwards of 8Gb.
  It is recommended you do not run other programs in the meantime on a laptop.
 
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
@@ -178,7 +180,7 @@ def make_parser():
     parser_grp.add_argument('-k', '--nb-threads',
                             help='Number of threads for multiprocessing.',
                             type=arg_formatter.ranged_num(0, None),
-                            default=8,
+                            default=1,
                             required=False)
 
     parser_grp.add_argument('-s', '--seed',
@@ -202,12 +204,6 @@ def make_parser():
     parser_grp.add_argument('-ma', '--use-markov',
                             help='Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes.',
                             action='store_true',
-                            required=False)
-
-    parser_grp.add_argument('-pp', '--pval-precision',
-                            help='Precision of p-val calculation in dps.',
-                            type=arg_formatter.ranged_num(0, None),
-                            default=1500,
                             required=False)
 
     # --------------------- Output ------------------------------------------- #
@@ -324,12 +320,11 @@ def ologram(inputfile=None,
             force_chrom_more_bed=False,
             user_img_file=None,
             dpi=300,
-            nb_threads=8,
+            nb_threads=1,
             seed=42,
             sort_features=False,
             minibatch_nb=8,
-            minibatch_size=25,
-            pval_precision=1500
+            minibatch_size=25
             ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
@@ -337,20 +332,26 @@ def ologram(inputfile=None,
     """
 
     # -------------------------------------------------------------------------
-    # Set random seed
+    # Initial checkups
     # -------------------------------------------------------------------------
 
+    # Set random seed
     np.random.seed(seed)
 
-    # -------------------------------------------------------------------------
     # Are we using Markov model realisations instead of shuffling ?
     # If yes, send a warning to the user.
-    # -------------------------------------------------------------------------
-
     if use_markov:
         message('Using Markov order 2 shuffling.', type='INFO')
         message(
             'Markov-based null is still in beta at the moment and tends to biais the "null" hypothesis towards association.',
+            type='WARNING')
+
+
+    # Send a warning is nb_threads < available cpu cores
+    available_cores = multiprocessing.cpu_count()
+    if nb_threads < available_cores:
+        message(
+            'Using only '+str(nb_threads)+' threads, but '+str(available_cores)+' cores are available. Consider changing the --nb-threads parameter.',
             type='WARNING')
 
     # -------------------------------------------------------------------------
@@ -587,7 +588,7 @@ def ologram(inputfile=None,
     overlap_partial = partial(compute_overlap_stats, chrom_len=chrom_len,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
                               bed_excl=bed_excl, use_markov_shuffling=use_markov,
-                              nb_threads=nb_threads, pval_precision=pval_precision)
+                              nb_threads=nb_threads)
 
     # Initialize result dict
     hits = dict()
