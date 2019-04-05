@@ -38,6 +38,7 @@ def make_parser():
                                 "mini_real",
                                 "mini_real_noov_rnd_tx",
                                 "tiny_real",
+                                "hg38_chr1",
                                 "simple_02",
                                 "simple_03",
                                 "simple_04",
