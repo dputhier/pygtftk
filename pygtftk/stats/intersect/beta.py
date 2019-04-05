@@ -30,7 +30,7 @@ class BetaCalculator:
 
     def __init__(self, precision=1500,
                  use_log=True,
-                 itermax=10000,
+                 itermax=100000,
                  ft_type="Unknown"):
         """
         Parameters :
