@@ -668,6 +668,10 @@ def ologram(inputfile=None,
                                                        no_na=True,
                                                        nr=True))
 
+                # Turn the set back into a list, which is predictably sorted,
+                # to ensure reproducible results
+                user_key_values = sorted(user_key_values)
+
                 if len(user_key_values) > 500:
                     message("The selected key in --more-keys "
                             "should be associated with less than 50 different values.",
