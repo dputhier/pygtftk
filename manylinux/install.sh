@@ -1,3 +1,4 @@
+#!/bin/bash
 echo "Creating working directory."
 mkdir -p /io && cd /io
 
