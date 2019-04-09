@@ -15,6 +15,10 @@ Citing                    |citing|_
 Documentation             |documentation|_
 =================         =================
 
+.. image:: https://api.codacy.com/project/badge/Grade/52c76d24e9e14ab58d46f6634442440d
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/app/dputhier/pygtftk?utm_source=github.com&utm_medium=referral&utm_content=dputhier/pygtftk&utm_campaign=Badge_Grade_Dashboard
+
 .. |license| image:: https://img.shields.io/github/license/dputhier/pygtftk.svg
 .. _license: https://github.com/dputhier/pygtftk
 
