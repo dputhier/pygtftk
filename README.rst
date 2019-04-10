@@ -1,6 +1,6 @@
 =================         =================
 Pip package               |Pippackage|_
-Conda package             |bioconda|_
+Bioconda package             |bioconda|_
 License                   |license|_
 Platforms                 |platform|_
 Languages                 |lang|_
