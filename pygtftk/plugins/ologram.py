@@ -594,7 +594,7 @@ def ologram(inputfile=None,
                 gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
                                                    "gene_id",
                                                    "exon_id"]).sort().merge()  # merging bed file !
-                tmp_file = make_tmp_file(prefix=str(feat_type), suffix='.bed')
+                tmp_file = make_tmp_file(prefix="ologram_" + str(feat_type), suffix='.bed')
                 gtf_sub_bed.saveas(tmp_file.name)
 
                 del gtf_sub
@@ -611,6 +611,9 @@ def ologram(inputfile=None,
                                              0,
                                              chrom_len.keys()).merge()
 
+            tmp_bed = make_tmp_file(prefix="ologram_intergenic", suffix=".bed")
+            gtf_sub_bed.saveas(tmp_bed.name)
+
             hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Intergenic")
 
             # -------------------------------------------------------------------------
@@ -619,6 +622,9 @@ def ologram(inputfile=None,
 
             message("Processing on : Introns", type="INFO")
             gtf_sub_bed = gtf.get_introns()
+
+            tmp_bed = make_tmp_file(prefix="ologram_introns", suffix=".bed")
+            gtf_sub_bed.saveas(tmp_bed.name)
 
             hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Introns")
 
@@ -633,6 +639,9 @@ def ologram(inputfile=None,
                                              g=chrom_info.name).cut([0, 1, 2,
                                                                      3, 4, 5]).sort().merge()
 
+            tmp_bed = make_tmp_file(prefix="ologram_promoters", suffix=".bed")
+            gtf_sub_bed.saveas(tmp_bed.name)
+
             hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Promoter")
 
             # -------------------------------------------------------------------------
@@ -645,6 +654,8 @@ def ologram(inputfile=None,
                                              r=downstream,
                                              g=chrom_info.name).cut([0, 1, 2,
                                                                      3, 4, 5]).sort().merge()
+            tmp_bed = make_tmp_file(prefix="ologram_terminator", suffix=".bed")
+            gtf_sub_bed.saveas(tmp_bed.name)
 
             hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Terminator")
 
@@ -686,6 +697,9 @@ def ologram(inputfile=None,
                                                            "gene_id",
                                                            "exon_id"]).sort().merge()  # merging bed file !
                         del gtf_sub
+                        tmp_bed = make_tmp_file(prefix="ologram_terminator", suffix=".bed")
+                        gtf_sub_bed.saveas(tmp_bed.name)
+
                         ft_type = ":".join([user_key, val])  # Key for the dictionary
                         hits[ft_type] = overlap_partial(bedA=peak_file,
                                                         bedB=gtf_sub_bed,
@@ -726,6 +740,9 @@ def ologram(inputfile=None,
 
                 bed_anno_sub.close()
                 bed_anno = bed_anno_sub
+
+            tmp_bed = make_tmp_file(prefix=bed_lab, suffix=".bed")
+            bed_anno.saveas(tmp_bed.name)
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
                                             bedB=BedTool(bed_anno.name),
