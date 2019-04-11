@@ -48,8 +48,9 @@ __doc__ = """
  The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
 
- Authors : Quentin Ferré <quentin.q.ferre@gmail.com>, Guillaume Charbonnier
- <guillaume.charbonnier@outlook.com> and Denis Puthier <denis.puthier@univ-amu.fr>.
+ Authors : Quentin FERRE <quentin.q.ferre@gmail.com>, Guillaume CHARBONNIER
+ <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
+ <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
  """
 
 __notes__ = """
@@ -819,7 +820,7 @@ def ologram(inputfile=None,
 
 def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
     """
-    Main plotting function by Q. Ferré and D. Puthier
+    Main plotting function by Q. FERRE and D. PUTHIER.
     """
 
     if d.shape[0] == 0:
