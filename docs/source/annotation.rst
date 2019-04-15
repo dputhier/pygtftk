@@ -73,7 +73,7 @@ the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
 
 **Example:** A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K4me3.
 
-.. command-output:: gtftk join_attr -i hg38_chr1.gtf.gz -H -j hg38_chr1_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38.genome -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
+.. command-output:: gtftk join_attr -i hg38_chr1.gtf.gz -H -j hg38_chr1_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38.genome -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
 	:shell:
 
 
