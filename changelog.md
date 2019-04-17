@@ -27,7 +27,7 @@ This version provides several improvements and bug fix to ologram. The CLI of *m
 ### Bug Fixes
 
   - Fix #76 (issue with chromosomes in ensembl format when using ologram).
-  - Fix #72 (P-values equal to zero when nb_intersections_true and nb_intersections_esperance_shuffled are equal to zero).
+  - Fix #72 (P-values equal to zero when nb_intersections_true and nb_intersections_expectation_shuffled are equal to zero).
 
 ### API Changes
 

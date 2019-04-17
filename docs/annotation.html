@@ -169,7 +169,7 @@ the bar plot diagram will be ordered according to â€˜summed_bp_overlaps_pvalueâ€
 <br>
 <br><p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -h
-  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-pp pval_precision] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-if user_img_file] [-x] [-tp tsv_file_path] [-dpi dpi] [-j {None,nb_intersections_esperance_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_esperance_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-z] [-f] [-w] [-q] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-pp pval_precision] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-if user_img_file] [-x] [-tp tsv_file_path] [-dpi dpi] [-j {None,nb_intersections_expectation_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_expectation_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-z] [-f] [-w] [-q] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
 
   Description: 
      *  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks (in bed
@@ -195,7 +195,7 @@ the bar plot diagram will be ordered according to â€˜summed_bp_overlaps_pvalueâ€
      *  The program produces a pdf file and a txt file (&#39;_stats_&#39;) containing intersection
      statistics for the shuffled BEDs under H0 (peak_file and the considered genomic region are
      independant): number of intersections (= number of lines in the bed intersect) and total number
-     of overlapping base pairs.  The output figure gives, for both statistics, esperance and
+     of overlapping base pairs.  The output figure gives, for both statistics, expectation and
      standard deviation (error bars) in the shuffles compared to the actual values.  It also gives,
      under the &#39;fit&#39; label for each statistic, the goodness of fit of the statistic under (H0) to a
      Negative Binomial assessed by a Cramer&#39;s V score (fit_quality gives 1-V ; as per Cramer (1948)

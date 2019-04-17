@@ -160,13 +160,13 @@ def compute_overlap_stats(bedA, bedB,
 
         # Return a result dict full of -1
         result_abort = OrderedDict()
-        result_abort['nb_intersections_esperance_shuffled'] = 0;
+        result_abort['nb_intersections_expectation_shuffled'] = 0;
         result_abort['nb_intersections_variance_shuffled'] = 0
         result_abort['nb_intersections_negbinom_fit_quality'] = -1;
         result_abort['nb_intersections_log2_fold_change'] = 0
         result_abort['nb_intersections_true'] = 0;
         result_abort['nb_intersections_pvalue'] = -1;
-        result_abort['summed_bp_overlaps_esperance_shuffled'] = 0;
+        result_abort['summed_bp_overlaps_expectation_shuffled'] = 0;
         result_abort['summed_bp_overlaps_variance_shuffled'] = 0
         result_abort['summed_bp_overlaps_negbinom_fit_quality'] = -1;
         result_abort['summed_bp_overlaps_log2_fold_change'] = 0
@@ -228,25 +228,25 @@ def compute_overlap_stats(bedA, bedB,
         ps = pn = -1
 
     else:
-        # Renaming esperances and variances
-        esperance_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(
+        # Renaming expectations and variances
+        expectation_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(
             summed_bp_overlaps)
-        esperance_fitted_intersect_nbs, variance_fitted_intersect_nbs = np.mean(intersect_nbs), np.var(intersect_nbs)
+        expectation_fitted_intersect_nbs, variance_fitted_intersect_nbs = np.mean(intersect_nbs), np.var(intersect_nbs)
 
         ## Check that there is a good adjustment.
         # This is done using 1 minus Cramer's V score ; a good adjustment should return a value close to 1
         # See doc of check_negbin_adjustment() for details
-        # NOTE Checking adjustment is meaningless if the esperance is zero
-        if esperance_fitted_summed_bp_overlaps == 0:
+        # NOTE Checking adjustment is meaningless if the expectation is zero
+        if expectation_fitted_summed_bp_overlaps == 0:
             ps = -1
         else:
-            ps = nf.check_negbin_adjustment(summed_bp_overlaps, esperance_fitted_summed_bp_overlaps,
+            ps = nf.check_negbin_adjustment(summed_bp_overlaps, expectation_fitted_summed_bp_overlaps,
                                             variance_fitted_summed_bp_overlaps)
 
-        if esperance_fitted_intersect_nbs == 0:
+        if expectation_fitted_intersect_nbs == 0:
             pn = -1
         else:
-            pn = nf.check_negbin_adjustment(intersect_nbs, esperance_fitted_intersect_nbs,
+            pn = nf.check_negbin_adjustment(intersect_nbs, expectation_fitted_intersect_nbs,
                                             variance_fitted_intersect_nbs)
 
     # Send warnings when there is a poor fit
@@ -283,11 +283,11 @@ def compute_overlap_stats(bedA, bedB,
 
     else:
         pval_intersect_nb = nf.negbin_pval(true_intersect_nb,
-                                           esperance_fitted_intersect_nbs,
+                                           expectation_fitted_intersect_nbs,
                                            variance_fitted_intersect_nbs,
                                            ft_type=ft_type)
         pval_bp_overlaps = nf.negbin_pval(true_bp_overlaps,
-                                          esperance_fitted_summed_bp_overlaps,
+                                          expectation_fitted_summed_bp_overlaps,
                                           variance_fitted_summed_bp_overlaps,
                                           ft_type=ft_type)
 
@@ -331,7 +331,7 @@ def compute_overlap_stats(bedA, bedB,
     result = OrderedDict()
 
     # Number of intersections
-    result['nb_intersections_esperance_shuffled'] = '{:.2f}'.format(np.mean(intersect_nbs))
+    result['nb_intersections_expectation_shuffled'] = '{:.2f}'.format(np.mean(intersect_nbs))
     result['nb_intersections_variance_shuffled'] = '{:.2f}'.format(np.var(intersect_nbs))
 
     result['nb_intersections_negbinom_fit_quality'] = '{:.5f}'.format(pn)
@@ -347,7 +347,7 @@ def compute_overlap_stats(bedA, bedB,
     result['nb_intersections_pvalue'] = '{0:.4g}'.format(pval_intersect_nb)
 
     # Summed number of overlapping basepairs
-    result['summed_bp_overlaps_esperance_shuffled'] = '{:.2f}'.format(np.mean(summed_bp_overlaps))
+    result['summed_bp_overlaps_expectation_shuffled'] = '{:.2f}'.format(np.mean(summed_bp_overlaps))
     result['summed_bp_overlaps_variance_shuffled'] = '{:.2f}'.format(np.var(summed_bp_overlaps))
 
     result['summed_bp_overlaps_negbinom_fit_quality'] = '{:.5f}'.format(ps)

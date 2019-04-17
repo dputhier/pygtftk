@@ -246,13 +246,13 @@ def make_parser():
 
     parser_grp.add_argument('-j', '--sort-features',
                             help="Whether to sort features in diagrams according to a computed statistic.",
-                            choices=[None, "nb_intersections_esperance_shuffled",
+                            choices=[None, "nb_intersections_expectation_shuffled",
                                      "nb_intersections_variance_shuffled",
                                      "nb_intersections_negbinom_fit_quality",
                                      "nb_intersections_log2_fold_change",
                                      "nb_intersections_true",
                                      "nb_intersections_pvalue",
-                                     "summed_bp_overlaps_esperance_shuffled",
+                                     "summed_bp_overlaps_expectation_shuffled",
                                      "summed_bp_overlaps_variance_shuffled",
                                      "summed_bp_overlaps_negbinom_fit_quality",
                                      "summed_bp_overlaps_log2_fold_change",
@@ -830,8 +830,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
         # ------------------------- DATA PROCESSING -------------------------- #
 
         # Collect true and shuffled number of the stat being plotted
-        data_ni = dm[['feature_type', statname + '_esperance_shuffled', statname + '_true']]
-        maximum = data_ni[[statname + '_esperance_shuffled', statname + '_true']].max(axis=1)
+        data_ni = dm[['feature_type', statname + '_expectation_shuffled', statname + '_true']]
+        maximum = data_ni[[statname + '_expectation_shuffled', statname + '_true']].max(axis=1)
 
         data_ni.columns = ['Feature', 'Shuffled', 'True']  # Rename columns
 
@@ -857,8 +857,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
         p += geom_bar(mapping=aes_plot, stat='identity', alpha=0.6, position='dodge', show_legend=True, width=.6)
 
         # Add error bars for the standard deviation of the shuffles
-        errorbar_mins = dm[statname + '_esperance_shuffled'] - np.sqrt(dm[statname + '_variance_shuffled'])
-        errorbar_maxs = dm[statname + '_esperance_shuffled'] + np.sqrt(dm[statname + '_variance_shuffled'])
+        errorbar_mins = dm[statname + '_expectation_shuffled'] - np.sqrt(dm[statname + '_variance_shuffled'])
+        errorbar_maxs = dm[statname + '_expectation_shuffled'] + np.sqrt(dm[statname + '_variance_shuffled'])
 
         # True values have no error
         na_series = pd.Series([np.nan] * len(errorbar_mins))
