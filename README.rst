@@ -1,19 +1,27 @@
 =================         =================
 Pip package               |Pippackage|_
-Platforms                 |platform|_
+Bioconda package             |bioconda|_
 License                   |license|_
+Platforms                 |platform|_
 Languages                 |lang|_
 Build status              |build|_
 Repository size           |size|_
-Conda                     |conda|_
 Latest conda              |latestconda|
 Downloads                 |downloads|_
+Codacy                    |codacy|_
 Contribution              |contrib|_
 Github hits               |hits|_
 Issues                    |issues|_
 Citing                    |citing|_
 Documentation             |documentation|_
 =================         =================
+
+.. |codacy| image:: https://api.codacy.com/project/badge/Grade/0a977718b4d44992a794cf5ddef7822e
+.. _codacy: https://www.codacy.com/app/dputhier/pygtftk?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dputhier/pygtftk&amp;utm_campaign=Badge_Grade
+
+.. |bioconda| image:: https://anaconda.org/bioconda/pygtftk/badges/version.svg
+.. _bioconda: https://anaconda.org/bioconda/pygtftk
+
 
 .. |license| image:: https://img.shields.io/github/license/dputhier/pygtftk.svg
 .. _license: https://github.com/dputhier/pygtftk
@@ -29,9 +37,6 @@ Documentation             |documentation|_
 
 .. |size| image:: https://img.shields.io/github/repo-size/badges/shields.svg
 .. _size: https://travis-ci.org/dputhier/pygtftk
-
-.. |conda| image:: https://anaconda.org/bioconda/pygtftk/badges/installer/conda.svg
-.. _conda: https://anaconda.org/bioconda/pygtftk
 
 .. |platform| image:: https://anaconda.org/bioconda/pygtftk/badges/platforms.svg
 .. _platform: https://anaconda.org/bioconda/pygtftk

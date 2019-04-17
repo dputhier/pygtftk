@@ -1240,7 +1240,7 @@ else:
     test = '''
     #profile: prepare dataset
     @test "profile_1" {
-     result=`gtftk get_example -d mini_real -f '*'; gtftk overlapping -i mini_real.gtf.gz -c hg38.genome  -n > mini_real_noov.gtf; gtftk random_tx -i mini_real_noov.gtf  -m 1 -s 123 > mini_real_noov_rnd_tx.gtf`
+     result=`gtftk get_example -d mini_real -f '*'; gtftk overlapping -i mini_real.gtf.gz -c hg38  -n > mini_real_noov.gtf; gtftk random_tx -i mini_real_noov.gtf  -m 1 -s 123 > mini_real_noov_rnd_tx.gtf`
       [ -s "hg38.genome" ]
     }
 
@@ -1251,7 +1251,7 @@ else:
                             
     #profile: prepare dataset
     @test "profile_3" {
-     result=`gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter_pr`
+     result=`gtftk mk_matrix -k 5 -i mini_real_noov_rnd_tx.gtf -d 5000 -u 5000 -w 200 -c hg38  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter_pr`
       [ -s "mini_real_promoter_pr.zip" ]
     }
 
@@ -1276,7 +1276,7 @@ else:
 
     #profile: make single_nuc
     @test "profile_7" {
-     result=`gtftk mk_matrix -u 5000 -d 5000 -i tss.bed -w 200 -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_single_nuc_pr -c hg38.genome -t single_nuc`
+     result=`gtftk mk_matrix -u 5000 -d 5000 -i tss.bed -w 200 -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_single_nuc_pr -c hg38 -t single_nuc`
       [ -s "mini_real_single_nuc_pr.zip" ]
     }
 
@@ -1288,7 +1288,7 @@ else:
 
     #profile: make mini_real_tx
     @test "profile_9" {
-     result=`gtftk mk_matrix  -k 5  -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr`
+     result=`gtftk mk_matrix  -k 5  -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr`
       [ -s "mini_real_tx_pr.zip" ]
     }
 
@@ -1306,7 +1306,7 @@ else:
 
     #profile: make mini_real_user_def
     @test "profile_12" {
-     result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_rnd_tx.bed -t user_regions  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_user_def`
+     result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_rnd_tx.bed -t user_regions  -d 5000 -u 5000 -w 200 -c hg38  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_user_def`
       [ -s "mini_real_user_def.zip" ]
     }
 
@@ -1354,7 +1354,7 @@ else:
 
     #profile: create dataset
     @test "profile_20" {
-     result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr_2`
+     result=`gtftk mk_matrix  -k 5  --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf -t transcript  -d 5000 -u 5000 -w 200 -c hg38  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx_pr_2`
       [ -s "mini_real_tx_pr_2.zip" ]
     }
     

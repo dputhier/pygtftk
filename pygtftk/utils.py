@@ -50,6 +50,11 @@ CHROM_CHECKED = False
 TAB = '\t'
 NEWLINE = '\n'
 
+# Whether message should be written to a file
+# Contains None or Argparse.Filetype('w')
+
+MESSAGE_FILE = None
+
 
 # ---------------------------------------------------------------
 # Error class
@@ -757,24 +762,31 @@ def message(msg, nl=True, type="INFO", force=False):
 
         if cmd == "":
             if nl:
-                sys.stderr.write(" |-- {c}-{a} : {b}\n".format(a=type,
-                                                               b=msg,
-                                                               c=ho_min))
+                msg = " |-- {c}-{a} : {b}\n".format(a=type,
+                                                    b=msg,
+                                                    c=ho_min)
+
             else:
-                sys.stderr.write(" |-- {c}-{a} : {b}".format(a=type,
-                                                             b=msg,
-                                                             c=ho_min))
+                msg = " |-- {c}-{a} : {b}".format(a=type,
+                                                  b=msg,
+                                                  c=ho_min)
+
         else:
             if nl:
-                sys.stderr.write(" |-- {c}-{a}-{d} : {b}\n".format(a=type,
-                                                                   b=msg,
-                                                                   c=ho_min,
-                                                                   d=cmd))
+                msg = " |-- {c}-{a}-{d} : {b}\n".format(a=type,
+                                                        b=msg,
+                                                        c=ho_min,
+                                                        d=cmd)
             else:
-                sys.stderr.write(" |-- {c}-{a}-{d} : {b}".format(a=type,
-                                                                 b=msg,
-                                                                 c=ho_min,
-                                                                 d=cmd))
+                msg = " |-- {c}-{a}-{d} : {b}".format(a=type,
+                                                      b=msg,
+                                                      c=ho_min,
+                                                      d=cmd)
+        if MESSAGE_FILE is None:
+            sys.stderr.write(msg)
+        else:
+            MESSAGE_FILE.write(msg)
+            MESSAGE_FILE.flush()
 
     if type == "ERROR":
 

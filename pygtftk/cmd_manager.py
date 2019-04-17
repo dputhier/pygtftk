@@ -640,7 +640,6 @@ class CmdManager(object):
         group.add_argument("-V",
                            "--verbosity",
                            default=0,
-                           metavar="",
                            type=ranged_num(lowest=0,
                                            highest=3,
                                            val_type="int",
@@ -666,7 +665,6 @@ class CmdManager(object):
         group.add_argument("-K",
                            "--tmp-dir",
                            type=str,
-                           metavar="",
                            default=None,
                            help="Keep all temporary files into this folder.",
                            required=False)
@@ -683,8 +681,16 @@ class CmdManager(object):
         group.add_argument("-L",
                            "--logger-file",
                            type=str,
-                           metavar="",
                            help='Stores the arguments passed to the command into a file.',
+                           required=False)
+
+        # logger-file can be used to store the requested command
+        # arguments into a file.
+        group.add_argument("-W",
+                           "--write-message-to-file",
+                           type=argparse.FileType('w'),
+                           default=None,
+                           help='Store all message into a file.',
                            required=False)
 
         # Add the command to the list of known command
@@ -891,6 +897,9 @@ class CmdManager(object):
             if args['add_chr']:
                 pygtftk.utils.ADD_CHR = 1
 
+            if args['write_message_to_file'] is not None:
+                pygtftk.utils.MESSAGE_FILE = args['write_message_to_file']
+
             if args['logger_file'] is not None:
                 if os.path.isdir(args['logger_file']):
                     message("ERROR --logger-file is a directory.",
@@ -937,7 +946,7 @@ class CmdManager(object):
                                'plugin_tests', 'list_plugins', 'plugin_tests_no_conn',
                                'r_libs', 'add_plugin', 'update_plugins', 'system_info',
                                'plugin_path', 'no_date', 'keep_all', 'logger_file',
-                               'tmp_dir', 'verbosity', 'command']
+                               'tmp_dir', 'verbosity', 'command', 'write_message_to_file']
             for cur_arg in arg_list_to_del:
                 try:
                     del args[cur_arg]

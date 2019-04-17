@@ -48,8 +48,9 @@ __doc__ = """
  The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
 
- Authors : Quentin Ferré <quentin.q.ferre@gmail.com>, Guillaume Charbonnier
- <guillaume.charbonnier@outlook.com> and Denis Puthier <denis.puthier@univ-amu.fr>.
+ Authors : Quentin FERRE <quentin.q.ferre@gmail.com>, Guillaume CHARBONNIER
+ <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
+ <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
  """
 
 __notes__ = """
@@ -504,7 +505,7 @@ def ologram(inputfile=None,
 
     if not no_gtf:
         if not no_basic_feature or more_keys:
-            gtf = GTF(inputfile)
+            gtf = GTF(inputfile, check_ensembl_format=False)
             gtf_chrom_list = gtf.get_chroms(nr=True)
 
             # -------------------------------------------------------------------------
@@ -619,59 +620,73 @@ def ologram(inputfile=None,
                 gtf_sub_bed = gtf_sub.to_bed(name=["transcript_id",
                                                    "gene_id",
                                                    "exon_id"]).sort().merge()  # merging bed file !
-                tmp_file = make_tmp_file(prefix=str(feat_type), suffix='.bed')
+                tmp_file = make_tmp_file(prefix="ologram_" + str(feat_type), suffix='.bed')
                 gtf_sub_bed.saveas(tmp_file.name)
 
                 del gtf_sub
 
                 hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type=feat_type)
 
-            # -------------------------------------------------------------------------
-            # Get the intergenic regions
-            # -------------------------------------------------------------------------
+            nb_gene_line = len(gtf.select_by_key(key="feature", value="gene"))
+            nb_tx_line = len(gtf.select_by_key(key="feature", value="transcript"))
 
-            message("Processing intergenic regions", type="INFO")
-            gtf_sub_bed = gtf.get_intergenic(chrom_info,
-                                             0,
-                                             0,
-                                             chrom_len.keys()).merge()
+            if nb_gene_line and nb_tx_line:
+                # -------------------------------------------------------------------------
+                # Get the intergenic regions
+                # -------------------------------------------------------------------------
+                message("Processing intergenic regions", type="INFO")
+                gtf_sub_bed = gtf.get_intergenic(chrom_info,
+                                                 0,
+                                                 0,
+                                                 chrom_len.keys()).merge()
 
-            hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Intergenic")
+                tmp_bed = make_tmp_file(prefix="ologram_intergenic", suffix=".bed")
+                gtf_sub_bed.saveas(tmp_bed.name)
 
-            # -------------------------------------------------------------------------
-            # Get the intronic regions
-            # -------------------------------------------------------------------------
+                hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Intergenic")
 
-            message("Processing on : Introns", type="INFO")
-            gtf_sub_bed = gtf.get_introns()
+                # -------------------------------------------------------------------------
+                # Get the intronic regions
+                # -------------------------------------------------------------------------
 
-            hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Introns")
+                message("Processing on : Introns", type="INFO")
+                gtf_sub_bed = gtf.get_introns()
 
-            # -------------------------------------------------------------------------
-            # Get the promoter regions
-            # -------------------------------------------------------------------------
+                tmp_bed = make_tmp_file(prefix="ologram_introns", suffix=".bed")
+                gtf_sub_bed.saveas(tmp_bed.name)
 
-            message("Processing promoters", type="INFO")
-            gtf_sub_bed = gtf.get_tss().slop(s=True,
-                                             l=upstream,
-                                             r=downstream,
-                                             g=chrom_info.name).cut([0, 1, 2,
-                                                                     3, 4, 5]).sort().merge()
+                hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Introns")
 
-            hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Promoter")
+                # -------------------------------------------------------------------------
+                # Get the promoter regions
+                # -------------------------------------------------------------------------
 
-            # -------------------------------------------------------------------------
-            # Get the tts regions
-            # -------------------------------------------------------------------------
+                message("Processing promoters", type="INFO")
+                gtf_sub_bed = gtf.get_tss().slop(s=True,
+                                                 l=upstream,
+                                                 r=downstream,
+                                                 g=chrom_info.name).cut([0, 1, 2,
+                                                                         3, 4, 5]).sort().merge()
 
-            message("Processing terminator", type="INFO")
-            gtf_sub_bed = gtf.get_tts().slop(s=True,
-                                             l=upstream,
-                                             r=downstream,
-                                             g=chrom_info.name).cut([0, 1, 2,
-                                                                     3, 4, 5]).sort().merge()
+                tmp_bed = make_tmp_file(prefix="ologram_promoters", suffix=".bed")
+                gtf_sub_bed.saveas(tmp_bed.name)
 
-            hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Terminator")
+                hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Promoter")
+
+                # -------------------------------------------------------------------------
+                # Get the tts regions
+                # -------------------------------------------------------------------------
+
+                message("Processing terminator", type="INFO")
+                gtf_sub_bed = gtf.get_tts().slop(s=True,
+                                                 l=upstream,
+                                                 r=downstream,
+                                                 g=chrom_info.name).cut([0, 1, 2,
+                                                                         3, 4, 5]).sort().merge()
+                tmp_bed = make_tmp_file(prefix="ologram_terminator", suffix=".bed")
+                gtf_sub_bed.saveas(tmp_bed.name)
+
+                hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Terminator")
 
         # -------------------------------------------------------------------------
         # if the user request --more-keys (e.g. gene_biotype)
@@ -711,6 +726,9 @@ def ologram(inputfile=None,
                                                            "gene_id",
                                                            "exon_id"]).sort().merge()  # merging bed file !
                         del gtf_sub
+                        tmp_bed = make_tmp_file(prefix="ologram_terminator", suffix=".bed")
+                        gtf_sub_bed.saveas(tmp_bed.name)
+
                         ft_type = ":".join([user_key, val])  # Key for the dictionary
                         hits[ft_type] = overlap_partial(bedA=peak_file,
                                                         bedB=gtf_sub_bed,
@@ -751,6 +769,9 @@ def ologram(inputfile=None,
 
                 bed_anno_sub.close()
                 bed_anno = bed_anno_sub
+
+            tmp_bed = make_tmp_file(prefix=bed_lab, suffix=".bed")
+            bed_anno.saveas(tmp_bed.name)
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
                                             bedB=BedTool(bed_anno.name),
@@ -827,7 +848,7 @@ def ologram(inputfile=None,
 
 def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
     """
-    Main plotting function by Q. Ferré and D. Puthier
+    Main plotting function by Q. FERRE and D. PUTHIER.
     """
 
     if d.shape[0] == 0:

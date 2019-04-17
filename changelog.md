@@ -19,6 +19,7 @@
   - Added bigwig_to_bed.
   - The --dpi has been removed from ologram.
   - The --user-img-file argument in ologram has become pdf_file.
+  - Added -W as command-wise argument. It force gtftk to print its message to a file. This may be handy when no access to stderr is available (e.g. through a scheduler).
   
 ## v1.0.5
 
