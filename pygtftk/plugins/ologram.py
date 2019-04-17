@@ -151,6 +151,13 @@ def make_parser():
                             type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
                             required=False)
 
+    parser_grp.add_argument('-bi', '--bed-incl',
+                            help='Opposite of --bed-excl, will perform the same operation but keep only those regions.',
+                            default=None,
+                            metavar="BED",
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
+                            required=False)
+
     parser_grp.add_argument('-u', '--upstream',
                             help="Extend the TSS and TTS of in 5' by a given value.",
                             default=1000,
@@ -304,6 +311,7 @@ def ologram(inputfile=None,
             downstream=1000,
             no_basic_feature=False,
             bed_excl=None,
+            bed_incl=None,
             use_markov=False,
             no_pdf=None,
             pdf_width=5,
@@ -449,6 +457,21 @@ def ologram(inputfile=None,
     # Exclusion on the other bed files or gtf extracted bed files ('bedB') is
     # done once we get to them.
     # overlap_stats_shuffling() will handle that, with the same condition : that bed_excl != None
+
+
+
+    # If the use supplied an inclusion file instead of an exclusion one, do
+    # its "negative" to get back an exclusion file.
+    if bed_incl:
+        if bed_excl is not None:
+            message("Cannot specify both --bed_incl and --bed_excl",
+                        type="ERROR")
+
+        # Generate a fake bed for the entire genome, using the chromsizes
+        full_genome_bed = [str(chrom)+'\t'+'0'+'\t'+str(chrom_len[chrom])+'\n' for chrom in chrom_len if chrom != 'all_chrom']
+        full_genome_bed = pybedtools.BedTool(full_genome_bed)
+        bed_incl = pybedtools.BedTool(bed_incl)
+        bed_excl = full_genome_bed.subtract(bed_incl)
 
     # WARNING : do not modify chrom_info or peak_file afterwards !
     # We can afford to modify chrom_len because we only modify its values, and the
