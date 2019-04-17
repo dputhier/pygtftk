@@ -180,6 +180,12 @@ cython_ologram_2 = Extension(name='pygtftk.stats.intersect.overlap.overlap_regio
                              extra_compile_args=extra_comp_cython,
                              language='c')
 
+cython_ologram_3 = Extension(name='pygtftk.stats.intersect.read_bed.read_bed_as_list',
+                             sources=["pygtftk/stats/intersect/read_bed/read_bed_as_list.pyx","pygtftk/stats/intersect/read_bed/exclude.cpp"],
+                             extra_compile_args=extra_comp_cython + ['-O3'],
+                             include_dirs=[np.get_include()],
+                             language='c++')
+
 # ----------------------------------------------------------------------
 # Description
 # ----------------------------------------------------------------------
@@ -311,7 +317,7 @@ setup(name="pygtftk",
                         'setuptools',
                         'cython',
                         'mpmath'],
-      ext_modules=[lib_pygtftk] + [cython_ologram] + [cython_ologram_2])
+      ext_modules=[lib_pygtftk] + [cython_ologram] + [cython_ologram_2] + [cython_ologram_3])
 
 # ----------------------------------------------------------------------
 # Update gtftk config directory

@@ -21,7 +21,7 @@ from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
-from pygtftk.stats.intersect import read_bed_as_list as read_bed  # Only used here for exclusions
+from pygtftk.stats.intersect.read_bed import read_bed_as_list as read_bed  # Only used here for exclusions
 from pygtftk.stats.intersect.overlap_stats_shuffling import \
     compute_overlap_stats  # Main function from the stats.intersect module
 from pygtftk.utils import chrom_info_as_dict
@@ -144,7 +144,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-e', '--bed-excl',
-                            help='Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features. Can take a long time.'
+                            help='Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features.'
                                  ' (bed format).',
                             default=None,
                             metavar="BED",
@@ -472,6 +472,9 @@ def ologram(inputfile=None,
         full_genome_bed = pybedtools.BedTool(full_genome_bed)
         bed_incl = pybedtools.BedTool(bed_incl)
         bed_excl = full_genome_bed.subtract(bed_incl)
+
+
+
 
     # WARNING : do not modify chrom_info or peak_file afterwards !
     # We can afford to modify chrom_len because we only modify its values, and the
@@ -1031,7 +1034,7 @@ else:
 
         #ologram: run on simple test file
         @test "ologram_1" {
-             result=`rm -Rf ologram_output; gtftk ologram -i simple_02.gtf -p simple_02_peaks.bed -c simple_02.chromInfo -u 2 -d 2 -K ologram_output --no-date`
+             result=`rm -Rf ologram_output; gtftk ologram -i simple_02.gtf -p simple_02_peaks.bed -c simple_02.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8`
           [ "$result" = "" ]
         }
 

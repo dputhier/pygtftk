@@ -13,7 +13,7 @@ import pybedtools
 
 from pygtftk.stats.intersect import create_shuffles as cs
 from pygtftk.stats.intersect import negbin_fit as nf
-from pygtftk.stats.intersect import read_bed_as_list as read_bed
+from pygtftk.stats.intersect.read_bed import read_bed_as_list as read_bed
 from pygtftk.stats.intersect.overlap import overlap_regions as oc
 from pygtftk.utils import message
 
@@ -122,7 +122,7 @@ def compute_overlap_stats(bedA, bedB,
     See the ologram module for more documentation on the significance of
     each argument.
 
-    Author : Quentin Ferré <quentin.q.ferre@gmail.com>
+    Author : Quentin FERRE <quentin.q.ferre@gmail.com>
     """
 
     message('Beginning shuffling for ' + ft_type)
@@ -138,6 +138,9 @@ def compute_overlap_stats(bedA, bedB,
     # Just in case, force type and merge bedA ; same for bedB
     bed_A_as_pybedtool = pybedtools.BedTool(bedA).sort().merge()
     bed_B_as_pybedtool = pybedtools.BedTool(bedB).sort().merge()
+
+
+
 
     # If there is an exclusion to be done, do it.
 
@@ -272,7 +275,7 @@ def compute_overlap_stats(bedA, bedB,
     # Do not do this for the Markov shuffling, as it is likely a multi-variable fit (see notes)
 
     # We can only use a Neg Binom p-val if we can fit it, and that is not the case for
-    # the Markov shuffle or if the esperance is too small : we must use an empirical p-value
+    # the Markov shuffle or if the expectation is too small : we must use an empirical p-value
 
     if (ps == -1) | (pn == -1):
         # NOTE : maybe re-use the empirical p-value later. For now return -1

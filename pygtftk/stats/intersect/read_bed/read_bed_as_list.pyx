@@ -1,3 +1,7 @@
+# distutils: language = c++
+# distutils: sources = exclude.cpp
+
+
 """
 A set of functions to turn a BED file into a list of intervals, and exclude
 certain regions to create concatenated sub-chromosomes.
@@ -8,7 +12,9 @@ from functools import partial
 from collections import Counter
 
 import pybedtools
+import cython
 import numpy as np
+cimport numpy as np
 import pandas as pd
 
 from pygtftk.utils import message
@@ -34,7 +40,7 @@ def bed_to_lists_of_intervals(bed, chromsizes):
     For example, Li['chr1'] is the list of distances between regions in chr1.
 
     >>> from pygtftk.utils import get_example_file
-    >>> from pygtftk.stats.intersect.read_bed_as_list import bed_to_lists_of_intervals
+    >>> from pygtftk.stats.intersect.read_bed.read_bed_as_list import bed_to_lists_of_intervals
     >>> import pybedtools
     >>> import numpy.testing as npt
     >>> f = pybedtools.BedTool(get_example_file("simple","bed")[0])
@@ -80,6 +86,14 @@ def bed_to_lists_of_intervals(bed, chromsizes):
         Lr[str(chrom)] = np.array(lr)
         Li[str(chrom)] = np.array(li)
 
+
+
+
+    # NOTE FOR IMPROVEMENT : we can shuffle all elements of the various lists of
+    # Lr and Li, so we no longer conserve the Li and Lr per chromosme, so as to
+    # shuffle across all chromosomes, rebuilding new lists of the same size, but
+    # with elements drawn from concatenated Lr and Li.
+
     return Lr, Li, all_chrom
 
 
@@ -98,7 +112,7 @@ def exclude_chromsizes(exclusion, chromsizes):
 
     >>> from pygtftk.utils import get_example_file
     >>> from collections import OrderedDict
-    >>> from pygtftk.stats.intersect.read_bed_as_list import exclude_chromsizes
+    >>> from pygtftk.stats.intersect.read_bed.read_bed_as_list import exclude_chromsizes
     >>> import pybedtools
     >>> import numpy.testing as npt
     >>> c = get_example_file(ext="chromInfo")[0]
@@ -118,7 +132,50 @@ def exclude_chromsizes(exclusion, chromsizes):
 
 
 
-def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
+
+
+
+
+
+
+
+
+
+# Declare the interface to C++ code
+cdef extern from "exclude.h" namespace "exclusion":
+  void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* bedfile_ends,
+                                        long long* exclusion_starts, long long* exclusion_ends,
+                                        long long* result_starts, long long* result_ends,
+                                        long bed_size, long excl_size)
+
+
+
+cdef cpp_wrapper(np.ndarray[longlong, ndim=1, mode="c"] bedfile_start_nparray,
+                np.ndarray[longlong, ndim=1, mode="c"] bedfile_end_nparray,
+                np.ndarray[longlong, ndim=1, mode="c"] exclusion_start_nparray,
+                np.ndarray[longlong, ndim=1, mode="c"] exclusion_end_nparray,
+                np.ndarray[longlong, ndim=1, mode="c"] result_start_nparray,
+                np.ndarray[longlong, ndim=1, mode="c"] result_end_nparray,
+                long bed_size,
+                long excl_size):
+    """
+    Create a cdef-defined  wrapper to call the C++ code. Needed because if we call
+    cpp_excludeConcatenateForThisChrom() directly in a Python function (defined
+    with `def`) it will try to pass Python objects.
+    """
+
+    cpp_excludeConcatenateForThisChrom(&bedfile_start_nparray[0],    &bedfile_end_nparray[0],
+                                        &exclusion_start_nparray[0], &exclusion_end_nparray[0],
+                                        &result_start_nparray[0],    &result_end_nparray[0],
+                                        bed_size, excl_size)
+    # Remember that in C++ you must actually pass a pointer to the first value, not an array.
+    # Remember that the operations are performed in-place (we are passing references)
+    # so we now work directly on result_start_nparray and result_end_nparray
+
+    return None
+
+
+def exclude_concatenate_for_this_chrom(chrom, exclusion, bedfile):
     """
     Subfunction of exclude_concatenate, for one chromosome only. Used for
     multiprocessing.
@@ -133,81 +190,66 @@ def exclude_concatenate_for_this_chrom(chrom,exclusion,bedfile):
     bedfile = bedfile[bedfile.chrom == chrom]
     exclusion = exclusion[exclusion.chrom == chrom]
 
+    # If there is no region in either bedfile or exclusion for this chromosome,
+    # abort and return an empty dataframe ; do not call C++
+    if (len(bedfile) == 0) | (len(exclusion) == 0):
+      return pd.DataFrame(columns = ['chrom','start','end'])
 
-    # WARNING Must use a copy and not remove elements one by one, because that
-    # would shift the position and now you are comparing positions in two
-    # different coordinates systems (between 'exclusion' with the original ones
-    # and the shifted 'bedfile')
-    partial_result = bedfile.copy()
+    # Convert bedfile and exclusion to 4 numpy arrays, containing only start
+    # and end (since we work on a single chromosome)
+    bedfile_start_nparray = bedfile[['start']].values.ravel()
+    bedfile_end_nparray = bedfile[['end']].values.ravel()
+    exclusion_start_nparray = exclusion[['start']].values.ravel()
+    exclusion_end_nparray = exclusion[['end']].values.ravel()
 
-    # For each region in 'exclusion' :
-    for _, excl in exclusion.iterrows():
+    # Create partial_result arrays for the modifications to be applied to
+    # (otherwise, as soon as one exclusion for one region) has been done, we
+    # would be comparing values from two different coordinates systems
+    result_start_nparray = np.copy(bedfile_start_nparray)
+    result_end_nparray = np.copy(bedfile_end_nparray)
 
-        excl_length = abs(excl['end'] - excl['start'])
+    # Convert those arrays to ensure that they are np.ndarray[long long, ndim=2, mode="c"]
+    allarrays = [bedfile_start_nparray, bedfile_end_nparray, exclusion_start_nparray, exclusion_end_nparray, result_start_nparray, result_end_nparray]
+    bedfile_start_nparray, bedfile_end_nparray, exclusion_start_nparray, exclusion_end_nparray, result_start_nparray, result_end_nparray = (np.array(array, dtype = np.longlong, order = 'C') for array in allarrays)
 
-        # Gain some time by selecting only the rows on which we will operate
-        filtered_rows = bedfile[(bedfile.chrom == excl.chrom) & (bedfile.end >= excl['start'])].index
+    # Force bed_size and excl_size into np.longs
+    bed_size  = np.long(bedfile_start_nparray.shape[0])
+    excl_size = np.long(exclusion_start_nparray.shape[0])
 
-        ### TREATING BEDFILE
-        for i in filtered_rows:
-
-            # Rq : I use '<' and '>=' so do not use '<=' or '>' if you modify this, else not all conditions will be covered
-
-            # WARNING Since this is an iterative algorithm, we must always
-            # compute the conditions and deltas from the old values in bedfile,
-            # but modify (ie. apply deltas) the values from result by always
-            # writing the new value of result as a function of the previous
-            # value of result, otherwise you are comparing positions from two
-            # different coordinates sets.
-
-            # For sanity check : do not check a line if it has been removed
-            check_for_zero = True
-
-
-            # all regions where region_start is under exclu_start but region_end is higher than exclu_start BUT lower than excl_end: truncate by setting region_end to exclu_start
-            if (bedfile.at[i, 'start'] < excl['start']) & (excl['end'] >= bedfile.at[i, 'end'] >= excl['start']):
-                truncate_by = bedfile.at[i, 'end'] - excl['start']
-                partial_result.at[i, 'end'] = partial_result.at[i, 'end'] - truncate_by
-
-            # all which contain the excluded region (start before and end after) : shorten the end by the region length
-            elif (bedfile.at[i, 'start'] < excl['start']) & (bedfile.at[i, 'end'] >= excl['end']):
-                partial_result.at[i, 'end'] = partial_result.at[i, 'end'] - excl_length
-
-            # all regions where region_start > excl_start but region_end < excl_end (so are included) : eliminate those
-            # Warning : must be before the 5th test
-            elif (bedfile.at[i, 'start'] >= excl['start']) & (bedfile.at[i, 'end'] < excl['end']):
-                check_for_zero = False
-                partial_result.drop(i, inplace=True)
-
-            # all regions where region_start is higher than excl_start but lower than excl_end and region_end is higher than excl_end : truncate by setting region_start to excl_end and also region_end = region_end - nb_of_nt_of_region_that_are_in_excl
-            elif (bedfile.at[i, 'start'] >= excl['start']) & (bedfile.at[i, 'start'] < excl['end']) & (bedfile.at[i, 'end'] >= excl['end']):
-
-                # Compute some utils
-                region_length_before_truncating = partial_result.at[i, 'end'] - partial_result.at[i, 'start']
-                nb_of_bp_of_region_that_are_in_excl = (excl['end'] - bedfile.at[i, 'start'])
-
-                # Move start point
-                forward_by = bedfile.at[i, 'start'] - excl['start']
-                partial_result.at[i, 'start'] = partial_result.at[i, 'start'] - forward_by
-
-                # Move end point to 'new start point + new length'
-                new_length = region_length_before_truncating - nb_of_bp_of_region_that_are_in_excl
-                partial_result.at[i, 'end'] = partial_result.at[i, 'start'] + new_length
-
-            # all regions where region_start and region_end are both higher than excl_end : move by setting region_start = region_start - excl_length and region_end = region_end - excl_length
-            elif (bedfile.at[i, 'start'] >= excl['end']):
-                partial_result.at[i, 'start'] = partial_result.at[i, 'start'] - excl_length
-                partial_result.at[i, 'end'] = partial_result.at[i, 'end'] - excl_length
+    try:
+      # C++ call here (through the wrapper)
+      cpp_wrapper(bedfile_start_nparray, bedfile_end_nparray,
+                exclusion_start_nparray, exclusion_end_nparray,
+                result_start_nparray, result_end_nparray,
+                bed_size, excl_size)
+    except Exception as e:
+      message("The C++ code for exclusion computation raised an exception. Let there be panic.", type = 'ERROR')
 
 
-            # WARNING pybedtools does not like when both start and end are equal to zero. Set them to 1 if that's the case.
-            if check_for_zero : # Do not check if the line has been dropped
-                if (partial_result.at[i, 'start'] == 0) & (partial_result.at[i, 'end'] == 0):
-                    partial_result.at[i, 'start'] = 1
-                    partial_result.at[i, 'end'] = 1
+    # Reformat partial result back by adding the chrom again and re-making it a pandas df with proper colnames
+    partial_result = pd.DataFrame(np.transpose([[chrom] * bed_size, result_start_nparray, result_end_nparray]), columns = ['chrom','start','end'])
 
+    # Convert to numeric, just in case
+    partial_result[["start", "end"]] = partial_result[["start", "end"]].apply(pd.to_numeric)
+
+
+    ## Sanity checks
+    # In C++, we marked regions to drop by making both coordinates equal to zero.
+    # Some other cases may also result in both coordinates being equal to zero.
+    # Drop those regions, as pybedtools does not like this specific case.
+    to_drop = (partial_result.start == 0) & (partial_result.end == 0)
+    partial_result.drop(partial_result.index[to_drop], inplace = True)
 
     return partial_result
+
+
+
+
+
+
+
+
+
 
 
 
@@ -228,19 +270,31 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
         chr1 150 250
 
     Remarks :
-        - This version is highly inefficient (1 second per excluded feature)
-        but is only run once per analysis, so it will be improved later.
         - The multiprocessing will pass a copy of the BED file to each process,
         which can consume a lot of RAM.
 
-    >>> from pygtftk.utils import get_example_file
-    >>> from pygtftk.stats.intersect.read_bed_as_list import exclude_concatenate
+
+    >>> from pygtftk.stats.intersect.read_bed.read_bed_as_list import exclude_concatenate
     >>> import pybedtools
     >>> import numpy.testing as npt
-    >>> f = pybedtools.BedTool(get_example_file("simple","bed")[0])
-    >>> e = pybedtools.BedTool('chr1\t12\t45',from_string=True)
+    >>> e = pybedtools.BedTool('chr1\t100\t200\n'\
+                                'chr2\t100\t200\n'\
+                                'chr3\t100\t200\n'\
+                                'chr4\t100\t200\n'\
+                                'chr5\t100\t200\n'\
+                                'chr6\t100\t200\n'\
+                                'chr7\t100\t200\n'\
+                                ,from_string=True)
+    >>> f = pybedtools.BedTool('chr1\t50\t80\n'\
+                                'chr1\t10000\t10100\n'\
+                                'chr2\t50\t150\n'\
+                                'chr3\t120\t180\n'\
+                                'chr4\t150\t250\n'\
+                                'chr5\t250\t350\n'\
+                                'chr6\t1\t300\n'\
+                                ,from_string=True)
     >>> result = exclude_concatenate(f,e)
-    >>> assert str(result[0]) == 'chr1\t10\t17\n'
+    >>> assert str(result) == 'chr1\t50\t80\nchr1\t9900\t10000\nchr2\t50\t100\nchr4\t100\t150\nchr5\t150\t250\nchr6\t1\t200\n'
     """
 
     # Raw edition does not work in pybedtools, so need to use pandas dataframe instead.
