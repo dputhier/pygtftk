@@ -31,7 +31,7 @@ from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 from pygtftk.utils import sort_2_lists
 
-__updated__ = "2019-04-12"
+__updated__ = "2019-04-17"
 __doc__ = """
 
  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
@@ -771,8 +771,8 @@ def ologram(inputfile=None,
                 bed_anno = bed_anno_sub
 
             tmp_bed = make_tmp_file(prefix=bed_lab, suffix=".bed")
-            bed_anno = BedTool(bed_anno.name)
-            bed_anno.saveas(tmp_bed.name)
+            bed_anno_tosave = BedTool(bed_anno.name)
+            bed_anno_tosave.saveas(tmp_bed.name)
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
                                             bedB=BedTool(bed_anno.name),
