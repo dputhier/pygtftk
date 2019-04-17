@@ -31,7 +31,7 @@ from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 from pygtftk.utils import sort_2_lists
 
-__updated__ = "2019-04-02"
+__updated__ = "2019-04-12"
 __doc__ = """
 
  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
@@ -40,7 +40,7 @@ __doc__ = """
   particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
   gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
 
- Each couple peak file/region is randomly shuffled across the genome (inter-region
+ Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
  lengths are considered). Then the probability of intersection under the null
  hypothesis (the peaks and this feature are independent) is deduced thanks to
  this Monte Carlo approach.
@@ -59,15 +59,15 @@ __notes__ = """
 
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
 
- -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the corresponding
- size of conventional chromosomes are used. ChrM is not used.
+ -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'.
+ In this case the corresponding size of conventional chromosomes are used. ChrM is not used.
 
- -- The program produces a pdf file and a txt file ('_stats_') containing intersection statistics
+ -- The program produces a pdf file and a tsv file ('_stats_') containing intersection statistics
  for the shuffled BEDs under H0 (peak_file and the considered genomic region are independant):
- number of intersections (= number of lines in the bed intersect) and total number of overlapping
- base pairs.
+ number of intersections (N = number of lines in the bed intersect) and total number of overlapping
+ base pairs (S).
 
- The output figure gives, for both statistics, esperance and standard deviation (error bars)
+ The output figure gives, for both statistics, expectation and standard deviation (error bars)
  in the shuffles compared to the actual values.
 
  It also gives, under the 'fit' label for each statistic, the goodness of fit of the statistic under (H0)
@@ -90,7 +90,6 @@ __notes__ = """
 
  -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
  the excluded regions, but the same ones will be excluded from the peak_file and the GTF.
- This in Beta for now and can be very time-consuming (minutes or hours), especially if you have few CPU cores.
  Try using an exclusion file that is as small (around a thousand elements) as possible.
 
  -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
@@ -265,7 +264,7 @@ def make_parser():
     # --------------------- Other input arguments----------------------------- #
 
     parser_grp.add_argument('-z', '--no-gtf',
-                            help="No gtf file is provide as input.",
+                            help="No GTF file is provided as input.",
                             action='store_true',
                             required=False)
 
@@ -339,7 +338,7 @@ def ologram(inputfile=None,
             'Markov-based null is still in beta at the moment and tends to biais the "null" hypothesis towards association.',
             type='WARNING')
 
-    # Send a warning is nb_threads < available cpu cores
+    # Send a warning if nb_threads < available cpu cores
     available_cores = multiprocessing.cpu_count()
     if nb_threads < available_cores:
         message(
