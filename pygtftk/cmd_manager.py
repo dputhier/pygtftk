@@ -741,7 +741,7 @@ class CmdManager(object):
         config_file = CmdManager.config_file
 
         # User plugins
-        plugin_dir_user = yaml.load(open(config_file, "r"))["plugin_path"]
+        plugin_dir_user = yaml.load(open(config_file, "r"), Loader=yaml.FullLoader)["plugin_path"]
         sys.path.append(plugin_dir_user)
         plugins = sorted(os.listdir(plugin_dir_user))
         plugins_user = [os.path.join(plugin_dir_user, x) for x in plugins]
