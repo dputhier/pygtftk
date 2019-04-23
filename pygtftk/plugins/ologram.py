@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 import argparse
+import warnings
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 import multiprocessing
 import os
 import re
@@ -459,23 +463,19 @@ def ologram(inputfile=None,
     # done once we get to them.
     # overlap_stats_shuffling() will handle that, with the same condition : that bed_excl != None
 
-
-
     # If the use supplied an inclusion file instead of an exclusion one, do
     # its "negative" to get back an exclusion file.
     if bed_incl:
         if bed_excl is not None:
             message("Cannot specify both --bed_incl and --bed_excl",
-                        type="ERROR")
+                    type="ERROR")
 
         # Generate a fake bed for the entire genome, using the chromsizes
-        full_genome_bed = [str(chrom)+'\t'+'0'+'\t'+str(chrom_len[chrom])+'\n' for chrom in chrom_len if chrom != 'all_chrom']
+        full_genome_bed = [str(chrom) + '\t' + '0' + '\t' + str(chrom_len[chrom]) + '\n' for chrom in chrom_len if
+                           chrom != 'all_chrom']
         full_genome_bed = pybedtools.BedTool(full_genome_bed)
         bed_incl = pybedtools.BedTool(bed_incl)
         bed_excl = full_genome_bed.subtract(bed_incl)
-
-
-
 
     # WARNING : do not modify chrom_info or peak_file afterwards !
     # We can afford to modify chrom_len because we only modify its values, and the
