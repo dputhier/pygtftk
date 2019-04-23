@@ -5,22 +5,28 @@
 
 ### Bug Fixes
 
+  - *ologram* warnings are now clearer.
+  - Fixed reproducibility issue when using --more_keys in *ologram*.
+  - Fix #78 (Relaxing constraints on GTF format)
 
 ### API Changes
 
 ### Code changes
 
   - Added new tests to *overlapping*.
+  - Excluding regions in *ologram* is now done in C++, bringing major speedups (400x).
 
 ### New Features
 
   - Added -b/--bool argument to *overlapping*.
   - Added -@/--annotate-all to *overlapping*.
   - Added bigwig_to_bed.
-  - The --dpi has been removed from ologram.
-  - The --user-img-file argument in ologram has become pdf_file.
+  - Added --bed-incl argument to *ologram*. (fix #73)
+  - The --dpi has been removed from *ologram*.
+  - The --pval-precision has been removed from *ologram*.
+  - The --user-img-file argument in *ologram* has become pdf_file.
   - Added -W as command-wise argument. It force gtftk to print its message to a file. This may be handy when no access to stderr is available (e.g. through a scheduler).
-  
+
 ## v1.0.5
 
 This version provides several improvements and bug fix to ologram. The CLI of *mk_matrix* and *join_multi_file* have slightly changed. An int ([0-4]) is now mandatory to control verbosity level.
@@ -123,7 +129,7 @@ This version provides several improvements and bug fix to ologram. The CLI of *m
 
   - Input BED file in bed3 format are now converted to bed6 automatically.
   - The select_by_numeric() function has been renamed eval_numeric()
-  - It is now possible to use numpy array of booleans to index the GTF (i.e. using the indexing function).	
+  - It is now possible to use numpy array of booleans to index the GTF (i.e. using the indexing function).
   - the prepare_gffutils_db() function allows one to create a db for gffutils while selecting features and attributes.
 
 ### Code changes
@@ -142,7 +148,7 @@ This version provides several improvements and bug fix to ologram. The CLI of *m
   - Fix a critical bug in get_sequence that affected get_feat_seq and get_tx_seq.
   - Select_by_key now throw an error when no key/val are available.
   - No more function with mutable objects as default arguments.
-  - Fix temporary file deletion. 
+  - Fix temporary file deletion.
 
 ### API Changes
 
@@ -181,7 +187,7 @@ This version provides several improvements and bug fix to ologram. The CLI of *m
   - Added a dataset mini_real_coding_pot.tab.
   - Working on travis now.
   - gtftk configuration directory now contains several subdirectories whose names are computed based on gtftk program location.
-  - Added a -d argument to gtftk program. This argument returns gtftk configuration directory. 
+  - Added a -d argument to gtftk program. This argument returns gtftk configuration directory.
   - All tests should be independent of the directory.
   - Added test to count_key_values.
 
@@ -191,7 +197,7 @@ This version provides several improvements and bug fix to ologram. The CLI of *m
 
   - Fixed a bug in add_attr_from_file. The arg has_header led to empty result.
   - Fixed a bug in select_by_reg_exp. The match method was used instead of search method...
-  - Fixed an error in count_key_values. 
+  - Fixed an error in count_key_values.
 
 ### API Changes
 
