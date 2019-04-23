@@ -696,11 +696,6 @@ def ologram(inputfile=None,
 
             more_keys_list = more_keys.split(",")
 
-            if len(more_keys_list) > 50:
-                message("The selected key in --more-keys should be "
-                        "associated with less than 50 different values.",
-                        type="ERROR")
-
             for user_key in more_keys_list:
                 user_key_values = set(gtf.extract_data(user_key,
                                                        as_list=True,
@@ -708,14 +703,9 @@ def ologram(inputfile=None,
                                                        no_na=True,
                                                        nr=True))
 
-                # Turn the set back into a list, which is predictably sorted,
-                # to ensure reproducible results
+                # Turn the set back into a list, which is predictably
+                # sorted, to ensure reproducible results
                 user_key_values = sorted(user_key_values)
-
-                if len(user_key_values) > 500:
-                    message("The selected key in --more-keys "
-                            "should be associated with less than 50 different values.",
-                            type="ERROR")
 
                 for val in user_key_values:
 
@@ -993,9 +983,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
         panel_width = 0.6
         pdf_width = panel_width * nb_ft
 
-        if pdf_width > 25:
-            pdf_width = 25
-            message("Setting --pdf-width to 25 (limit)")
+        if pdf_width > 100:
+            pdf_width = 100
+            message("Setting --pdf-width to 100 (limit)")
 
     if pdf_height is None:
         pdf_height = 5
