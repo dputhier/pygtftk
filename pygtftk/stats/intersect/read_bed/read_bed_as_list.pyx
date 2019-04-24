@@ -42,6 +42,9 @@ def bed_to_lists_of_intervals(bed, chromsizes):
     >>> from pygtftk.utils import get_example_file
     >>> from pygtftk.stats.intersect.read_bed.read_bed_as_list import bed_to_lists_of_intervals
     >>> import pybedtools
+    >>> import numpy as np
+    >>> import warnings
+    >>> warnings.simplefilter(action='ignore', category=FutureWarning)
     >>> import numpy.testing as npt
     >>> f = pybedtools.BedTool(get_example_file("simple","bed")[0])
     >>> c = get_example_file(ext="chromInfo")[0]
@@ -277,22 +280,13 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
     >>> from pygtftk.stats.intersect.read_bed.read_bed_as_list import exclude_concatenate
     >>> import pybedtools
     >>> import numpy.testing as npt
-    >>> e = pybedtools.BedTool('chr1\t100\t200\n'\
-                                'chr2\t100\t200\n'\
-                                'chr3\t100\t200\n'\
-                                'chr4\t100\t200\n'\
-                                'chr5\t100\t200\n'\
-                                'chr6\t100\t200\n'\
-                                'chr7\t100\t200\n'\
-                                ,from_string=True)
-    >>> f = pybedtools.BedTool('chr1\t50\t80\n'\
-                                'chr1\t10000\t10100\n'\
-                                'chr2\t50\t150\n'\
-                                'chr3\t120\t180\n'\
-                                'chr4\t150\t250\n'\
-                                'chr5\t250\t350\n'\
-                                'chr6\t1\t300\n'\
-                                ,from_string=True)
+    >>> part_1 = 'chr1\t100\t200\nchr2\t100\t200\n'
+    >>> part_2 = 'chr3\t100\t200\nchr4\t100\t200\n'
+    >>> part_3 = 'chr5\t100\t200\nchr6\t100\t200\nchr7\t100\t200\n'
+    >>> e = pybedtools.BedTool(part_1 + part_2 + part_3, from_string=True)
+    >>> part_1 = 'chr1\t50\t80\nchr1\t10000\t10100\nchr2\t50\t150\n'
+    >>> part_2 = 'chr3\t120\t180\nchr4\t150\t250\nchr5\t250\t350\nchr6\t1\t300'
+    >>> f = pybedtools.BedTool(part_1 + part_2, from_string=True)
     >>> result = exclude_concatenate(f,e)
     >>> assert str(result) == 'chr1\t50\t80\nchr1\t9900\t10000\nchr2\t50\t100\nchr4\t100\t150\nchr5\t150\t250\nchr6\t1\t200\n'
     """
