@@ -13,8 +13,8 @@ import pybedtools
 
 from pygtftk.stats.intersect import create_shuffles as cs
 from pygtftk.stats.intersect import negbin_fit as nf
-from pygtftk.stats.intersect.read_bed import read_bed_as_list as read_bed
 from pygtftk.stats.intersect.overlap import overlap_regions as oc
+from pygtftk.stats.intersect.read_bed import read_bed_as_list as read_bed
 from pygtftk.utils import message
 
 
@@ -141,9 +141,6 @@ def compute_overlap_stats(bedA, bedB,
     bed_A_as_pybedtool = pybedtools.BedTool(bedA).sort().merge()
     bed_B_as_pybedtool = pybedtools.BedTool(bedB).sort().merge()
 
-
-
-
     # If there is an exclusion to be done, do it.
 
     # NOTE : exclusion on the peak file (bedA) has been moved to ologram itself to avoid repetition. Same thing for the chromsizes.
@@ -256,7 +253,7 @@ def compute_overlap_stats(bedA, bedB,
 
     # Send warnings when there is a poor fit
     if (ps < 0.75) | (pn < 0.75):
-        message(ft_type + ': there may be a poor fit for this feature.'
+        message(ft_type + ': there may be a poor fit for this feature. '
                           'Check fit quality in the results. This is likely due '
                           'to there being too few regions.',
                 type='WARNING')
