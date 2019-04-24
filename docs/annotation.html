@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Commands from section ‘annotation’ &#8212; gtftk 1.0.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -50,7 +48,7 @@
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
 </pre></div>
 </div>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d hg38_chr1 -f &#39;*&#39;
 </pre></div>
 </div>
 <hr class="docutils" />
@@ -64,18 +62,15 @@ is randomly shuffled across the genome (inter-region lengths are considered). Th
 under the null hypothesis (the peaks and this feature are independent) is deduced thanks to this Monte Carlo approach.
 The program will return statistics for both the number of intersections and the total lengths (in basepairs) of all intersections.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The ologram examples below use 8 CPUs. Please adapt.</p>
+<p class="admonition-title">Warning</p>
+<p>The ologram examples below use 8 CPUs. Please adapt.</p>
 </div>
 <p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in
 the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i mini_real.gtf.gz -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -u 1500 -d 1500 -D  -if example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 13:35-INFO : Checking BED file format (ENCFF112BHN_H3K4me3_K562_sub.bed).
- |-- 13:38-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
- |-- 13:39-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:39-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
- |-- 13:39-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
- |-- 13:39-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 17:03-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
+ |-- 17:05-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (stop_codon)
+ |-- 17:06-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (Intergenic)
 </pre></div>
 </div>
 <br>
@@ -89,32 +84,8 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </table>
 <br>
 <br><p><strong>Example:</strong> Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i mini_real.gtf.gz -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n  -if example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 13:41-INFO : Checking BED file format (ENCFF112BHN_H3K4me3_K562_sub.bed).
- |-- 13:41-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:41-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 13:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
- |-- 13:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
- |-- 13:41-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:41-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 13:41-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 13:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
- |-- 13:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
- |-- 13:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
- |-- 13:42-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
- |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
- |-- 13:42-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
- |-- 13:42-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
- |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
- |-- 13:42-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:42-WARNING-ologram : There may be at least one poor fit. Check fit quality in the results.
- |-- 13:42-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
- |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &lt; 1 ; mean was set to 1
- |-- 13:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1
- |-- 13:43-WARNING-ologram : Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -m gene_biotype -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 17:06-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
 </pre></div>
 </div>
 <br>
@@ -128,14 +99,9 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </table>
 <br>
 <br><p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K4me3.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 6   | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exprs_class -if example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 13:43-INFO-discretize_key : Categories: [&#39;[0.0_10.0]&#39;, &#39;(10.0_149.0]&#39;, &#39;(149.0_585.0]&#39;, &#39;(585.0_1171.0]&#39;, &#39;(1171.0_2486.83]&#39;, &#39;(2486.83_41703.0]&#39;]
- |-- 13:43-INFO : Checking BED file format (ENCFF112BHN_H3K4me3_K562_sub.bed).
- |-- 13:43-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:43-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:44-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:44-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:45-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i hg38_chr1.gtf.gz -H -j hg38_chr1_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 17:07-INFO-discretize_key : Categories: [&#39;[0.0_258.5]&#39;, &#39;(258.5_758.0]&#39;, &#39;(758.0_1342.5]&#39;, &#39;(1342.5_2238.67]&#39;, &#39;(2238.67_4275.0]&#39;, &#39;(4275.0_89484.0]&#39;]
+ |-- 17:07-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
 </pre></div>
 </div>
 <br>
@@ -149,12 +115,9 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </table>
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38.genome -D -n -m exon_nbr_cat -if example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 13:45-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
- |-- 13:45-INFO : Checking BED file format (ENCFF112BHN_H3K4me3_K562_sub.bed).
- |-- 13:45-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:46-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
- |-- 13:46-WARNING-ologram : a or b too large or given itermax too small for computing incomplete beta function ; pval may be erroneous
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i hg38_chr1.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 17:08-INFO-discretize_key : Categories: [&#39;[1.0_1.0]&#39;, &#39;(1.0_3.0]&#39;, &#39;(3.0_5.0]&#39;, &#39;(5.0_9.0]&#39;, &#39;(9.0_138.0]&#39;]
+ |-- 17:08-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
 </pre></div>
 </div>
 <br>
@@ -169,40 +132,41 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 <br>
 <br><p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -h
-  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-pp pval_precision] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-if user_img_file] [-x] [-tp tsv_file_path] [-dpi dpi] [-j {None,nb_intersections_expectation_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_expectation_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-z] [-f] [-w] [-q] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-bi BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-pf pdf_file_alt] [-x] [-tp tsv_file_path] [-j {None,nb_intersections_expectation_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_expectation_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-z] [-f] [-w] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks (in bed
      format) using (i) genomic features extracted from a GTF file (e.g promoter, tts, gene body,
      UTR...) (ii) genomic regions tagged with particular keys/values in a GTF file (e.g.
      gene_biotype &quot;protein_coding&quot;, gene_biotype &quot;LncRNA&quot;...) or (iii) from a BED file (e.g. user-
-     defined regions).  Each couple peak file/region is randomly shuffled across the genome (inter-
-     region lengths are considered). Then the probability of intersection under the null hypothesis
-     (the peaks and this feature are independent) is deduced thanks to this Monte Carlo approach.
-     The program will return statistics for both the number of intersections and the total lengths
-     (in basepairs) of all intersections.  Authors : Quentin Ferré &lt;quentin.q.ferre@gmail.com&gt;,
-     Guillaume Charbonnier &lt;guillaume.charbonnier@outlook.com&gt; and Denis Puthier
-     &lt;denis.puthier@univ-amu.fr&gt;.
+     defined regions).  Each pair {peak file, feature} is randomly shuffled independently across the
+     genome (inter-region lengths are considered). Then the probability of intersection under the
+     null hypothesis (the peaks and this feature are independent) is deduced thanks to this Monte
+     Carlo approach.  The program will return statistics for both the number of intersections and
+     the total lengths (in basepairs) of all intersections.  Authors : Quentin FERRE
+     &lt;quentin.q.ferre@gmail.com&gt;, Guillaume CHARBONNIER &lt;guillaume.charbonnier@outlook.com&gt; and
+     Denis PUTHIER &lt;denis.puthier@univ-amu.fr&gt;. &lt;guillaume.charbonnier@outlook.com&gt; and Denis
+     PUTHIER &lt;denis.puthier@univ-amu.fr&gt;.
 
   Notes:
-     *  Although ologram itself is not RAM-intensive, base pygtftk processing of a full human GTF
-     can require upwards of 8Gb. It is recommended you do not run other programs in the meantime on
-     a laptop.
+     *  Ologram is multithreaded and can use many cores. Although ologram itself is not RAM-
+     intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb. It is
+     recommended you do not run other programs in the meantime on a laptop.
      *  Genome size is computed from the provided chromInfo file (-c). It should thus only contain
      ordinary chromosomes.
      *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
      case the corresponding size of conventional chromosomes are used. ChrM is not used.
-     *  The program produces a pdf file and a txt file (&#39;_stats_&#39;) containing intersection
+     *  The program produces a pdf file and a tsv file (&#39;_stats_&#39;) containing intersection
      statistics for the shuffled BEDs under H0 (peak_file and the considered genomic region are
-     independant): number of intersections (= number of lines in the bed intersect) and total number
-     of overlapping base pairs.  The output figure gives, for both statistics, expectation and
-     standard deviation (error bars) in the shuffles compared to the actual values.  It also gives,
-     under the &#39;fit&#39; label for each statistic, the goodness of fit of the statistic under (H0) to a
-     Negative Binomial assessed by a Cramer&#39;s V score (fit_quality gives 1-V ; as per Cramer (1948)
-     a good fit should have a fit quality above (1 - 0.25 = 0.75) if your nb. of shuffles is in the
-     hundreds, but closer to 0.9 if it is in the thousands or above.  The p-value of the true
-     intersection under the distribution characterized by the shuffles is also given, under
-     &#39;p_value&#39;. Finally, the log2 fold change between true and shuffles is also given.
+     independant): number of intersections (N = number of lines in the bed intersect) and total
+     number of overlapping base pairs (S).  The output figure gives, for both statistics,
+     expectation and standard deviation (error bars) in the shuffles compared to the actual values.
+     It also gives, under the &#39;fit&#39; label for each statistic, the goodness of fit of the statistic
+     under (H0) to a Negative Binomial assessed by a Cramer&#39;s V score (fit_quality gives 1-V ; as
+     per Cramer (1948) a good fit should have a fit quality above (1 - 0.25 = 0.75) if your nb. of
+     shuffles is in the hundreds, but closer to 0.9 if it is in the thousands or above.  The p-value
+     of the true intersection under the distribution characterized by the shuffles is also given,
+     under &#39;p_value&#39;. Finally, the log2 fold change between true and shuffles is also given.
      *  If --more-keys is used additional region sets will be tested based on the associated key
      value. As an example, if --more-keys is set to the &#39;gene_biotype&#39; (a key generally found in
      ensembl GTF), the region related to &#39;protein_coding&#39;, &#39;lncRNA&#39; or any other values for that key
@@ -214,54 +178,53 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
      regions.
      *  You can exclude regions from the shuffling. This is done by shuffling across a concatenated
      &quot;sub-genome&quot; obtained by removing the excluded regions, but the same ones will be excluded from
-     the peak_file and the GTF. This in Beta for now and can be very time-consuming (minutes or
-     hours), especially if you have few CPU cores. Try using an exclusion file that is as small
-     (around a thousand elements) as possible.
+     the peak_file and the GTF. Try using an exclusion file that is as small (around a thousand
+     elements) as possible.
      *  BETA : About --use-markov. This arguments control whether to use Markov model realisations
      (of order 2) instead of independant shuffles for respectively region lengths and inter-region
      lengths. This can better capture the structure of the genomic regions repartitions. This is not
      recommended in the general case and can be *very* time-consuming (hours).
 
-  Version:  2019-03-18
+  Version:  2019-04-17
 
 Arguments:
- -i, --inputfile             Path to the GTF file. Defaults to STDIN (default: &lt;stdin&gt;)
- -c, --chrom-info            Tabulated two-columns file. Chromosomes as column 1, sizes as column 2 (default: None)
- -p, --peak-file             The file containing the peaks/regions to be annotated. (bed format). (default: None)
- -b, --more-bed              A list of bed files to be considered as additional genomic annotations. (default: None)
- -l, --more-bed-labels       A comma separated list of labels (see --more-bed) (default: None)
- -e, --bed-excl              Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features. Can take a long time. (bed format). (default: None)
- -u, --upstream              Extend the TSS and TTS of in 5&#39; by a given value. (default: 1000)
- -d, --downstream            Extend the TSS and TTS of in 3&#39; by a given value. (default: 1000)
- -m, --more-keys             A comma separated list of key used for labeling the genome. See Notes. (default: None)
- -n, --no-basic-feature      No statistics for basic features of GTF. Concentrates on --more-bed and --more-keys. (default: False)
- -k, --nb-threads            Number of threads for multiprocessing. (default: 8)
- -s, --seed                  Numpy random seed. (default: 42)
- -mn, --minibatch-nb         Number of minibatches of shuffles. (default: 10)
- -ms, --minibatch-size       Size of each minibatch, in number of shuffles. (default: 20)
- -ma, --use-markov           Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes. (default: False)
- -pp, --pval-precision       Precision of p-val calculation in dps. (default: 1500)
- -o, --outputdir             Output directory name. (default: ologram_output)
- -pw, --pdf-width            Output pdf file width (inches). (default: None)
- -ph, --pdf-height           Output pdf file height (inches). (default: None)
- -if, --user-img-file        Provide an alternative path for the main image. (default: None)
- -x, --no-pdf                Do not produce any image file. (default: False)
- -tp, --tsv-file-path        Provide an alternative path for text output file. (default: None)
- -dpi, --dpi                 Dpi to use. (default: 300)
- -j, --sort-features         Whether to sort features in diagrams according to a computed statistic. (default: None)
- -z, --no-gtf                No gtf file is provide as input. (default: False)
- -f, --force-chrom-gtf       Discard silently, from GTF, genes outside chromosomes defined in --chrom-info. (default: False)
- -w, --force-chrom-peak      Discard silently, from --peak-file, peaks outside chromosomes defined in --chrom-info. (default: False)
- -q, --force-chrom-more-bed  Discard silently, from --more-bed files, regions outside chromosomes defined in --chrom-info. (default: False)
+ -i, --inputfile              Path to the GTF file. Defaults to STDIN (default: &lt;stdin&gt;)
+ -c, --chrom-info             Tabulated two-columns file. Chromosomes as column 1, sizes as column 2 (default: None)
+ -p, --peak-file              The file containing the peaks/regions to be annotated. (bed format). (default: None)
+ -b, --more-bed               A list of bed files to be considered as additional genomic annotations. (default: None)
+ -l, --more-bed-labels        A comma separated list of labels (see --more-bed) (default: None)
+ -e, --bed-excl               Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features. (bed format). (default: None)
+ -bi, --bed-incl              Opposite of --bed-excl, will perform the same operation but keep only those regions. (default: None)
+ -u, --upstream               Extend the TSS and TTS of in 5&#39; by a given value. (default: 1000)
+ -d, --downstream             Extend the TSS and TTS of in 3&#39; by a given value. (default: 1000)
+ -m, --more-keys              A comma separated list of key used for labeling the genome. See Notes. (default: None)
+ -n, --no-basic-feature       No statistics for basic features of GTF. Concentrates on --more-bed and --more-keys. (default: False)
+ -k, --nb-threads             Number of threads for multiprocessing. (default: 1)
+ -s, --seed                   Numpy random seed. (default: 42)
+ -mn, --minibatch-nb          Number of minibatches of shuffles. (default: 10)
+ -ms, --minibatch-size        Size of each minibatch, in number of shuffles. (default: 20)
+ -ma, --use-markov            Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes. (default: False)
+ -o, --outputdir              Output directory name. (default: ologram_output)
+ -pw, --pdf-width             Output pdf file width (inches). (default: None)
+ -ph, --pdf-height            Output pdf file height (inches). (default: None)
+ -pf, --pdf-file-alt          Provide an alternative path for the main image. (default: None)
+ -x, --no-pdf                 Do not produce any image file. (default: False)
+ -tp, --tsv-file-path         Provide an alternative path for text output file. (default: None)
+ -j, --sort-features          Whether to sort features in diagrams according to a computed statistic. (default: None)
+ -z, --no-gtf                 No GTF file is provided as input. (default: False)
+ -f, --force-chrom-gtf        Discard silently, from GTF, genes outside chromosomes defined in --chrom-info. (default: False)
+ -w, --force-chrom-peak       Discard silently, from --peak-file, peaks outside chromosomes defined in --chrom-info. (default: False)
+ -q, --force-chrom-more-bed   Discard silently, from --more-bed files, regions outside chromosomes defined in --chrom-info. (default: False)
 
 Command-wise optional arguments:
- -h, --help                  Show this help message and exit.
- -V, --verbosity             Set output verbosity ([0-3]). (default: 0)
- -D, --no-date               Do not add date to output file names. (default: False)
- -C, --add-chr               Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir               Keep all temporary files into this folder. (default: None)
- -A, --keep-all              Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file           Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -286,7 +249,7 @@ G0010	G0002	4
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk closest_genes -h
-  Usage: gtftk closest_genes [-i GTF] [-o GTF/TXT] [-r {tss,tts,gene}] [-nb nb_neighbors] [-t {tss,tts,gene}] [-s] [-S] [-f] [-H] [-k] [-id {gene_id,gene_name}] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk closest_genes [-i GTF] [-o GTF/TXT] [-r {tss,tts,gene}] [-nb nb_neighbors] [-t {tss,tts,gene}] [-s] [-S] [-f] [-H] [-k] [-id {gene_id,gene_name}] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Find the n closest genes for each genes.
@@ -300,28 +263,29 @@ G0010	G0002	4
   Version:  2018-02-11
 
 optional arguments:
- -i, --inputfile          Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile         Output file. (default: &lt;stdout&gt;)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
 
 Arguments:
- -r, --from-region-type   What is region to consider for each gene. (default: tss)
- -nb, --nb-neighbors      The size of the neighborhood. (default: 1)
- -t, --to-region-type     What is region to consider for each closest gene. (default: tss)
- -s, --same-strandedness  Require same strandedness (default: False)
- -S, --diff-strandedness  Require different strandedness (default: False)
- -f, --text-format        Return a text format. (default: False)
- -H, --no-header          Don&#39;t print the header line. (default: False)
- -k, --collapse           Unwrap. Don&#39;t use comma. Print closest genes line by line. (default: False)
- -id, --identifier        The key used as gene identifier. (default: gene_id)
+ -r, --from-region-type       What is region to consider for each gene. (default: tss)
+ -nb, --nb-neighbors          The size of the neighborhood. (default: 1)
+ -t, --to-region-type         What is region to consider for each closest gene. (default: tss)
+ -s, --same-strandedness      Require same strandedness (default: False)
+ -S, --diff-strandedness      Require different strandedness (default: False)
+ -f, --text-format            Return a text format. (default: False)
+ -H, --no-header              Don&#39;t print the header line. (default: False)
+ -k, --collapse               Unwrap. Don&#39;t use comma. Print closest genes line by line. (default: False)
+ -id, --identifier            The key used as gene identifier. (default: gene_id)
 
 Command-wise optional arguments:
- -h, --help               Show this help message and exit.
- -V, --verbosity          Set output verbosity ([0-3]). (default: 0)
- -D, --no-date            Do not add date to output file names. (default: False)
- -C, --add-chr            Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir            Keep all temporary files into this folder. (default: None)
- -A, --keep-all           Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file        Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -345,7 +309,7 @@ G0006T002	G0005T001
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk overlapping -h
-  Usage: gtftk overlapping [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-t {transcript,promoter,tts}] [-s] [-S] [-n] [-a] [-k key_name] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk overlapping [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-t {transcript,promoter,tts}] [-s] [-S] [-n] [-a] [-k key_name] [-b] [-@] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Find transcripts whose body/TSS/TTS region extended in 5&#39; and 3&#39; (-u/-d) overlaps with any
@@ -362,26 +326,29 @@ G0006T002	G0005T001
   Version:  2018-01-24
 
 Arguments:
- -i, --inputfile          Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile         Output file. (default: &lt;stdout&gt;)
- -c, --chrom-info         Chromosome information. A tabulated two-columns file with chromosomes as column 1 and sizes as column 2 (default: None)
- -u, --upstream           Extend the region in 5&#39; by a given value (int). Used to define the region around the TSS/TTS. (default: 1500)
- -d, --downstream         Extend the region in 3&#39; by a given value (int). Used to define the region around the TSS/TTS. (default: 1500)
- -t, --feature-type       The feature of interest. (default: transcript)
- -s, --same-strandedness  Require same strandedness (default: False)
- -S, --diff-strandedness  Require different strandedness (default: False)
- -n, --invert-match       Not/Invert match. (default: False)
- -a, --annotate-gtf       All lines of the original GTF will be printed. (default: False)
- -k, --key-name           The name of the key. (default: None)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -c, --chrom-info             Chromosome information. A tabulated two-columns file with chromosomes as column 1 and sizes as column 2 (default: None)
+ -u, --upstream               Extend the region in 5&#39; by a given value (int). Used to define the region around the TSS/TTS. (default: 1500)
+ -d, --downstream             Extend the region in 3&#39; by a given value (int). Used to define the region around the TSS/TTS. (default: 1500)
+ -t, --feature-type           The feature of interest. (default: transcript)
+ -s, --same-strandedness      Require same strandedness (default: False)
+ -S, --diff-strandedness      Require different strandedness (default: False)
+ -n, --invert-match           Not/Invert match. (default: False)
+ -a, --annotate-gtf           All lines of the original GTF will be printed. (default: False)
+ -k, --key-name               The name of the key. (default: None)
+ -b, --bool                   When --annotate-gtf is used use 0 or 1 as key values (instead of overlapping transcripts id). (default: False)
+ -@, --annotate-all           When --annotate-gtf annotate all transcripts (default value would be &#39;0&#39;). (default: False)
 
 Command-wise optional arguments:
- -h, --help               Show this help message and exit.
- -V, --verbosity          Set output verbosity ([0-3]). (default: 0)
- -D, --no-date            Do not add date to output file names. (default: False)
- -C, --add-chr            Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir            Keep all temporary files into this folder. (default: None)
- -A, --keep-all           Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file        Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -409,7 +376,7 @@ G0004T001	G0003T001	4
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk divergent -h
-  Usage: gtftk divergent [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-n] [-S] [-a key_name] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk divergent [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-n] [-S] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Find transcripts with divergent promoters. These transcripts will be defined here as those whose
@@ -429,23 +396,24 @@ G0004T001	G0003T001	4
   Version:  2018-01-24
 
 Arguments:
- -i, --inputfile      Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile     Output file. (default: &lt;stdout&gt;)
- -c, --chrom-info     Tabulated two-columns file. Chromosomes as column 1 and their sizes as column 2 (default: None)
- -u, --upstream       Extend the promoter in 5&#39; by a given value (int). Defines the region around the tss. (default: 1500)
- -d, --downstream     Extend the region in 3&#39; by a given value (int). Defines the region around the tss. (default: 1500)
- -n, --no-annotation  Do not annotate the GTF. Just select the divergent transcripts. (default: False)
- -S, --no-strandness  Do not consider strandness (only look whether the promoter from a transcript overlaps with the promoter from another gene). (default: False)
- -a, --key-name       The name of the key. (default: None)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -c, --chrom-info             Tabulated two-columns file. Chromosomes as column 1 and their sizes as column 2 (default: None)
+ -u, --upstream               Extend the promoter in 5&#39; by a given value (int). Defines the region around the tss. (default: 1500)
+ -d, --downstream             Extend the region in 3&#39; by a given value (int). Defines the region around the tss. (default: 1500)
+ -n, --no-annotation          Do not annotate the GTF. Just select the divergent transcripts. (default: False)
+ -S, --no-strandness          Do not consider strandness (only look whether the promoter from a transcript overlaps with the promoter from another gene). (default: False)
+ -a, --key-name               The name of the key. (default: None)
 
 Command-wise optional arguments:
- -h, --help           Show this help message and exit.
- -V, --verbosity      Set output verbosity ([0-3]). (default: 0)
- -D, --no-date        Do not add date to output file names. (default: False)
- -C, --add-chr        Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir        Keep all temporary files into this folder. (default: None)
- -A, --keep-all       Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file    Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -470,7 +438,7 @@ G0010T001	G0008T001	24
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk convergent -h
-  Usage: gtftk convergent [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk convergent [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Find transcripts with convergent tts. These transcripts will be defined here as those whose tts
@@ -488,20 +456,21 @@ G0010T001	G0008T001	24
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile    Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile   Output file. (default: &lt;stdout&gt;)
- -c, --chrom-info   Tabulated two-columns file. Chromosomes as column 1 and sizes as column 2 (default: None)
- -u, --upstream     Extends the tts in 5&#39; by a given value (int). Defines the region around the tts. (default: 1500)
- -d, --downstream   Extends the region in 3&#39; by a given value (int). Defines the region around the tts. (default: 1500)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -c, --chrom-info             Tabulated two-columns file. Chromosomes as column 1 and sizes as column 2 (default: None)
+ -u, --upstream               Extends the tts in 5&#39; by a given value (int). Defines the region around the tts. (default: 1500)
+ -d, --downstream             Extends the region in 3&#39; by a given value (int). Defines the region around the tts. (default: 1500)
 
 Command-wise optional arguments:
- -h, --help         Show this help message and exit.
- -V, --verbosity    Set output verbosity ([0-3]). (default: 0)
- -D, --no-date      Do not add date to output file names. (default: False)
- -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
- -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -531,7 +500,7 @@ G0010T001	11
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk exon_sizes -h
-  Usage: gtftk exon_sizes [-i GTF] [-o TXT] [-a key_name] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk exon_sizes [-i GTF] [-o TXT] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Add a new key to transcript features containing a comma-separated list of exon sizes.
@@ -539,18 +508,19 @@ G0010T001	11
   Version:  2018-01-24
 
 Arguments:
- -i, --inputfile    Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
- -o, --outputfile   Output GTF file. (default: &lt;stdout&gt;)
- -a, --key-name     The name of the key. (default: exon_sizes)
+ -i, --inputfile              Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
+ -o, --outputfile             Output GTF file. (default: &lt;stdout&gt;)
+ -a, --key-name               The name of the key. (default: exon_sizes)
 
 Command-wise optional arguments:
- -h, --help         Show this help message and exit.
- -V, --verbosity    Set output verbosity ([0-3]). (default: 0)
- -D, --no-date      Do not add date to output file names. (default: False)
- -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
- -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -580,7 +550,7 @@ G0010T001	0
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intron_sizes -h
-  Usage: gtftk intron_sizes [-i GTF] [-o GTF] [-a key_name] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk intron_sizes [-i GTF] [-o GTF] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Add a new key to transcript features containing a comma-separated list of intron-size.
@@ -588,18 +558,19 @@ G0010T001	0
   Version:  2018-01-24
 
 Arguments:
- -i, --inputfile    Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
- -o, --outputfile   Output file. (default: &lt;stdout&gt;)
- -a, --key-name     The name of the key. (default: intron_sizes)
+ -i, --inputfile              Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -a, --key-name               The name of the key. (default: intron_sizes)
 
 Command-wise optional arguments:
- -h, --help         Show this help message and exit.
- -V, --verbosity    Set output verbosity ([0-3]). (default: 0)
- -D, --no-date      Do not add date to output file names. (default: False)
- -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
- -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -644,8 +615,6 @@ Command-wise optional arguments:
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -674,8 +643,8 @@ Command-wise optional arguments:
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 02, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Last updated on Apr 24, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>The pygtftk.bwig.bw_coverage module &#8212; gtftk 1.0.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -51,26 +49,22 @@
 <dt id="pygtftk.bwig.bw_coverage.bw_cov_mp">
 <code class="descclassname">pygtftk.bwig.bw_coverage.</code><code class="descname">bw_cov_mp</code><span class="sig-paren">(</span><em>bw_list=None</em>, <em>region_file=None</em>, <em>labels=None</em>, <em>bin_nb=None</em>, <em>nb_proc=None</em>, <em>n_highest=None</em>, <em>zero_to_na=False</em>, <em>pseudo_count=None</em>, <em>stat='mean'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.bw_cov_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute bigwig coverage (multi-processed) for a set of regions.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>bw_list</strong> – the list of bigWig files to be processed.</li>
-<li><strong>region_file</strong> – the bed file containing the region for which coverage is to be computed.</li>
-<li><strong>labels</strong> – shortname for bigwigs.</li>
-<li><strong>bin_nb</strong> – The number of bin into which the region should be splitted.</li>
-<li><strong>nb_proc</strong> – Number of threads to be used.</li>
-<li><strong>n_highest</strong> – compute the mean coverage based on the n highest values in the bins.</li>
-<li><strong>pseudo_count</strong> – The value for a pseudo-count.</li>
-<li><strong>verbose</strong> – run in verbose mode.</li>
-<li><strong>stat</strong> – mean (default) or sum.</li>
-<li><strong>zero_to_na</strong> – Convert missing values to NA, not zero.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bw_list</strong> – the list of bigWig files to be processed.</p></li>
+<li><p><strong>region_file</strong> – the bed file containing the region for which coverage is to be computed.</p></li>
+<li><p><strong>labels</strong> – shortname for bigwigs.</p></li>
+<li><p><strong>bin_nb</strong> – The number of bin into which the region should be splitted.</p></li>
+<li><p><strong>nb_proc</strong> – Number of threads to be used.</p></li>
+<li><p><strong>n_highest</strong> – compute the mean coverage based on the n highest values in the bins.</p></li>
+<li><p><strong>pseudo_count</strong> – The value for a pseudo-count.</p></li>
+<li><p><strong>verbose</strong> – run in verbose mode.</p></li>
+<li><p><strong>stat</strong> – mean (default) or sum.</p></li>
+<li><p><strong>zero_to_na</strong> – Convert missing values to NA, not zero.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>Returns a file.</p>
 </dd></dl>
 
@@ -78,30 +72,26 @@
 <dt id="pygtftk.bwig.bw_coverage.bw_profile_mp">
 <code class="descclassname">pygtftk.bwig.bw_coverage.</code><code class="descname">bw_profile_mp</code><span class="sig-paren">(</span><em>in_bed_file=None</em>, <em>nb_proc=None</em>, <em>big_wig=None</em>, <em>bin_nb=None</em>, <em>pseudo_count=0</em>, <em>stranded=True</em>, <em>type=None</em>, <em>labels=None</em>, <em>outputfile=None</em>, <em>zero_to_na=False</em>, <em>bed_format=False</em>, <em>add_score=False</em>, <em>stat='mean'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.bw_profile_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute bigwig profile for a set of regions.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>in_bed_file</strong> – the bed file containing the region for which coverage is to be computed.</li>
-<li><strong>nb_proc</strong> – Number of threads to be used.</li>
-<li><strong>big_wig</strong> – The bigWig files to be processed.</li>
-<li><strong>bin_nb</strong> – The number of bin into which the region should be splitted.</li>
-<li><strong>pseudo_count</strong> – The value for a pseudo-count.</li>
-<li><strong>stranded</strong> – controls whether the profile should be ordered based on strand.</li>
-<li><strong>type</strong> – This string will be added to the output to indicate the type of region (e.g tss, promoter…).</li>
-<li><strong>labels</strong> – shortname for bigwigs.</li>
-<li><strong>outputfile</strong> – output file name.</li>
-<li><strong>zero_to_na</strong> – Convert missing values to NA, not zero.</li>
-<li><strong>bed_format</strong> – Force Bed format. Default is to write columns in the following way: bwig, chrom, start, end, gene/feature, strand…</li>
-<li><strong>add_score</strong> – add a ‘score’ column (“.”). Just for downstream compatibility).</li>
-<li><strong>stat</strong> – mean (default) or sum.</li>
-<li><strong>verbose</strong> – run in verbose mode.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_bed_file</strong> – the bed file containing the region for which coverage is to be computed.</p></li>
+<li><p><strong>nb_proc</strong> – Number of threads to be used.</p></li>
+<li><p><strong>big_wig</strong> – The bigWig files to be processed.</p></li>
+<li><p><strong>bin_nb</strong> – The number of bin into which the region should be splitted.</p></li>
+<li><p><strong>pseudo_count</strong> – The value for a pseudo-count.</p></li>
+<li><p><strong>stranded</strong> – controls whether the profile should be ordered based on strand.</p></li>
+<li><p><strong>type</strong> – This string will be added to the output to indicate the type of region (e.g tss, promoter…).</p></li>
+<li><p><strong>labels</strong> – shortname for bigwigs.</p></li>
+<li><p><strong>outputfile</strong> – output file name.</p></li>
+<li><p><strong>zero_to_na</strong> – Convert missing values to NA, not zero.</p></li>
+<li><p><strong>bed_format</strong> – Force Bed format. Default is to write columns in the following way: bwig, chrom, start, end, gene/feature, strand…</p></li>
+<li><p><strong>add_score</strong> – add a ‘score’ column (“.”). Just for downstream compatibility).</p></li>
+<li><p><strong>stat</strong> – mean (default) or sum.</p></li>
+<li><p><strong>verbose</strong> – run in verbose mode.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>Returns a file.</p>
 </dd></dl>
 
@@ -109,14 +99,10 @@
 <dt id="pygtftk.bwig.bw_coverage.make_tmp_file_pool">
 <code class="descclassname">pygtftk.bwig.bw_coverage.</code><code class="descname">make_tmp_file_pool</code><span class="sig-paren">(</span><em>prefix='tmp'</em>, <em>suffix=''</em>, <em>store=True</em>, <em>dir=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.make_tmp_file_pool" title="Permalink to this definition">¶</a></dt>
 <dd><p>This</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">make_tmp_file_pool</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tmp_file</span> <span class="o">=</span> <span class="n">make_tmp_file_pool</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -155,8 +141,6 @@
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -185,8 +169,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 02, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Last updated on Apr 24, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

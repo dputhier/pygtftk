@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Help on gtftk Unix commands &#8212; gtftk 1.0.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -129,6 +127,7 @@ Available sub-commands/plugins:
 ------ conversion ------
 
    bed_to_gtf                 Convert a bed file to a gtf but with lots of empty fields...
+   bigwig_to_bed              Convert a bigwig to a BED3 format.
    convert                    Convert a GTF to various format including bed.
    convert_ensembl            Convert the GTF file to ensembl format. Essentially add &#39;transcript&#39;/&#39;gene&#39; features.
    tabulate                   Convert a GTF to tabulated format.
@@ -202,14 +201,14 @@ gtftk -b &gt;&gt; ~/.bashrc
 <h2>Command-wide arguments<a class="headerlink" href="#command-wide-arguments" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> The following arguments are available in almost all gtftk commands :</p>
 <ul class="simple">
-<li>-h, –help : Argument list and details.</li>
-<li>-i, –inputfile: The input file (may be &lt;stdin&gt;).</li>
-<li>-o, –outputfile: The output file (may be &lt;stdout&gt;).</li>
-<li>-D, –no-date: Do not add date to output file names.</li>
-<li>-C, –add-chr: Add ‘chr’ to chromosome names before printing output.</li>
-<li>-V, –verbosity: Increases output verbosity (can take value from 0 to 4).</li>
-<li>-K –tmp-dir: Keep all temporary files into this folder.</li>
-<li>-L, –logger-file: Stores the values of all command line arguments into a file.</li>
+<li><p>-h, –help : Argument list and details.</p></li>
+<li><p>-i, –inputfile: The input file (may be &lt;stdin&gt;).</p></li>
+<li><p>-o, –outputfile: The output file (may be &lt;stdout&gt;).</p></li>
+<li><p>-D, –no-date: Do not add date to output file names.</p></li>
+<li><p>-C, –add-chr: Add ‘chr’ to chromosome names before printing output.</p></li>
+<li><p>-V, –verbosity: Increases output verbosity (can take value from 0 to 4).</p></li>
+<li><p>-K –tmp-dir: Keep all temporary files into this folder.</p></li>
+<li><p>-L, –logger-file: Stores the values of all command line arguments into a file.</p></li>
 </ul>
 </div>
 </div>
@@ -253,8 +252,6 @@ gtftk -b &gt;&gt; ~/.bashrc
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -283,8 +280,8 @@ gtftk -b &gt;&gt; ~/.bashrc
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 02, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Last updated on Apr 24, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

@@ -1012,7 +1012,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
         p += ylab('-log10(pvalue)') + xlab('log2(FC)')
         p += ggtitle('Volcano plot (for both N and S statistics)')
         p += scale_fill_manual(values={'N': '#7570b3', 'S': '#e7298a'})
-
+        p += theme_bw()
+        
         return p
 
     # -------------------------------------------------------------------------

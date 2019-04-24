@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Commands from section ‘miscellaneous’ &#8212; gtftk 1.0.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -58,20 +56,19 @@
 <p><strong>Description:</strong> Returns a list of gene matched for expression based on reference values. Based on a reference gene list (or more generally IDs) this command tries to extract a set of other genes/IDs matched for signal/expression. The –reference-gene-file contains the list of reference IDs while the –inputfile contains a tuple gene/signal for all genes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk control_list -i mini_real_counts_ENCFF630HEX.tsv -r mini_real_control_1.txt -D -V 2 -s -l -p 1 -ju -if example_13.png -pf png
- |-- 13:35-INFO-control_list : First installation. Building CLI for command : control_list.
- |-- 13:35-INFO-control_list : 0 duplicate lines have been deleted in reference file.
- |-- 13:35-INFO-control_list : Found 50 genes of the reference in the provided signal file
- |-- 13:35-INFO-control_list : All reference genes were found.
- |-- 13:35-INFO-control_list : Searching for genes with matched signal.
- |-- 13:35-INFO-control_list : Preparing a dataframe for plotting.
- |-- 13:35-INFO-control_list : Saving diagram to file : example_13.png
- |-- 13:35-INFO-control_list : Be patient. This may be long for large datasets.
+ |-- 17:03-INFO-control_list : 0 duplicate lines have been deleted in reference file.
+ |-- 17:03-INFO-control_list : Found 50 genes of the reference in the provided signal file
+ |-- 17:03-INFO-control_list : All reference genes were found.
+ |-- 17:03-INFO-control_list : Searching for genes with matched signal.
+ |-- 17:04-INFO-control_list : Preparing a dataframe for plotting.
+ |-- 17:04-INFO-control_list : Saving diagram to file : example_13.png
+ |-- 17:04-INFO-control_list : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_13.png"><img alt="_images/example_13.png" src="_images/example_13.png" /></a>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk control_list -h
-  Usage: gtftk control_list --in-file TXT --reference-gene-file TXT [--out-dir DIR] [--log2] [--pseudo-count pseudo_count] [-pw page_width] [-ph page_height] [-pf {pdf,png}] [-dpi dpi] [--skip-first] [--rug] [--jitter] [-if user_img_file] [-c set_colors] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk control_list --in-file TXT --reference-gene-file TXT [--out-dir DIR] [--log2] [--pseudo-count pseudo_count] [-pw page_width] [-ph page_height] [-pf {pdf,png}] [-dpi dpi] [--skip-first] [--rug] [--jitter] [-if user_img_file] [-c set_colors] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Based on a reference gene list (or more generally IDs) this command tries to extract a set of
@@ -87,29 +84,30 @@
   Version:  2018-01-20
 
 optional arguments:
- --in-file, -i              A two columns tab-file. See notes. (default: None)
- --reference-gene-file, -r  The file containing the reference gene list (1 column, transcript ids). No header. (default: None)
- --out-dir, -o              Name of the output directory. (default: control_list)
- --log2, -l                 If selected, data will be log transformed. (default: False)
- --pseudo-count, -p         The value for a pseudo-count to be added. (default: 0)
- -pw, --page-width          Output pdf file width (e.g. 7 inches). (default: None)
- -ph, --page-height         Output file height (e.g. 5 inches). (default: None)
- -pf, --page-format         Output file format. (default: pdf)
- -dpi, --dpi                Dpi to use. (default: 300)
- --skip-first, -s           Indicates that infile hase a header. (default: False)
- --rug, -u                  Add rugs to the diagram. (default: False)
- --jitter, -j               Add jittered points. (default: False)
- -if, --user-img-file       Provide an alternative path for the image. (default: None)
- -c, --set-colors           Colors for the two sets (comma-separated). (default: #b2df8a,#6a3d9a)
+ --in-file, -i                A two columns tab-file. See notes. (default: None)
+ --reference-gene-file, -r    The file containing the reference gene list (1 column, transcript ids). No header. (default: None)
+ --out-dir, -o                Name of the output directory. (default: control_list)
+ --log2, -l                   If selected, data will be log transformed. (default: False)
+ --pseudo-count, -p           The value for a pseudo-count to be added. (default: 0)
+ -pw, --page-width            Output pdf file width (e.g. 7 inches). (default: None)
+ -ph, --page-height           Output file height (e.g. 5 inches). (default: None)
+ -pf, --page-format           Output file format. (default: pdf)
+ -dpi, --dpi                  Dpi to use. (default: 300)
+ --skip-first, -s             Indicates that infile hase a header. (default: False)
+ --rug, -u                    Add rugs to the diagram. (default: False)
+ --jitter, -j                 Add jittered points. (default: False)
+ -if, --user-img-file         Provide an alternative path for the image. (default: None)
+ -c, --set-colors             Colors for the two sets (comma-separated). (default: #b2df8a,#6a3d9a)
 
 Command-wise optional arguments:
- -h, --help                 Show this help message and exit.
- -V, --verbosity            Set output verbosity ([0-3]). (default: 0)
- -D, --no-date              Do not add date to output file names. (default: False)
- -C, --add-chr              Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir              Keep all temporary files into this folder. (default: None)
- -A, --keep-all             Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file          Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -138,7 +136,7 @@ G0010T001	G0010
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk col_from_tab -h
-  Usage: gtftk col_from_tab [-i TXT] [-o TXT] -c columns [-n] [-u] [-s SEP] [-H] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk col_from_tab [-i TXT] [-o TXT] -c columns [-n] [-u] [-s SEP] [-H] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Select columns from a tabulated file based on their names.
@@ -146,22 +144,23 @@ G0010T001	G0010
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile     The tabulated file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile    Output file. (default: &lt;stdout&gt;)
- -c, --columns       The list (csv) of column names. (default: None)
- -n, --invert-match  Not/invert match. (default: False)
- -u, --unique        Write non redondant lines. (default: False)
- -s, --separator     The separator to be used for separating name elements (see -n). (default: )
- -H, --no-header     Don&#39;t print the header line. (default: False)
+ -i, --inputfile              The tabulated file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -c, --columns                The list (csv) of column names. (default: None)
+ -n, --invert-match           Not/invert match. (default: False)
+ -u, --unique                 Write non redondant lines. (default: False)
+ -s, --separator              The separator to be used for separating name elements (see -n). (default: )
+ -H, --no-header              Don&#39;t print the header line. (default: False)
 
 Command-wise optional arguments:
- -h, --help          Show this help message and exit.
- -V, --verbosity     Set output verbosity ([0-3]). (default: 0)
- -D, --no-date       Do not add date to output file names. (default: False)
- -C, --add-chr       Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir       Keep all temporary files into this folder. (default: None)
- -A, --keep-all      Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file   Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -201,8 +200,6 @@ Command-wise optional arguments:
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -231,8 +228,8 @@ Command-wise optional arguments:
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 02, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Last updated on Apr 24, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>
