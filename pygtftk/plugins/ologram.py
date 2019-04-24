@@ -19,7 +19,8 @@ import pybedtools
 from plotnine import (ggplot, aes, position_dodge, ggtitle,
                       geom_bar, ylab, theme, element_blank,
                       element_text, geom_errorbar, theme_bw,
-                      geom_label, save_as_pdf_pages, scale_fill_manual)
+                      geom_label, save_as_pdf_pages, scale_fill_manual,
+                      geom_vline, xlab)
 
 from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
@@ -861,8 +862,12 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
 
     message('Adding bar plot.')
 
-    # This can be used to plot either 'summed_bp_overlaps' or 'nb_intersections'
-    def plot_this(statname):
+    # -------------------------------------------------------------------------
+    # Barplot: can be used to plot either 'summed_bp_overlaps'
+    # or 'nb_intersections'
+    # -------------------------------------------------------------------------
+
+    def plot_this(statname, plot_type='barplot'):
 
         # ------------------------- DATA PROCESSING -------------------------- #
 
@@ -882,8 +887,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
         # reorder features if required
         if feature_order is not None:
             dmm.Feature = pd.Categorical(dmm.Feature.tolist(), categories=feature_order, ordered=True)
-
-        # ------------------------- PLOTTING --------------------------------- #
 
         # Create plot
         p = ggplot(dmm)
@@ -967,11 +970,61 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
 
         return p
 
+    # -------------------------------------------------------------------------
+    # Volcano plot (combining both N and S results
+    # -------------------------------------------------------------------------
+
+    # TODO: add some repelling points asap as available in plotnine.
+
+    def plot_volcano():
+
+        mat_n = d[['feature_type',
+                   'nb_intersections_log2_fold_change',
+                   'nb_intersections_pvalue']]
+        # Uncomputed pvalue are discarded
+        mat_n = mat_n.drop(mat_n[mat_n.nb_intersections_pvalue == -1].index)
+        # Pval set to 0 are changed to  1e-320
+        mat_n.loc[mat_n['nb_intersections_pvalue'] == 0, 'nb_intersections_pvalue'] = 1e-320
+        mat_n = mat_n.assign(minus_log10_pvalue=list(-np.log10(list(mat_n.nb_intersections_pvalue))))
+        mat_n.columns = ['Feature', 'log2_FC', 'pvalue', 'minus_log10_pvalue']
+        mat_n = mat_n.assign(Statistic=['N'] * mat_n.shape[0])
+
+        mat_s = d[['feature_type',
+                   'summed_bp_overlaps_log2_fold_change',
+                   'summed_bp_overlaps_pvalue']]
+        # Uncomputed pvalue are discarded
+        mat_s = mat_s.drop(mat_s[mat_s.summed_bp_overlaps_pvalue == -1].index)
+        # Pval set to 0 are changed to  1e-320
+        mat_s.loc[mat_s['summed_bp_overlaps_pvalue'] == 0, 'summed_bp_overlaps_pvalue'] = 1e-320
+        mat_s = mat_s.assign(minus_log10_pvalue=list(-np.log10(list(mat_s.summed_bp_overlaps_pvalue))))
+        mat_s.columns = ['Feature', 'log2_FC', 'pvalue', 'minus_log10_pvalue']
+        mat_s = mat_s.assign(Statistic=['S'] * mat_s.shape[0])
+
+        df_volc = mat_n.append(mat_s)
+
+        p = ggplot(data=df_volc, mapping=aes(x='log2_FC', y='minus_log10_pvalue'))
+        p += geom_vline(xintercept=0, color='darkgray')
+        p += geom_label(aes(label='Feature', fill='Statistic'),
+                        size=5,
+                        color='black',
+                        alpha=.5,
+                        label_size=0)
+        p += ylab('-log10(pvalue)') + xlab('log2(FC)')
+        p += ggtitle('Volcano plot (for both N and S statistics)')
+        p += scale_fill_manual(values={'N': '#7570b3', 'S': '#e7298a'})
+
+        return p
+
+    # -------------------------------------------------------------------------
+    # call plotting functions
+    # -------------------------------------------------------------------------
+
     # Compute the plots for both statistics
     p1 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs") + ggtitle(
         'Total overlap length per region type')
     p2 = plot_this('nb_intersections') + ylab("Number of intersections") + ggtitle(
         'Total nb. of intersections per region type')
+    p3 = plot_volcano()
 
     # -------------------------------------------------------------------------
     # Computing page size
@@ -1016,7 +1069,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
 
         # NOTE : We must manually specify figure size with save_as_pdf_pages
         save_as_pdf_pages(filename=pdf_file.name,
-                          plots=[p1 + theme(figure_size=figsize), p2 + theme(figure_size=figsize)],
+                          plots=[p1 + theme(figure_size=figsize),
+                                 p2 + theme(figure_size=figsize),
+                                 p3 + theme(figure_size=figsize)],
                           width=pdf_width,
                           height=pdf_height)
 
