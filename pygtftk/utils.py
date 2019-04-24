@@ -438,7 +438,7 @@ def check_file_or_dir_exists(file_or_dir=None):
             message("File not found: " + file_or_dir_cur, type="ERROR")
 
         else:
-            message("Found file " + file_or_dir_cur)
+            message("Found file " + file_or_dir_cur, type="DEBUG")
     return True
 
 
