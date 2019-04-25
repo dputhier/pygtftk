@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Count the number of each features in the gtf file.
+"""
 import argparse
 import os
 import sys
@@ -11,9 +13,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Count the number of each features in the gtf file.
-"""
 
 
 def make_parser():

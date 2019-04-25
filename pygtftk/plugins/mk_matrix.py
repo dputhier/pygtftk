@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Create a matrix storing the bigwig coverage computed from binned regions.
+"""
 
 import argparse
 import os
@@ -21,10 +23,6 @@ from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-
-__doc__ = """
- Create a matrix storing the bigwig coverage computed from binned regions.
-"""
 
 __notes__ = """
  -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 

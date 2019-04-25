@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+Join attributes from mutiple files.
+"""
+
 import argparse
 import os
 import sys
@@ -10,9 +14,6 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-02-05"
-__doc__ = """
-Join attributes from mutiple files.
-"""
 
 
 def make_parser():

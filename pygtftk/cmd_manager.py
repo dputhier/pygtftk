@@ -13,9 +13,6 @@ import subprocess
 import sys
 import textwrap
 from argparse import Action
-from builtins import object
-from builtins import range
-from builtins import str
 from importlib.machinery import SourceFileLoader
 from sys import platform
 

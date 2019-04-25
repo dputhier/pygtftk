@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+"""
+ Returns a bed file containing the intronic regions. If by_transcript is false
+ (default), returns merged genic regions with no exonic overlap ("strict" mode).
+ Otherwise, the intronic regions corresponding to each transcript are returned
+ (may contain exonic overlap and redundancy).
+"""
 
 import argparse
 import os
@@ -13,12 +19,6 @@ from pygtftk.utils import message
 from pygtftk.utils import write_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Returns a bed file containing the intronic regions. If by_transcript is false
- (default), returns merged genic regions with no exonic overlap ("strict" mode).
- Otherwise, the intronic regions corresponding to each transcript are returned
- (may contain exonic overlap and redundancy).
-"""
 
 
 def make_parser():

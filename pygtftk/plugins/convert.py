@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Convert a GTF to various format (still limited)."""
 
 import argparse
 import os
@@ -10,7 +11,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """Convert a GTF to various format (still limited)."""
 
 
 def make_parser():

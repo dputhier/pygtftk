@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Convert a GTF to tabulated format.
+"""
 import argparse
 import os
 import sys
@@ -12,10 +14,6 @@ from pygtftk.utils import message
 from pygtftk.utils import write_properly
 
 __updated__ = "2018-01-20"
-
-__doc__ = """
- Convert a GTF to tabulated format.
-"""
 
 __notes__ = """
  -- Warning: by default tabulate will discard any line for which one of the selected key is not defined. Use -x (-\-accept-undef) to print them.

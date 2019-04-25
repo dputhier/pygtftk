@@ -1,4 +1,23 @@
 #!/usr/bin/env python
+"""
+
+ OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
+ annotates peaks (in bed format) using (i) genomic features extracted
+ from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with
+  particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
+  gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
+
+ Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
+ lengths are considered). Then the probability of intersection under the null
+ hypothesis (the peaks and this feature are independent) is deduced thanks to
+ this Monte Carlo approach.
+
+ The program will return statistics for both the number of intersections and the
+ total lengths (in basepairs) of all intersections.
+
+ Authors : Quentin FERRE <quentin.q.ferre@gmail.com>, Guillaume CHARBONNIER
+ <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
+ """
 
 import argparse
 import warnings
@@ -37,26 +56,6 @@ from pygtftk.utils import message
 from pygtftk.utils import sort_2_lists
 
 __updated__ = "2019-04-17"
-__doc__ = """
-
- OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
- annotates peaks (in bed format) using (i) genomic features extracted
- from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with
-  particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
-  gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
-
- Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
- lengths are considered). Then the probability of intersection under the null
- hypothesis (the peaks and this feature are independent) is deduced thanks to
- this Monte Carlo approach.
-
- The program will return statistics for both the number of intersections and the
- total lengths (in basepairs) of all intersections.
-
- Authors : Quentin FERRE <quentin.q.ferre@gmail.com>, Guillaume CHARBONNIER
- <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
- <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
- """
 
 __notes__ = """
  -- Ologram is multithreaded and can use many cores. Although ologram itself is not RAM-intensive,

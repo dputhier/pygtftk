@@ -1,5 +1,3 @@
-from builtins import str
-
 from pybedtools import BedTool
 
 from pygtftk.utils import make_tmp_file

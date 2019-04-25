@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Select columns from a tabulated file based on their names."""
-
+"""
+  Select columns from a tabulated file based on their names.
+"""
 import argparse
 import os
 import re
@@ -12,9 +13,6 @@ from pygtftk.utils import message
 from pygtftk.utils import write_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
-  Select columns from a tabulated file based on their names.
-"""
 
 
 def make_parser():

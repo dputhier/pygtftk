@@ -15,10 +15,6 @@ import os
 import re
 import sys
 import textwrap
-from builtins import object
-from builtins import range
-from builtins import str
-from builtins import zip
 from collections import OrderedDict
 from collections import defaultdict
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Select the most 5' transcript of each gene.
+"""
 
 import argparse
 import os
@@ -11,10 +13,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-
-__doc__ = """
- Select the most 5' transcript of each gene.
-"""
 
 __notes__ = """
   -- If several transcript share the samemost 5' TSS, only one transcript is

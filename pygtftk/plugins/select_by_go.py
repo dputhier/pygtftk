@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Select lines/genes from a GTF file using a Gene Ontology ID (e.g GO:0097194).
+"""
 
 import argparse
 import os
@@ -12,10 +15,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import message, write_properly
 
 __updated__ = "2018-01-20"
-
-__doc__ = """
- Select lines/genes from a GTF file using a Gene Ontology ID (e.g GO:0097194).
-"""
 
 
 def make_parser():

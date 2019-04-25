@@ -9,9 +9,6 @@ import re
 import string
 import sys
 import time
-from builtins import range
-from builtins import str
-from builtins import zip
 from collections import defaultdict, OrderedDict
 from distutils.spawn import find_executable
 from subprocess import PIPE
@@ -503,7 +500,7 @@ def chrom_info_as_dict(chrom_info_file):
         try:
             chrom_len[line[0]] = int(line[1])
 
-        except:
+        except ValueError:
             continue
 
         if int(line[1]) <= 0:

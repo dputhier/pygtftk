@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Transpose coordinates in 3' or 5' direction.
+"""
 
 import argparse
 import os
@@ -13,9 +16,6 @@ from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Transpose coordinates in 3' or 5' direction.
-"""
 
 __notes__ = """
  -- By default shift is not strand specific. Meaning that if -\shift-value is set to 10, all coordinates will be moved 10 bases in 5' direction relative to the forward/watson/plus/top strand.

@@ -5,9 +5,6 @@ A module to compute bigwig coverage over a set of regions (bed).
 import multiprocessing
 import os
 import sys
-from builtins import range
-from builtins import str
-from builtins import zip
 from itertools import repeat
 from tempfile import NamedTemporaryFile
 

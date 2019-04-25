@@ -16,10 +16,8 @@ Just do the following things to declare a new command named **'print_gtf'**:
 
    #!/usr/bin/env python
    """
-   Description: This module is intented to print a GTF.
-   Developer: D. Puthier.
-   Last modifications: 09 Mar 2016.
-   Version: {v}
+   This is the doc about the command that will appear when gtftk my_command -h
+   is called...
    """
    
    import sys
@@ -57,12 +55,6 @@ Just do the following things to declare a new command named **'print_gtf'**:
    #-------------------------------------------------------------------------
    # Command information
    #-------------------------------------------------------------------------
-   
-   __doc__ = """
-   This is the doc about the command that will appear when gtftk my_command -h 
-   is called...
-   """
-   
    
    __notes__ = """
    -- A note that will appear when 'gtftk my_command -h' will be called.

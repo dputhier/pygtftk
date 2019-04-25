@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-
+"""
+ Select a random list of genes or transcripts. Note that if transcripts
+ are requested the 'gene' feature is not returned.
+"""
 
 import argparse
 import os
@@ -13,10 +16,6 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Select a random list of genes or transcripts. Note that if transcripts
- are requested the 'gene' feature is not returned.
-"""
 
 
 def make_parser():

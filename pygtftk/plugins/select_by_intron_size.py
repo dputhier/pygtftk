@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Delete transcripts containing an intron whose size is below s.
+"""
 
 import argparse
 import os
@@ -13,9 +16,6 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Delete transcripts containing an intron whose size is below s.
-"""
 
 __notes__ = """
  -- By default delete transcripts containing an intron (or a sum intronic nucleotides, see -m) whose size is below s.

@@ -10,7 +10,6 @@ import operator
 import os
 import re
 import sys
-from builtins import str
 
 import pybedtools
 from pybedtools import BedTool

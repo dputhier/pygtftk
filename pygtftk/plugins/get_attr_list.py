@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+Get the list of attributes from a GTF file.
+"""
 import argparse
 import os
 import sys
@@ -10,9 +12,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
-Get the list of attributes from a GTF file.
-"""
 
 
 def make_parser():

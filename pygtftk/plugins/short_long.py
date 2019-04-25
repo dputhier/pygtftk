@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-
-
-""" Select the shortest mature transcript (i.e without introns) for each gene or the longest if the \
--l arguments is used. """
+""" Select the shortest mature transcript (i.e without introns) for each gene or the longest if the -l arguments is used. """
 
 import argparse
 import os
@@ -11,8 +8,6 @@ import sys
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
-
-__doc__ = """ Select the shortest mature transcript (i.e without introns) for each gene or the longest if the -l arguments is used. """
 
 __updated__ = "2018-01-25"
 

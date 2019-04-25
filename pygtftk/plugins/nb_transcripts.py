@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Compute the number of transcript per gene.
+"""
 
 import argparse
 import os
@@ -11,9 +14,6 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message, make_tmp_file
 
 __updated__ = "2018-01-20"
-__doc__ = """
-Compute the number of transcript per gene.
-"""
 
 
 def make_parser():

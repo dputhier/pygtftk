@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Print example files including GTF.
+"""
 import argparse
 import glob
 import os
@@ -14,9 +16,6 @@ from pygtftk.utils import get_example_file
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Print example files including GTF.
-"""
 
 __notes__ = '''
 
@@ -116,18 +115,20 @@ def get_example(outputfile=None,
             print("\t" + i)
     else:
         if format == "gtf":
-            try:
-                gtf = GTF(get_example_file(datasetname=dataset,
-                                           ext=format)[0], check_ensembl_format=False)
-            except:
-                try:
-                    gtf = GTF(get_example_file(datasetname=dataset,
-                                               ext=format + ".gz")[0], check_ensembl_format=False)
-                except:
+            example_file = get_example_file(datasetname=dataset,
+                                            ext=format)
+
+            if example_file:
+                example_file = example_file[0]
+            else:
+                example_file = get_example_file(datasetname=dataset,
+                                                ext=format + ".gz")
+                if example_file:
+                    example_file = example_file[0]
+                else:
                     message("No GTF file found for this dataset.",
                             type="ERROR")
-
-            gtf.write(outputfile, gc_off=True)
+            GTF(example_file, check_ensembl_format=False).write(outputfile, gc_off=True)
 
         elif format in ["fa", "join", "join_mat", "genome", "chromInfo", "genes", "geneList"]:
             try:
@@ -161,12 +162,12 @@ def get_example(outputfile=None,
 
         else:
 
-            if not quiet:
-                message("Copying ", force=True)
             file_path = glob.glob(os.path.join(pygtftk.__path__[0],
                                                'data',
                                                dataset,
                                                "*" + '.' + format))
+            if not file_path:
+                message("No corresponding file found", type='ERROR')
 
             file_path = [x for x in file_path if "__" not in x]
             target_path = os.path.join(pygtftk.__path__[0], 'data', dataset)
