@@ -170,6 +170,9 @@ extra_comp_cython = ['-W']
 if platform.system() == 'Darwin':
     extra_comp_cython += ['-Wno-#warnings']
 
+# Remark : the separation in three different modules was needed to make it
+# work on MacOSX for some unfathomable reason.
+
 cython_ologram = Extension(name='pygtftk.stats.intersect.create_shuffles',
                            sources=["pygtftk/stats/intersect/create_shuffles.pyx"],
                            extra_compile_args=extra_comp_cython,
