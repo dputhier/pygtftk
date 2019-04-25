@@ -162,7 +162,7 @@ def get_feat_seq(inputfile=None,
 
     to_print = True
 
-    for nb_line, line in enumerate(open(feat_seq.seqfn)):
+    for _, line in enumerate(open(feat_seq.seqfn)):
         if line.startswith(">"):
 
             # This (+/-) may be added by pybedtool

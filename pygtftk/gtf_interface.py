@@ -1054,7 +1054,7 @@ class GTF(object):
         elif isinstance(x, list):
 
             x_int = list()
-            for p, i in enumerate(x):
+            for _, i in enumerate(x):
                 try:
                     # Converting to one base
                     x_int += [int(i)]
@@ -2276,7 +2276,7 @@ class GTF(object):
         if line_nb == 0:
             raise GTFtkError("File is empty.")
 
-        for k, v in list(key_to_value.items()):
+        for k, _ in list(key_to_value.items()):
             tmp_file.write(k + "\t" + "|".join(key_to_value[k]) + "\n")
 
         tmp_file.close()

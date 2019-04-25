@@ -327,7 +327,7 @@ def simple_line_count(afile):
         afile = open(afile.name, "r")
 
     lines = 0
-    for line in afile:
+    for _ in afile:
         lines += 1
     afile.close()
 
@@ -514,7 +514,7 @@ def chrom_info_as_dict(chrom_info_file):
 
     genome_size = 0
 
-    for chrom, value in list(chrom_len.items()):
+    for _, value in list(chrom_len.items()):
         genome_size += value
 
     chrom_len["all_chrom"] = genome_size
@@ -914,7 +914,7 @@ def to_alphanum(string):
 def left_strip_str(string):
     new_line = []
 
-    for pos, line in enumerate(string.split("\n")):
+    for _, line in enumerate(string.split("\n")):
         if line == "":
             if not new_line:
                 continue

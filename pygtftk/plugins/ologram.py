@@ -790,7 +790,7 @@ def ologram(inputfile=None,
             should_print_header = False
 
         values = []
-        for k, v in current_dict.items():
+        for _, v in current_dict.items():
             values = values + [str(v)]
 
         data_file.write("\t".join([feature_type] + values) + "\n")
@@ -1013,7 +1013,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
         p += ggtitle('Volcano plot (for both N and S statistics)')
         p += scale_fill_manual(values={'N': '#7570b3', 'S': '#e7298a'})
         p += theme_bw()
-        
+
         return p
 
     # -------------------------------------------------------------------------

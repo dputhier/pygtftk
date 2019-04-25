@@ -240,7 +240,7 @@ transcript from another gene.
             overlapping_tx[tx_id] += [tx_other]
 
     if bool:
-        for k, v in overlapping_tx.items():
+        for k, _ in overlapping_tx.items():
             if not len(overlapping_tx[k]):
                 overlapping_tx[k] = "0"
             else:

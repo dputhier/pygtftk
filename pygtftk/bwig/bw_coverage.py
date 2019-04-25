@@ -4,7 +4,6 @@ A module to compute bigwig coverage over a set of regions (bed).
 
 import multiprocessing
 import os
-import pyBigWig
 import sys
 from builtins import range
 from builtins import str
@@ -13,6 +12,7 @@ from itertools import repeat
 from tempfile import NamedTemporaryFile
 
 import numpy as np
+import pyBigWig
 from pybedtools import BedTool
 
 import pygtftk
@@ -120,7 +120,7 @@ def _big_wig_coverage_worker(input_values):
      region_bed_file_name,
      bin_nb, pseudo_count,
      n_highest, profile,
-     stranded, type, label, zero_to_na, stat, verbose) = input_values
+     stranded, type, label, zero_to_na, stat, _) = input_values
 
     pc = pseudo_count
 
