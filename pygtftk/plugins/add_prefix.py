@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+  Add a prefix to target values. By default add 'chr' to seqid/chromosome key.
+"""
 
 import argparse
 import os
@@ -10,9 +13,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
-  Add a prefix to target values. By default add 'chr' to seqid/chromosome key.
-"""
 
 
 def make_parser():

@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+ Convert a bed file to a gtf. This will make the poor bed feel as if it was a
+ big/fat gtf (but with lots of empty fields...sniff). May be helpful sometimes...
+"""
 
 import argparse
 import os
@@ -16,10 +20,6 @@ from pygtftk.utils import message
 from pygtftk.utils import write_properly
 
 __updated__ = "2018-02-11"
-__doc__ = """
- Convert a bed file to a gtf. This will make the poor bed feel as if it was a
- big/fat gtf (but with lots of empty fields...sniff). May be helpful sometimes...
-"""
 
 
 def make_parser():

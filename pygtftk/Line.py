@@ -9,9 +9,6 @@ returned respectively:
 
 """
 
-from builtins import object
-from builtins import range
-from builtins import str
 from collections import OrderedDict
 
 from cffi import FFI

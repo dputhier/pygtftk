@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Add exon number transcript-wise (based on 5' to 3' orientation).
+"""
 import argparse
 import os
 import sys
@@ -11,9 +13,6 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Add exon number transcript-wise (based on 5' to 3' orientation).
-"""
 
 
 def make_parser():

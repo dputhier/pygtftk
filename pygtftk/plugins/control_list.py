@@ -1,10 +1,7 @@
 """
-    The ``control_list`` plugin
-    ============================
-
-    Based on a reference gene list, returns a list of genes matched for
-    signal. The expression/signal values should be provided for all genes through
-    the in_file argument.
+ Based on a reference gene list (or more generally IDs) this command tries to extract a set of
+ other genes/IDs matched for signal/expression. The --reference-gene-file contains
+ the list of reference IDs while the -\inputfile contains a tuple gene/signal for all genes.
 """
 
 import argparse
@@ -31,11 +28,6 @@ from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Based on a reference gene list (or more generally IDs) this command tries to extract a set of
- other genes/IDs matched for signal/expression. The --reference-gene-file contains
- the list of reference IDs while the -\inputfile contains a tuple gene/signal for all genes.
-"""
 
 __notes__ = """
     -- -\-infile is a two columns tabulated file. The first column contains the list of ids (including reference IDs)
@@ -181,7 +173,7 @@ def control_list(in_file=None,
                 continue
         try:
             fl = float(line[1])
-        except:
+        except ValueError:
             msg = "It seems that column 2 of input file"
             msg += " contains non numeric values. "
             msg += "Check that no header is present and that "

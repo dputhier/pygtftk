@@ -1,5 +1,13 @@
 #!/usr/bin/env python
-
+"""
+ Find transcripts whose body/TSS/TTS region extended in 5' and 3'
+ (-u/-d) overlaps with any transcript from another gene. Strandness is not
+ considered by default. Used --invert-match to find those that do not overlap. If
+ --annotate-gtf is used, all lines of the input GTF file will be printed and a new
+ key containing the list of overlapping transcripts will be added to the transcript
+ features/lines (key will be 'overlapping_*' with * one of body/TSS/TTS). The --annotate-gtf and
+ --invert-match arguments are mutually exclusive.
+"""
 import argparse
 import os
 import sys
@@ -14,16 +22,6 @@ from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
 __updated__ = "2018-01-24"
-
-__doc__ = """
- Find transcripts whose body/TSS/TTS region extended in 5' and 3'
- (-u/-d) overlaps with any transcript from another gene. Strandness is not
- considered by default. Used --invert-match to find those that do not overlap. If
- --annotate-gtf is used, all lines of the input GTF file will be printed and a new
- key containing the list of overlapping transcripts will be added to the transcript
- features/lines (key will be 'overlapping_*' with * one of body/TSS/TTS). The --annotate-gtf and
- --invert-match arguments are mutually exclusive.
-"""
 
 __notes__ = '''
  -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
@@ -240,7 +238,7 @@ transcript from another gene.
             overlapping_tx[tx_id] += [tx_other]
 
     if bool:
-        for k, v in overlapping_tx.items():
+        for k, _ in overlapping_tx.items():
             if not len(overlapping_tx[k]):
                 overlapping_tx[k] = "0"
             else:

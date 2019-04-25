@@ -9,20 +9,16 @@ When using gtfk a GTF object methods may return:
 
 """
 
-import gc
 import glob
 import io
 import os
 import re
 import sys
 import textwrap
-from builtins import object
-from builtins import range
-from builtins import str
-from builtins import zip
 from collections import OrderedDict
 from collections import defaultdict
 
+import gc
 import numpy as np
 from cffi import FFI
 from nose.plugins.skip import SkipTest
@@ -1054,7 +1050,7 @@ class GTF(object):
         elif isinstance(x, list):
 
             x_int = list()
-            for p, i in enumerate(x):
+            for _, i in enumerate(x):
                 try:
                     # Converting to one base
                     x_int += [int(i)]
@@ -2276,7 +2272,7 @@ class GTF(object):
         if line_nb == 0:
             raise GTFtkError("File is empty.")
 
-        for k, v in list(key_to_value.items()):
+        for k, _ in list(key_to_value.items()):
             tmp_file.write(k + "\t" + "|".join(key_to_value[k]) + "\n")
 
         tmp_file.close()
@@ -3497,8 +3493,6 @@ class GTF(object):
         >>> assert len(tx_ids) == 3
 
         """
-
-        tx_ids = []
 
         alist = list()
 

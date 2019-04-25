@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Count the number of values/levels for a set of keys.
+"""
 
 import argparse
 import os
@@ -11,9 +14,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Count the number of values/levels for a set of keys.
-"""
 
 __notes__ = """
  -- Use -\-uniq to get the count of non-redondant values.

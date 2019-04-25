@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""
+ Merge a set of attributes into a destination attribute. Can be
+ useful, for instance, to merge gene_name and gene_id values into
+ a new key to prepare the GTF for RNA-seq quantification.
+"""
 
 import argparse
 import os
@@ -10,11 +15,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Merge a set of attributes into a destination attribute. Can be
- useful, for instance, to merge gene_name and gene_id values into 
- a new key to prepare the GTF for RNA-seq quantification.
-"""
 
 __notes__ = """
 -- The destination key can be one of the source key, leading to an update of that key.

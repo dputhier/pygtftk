@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Get the list of values observed for an attributes.
+"""
 
 import argparse
 import os
@@ -10,9 +13,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-02-11"
-__doc__ = """
-Get the list of values observed for an attributes.
-"""
 
 
 def make_parser():

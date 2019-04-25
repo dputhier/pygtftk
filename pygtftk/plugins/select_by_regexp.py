@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Select lines from a GTF file based on a regexp.
+"""
 
 import argparse
 import os
@@ -11,9 +13,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Select lines from a GTF file based on a regexp.
-"""
 
 __notes__ = """
  -- The default is to try to select feature from conventional human chromosome (chr1..chr22, chrX and chrY) with

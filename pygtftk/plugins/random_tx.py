@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Select randomly up to m transcript for each gene.
+"""
 import argparse
 import os
 import random
@@ -12,9 +14,6 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-30"
-__doc__ = """
- Select randomly up to m transcript for each gene.
-"""
 
 
 def make_parser():

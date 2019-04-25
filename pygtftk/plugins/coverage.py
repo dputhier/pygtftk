@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-
+"""
+Takes a GTF as input to compute bigwig coverage in regions of interest (promoter,
+transcript body, intron, intron_by_tx, tts...) or a BED6 to focus on user-defined regions. If --n-highest
+is used the program will compute the coverage of each bigwig based on the average value of
+the n windows (--nb-window) with the highest coverage values.
+ """
 import argparse
 import os
 import sys
@@ -17,12 +22,7 @@ from pygtftk.utils import close_properly, message
 from pygtftk.utils import make_tmp_file
 
 __updated__ = "2018-02-05"
-__doc__ = """
-Takes a GTF as input to compute bigwig coverage in regions of interest (promoter,
-transcript body, intron, intron_by_tx, tts...) or a BED6 to focus on user-defined regions. If --n-highest
-is used the program will compute the coverage of each bigwig based on the average value of
-the n windows (--nb-window) with the highest coverage values.
- """
+
 __notes__ = """
 -- Regions were signal can be computed (if GTF file as input): promoter/tss, tts,
 introns, intron_by_tx, intergenic regions or any feature available in the GTF file (transcript, exon, gene...).

@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+ Convert the GTF file to ensembl format. It will essentially add a 'transcript' feature and 'gene' feature when required.
+ This command can be viewed as a 'groomer' command for those starting with a non ensembl GTF.
+"""
 
 import argparse
 import os
@@ -11,10 +15,6 @@ from pygtftk.utils import close_properly
 
 __updated__ = "2018-02-06"
 
-__doc__ = """
- Convert the GTF file to ensembl format. It will essentially add a 'transcript' feature and 'gene' feature when required.
- This command can be viewed as a 'groomer' command for those starting with a non ensembl GTF.
-"""
 __notes__ = """
     -- The gtftk program is designed to handle files in ensembl GTF format. This means that the GTF file provided to
     gtftk must contain transcript and gene feature/lines. They will be used to get access to transcript and gene

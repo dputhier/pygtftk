@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
+"""
 
 import argparse
 import os
@@ -13,9 +16,7 @@ from pygtftk.utils import message
 from pygtftk.utils import write_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
-"""
+
 __notes__ = "Output is in BED format."
 
 

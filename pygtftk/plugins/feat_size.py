@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+"""
+ Get the size and limits (start/end) of features enclosed in the GTF.
+ The feature can be of any type (as found in the 3rd column of the GTF)
+ or 'mature_rna' to get transcript size (i.e without introns).
+ If bed format is requested returns the limits in bed format and the size as a score.
+ Otherwise output GTF file with 'feat_size' as a new key and size as value.
+"""
 
 import argparse
 import os
@@ -14,13 +21,6 @@ from pygtftk.utils import message
 from pygtftk.utils import write_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Get the size and limits (start/end) of features enclosed in the GTF.
- The feature can be of any type (as found in the 3rd column of the GTF)
- or 'mature_rna' to get transcript size (i.e without introns).
- If bed format is requested returns the limits in bed format and the size as a score.
- Otherwise output GTF file with 'feat_size' as a new key and size as value.
-"""
 
 
 def make_parser():

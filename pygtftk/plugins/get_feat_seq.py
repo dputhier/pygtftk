@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Get feature sequences (i.e. column 3) in a flexible fasta format from a GTF file.
+"""
 import argparse
 import os
 import re
@@ -12,9 +14,7 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Get feature sequences (i.e. column 3) in a flexible fasta format from a GTF file. 
-"""
+
 __notes__ = """
  -- The sequences are returned in 5' to 3' orientation.
  -- If you want to use wildcards, use quotes: e.g. 'foo/bar*.fa'.
@@ -162,7 +162,7 @@ def get_feat_seq(inputfile=None,
 
     to_print = True
 
-    for nb_line, line in enumerate(open(feat_seq.seqfn)):
+    for _, line in enumerate(open(feat_seq.seqfn)):
         if line.startswith(">"):
 
             # This (+/-) may be added by pybedtool

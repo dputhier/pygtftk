@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Add a new key to transcript features containing a comma-separated list of exon sizes.
+"""
 import argparse
 import os
 import sys
@@ -11,9 +13,7 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-24"
-__doc__ = """
- Add a new key to transcript features containing a comma-separated list of exon sizes.
-"""
+
 __notes__ = """
  -- The GTF should be sorted before computation. Use bedtools sortBed.
  -- Sizes are provided in 5'->3' orientation (iff the GTF was previously sorted).

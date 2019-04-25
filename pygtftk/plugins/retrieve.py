@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Retrieve a GTF file from ensembl.
+"""
 
 import argparse
 import os
@@ -15,9 +18,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import message
 
 __updated__ = "2018-01-31"
-__doc__ = """
- Retrieve a GTF file from ensembl.
-"""
 
 
 def make_parser():

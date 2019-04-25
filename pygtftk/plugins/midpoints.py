@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+ Get the midpoint coordinates for the requested feature.
+ Output is bed format.
+"""
 
 import argparse
 import os
@@ -15,10 +19,6 @@ from pygtftk.utils import message
 from pygtftk.utils import write_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Get the midpoint coordinates for the requested feature.
- Output is bed format.
-"""
 
 
 def make_parser():

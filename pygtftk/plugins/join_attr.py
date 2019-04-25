@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Join attributes from a tabulated file.
+"""
 
 import argparse
 import os
@@ -11,9 +14,6 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-02-05"
-__doc__ = """
- Join attributes from a tabulated file.
-"""
 
 
 def make_parser():

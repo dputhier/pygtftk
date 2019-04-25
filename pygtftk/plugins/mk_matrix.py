@@ -1,13 +1,15 @@
 #!/usr/bin/env python
-
+"""
+ Create a matrix storing the bigwig coverage computed from binned regions.
+"""
 
 import argparse
 import os
-import pyBigWig
 import sys
 import zipfile
 
 import pandas as pd
+import pyBigWig
 from pybedtools import BedTool
 
 import pygtftk
@@ -21,10 +23,6 @@ from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-
-__doc__ = """
- Create a matrix storing the bigwig coverage computed from binned regions.
-"""
 
 __notes__ = """
  -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
@@ -204,8 +202,8 @@ def mk_matrix(
         try:
 
             region_bo = BedTool(inputfile.name)
-            a = len(region_bo)
-        except:
+            len(region_bo)
+        except IndexError:
             message("Unable to read the input file. Check format",
                     type="ERROR")
         if len(region_bo) == 0:

@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Delete one or several attributes from the gtf file.
+"""
 
 import argparse
 import os
@@ -12,9 +15,7 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Delete one or several attributes from the gtf file.
-"""
+
 __notes__ = """
  -- You may also use 'complex' regexp such as : "(^.*_id$|^.*_biotype$)"
  -- Example: gtftk get_example -d mini_real | gtftk del_attr -k "(^.*_id$|^.*_biotype$)" -r -v
