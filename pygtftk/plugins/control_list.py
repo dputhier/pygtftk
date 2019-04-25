@@ -181,7 +181,7 @@ def control_list(in_file=None,
                 continue
         try:
             fl = float(line[1])
-        except:
+        except ValueError:
             msg = "It seems that column 2 of input file"
             msg += " contains non numeric values. "
             msg += "Check that no header is present and that "

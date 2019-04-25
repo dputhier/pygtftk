@@ -3,11 +3,11 @@
 
 import argparse
 import os
-import pyBigWig
 import sys
 import zipfile
 
 import pandas as pd
+import pyBigWig
 from pybedtools import BedTool
 
 import pygtftk
@@ -204,8 +204,8 @@ def mk_matrix(
         try:
 
             region_bo = BedTool(inputfile.name)
-            a = len(region_bo)
-        except:
+            len(region_bo)
+        except IndexError:
             message("Unable to read the input file. Check format",
                     type="ERROR")
         if len(region_bo) == 0:
