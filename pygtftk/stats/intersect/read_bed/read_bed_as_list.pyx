@@ -54,6 +54,7 @@ def bed_to_lists_of_intervals(bed, chromsizes):
     >>> npt.assert_array_equal(result[0]['chr1'], np.array([ 5, 10]))
     >>> npt.assert_array_equal(result[1]['chr1'], np.array([ 10, 25, 250]))
     >>> npt.assert_array_equal(result[2], np.array(['chr1']))
+    
     """
 
     # Convert bedfile to pandas array
@@ -125,7 +126,9 @@ def exclude_chromsizes(exclusion, chromsizes):
     >>> e = pybedtools.BedTool(e_string,from_string=True).sort().merge()
     >>> result = exclude_chromsizes(e,cl)
     >>> assert result == OrderedDict([('chr1', 200), ('chr2', 300), ('all_chrom', 900)])
+
     """
+
     exclusion = exclusion.to_dataframe()
     for _, excl in exclusion.iterrows():
         excl_length = abs(excl['end'] - excl['start'])
@@ -289,6 +292,7 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
     >>> f = pybedtools.BedTool(part_1 + part_2, from_string=True)
     >>> result = exclude_concatenate(f,e)
     >>> assert str(result) == 'chr1\t50\t80\nchr1\t9900\t10000\nchr2\t50\t100\nchr4\t100\t150\nchr5\t150\t250\nchr6\t1\t200\n'
+
     """
 
     # Raw edition does not work in pybedtools, so need to use pandas dataframe instead.
