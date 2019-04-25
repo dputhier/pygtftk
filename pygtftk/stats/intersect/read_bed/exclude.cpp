@@ -1,5 +1,4 @@
-/*
- * This function will perform exclusion for a single chromosome. It is designed
+/* This function will perform exclusion for a single chromosome. It is designed
  * to alleviate the bottleneck observed in the old pandas code.
  *
  * For more details about the function role, please see the documentation in
@@ -19,7 +18,7 @@
   * Some helper variables are declared to make the code more legible (eg. excl_length)
   *
   * The reason why we use a result array and do not perform the operations directly
-  * on the bedfile_starts and bedfile_ends : is because this means that after the
+  * on the bedfile_starts and bedfile_ends is because this means that after the
   * first exclusion has been performed we would be comparing positions in two
   * different coordinates systems (between 'exclusion' with the original ones
   * and the shifted 'bedfile'). Same reason why the conditions are computed from
@@ -101,25 +100,29 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
 
     long long excl_length = end_excl_value - start_excl_value;
 
+    // Is region start under exclusion start ?
     bool* rs_lt_es = new bool[bed_size]();
-    arrayWiseIsLower(bedfile_starts, start_excl_value, bed_size, rs_lt_es); //is start_region under start_excl ?
+    arrayWiseIsLower(bedfile_starts, start_excl_value, bed_size, rs_lt_es);
 
+    // Is region end under exclusion start ?
     bool* re_lt_es = new bool[bed_size]();
-    arrayWiseIsLower(bedfile_ends, start_excl_value, bed_size, re_lt_es);   //is end_region under start_excl ?
+    arrayWiseIsLower(bedfile_ends, start_excl_value, bed_size, re_lt_es);
 
+    // Is region start under exclusion end ?
     bool* rs_lt_ee = new bool[bed_size]();
-    arrayWiseIsLower(bedfile_starts, end_excl_value, bed_size, rs_lt_ee);   //is start_region under end_exl ?
+    arrayWiseIsLower(bedfile_starts, end_excl_value, bed_size, rs_lt_ee);
 
+    // Is region end under exclusion end ?
     bool* re_lt_ee = new bool[bed_size]();
-    arrayWiseIsLower(bedfile_ends, end_excl_value, bed_size, re_lt_ee);     //is end_region under end_exl ?
+    arrayWiseIsLower(bedfile_ends, end_excl_value, bed_size, re_lt_ee);
 
 
 
 
-    // /**************************** Determining cases ***************************/
-    // The cases are arranged in priority order !
-    // In the original code, they were "else ifs"
-    // This means a case can only be considered if all previous cases are false.
+    /******************************* Determining cases *****************************/
+    /* The cases are arranged in priority order !
+     * In the original code, they were "else ifs"
+     * This means a case can only be considered if all previous cases are false. */
     bool* case_0 = new bool[bed_size]();
     for(long i = 0; i < bed_size; ++i){
       case_0[i] = re_lt_es[i];
@@ -177,9 +180,9 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
     // Case 0 : regions before exclusion. Do nothing.
 
     // Case 1 :
-    // All regions where region_start is under exclu_start but region_end is
-    // higher than exclu_start BUT lower than excl_end: truncate by setting
-    // region_end to exclu_start
+    /* All regions where region_start is under exclu_start but region_end is
+     * higher than exclu_start BUT lower than excl_end: truncate by setting
+     * region_end to exclu_start */
     for(long i = 0; i < bed_size; i++){
       if (case_1[i]){
         long long truncate_by = bedfile_ends[i] - start_excl_value;
@@ -188,8 +191,8 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
     }
 
     // Case 2 :
-    // All which contain the excluded region (start before and end after) :
-    // shorten the end by the region length
+    /* All which contain the excluded region (start before and end after) :
+     * shorten the end by the region length */
     for(long i = 0; i < bed_size; i++){
       if (case_2[i]){
         result_ends[i] -= excl_length;
@@ -197,8 +200,8 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
     }
 
     // Case 3 :
-    // All regions where region_start > excl_start but region_end < excl_end
-    // (so are included) : eliminate those by setting 0 0
+    /* All regions where region_start > excl_start but region_end < excl_end
+     * (so are included) : eliminate those by setting 0 0 */
     for(long i = 0; i < bed_size; i++){
       if (case_3[i]){
         result_starts[i] = 0;
@@ -207,10 +210,10 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
     }
 
     // Case 4 :
-    // All regions where region_start is higher than excl_start but lower than
-    // excl_end and region_end is higher than excl_end : truncate by setting
-    // region_start to excl_end and also
-    // region_end = region_end - nb_of_nt_of_region_that_are_in_excl
+    /* All regions where region_start is higher than excl_start but lower than
+     * excl_end and region_end is higher than excl_end : truncate by setting
+     * region_start to excl_end and also
+     * region_end = region_end - nb_of_nt_of_region_that_are_in_excl */
     for(long i = 0; i < bed_size; i++){
       if (case_4[i]){
 
@@ -229,9 +232,9 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
     }
 
     // Case 5 :
-    // All regions where region_start and region_end are both higher than
-    // excl_end : move by setting region_start = region_start - excl_length
-    // and region_end = region_end - excl_length
+    /* All regions where region_start and region_end are both higher than
+     * excl_end : move by setting region_start = region_start - excl_length
+     * and region_end = region_end - excl_length */
     for(long i = 0; i < bed_size; i++){
       if (case_5[i]){
         result_starts[i] -= excl_length;
