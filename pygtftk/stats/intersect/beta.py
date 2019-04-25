@@ -33,10 +33,10 @@ class BetaCalculator:
                  itermax=100000,
                  ft_type="Unknown"):
         """
-        Parameters :
-        - precision is the number of significant digits in mpmath.
-        - use_log is relevant when calculating beta (using mpmath.gamma or mpmath.loggamma)
-        - itermax is the max number of iterations when evaluating the continued fraction form of the incomplete Beta
+        :param precision: The number of significant digits in mpmath.
+        :param use_log: Relevant when calculating beta (using mpmath.gamma or mpmath.loggamma).
+        :param itermax: Max number of iterations when evaluating the continued fraction form of the incomplete Beta.
+
         """
         self.precision = precision
         self.use_log = use_log
