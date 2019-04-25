@@ -181,7 +181,8 @@ cython_ologram_2 = Extension(name='pygtftk.stats.intersect.overlap.overlap_regio
                              language='c')
 
 cython_ologram_3 = Extension(name='pygtftk.stats.intersect.read_bed.read_bed_as_list',
-                             sources=["pygtftk/stats/intersect/read_bed/read_bed_as_list.pyx","pygtftk/stats/intersect/read_bed/exclude.cpp"],
+                             sources=["pygtftk/stats/intersect/read_bed/read_bed_as_list.pyx",
+                                      "pygtftk/stats/intersect/read_bed/exclude.cpp"],
                              extra_compile_args=extra_comp_cython + ['-O3'],
                              include_dirs=[np.get_include()],
                              language='c++')
@@ -299,7 +300,8 @@ setup(name="pygtftk",
           'dev': ['pycodestyle >= 2.1.0',
                   'sphinx >=1.5.2',
                   'sphinxcontrib-programoutput >=0.8',
-                  'sphinx_bootstrap_theme >=0.4.9'],
+                  'sphinx_bootstrap_theme >=0.4.9',
+                  'sphinxcontrib-googleanalytics'],
           'gffutils': ['gffutils']},
       install_requires=['nose',
                         'pyyaml >=3.12',
