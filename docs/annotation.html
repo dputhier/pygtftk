@@ -3,8 +3,19 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta charset="utf-8" />
-    <title>Commands from section ‘annotation’ &#8212; gtftk 1.0.5 documentation</title>
+    <meta charset="utf-8" /><script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-139058009-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <title>Commands from section ‘annotation’ &#8212; gtftk 1.0.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -33,7 +44,7 @@
         <li class="right" >
           <a href="conversion.html" title="Commands from section ‘conversion’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -46,6 +57,9 @@
 <h1>Commands from section ‘annotation’<a class="headerlink" href="#commands-from-section-annotation" title="Permalink to this headline">¶</a></h1>
 <p>In the example of this section we will need the following example files:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d hg38_chr1 -f &#39;*&#39;
@@ -68,9 +82,9 @@ The program will return statistics for both the number of intersections and the 
 <p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in
 the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:03-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
- |-- 17:05-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (stop_codon)
- |-- 17:06-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (Intergenic)
+ |-- 11:18-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
+ |-- 11:19-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (stop_codon)
+ |-- 11:19-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (Intergenic)
 </pre></div>
 </div>
 <br>
@@ -84,8 +98,7 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </table>
 <br>
 <br><p><strong>Example:</strong> Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -m gene_biotype -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:06-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
 </pre></div>
 </div>
 <br>
@@ -98,10 +111,9 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </tr>
 </table>
 <br>
-<br><p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K4me3.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i hg38_chr1.gtf.gz -H -j hg38_chr1_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:07-INFO-discretize_key : Categories: [&#39;[0.0_258.5]&#39;, &#39;(258.5_758.0]&#39;, &#39;(758.0_1342.5]&#39;, &#39;(1342.5_2238.67]&#39;, &#39;(2238.67_4275.0]&#39;, &#39;(4275.0_89484.0]&#39;]
- |-- 17:07-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
+<br><p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 11:21-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
 </pre></div>
 </div>
 <br>
@@ -115,9 +127,8 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </table>
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i hg38_chr1.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:08-INFO-discretize_key : Categories: [&#39;[1.0_1.0]&#39;, &#39;(1.0_3.0]&#39;, &#39;(3.0_5.0]&#39;, &#39;(5.0_9.0]&#39;, &#39;(9.0_138.0]&#39;]
- |-- 17:08-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 11:24-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
 </pre></div>
 </div>
 <br>
@@ -638,12 +649,12 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="conversion.html" title="Commands from section ‘conversion’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.6 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 24, 2019.
+      Last updated on Apr 25, 2019.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
