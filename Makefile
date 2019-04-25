@@ -204,6 +204,7 @@ release_doc:
 	@ cp  docs/source/example*png docs/build/html/_static
 	@ cp  docs/source/example*pdf docs/build/html/_static
 	@ cp  -r docs/build/html/* docs
+	@ rm -rf docs/build
 	@ make clean
 	@ git add docs/*
 	@ git commit -m "Updated img in source and source/_static "
