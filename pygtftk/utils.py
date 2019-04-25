@@ -182,8 +182,6 @@ def make_tmp_dir(prefix='tmp',
 
     """
 
-    dir_target = None
-
     dir_name = mkdtemp(prefix=prefix + "_pygtftk_")
     message("Creating directory : " + dir_name, type="DEBUG")
 

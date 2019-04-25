@@ -9,7 +9,6 @@ When using gtfk a GTF object methods may return:
 
 """
 
-import gc
 import glob
 import io
 import os
@@ -23,6 +22,7 @@ from builtins import zip
 from collections import OrderedDict
 from collections import defaultdict
 
+import gc
 import numpy as np
 from cffi import FFI
 from nose.plugins.skip import SkipTest
@@ -3497,8 +3497,6 @@ class GTF(object):
         >>> assert len(tx_ids) == 3
 
         """
-
-        tx_ids = []
 
         alist = list()
 
