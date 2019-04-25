@@ -1,12 +1,21 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Warning about supported GTF file formats &#8212; gtftk 1.0.5 documentation</title>
+    <meta charset="utf-8" /><script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-139058009-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <title>Warning about supported GTF file formats &#8212; gtftk 1.0.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -35,7 +44,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to pygtftk documentation page"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -47,8 +56,8 @@
   <div class="section" id="warning-about-supported-gtf-file-formats">
 <h1>Warning about supported GTF file formats<a class="headerlink" href="#warning-about-supported-gtf-file-formats" title="Permalink to this headline">¶</a></h1>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Most of the commands of the gtftk suite are designed to handle files in <strong>Ensembl</strong> GTF format and thus require <strong>transcript and gene features/lines</strong> in the GTF. All lines must contain a transcript_id and gene_id value except the <strong>gene feature</strong> that should contain only the gene_id (<strong>see get_example command for an example</strong>). Transcript and gene lines will be used when required to get access to transcript and gene coordinates. This solution was chosen to define a reference GTF file format for (py)gtftk (since Ensembl format is probably the most widely used).</p>
+<p class="admonition-title">Warning</p>
+<p>Most of the commands of the gtftk suite are designed to handle files in <strong>Ensembl</strong> GTF format and thus require <strong>transcript and gene features/lines</strong> in the GTF. All lines must contain a transcript_id and gene_id value except the <strong>gene feature</strong> that should contain only the gene_id (<strong>see get_example command for an example</strong>). Transcript and gene lines will be used when required to get access to transcript and gene coordinates. This solution was chosen to define a reference GTF file format for (py)gtftk (since Ensembl format is probably the most widely used).</p>
 </div>
 <p>You can use the <strong>convert_ensembl</strong> subcommand to convert your non- (or old) ensembl format to current ensembl format.</p>
 <p>Below an example in which we first select only exon features then use <strong>convert_ensembl</strong> to re-generate gene and transcript features using <strong>convert_ensembl</strong> .</p>
@@ -80,7 +89,7 @@ chr1	gtftk	transcript	50	61	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk convert_ensembl -h
-  Usage: gtftk convert_ensembl [-i GTF] [-o GTF] [-n] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk convert_ensembl [-i GTF] [-o GTF] [-n] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Convert the GTF file to ensembl format. It will essentially add a &#39;transcript&#39; feature and &#39;gene&#39;
@@ -102,29 +111,30 @@ chr1	gtftk	transcript	50	61	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot
   Version:  2018-02-06
 
 Arguments:
- -i, --inputfile          Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile         Output file. (default: &lt;stdout&gt;)
- -n, --no-check-gene-chr  By default the command raise an error if several chromosomes are associated with the same gene_id. Disable this behaviour (but you should better think about what it means...). (default: False)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -n, --no-check-gene-chr      By default the command raise an error if several chromosomes are associated with the same gene_id. Disable this behaviour (but you should better think about what it means...). (default: False)
 
 Command-wise optional arguments:
- -h, --help               Show this help message and exit.
- -V, --verbosity          Set output verbosity ([0-3]). (default: 0)
- -D, --no-date            Do not add date to output file names. (default: False)
- -C, --add-chr            Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir            Keep all temporary files into this folder. (default: None)
- -A, --keep-all           Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file        Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">any comment line (<em>i.e.</em> starting with #) or empty line in the gtf file will be ignore (discarded) by gtftk.</p>
+<p class="admonition-title">Note</p>
+<p>any comment line (<em>i.e.</em> starting with #) or empty line in the gtf file will be ignore (discarded) by gtftk.</p>
 </div>
 <div class="section" id="naming-conventions">
 <h2>Naming conventions<a class="headerlink" href="#naming-conventions" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">We will use the terms <strong>attribute or key</strong> for any descriptor found in the 9th column (<em>e.g.</em> transcript_id) and the term <strong>value</strong> for its associated string (e.g. “NM_334567”). The eight first columns of the GTF file (chrom/seqid, source, type, start, end, score, strand, frame) will be refered as <strong>basic attributes</strong>. In the example below, gene_id is the attribute and ‘G0001’ is the associated value.</p>
+<p class="admonition-title">Note</p>
+<p>We will use the terms <strong>attribute or key</strong> for any descriptor found in the 9th column (<em>e.g.</em> transcript_id) and the term <strong>value</strong> for its associated string (e.g. “NM_334567”). The eight first columns of the GTF file (chrom/seqid, source, type, start, end, score, strand, frame) will be refered as <strong>basic attributes</strong>. In the example below, gene_id is the attribute and ‘G0001’ is the associated value.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example| gtftk select_by_key -k feature -v gene| head -1
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
@@ -166,8 +176,6 @@ chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -191,13 +199,13 @@ chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
         <li class="right" >
           <a href="index.html" title="Welcome to pygtftk documentation page"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.6 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 02, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Last updated on Apr 25, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

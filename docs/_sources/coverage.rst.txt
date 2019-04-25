@@ -24,7 +24,7 @@ If --matrix-out is selected, the signal for each bigwig will be provided in a de
 We will compute coverage of promoters regions using 3 bigWig files as input.
 
 
-.. command-output:: gtftk coverage -l H3K4me3,H3K79me2,H3K36me3 -u 5000 -d 5000 -i mini_real_noov_rnd_tx.gtf.gz -c hg38.genome -m transcript_id,gene_name -x ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -k 8 > coverage.bed
+.. command-output:: gtftk coverage -l H3K4me3,H3K79me2,H3K36me3 -u 5000 -d 5000 -i mini_real_noov_rnd_tx.gtf.gz -c hg38 -m transcript_id,gene_name -x ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -k 8 > coverage.bed
 	:shell:
 
 
@@ -61,7 +61,7 @@ First we will create a coverage matrix around promoter based on a subset of rand
 .. warning:: The mk_matrix example below use 8 CPUs. Please adapt.
 
 
-.. command-output:: gtftk mk_matrix -k 8 -i mini_real_noov_rnd_tx.gtf.gz -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter
+.. command-output:: gtftk mk_matrix -k 8 -i mini_real_noov_rnd_tx.gtf.gz -d 5000 -u 5000 -w 200 -c hg38  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter
 	:shell:
 
 
@@ -69,7 +69,7 @@ First we will create a coverage matrix around promoter based on a subset of rand
 The following command computes coverage profil along the whole transcript.
 
 
-.. command-output:: gtftk mk_matrix -k 8 --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38.genome  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx
+.. command-output:: gtftk mk_matrix -k 8 --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx
 	:shell:
 
 

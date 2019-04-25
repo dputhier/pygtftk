@@ -180,6 +180,13 @@ cython_ologram_2 = Extension(name='pygtftk.stats.intersect.overlap.overlap_regio
                              extra_compile_args=extra_comp_cython,
                              language='c')
 
+cython_ologram_3 = Extension(name='pygtftk.stats.intersect.read_bed.read_bed_as_list',
+                             sources=["pygtftk/stats/intersect/read_bed/read_bed_as_list.pyx",
+                                      "pygtftk/stats/intersect/read_bed/exclude.cpp"],
+                             extra_compile_args=extra_comp_cython + ['-O3'],
+                             include_dirs=[np.get_include()],
+                             language='c++')
+
 # ----------------------------------------------------------------------
 # Description
 # ----------------------------------------------------------------------
@@ -246,6 +253,7 @@ setup(name="pygtftk",
                 'pygtftk/rtools',
                 'pygtftk/stats/intersect',
                 'pygtftk/stats/intersect/overlap',
+                'pygtftk/stats/intersect/read_bed',
                 'pygtftk/data',
                 'pygtftk/data/simple',
                 'pygtftk/data/simple_02',
@@ -257,6 +265,7 @@ setup(name="pygtftk",
                 'pygtftk/data/mini_real_10M',
                 'pygtftk/data/mini_real_noov_rnd_tx',
                 'pygtftk/data/tiny_real',
+                'pygtftk/data/hg38_chr1',
                 'pygtftk/data/control_list',
                 'pygtftk/src/',
                 'pygtftk/src/libgtftk',
@@ -272,12 +281,14 @@ setup(name="pygtftk",
                     'pygtftk/data/mini_real_10M': ['*.*'],
                     'pygtftk/data/mini_real_noov_rnd_tx': ['*.*'],
                     'pygtftk/data/tiny_real': ['*.*'],
+                    'pygtftk/data/hg38_chr1': ['*.*'],
                     'pygtftk/data/control_list': ['*.*'],
                     'pygtftk/plugins': ['*.*'],
                     'docs': ['Makefile'],
                     'docs/source': ['*.*'],
                     'pygtftk/stats/intersect': ['*.*'],
                     'pygtftk/stats/intersect/overlap': ['*.*'],
+                    'pygtftk/stats/intersect/read_bed': ['*.*'],
                     'pygtftk/src': ['*.*'],
                     'pygtftk/src/libgtftk': ['*.*'],
                     'pygtftk/src/libgtftk/command': ['*.*']},
@@ -289,7 +300,8 @@ setup(name="pygtftk",
           'dev': ['pycodestyle >= 2.1.0',
                   'sphinx >=1.5.2',
                   'sphinxcontrib-programoutput >=0.8',
-                  'sphinx_bootstrap_theme >=0.4.9'],
+                  'sphinx_bootstrap_theme >=0.4.9',
+                  'sphinxcontrib-googleanalytics'],
           'gffutils': ['gffutils']},
       install_requires=['nose',
                         'pyyaml >=3.12',
@@ -309,7 +321,7 @@ setup(name="pygtftk",
                         'setuptools',
                         'cython',
                         'mpmath'],
-      ext_modules=[lib_pygtftk] + [cython_ologram] + [cython_ologram_2])
+      ext_modules=[lib_pygtftk] + [cython_ologram] + [cython_ologram_2] + [cython_ologram_3])
 
 # ----------------------------------------------------------------------
 # Update gtftk config directory

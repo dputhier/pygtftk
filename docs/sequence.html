@@ -1,12 +1,21 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Commands from section ‘sequence’ &#8212; gtftk 1.0.5 documentation</title>
+    <meta charset="utf-8" /><script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-139058009-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <title>Commands from section ‘sequence’ &#8212; gtftk 1.0.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -35,7 +44,7 @@
         <li class="right" >
           <a href="coordinates.html" title="Commands from section ‘coordinates’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -69,7 +78,7 @@ cccccgttacgtag
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_tx_seq -h
-  Usage: gtftk get_tx_seq [-i GTF] [-o FASTA] -g FASTA [-w] [-s SEP] [-l label] [-f] [-d] [-a assembly] [-c] [-n] [-e] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk get_tx_seq [-i GTF] [-o FASTA] -g FASTA [-w] [-s SEP] [-l label] [-f] [-d] [-a assembly] [-c] [-n] [-e] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Get transcripts sequences in a flexible fasta format from a GTF file.
@@ -82,27 +91,28 @@ cccccgttacgtag
   Version:
 
 Arguments:
- -i, --inputfile       Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile      Output FASTA file. (default: &lt;stdout&gt;)
- -g, --genome          The genome in fasta format. Accept path with wildcards (e.g. *.fa). (default: None)
- -w, --with-introns    Set to true to include intronic regions. (default: False)
- -s, --separator       To separate info in header. (default: |)
- -l, --label           A set of key for the header. (default: feature,transcript_id,gene_id,seqid,start,end)
- -f, --sleuth-format   Produce output in sleuth format (still experimental). (default: False)
- -d, --delete-version  In case of --sleuth-format, delete gene_id or transcript_id version number (e.g &#39;.2&#39; in ENSG56765.2). (default: False)
- -a, --assembly        In case of --sleuth-format, an assembly version. (default: GRCm38)
- -c, --del-chr         When using --sleuth-format delete &#39;chr&#39; in sequence id. (default: False)
- -n, --no-rev-comp     Don&#39;t reverse complement sequence corresponding to gene on minus strand. (default: False)
- -e, --explicit        Write explicitly the name of the keys in the header. (default: False)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output FASTA file. (default: &lt;stdout&gt;)
+ -g, --genome                 The genome in fasta format. Accept path with wildcards (e.g. *.fa). (default: None)
+ -w, --with-introns           Set to true to include intronic regions. (default: False)
+ -s, --separator              To separate info in header. (default: |)
+ -l, --label                  A set of key for the header. (default: feature,transcript_id,gene_id,seqid,start,end)
+ -f, --sleuth-format          Produce output in sleuth format (still experimental). (default: False)
+ -d, --delete-version         In case of --sleuth-format, delete gene_id or transcript_id version number (e.g &#39;.2&#39; in ENSG56765.2). (default: False)
+ -a, --assembly               In case of --sleuth-format, an assembly version. (default: GRCm38)
+ -c, --del-chr                When using --sleuth-format delete &#39;chr&#39; in sequence id. (default: False)
+ -n, --no-rev-comp            Don&#39;t reverse complement sequence corresponding to gene on minus strand. (default: False)
+ -e, --explicit               Write explicitly the name of the keys in the header. (default: False)
 
 Command-wise optional arguments:
- -h, --help            Show this help message and exit.
- -V, --verbosity       Set output verbosity ([0-3]). (default: 0)
- -D, --no-date         Do not add date to output file names. (default: False)
- -C, --add-chr         Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir         Keep all temporary files into this folder. (default: None)
- -A, --keep-all        Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file     Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -112,6 +122,7 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Get feature sequence (e.g exon, UTR…).</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  exon -n | head -10
+index file simple.fa.fai not found, generating...
 &gt;exon|G0001T002|124
 cccccgttacgtag
 &gt;exon|G0001T001|124
@@ -126,7 +137,7 @@ taatt
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_feat_seq -h
-  Usage: gtftk get_feat_seq [-i GTF] [-o FASTA] -g FASTA [-s separator] [-l label] [-t feature_type] [-n] [-r] [-u] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk get_feat_seq [-i GTF] [-o FASTA] -g FASTA [-s separator] [-l label] [-t feature_type] [-n] [-r] [-u] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Get feature sequences (i.e. column 3) in a flexible fasta format from a GTF file.
@@ -141,24 +152,25 @@ taatt
   Version:
 
 Arguments:
- -i, --inputfile           Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile          Output FASTA file. (default: &lt;stdout&gt;)
- -g, --genome              The genome in fasta format. (default: None)
- -s, --separator           To separate info in header. (default: |)
- -l, --label               A set of key for the header that will be extracted from the transcript line. (default: feature,transcript_id,gene_id,seqid,start,end)
- -t, --feature-type        The feature type (one defined in column 3). (default: exon)
- -n, --no-rev-comp         Don&#39;t reverse complement sequence corresponding to gene on minus strand. (default: False)
- -r, --rev-comp-to-header  Indicate in the header whether sequence was rev-complemented. (default: False)
- -u, --unique              Don&#39;t write redondant IDS. (default: False)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output FASTA file. (default: &lt;stdout&gt;)
+ -g, --genome                 The genome in fasta format. (default: None)
+ -s, --separator              To separate info in header. (default: |)
+ -l, --label                  A set of key for the header that will be extracted from the transcript line. (default: feature,transcript_id,gene_id,seqid,start,end)
+ -t, --feature-type           The feature type (one defined in column 3). (default: exon)
+ -n, --no-rev-comp            Don&#39;t reverse complement sequence corresponding to gene on minus strand. (default: False)
+ -r, --rev-comp-to-header     Indicate in the header whether sequence was rev-complemented. (default: False)
+ -u, --unique                 Don&#39;t write redondant IDS. (default: False)
 
 Command-wise optional arguments:
- -h, --help                Show this help message and exit.
- -V, --verbosity           Set output verbosity ([0-3]). (default: 0)
- -D, --no-date             Do not add date to output file names. (default: False)
- -C, --add-chr             Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir             Keep all temporary files into this folder. (default: None)
- -A, --keep-all            Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file         Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -198,8 +210,6 @@ Command-wise optional arguments:
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -223,13 +233,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="coordinates.html" title="Commands from section ‘coordinates’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.6 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 02, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Last updated on Apr 25, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

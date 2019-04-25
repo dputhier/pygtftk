@@ -1,12 +1,21 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Commands from section ‘Editing’ &#8212; gtftk 1.0.5 documentation</title>
+    <meta charset="utf-8" /><script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-139058009-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <title>Commands from section ‘Editing’ &#8212; gtftk 1.0.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -35,7 +44,7 @@
         <li class="right" >
           <a href="information.html" title="Commands from section ‘information’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -64,7 +73,7 @@ chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &qu
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_prefix -h
-  Usage: gtftk add_prefix [-i GTF] [-o GTF] [-k KEY] [-t TEXT] [-s] [-f target_feature] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk add_prefix [-i GTF] [-o GTF] [-k KEY] [-t TEXT] [-s] [-f target_feature] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Add a prefix to target values. By default add &#39;chr&#39; to seqid/chromosome key.
@@ -72,21 +81,22 @@ chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &qu
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile       Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile      Output file. (default: &lt;stdout&gt;)
- -k, --key             The name of the attribute for which a prefix/suffix is to be added to the corresponding values (e.g, gene_id, transcript_id...). (default: chrom)
- -t, --text            The character string to add as a prefix to the values. (default: chr)
- -s, --suffix          The character string to add as a prefix to the values. (default: False)
- -f, --target-feature  The name of the target feature. (default: *)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -k, --key                    The name of the attribute for which a prefix/suffix is to be added to the corresponding values (e.g, gene_id, transcript_id...). (default: chrom)
+ -t, --text                   The character string to add as a prefix to the values. (default: chr)
+ -s, --suffix                 The character string to add as a prefix to the values. (default: False)
+ -f, --target-feature         The name of the target feature. (default: *)
 
 Command-wise optional arguments:
- -h, --help            Show this help message and exit.
- -V, --verbosity       Set output verbosity ([0-3]). (default: 0)
- -D, --no-date         Do not add date to output file names. (default: False)
- -C, --add-chr         Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir         Keep all temporary files into this folder. (default: None)
- -A, --keep-all        Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file     Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -103,7 +113,7 @@ chr1	gtftk	exon	125	138	.	+	.
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk del_attr -h
-  Usage: gtftk del_attr [-i GTF] [-o GTF] -k KEY [-r] [-v] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk del_attr [-i GTF] [-o GTF] -k KEY [-r] [-v] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Delete one or several attributes from the gtf file.
@@ -115,20 +125,21 @@ chr1	gtftk	exon	125	138	.	+	.
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile     Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile    Output file. (default: &lt;stdout&gt;)
- -k, --key           comma-separated list of attribute names or a regular expression (see -r). (default: None)
- -r, --reg-exp       The key name is a regular expression. (default: False)
- -v, --invert-match  Delected keys are those not matching any of the specified key. (default: False)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -k, --key                    comma-separated list of attribute names or a regular expression (see -r). (default: None)
+ -r, --reg-exp                The key name is a regular expression. (default: False)
+ -v, --invert-match           Delected keys are those not matching any of the specified key. (default: False)
 
 Command-wise optional arguments:
- -h, --help          Show this help message and exit.
- -V, --verbosity     Set output verbosity ([0-3]). (default: 0)
- -D, --no-date       Do not add date to output file names. (default: False)
- -C, --add-chr       Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir       Keep all temporary files into this folder. (default: None)
- -A, --keep-all      Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file   Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -137,15 +148,17 @@ Command-wise optional arguments:
 <h2>join_attr<a class="headerlink" href="#join-attr" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Add attributes from a file. This command can be used to import additional key/values into the gtf (e.g CPAT for coding potential, DESeq for differential analysis…). The imported file can be in 2 formats (2 columns or matrix):</p>
 <ul class="simple">
-<li>With a 2-columns file:<ul>
-<li>value for joining (transcript_id or gene_id…).</li>
-<li>corresponding value.</li>
+<li><p>With a 2-columns file:</p>
+<ul>
+<li><p>value for joining (transcript_id or gene_id…).</p></li>
+<li><p>corresponding value.</p></li>
 </ul>
 </li>
-<li>With a matrix (see -m):<ul>
-<li>rows corresponding to joining keys (transcript_id or gene_id or…).</li>
-<li>columns corresponding to novel attributes name.</li>
-<li>Each cell of the matrix is a value for the corresponding attribute.</li>
+<li><p>With a matrix (see -m):</p>
+<ul>
+<li><p>rows corresponding to joining keys (transcript_id or gene_id or…).</p></li>
+<li><p>columns corresponding to novel attributes name.</p></li>
+<li><p>Each cell of the matrix is a value for the corresponding attribute.</p></li>
 </ul>
 </li>
 </ul>
@@ -192,7 +205,7 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -h
-  Usage: gtftk join_attr [-i GTF] [-o GTF] -k KEY -j JOIN_FILE [-H] [-m] [-n NEW_KEY] [-t target_feature] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk join_attr [-i GTF] [-o GTF] -k KEY -j JOIN_FILE [-H] [-m] [-n NEW_KEY] [-t target_feature] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Join attributes from a tabulated file.
@@ -200,23 +213,24 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
   Version:  2018-02-05
 
 Arguments:
- -i, --inputfile       Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile      Output file. (default: &lt;stdout&gt;)
- -k, --key-to-join     The name of the key used to join (e.g transcript_id). (default: None)
- -j, --join-file       A two columns file with (i) the value for joining (e.g value for transcript_id), (ii) the value for novel key (e.g the coding potential computed value). (default: None)
- -H, --has-header      Indicates that the &#39;join-file&#39; has a header. (default: False)
- -m, --matrix          &#39;join-file&#39; expect a matrix with row names as target keys column names as novel key and each cell as value. (default: False)
- -n, --new-key         The name of the novel key. Mutually exclusive with --matrix. (default: None)
- -t, --target-feature  The name(s) of the target feature(s). comma-separated. (default: None)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -k, --key-to-join            The name of the key used to join (e.g transcript_id). (default: None)
+ -j, --join-file              A two columns file with (i) the value for joining (e.g value for transcript_id), (ii) the value for novel key (e.g the coding potential computed value). (default: None)
+ -H, --has-header             Indicates that the &#39;join-file&#39; has a header. (default: False)
+ -m, --matrix                 &#39;join-file&#39; expect a matrix with row names as target keys column names as novel key and each cell as value. (default: False)
+ -n, --new-key                The name of the novel key. Mutually exclusive with --matrix. (default: None)
+ -t, --target-feature         The name(s) of the target feature(s). comma-separated. (default: None)
 
 Command-wise optional arguments:
- -h, --help            Show this help message and exit.
- -V, --verbosity       Set output verbosity ([0-3]). (default: 0)
- -D, --no-date         Do not add date to output file names. (default: False)
- -C, --add-chr         Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir         Keep all temporary files into this folder. (default: None)
- -A, --keep-all        Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file     Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -256,7 +270,7 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_multi_file -h
-  Usage: gtftk join_multi_file [-i GTF] [-o GTF] -k KEY [-t target_feature] [-m matrix_files [matrix_files ...]] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk join_multi_file [-i GTF] [-o GTF] -k KEY [-t target_feature] [-m matrix_files [matrix_files ...]] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Join attributes from mutiple files.
@@ -264,20 +278,21 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
   Version:  2018-02-05
 
 Arguments:
- -i, --inputfile       Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile      Output file. (default: &lt;stdout&gt;)
- -k, --key-to-join     The name of the key used to join (e.g transcript_id). (default: None)
- -t, --target-feature  The name(s) of the target feature(s). Comma-separated. (default: None)
- -m, --matrix-files    A set of matrix files with row names as target keys column names as novel key and each cell as value. (default: None)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -k, --key-to-join            The name of the key used to join (e.g transcript_id). (default: None)
+ -t, --target-feature         The name(s) of the target feature(s). Comma-separated. (default: None)
+ -m, --matrix-files           A set of matrix files with row names as target keys column names as novel key and each cell as value. (default: None)
 
 Command-wise optional arguments:
- -h, --help            Show this help message and exit.
- -V, --verbosity       Set output verbosity ([0-3]). (default: 0)
- -D, --no-date         Do not add date to output file names. (default: False)
- -C, --add-chr         Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir         Keep all temporary files into this folder. (default: None)
- -A, --keep-all        Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file     Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -306,7 +321,7 @@ chr1	gtftk	transcript	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &qu
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_multi_file -h
-  Usage: gtftk join_multi_file [-i GTF] [-o GTF] -k KEY [-t target_feature] [-m matrix_files [matrix_files ...]] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk join_multi_file [-i GTF] [-o GTF] -k KEY [-t target_feature] [-m matrix_files [matrix_files ...]] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Join attributes from mutiple files.
@@ -314,20 +329,21 @@ chr1	gtftk	transcript	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &qu
   Version:  2018-02-05
 
 Arguments:
- -i, --inputfile       Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile      Output file. (default: &lt;stdout&gt;)
- -k, --key-to-join     The name of the key used to join (e.g transcript_id). (default: None)
- -t, --target-feature  The name(s) of the target feature(s). Comma-separated. (default: None)
- -m, --matrix-files    A set of matrix files with row names as target keys column names as novel key and each cell as value. (default: None)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -k, --key-to-join            The name of the key used to join (e.g transcript_id). (default: None)
+ -t, --target-feature         The name(s) of the target feature(s). Comma-separated. (default: None)
+ -m, --matrix-files           A set of matrix files with row names as target keys column names as novel key and each cell as value. (default: None)
 
 Command-wise optional arguments:
- -h, --help            Show this help message and exit.
- -V, --verbosity       Set output verbosity ([0-3]). (default: 0)
- -D, --no-date         Do not add date to output file names. (default: False)
- -C, --add-chr         Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir         Keep all temporary files into this folder. (default: None)
- -A, --keep-all        Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file     Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -345,7 +361,7 @@ G0009	0.5555	0.7
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i simple.gtf -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
- |-- 13:35-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
+ |-- 11:29-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; S1 &quot;0.2322&quot;; S2 &quot;0.4&quot;; S1_d &quot;A&quot;;
@@ -360,11 +376,11 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 </div>
 <p><strong>Example:</strong> We want to load RNA-seq data in the GTF and discretize the expression values according to deciles (-p and -n set to 10). Classes will be labeled from A to J. The example below shows how balanced these classes will be.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">The <em>profile</em> command that could be used to asses the associated epigenetic marks of these 10 gene classes.</p>
+<p class="admonition-title">See also</p>
+<p>The <em>profile</em> command that could be used to asses the associated epigenetic marks of these 10 gene classes.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
- |-- 13:35-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
+ |-- 11:29-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
   96 A
   83 B
   89 C
@@ -379,7 +395,7 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk discretize_key -h
-  Usage: gtftk discretize_key [-i GTF] [-o GTF] -k src_key -d dest_key -n KEY [-l labels] [-p] [-g] [-u] [-r precision] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk discretize_key [-i GTF] [-o GTF] -k src_key -d dest_key -n KEY [-l labels] [-p] [-g] [-u] [-r precision] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Create a new key by discretizing a numeric key. This can be helpful to create new classes on the
@@ -395,25 +411,26 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile            Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile           Output file. (default: &lt;stdout&gt;)
- -k, --src-key              The name of the source key (default: None)
- -d, --dest-key             The name of the target key. (default: None)
- -n, --nb-levels            The number of levels/classes to create. (default: 2)
- -l, --labels               A comma-separated list of labels of size --nb-levels. (default: None)
- -p, --percentiles          Compute --nb-levels classes using percentiles. (default: False)
- -g, --log                  Compute breaks based on log-scale. (default: False)
- -u, --percentiles-of-uniq  Compute percentiles based on non-redondant values. (default: False)
- -r, --precision            The precision used in naming intervals. (default: 2)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -k, --src-key                The name of the source key (default: None)
+ -d, --dest-key               The name of the target key. (default: None)
+ -n, --nb-levels              The number of levels/classes to create. (default: 2)
+ -l, --labels                 A comma-separated list of labels of size --nb-levels. (default: None)
+ -p, --percentiles            Compute --nb-levels classes using percentiles. (default: False)
+ -g, --log                    Compute breaks based on log-scale. (default: False)
+ -u, --percentiles-of-uniq    Compute percentiles based on non-redondant values. (default: False)
+ -r, --precision              The precision used in naming intervals. (default: 2)
 
 Command-wise optional arguments:
- -h, --help                 Show this help message and exit.
- -V, --verbosity            Set output verbosity ([0-3]). (default: 0)
- -D, --no-date              Do not add date to output file names. (default: False)
- -C, --add-chr              Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir              Keep all temporary files into this folder. (default: None)
- -A, --keep-all             Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file          Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -457,8 +474,6 @@ Command-wise optional arguments:
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -482,13 +497,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="information.html" title="Commands from section ‘information’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.6 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 02, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Last updated on Apr 25, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

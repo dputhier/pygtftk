@@ -1,19 +1,26 @@
 =================         =================
 Pip package               |Pippackage|_
-Platforms                 |platform|_
+Bioconda package             |bioconda|_
 License                   |license|_
+Platforms                 |platform|_
 Languages                 |lang|_
 Build status              |build|_
 Repository size           |size|_
-Conda                     |conda|_
 Latest conda              |latestconda|
 Downloads                 |downloads|_
+Codacy                    |codacy|_
 Contribution              |contrib|_
 Github hits               |hits|_
 Issues                    |issues|_
 Citing                    |citing|_
 Documentation             |documentation|_
 =================         =================
+
+.. |codacy| image:: https://api.codacy.com/project/badge/Grade/0a977718b4d44992a794cf5ddef7822e
+.. _codacy: https://www.codacy.com/app/dputhier/pygtftk?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dputhier/pygtftk&amp;utm_campaign=Badge_Grade
+
+.. |bioconda| image:: https://anaconda.org/bioconda/pygtftk/badges/version.svg
+.. _bioconda: https://anaconda.org/bioconda/pygtftk
 
 .. |license| image:: https://img.shields.io/github/license/dputhier/pygtftk.svg
 .. _license: https://github.com/dputhier/pygtftk
@@ -29,9 +36,6 @@ Documentation             |documentation|_
 
 .. |size| image:: https://img.shields.io/github/repo-size/badges/shields.svg
 .. _size: https://travis-ci.org/dputhier/pygtftk
-
-.. |conda| image:: https://anaconda.org/bioconda/pygtftk/badges/installer/conda.svg
-.. _conda: https://anaconda.org/bioconda/pygtftk
 
 .. |platform| image:: https://anaconda.org/bioconda/pygtftk/badges/platforms.svg
 .. _platform: https://anaconda.org/bioconda/pygtftk
@@ -57,7 +61,7 @@ Documentation             |documentation|_
 .. |documentation| image:: https://img.shields.io/badge/Documentation-https%3A%2F%2Fdputhier.github.io%2Fpygtftk%2F-blue.svg
 .. _documentation: https://dputhier.github.io/pygtftk/
 
-.. |lang| image:: https://img.shields.io/badge/Languages-Python%2C%20Cython%2C%20C-blue.svg
+.. |lang| image:: https://img.shields.io/badge/Languages-Python%2C%20C%2C%20Cython%2C%20C++-blue.svg
 .. _lang: https://github.com/dputhier/pygtftk
 
 
@@ -68,7 +72,7 @@ The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF
 
 The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files. The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help sections.
 
-While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon  active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository. 
+While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon  active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository.
 
 **NB:** The **Documentation** about the latest release is available as a `github page <https://dputhier.github.io/pygtftk/>`_. The readthedoc version won't be maintained and will be close in the near future. This choice was motivated by the impossibility to maintain a dynamic documentation (using sphinx/sphinxcontrib-programoutput) given the computing time provided by readthedoc server.
 
@@ -120,7 +124,7 @@ Installation through pip
 
 **Prerequisites**
 
- 
+
 Again, this is not the preferred way for installation. Please choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed.
 
 **Running pip**
@@ -134,7 +138,7 @@ Installation through pip can be done as follow. ::
     # to look for plugins and their
     # CLI in ~/.gtftk
     # before going further
-    gtftk -h     
+    gtftk -h
 
 
 
@@ -174,7 +178,7 @@ Or run tests in parallel using: ::
     make clean
     make test_para -j 10 # Using 10 cores
 
-        
+
 
 Running unitary tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -182,5 +186,3 @@ Running unitary tests
 Several unitary tests have been implemented using doctests. You can run them using nose through the following command line: ::
 
     make nose
-
-

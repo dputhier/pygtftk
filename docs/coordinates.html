@@ -1,12 +1,21 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Commands from section ‘coordinates’ &#8212; gtftk 1.0.5 documentation</title>
+    <meta charset="utf-8" /><script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-139058009-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <title>Commands from section ‘coordinates’ &#8212; gtftk 1.0.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -35,7 +44,7 @@
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -64,7 +73,7 @@ chr1	27	29	G0006T001|transcript	.	-
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk midpoints -h
-  Usage: gtftk midpoints [-i GTF/BED] [-o BED] [-t ft_type] [-n NAME] [-s SEP] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk midpoints [-i GTF/BED] [-o BED] [-t ft_type] [-n NAME] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Get the midpoint coordinates for the requested feature. Output is bed format.
@@ -72,20 +81,21 @@ chr1	27	29	G0006T001|transcript	.	-
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile    Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile   Output file (BED). (default: &lt;stdout&gt;)
- -t, --ft-type      The target feature (as found in the 3rd column of the GTF). (default: transcript)
- -n, --names        The key(s) that should be used as name. (default: transcript_id)
- -s, --separator    The separator to be used for separating name elements (see -n). (default: |)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file (BED). (default: &lt;stdout&gt;)
+ -t, --ft-type                The target feature (as found in the 3rd column of the GTF). (default: transcript)
+ -n, --names                  The key(s) that should be used as name. (default: transcript_id)
+ -s, --separator              The separator to be used for separating name elements (see -n). (default: |)
 
 Command-wise optional arguments:
- -h, --help         Show this help message and exit.
- -V, --verbosity    Set output verbosity ([0-3]). (default: 0)
- -D, --no-date      Do not add date to output file names. (default: False)
- -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
- -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -105,7 +115,7 @@ chr1	179	180	G0002T001|G0002|transcript	.	+
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_5p_3p_coords -h
-  Usage: gtftk get_5p_3p_coords [-i GTF] [-o BED] [-t ft_type] [-v] [-p transpose] [-n NAME] [-m more_names] [-s SEP] [-e] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk get_5p_3p_coords [-i GTF] [-o BED] [-t ft_type] [-v] [-p transpose] [-n NAME] [-m more_names] [-s SEP] [-e] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
@@ -116,24 +126,25 @@ chr1	179	180	G0002T001|G0002|transcript	.	+
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile    Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile   Output file (BED). (default: &lt;stdout&gt;)
- -t, --ft-type      The target feature (as found in the 3rd column of the GTF). (default: transcript)
- -v, --invert       Get 3&#39; coordinate. (default: False)
- -p, --transpose    Transpose coordinate in 5&#39; (use negative value) or in 3&#39; (use positive values). (default: 0)
- -n, --names        The key(s) that should be used as name. (default: gene_id,transcript_id)
- -m, --more-names   A comma-separated list of information to be added to the &#39;name&#39; column of the bed file. (default: None)
- -s, --separator    The separator to be used for separating name elements (see -n). (default: |)
- -e, --explicit     Write explicitly the name of the keys in the header. (default: False)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file (BED). (default: &lt;stdout&gt;)
+ -t, --ft-type                The target feature (as found in the 3rd column of the GTF). (default: transcript)
+ -v, --invert                 Get 3&#39; coordinate. (default: False)
+ -p, --transpose              Transpose coordinate in 5&#39; (use negative value) or in 3&#39; (use positive values). (default: 0)
+ -n, --names                  The key(s) that should be used as name. (default: gene_id,transcript_id)
+ -m, --more-names             A comma-separated list of information to be added to the &#39;name&#39; column of the bed file. (default: None)
+ -s, --separator              The separator to be used for separating name elements (see -n). (default: |)
+ -e, --explicit               Write explicitly the name of the keys in the header. (default: False)
 
 Command-wise optional arguments:
- -h, --help         Show this help message and exit.
- -V, --verbosity    Set output verbosity ([0-3]). (default: 0)
- -D, --no-date      Do not add date to output file names. (default: False)
- -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
- -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -159,7 +170,7 @@ chr2	0	600	region_10	0	.
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intergenic -h
-  Usage: gtftk intergenic [-i GTF] [-o BED] -c CHROMINFO [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk intergenic [-i GTF] [-o BED] -c CHROMINFO [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Extract intergenic regions. This command requires a chromInfo file to compute the bed file
@@ -173,18 +184,19 @@ chr2	0	600	region_10	0	.
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile    Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile   Output file (BED). (default: &lt;stdout&gt;)
- -c, --chrom-info   Tabulated two-columns file. Chromosomes as column 1 and their sizes as column 2 (default: None)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file (BED). (default: &lt;stdout&gt;)
+ -c, --chrom-info             Tabulated two-columns file. Chromosomes as column 1 and their sizes as column 2 (default: None)
 
 Command-wise optional arguments:
- -h, --help         Show this help message and exit.
- -V, --verbosity    Set output verbosity ([0-3]). (default: 0)
- -D, --no-date      Do not add date to output file names. (default: False)
- -C, --add-chr      Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir      Keep all temporary files into this folder. (default: None)
- -A, --keep-all     Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file  Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -206,7 +218,7 @@ chr1	68	70
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intronic -h
-  Usage: gtftk intronic [-i GTF] [-o BED] [-b] [-n NAME] [-s SEP] [-w] [-F] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk intronic [-i GTF] [-o BED] [-b] [-n NAME] [-s SEP] [-w] [-F] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Returns a bed file containing the intronic regions. If by_transcript is false (default), returns
@@ -216,22 +228,23 @@ chr1	68	70
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile          Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile         Output file (BED). (default: &lt;stdout&gt;)
- -b, --by-transcript      The intronic regions are returned for each transcript. (default: False)
- -n, --names              The key(s) that should be used as name (if -b is used). (default: gene_id,transcript_id)
- -s, --separator          The separator to be used for separating name elements (if -b is used). (default: |)
- -w, --intron-nb-in-name  By default intron number is written in &#39;score&#39; column. Force it to be written in &#39;name&#39; column. (default: False)
- -F, --no-feature-name    Don&#39;t add the feature name (&#39;intron&#39;) in the name column. (default: False)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file (BED). (default: &lt;stdout&gt;)
+ -b, --by-transcript          The intronic regions are returned for each transcript. (default: False)
+ -n, --names                  The key(s) that should be used as name (if -b is used). (default: gene_id,transcript_id)
+ -s, --separator              The separator to be used for separating name elements (if -b is used). (default: |)
+ -w, --intron-nb-in-name      By default intron number is written in &#39;score&#39; column. Force it to be written in &#39;name&#39; column. (default: False)
+ -F, --no-feature-name        Don&#39;t add the feature name (&#39;intron&#39;) in the name column. (default: False)
 
 Command-wise optional arguments:
- -h, --help               Show this help message and exit.
- -V, --verbosity          Set output verbosity ([0-3]). (default: 0)
- -D, --no-date            Do not add date to output file names. (default: False)
- -C, --add-chr            Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir            Keep all temporary files into this folder. (default: None)
- -A, --keep-all           Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file        Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -256,7 +269,7 @@ chr1	72	73	acceptor|G0004T001E003|G0004T001|G0004	3	+
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk splicing_site -h
-  Usage: gtftk splicing_site [-i GTF] [-o BED] [-k exon_numbering_key] [-n NAME] [-s SEP] [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk splicing_site [-i GTF] [-o BED] [-k exon_numbering_key] [-n NAME] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Compute the locations of donor and acceptor splice sites.
@@ -270,20 +283,21 @@ chr1	72	73	acceptor|G0004T001E003|G0004T001|G0004	3	+
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile           Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile          Output file. (default: &lt;stdout&gt;)
- -k, --exon-numbering-key  The name of the key containing the exon numbering (exon_number in ensembl) (default: exon_number)
- -n, --names               The key(s) that should be used as name. (default: exon_id,transcript_id,gene_id)
- -s, --separator           The separator to be used for separating name elements (see -n). (default: |)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -k, --exon-numbering-key     The name of the key containing the exon numbering (exon_number in ensembl) (default: exon_number)
+ -n, --names                  The key(s) that should be used as name. (default: exon_id,transcript_id,gene_id)
+ -s, --separator              The separator to be used for separating name elements (see -n). (default: |)
 
 Command-wise optional arguments:
- -h, --help                Show this help message and exit.
- -V, --verbosity           Set output verbosity ([0-3]). (default: 0)
- -D, --no-date             Do not add date to output file names. (default: False)
- -C, --add-chr             Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir             Keep all temporary files into this folder. (default: None)
- -A, --keep-all            Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file         Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -302,7 +316,7 @@ chr1	gtftk	gene	115	128	.	+	.	gene_id &quot;G0001&quot;;
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk shift -h
-  Usage: gtftk shift [-i GTF] [-o GTF] -s shift_value [-d] [-a] -c CHROMINFO [-h] [-V ] [-D] [-C] [-K] [-A] [-L]
+  Usage: gtftk shift [-i GTF] [-o GTF] -s shift_value [-d] [-a] -c CHROMINFO [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Transpose coordinates in 3&#39; or 5&#39; direction.
@@ -326,21 +340,22 @@ chr1	gtftk	gene	115	128	.	+	.	gene_id &quot;G0001&quot;;
   Version:  2018-01-20
 
 Arguments:
- -i, --inputfile      Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
- -o, --outputfile     Output file. (default: &lt;stdout&gt;)
- -s, --shift-value    Shift coordinate by s nucleotides. (default: 0)
- -d, --stranded       By default shift not . (default: False)
- -a, --allow-outside  Accept the partial or total disappearance of a feature upon shifting. (default: False)
- -c, --chrom-info     Tabulated two-columns file. Chromosomes as column 1 and sizes as column 2 (default: None)
+ -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
+ -o, --outputfile             Output file. (default: &lt;stdout&gt;)
+ -s, --shift-value            Shift coordinate by s nucleotides. (default: 0)
+ -d, --stranded               By default shift not . (default: False)
+ -a, --allow-outside          Accept the partial or total disappearance of a feature upon shifting. (default: False)
+ -c, --chrom-info             Tabulated two-columns file. Chromosomes as column 1 and sizes as column 2 (default: None)
 
 Command-wise optional arguments:
- -h, --help           Show this help message and exit.
- -V, --verbosity      Set output verbosity ([0-3]). (default: 0)
- -D, --no-date        Do not add date to output file names. (default: False)
- -C, --add-chr        Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir        Keep all temporary files into this folder. (default: None)
- -A, --keep-all       Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file    Stores the arguments passed to the command into a file. (default: None)
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
 </div>
@@ -384,8 +399,6 @@ Command-wise optional arguments:
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -409,13 +422,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.6 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 02, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+      Last updated on Apr 25, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

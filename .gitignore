@@ -6,10 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
-# Cython modules translated into C
-# Eveyrtime you create a new one, remember to add it to the gitignore.
+# Cython modules translated into C/C++
+# Everytime you create a new one, remember to add it to the gitignore.
+# External C/C++ code, of course, should not be ignored.
 *create_shuffles.c
 *overlap_regions.c
+*read_bed_as_list.cpp
 
 # Distribution / packaging
 .Python
