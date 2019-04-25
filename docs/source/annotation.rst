@@ -7,9 +7,11 @@ In the example of this section we will need the following example files:
 	:shell:
 
 
-.. command-output:: gtftk get_example -q -d hg38_chr1 -f '*'
+.. command-output:: gtftk get_example -q -d mini_real -f '*'
 	:shell:
 
+.. command-output:: gtftk get_example -q -d hg38_chr1 -f '*'
+	:shell:
 
 ------------------------------------------------------------------------------------------------------------------
 
@@ -53,7 +55,7 @@ the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
 
 **Example:** Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs...). The --no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts...).
 
-.. command-output:: gtftk ologram -i hg38_chr1.gtf.gz -m gene_biotype -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
+.. command-output:: gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
 	:shell:
 
 
@@ -71,9 +73,9 @@ the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
   <br>
   <br>
 
-**Example:** A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K4me3.
+**Example:** A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.
 
-.. command-output:: gtftk join_attr -i hg38_chr1.gtf.gz -H -j hg38_chr1_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
+.. command-output:: gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
 	:shell:
 
 
@@ -93,7 +95,7 @@ the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
 
 **Example:** Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5' to 3') and discretize this novel key into 5 classes tested for enrichment.
 
-.. command-output:: gtftk add_exon_nb -k exon_nbr -i hg38_chr1.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
+.. command-output:: gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
 	:shell:
 
 

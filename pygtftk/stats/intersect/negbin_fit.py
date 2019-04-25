@@ -41,6 +41,13 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     association (around 0.8). Conversely, if len(obs) is in the thousands, only
     fits above 0.9 should be considered good.
 
+    :param obs: Observed values.
+    :param mean: The mean for the negative binomial model.
+    :param var: The variance for the negative binomial model.
+    :param bins_number: The number of bins in histogram.
+
+    :Example:
+
     >>> import numpy as np
     >>> import scipy.stats
     >>> np.random.seed(42)
@@ -130,7 +137,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     return result
 
 
-def negbin_pval(k, mean, var, precision = 1500, ft_type="Unknown"):
+def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
     r"""
     P-value for a negative binomial distribution of the given moments (mean, var).
 
@@ -139,6 +146,12 @@ def negbin_pval(k, mean, var, precision = 1500, ft_type="Unknown"):
 
     NOTE : To prevent division by zero or negative r, if the mean is higher than
     or equal to the variance, set the variance to mean + epsilon and send a warning
+
+    :param k: the critical value.
+    :param mean: The mean for the negative binomial model.
+    :param var: The variance for the negative binomial model.
+    :param precision: Floating point precision of mpmath. Should be at least 1000
+    :param ft_type: The name of the feature to be tested (just for meaningful messages).
 
     >>> from pygtftk.stats.intersect.negbin_fit import negbin_pval
     >>> mean = 18400

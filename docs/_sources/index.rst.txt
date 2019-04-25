@@ -9,9 +9,9 @@ While the gtftk Unix program comes with hundreds of unitary and functional tests
 
 
 
-.. image:: _static/example_07.png
+.. image:: _static/example_hp.png
     :width: 85%
-    :target: _static/example_07.png
+    :target: _static/example_hp.png
 
 
 

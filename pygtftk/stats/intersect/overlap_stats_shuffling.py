@@ -33,13 +33,21 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
 
     This function will be called by the hub function `compute_overlap_stats` to
     create a batch of shuffled "fake" BED files.
-
     Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2 are all outputs from the
-    bed_to_lists_of_intervals function calls : those are the lists of region
+    bed_Li1to_lists_of_intervals() function calls : those are the lists of region
     lengths, inter-region lengths, and chromosomes for each of the two input files.
 
-    'minibatch_size' (int) and 'use_markov_shuffling' (bool) are the other parameters.
-    'nb_threads' is the nb of threads for the multiprocessing.
+    :param Lr1: An output from the bed_to_lists_of_intervals() function calls.
+    :param Li1: An output from the bed_to_lists_of_intervals() function calls.
+    :param Lr2: An output from the bed_to_lists_of_intervals() function calls.
+    :param Li2: An output from the bed_to_lists_of_intervals() function calls.
+    :param all_chrom1:  An output from the bed_to_lists_of_intervals() function calls.
+    :param all_chrom2: An output from the bed_to_lists_of_intervals() function calls.
+    :param minibatch_size: The size of the batchs for shuffling.
+    :param use_markov_shuffling: Use a classical or a order-2 Markov shuffling.
+    :param nb_threads: number of threads.
+
+
     """
 
     # --------------------- Generate and shuffle batches  -------------------- #
@@ -116,13 +124,18 @@ def compute_overlap_stats(bedA, bedB,
     estimation of the intersections under the null hypothesis (the sets of
     regions given in A and B are independant).
 
-    - bedA corresponds to the old argument 'peak_file=region_mid_point.fn'
-    - bedB corresponds to the old argument 'feature_bo=gtf_sub_bed'
-    - chrom_len is the dictionary of chromosome lengths
-    See the ologram module for more documentation on the significance of
-    each argument.
-
     Author : Quentin FERRE <quentin.q.ferre@gmail.com>
+
+    :param bedA: The first bed file.
+    :param bedB: The second bed file.
+    :param chrom_len: the dictionary of chromosome lengths
+    :param minibatch_size: the size of the minibatch for shuffling.
+    :param minibatch_nb: The number of minibatchs.
+    :param bed_excl: The regions to be excluded.
+    :param use_markov_shuffling: Use a classical or a order-2 Markov shuffling.
+    :param nb_threads: Number of threads.
+    :param ft_type: The name of the feature.
+
     """
 
     message('Beginning shuffling for ' + ft_type)
