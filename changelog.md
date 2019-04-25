@@ -1,5 +1,27 @@
 # Changelog
 
+## v1.0.7
+
+This version contains some minor code refactoring. See 1.0.6 for recent major changes.
+
+### Bug Fixes
+
+*   None.
+
+### API Changes
+
+*   None.
+
+### Code changes
+
+*   Essentially some refactoring.
+
+### New Features
+
+*   None.
+
+# Changelog
+
 ## v1.0.6
 
 ### Bug Fixes
@@ -25,8 +47,8 @@
 *   The --pval-precision has been removed from *ologram*.
 *   The --user-img-file argument in *ologram* has become pdf_file.
 *   Added -W as command-wise argument. It force gtftk to print its
-message to a file. This may be handy when no access to stderr
-is available (e.g. through a scheduler).
+    message to a file. This may be handy when no access to stderr
+    is available (e.g. through a scheduler).
 
 ## v1.0.5
 
@@ -38,7 +60,7 @@ verbosity level.
 
 *   Fix #76 (issue with chromosomes in ensembl format when using ologram).
 *   Fix #72 (P-values equal to zero when nb_intersections_true and
-nb_intersections_expectation_shuffled are equal to zero).
+    nb_intersections_expectation_shuffled are equal to zero).
 
 ### API Changes
 
@@ -49,7 +71,7 @@ nb_intersections_expectation_shuffled are equal to zero).
 ### New Features
 
 *   Added -j/--sort-features to ologram. Controls the feature sorting in
-barplot diagram. Changed doc accordingly.
+    barplot diagram. Changed doc accordingly.
 *   The positional argument 'bigwiglist' in mk_matrix has been replaced by -y.
 *   The verbosity argument now must take a value (0-4).
 *   The positional argument in join_multi_file has been replaced by -m.
@@ -116,39 +138,39 @@ barplot diagram. Changed doc accordingly.
 ### New Features
 
 *   This version now integrates ologram (OverLap Of Genomic Regions Analysis using
-Monte Carlo). Ologram annotates peaks(in BED format) with region sets/features
-extracted from (i) GTF file features (e.g promoter, tts, gene body, UTR...) (ii)
-GTF file keys (e.g. gene_biotype, user defined keys...) (iii) or from a BED file.
+    Monte Carlo). Ologram annotates peaks(in BED format) with region sets/features
+    extracted from (i) GTF file features (e.g promoter, tts, gene body, UTR...) (ii)
+    GTF file keys (e.g. gene_biotype, user defined keys...) (iii) or from a BED file.
 *   The user can now use --chrom-info to provide the command with a file or a string.
-The string should be one of 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'.
-When a genome version is requested as a string, the conventional chromosomes
-are used (chrM is discarded together with alternative haplotypes,
-unlocalized regions...).
+    The string should be one of 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'.
+    When a genome version is requested as a string, the conventional chromosomes
+    are used (chrM is discarded together with alternative haplotypes,
+    unlocalized regions...).
 
 ## v0.9.10
 
 ### Bug Fixes
 
 *   Argparse was part of the dependencies. However, argparse is part of Python 3.
-Thus, this caused pygtftk to come with an older version of argparse...
+    Thus, this caused pygtftk to come with an older version of argparse...
 *   Fixed gene sorting in tss_dict to ensure reproducible result.
 *   Fixed a problem with retrieve() when used from interpreter (#45).
 *   The load_gtf() function (C API) no raise an error if a GFF3 is passed
-with .gtf extension.
+    with .gtf extension.
 
 ### API Changes
 
 *   Input BED file in bed3 format are now converted to bed6 automatically.
 *   The select_by_numeric() function has been renamed eval_numeric()
 *   It is now possible to use numpy array of booleans to index the GTF (i.e.
-using the indexing function).
+    using the indexing function).
 *   the prepare_gffutils_db() function allows one to create a db for
-gffutils while selecting features and attributes.
+    gffutils while selecting features and attributes.
 
 ### Code changes
 
 *   The argformatter module was refactored. Development of FormattedFile(argparse.FileType)
-that test for file extension and content (at least for bed).
+    that test for file extension and content (at least for bed).
 *   The BED conversion is now performed using the print_bed() C function .
 
 ### New Features
@@ -174,19 +196,19 @@ unused arguments (tmp_dir, verbosity...).
 *   No more reference to PY2.
 *   Added several test to get_tx_seq and get_feat_seq.
 *   Added several script to manipulate fasta files (see 'tools' folder).
-For pygtftk dev.
+    For pygtftk dev.
 *   Added 'extra_require' slot in setup().
 *   The get-feature-seq program now relies on bedtools (not on internal C code).
-This may change in the future as a a more
-flexible C interface is available.
+    This may change in the future as a a more
+    flexible C interface is available.
 
 ### New Features
 
 *   Added --list-bigwigs to profile (to display the content of a coverage file).
 *   Added a novel dataset	(mini_real_10M) derived from mini_real and containing
-10 Mb of chr1.
+    10 Mb of chr1.
 *   The configuration directory now supports several subdirectories named based
-on a hash string computed from path to the gtftk program.
+    on a hash string computed from path to the gtftk program.
 
 ## v0.9.8
 
@@ -198,8 +220,8 @@ in integer not float...
 ### API Changes
 
 *   pygtftk is no more compatible with python 2. This decision aims at
-integrating last plotnine versions (starting from 0.5.1) that
-depends on matplotlib 3.0.0 which strictly depends on py3k.
+    integrating last plotnine versions (starting from 0.5.1) that
+    depends on matplotlib 3.0.0 which strictly depends on py3k.
 
 ### New Features
 
@@ -207,9 +229,9 @@ depends on matplotlib 3.0.0 which strictly depends on py3k.
 *   Added a dataset mini_real_coding_pot.tab.
 *   Working on travis now.
 *   gtftk configuration directory now contains several subdirectories whose
-names are computed based on gtftk program location.
+    names are computed based on gtftk program location.
 *   Added a -d argument to gtftk program. This argument returns gtftk
-configuration directory.
+    configuration directory.
 *   All tests should be independent of the directory.
 *   Added test to count_key_values.
 
@@ -236,7 +258,7 @@ configuration directory.
 ### New Features
 
 *   Several changes in setup.py and requirements_develops.txt to makes it
-compliant with Pypi and buildable with manylinux.
+    compliant with Pypi and buildable with manylinux.
 
 ## v0.9.5
 
@@ -247,7 +269,7 @@ compliant with Pypi and buildable with manylinux.
 ### New Features
 
 *   Several changes in setup.py and requirements_develops.txt to makes it compliant
-with Pypi and buildable with manylinux.
+    with Pypi and buildable with manylinux.
 
 ## v0.9.3
 
