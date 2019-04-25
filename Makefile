@@ -160,8 +160,6 @@ release_bump: release
 	@ git checkout setup.cfg
 	@ git checkout pygtftk/version.py
 	@ python setup.py install
-	@ cat conda/$(VER)/meta.yaml | perl -npe 's/set version = "(.*)"/set version = "$(VER)"/' > /tmp/pygtftk.bump
-	@ mv /tmp/pygtftk.bump  conda/$(VER)/meta.yaml
 	@ cat pygtftk/version.py | perl -npe "s/='(.*)'/='$(VER)'/" > /tmp/pygtftk.bump
 	@ mv /tmp/pygtftk.bump pygtftk/version.py
 	@ cat setup.cfg | perl -npe 's/^version = .*/version = $(VER)/' > /tmp/pygtftk.bump
@@ -174,7 +172,7 @@ release_bump: release
 	@ echo "# Check gtftk version                           #"
 	@ echo "#-----------------------------------------------#"
 	@ echo `gtftk -v`
-	@ git add docs/source/conf.py pygtftk/version.py setup.cfg conda/$(VER)/meta.yaml
+	@ git add docs/source/conf.py pygtftk/version.py setup.cfg
 	@ git commit -m 'Bumped version $(VER)'
 
 release_test:
