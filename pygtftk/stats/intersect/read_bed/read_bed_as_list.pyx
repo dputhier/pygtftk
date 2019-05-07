@@ -54,7 +54,7 @@ def bed_to_lists_of_intervals(bed, chromsizes):
     >>> npt.assert_array_equal(result[0]['chr1'], np.array([ 5, 10]))
     >>> npt.assert_array_equal(result[1]['chr1'], np.array([ 10, 25, 250]))
     >>> npt.assert_array_equal(result[2], np.array(['chr1']))
-    
+
     """
 
     # Convert bedfile to pandas array
