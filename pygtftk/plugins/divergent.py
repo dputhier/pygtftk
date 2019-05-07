@@ -1,4 +1,17 @@
 #!/usr/bin/env python
+"""
+ Find transcripts with divergent promoters. These transcripts will be defined here
+ as those whose promoter region (defined by -u/-d) overlaps with the tss of
+ another gene in reverse/antisens orientation. This may be useful to select
+ coding genes in head-to-head orientation or LUAT as described in "Divergent
+ transcription is associated with promoters of transcriptional regulators"
+ (Lepoivre C, BMC Genomics, 2013). The output is a GTF with an additional key
+ ('divergent') whose value is set to '.' if the gene has no antisens transcript
+ in its promoter region. If the gene has an antisens transcript in its promoter
+ region the 'divergent' key is set to the identifier of the transcript whose tss
+ is the closest relative to the considered promoter. The tss to tss distance is
+ also provided as an additional key (dist_to_divergent).
+"""
 
 import argparse
 import os
@@ -13,19 +26,6 @@ from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
 __updated__ = "2018-01-24"
-__doc__ = """
- Find transcripts with divergent promoters. These transcripts will be defined here
- as those whose promoter region (defined by -u/-d) overlaps with the tss of
- another gene in reverse/antisens orientation. This may be useful to select
- coding genes in head-to-head orientation or LUAT as described in "Divergent
- transcription is associated with promoters of transcriptional regulators"
- (Lepoivre C, BMC Genomics, 2013). The output is a GTF with an additional key
- ('divergent') whose value is set to '.' if the gene has no antisens transcript
- in its promoter region. If the gene has an antisens transcript in its promoter
- region the 'divergent' key is set to the identifier of the transcript whose tss
- is the closest relative to the considered promoter. The tss to tss distance is
- also provided as an additional key (dist_to_divergent).
-"""
 
 __notes__ = '''
  -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 

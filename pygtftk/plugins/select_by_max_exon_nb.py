@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+For each gene select the transcript with the highest number of exons. If ties, select the first encountered.
+"""
 import argparse
 import os
 import sys
@@ -10,9 +12,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import message
 
 __updated__ = "2018-02-11"
-__doc__ = """
-For each gene select the transcript with the highest number of exons. If ties, select the first encountered.
-"""
 
 
 def make_parser():

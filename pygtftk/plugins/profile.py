@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Produces bigWig coverage profiles using calls to plotnine graphic package.
+"""
 
 import argparse
 import os
@@ -36,10 +39,6 @@ from pygtftk.utils import make_tmp_dir
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Produces bigWig coverage profiles using calls to plotnine graphic package.
- 
-"""
 
 __notes__ = """
  -- Think about using normalized bigWig files as input to mk_matrix. This

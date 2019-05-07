@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Select transcripts/gene overlapping a given locations.
+"""
 
 import argparse
 import os
@@ -15,9 +18,6 @@ from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
 
-__doc__ = """
- Select transcripts/gene overlapping a given locations.
-"""
 __notes__ = """
  -- A transcript is defined here as the genomic region from TSS to TTS including introns.
  -- This function will return the transcript and all its associated elements (exons, utr...)

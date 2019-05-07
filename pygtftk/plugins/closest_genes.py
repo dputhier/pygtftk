@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+ Find the n closest genes for each genes.
+"""
 
 import argparse
 import os
@@ -12,9 +15,7 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-02-11"
-__doc__ = """
- Find the n closest genes for each genes.
-"""
+
 __notes__ = """
  -- The reference region for each gene can be the TSS (the most 5'), the TTS (The most 3') or the whole gene.
  -- The reference region for each closest gene can be the TSS, the whole gene or the TTS.

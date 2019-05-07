@@ -3,8 +3,6 @@
 import argparse
 import re
 import sys
-from builtins import object
-from builtins import range
 
 import pygtftk
 import pygtftk.cmd_manager

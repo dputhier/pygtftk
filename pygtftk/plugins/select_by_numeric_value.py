@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Select lines from a GTF file based on a boolean test on numeric values.
+"""
 import argparse
 import os
 import sys
@@ -10,9 +12,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Select lines from a GTF file based on a boolean test on numeric values.
-"""
 
 __notes__ = """
  -- The test should be of the form : "{key} operator value".

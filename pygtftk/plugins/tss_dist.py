@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Computes the distance between TSSs of pairs of gene transcripts.
+"""
 
 import argparse
 import os
@@ -13,10 +15,6 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-
-__doc__ = """
- Computes the distance between TSSs of pairs of gene transcripts.
-"""
 
 __notes__ = """
  -- The tss_num_1/tss_num_1 columns contains the numbering of TSSs (transcript_id_1 and transcript_id_2 respectively) for each gene.

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Search in all command description files those related to a user-defined keyword.
+"""
 import argparse
 import os
 
@@ -8,9 +10,6 @@ from pygtftk.cmd_object import CmdObject
 from pygtftk.utils import message
 
 __updated__ = "2017-09-27"
-__doc__ = """
- Search in all command description files those related to a user-defined keyword.
-"""
 
 
 def make_parser():

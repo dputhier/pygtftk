@@ -330,13 +330,11 @@ setup(name="pygtftk",
 # Update gtftk config directory
 # ----------------------------------------------------------------------
 
-try:
-    current_install_path = subprocess.Popen(['which', 'gtftk'],
-                                            stdout=subprocess.PIPE,
-                                            stderr=DEVNULL
-                                            ).stdout.read().rstrip()
-except:
-    current_install_path = ''
+current_install_path = subprocess.Popen(['which', 'gtftk'],
+                                        stdout=subprocess.PIPE,
+                                        stderr=DEVNULL
+                                        ).stdout.read().rstrip()
+if current_install_path == '':
     sys.stderr.write("Unable to find gtftk in the path...\n")
 
 str_to_hash = current_install_path + __version__.encode()
@@ -358,7 +356,7 @@ if os.path.exists(config_dir):
 try:
     gtftk_sys_config = subprocess.Popen(['gtftk', '-s'], stdout=subprocess.PIPE).stdout.read().rstrip()
     sys.stderr.write(gtftk_sys_config.decode())
-except:
+except FileNotFoundError:
     pass
 
 sys.stderr.write("\n\nInstallation complete.\n\n")

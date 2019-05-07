@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Select transcript based on their size (i.e size of mature/spliced transcript).
+"""
 import argparse
 import os
 import sys
@@ -10,10 +12,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-
-__doc__ = """
- Select transcript based on their size (i.e size of mature/spliced transcript).
-"""
 
 
 def make_parser():

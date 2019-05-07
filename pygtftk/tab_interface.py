@@ -3,8 +3,6 @@ Class declaration of the TAB object (may be returned by a GTF instance).
 """
 
 import textwrap
-from builtins import object
-from builtins import range
 
 import pandas as pd
 from cffi import FFI

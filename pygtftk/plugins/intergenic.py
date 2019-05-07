@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""
+ Extract intergenic regions. This command requires a chromInfo file to compute
+ the bed file boundaries. The command will print the coordinates of genomic
+ regions without any transcript features.
+"""
 
 import argparse
 import os
@@ -14,11 +19,6 @@ from pygtftk.utils import message
 from pygtftk.utils import write_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Extract intergenic regions. This command requires a chromInfo file to compute
- the bed file boundaries. The command will print the coordinates of genomic
- regions without any transcript features.
-"""
 
 __notes__ = '''
  -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 

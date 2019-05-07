@@ -6,7 +6,7 @@ set -e
 yum install zlib-devel -y
 
 # Compile wheels
-for PYBIN in `ls --color=none -d1 /opt/python/*/bin| grep -P "(35)|(36)"`; do
+for PYBIN in $(ls --color=none -d1 /opt/python/*/bin| grep -P "(35)|(36)"); do
     echo "${PYBIN}"
     echo ""
     "${PYBIN}/pip" install -U pip
@@ -21,7 +21,7 @@ for whl in wheelhouse/pygtftk*.whl; do
     auditwheel repair "$whl" -w wheelhouse_manylinux 2>&1| tee 1>$whl.log
 done
 
-rm -f `ls  wheelhouse/* | grep -v pygtftk`
+rm -f $(ls  wheelhouse/* | grep -v pygtftk)
 
 # Install packages and test
 #for PYBIN in `ls --color=none -d1 /opt/python/*/bin| grep -v "34"| grep -v "37"`; do

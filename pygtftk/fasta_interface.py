@@ -3,9 +3,6 @@ Class declaration of the FASTA object (may be returned by GTF object methods).
 """
 
 import textwrap
-from builtins import object
-from builtins import range
-from builtins import str
 
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq

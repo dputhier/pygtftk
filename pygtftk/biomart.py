@@ -1,7 +1,6 @@
 import re
 import textwrap
 import xml.etree.ElementTree as ElementTree
-from builtins import str
 from collections import defaultdict
 
 import requests

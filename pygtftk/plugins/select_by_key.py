@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+ Select lines from a GTF file based on attributes and
+ associated values.
+"""
 
 import argparse
 import os
@@ -11,10 +15,6 @@ from pygtftk.utils import close_properly
 from pygtftk.utils import message
 
 __updated__ = "2018-01-31"
-__doc__ = '''
- Select lines from a GTF file based on attributes and
- associated values.
-'''
 
 __notes__ = '''
 -- select_by_key only returns lines for which the key is defined (i.e. exists) even with -\-invert-match.

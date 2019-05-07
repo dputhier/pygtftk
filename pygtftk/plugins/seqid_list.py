@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+ Select the seqid/chromosomes
+"""
 import argparse
 import os
 import sys
@@ -10,9 +12,6 @@ from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Select the seqid/chromosomes
-"""
 
 
 def make_parser():

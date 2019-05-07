@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-
+"""
+ Create a new key by discretizing a numeric key. This can be helpful to create new classes
+ on the fly that can be used subsequently.
+"""
 import argparse
 import os
 import sys
@@ -15,10 +18,6 @@ from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
-__doc__ = """
- Create a new key by discretizing a numeric key. This can be helpful to create new classes
- on the fly that can be used subsequently.
-"""
 
 __notes__ = """
  -- if -\-ft-type is not set the destination key will be assigned to all feature containing

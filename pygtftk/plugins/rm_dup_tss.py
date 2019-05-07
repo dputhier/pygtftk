@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""If several transcripts of a gene share the same tss, select only one."""
+"""
+If several transcripts of a gene share the same TSS, select one transcript per TSS.
+"""
+
 import os
 
 __updated__ = "2018-01-20"
@@ -16,10 +19,6 @@ from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
-
-__doc__ = """
-If several transcripts of a gene share the same TSS, select one transcript per TSS.
-"""
 
 __notes__ = """
 -- The alphanumeric order of transcript_id is used to select the representative of a TSS.
