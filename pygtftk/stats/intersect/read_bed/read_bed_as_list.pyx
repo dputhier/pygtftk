@@ -148,7 +148,7 @@ def exclude_chromsizes(exclusion, chromsizes):
 
 
 # Declare the interface to C++ code
-cdef extern from "exclude.h" namespace "exclusion":
+cdef extern from "exclude.hpp" namespace "exclusion":
   void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* bedfile_ends,
                                         long long* exclusion_starts, long long* exclusion_ends,
                                         long long* result_starts, long long* result_ends,
