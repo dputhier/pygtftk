@@ -19,7 +19,7 @@ from multiprocessing import Pool
 
 # ------------------------ Custom simple permutation ------------------------- #
 
-def shuffle(arr):
+def shuffle(arr, return_indices = False):
     """
     Given a numpy array, will shuffle its rows independantly.
     """
@@ -28,7 +28,15 @@ def shuffle(arr):
     rows = np.indices((x, y))[0]
     cols = np.asarray([np.random.permutation(y) for _ in np.arange(x)])
     result = arr[rows, cols]
-    return result
+
+    # We may return the indices as well, to check overlap by region in the code
+    # This is not used in the code currently, but the intersection algorithm
+    # could support it and be passed a list of indices for the regions (see notes)
+    if return_indices :
+      return result, cols # Return the shuffled array, and the original column numbers
+    else :
+      return result
+
 
 
 # ------------------------ Custom Markov shuffling --------------------------- #
@@ -234,38 +242,34 @@ cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
     # NOTE for improvement : we could use the same algorithm but keep the
     # negative inter-region lengths, to generate non-merged beds : this way,
     # we could work with peaks that have some overlap and not juste merge them,
-    # and do some statistics on this within-set overlap. Something to consider.
+    # and do some statistics on this within-set overlap as our algorithm supports multiple overlap.
     # The only sanity check required is making sure negative `current_position`
     # are not possible.
-    # Rq : this would require changing the algorithm that computes the overlaps,
-    # see relevant notes there
+    # Now that the intersection algorithm supports multiple overlaps, this can
+    # be done easily.
+
+    # Of course, it would also mean removing all the bedfile.merge() when relevant
 
     return fake_bed
 
 
 
-def generate_fake_bed_for_i(i,shuffled_Lr1_batches,shuffled_Li1_batches, shuffled_Lr2_batches,shuffled_Li2_batches,all_chroms):
+def generate_fake_bed_for_i(i,shuffled_Lr_batches,shuffled_Li_batches,all_chroms):
     """
     Partial call to the individual function 'generate_fake_bed'. Used in multiprocessing.
     """
 
-    current_fake_bed_A = list()
-    current_fake_bed_B = list()
+    current_fake_bed = list()
 
     for chrom in all_chroms:
-        genA = list()
-        genB = list()
-        genA = generate_fake_bed(
-            shuffled_Lr1_batches[chrom][i], shuffled_Li1_batches[chrom][i], chrom)
-        genB = generate_fake_bed(
-            shuffled_Lr2_batches[chrom][i], shuffled_Li2_batches[chrom][i], chrom)
-        current_fake_bed_A = current_fake_bed_A + genA
-        current_fake_bed_B = current_fake_bed_B + genB
-    return (current_fake_bed_A, current_fake_bed_B)
+        gen = list()
+        gen = generate_fake_bed(
+            shuffled_Lr_batches[chrom][i], shuffled_Li_batches[chrom][i], chrom)
+        current_fake_bed = current_fake_bed + gen
+    return current_fake_bed
 
 
-def batch_to_bedlist(shuffled_Lr1_batches, shuffled_Li1_batches,
-                      shuffled_Lr2_batches, shuffled_Li2_batches,
+def batch_to_bedlist(shuffled_Lr_batches, shuffled_Li_batches,
                       all_chroms, minibatch_size, nb_threads = 8):
 
     """
@@ -273,19 +277,14 @@ def batch_to_bedlist(shuffled_Lr1_batches, shuffled_Li1_batches,
     """
 
     generate_for_them = partial(generate_fake_bed_for_i,
-            shuffled_Lr1_batches=shuffled_Lr1_batches,shuffled_Li1_batches=shuffled_Li1_batches,
-            shuffled_Lr2_batches=shuffled_Lr2_batches,shuffled_Li2_batches=shuffled_Li2_batches,
+            shuffled_Lr_batches=shuffled_Lr_batches,shuffled_Li_batches=shuffled_Li_batches,
             all_chroms=all_chroms)
 
-    bedsA = list()
-    bedsB = list()
+    beds = list()
 
     # Multiprocess
     # TODO If RAM turns out to be critical, map() could be replaced by imap(). To investigate.
     with Pool(nb_threads) as p:
-        AB_tuples = p.map(generate_for_them,np.arange(minibatch_size))
+        beds = p.map(generate_for_them,np.arange(minibatch_size))
 
-    bedsA = [x[0] for x in AB_tuples]
-    bedsB = [x[1] for x in AB_tuples]
-
-    return bedsA,bedsB
+    return beds

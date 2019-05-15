@@ -56,6 +56,25 @@ from pygtftk.utils import message
 from pygtftk.utils import sort_2_lists
 
 __updated__ = "2019-04-17"
+__doc__ = """
+
+ OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
+ annotates peaks (in bed format) using (i) genomic features extracted
+ from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with
+  particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
+  gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
+
+ Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
+ lengths are considered). Then the probability of intersection under the null
+ hypothesis (the peaks and this feature are independent) is deduced thanks to
+ this Monte Carlo approach.
+
+ The program will return statistics for both the number of intersections and the
+ total lengths (in basepairs) of all intersections.
+
+ Authors : Quentin FERRE <quentin.q.ferre@gmail.com>, Guillaume CHARBONNIER
+ <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
+ """
 
 __notes__ = """
  -- Ologram is multithreaded and can use many cores. Although ologram itself is not RAM-intensive,
@@ -100,6 +119,8 @@ __notes__ = """
  -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
  for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
  This is not recommended in the general case and can be *very* time-consuming (hours).
+
+ -- ALPHA : support for multiple overlaps is in progress (within or between sets). The backend supports it but no statistics are made on it yet.
  """
 
 
@@ -459,7 +480,7 @@ def ologram(inputfile=None,
 
     # If there is an exclusion of certain regions to be done, do it.
     # Here, we do exclusion on the peak file ('bedA') and the chrom sizes.
-    # Exclusion on the other bed files or gtf extracted bed files ('bedB') is
+    # Exclusion on the other bed files or gtf extracted bed files ('bedsB') is
     # done once we get to them.
     # overlap_stats_shuffling() will handle that, with the same condition : that bed_excl != None
 
@@ -558,6 +579,8 @@ def ologram(inputfile=None,
                 "--more-bed-labels should be set if --more-bed is used.",
                 type="ERROR")
 
+
+
     # -------------------------------------------------------------------------
     # Preparing output files
     # -------------------------------------------------------------------------
@@ -625,7 +648,7 @@ def ologram(inputfile=None,
 
                 del gtf_sub
 
-                hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type=feat_type)
+                hits[feat_type] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type=feat_type)
 
             nb_gene_line = len(gtf.select_by_key(key="feature", value="gene"))
             nb_tx_line = len(gtf.select_by_key(key="feature", value="transcript"))
@@ -643,7 +666,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_intergenic", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Intergenic")
+                hits["Intergenic"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Intergenic")
 
                 # -------------------------------------------------------------------------
                 # Get the intronic regions
@@ -655,7 +678,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_introns", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Introns")
+                hits["Introns"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Introns")
 
                 # -------------------------------------------------------------------------
                 # Get the promoter regions
@@ -671,7 +694,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_promoters", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Promoter")
+                hits["Promoters"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Promoter")
 
                 # -------------------------------------------------------------------------
                 # Get the tts regions
@@ -686,7 +709,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_terminator", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Terminator")
+                hits["Terminator"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Terminator")
 
         # -------------------------------------------------------------------------
         # if the user request --more-keys (e.g. gene_biotype)
@@ -721,13 +744,17 @@ def ologram(inputfile=None,
 
                         ft_type = ":".join([user_key, val])  # Key for the dictionary
                         hits[ft_type] = overlap_partial(bedA=peak_file,
-                                                        bedB=gtf_sub_bed,
+                                                        bedsB=gtf_sub_bed,
                                                         ft_type=ft_type)
                         message("Processing " + str(ft_type), type="INFO")
 
     # -------------------------------------------------------------------------
     # Process user defined annotations
     # -------------------------------------------------------------------------
+
+    # Stock all of the more_beds if needed for multiple overlaps
+    all_more_beds = list()
+
 
     if more_bed is not None:
         message("Processing user-defined regions (bed format).")
@@ -760,13 +787,35 @@ def ologram(inputfile=None,
                 bed_anno_sub.close()
                 bed_anno = bed_anno_sub
 
+                # Stock all bed annos if multiple overlap is needed
+                all_more_beds += [BedTool(bed_anno.name)]
+
+
             tmp_bed = make_tmp_file(prefix=bed_lab, suffix=".bed")
             bed_anno_tosave = BedTool(bed_anno.name)
             bed_anno_tosave.saveas(tmp_bed.name)
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
-                                            bedB=BedTool(bed_anno.name),
+                                            bedsB=BedTool(bed_anno.name),
                                             ft_type=bed_lab)
+
+
+
+
+
+
+
+    # TODO : prepare another possibility, where an option such as
+    # `-all-more-beds-together` is used,  we do the multiple overlap of the
+    # region with ALL of the more beds.
+    # Now, bedsB can be a list !
+    """
+    hits['multiple_beds'] = overlap_partial(bedA=peak_file, bedsB=all_more_beds)
+    """
+
+
+
+
 
     # ------------------ Treating the 'hits' dictionary --------------------- #
 
@@ -1114,7 +1163,7 @@ else:
         #ologram: proper number of shuffled intersections
         @test "ologram_3" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 2`
-          [ "$result" = "14.97" ]
+          [ "$result" = "14.77" ]
         }
 
         #ologram: overlapping bp
@@ -1126,19 +1175,19 @@ else:
         #ologram: shuffled overlapping bp
         @test "ologram_5" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
-          [ "$result" = "61.35" ]
+          [ "$result" = "65.98" ]
         }
 
         #ologram: shuffled overlapping bp variance
         @test "ologram_6" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 9`
-          [ "$result" = "32.94" ]
+          [ "$result" = "18.54" ]
         }
 
         #ologram: shuffled overlapping bp fitting
         @test "ologram_7" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10`
-          [ "$result" = "0.8227700000000001" ]
+          [ "$result" = "0.70573" ]
         }
         '''
 

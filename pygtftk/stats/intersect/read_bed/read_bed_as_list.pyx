@@ -54,7 +54,7 @@ def bed_to_lists_of_intervals(bed, chromsizes):
     >>> npt.assert_array_equal(result[0]['chr1'], np.array([ 5, 10]))
     >>> npt.assert_array_equal(result[1]['chr1'], np.array([ 10, 25, 250]))
     >>> npt.assert_array_equal(result[2], np.array(['chr1']))
-    
+
     """
 
     # Convert bedfile to pandas array
@@ -148,7 +148,7 @@ def exclude_chromsizes(exclusion, chromsizes):
 
 
 # Declare the interface to C++ code
-cdef extern from "exclude.h" namespace "exclusion":
+cdef extern from "exclude.hpp" namespace "exclusion":
   void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* bedfile_ends,
                                         long long* exclusion_starts, long long* exclusion_ends,
                                         long long* result_starts, long long* result_ends,
