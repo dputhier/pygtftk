@@ -145,7 +145,9 @@ Installation through pip can be done as follow. ::
 Documentation
 --------------
 
-Documentation about the latest release is available as a `github page <https://dputhier.github.io/pygtftk/>`_. Documentation about OLOGRAM (OverLap Of Genomic Regions Analysis using Monte Carlo) can be found in `section 'annotation' of the documentation <https://dputhier.github.io/pygtftk/annotation.html>`_.
+Documentation about the latest release is available as a `github page <https://dputhier.github.io/pygtftk/>`_.
+
+Documentation about OLOGRAM (OverLap Of Genomic Regions Analysis using Monte Carlo) can be found in `section 'annotation' of the documentation <https://dputhier.github.io/pygtftk/annotation.html>`_.
 
 Testing
 --------
