@@ -1669,7 +1669,7 @@ class GTF(object):
         if key is None or value is None:
             raise GTFtkError("Need a key and value.")
 
-        if key in ['chrom', 'chr']:
+        if key in ['chrom', 'chr', 'seqname', 'seq_id', 'seq_name']:
             key = 'seqid'
 
         if len(value) > 20:

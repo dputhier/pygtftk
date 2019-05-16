@@ -17,7 +17,9 @@ from pygtftk.utils import message
 __updated__ = "2018-01-31"
 
 __notes__ = '''
--- select_by_key only returns lines for which the key is defined (i.e. exists) even with -\-invert-match.
+-- select_by_key only returns lines for which the key is defined (i.e. exists).
+-- Use -\-invert-match to select lines whose requested key is not associated with the requested values.
+-- You may also use basic attributes as key (e.g. seqid or chrom, feature, source...).
 '''
 
 
@@ -70,8 +72,8 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-n', '--invert-match',
-                            help='Not/invert match. Selected lines whose requested ke'
-                                 'y is not associated with the requested value.',
+                            help='Not/invert match. Select lines whose selected key is not associated'
+                                 ' with the selected values.',
                             action="store_true")
 
     parser_grp.add_argument('-b', '--bed-format',
