@@ -72,9 +72,9 @@ The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF
 
 The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, extract data from GTF files. The newly released command, **OLOGRAM (OverLap Of Genomic Regions Analysis using Monte Carlo)** may be used to compute overlap statistics between user supplied regions (BED format) and annotation derived from :
 
-- Gene centric features (e.g. exons, promoters, terminators…) enclosed in a GTF.
-- Built-in keys/values enclosed in a GTFs (e.g. check whether peaks fall in regions flagged as protein_coding, lincRNA or miRNA using key the 'gene_biotype' as provided by ensembl GTFs)
-- User-defined keys since users may load their own annotations into the GTF file using dedicated commands from the gtftk CLI suite (*e.g.* adding a numeric value to a gene and discretizing this value to create gene classes).
+- Gene centric features enclosed in a GTF (e.g. exons, promoters, terminators…).
+- Regions in a GTFs flagged with built-in keys/values (e.g. check whether peaks fall in regions flagged as protein_coding, lincRNA or miRNA using key the 'gene_biotype' as provided by ensembl GTFs)
+- Regions in a GTFs flagged with user-defined keys since users may load their own annotations into the GTF file using dedicated commands from the gtftk CLI suite (*e.g.* adding a numeric value to a gene and discretizing this value to create gene classes).
 - User supplied BED files.
 
 The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help sections.
