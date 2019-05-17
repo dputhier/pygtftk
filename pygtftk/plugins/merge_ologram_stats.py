@@ -5,6 +5,7 @@ Merge a set of OLOGRAM outputs into a single output. Build a heatmap from the re
 
 import argparse
 import os
+import re
 import warnings
 
 import numpy as np
@@ -20,6 +21,8 @@ from pygtftk.utils import message
 __updated__ = '''  '''
 
 __notes__ = """
+-- By default labels in the diagram are derived from the name of the enclosing folder. E.g. if file is a/b/c/00_ologram_stats.tsv, 'c' file be used as label.
+-- Otherwise use -\-labels to set the labels. 
 """
 
 
@@ -53,13 +56,40 @@ def make_parser():
                             type=arg_formatter.FormattedFile(mode='w', file_ext='pdf'),
                             required=True)
 
+    parser_grp.add_argument('-l', '--labels',
+                            help="A comma separated list of labels.",
+                            default=None,
+                            type=str,
+                            required=False)
+
     return parser
 
 
 def merge_ologram_stats(inputfiles=None,
                         pdf_width=None,
                         pdf_height=None,
-                        output=None):
+                        output=None,
+                        labels=None):
+    # -------------------------------------------------------------------------
+    # Check user provided labels
+    # -------------------------------------------------------------------------
+
+    if labels is not None:
+
+        labels = labels.split(",")
+
+        for elmt in labels:
+            if not re.search("^[A-Za-z0-9_]+$", elmt):
+                message(
+                    "Only alphanumeric characters and '_' allowed for --more-bed-labels",
+                    type="ERROR")
+        if len(labels) != len(inputfiles):
+            message("--labels: the number of labels should be"
+                    " the same as the number of input files ", type="ERROR")
+
+        if len(labels) != len(set(labels)):
+            message("Redundant labels not allowed.", type="ERROR")
+
     # -------------------------------------------------------------------------
     # Loop over input files
     # -------------------------------------------------------------------------
@@ -69,13 +99,19 @@ def merge_ologram_stats(inputfiles=None,
 
     for pos, infile in enumerate(inputfiles):
         message("Reading file : " + infile.name)
-        file_short_name = os.path.dirname(infile.name)
-        df_label += [file_short_name]
         # read the dataset
         df_tmp = pd.read_csv(infile, sep='\t', header=0, index_col=None)
         # Change name of 'feature_type' column.
         df_tmp = df_tmp.rename(index=str, columns={"feature_type": "Feature"})
         # Assign the name of the dataset to a new column
+
+        if labels is None:
+            file_short_name = os.path.basename(os.path.normpath(os.path.dirname(infile.name)))
+            df_label += [file_short_name]
+        else:
+            file_short_name = labels[pos]
+            df_label += [labels[pos]]
+
         df_tmp = df_tmp.assign(**{"dataset": [file_short_name] * df_tmp.shape[0]})
         # Pval set to 0 are changed to  1e-320
         df_tmp.loc[df_tmp['summed_bp_overlaps_pvalue'] == 0, 'summed_bp_overlaps_pvalue'] = 1e-320
@@ -85,6 +121,10 @@ def merge_ologram_stats(inputfiles=None,
         df_tmp = df_tmp.assign(**{"-log_10(pval)": -np.log10(df_tmp.summed_bp_overlaps_pvalue)})
         # Add the df to the list to be subsequently merged
         df_list += [df_tmp]
+
+    if len(set(df_label)) < len(df_label):
+        message('Enclosing directories are ambiguous and cannot be used as labels. You may use "--labels".',
+                type="ERROR")
 
     # -------------------------------------------------------------------------
     # Concatenate dataframes (row bind)
