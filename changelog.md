@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.0.8
+
+This version introduces *merge_ologram_stats* command that can be used to produce a heatmap from multiple OLOGRAM results.
+
+### Bug Fixes
+
+*   None.
+
+### API Changes
+
+*   None.
+
+### Code changes
+
+*   The select_by_key command now accept seq_name and seqname in addition to seqid and chrom as a key.
+
+### New Features
+
+*   This version implements merge_ologram_stats command that can be used to produce a heatmap from multiple OLOGRAM results.
+
 ## v1.0.7
 
 This version contains some minor code refactoring. See 1.0.6 for recent major changes.
@@ -20,7 +40,6 @@ This version contains some minor code refactoring. See 1.0.6 for recent major ch
 
 *   None.
 
-# Changelog
 
 ## v1.0.6
 
