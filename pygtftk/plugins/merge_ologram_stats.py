@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """
 Merge a set of OLOGRAM outputs into a single output. Build a heatmap from the results.
+
+See the /pygtftk/plugins/ologram.py file, as well as the documentation, for more information about OLOGRAM.
 """
 
 import argparse
@@ -22,7 +24,7 @@ __updated__ = '''  '''
 
 __notes__ = """
 -- By default labels in the diagram are derived from the name of the enclosing folder. E.g. if file is a/b/c/00_ologram_stats.tsv, 'c' file be used as label.
--- Otherwise use -\-labels to set the labels. 
+-- Otherwise use -\-labels to set the labels.
 """
 
 
@@ -33,7 +35,7 @@ def make_parser():
     parser_grp = parser.add_argument_group('Arguments')
 
     parser_grp.add_argument('inputfiles',
-                            help="Path to the OLOGRAM output files",
+                            help="Complete paths to the OLOGRAM output files",
                             type=arg_formatter.FormattedFile(mode='r', file_ext=('txt')),
                             nargs='+')
 
@@ -224,12 +226,18 @@ else:
 
     # 'Bats' tests
     test = '''
-#ologram: get example files
-@test "ologram_0" {
-     result=`gtftk get_example -d simple_02 -f '*'`
-  [ "$result" = "" ]
-}
-'''
+    #ologram: get example files
+    @test "ologram_0" {
+         result=`gtftk get_example -d ologram_1 -f '*'`
+      [ "$result" = "" ]
+    }
+
+    #ologram: produce heatmap
+    @test "ologram_1" {
+         result=`gtftk merge_ologram_stats H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merged_ologram.pdf --labels H3K4me3,H3K36me3,H3K79me2`
+      [ "$result" = "" ]
+    }
+    '''
 
     cmd = CmdObject(name="merge_ologram_stats",
                     message="Build a heatmap from several ologram output files (tsv).",
