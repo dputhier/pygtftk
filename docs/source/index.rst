@@ -30,6 +30,7 @@ Table of content
     selection
     conversion
     annotation
+    ologram
     coordinates
     sequence
     coverage
@@ -37,4 +38,3 @@ Table of content
     api
     bwig_coverage
     developers
-
