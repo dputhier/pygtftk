@@ -13,14 +13,15 @@ import warnings
 import numpy as np
 import pandas as pd
 from plotnine import (ggplot, aes, geom_tile, theme_bw,
-                      element_blank, theme,
-                      element_text, save_as_pdf_pages)
+                      element_blank, theme, geom_point,
+                      element_text, save_as_pdf_pages,
+                      scale_color_gradientn)
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.utils import message
 
-__updated__ = '''  '''
+__updated__ = ''' 2019-05-27 '''
 
 __notes__ = """
 -- By default labels in the diagram are derived from the name of the enclosing folder. E.g. if file is a/b/c/00_ologram_stats.tsv, 'c' file be used as label.
@@ -52,7 +53,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-o', '--output',
-                            help="Pdf file name. ",
+                            help="Pdf file name.",
                             default=None,
                             nargs=None,
                             type=arg_formatter.FormattedFile(mode='w', file_ext='pdf'),
@@ -65,6 +66,7 @@ def make_parser():
                             required=False)
 
     return parser
+
 
 
 def merge_ologram_stats(inputfiles=None,
@@ -101,7 +103,7 @@ def merge_ologram_stats(inputfiles=None,
 
     for pos, infile in enumerate(inputfiles):
         message("Reading file : " + infile.name)
-        # read the dataset
+        # Read the dataset into a temporay dataframe
         df_tmp = pd.read_csv(infile, sep='\t', header=0, index_col=None)
         # Change name of 'feature_type' column.
         df_tmp = df_tmp.rename(index=str, columns={"feature_type": "Feature"})
@@ -115,14 +117,20 @@ def merge_ologram_stats(inputfiles=None,
             df_label += [labels[pos]]
 
         df_tmp = df_tmp.assign(**{"dataset": [file_short_name] * df_tmp.shape[0]})
-        # Pval set to 0 are changed to  1e-320
+        # Pval set to 0 or -1 are changed to 1e-320 and NaN respectively
         df_tmp.loc[df_tmp['summed_bp_overlaps_pvalue'] == 0, 'summed_bp_overlaps_pvalue'] = 1e-320
-        # Pval set to 0 are changed to  1e-320
         df_tmp.loc[df_tmp['summed_bp_overlaps_pvalue'] == -1, 'summed_bp_overlaps_pvalue'] = np.nan
         # Compute -log10(pval)
         df_tmp = df_tmp.assign(**{"-log_10(pval)": -np.log10(df_tmp.summed_bp_overlaps_pvalue)})
+
+        # Which p-values are signifcant ?
+        # TODO Add Benjamini-Hochberg multitesting correction
+        df_tmp = df_tmp.assign(**{"pval_signif": df_tmp.summed_bp_overlaps_pvalue < 0.01})
+
         # Add the df to the list to be subsequently merged
         df_list += [df_tmp]
+
+
 
     if len(set(df_label)) < len(df_label):
         message('Enclosing directories are ambiguous and cannot be used as labels. You may use "--labels".',
@@ -142,10 +150,14 @@ def merge_ologram_stats(inputfiles=None,
     message("Plotting")
     my_plot = ggplot(data=df_merged,
                      mapping=aes(y='Feature',
-                                 fill='-log_10(pval)',
+                                 fill='summed_bp_overlaps_log2_fold_change',
                                  x='dataset'))
-
     my_plot += geom_tile()
+
+    # Points for p-val. Must be after geom_tile()
+    my_plot += geom_point(data = df_merged.loc[df_merged['pval_signif']],
+        mapping = aes(x='dataset',y='Feature',color = '-log_10(pval)'), size=6, shape ='D', inherit_aes = False)
+    my_plot += scale_color_gradientn(colors = ["#160E00","#160E00","#FFB025","#FFE7BD"])
 
     # theming
     my_plot += theme_bw()
@@ -220,7 +232,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
 else:
 
