@@ -8,7 +8,7 @@ class BetaCalculator:
     Computing the beta distribution in Python using mpmath.
 
     Using routines from the GNU Scientific Library (`beta_inc.c`):
-    <Copyright (C) 2007 Brian Gough and  Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman>
+    <Copyright (C) 2007 Brian Gough and Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman>
 
     Available under the GNU GPL v3 license.
 
@@ -16,6 +16,9 @@ class BetaCalculator:
         self.betainc(A, B, p) <-->
         mpmath.betainc(A, B, 0, p) <-->
         mpmath.quad(lambdat: t**(A-1)*(1-t)**(B-1), [0, p])
+
+
+    :Example:
 
     >>> from pygtftk.stats.intersect.beta import BetaCalculator
     >>> import mpmath
@@ -26,6 +29,7 @@ class BetaCalculator:
     >>> res_A = float(mpmath.betainc(a=5,b=2,x2=0.5))
     >>> res_B = float(mycalc.betainc(a=5,b=2,x=0.5))
     >>> assert(res_A == res_B)
+
     """
 
     def __init__(self, precision=1500,
@@ -58,12 +62,10 @@ class BetaCalculator:
 
         a, b = mpmath.mpf(a), mpmath.mpf(b)
 
-        if self.use_log:
-            beta = mpmath.exp(mpmath.loggamma(a) + mpmath.loggamma(b) - mpmath.loggamma(a + b))
-            return beta
-        else:
-            beta = mpmath.gamma(a) * mpmath.gamma(b) / mpmath.gamma(a + b)
-            return beta
+        if self.use_log: beta = mpmath.exp(mpmath.loggamma(a) + mpmath.loggamma(b) - mpmath.loggamma(a + b))
+        else: beta = mpmath.gamma(a) * mpmath.gamma(b) / mpmath.gamma(a + b)
+
+        return beta
 
     # ----------------------------- Incomplete beta -------------------------- #
 
@@ -74,6 +76,11 @@ class BetaCalculator:
         Code translated from: GNU Scientific Library
 
         Uses the modified Lentz's method.
+
+        You can see a representation of this form in the Digial Library of
+        Mathematical functions <https://dlmf.nist.gov/8.17#SS5.p1>.
+        The goal of the method is to calculate the successive 'd' terms,
+        separately for odd and even.
         """
 
         a, b, x = mpmath.mpf(a), mpmath.mpf(b), mpmath.mpf(x)
@@ -112,7 +119,7 @@ class BetaCalculator:
 
         # If failed to converge, return our best guess but send a warning
         msg = 'a or b too large or given itermax too small for computing incomplete'
-        msg += ' beta function ; pval may be slightly erroneous (' + self.ft_type + ').'
+        msg += ' beta function ; pval may be slightly erroneous for feature (' + self.ft_type + ').'
         message(msg, type='WARNING')
         return cf
 
@@ -128,18 +135,15 @@ class BetaCalculator:
 
         a, b, x = mpmath.mpf(a), mpmath.mpf(b), mpmath.mpf(x)
 
-        def isnegint(X):
-            return (X < 0) & (X == mpmath.floor(X))
+        def isnegint(X): return (X < 0) & (X == mpmath.floor(X))
 
         # Trivial cases
         if (x < 0) | (x > 1):
             raise ValueError("Bad x in betainc(a,b,x) - x must be between 0 and 1")
         elif isnegint(a) | isnegint(b) | isnegint(a + b):
             raise ValueError("Bad a or b in betainc(a,b,x) -- neither a, b nor a+b can be negative integers")
-        elif (x == 0):
-            return 0
-        elif (x == 1):
-            return 1
+        elif (x == 0): return 0
+        elif (x == 1): return 1
 
         else:
 

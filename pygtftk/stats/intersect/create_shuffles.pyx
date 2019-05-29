@@ -200,7 +200,7 @@ def markov_shuffle(arr, nb_threads = 8):
 
 # NOTE for improvement : it is very possible to add new types of shuffles here.
 # Just remember to update the wrappers in overlap_stats_shuffling (see the
-# corresponding note)
+# corresponding NOTE there)
 
 
 
@@ -238,19 +238,26 @@ cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
 
         fake_bed.append((str(chrom),int(start),int(end)))
 
-
     # NOTE for improvement : we could use the same algorithm but keep the
     # negative inter-region lengths, to generate non-merged beds : this way,
     # we could work with peaks that have some overlap and not juste merge them,
-    # and do some statistics on this within-set overlap as our algorithm supports multiple overlap.
-    # The only sanity check required is making sure negative `current_position`
-    # are not possible.
-    # Now that the intersection algorithm supports multiple overlaps, this can
-    # be done easily.
+    # and do some statistics on this within-set overlap as our algorithm now
+    # supports multiple overlap.
 
-    # Of course, it would also mean removing all the bedfile.merge() when relevant
+    # The only sanity check required is making sure negative `current_position`
+    # are not possible. To do so, once a 'fake bed' has been created, iterate
+    # over all its starts and ends and get the minimum observed coordinate.
+    # If negative, substract it from all start and end values to ensure there
+    # are no negative values.
+    # Of course, it would also require removing all the `bedfile.merge()` from the
+    # code of other functions when relevant
 
     return fake_bed
+
+
+
+
+
 
 
 
@@ -271,7 +278,6 @@ def generate_fake_bed_for_i(i,shuffled_Lr_batches,shuffled_Li_batches,all_chroms
 
 def batch_to_bedlist(shuffled_Lr_batches, shuffled_Li_batches,
                       all_chroms, minibatch_size, nb_threads = 8):
-
     """
     Wrapper to multiprocess generate_fake_bed across both bed files.
     """
