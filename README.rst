@@ -68,13 +68,33 @@ Documentation             |documentation|_
 Python GTF toolkit (pygtftk)
 =============================
 
-The **Python GTF toolkit (pygtftk) package** is intented to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python  >=3.5,<3.7 and relies on **libgtftk**, a library of functions **written in C**.
+The **Python GTF toolkit (pygtftk) package** is intended to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python  >=3.5,<3.7 and relies on **libgtftk**, a library of functions **written in C**.
 
-The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files. The gtftk set of Unix commands can be easily extended using a basic plugin architecture. All these aspects are covered in the help sections.
+The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files.
 
-While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still upon  active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the github repository.
+The newly released command, **OLOGRAM (OverLap Of Genomic Regions Analysis using Monte Carlo)** may be used to compute overlap statistics between user supplied regions (BED format) and annotation derived from :
 
-**NB:** The **Documentation** about the latest release is available as a `github page <https://dputhier.github.io/pygtftk/>`_. The readthedoc version won't be maintained and will be close in the near future. This choice was motivated by the impossibility to maintain a dynamic documentation (using sphinx/sphinxcontrib-programoutput) given the computing time provided by readthedoc server.
+- Gene centric features enclosed in a GTF (e.g. exons, promoters, terminators…).
+- Regions in a GTFs flagged with built-in keys/values (e.g. check the 'gene_biotype' as provided by ensembl GTFs of the regions in which peaks fall).
+- Same with custom keys/values through the gtftk CLI (e.g. adding a numeric value to a gene and discretizing this value to create gene classes).
+- User supplied BED files.
+
+The gtftk set of Unix commands can be easily extended using a basic plugin architecture.
+
+All these aspects are covered in the help sections ; please see the `documentation<https://dputhier.github.io/pygtftk/>`_.
+
+While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still in active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the GitHub repository.
+
+
+Documentation
+--------------
+
+Documentation about the latest release is available as a `github page <https://dputhier.github.io/pygtftk/>`_.
+
+Documentation about OLOGRAM (OverLap Of Genomic Regions Analysis using Monte Carlo) can be found in `the 'ologram' section of the documentation <https://dputhier.github.io/pygtftk/ologram.html>`_.
+
+**NB:** The readthedoc version won't be maintained and will be closed in the near future. This choice was motivated by the impossibility to maintain a dynamic documentation (using sphinx/sphinxcontrib-programoutput) given the computing time provided by readthedoc server.
+
 
 System requirements
 --------------------
@@ -141,11 +161,6 @@ Installation through pip can be done as follow. ::
     gtftk -h
 
 
-
-Documentation
---------------
-
-Documentation about the latest release is available as a `github page <https://dputhier.github.io/pygtftk/>`_.
 
 Testing
 --------
