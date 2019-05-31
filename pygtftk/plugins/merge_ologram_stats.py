@@ -255,7 +255,7 @@ else:
                     parser=make_parser(),
                     fun=os.path.abspath(__file__),
                     desc=__doc__,
-                    group="annotation",
+                    group="ologram",
                     notes=__notes__,
                     updated=__updated__,
                     test=test)

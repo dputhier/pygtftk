@@ -374,13 +374,13 @@ class CmdManager(object):
 
   Example:
 
-  gtftk get_example -f chromInfo -o simple.chromInfo ; 
+  gtftk get_example -f chromInfo -o simple.chromInfo ;
   gtftk get_example  | gtftk feature_size -t mature_rna | gtftk nb_exons |\\
   gtftk intron_sizes | gtftk exon_sizes | gtftk convergent -u 24 -d 24  -c simple.chromInfo | \\
   gtftk divergent -u 101 -d 10  -c simple.chromInfo  | \\
   gtftk overlapping -u 0 -d 0 -t transcript -c simple.chromInfo -a |  \\
   gtftk select_by_key -k feature -v transcript |   gtftk tabulate -k "*" -b -x
-  
+
 
   Type 'gtftk sub-command -h' for more information.
 
@@ -450,6 +450,7 @@ class CmdManager(object):
     grp_select = sub_parsers.add_parser_group('\n------ Selection -------\n')
     grp_convert = sub_parsers.add_parser_group('\n------ Conversion ------\n')
     grp_annot = sub_parsers.add_parser_group('\n------ Annotation ------\n')
+    grp_ologram = sub_parsers.add_parser_group('\n------ OLOGRAM ------\n')
     grp_seq = sub_parsers.add_parser_group('\n------- Sequence -------\n')
     grp_coord = sub_parsers.add_parser_group('\n----- Coordinates ------\n')
     grp_cov = sub_parsers.add_parser_group('\n------- Coverage -------\n')
@@ -718,6 +719,9 @@ class CmdManager(object):
 
         elif cmd.group == 'annotation':
             cls.grp_annot.add_parser(**arg_dict)
+
+        elif cmd.group == 'ologram':
+            cls.grp_ologram.add_parser(**arg_dict)
 
         elif cmd.group == 'sequences':
             cls.grp_seq.add_parser(**arg_dict)
