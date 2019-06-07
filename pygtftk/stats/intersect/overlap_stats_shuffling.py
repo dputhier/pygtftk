@@ -86,6 +86,61 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
     # wrappers should be added here.
 
 
+
+
+    # --------------------------------------------------------------------------
+    # NOTE for improvement : We may wish to shuffle across all chromosomes,
+    # instead of chromosome-by-chromosome.
+    # A workaround to do so is implemented here by exchanging the base Lrs and
+    # Lis (the true ones) before producing the N shuffles
+    # --------------------------------------------------------------------------
+    # TODO This is not used yet (the code is commented and no arguments call it)
+    # because we need to agree on implementation parameters : namely, when
+    # shuffling across all chromosomes, should we put the same number of regions
+    # on each chromosome ? Follow a Poisson law ? etc.
+    # --------------------------------------------------------------------------
+    """
+    def shuffle_L_across_chrom(L):
+        '''
+        Takes a dictionary of lists and returns a new dictionary where the elements
+        of all the lists have been shuffled across all lists.
+
+        This simply consists in flattening and rebuilding the dictionary.
+        '''
+
+        size_per_chrom = dict()
+        flattened_list = list()
+
+        # Flatten the dictionary
+        for chrom in L.keys():
+            L_for_this_chrom = L[chrom] # This is a list !
+
+            # TODO This is what needs to be fixed. For now it rebuilds the
+            # dictionary with the same number or arguments as before
+            size_per_chrom[chrom] = len(L_for_this_chrom)
+
+            flattened_list += L_for_this_chrom
+
+        # Rebuild the dictionary
+        for chrom in L.keys():
+            # Pick as many elements from the flattened list as there were before
+            # and remove them from the flattened list
+            L[chrom] = [flattened_list.pop(np.random.randint(len(flattened_list))) for _ in range(size_per_chrom[chrom])]
+
+        return L
+
+    # Shuffle the *true* Lrs and Lis, for all.
+    if shuffle_across_all_chrom:
+
+        Lr1 = shuffle_L_across_chrom(Lr1)
+        Li1 = shuffle_L_across_chrom(Li1)
+
+        for set in range(len(Lis)):
+            Lrs[set] = shuffle_L_across_chrom(Lrs[set])
+            Lis[set] = shuffle_L_across_chrom(Lis[set])
+    """
+
+
     # Produce the shuffles on a chromosome basis
     start = time.time()
     for chrom in all_chroms:
