@@ -15,7 +15,8 @@ import pandas as pd
 from plotnine import (ggplot, aes, geom_tile, theme_bw,
                       element_blank, theme, geom_point,
                       element_text, save_as_pdf_pages,
-                      scale_color_gradientn)
+                      scale_color_gradientn, labs,
+                      scale_fill_gradient2)
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
@@ -24,7 +25,7 @@ from pygtftk.utils import message
 __updated__ = ''' 2019-05-27 '''
 
 __notes__ = """
--- By default labels in the diagram are derived from the name of the enclosing folder. E.g. if file is a/b/c/00_ologram_stats.tsv, 'c' file be used as label.
+-- By default, labels in the diagram are derived from the name of the enclosing folder. E.g. if file is a/b/c/00_ologram_stats.tsv, 'c' will be used as label.
 -- Otherwise use -\-labels to set the labels.
 """
 
@@ -149,17 +150,18 @@ def merge_ologram_stats(inputfiles=None,
 
     message("Plotting")
     my_plot = ggplot(data=df_merged,
-                     mapping=aes(y='Feature',
-                                 fill='summed_bp_overlaps_log2_fold_change',
-                                 x='dataset'))
-    my_plot += geom_tile()
+                     mapping=aes(y='Feature', x='dataset'))
+    my_plot += geom_tile(aes(fill = 'summed_bp_overlaps_log2_fold_change'))
+    my_plot += scale_fill_gradient2()
+    my_plot += labs(fill = "log2(fold change) for summed bp overlaps")
 
     # Points for p-val. Must be after geom_tile()
     my_plot += geom_point(data = df_merged.loc[df_merged['pval_signif']],
-        mapping = aes(x='dataset',y='Feature',color = '-log_10(pval)'), size=6, shape ='D', inherit_aes = False)
-    my_plot += scale_color_gradientn(colors = ["#160E00","#160E00","#FFB025","#FFE7BD"])
+        mapping = aes(x='dataset',y='Feature',color = '-log_10(pval)'), size=5, shape ='D', inherit_aes = False)
+    my_plot += scale_color_gradientn(colors = ["#160E00","#FFB025","#FFE7BD"])
+    my_plot += labs(color = "-log10(p-value)")
 
-    # theming
+    # Theming
     my_plot += theme_bw()
     my_plot += theme(panel_grid_major=element_blank(),
                      axis_text_x=element_text(rotation=90),
