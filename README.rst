@@ -10,7 +10,6 @@ Latest conda              |latestconda|
 Downloads                 |downloads|_
 Codacy                    |codacy|_
 Contribution              |contrib|_
-Github hits               |hits|_
 Issues                    |issues|_
 Citing                    |citing|_
 Documentation             |documentation|_
@@ -45,9 +44,6 @@ Documentation             |documentation|_
 
 .. |downloads| image:: https://anaconda.org/bioconda/pygtftk/badges/downloads.svg
 .. _downloads: https://anaconda.org/bioconda/pygtftk
-
-.. |hits| image:: http://hits.dwyl.io/dputhier/pygtftk.svg
-.. _hits: http://hits.dwyl.io/dputhier/pygtftk
 
 .. |reference| image:: https://img.shields.io/reference-yes-green.svg
 .. _reference: http://hits.dwyl.io/dputhier/pygtftk
