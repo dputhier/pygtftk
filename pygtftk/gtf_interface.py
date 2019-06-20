@@ -9,17 +9,17 @@ When using gtfk a GTF object methods may return:
 
 """
 
-import glob
-import io
-import os
-import re
 import sys
-import textwrap
 from collections import OrderedDict
 from collections import defaultdict
 
 import gc
+import glob
+import io
 import numpy as np
+import os
+import re
+import textwrap
 from cffi import FFI
 from nose.plugins.skip import SkipTest
 from pybedtools.bedtool import BedTool
@@ -3150,8 +3150,8 @@ class GTF(object):
         """Returns a dict with genes as keys and the list of their associated transcripts
         as values.
 
-        params ordered_5p: If True, returns transcript list ordered based on their TSS coordinates (5' to 3'). For ties, values are randomly picked.
-        params as_dict_of_dict: If True, returns a dict of dict that maps gene_id to transcript_id and transcript_id to TSS numbering (1 for most 5', then 2...).
+        params ordered_5p: If True, returns transcript list ordered based on their TSS coordinates (5' to 3'). For ties, transcript name are randomly picked.
+        params as_dict_of_dict: If True, returns a dict of dict that maps gene_id to transcript_id and transcript_id to TSS numbering (1 for most 5', then 2...). For transcripts having the same TSSs, the tss number will be the same.
 
         :Example:
 
