@@ -7,7 +7,7 @@ import numpy as np
 import scipy
 import scipy.stats
 
-from pygtftk.stats.intersect.beta import BetaCalculator
+from pygtftk.stats.beta import BetaCalculator
 from pygtftk.utils import message
 
 
@@ -86,7 +86,8 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     bins = range(min(obs), max(obs), bin_size)
 
     # There can be a bug later in the count table generation if the range is only 1 or 2
-    if obs_range < 3: bins = range(min(obs), min(obs) + 3, bin_size)
+    if obs_range < 3:
+        bins = range(min(obs), min(obs) + 3, bin_size)
 
     # Turn this binned distribution into frequencies
     obs_binned = np.digitize(obs, bins)
@@ -116,7 +117,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     f_exp = np.array(f_exp) * len(obs)
 
     # Remove leading zero in f_exp and f_obs and cast to a np array of integers
-    f_exp = np.array(f_exp[1:]).astype(int);
+    f_exp = np.array(f_exp[1:]).astype(int)
     f_obs = np.array(f_obs[1:]).astype(int)
 
     f_exp = f_exp + 1E-100  # The table of expected frequencies must have no zeros.
@@ -154,7 +155,7 @@ def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
     :param precision: Floating point precision of mpmath. Should be at least 1000
     :param ft_type: The name of the feature to be tested (just for meaningful messages).
 
-    >>> from pygtftk.stats.intersect.negbin_fit import negbin_pval
+    >>> from pygtftk.stats.negbin_fit import negbin_pval
     >>> mean = 18400
     >>> var = 630200
     >>> k = 65630
@@ -175,7 +176,8 @@ def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
         msg += "Binom with mean >= var ; var was set to mean+1 (" + ft_type + ")"
         message(msg, type='WARNING')
 
-    mpmath.mp.dps = precision  # Floating point precision of mpmath. Should be at least 1000.
+    # Floating point precision of mpmath. Should be at least 1000.
+    mpmath.mp.dps = precision
 
     # Calculate r and p based on mean and var
     r = mpmath.mpf(mean ** 2 / (var - mean))
@@ -195,11 +197,15 @@ def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
     return float(twosided_pval)
 
 
+
+
+
 def empirical_p_val(x, data):
     """
     Quick wrapper : empirical two-sided p value.
 
-    Returns the proportion of elements greater than x or smaller than x in the data, whichever proportion is smaller.
+    Returns the proportion of elements greater than x (or smaller than x) in
+    the data (resp. whichever proportion is smaller).
     This can be used with any dataset, not just a negative-binomial-compliant one.
     """
     arr = np.array(data)
