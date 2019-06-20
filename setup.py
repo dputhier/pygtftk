@@ -28,13 +28,12 @@ from Cython.Distutils import build_ext
 # -------------------------------------------------------------------------
 # Python compiler version
 # -------------------------------------------------------------------------
-print("Python version and gcc version used for compilation")
+print("Python version and gcc version used for compilation : ")
 print(sys.version)
 
 # -------------------------------------------------------------------------
 # Python Version
 # -------------------------------------------------------------------------
-
 
 PY2 = sys.version_info[0] == 2
 
@@ -160,17 +159,18 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                         extra_compile_args=extra_compile_args,
                         sources=cmd_src_list)
 
-# ---------------------------- Building Cython ------------------------------- #
+# ----------------------------------------------------------------------
+#  Building Cython modules
+# ----------------------------------------------------------------------
 
 extra_comp_cython = ['-W']
 
-# Avoid cython warning about numpy API deprecation
-# upon installation
-
+# Avoid Cython warning about NumPy API deprecation upon installation
 if platform.system() == 'Darwin':
     extra_comp_cython += ['-Wno-#warnings']
 
-# Remark : the separation in three different modules was needed to make it
+
+# NOTE : the separation in three different modules was needed to make it
 # work on MacOSX for some unfathomable reason.
 
 cython_ologram = Extension(name='pygtftk.stats.intersect.create_shuffles',
@@ -327,7 +327,8 @@ setup(name="pygtftk",
                         'plotnine >=0.5.1',
                         'setuptools',
                         'cython',
-                        'mpmath'],
+                        'mpmath',
+                        'scikit-learn'],
       ext_modules=[lib_pygtftk] + [cython_ologram] + [cython_ologram_2] + [cython_ologram_3])
 
 # ----------------------------------------------------------------------
@@ -354,9 +355,8 @@ if os.path.exists(config_dir):
 # ----------------------------------------------------------------------
 # Print gtftk info (and load the plugins...)
 # ----------------------------------------------------------------------
-# put this in a try as it could
-# raisse an error
-# if the program is not in the PATH.
+# Put this in a `try` as it could raise an exception if the program is not
+# in the PATH.
 try:
     gtftk_sys_config = subprocess.Popen(['gtftk', '-s'], stdout=subprocess.PIPE).stdout.read().rstrip()
     sys.stderr.write(gtftk_sys_config.decode())
