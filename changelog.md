@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.0.9
+
+
+### Bug Fixes
+
+*   None.
+
+### API Changes
+
+*   None.
+
+### Code changes
+
+*   The select_by_key command now accept seq_name and seqname in addition to seqid and chrom as a key.
+
+### New Features
+
+*  This version contains the tss_numbering plugin. Annotate transcripts by computing their TSS position relative to the most five prime TSS of the corresponding gene.
+
 ## v1.0.8
 
 This version introduces *merge_ologram_stats* command that can be used to produce a heatmap from multiple OLOGRAM results.
