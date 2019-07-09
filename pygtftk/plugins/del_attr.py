@@ -17,8 +17,9 @@ from pygtftk.utils import message
 __updated__ = "2018-01-20"
 
 __notes__ = """
- -- You may also use 'complex' regexp such as : "(^.*_id$|^.*_biotype$)"
+ -- You may also use 'complex' regexp such as : "(_id)|(_b.*pe)"
  -- Example: gtftk get_example -d mini_real | gtftk del_attr -k "(^.*_id$|^.*_biotype$)" -r -v
+ -- TODO: currently a segfault is thrown when no keys are left after deletion (libgtftk issue #98).
 """
 
 
@@ -72,43 +73,51 @@ def del_attr(
     comma-separated list of attributes.
     """
 
+    # ----------------------------------------------------------------------
+    # Read the GTF and get the list of attributes
+    # ----------------------------------------------------------------------
+
     gtf = GTF(inputfile, check_ensembl_format=False)
 
+    attr_list = gtf.attr_extended
+
+    # ----------------------------------------------------------------------
+    # If regExp, select the corresponding keys
+    # ----------------------------------------------------------------------
+
     if reg_exp:
+
+        key_list = []
+
         try:
             rgxp = re.compile(key)
         except:
             message("Check the regular expression please.", type="ERROR")
-        key_list = [key]
+
+        for attr in attr_list:
+            if rgxp.search(attr):
+                key_list += [attr]
     else:
         key_list = key.split(",")
 
-    for i in gtf:
+    # ----------------------------------------------------------------------
+    # If invert-match select all but the selected
+    # ----------------------------------------------------------------------
 
-        feature_keys = i.get_attr_names()
+    key_to_del = []
+    if invert_match:
+        for attr in attr_list:
+            if attr not in key_list:
+                key_to_del += [attr]
+    else:
+        key_to_del = key_list
 
-        if not invert_match:
-            for k in key_list:
-                if not reg_exp:
-                    try:
-                        del i.attr[k]
-                    except:
-                        pass
-                else:
-                    for feat_key in feature_keys:
-                        if rgxp.search(feat_key):
-                            del i.attr[feat_key]
-        else:
+    # ----------------------------------------------------------------------
+    # Delete the keys
+    # ----------------------------------------------------------------------
 
-            for k in feature_keys:
-                if not reg_exp:
-                    if k not in key_list:
-                        del i.attr[k]
-                else:
-                    if not rgxp.search(k):
-                        del i.attr[k]
-
-        i.write(outputfile)
+    gtf = gtf.del_attr(feat="*",
+                       keys=",".join(key_list), force=True).write(outputfile, gc_off=True)
 
     close_properly(outputfile, inputfile)
 
