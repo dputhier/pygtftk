@@ -8,6 +8,8 @@ import re
 import shutil
 import sys
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.arg_formatter import globbedFileList
 from pygtftk.cmd_object import CmdObject
@@ -249,6 +251,7 @@ def get_tx_seq(inputfile=None,
             outputfile.write(">" + header + "\n")
             outputfile.write(i.sequence + "\n")
 
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 

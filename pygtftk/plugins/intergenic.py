@@ -9,6 +9,8 @@ import argparse
 import os
 import sys
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
@@ -77,6 +79,7 @@ def intergenic(
         write_properly(chomp(str(i)), outputfile)
         nb_intergenic_region += 1
 
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 

@@ -7,6 +7,8 @@ import argparse
 import os
 import sys
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
@@ -130,6 +132,7 @@ def shift(inputfile=None,
             i.end = new_end
             i.write(outputfile)
 
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 

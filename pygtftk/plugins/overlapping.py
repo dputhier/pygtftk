@@ -13,6 +13,8 @@ import os
 import sys
 from collections import defaultdict
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
@@ -267,6 +269,7 @@ transcript from another gene.
                           values,
                           invert_match).write(outputfile, gc_off=True)
 
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 

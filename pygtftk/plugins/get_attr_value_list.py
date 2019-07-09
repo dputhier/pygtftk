@@ -11,6 +11,7 @@ from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
+import gc
 
 __updated__ = "2018-02-11"
 
@@ -77,6 +78,7 @@ def get_attr_value_list(
                     outputfile.write(akey + separator + i + "\n")
                 else:
                     outputfile.write(i + "\n")
+        gc.disable()
         close_properly(outputfile, inputfile)
 
     else:
@@ -89,6 +91,7 @@ def get_attr_value_list(
                     outputfile.write(akey + separator + i[0] + separator + i[1] + "\n")
                 else:
                     outputfile.write(i[0] + separator + i[1] + "\n")
+        gc.disable()
         close_properly(outputfile, inputfile)
 
 

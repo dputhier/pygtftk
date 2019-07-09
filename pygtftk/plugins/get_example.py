@@ -8,6 +8,8 @@ import os
 import shutil
 import sys
 
+import gc
+
 import pygtftk
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -182,7 +184,7 @@ def get_example(outputfile=None,
                 else:
                     if not quiet:
                         message("Copy canceled, file already exist:" + os.path.basename(i), force=True)
-
+    gc.disable()
     close_properly(outputfile)
 
 

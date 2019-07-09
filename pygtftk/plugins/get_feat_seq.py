@@ -7,6 +7,8 @@ import os
 import re
 import sys
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -191,6 +193,7 @@ def get_feat_seq(inputfile=None,
             else:
                 outputfile.write(line)
 
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 
