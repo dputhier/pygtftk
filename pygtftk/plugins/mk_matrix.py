@@ -8,6 +8,7 @@ import os
 import sys
 import zipfile
 
+import gc
 import pandas as pd
 import pyBigWig
 from pybedtools import BedTool
@@ -562,6 +563,7 @@ def mk_matrix(
         os.remove(outputfile_list[i].name)
     os.remove(outputfile.name)
 
+    gc.disable()
     close_properly(inputfile, outputfile)
 
 

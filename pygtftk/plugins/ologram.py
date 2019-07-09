@@ -54,6 +54,7 @@ from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 from pygtftk.utils import sort_2_lists
+import gc
 
 __updated__ = "2019-04-17"
 __doc__ = """
@@ -579,8 +580,6 @@ def ologram(inputfile=None,
                 "--more-bed-labels should be set if --more-bed is used.",
                 type="ERROR")
 
-
-
     # -------------------------------------------------------------------------
     # Preparing output files
     # -------------------------------------------------------------------------
@@ -755,7 +754,6 @@ def ologram(inputfile=None,
     # Stock all of the more_beds if needed for multiple overlaps
     all_more_beds = list()
 
-
     if more_bed is not None:
         message("Processing user-defined regions (bed format).")
         for bed_anno, bed_lab in zip(more_bed, more_bed_labels):
@@ -790,7 +788,6 @@ def ologram(inputfile=None,
                 # Stock all bed annos if multiple overlap is needed
                 all_more_beds += [BedTool(bed_anno.name)]
 
-
             tmp_bed = make_tmp_file(prefix=bed_lab, suffix=".bed")
             bed_anno_tosave = BedTool(bed_anno.name)
             bed_anno_tosave.saveas(tmp_bed.name)
@@ -799,12 +796,6 @@ def ologram(inputfile=None,
                                             bedsB=BedTool(bed_anno.name),
                                             ft_type=bed_lab)
 
-
-
-
-
-
-
     # TODO : prepare another possibility, where an option such as
     # `-all-more-beds-together` is used,  we do the multiple overlap of the
     # region with ALL of the more beds.
@@ -812,10 +803,6 @@ def ologram(inputfile=None,
     """
     hits['multiple_beds'] = overlap_partial(bedA=peak_file, bedsB=all_more_beds)
     """
-
-
-
-
 
     # ------------------ Treating the 'hits' dictionary --------------------- #
 
@@ -1123,6 +1110,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
                                  p3 + theme(figure_size=figsize)],
                           width=pdf_width,
                           height=pdf_height)
+
+    gc.disable()
 
 
 def main():

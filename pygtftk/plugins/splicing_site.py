@@ -7,6 +7,8 @@ import argparse
 import os
 import sys
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -126,6 +128,7 @@ def splicing_site(inputfile=None,
 
                     outputfile.write("\t".join(out) + "\n")
 
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 
