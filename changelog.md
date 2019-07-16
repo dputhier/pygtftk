@@ -7,9 +7,10 @@
 
 *   None.
 
-### API Changes
+### API/CLI Changes
 
 *   None.
+*   bigwig_to_bed is know part of miscellaneous commands.
 
 ### Code changes
 
