@@ -1,6 +1,5 @@
 '''
 Convert a bigwig to a BED3 format by selecting regions with coverage above --lower-val.
-This tool is not part of pygtftk distribution (and thus is not supposed to be maintained).
 '''
 
 import argparse
