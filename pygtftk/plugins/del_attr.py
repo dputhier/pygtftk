@@ -144,8 +144,7 @@ else:
      result=`gtftk del_attr -i simple.gtf  -k ccds_id,transcript_id,gene_id| cut -f9| grep -v "^$"| sed 's/ \".*//'| sort | uniq`
       [ "$result" = "exon_id" ]
     }
-    
-    
+
     #del_attr: check -v
     @test "del_attr_2" {
      result=`gtftk del_attr -i simple.gtf  -k ccds_id,transcript_id,gene_id -v| grep exon_id| wc -l`
