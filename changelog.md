@@ -21,6 +21,7 @@
 *  This version contains the tss_numbering plugin. Annotate transcripts by computing their TSS position relative to the most five prime TSS of the corresponding gene.
 *  The get_attr_value_list command now accepts a list of keys as input.
 *  The get_attr_value_list command has an additional argument (--print-key-name).
+*  Added a new miscellaneous command, get_ceas_record that extract records from CEAS (Cis-regulatory Element Annotation System).
 
 ## v1.0.8
 
