@@ -317,7 +317,13 @@ class CheckChromFile(argparse.Action):
                 tmp_file_chr.write(chrom + "\t" + str(size[1]) + "\n")
             tmp_file_chr.close()
             values = open(tmp_file_chr.name, 'r')
-
+        elif values == 'simple':
+            chr_size = {'chr1': 300, 'chr2': 600}
+            tmp_file_chr = make_tmp_file(prefix='chromsize', suffix='.txt')
+            for chrom, size in chr_size.items():
+                tmp_file_chr.write(chrom + "\t" + str(size) + "\n")
+            tmp_file_chr.close()
+            values = open(tmp_file_chr.name, 'r')
         else:
             check_file_or_dir_exists(values)
             values = open(values, "r")
