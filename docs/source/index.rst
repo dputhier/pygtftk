@@ -1,3 +1,8 @@
+.. meta::
+   :description: Python GTF toolkit (pygtftk) package
+   :keywords: bioinformatics gene gtf bed bigwig genomics transcript exon cds genomic tss tts splicing dna-sequences intron ngs chip-seq rna-seq python
+
+
 Welcome to pygtftk documentation page
 --------------------------------------
 
