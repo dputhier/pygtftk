@@ -73,6 +73,14 @@ __doc__ = """
 
  The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
+ 
+ The null hypothesis is:
+ 
+ H0: The regions of the query (--peak-file) are located independently of the 
+ reference (--inputfile or --more-bed) with respect to overlap.
+ 
+ H1: The regions of the query (--peak-file) tend to overlap the 
+ reference (--inputfile or --more-bed). 
 
  Authors : Quentin FERRE <quentin.q.ferre@gmail.com>, Guillaume CHARBONNIER
  <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
@@ -565,6 +573,7 @@ def ologram(inputfile=None,
 
             for elmt in more_bed_labels:
                 if not re.search("^[A-Za-z0-9_]+$", elmt):
+                    message("Problem with:" + elmt, type="WARNING")
                     message(
                         "Only alphanumeric characters and '_' allowed for --more-bed-labels",
                         type="ERROR")
