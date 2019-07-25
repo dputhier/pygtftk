@@ -26,7 +26,7 @@
 format in order to produced a set of 'labeled' regions with the same rules as those described in GREAT (Genomic Regions
 Enrichment of Annotations Tool) documentation. We can not warrant that the procedure is exactly the same. See the CLI
 for more details.
-
+* Added -y/--display-fit-quality to ologram
 ## v1.0.8
 
 This version introduces *merge_ologram_stats* command that can be used to produce a heatmap from multiple OLOGRAM results.
