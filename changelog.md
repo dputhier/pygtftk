@@ -22,6 +22,10 @@
 *  The get_attr_value_list command now accepts a list of keys as input.
 *  The get_attr_value_list command has an additional argument (--print-key-name).
 *  Added a new miscellaneous command, get_ceas_record that extract records from CEAS (Cis-regulatory Element Annotation System).
+*  Added a new miscellaneous command, great_reg_domains. This tool represents an attempt to process genomic annotations in GTF
+format in order to produced a set of 'labeled' regions with the same rules as those described in GREAT (Genomic Regions
+Enrichment of Annotations Tool) documentation. We can not warrant that the procedure is exactly the same. See the CLI
+for more details.
 
 ## v1.0.8
 
