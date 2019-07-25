@@ -33,6 +33,7 @@ import sys
 import time
 import warnings
 from functools import partial
+import matplotlib.cbook
 
 import numpy as np
 import pandas as pd
@@ -280,6 +281,11 @@ def make_parser():
                             action='store_true',
                             required=False)
 
+    parser_grp.add_argument('-y', '--display-fit-quality',
+                            help="Display the negative binomial fit quality on the diagrams. ",
+                            action='store_true',
+                            required=False)
+
     parser_grp.add_argument('-tp', '--tsv-file-path',
                             help="Provide an alternative path for text output file.",
                             default=None,
@@ -360,7 +366,8 @@ def ologram(inputfile=None,
             seed=42,
             sort_features=False,
             minibatch_nb=8,
-            minibatch_size=25
+            minibatch_size=25,
+            display_fit_quality=False
             ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
@@ -878,12 +885,12 @@ def ologram(inputfile=None,
     # -------------------------------------------------------------------------
 
     if pdf_file is not None:
-        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order)
+        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, display_fit_quality)
         close_properly(pdf_file)
     close_properly(data_file)
 
 
-def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
+def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, display_fit_quality):
     """
     Main plotting function by Q. FERRE and D. PUTHIER.
     """
@@ -912,7 +919,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
     # or 'nb_intersections'
     # -------------------------------------------------------------------------
 
-    def plot_this(statname, plot_type='barplot'):
+    def plot_this(statname, plot_type='barplot', display_fit_quality=False):
 
         # ------------------------- DATA PROCESSING -------------------------- #
 
@@ -985,6 +992,16 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
         text = text.apply(format_pvalue)
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
         text_pos.index = range(len(text_pos))
+
+        if display_fit_quality:
+            fit_qual_text = dm[statname + '_negbinom_fit_quality'].append(na_series)
+            fit_qual_text.index = range(len(fit_qual_text))
+
+            text_with_fit = list()
+            for t, f in zip(text.tolist(), fit_qual_text.tolist()):
+                text_with_fit += [t + "\n" + 'fit={0:.2g}'.format(f)]
+            text = pd.Series(text_with_fit)
+
         aes_plot = aes(x='Feature', y=text_pos, label=text)
         p += geom_label(mapping=aes_plot, stat='identity',
                         size=5, boxstyle='round', label_size=0.2,
@@ -1066,9 +1083,11 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
     # -------------------------------------------------------------------------
 
     # Compute the plots for both statistics
-    p1 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs") + ggtitle(
+    p1 = plot_this('summed_bp_overlaps', display_fit_quality=display_fit_quality) + ylab(
+        "Nb. of overlapping base pairs") + ggtitle(
         'Total overlap length per region type')
-    p2 = plot_this('nb_intersections') + ylab("Number of intersections") + ggtitle(
+    p2 = plot_this('nb_intersections', display_fit_quality=display_fit_quality) + ylab(
+        "Number of intersections") + ggtitle(
         'Total nb. of intersections per region type')
     p3 = plot_volcano()
 
@@ -1098,6 +1117,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
     # functions. I need to turn they off although I'm not really satisfied with
     # this solution...
     # -------------------------------------------------------------------------
+
+    warnings.filterwarnings("ignore", category=matplotlib.cbook.MatplotlibDeprecationWarning)
 
     def fxn():
         warnings.warn("deprecated", DeprecationWarning)
