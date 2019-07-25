@@ -41,6 +41,12 @@ is randomly shuffled across the genome (inter-region lengths are considered). Th
 under the null hypothesis (the peaks and this feature are independent) is deduced thanks to this Monte Carlo approach.
 The program will return statistics for both the number of intersections and the total lengths (in basepairs) of all intersections.
 
+
+.. note:: The null hypothesis of the statistical test is:
+	- H0: The regions of the query (--peak-file) are located independently of the reference (--inputfile or --more-bed) with respect to overlap.
+	- H1: The regions of the query (--peak-file) tend to overlap the reference (--inputfile or --more-bed).
+
+
 .. warning:: The ologram examples below use 8 CPUs. Please adapt.
 
 
@@ -133,3 +139,28 @@ the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
 	:shell:
 
 
+
+merge_ologram_stats
+~~~~~~~~~~~~~~~~~~~~~~
+
+Several tsv files resulting from OLOGRAM analyses can be merged into a single diagram report using the merge_ologram_stats.
+
+**Example:** For this example will will used the results obtained for 3 epigenetic marks on human chromosome 1.
+
+
+.. command-output:: gtftk merge_ologram_stats H3K4me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv H3K36me3_ologram_stats.tsv -l H3K4me3,H3K79me2,H3K36me3  -o merge_ologram_stats_01.pdf
+	:shell:
+
+.. raw:: html
+
+  <br>
+  <table>
+  <tr>
+  <td valign="top">
+  <iframe src="_static/merge_ologram_stats_01.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  </iframe>
+  </td>
+  </tr>
+  </table>
+  <br>
+  <br>
