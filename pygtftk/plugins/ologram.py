@@ -664,7 +664,7 @@ def ologram(inputfile=None,
 
                 del gtf_sub
 
-                hits[feat_type] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type=feat_type)
+                hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type=feat_type)
 
             nb_gene_line = len(gtf.select_by_key(key="feature", value="gene"))
             nb_tx_line = len(gtf.select_by_key(key="feature", value="transcript"))
@@ -682,7 +682,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_intergenic", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Intergenic"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Intergenic")
+                hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Intergenic")
 
                 # -------------------------------------------------------------------------
                 # Get the intronic regions
@@ -694,7 +694,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_introns", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Introns"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Introns")
+                hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Introns")
 
                 # -------------------------------------------------------------------------
                 # Get the promoter regions
@@ -710,7 +710,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_promoters", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Promoters"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Promoter")
+                hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Promoter")
 
                 # -------------------------------------------------------------------------
                 # Get the tts regions
@@ -725,7 +725,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_terminator", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Terminator"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Terminator")
+                hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Terminator")
 
         # -------------------------------------------------------------------------
         # if the user request --more-keys (e.g. gene_biotype)
@@ -760,7 +760,7 @@ def ologram(inputfile=None,
 
                         ft_type = ":".join([user_key, val])  # Key for the dictionary
                         hits[ft_type] = overlap_partial(bedA=peak_file,
-                                                        bedsB=gtf_sub_bed,
+                                                        bedB=gtf_sub_bed,
                                                         ft_type=ft_type)
                         message("Processing " + str(ft_type), type="INFO")
 
