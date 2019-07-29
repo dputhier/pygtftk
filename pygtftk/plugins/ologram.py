@@ -755,7 +755,10 @@ def ologram(inputfile=None,
                                                            "gene_id",
                                                            "exon_id"]).sort().merge()  # merging bed file !
                         del gtf_sub
-                        tmp_bed = make_tmp_file(prefix="ologram_terminator", suffix=".bed")
+                        cur_prefix = "ologram_" + re.sub('\W+', '_',
+                                                         user_key) + "_" + re.sub('\W+', '_',
+                                                                                  val)
+                        tmp_bed = make_tmp_file(prefix=cur_prefix, suffix=".bed")
                         gtf_sub_bed.saveas(tmp_bed.name)
 
                         ft_type = ":".join([user_key, val])  # Key for the dictionary
