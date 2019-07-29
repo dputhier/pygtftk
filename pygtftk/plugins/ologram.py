@@ -813,7 +813,7 @@ def ologram(inputfile=None,
             bed_anno_tosave.saveas(tmp_bed.name)
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
-                                            bedsB=BedTool(bed_anno.name),
+                                            bedB=BedTool(bed_anno.name),
                                             ft_type=bed_lab)
 
     # TODO : prepare another possibility, where an option such as
