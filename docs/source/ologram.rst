@@ -164,3 +164,7 @@ Several tsv files resulting from OLOGRAM analyses can be merged into a single di
   </table>
   <br>
   <br>
+
+
+.. command-output:: gtftk merge_ologram_stats -h
+	:shell:
