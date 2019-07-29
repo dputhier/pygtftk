@@ -688,7 +688,7 @@ def ologram(inputfile=None,
                 # Get the intronic regions
                 # -------------------------------------------------------------------------
 
-                message("Processing on : Introns", type="INFO")
+                message("Processing : Introns", type="INFO")
                 gtf_sub_bed = gtf.get_introns()
 
                 tmp_bed = make_tmp_file(prefix="ologram_introns", suffix=".bed")
