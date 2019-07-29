@@ -525,9 +525,16 @@ def profile(inputfile=None,
         message("Sorry but the palette is unknown.")
 
     def get_list_of_colors_mpl(number, pal=palette):
+        # Workaround for a bug in mpl
+        if number == 1:
+            number_use = 2
 
-        colormap = cm.get_cmap(pal, lut=number)
-        colors = [mpl.colors.rgb2hex(colormap(i)) for i in np.linspace(0., 1., number)]
+        colormap = cm.get_cmap(pal, lut=number_use)
+        colors = [mpl.colors.rgb2hex(colormap(i)) for i in np.linspace(0., 1., number_use)]
+        
+        if number == 1:
+            colors = [colors[0]]
+
         return colors
 
     if profile_colors is None:
@@ -535,6 +542,7 @@ def profile(inputfile=None,
         if group_by == 'bwig':
             profile_colors = get_list_of_colors_mpl(len(input_file_bwig))
         elif group_by == 'tx_classes':
+            print(class_list)
             profile_colors = get_list_of_colors_mpl(len(class_list))
         elif group_by == 'chrom':
             profile_colors = get_list_of_colors_mpl(len(input_file_chrom))
