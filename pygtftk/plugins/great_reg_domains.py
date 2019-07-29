@@ -375,7 +375,7 @@ else:
 
     #great_reg_domains: check simply the number of lines
     @test "great_reg_domains_2" {
-     result=`gtftk great_reg_domains -i simple.gtf -c simple -u 1 -d 1 -t 20 | wc -l`
+     result=`gtftk great_reg_domains -i simple.gtf -c simple -u 1 -d 1 -t 20 | wc -l | perl -npe  's/\\s+//'`
       [ "$result" = "10" ]
     }    
     """
