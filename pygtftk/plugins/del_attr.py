@@ -137,7 +137,8 @@ else:
      result=`gtftk get_example -f '*' -d simple`
       [ "$result" = "" ]
     }
-    
+
+
     #del_attr:
     # If you delete almost all extended attributes there are only exon_id left
     @test "del_attr_1" {
@@ -151,26 +152,6 @@ else:
       [ "$result" = "gene_id,exon_id" ]
     }
 
-    #del_attr: check -r
-    @test "del_attr_3" {
-     result=`gtftk get_example -d mini_real | gtftk del_attr -r -k 'transcript.*'| gtftk tabulate -k "*" -x -V 3| head -1| grep transcript | wc -l`
-      [ "$result" -eq 0 ]
-    }
-        
- 
-    #del_attr: check -r
-    @test "del_attr_4" {
-     result=`gtftk get_example -d mini_real | gtftk del_attr -r -k '(trancrip)|(biotype)|(exon_id)'| gtftk tabulate -k "*" -x| head -1| awk 'BEGIN{FS="\\t"}{print NF}'`
-      [ "$result" -eq 13 ]
-    }
-        
-           
-    #del_attr: check -r
-    @test "del_attr_5" {
-     result=`gtftk get_example -d mini_real | gtftk del_attr -r -k '(transcript_id)|(exon_id)' -v| awk 'BEGIN{FS="\\t"}{print NF}' | sort | uniq -c | cut -f2 | sed 's/ //g'`
-      [ "$result" = "1376709" ]
-    }
- 
     """
 
     CmdObject(name="del_attr",
