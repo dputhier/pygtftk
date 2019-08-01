@@ -141,14 +141,14 @@ else:
     #del_attr:
     # If you delete almost all extended attributes there are only exon_id left
     @test "del_attr_1" {
-     result=`gtftk del_attr -i simple.gtf  -k ccds_id,transcript_id,gene_id| cut -f9| grep -v "^$"| sed 's/ \".*//'| sort | uniq`
-      [ "$result" = "exon_id" ]
+     result=`gtftk del_attr -i simple.gtf  -k ccds_id,transcript_id| grep ccds_id | wc -l`
+      [ "$result" -eq 0 ]
     }
 
     #del_attr: check -v
     @test "del_attr_2" {
-     result=`gtftk del_attr -i simple.gtf  -k ccds_id,transcript_id,gene_id -v| grep exon_id| wc -l`
-      [ "$result" -eq 0 ]
+     result=`gtftk del_attr -i simple.gtf  -k ccds_id,transcript_id -v| gtftk tabulate | cut -f 9,10| head -1| perl -npe 's/\t/,/g'`
+      [ "$result" = "gene_id,exon_id" ]
     }
 
     #del_attr: check -r
