@@ -780,7 +780,7 @@ class GTF(object):
 
             return self._clone(new_data)
 
-    def message(self, msg="", type='DEBUG'):
+    def message(self, msg="", type='INFO'):
         """A processing message whose verbosity is adapted based on pygtftk.utils.VERBOSITY.
 
         >>> import pygtftk.utils
@@ -1669,7 +1669,7 @@ class GTF(object):
         if key is None or value is None:
             raise GTFtkError("Need a key and value.")
 
-        if key in ['chrom', 'chr']:
+        if key in ['chrom', 'chr', 'seqname', 'seq_id', 'seq_name']:
             key = 'seqid'
 
         if len(value) > 20:
@@ -2649,10 +2649,11 @@ class GTF(object):
             message("Garbage collector has been disabled.", type="DEBUG")
             gc.disable()
 
-        self.message("Writing a GTF ")
+        message("Writing a GTF.")
 
         if pygtftk.utils.ADD_CHR == 1:
             add_chr = 1
+            message("Adding 'chr' prefix to chromosomes.")
 
         if isinstance(output, list):
             output = output[0]
@@ -2692,7 +2693,7 @@ class GTF(object):
         if output_str != "-":
             output.close()
 
-        self.message("GTF written ")
+        message("GTF written.")
 
     def get_sequences(self, genome=None, intron=False, rev_comp=True):
         """

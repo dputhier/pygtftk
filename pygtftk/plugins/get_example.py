@@ -8,6 +8,8 @@ import os
 import shutil
 import sys
 
+import gc
+
 import pygtftk
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -44,7 +46,9 @@ def make_parser():
                                 "simple_05",
                                 "simple_06",
                                 "mini_real_10M",
-                                "control_list"],
+                                "control_list",
+                                "ologram_1",
+                                "mini_real_ens"],
                             default="simple",
                             required=False)
 
@@ -181,7 +185,7 @@ def get_example(outputfile=None,
                 else:
                     if not quiet:
                         message("Copy canceled, file already exist:" + os.path.basename(i), force=True)
-
+    gc.disable()
     close_properly(outputfile)
 
 

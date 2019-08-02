@@ -1,5 +1,52 @@
 # Changelog
 
+## v1.0.9
+
+
+### Bug Fixes
+
+*   None.
+
+### API/CLI Changes
+
+*   None.
+*   bigwig_to_bed is know part of miscellaneous commands.
+
+### Code changes
+
+*   The select_by_key command now accept seq_name and seqname in addition to seqid and chrom as a key.
+
+### New Features
+
+*  This version contains the tss_numbering plugin. Annotate transcripts by computing their TSS position relative to the most five prime TSS of the corresponding gene.
+*  The get_attr_value_list command now accepts a list of keys as input.
+*  The get_attr_value_list command has an additional argument (--print-key-name).
+*  Added a new miscellaneous command, get_ceas_record that extract records from CEAS (Cis-regulatory Element Annotation System).
+*  Added a new miscellaneous command, great_reg_domains. This tool represents an attempt to process genomic annotations in GTF
+format in order to produced a set of 'labeled' regions with the same rules as those described in GREAT (Genomic Regions
+Enrichment of Annotations Tool) documentation. We can not warrant that the procedure is exactly the same. See the CLI
+for more details.
+* Added -y/--display-fit-quality to ologram
+## v1.0.8
+
+This version introduces *merge_ologram_stats* command that can be used to produce a heatmap from multiple OLOGRAM results.
+
+### Bug Fixes
+
+*   None.
+
+### API Changes
+
+*   None.
+
+### Code changes
+
+*   The select_by_key command now accept seq_name and seqname in addition to seqid and chrom as a key.
+
+### New Features
+
+*   This version implements merge_ologram_stats command that can be used to produce a heatmap from multiple OLOGRAM results.
+
 ## v1.0.7
 
 This version contains some minor code refactoring. See 1.0.6 for recent major changes.
@@ -20,7 +67,6 @@ This version contains some minor code refactoring. See 1.0.6 for recent major ch
 
 *   None.
 
-# Changelog
 
 ## v1.0.6
 

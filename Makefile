@@ -193,10 +193,10 @@ release_doc:
 	@ echo "#-----------------------------------------------#"
 	@ make doc
 	@ git pull
-	@ git add docs/source/example*png
-	@ git add docs/source/example*pdf
-	@ cp docs/source/example*png docs/source/_static
-	@ cp docs/source/example*pdf docs/source/_static
+	@ git add docs/source/*png
+	@ git add docs/source/*pdf
+	@ cp docs/source/*png docs/source/_static
+	@ cp docs/source/*pdf docs/source/_static
 	@ git add docs/source/_static/*png
 	@ git add docs/source/_static/*pdf
 	@ git add docs/source/example*png

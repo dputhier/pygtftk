@@ -7,6 +7,8 @@ import argparse
 import os
 import sys
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -147,7 +149,7 @@ def get_5p_3p_coords(inputfile=None,
                             i.score,
                             i.strand]
             outputfile.write("\t".join(out_list) + "\n")
-
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 

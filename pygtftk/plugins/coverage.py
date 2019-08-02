@@ -9,6 +9,7 @@ import argparse
 import os
 import sys
 
+import gc
 import pandas as pd
 from pybedtools import BedTool
 
@@ -386,7 +387,7 @@ def coverage(
         if nb_line == 0:
             message("No line available in output...",
                     type="ERROR")
-
+    gc.disable()
     close_properly(inputfile, outputfile)
 
 

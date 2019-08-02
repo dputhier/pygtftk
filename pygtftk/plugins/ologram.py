@@ -22,6 +22,8 @@
 import argparse
 import warnings
 
+import gc
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 import multiprocessing
@@ -31,6 +33,7 @@ import sys
 import time
 import warnings
 from functools import partial
+import matplotlib.cbook
 
 import numpy as np
 import pandas as pd
@@ -56,6 +59,33 @@ from pygtftk.utils import message
 from pygtftk.utils import sort_2_lists
 
 __updated__ = "2019-04-17"
+__doc__ = """
+
+ OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
+ annotates peaks (in bed format) using (i) genomic features extracted
+ from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with
+  particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
+  gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
+
+ Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
+ lengths are considered). Then the probability of intersection under the null
+ hypothesis (the peaks and this feature are independent) is deduced thanks to
+ this Monte Carlo approach.
+
+ The program will return statistics for both the number of intersections and the
+ total lengths (in basepairs) of all intersections.
+ 
+ The null hypothesis is:
+ 
+ H0: The regions of the query (--peak-file) are located independently of the 
+ reference (--inputfile or --more-bed) with respect to overlap.
+ 
+ H1: The regions of the query (--peak-file) tend to overlap the 
+ reference (--inputfile or --more-bed). 
+
+ Authors : Quentin FERRE <quentin.q.ferre@gmail.com>, Guillaume CHARBONNIER
+ <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
+ """
 
 __notes__ = """
  -- Ologram is multithreaded and can use many cores. Although ologram itself is not RAM-intensive,
@@ -100,6 +130,8 @@ __notes__ = """
  -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
  for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
  This is not recommended in the general case and can be *very* time-consuming (hours).
+
+ -- ALPHA : support for multiple overlaps is in progress (within or between sets). The backend supports it but no statistics are made on it yet.
  """
 
 
@@ -249,6 +281,11 @@ def make_parser():
                             action='store_true',
                             required=False)
 
+    parser_grp.add_argument('-y', '--display-fit-quality',
+                            help="Display the negative binomial fit quality on the diagrams. ",
+                            action='store_true',
+                            required=False)
+
     parser_grp.add_argument('-tp', '--tsv-file-path',
                             help="Provide an alternative path for text output file.",
                             default=None,
@@ -329,7 +366,8 @@ def ologram(inputfile=None,
             seed=42,
             sort_features=False,
             minibatch_nb=8,
-            minibatch_size=25
+            minibatch_size=25,
+            display_fit_quality=False
             ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
@@ -459,7 +497,7 @@ def ologram(inputfile=None,
 
     # If there is an exclusion of certain regions to be done, do it.
     # Here, we do exclusion on the peak file ('bedA') and the chrom sizes.
-    # Exclusion on the other bed files or gtf extracted bed files ('bedB') is
+    # Exclusion on the other bed files or gtf extracted bed files ('bedsB') is
     # done once we get to them.
     # overlap_stats_shuffling() will handle that, with the same condition : that bed_excl != None
 
@@ -542,6 +580,7 @@ def ologram(inputfile=None,
 
             for elmt in more_bed_labels:
                 if not re.search("^[A-Za-z0-9_]+$", elmt):
+                    message("Problem with:" + elmt, type="WARNING")
                     message(
                         "Only alphanumeric characters and '_' allowed for --more-bed-labels",
                         type="ERROR")
@@ -649,7 +688,7 @@ def ologram(inputfile=None,
                 # Get the intronic regions
                 # -------------------------------------------------------------------------
 
-                message("Processing on : Introns", type="INFO")
+                message("Processing : Introns", type="INFO")
                 gtf_sub_bed = gtf.get_introns()
 
                 tmp_bed = make_tmp_file(prefix="ologram_introns", suffix=".bed")
@@ -716,7 +755,10 @@ def ologram(inputfile=None,
                                                            "gene_id",
                                                            "exon_id"]).sort().merge()  # merging bed file !
                         del gtf_sub
-                        tmp_bed = make_tmp_file(prefix="ologram_terminator", suffix=".bed")
+                        cur_prefix = "ologram_" + re.sub('\W+', '_',
+                                                         user_key) + "_" + re.sub('\W+', '_',
+                                                                                  val)
+                        tmp_bed = make_tmp_file(prefix=cur_prefix, suffix=".bed")
                         gtf_sub_bed.saveas(tmp_bed.name)
 
                         ft_type = ":".join([user_key, val])  # Key for the dictionary
@@ -728,6 +770,9 @@ def ologram(inputfile=None,
     # -------------------------------------------------------------------------
     # Process user defined annotations
     # -------------------------------------------------------------------------
+
+    # Stock all of the more_beds if needed for multiple overlaps
+    all_more_beds = list()
 
     if more_bed is not None:
         message("Processing user-defined regions (bed format).")
@@ -760,6 +805,9 @@ def ologram(inputfile=None,
                 bed_anno_sub.close()
                 bed_anno = bed_anno_sub
 
+                # Stock all bed annos if multiple overlap is needed
+                all_more_beds += [BedTool(bed_anno.name)]
+
             tmp_bed = make_tmp_file(prefix=bed_lab, suffix=".bed")
             bed_anno_tosave = BedTool(bed_anno.name)
             bed_anno_tosave.saveas(tmp_bed.name)
@@ -767,6 +815,14 @@ def ologram(inputfile=None,
             hits[bed_lab] = overlap_partial(bedA=peak_file,
                                             bedB=BedTool(bed_anno.name),
                                             ft_type=bed_lab)
+
+    # TODO : prepare another possibility, where an option such as
+    # `-all-more-beds-together` is used,  we do the multiple overlap of the
+    # region with ALL of the more beds.
+    # Now, bedsB can be a list !
+    """
+    hits['multiple_beds'] = overlap_partial(bedA=peak_file, bedsB=all_more_beds)
+    """
 
     # ------------------ Treating the 'hits' dictionary --------------------- #
 
@@ -832,12 +888,12 @@ def ologram(inputfile=None,
     # -------------------------------------------------------------------------
 
     if pdf_file is not None:
-        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order)
+        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, display_fit_quality)
         close_properly(pdf_file)
     close_properly(data_file)
 
 
-def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
+def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, display_fit_quality):
     """
     Main plotting function by Q. FERRE and D. PUTHIER.
     """
@@ -866,7 +922,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
     # or 'nb_intersections'
     # -------------------------------------------------------------------------
 
-    def plot_this(statname, plot_type='barplot'):
+    def plot_this(statname, plot_type='barplot', display_fit_quality=False):
 
         # ------------------------- DATA PROCESSING -------------------------- #
 
@@ -939,6 +995,16 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
         text = text.apply(format_pvalue)
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
         text_pos.index = range(len(text_pos))
+
+        if display_fit_quality:
+            fit_qual_text = dm[statname + '_negbinom_fit_quality'].append(na_series)
+            fit_qual_text.index = range(len(fit_qual_text))
+
+            text_with_fit = list()
+            for t, f in zip(text.tolist(), fit_qual_text.tolist()):
+                text_with_fit += [t + "\n" + 'fit={0:.2g}'.format(f)]
+            text = pd.Series(text_with_fit)
+
         aes_plot = aes(x='Feature', y=text_pos, label=text)
         p += geom_label(mapping=aes_plot, stat='identity',
                         size=5, boxstyle='round', label_size=0.2,
@@ -1020,9 +1086,11 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
     # -------------------------------------------------------------------------
 
     # Compute the plots for both statistics
-    p1 = plot_this('summed_bp_overlaps') + ylab("Nb. of overlapping base pairs") + ggtitle(
+    p1 = plot_this('summed_bp_overlaps', display_fit_quality=display_fit_quality) + ylab(
+        "Nb. of overlapping base pairs") + ggtitle(
         'Total overlap length per region type')
-    p2 = plot_this('nb_intersections') + ylab("Number of intersections") + ggtitle(
+    p2 = plot_this('nb_intersections', display_fit_quality=display_fit_quality) + ylab(
+        "Number of intersections") + ggtitle(
         'Total nb. of intersections per region type')
     p3 = plot_volcano()
 
@@ -1053,6 +1121,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
     # this solution...
     # -------------------------------------------------------------------------
 
+    warnings.filterwarnings("ignore", category=matplotlib.cbook.MatplotlibDeprecationWarning)
+
     def fxn():
         warnings.warn("deprecated", DeprecationWarning)
 
@@ -1074,6 +1144,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
                                  p3 + theme(figure_size=figsize)],
                           width=pdf_width,
                           height=pdf_height)
+
+    gc.disable()
 
 
 def main():
@@ -1147,7 +1219,7 @@ else:
                     parser=make_parser(),
                     fun=os.path.abspath(__file__),
                     desc=__doc__,
-                    group="annotation",
+                    group="ologram",
                     notes=__notes__,
                     updated=__updated__,
                     test=test)

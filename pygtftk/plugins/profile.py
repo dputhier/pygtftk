@@ -522,12 +522,20 @@ def profile(inputfile=None,
     # -------------------------------------------------------------------------
 
     if palette not in ALL_MPL_PALETTES:
-        message("Sorry but the palette is unknown.")
+        message("Sorry but the palette is unknown.", type="ERROR")
 
     def get_list_of_colors_mpl(number, pal=palette):
+        # Workaround for a bug in mpl
+        if number == 1:
+            number_use = 2
+        else:
+            number_use = number
+        colormap = cm.get_cmap(pal, lut=number_use)
+        colors = [mpl.colors.rgb2hex(colormap(i)) for i in np.linspace(0., 1., number_use)]
 
-        colormap = cm.get_cmap(pal, lut=number)
-        colors = [mpl.colors.rgb2hex(colormap(i)) for i in np.linspace(0., 1., number)]
+        if number == 1:
+            colors = [colors[0]]
+
         return colors
 
     if profile_colors is None:

@@ -9,6 +9,7 @@ import re
 import sys
 
 import ftputil
+import gc
 from ftputil.error import FTPOSError
 
 import pygtftk
@@ -282,6 +283,8 @@ def retrieve(species_name='homo_sapiens',
     else:
         message("Species could not be found for release: " + release,
                 type='ERROR')
+
+    gc.disable()
 
 
 def main():

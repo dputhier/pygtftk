@@ -192,6 +192,11 @@ def compute_overlap_stats(bedA, bedB,
     # Proper reading of the bed file as a list of intervals
     Lr1, Li1, all_chrom1 = read_bed.bed_to_lists_of_intervals(bed_A_as_pybedtool, chrom_len)
     Lr2, Li2, all_chrom2 = read_bed.bed_to_lists_of_intervals(bed_B_as_pybedtool, chrom_len)
+
+    # convert to string (#106)
+    all_chrom1 = all_chrom1.astype(str)
+    all_chrom2 = all_chrom2.astype(str)
+
     stop = time.time()
     message('BED files read as lists of intervals in ' + str(stop - start) + ' s', type='DEBUG')
 
