@@ -15,7 +15,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘information’ &#8212; gtftk 1.0.7 documentation</title>
+    <title>Commands from section ‘information’ &#8212; gtftk 1.0.9 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="gtftk_args.html" title="Help on gtftk Unix commands"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,10 +67,10 @@
 <p><strong>Description:</strong> Search in all command description files those related to a user-defined keyword.</p>
 <p><strong>Example:</strong> Search all commands related to promoters.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk apropos -k promoter
- |-- 16:41-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
-	- divergent.
+ |-- 16:11-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
 	- ologram.
 	- coverage.
+	- divergent.
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
@@ -158,7 +158,7 @@ chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &qu
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -h
-  Usage: gtftk get_example [-d {simple,mini_real,mini_real_noov_rnd_tx,tiny_real,hg38_chr1,simple_02,simple_03,simple_04,simple_05,simple_06,mini_real_10M,control_list}] [-f {*,gtf,bed,bw,bam,join,join_mat,chromInfo,tsv,fa,fa.idx,genes,geneList,2.bw,genome}] [-o OUTPUT] [-l] [-a] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
+  Usage: gtftk get_example [-d {simple,mini_real,mini_real_noov_rnd_tx,tiny_real,hg38_chr1,simple_02,simple_03,simple_04,simple_05,simple_06,mini_real_10M,control_list,ologram_1,mini_real_ens}] [-f {*,gtf,bed,bw,bam,join,join_mat,chromInfo,tsv,fa,fa.idx,genes,geneList,2.bw,genome}] [-o OUTPUT] [-l] [-a] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Print example files including GTF.
@@ -382,7 +382,7 @@ G0010;4
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_attr_value_list -h
-  Usage: gtftk get_attr_value_list [-i GTF] [-o TXT] -k key_name [-s SEP] [-c] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
+  Usage: gtftk get_attr_value_list [-i GTF] [-o TXT] -k key_name [-s separator] [-c] [-p] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Get the list of values observed for an attributes.
@@ -392,9 +392,10 @@ G0010;4
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
  -o, --outputfile             Output file. (default: &lt;stdout&gt;)
- -k, --key-name               Key name. (default: None)
- -s, --separator              The separator to be used for separating key names. (default: )
+ -k, --key-name               The comma separated list of key name. (default: None)
+ -s, --separator              The separator used if -c or -p are true. (default: )
  -c, --count                  Add the counts for each key (separator will be set to &#39; &#39; by default). (default: False)
+ -p, --print-key-name         Also print the key name in the first column. (default: False)
 
 Command-wise optional arguments:
  -h, --help                   Show this help message and exit.
@@ -706,10 +707,10 @@ Command-wise optional arguments:
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -734,13 +735,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="gtftk_args.html" title="Help on gtftk Unix commands"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 25, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Last updated on Aug 01, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.1.
     </div>
   </body>
 </html>

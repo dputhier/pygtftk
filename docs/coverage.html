@@ -15,7 +15,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘coverage’ &#8212; gtftk 1.0.7 documentation</title>
+    <title>Commands from section ‘coverage’ &#8212; gtftk 1.0.9 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="sequence.html" title="Commands from section ‘sequence’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -212,19 +212,40 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 <p><strong>Basic profiles</strong></p>
 <p>A simple overlayed profile of all epigenetic marks around promoter. Here <em>—group-by</em> is, by default set to <em>bwig</em> and <em>—facet-var</em> is set to None. Thus a single plot with several lines corresponding to bwig coverage is obtained.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if  example_01.png
- |-- 16:39-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 16:09-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_01.png"><img alt="_images/example_01.png" src="_images/example_01.png" style="width: 75%;" /></a>
 <p>Changing colors and applying color order can be done using the following syntax:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -c &#39;red,blue,violet&#39; -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if  example_01b.png
- |-- 16:39-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 16:09-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_01b.png"><img alt="_images/example_01b.png" src="_images/example_01b.png" style="width: 75%;" /></a>
 <p>Transcript coverage is obtained using the <em>mini_real_tx.zip</em> matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5’ and 3’ regions:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if  example_02.png
- |-- 16:39-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 16:09-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_02.png"><img alt="_images/example_02.png" src="_images/example_02.png" style="width: 75%;" /></a>
@@ -232,109 +253,145 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 <p>Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to bwig classes and the facets to transcript classes. Things can be simply done by providing an additional file containing the transcript and their associated classes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_05.png -e -V 2 -fc 2
- |-- 16:40-DEBUG-profile : Using pandas version 0.24.2
- |-- 16:40-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk/lib/python3.6/site-packages/pandas/__init__.py
- |-- 16:40-DEBUG-profile : Using numpy version 1.16.2
- |-- 16:40-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk/lib/python3.6/site-packages/numpy/__init__.py
- |-- 16:40-DEBUG-profile : Using plotnine version 0.5.1+43.gff25aef
- |-- 16:40-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk/lib/python3.6/site-packages/plotnine/__init__.py
- |-- 16:40-DEBUG-profile : Creating directory : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_fwor_rzo
- |-- 16:40-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_fwor_rzo
- |-- 16:40-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_fwor_rzo/mini_real_promoter
- |-- 16:40-INFO-profile : Getting configuration info from input file.
- |-- 16:40-INFO-profile : Reading transcript file.
- |-- 16:40-INFO-profile : Deleting duplicates in transcript-file.
- |-- 16:40-INFO-profile : Checking how many transcript where found in the transcript list.
- |-- 16:40-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
- |-- 16:40-DEBUG-profile : Color order : [&#39;H3K4me3&#39;, &#39;H3K36me3&#39;, &#39;H3K79me&#39;]
- |-- 16:40-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
- |-- 16:40-INFO-profile : Searching coverage columns.
- |-- 16:40-INFO-profile : Melting.
- |-- 16:40-INFO-profile : Ceiling
- |-- 16:40-INFO-profile : Computing column ordering.
- |-- 16:40-INFO-profile : Preparing diagram
- |-- 16:40-INFO-profile : Theming and ordering. Please be patient...
- |-- 16:40-INFO-profile : Preparing x axis
- |-- 16:40-INFO-profile : facet_col 2
- |-- 16:40-INFO-profile : Page width set to 6
- |-- 16:40-INFO-profile : Page height set to 5.0
- |-- 16:40-INFO-profile : Saving diagram to file : example_05.png
- |-- 16:40-INFO-profile : Be patient. This may be long for large datasets.
- |-- 16:40-DEBUG-profile : Deleting temp file : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_fwor_rzo
+ |-- 16:09-DEBUG-profile : Using pandas version 0.24.2
+ |-- 16:09-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/pandas/__init__.py
+ |-- 16:09-DEBUG-profile : Using numpy version 1.16.4
+ |-- 16:09-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/numpy/__init__.py
+ |-- 16:09-DEBUG-profile : Using plotnine version 0.5.1
+ |-- 16:09-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/__init__.py
+ |-- 16:09-DEBUG-profile : Creating directory : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_c92ct0d9
+ |-- 16:09-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_c92ct0d9
+ |-- 16:09-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_c92ct0d9/mini_real_promoter
+ |-- 16:09-INFO-profile : Getting configuration info from input file.
+ |-- 16:09-INFO-profile : Reading transcript file.
+ |-- 16:09-INFO-profile : Deleting duplicates in transcript-file.
+ |-- 16:09-INFO-profile : Checking how many transcript where found in the transcript list.
+ |-- 16:09-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
+ |-- 16:09-DEBUG-profile : Color order : [&#39;H3K4me3&#39;, &#39;H3K79me&#39;, &#39;H3K36me3&#39;]
+ |-- 16:09-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
+ |-- 16:09-INFO-profile : Searching coverage columns.
+ |-- 16:09-INFO-profile : Melting.
+ |-- 16:09-INFO-profile : Ceiling
+ |-- 16:09-INFO-profile : Computing column ordering.
+ |-- 16:09-INFO-profile : Preparing diagram
+ |-- 16:09-INFO-profile : Theming and ordering. Please be patient...
+ |-- 16:09-INFO-profile : Preparing x axis
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+ |-- 16:09-INFO-profile : facet_col 2
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+ |-- 16:09-INFO-profile : Page width set to 6
+ |-- 16:09-INFO-profile : Page height set to 5.0
+ |-- 16:09-INFO-profile : Saving diagram to file : example_05.png
+ |-- 16:09-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 16:09-DEBUG-profile : Deleting temp file : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_c92ct0d9
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_05.png"><img alt="_images/example_05.png" src="_images/example_05.png" style="width: 75%;" /></a>
 <p>Alternatively, the groups can be set to chromosomes or transcript classes:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_06.png -V 2 -nm ranging
- |-- 16:40-DEBUG-profile : Using pandas version 0.24.2
- |-- 16:40-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk/lib/python3.6/site-packages/pandas/__init__.py
- |-- 16:40-DEBUG-profile : Using numpy version 1.16.2
- |-- 16:40-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk/lib/python3.6/site-packages/numpy/__init__.py
- |-- 16:40-DEBUG-profile : Using plotnine version 0.5.1+43.gff25aef
- |-- 16:40-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk/lib/python3.6/site-packages/plotnine/__init__.py
- |-- 16:40-DEBUG-profile : Creating directory : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_i7ayrz07
- |-- 16:40-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_i7ayrz07
- |-- 16:40-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_i7ayrz07/mini_real_promoter
- |-- 16:40-INFO-profile : Getting configuration info from input file.
- |-- 16:40-INFO-profile : Reading transcript file.
- |-- 16:40-INFO-profile : Deleting duplicates in transcript-file.
- |-- 16:40-INFO-profile : Checking how many transcript where found in the transcript list.
- |-- 16:40-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
- |-- 16:40-DEBUG-profile : Color order : [&#39;lincRNA&#39;, &#39;protein_coding&#39;, &#39;antisense&#39;]
- |-- 16:40-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
- |-- 16:40-INFO-profile : Searching coverage columns.
- |-- 16:40-INFO-profile : Melting.
- |-- 16:40-INFO-profile : Ceiling
- |-- 16:40-INFO-profile : Normalizing (ranging)
- |-- 16:40-INFO-profile : Computing column ordering.
- |-- 16:40-INFO-profile : Preparing diagram
- |-- 16:40-INFO-profile : Theming and ordering. Please be patient...
- |-- 16:40-INFO-profile : Preparing x axis
- |-- 16:40-INFO-profile : facet_col 3
- |-- 16:40-INFO-profile : Page width set to 9
- |-- 16:40-INFO-profile : Page height set to 2.0
- |-- 16:40-INFO-profile : Saving diagram to file : example_06.png
- |-- 16:40-INFO-profile : Be patient. This may be long for large datasets.
- |-- 16:40-DEBUG-profile : Deleting temp file : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_i7ayrz07
+ |-- 16:09-DEBUG-profile : Using pandas version 0.24.2
+ |-- 16:09-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/pandas/__init__.py
+ |-- 16:09-DEBUG-profile : Using numpy version 1.16.4
+ |-- 16:09-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/numpy/__init__.py
+ |-- 16:09-DEBUG-profile : Using plotnine version 0.5.1
+ |-- 16:09-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/__init__.py
+ |-- 16:09-DEBUG-profile : Creating directory : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_m_a64x17
+ |-- 16:09-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_m_a64x17
+ |-- 16:09-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_m_a64x17/mini_real_promoter
+ |-- 16:09-INFO-profile : Getting configuration info from input file.
+ |-- 16:09-INFO-profile : Reading transcript file.
+ |-- 16:09-INFO-profile : Deleting duplicates in transcript-file.
+ |-- 16:09-INFO-profile : Checking how many transcript where found in the transcript list.
+ |-- 16:09-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
+ |-- 16:09-DEBUG-profile : Color order : [&#39;antisense&#39;, &#39;lincRNA&#39;, &#39;protein_coding&#39;]
+ |-- 16:09-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
+ |-- 16:09-INFO-profile : Searching coverage columns.
+ |-- 16:09-INFO-profile : Melting.
+ |-- 16:09-INFO-profile : Ceiling
+ |-- 16:09-INFO-profile : Normalizing (ranging)
+ |-- 16:09-INFO-profile : Computing column ordering.
+ |-- 16:09-INFO-profile : Preparing diagram
+ |-- 16:09-INFO-profile : Theming and ordering. Please be patient...
+ |-- 16:09-INFO-profile : Preparing x axis
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+ |-- 16:09-INFO-profile : facet_col 3
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+ |-- 16:09-INFO-profile : Page width set to 9
+ |-- 16:09-INFO-profile : Page height set to 2.0
+ |-- 16:09-INFO-profile : Saving diagram to file : example_06.png
+ |-- 16:09-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 16:09-DEBUG-profile : Deleting temp file : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_m_a64x17
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_06.png"><img alt="_images/example_06.png" src="_images/example_06.png" style="width: 75%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_06b.png -V 2 -nm ranging
- |-- 16:40-DEBUG-profile : Using pandas version 0.24.2
- |-- 16:40-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk/lib/python3.6/site-packages/pandas/__init__.py
- |-- 16:40-DEBUG-profile : Using numpy version 1.16.2
- |-- 16:40-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk/lib/python3.6/site-packages/numpy/__init__.py
- |-- 16:40-DEBUG-profile : Using plotnine version 0.5.1+43.gff25aef
- |-- 16:40-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk/lib/python3.6/site-packages/plotnine/__init__.py
- |-- 16:40-DEBUG-profile : Creating directory : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_f_ov4s7c
- |-- 16:40-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_f_ov4s7c
- |-- 16:40-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_f_ov4s7c/mini_real_promoter
- |-- 16:40-INFO-profile : Getting configuration info from input file.
- |-- 16:40-DEBUG-profile : Color order : [&#39;chr21&#39;, &#39;chr11&#39;, &#39;chr15&#39;, &#39;chr18&#39;, &#39;chr19&#39;, &#39;chr22&#39;, &#39;chr7&#39;, &#39;chr5&#39;, &#39;chr20&#39;, &#39;chr8&#39;, &#39;chr10&#39;, &#39;chr17&#39;, &#39;chr3&#39;, &#39;chr2&#39;, &#39;chrX&#39;, &#39;chr13&#39;, &#39;chr12&#39;, &#39;chr6&#39;, &#39;chr4&#39;, &#39;chr9&#39;, &#39;chr16&#39;, &#39;chr14&#39;, &#39;chr1&#39;]
- |-- 16:40-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#6c007c&#39;, &#39;#850096&#39;, &#39;#2500a5&#39;, &#39;#0000ca&#39;, &#39;#0041dd&#39;, &#39;#0086dd&#39;, &#39;#009fca&#39;, &#39;#00aaa1&#39;, &#39;#00a76f&#39;, &#39;#009c00&#39;, &#39;#00bb00&#39;, &#39;#00da00&#39;, &#39;#00f900&#39;, &#39;#88ff00&#39;, &#39;#dbf400&#39;, &#39;#f7db00&#39;, &#39;#ffb500&#39;, &#39;#ff6100&#39;, &#39;#f60000&#39;, &#39;#da0000&#39;, &#39;#cc1313&#39;, &#39;#cccccc&#39;]
- |-- 16:40-INFO-profile : Searching coverage columns.
- |-- 16:40-INFO-profile : Melting.
- |-- 16:40-INFO-profile : Ceiling
- |-- 16:40-INFO-profile : Normalizing (ranging)
- |-- 16:40-INFO-profile : Computing column ordering.
- |-- 16:40-INFO-profile : Preparing diagram
- |-- 16:40-INFO-profile : Theming and ordering. Please be patient...
- |-- 16:40-INFO-profile : Preparing x axis
- |-- 16:40-INFO-profile : facet_col 3
- |-- 16:40-INFO-profile : Page width set to 9
- |-- 16:40-INFO-profile : Page height set to 2.0
- |-- 16:40-INFO-profile : Saving diagram to file : example_06b.png
- |-- 16:40-INFO-profile : Be patient. This may be long for large datasets.
- |-- 16:40-DEBUG-profile : Deleting temp file : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_f_ov4s7c
+ |-- 16:09-DEBUG-profile : Using pandas version 0.24.2
+ |-- 16:09-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/pandas/__init__.py
+ |-- 16:09-DEBUG-profile : Using numpy version 1.16.4
+ |-- 16:09-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/numpy/__init__.py
+ |-- 16:09-DEBUG-profile : Using plotnine version 0.5.1
+ |-- 16:09-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/__init__.py
+ |-- 16:09-DEBUG-profile : Creating directory : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_0o2ghyjv
+ |-- 16:09-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_0o2ghyjv
+ |-- 16:09-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_0o2ghyjv/mini_real_promoter
+ |-- 16:09-INFO-profile : Getting configuration info from input file.
+ |-- 16:09-DEBUG-profile : Color order : [&#39;chr10&#39;, &#39;chr2&#39;, &#39;chr4&#39;, &#39;chr6&#39;, &#39;chr8&#39;, &#39;chrX&#39;, &#39;chr20&#39;, &#39;chr12&#39;, &#39;chr1&#39;, &#39;chr22&#39;, &#39;chr15&#39;, &#39;chr17&#39;, &#39;chr21&#39;, &#39;chr7&#39;, &#39;chr9&#39;, &#39;chr19&#39;, &#39;chr18&#39;, &#39;chr3&#39;, &#39;chr16&#39;, &#39;chr14&#39;, &#39;chr11&#39;, &#39;chr5&#39;, &#39;chr13&#39;]
+ |-- 16:09-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#6c007c&#39;, &#39;#850096&#39;, &#39;#2500a5&#39;, &#39;#0000ca&#39;, &#39;#0041dd&#39;, &#39;#0086dd&#39;, &#39;#009fca&#39;, &#39;#00aaa1&#39;, &#39;#00a76f&#39;, &#39;#009c00&#39;, &#39;#00bb00&#39;, &#39;#00da00&#39;, &#39;#00f900&#39;, &#39;#88ff00&#39;, &#39;#dbf400&#39;, &#39;#f7db00&#39;, &#39;#ffb500&#39;, &#39;#ff6100&#39;, &#39;#f60000&#39;, &#39;#da0000&#39;, &#39;#cc1313&#39;, &#39;#cccccc&#39;]
+ |-- 16:09-INFO-profile : Searching coverage columns.
+ |-- 16:09-INFO-profile : Melting.
+ |-- 16:09-INFO-profile : Ceiling
+ |-- 16:10-INFO-profile : Normalizing (ranging)
+ |-- 16:10-INFO-profile : Computing column ordering.
+ |-- 16:10-INFO-profile : Preparing diagram
+ |-- 16:10-INFO-profile : Theming and ordering. Please be patient...
+ |-- 16:10-INFO-profile : Preparing x axis
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+ |-- 16:10-INFO-profile : facet_col 3
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+ |-- 16:10-INFO-profile : Page width set to 9
+ |-- 16:10-INFO-profile : Page height set to 2.0
+ |-- 16:10-INFO-profile : Saving diagram to file : example_06b.png
+ |-- 16:10-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 16:10-DEBUG-profile : Deleting temp file : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_0o2ghyjv
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_06b.png"><img alt="_images/example_06b.png" src="_images/example_06b.png" style="width: 75%;" /></a>
 <p>Note that facets may also be associated to epigenetic marks. In this case each the –group-by can be set to <em>tx_classes</em> or <em>chrom</em>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if  example_07.png -w -nm ranging
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_07.png"><img alt="_images/example_07.png" src="_images/example_07.png" style="width: 75%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -g chrom -f bwig  -o profile_tx -pf png -if  example_08.png  -w -nm ranging
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
+/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
+The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
+  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_08.png"><img alt="_images/example_08.png" src="_images/example_08.png" style="width: 75%;" /></a>
@@ -429,10 +486,10 @@ Command-wise optional arguments:
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -457,13 +514,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="sequence.html" title="Commands from section ‘sequence’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 25, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Last updated on Aug 01, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.1.
     </div>
   </body>
 </html>

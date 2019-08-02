@@ -15,7 +15,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>The pygtftk.bwig.bw_coverage module &#8212; gtftk 1.0.7 documentation</title>
+    <title>The pygtftk.bwig.bw_coverage module &#8212; gtftk 1.0.9 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="api.html" title="Help on Python package (pygtftk)"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -58,7 +58,7 @@
 <p>A module to compute bigwig coverage over a set of regions (bed).</p>
 <dl class="function">
 <dt id="pygtftk.bwig.bw_coverage.bw_cov_mp">
-<code class="descclassname">pygtftk.bwig.bw_coverage.</code><code class="descname">bw_cov_mp</code><span class="sig-paren">(</span><em>bw_list=None</em>, <em>region_file=None</em>, <em>labels=None</em>, <em>bin_nb=None</em>, <em>nb_proc=None</em>, <em>n_highest=None</em>, <em>zero_to_na=False</em>, <em>pseudo_count=None</em>, <em>stat='mean'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.bw_cov_mp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.bwig.bw_coverage.</code><code class="sig-name descname">bw_cov_mp</code><span class="sig-paren">(</span><em class="sig-param">bw_list=None</em>, <em class="sig-param">region_file=None</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">bin_nb=None</em>, <em class="sig-param">nb_proc=None</em>, <em class="sig-param">n_highest=None</em>, <em class="sig-param">zero_to_na=False</em>, <em class="sig-param">pseudo_count=None</em>, <em class="sig-param">stat='mean'</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.bw_cov_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute bigwig coverage (multi-processed) for a set of regions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -81,7 +81,7 @@
 
 <dl class="function">
 <dt id="pygtftk.bwig.bw_coverage.bw_profile_mp">
-<code class="descclassname">pygtftk.bwig.bw_coverage.</code><code class="descname">bw_profile_mp</code><span class="sig-paren">(</span><em>in_bed_file=None</em>, <em>nb_proc=None</em>, <em>big_wig=None</em>, <em>bin_nb=None</em>, <em>pseudo_count=0</em>, <em>stranded=True</em>, <em>type=None</em>, <em>labels=None</em>, <em>outputfile=None</em>, <em>zero_to_na=False</em>, <em>bed_format=False</em>, <em>add_score=False</em>, <em>stat='mean'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.bw_profile_mp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.bwig.bw_coverage.</code><code class="sig-name descname">bw_profile_mp</code><span class="sig-paren">(</span><em class="sig-param">in_bed_file=None</em>, <em class="sig-param">nb_proc=None</em>, <em class="sig-param">big_wig=None</em>, <em class="sig-param">bin_nb=None</em>, <em class="sig-param">pseudo_count=0</em>, <em class="sig-param">stranded=True</em>, <em class="sig-param">type=None</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">outputfile=None</em>, <em class="sig-param">zero_to_na=False</em>, <em class="sig-param">bed_format=False</em>, <em class="sig-param">add_score=False</em>, <em class="sig-param">stat='mean'</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.bw_profile_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute bigwig profile for a set of regions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -108,7 +108,7 @@
 
 <dl class="function">
 <dt id="pygtftk.bwig.bw_coverage.make_tmp_file_pool">
-<code class="descclassname">pygtftk.bwig.bw_coverage.</code><code class="descname">make_tmp_file_pool</code><span class="sig-paren">(</span><em>prefix='tmp'</em>, <em>suffix=''</em>, <em>store=True</em>, <em>dir=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.make_tmp_file_pool" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.bwig.bw_coverage.</code><code class="sig-name descname">make_tmp_file_pool</code><span class="sig-paren">(</span><em class="sig-param">prefix='tmp'</em>, <em class="sig-param">suffix=''</em>, <em class="sig-param">store=True</em>, <em class="sig-param">dir=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.make_tmp_file_pool" title="Permalink to this definition">¶</a></dt>
 <dd><p>This</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -147,10 +147,10 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -175,13 +175,13 @@
         <li class="right" >
           <a href="api.html" title="Help on Python package (pygtftk)"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 25, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Last updated on Aug 01, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.1.
     </div>
   </body>
 </html>

@@ -15,7 +15,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Help on Python package (pygtftk) &#8212; gtftk 1.0.7 documentation</title>
+    <title>Help on Python package (pygtftk) &#8212; gtftk 1.0.9 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -68,12 +68,12 @@
 </div></blockquote>
 <dl class="class">
 <dt id="pygtftk.gtf_interface.GTF">
-<em class="property">class </em><code class="descclassname">pygtftk.gtf_interface.</code><code class="descname">GTF</code><span class="sig-paren">(</span><em>input_obj=None</em>, <em>check_ensembl_format=True</em>, <em>new_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.gtf_interface.</code><code class="sig-name descname">GTF</code><span class="sig-paren">(</span><em class="sig-param">input_obj=None</em>, <em class="sig-param">check_ensembl_format=True</em>, <em class="sig-param">new_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF" title="Permalink to this definition">¶</a></dt>
 <dd><p>An interface to a GTF file. This object returns a GTF, TAB
 or FASTA object.</p>
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.add_attr_column">
-<code class="descname">add_attr_column</code><span class="sig-paren">(</span><em>input_file=None</em>, <em>new_key='new_key'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_column" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_attr_column</code><span class="sig-paren">(</span><em class="sig-param">input_file=None</em>, <em class="sig-param">new_key='new_key'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simply add a new column of attribute/value to each line.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -99,7 +99,7 @@ or FASTA object.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.add_attr_from_dict">
-<code class="descname">add_attr_from_dict</code><span class="sig-paren">(</span><em>feat='*'</em>, <em>key='transcript_id'</em>, <em>a_dict=None</em>, <em>new_key='new_key'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_from_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_attr_from_dict</code><span class="sig-paren">(</span><em class="sig-param">feat='*'</em>, <em class="sig-param">key='transcript_id'</em>, <em class="sig-param">a_dict=None</em>, <em class="sig-param">new_key='new_key'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add key/value pairs to the GTF object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -128,7 +128,7 @@ or FASTA object.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.add_attr_from_file">
-<code class="descname">add_attr_from_file</code><span class="sig-paren">(</span><em>feat=None</em>, <em>key='transcript_id'</em>, <em>new_key='new_key'</em>, <em>inputfile=None</em>, <em>has_header=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_from_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_attr_from_file</code><span class="sig-paren">(</span><em class="sig-param">feat=None</em>, <em class="sig-param">key='transcript_id'</em>, <em class="sig-param">new_key='new_key'</em>, <em class="sig-param">inputfile=None</em>, <em class="sig-param">has_header=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_from_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add key/value pairs to the GTF object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -158,7 +158,7 @@ or FASTA object.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.add_attr_from_list">
-<code class="descname">add_attr_from_list</code><span class="sig-paren">(</span><em>feat=None</em>, <em>key='transcript_id'</em>, <em>key_value=()</em>, <em>new_key='new_key'</em>, <em>new_key_value=()</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_from_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_attr_from_list</code><span class="sig-paren">(</span><em class="sig-param">feat=None</em>, <em class="sig-param">key='transcript_id'</em>, <em class="sig-param">key_value=()</em>, <em class="sig-param">new_key='new_key'</em>, <em class="sig-param">new_key_value=()</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_from_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add key/value pairs to the GTF object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -191,7 +191,7 @@ or FASTA object.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.add_attr_from_matrix_file">
-<code class="descname">add_attr_from_matrix_file</code><span class="sig-paren">(</span><em>feat=None</em>, <em>key='transcript_id'</em>, <em>inputfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_from_matrix_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_attr_from_matrix_file</code><span class="sig-paren">(</span><em class="sig-param">feat=None</em>, <em class="sig-param">key='transcript_id'</em>, <em class="sig-param">inputfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_from_matrix_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add key/value pairs to the GTF file. Expect a matrix with row names as target keys column names as novel key and each cell as value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -219,7 +219,7 @@ or FASTA object.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.add_attr_to_pos">
-<code class="descname">add_attr_to_pos</code><span class="sig-paren">(</span><em>input_file=None</em>, <em>new_key='new_key'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_to_pos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_attr_to_pos</code><span class="sig-paren">(</span><em class="sig-param">input_file=None</em>, <em class="sig-param">new_key='new_key'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_to_pos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simply add a new column of attribute/value to specific lines.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -248,7 +248,7 @@ or FASTA object.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.add_exon_number">
-<code class="descname">add_exon_number</code><span class="sig-paren">(</span><em>key='exon_nbr'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_exon_number" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_exon_number</code><span class="sig-paren">(</span><em class="sig-param">key='exon_nbr'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_exon_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add exon number to exons.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -272,7 +272,7 @@ or FASTA object.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.add_prefix">
-<code class="descname">add_prefix</code><span class="sig-paren">(</span><em>feat='*'</em>, <em>key=None</em>, <em>txt=None</em>, <em>suffix=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_prefix" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_prefix</code><span class="sig-paren">(</span><em class="sig-param">feat='*'</em>, <em class="sig-param">key=None</em>, <em class="sig-param">txt=None</em>, <em class="sig-param">suffix=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_prefix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a prefix to an attribute value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -302,7 +302,7 @@ or FASTA object.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.convert_to_ensembl">
-<code class="descname">convert_to_ensembl</code><span class="sig-paren">(</span><em>check_gene_chr=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.convert_to_ensembl" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">convert_to_ensembl</code><span class="sig-paren">(</span><em class="sig-param">check_gene_chr=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.convert_to_ensembl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a GTF file to ensembl format. This method will add gene
 and transcript features if not encountered in the GTF.</p>
 <dl class="field-list simple">
@@ -323,7 +323,7 @@ and transcript features if not encountered in the GTF.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.del_attr">
-<code class="descname">del_attr</code><span class="sig-paren">(</span><em>feat='*'</em>, <em>keys=None</em>, <em>force=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.del_attr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">del_attr</code><span class="sig-paren">(</span><em class="sig-param">feat='*'</em>, <em class="sig-param">keys=None</em>, <em class="sig-param">force=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.del_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete an attributes from the GTF file..</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -348,7 +348,7 @@ and transcript features if not encountered in the GTF.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.eval_numeric">
-<code class="descname">eval_numeric</code><span class="sig-paren">(</span><em>bool_exp=None</em>, <em>na_omit=('.'</em>, <em>'?')</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.eval_numeric" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">eval_numeric</code><span class="sig-paren">(</span><em class="sig-param">bool_exp=None</em>, <em class="sig-param">na_omit=('.'</em>, <em class="sig-param">'?')</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.eval_numeric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test numeric values. Select lines using a boolean operation on attributes.
 The boolean expression must contain attributes enclosed with braces.
 Example: “cDNA_length &gt; 200 and tx_genomic_length &gt; 2000”.
@@ -390,7 +390,7 @@ start, end, score or frame.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.extract_data">
-<code class="descname">extract_data</code><span class="sig-paren">(</span><em>keys=None</em>, <em>as_list=False</em>, <em>zero_based=False</em>, <em>no_na=False</em>, <em>as_dict_of_values=False</em>, <em>as_dict_of_lists=False</em>, <em>as_dict=False</em>, <em>as_dict_of_merged_list=False</em>, <em>nr=False</em>, <em>hide_undef=False</em>, <em>as_list_of_list=False</em>, <em>default_val=1</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.extract_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extract_data</code><span class="sig-paren">(</span><em class="sig-param">keys=None</em>, <em class="sig-param">as_list=False</em>, <em class="sig-param">zero_based=False</em>, <em class="sig-param">no_na=False</em>, <em class="sig-param">as_dict_of_values=False</em>, <em class="sig-param">as_dict_of_lists=False</em>, <em class="sig-param">as_dict=False</em>, <em class="sig-param">as_dict_of_merged_list=False</em>, <em class="sig-param">nr=False</em>, <em class="sig-param">hide_undef=False</em>, <em class="sig-param">as_list_of_list=False</em>, <em class="sig-param">default_val=1</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.extract_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract attribute values into containers of various types. Note that in case dict are requested, keys are force to no_na.</p>
 <p>Note: no_na, hide_undef, nr, zero_based are not applied in case a tab object is returned (default).</p>
 <dl class="field-list simple">
@@ -440,7 +440,7 @@ start, end, score or frame.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.extract_data_iter_list">
-<code class="descname">extract_data_iter_list</code><span class="sig-paren">(</span><em>keys=None</em>, <em>zero_based=False</em>, <em>nr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.extract_data_iter_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extract_data_iter_list</code><span class="sig-paren">(</span><em class="sig-param">keys=None</em>, <em class="sig-param">zero_based=False</em>, <em class="sig-param">nr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.extract_data_iter_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract attributes of any type and returns an iterator of lists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -471,7 +471,7 @@ start, end, score or frame.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_3p_end">
-<code class="descname">get_3p_end</code><span class="sig-paren">(</span><em>feat_type='transcript'</em>, <em>name='transcript_id'</em>, <em>sep='|'</em>, <em>as_dict=False</em>, <em>more_name=()</em>, <em>feature_name=None</em>, <em>explicit=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_3p_end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_3p_end</code><span class="sig-paren">(</span><em class="sig-param">feat_type='transcript'</em>, <em class="sig-param">name='transcript_id'</em>, <em class="sig-param">sep='|'</em>, <em class="sig-param">as_dict=False</em>, <em class="sig-param">more_name=()</em>, <em class="sig-param">feature_name=None</em>, <em class="sig-param">explicit=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_3p_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Bedtool object containing the 3’ coordinates of selected
 features (Bed6 format) or a dict (zero-based coordinate).</p>
 <dl class="field-list simple">
@@ -506,7 +506,7 @@ features (Bed6 format) or a dict (zero-based coordinate).</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_5p_end">
-<code class="descname">get_5p_end</code><span class="sig-paren">(</span><em>feat_type='transcript'</em>, <em>name='transcript_id'</em>, <em>sep='|'</em>, <em>as_dict=False</em>, <em>more_name=()</em>, <em>one_based=False</em>, <em>feature_name=None</em>, <em>explicit=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_5p_end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_5p_end</code><span class="sig-paren">(</span><em class="sig-param">feat_type='transcript'</em>, <em class="sig-param">name='transcript_id'</em>, <em class="sig-param">sep='|'</em>, <em class="sig-param">as_dict=False</em>, <em class="sig-param">more_name=()</em>, <em class="sig-param">one_based=False</em>, <em class="sig-param">feature_name=None</em>, <em class="sig-param">explicit=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_5p_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Bedtool object containing the 5’ coordinates of selected
 features (Bed6 format) or a dict (zero-based coordinate).</p>
 <dl class="field-list simple">
@@ -544,7 +544,7 @@ features (Bed6 format) or a dict (zero-based coordinate).</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_attr_list">
-<code class="descname">get_attr_list</code><span class="sig-paren">(</span><em>add_basic=False</em>, <em>as_dict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_attr_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_attr_list</code><span class="sig-paren">(</span><em class="sig-param">add_basic=False</em>, <em class="sig-param">as_dict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_attr_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the list of possible attributes from a GTF file..</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -566,7 +566,7 @@ features (Bed6 format) or a dict (zero-based coordinate).</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_attr_value_list">
-<code class="descname">get_attr_value_list</code><span class="sig-paren">(</span><em>key=None</em>, <em>count=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_attr_value_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_attr_value_list</code><span class="sig-paren">(</span><em class="sig-param">key=None</em>, <em class="sig-param">count=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_attr_value_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the list of possible values taken by an attributes from a GTF file..</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -591,7 +591,7 @@ features (Bed6 format) or a dict (zero-based coordinate).</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_chroms">
-<code class="descname">get_chroms</code><span class="sig-paren">(</span><em>nr=False</em>, <em>as_dict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_chroms" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_chroms</code><span class="sig-paren">(</span><em class="sig-param">nr=False</em>, <em class="sig-param">as_dict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_chroms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the chomosome/sequence ID from the GTF.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -616,7 +616,7 @@ features (Bed6 format) or a dict (zero-based coordinate).</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_feature_list">
-<code class="descname">get_feature_list</code><span class="sig-paren">(</span><em>nr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_feature_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_feature_list</code><span class="sig-paren">(</span><em class="sig-param">nr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_feature_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the list of features.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -639,7 +639,7 @@ features (Bed6 format) or a dict (zero-based coordinate).</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_feature_size">
-<code class="descname">get_feature_size</code><span class="sig-paren">(</span><em>ft_type='gene'</em>, <em>feat_id=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_feature_size" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_feature_size</code><span class="sig-paren">(</span><em class="sig-param">ft_type='gene'</em>, <em class="sig-param">feat_id=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_feature_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns feature size as a dict.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -662,7 +662,7 @@ features (Bed6 format) or a dict (zero-based coordinate).</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_gn_ids">
-<code class="descname">get_gn_ids</code><span class="sig-paren">(</span><em>nr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_gn_ids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_gn_ids</code><span class="sig-paren">(</span><em class="sig-param">nr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_gn_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all gene ids from the GTF file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -688,7 +688,7 @@ features (Bed6 format) or a dict (zero-based coordinate).</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_gn_strand">
-<code class="descname">get_gn_strand</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_gn_strand" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_gn_strand</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_gn_strand" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dict with gene IDs as keys and strands as values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -709,11 +709,11 @@ features (Bed6 format) or a dict (zero-based coordinate).</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_gn_to_tx">
-<code class="descname">get_gn_to_tx</code><span class="sig-paren">(</span><em>ordered_5p=False</em>, <em>as_dict_of_dict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_gn_to_tx" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_gn_to_tx</code><span class="sig-paren">(</span><em class="sig-param">ordered_5p=False</em>, <em class="sig-param">as_dict_of_dict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_gn_to_tx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dict with genes as keys and the list of their associated transcripts
 as values.</p>
-<p>params ordered_5p: If True, returns transcript list ordered based on their TSS coordinates (5’ to 3’). For ties, values are randomly picked.
-params as_dict_of_dict: If True, returns a dict of dict that maps gene_id to transcript_id and transcript_id to TSS numbering (1 for most 5’, then 2…).</p>
+<p>params ordered_5p: If True, returns transcript list ordered based on their TSS coordinates (5’ to 3’). For ties, transcript name are randomly picked.
+params as_dict_of_dict: If True, returns a dict of dict that maps gene_id to transcript_id and transcript_id to TSS numbering (1 for most 5’, then 2…). For transcripts having the same TSSs, the tss number will be the same.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
 <dd class="field-odd"><p></p></dd>
@@ -741,14 +741,14 @@ params as_dict_of_dict: If True, returns a dict of dict that maps gene_id to tra
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_gname_to_tx">
-<code class="descname">get_gname_to_tx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_gname_to_tx" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_gname_to_tx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_gname_to_tx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dict with gene names as keys and the list of their associated transcripts
 as values.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_intergenic">
-<code class="descname">get_intergenic</code><span class="sig-paren">(</span><em>chrom_file=None</em>, <em>upstream=0</em>, <em>downstream=0</em>, <em>chr_list=None</em>, <em>feature_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_intergenic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_intergenic</code><span class="sig-paren">(</span><em class="sig-param">chrom_file=None</em>, <em class="sig-param">upstream=0</em>, <em class="sig-param">downstream=0</em>, <em class="sig-param">chr_list=None</em>, <em class="sig-param">feature_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_intergenic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a bedtools object containing the intergenic regions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -777,7 +777,7 @@ as values.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_introns">
-<code class="descname">get_introns</code><span class="sig-paren">(</span><em>by_transcript=False</em>, <em>name=('transcript_id'</em>, <em>'gene_id')</em>, <em>sep='|'</em>, <em>intron_nb_in_name=False</em>, <em>feat_name=False</em>, <em>feat_name_last=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_introns" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_introns</code><span class="sig-paren">(</span><em class="sig-param">by_transcript=False</em>, <em class="sig-param">name=('transcript_id'</em>, <em class="sig-param">'gene_id')</em>, <em class="sig-param">sep='|'</em>, <em class="sig-param">intron_nb_in_name=False</em>, <em class="sig-param">feat_name=False</em>, <em class="sig-param">feat_name_last=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_introns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a bedtools object containing the intronic regions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -805,7 +805,7 @@ as values.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_midpoints">
-<code class="descname">get_midpoints</code><span class="sig-paren">(</span><em>name=('transcript_id'</em>, <em>'gene_id')</em>, <em>sep='|'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_midpoints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_midpoints</code><span class="sig-paren">(</span><em class="sig-param">name=('transcript_id'</em>, <em class="sig-param">'gene_id')</em>, <em class="sig-param">sep='|'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_midpoints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a bedtools object containing the midpoints of features.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -829,7 +829,7 @@ as values.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_sequences">
-<code class="descname">get_sequences</code><span class="sig-paren">(</span><em>genome=None</em>, <em>intron=False</em>, <em>rev_comp=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_sequences" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_sequences</code><span class="sig-paren">(</span><em class="sig-param">genome=None</em>, <em class="sig-param">intron=False</em>, <em class="sig-param">rev_comp=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_sequences" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Returns a FASTA object from which various sequences can be retrieved.</p>
 <dl class="field-list simple">
@@ -884,7 +884,7 @@ as values.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_transcript_size">
-<code class="descname">get_transcript_size</code><span class="sig-paren">(</span><em>with_intron=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_transcript_size" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_transcript_size</code><span class="sig-paren">(</span><em class="sig-param">with_intron=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_transcript_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dict with transcript_id as keys and their mature RNA length
 (i.e exon only) of each transcript.</p>
 <dl class="field-list simple">
@@ -908,7 +908,7 @@ as values.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_tss">
-<code class="descname">get_tss</code><span class="sig-paren">(</span><em>name='transcript_id'</em>, <em>sep='|'</em>, <em>as_dict=False</em>, <em>more_name=()</em>, <em>one_based=False</em>, <em>feature_name=None</em>, <em>explicit=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tss" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_tss</code><span class="sig-paren">(</span><em class="sig-param">name='transcript_id'</em>, <em class="sig-param">sep='|'</em>, <em class="sig-param">as_dict=False</em>, <em class="sig-param">more_name=()</em>, <em class="sig-param">one_based=False</em>, <em class="sig-param">feature_name=None</em>, <em class="sig-param">explicit=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Bedtool object containing the TSSs (Bed6 format) or a dict
 (zero-based coordinate).</p>
 <dl class="field-list simple">
@@ -938,7 +938,7 @@ as values.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_tts">
-<code class="descname">get_tts</code><span class="sig-paren">(</span><em>name='transcript_id'</em>, <em>sep='|'</em>, <em>as_dict=False</em>, <em>more_name=()</em>, <em>feature_name=None</em>, <em>explicit=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tts" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_tts</code><span class="sig-paren">(</span><em class="sig-param">name='transcript_id'</em>, <em class="sig-param">sep='|'</em>, <em class="sig-param">as_dict=False</em>, <em class="sig-param">more_name=()</em>, <em class="sig-param">feature_name=None</em>, <em class="sig-param">explicit=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Bedtool object containing the TTSs (Bed6 format) or a dict
 (zero-based coordinate).</p>
 <dl class="field-list simple">
@@ -967,7 +967,7 @@ as values.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_tx_ids">
-<code class="descname">get_tx_ids</code><span class="sig-paren">(</span><em>nr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tx_ids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_tx_ids</code><span class="sig-paren">(</span><em class="sig-param">nr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tx_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all transcript_id from the GTF file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -993,7 +993,7 @@ as values.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_tx_strand">
-<code class="descname">get_tx_strand</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tx_strand" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_tx_strand</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tx_strand" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dict with transcript IDs as keys and strands as values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1014,19 +1014,19 @@ as values.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_tx_to_gn">
-<code class="descname">get_tx_to_gn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tx_to_gn" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_tx_to_gn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tx_to_gn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dict with transcripts IDs as keys and gene IDs as values.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.get_tx_to_gname">
-<code class="descname">get_tx_to_gname</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tx_to_gname" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_tx_to_gname</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tx_to_gname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dict with transcript IDs as keys and gene names as values.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.head">
-<code class="descname">head</code><span class="sig-paren">(</span><em>nb=6</em>, <em>returned=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.head" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">head</code><span class="sig-paren">(</span><em class="sig-param">nb=6</em>, <em class="sig-param">returned=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.head" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print the nb first lines of the GTF object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1040,7 +1040,7 @@ as values.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.is_defined">
-<code class="descname">is_defined</code><span class="sig-paren">(</span><em>key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.is_defined" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_defined</code><span class="sig-paren">(</span><em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.is_defined" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract a numpy array representation of a GTF attribute indicating, for each line, whether the key is defined
 (i.e. exists). In pygtftk, values for undefined keys are ‘?’. So in other words this function tests whether
 each value differs from ‘?’.</p>
@@ -1070,7 +1070,7 @@ each value differs from ‘?’.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.is_set">
-<code class="descname">is_set</code><span class="sig-paren">(</span><em>key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.is_set" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_set</code><span class="sig-paren">(</span><em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.is_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract a numpy array representation of a GTF attribute indicating, for each line, whether the key is set
 (i.e. is defined with value ‘.’). In pygtftk, values for unset keys are ‘.’. So in other words this function
 tests whether each value for the input key are set.</p>
@@ -1095,7 +1095,7 @@ tests whether each value for the input key are set.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.merge_attr">
-<code class="descname">merge_attr</code><span class="sig-paren">(</span><em>feat='*'</em>, <em>keys='gene_id</em>, <em>transcript_id'</em>, <em>new_key='gn_tx_id'</em>, <em>sep='|'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.merge_attr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">merge_attr</code><span class="sig-paren">(</span><em class="sig-param">feat='*'</em>, <em class="sig-param">keys='gene_id</em>, <em class="sig-param">transcript_id'</em>, <em class="sig-param">new_key='gn_tx_id'</em>, <em class="sig-param">sep='|'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.merge_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merge a set of source keys (e.g gene_id and transcript_id) into a destination attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1119,7 +1119,7 @@ tests whether each value for the input key are set.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.message">
-<code class="descname">message</code><span class="sig-paren">(</span><em>msg=''</em>, <em>type='DEBUG'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.message" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">message</code><span class="sig-paren">(</span><em class="sig-param">msg=''</em>, <em class="sig-param">type='INFO'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.message" title="Permalink to this definition">¶</a></dt>
 <dd><p>A processing message whose verbosity is adapted based on pygtftk.utils.VERBOSITY.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pygtftk.utils</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span>  <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">get_example_file</span>
@@ -1138,7 +1138,7 @@ tests whether each value for the input key are set.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.nb_exons">
-<code class="descname">nb_exons</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.nb_exons" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">nb_exons</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.nb_exons" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a dict with transcript as key and number of exon as value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1164,7 +1164,7 @@ tests whether each value for the input key are set.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.nrow">
-<code class="descname">nrow</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.nrow" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">nrow</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.nrow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of lines enclosed in the GTF object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1185,7 +1185,7 @@ tests whether each value for the input key are set.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_5p_transcript">
-<code class="descname">select_5p_transcript</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_5p_transcript" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_5p_transcript</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_5p_transcript" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select the most 5’ transcript of each gene. Note that the genomic
 boundaries for each gene could differ from that displayed by its
 associated transcripts. The gene features may be subsequently deleted
@@ -1204,7 +1204,7 @@ using select_by_key.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_by_key">
-<code class="descname">select_by_key</code><span class="sig-paren">(</span><em>key=None</em>, <em>value=None</em>, <em>invert_match=False</em>, <em>file_with_values=None</em>, <em>no_na=True</em>, <em>col=1</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_key" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_by_key</code><span class="sig-paren">(</span><em class="sig-param">key=None</em>, <em class="sig-param">value=None</em>, <em class="sig-param">invert_match=False</em>, <em class="sig-param">file_with_values=None</em>, <em class="sig-param">no_na=True</em>, <em class="sig-param">col=1</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select lines from a GTF based i) on attributes and values 2) on
 feature type.</p>
 <dl class="field-list simple">
@@ -1240,7 +1240,7 @@ feature type.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_by_loc">
-<code class="descname">select_by_loc</code><span class="sig-paren">(</span><em>chr_str</em>, <em>start_str</em>, <em>end_str</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_loc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_by_loc</code><span class="sig-paren">(</span><em class="sig-param">chr_str</em>, <em class="sig-param">start_str</em>, <em class="sig-param">end_str</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_loc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select lines from a GTF based on genomic location.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1265,7 +1265,7 @@ feature type.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_by_max_exon_nb">
-<code class="descname">select_by_max_exon_nb</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_max_exon_nb" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_by_max_exon_nb</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_max_exon_nb" title="Permalink to this definition">¶</a></dt>
 <dd><p>For each gene select the transcript with the highest number of exons. If ties, select the first encountered.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1287,7 +1287,7 @@ feature type.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_by_number_of_exons">
-<code class="descname">select_by_number_of_exons</code><span class="sig-paren">(</span><em>min=0</em>, <em>max=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_number_of_exons" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_by_number_of_exons</code><span class="sig-paren">(</span><em class="sig-param">min=0</em>, <em class="sig-param">max=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_number_of_exons" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select transcript from a GTF based on the number of exons.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1311,7 +1311,7 @@ feature type.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_by_positions">
-<code class="descname">select_by_positions</code><span class="sig-paren">(</span><em>pos=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_positions" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_by_positions</code><span class="sig-paren">(</span><em class="sig-param">pos=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_positions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select a set of lines by position. Numbering zero-based.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1333,7 +1333,7 @@ feature type.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_by_regexp">
-<code class="descname">select_by_regexp</code><span class="sig-paren">(</span><em>key=None</em>, <em>regexp=None</em>, <em>invert_match=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_regexp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_by_regexp</code><span class="sig-paren">(</span><em class="sig-param">key=None</em>, <em class="sig-param">regexp=None</em>, <em class="sig-param">invert_match=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_regexp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns lines for which key value match a regular expression.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1360,7 +1360,7 @@ feature type.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_by_transcript_size">
-<code class="descname">select_by_transcript_size</code><span class="sig-paren">(</span><em>min=0</em>, <em>max=1000000000</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_transcript_size" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_by_transcript_size</code><span class="sig-paren">(</span><em class="sig-param">min=0</em>, <em class="sig-param">max=1000000000</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_by_transcript_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select ‘mature/spliced transcript by size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1384,7 +1384,7 @@ feature type.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_longuest_transcripts">
-<code class="descname">select_longuest_transcripts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_longuest_transcripts" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_longuest_transcripts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_longuest_transcripts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select the longuest transcript of each gene.
 The “gene” rows are returned in the results. Note that the genomic
 boundaries for each gene could differ from that displayed by its
@@ -1404,7 +1404,7 @@ using select_by_key.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.select_shortest_transcripts">
-<code class="descname">select_shortest_transcripts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_shortest_transcripts" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_shortest_transcripts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.select_shortest_transcripts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select the shortest transcript of each gene. Note that the genomic
 boundaries for each gene could differ from that displayed by its
 associated transcripts. The gene features may be subsequently deleted
@@ -1423,7 +1423,7 @@ using select_by_key.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.tail">
-<code class="descname">tail</code><span class="sig-paren">(</span><em>nb=6</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.tail" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">tail</code><span class="sig-paren">(</span><em class="sig-param">nb=6</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.tail" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print the nb last lines of the GTF object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1434,7 +1434,7 @@ using select_by_key.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.to_bed">
-<code class="descname">to_bed</code><span class="sig-paren">(</span><em>name='gene_id'</em>, <em>sep='|'</em>, <em>add_feature_type=False</em>, <em>more_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.to_bed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">to_bed</code><span class="sig-paren">(</span><em class="sig-param">name='gene_id'</em>, <em class="sig-param">sep='|'</em>, <em class="sig-param">add_feature_type=False</em>, <em class="sig-param">more_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.to_bed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Bedtool object (Bed6 format).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1466,7 +1466,7 @@ using select_by_key.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>output</em>, <em>add_chr=0</em>, <em>gc_off=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">output</em>, <em class="sig-param">add_chr=0</em>, <em class="sig-param">gc_off=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>write the gtf to a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1494,7 +1494,7 @@ using select_by_key.</p>
 
 <dl class="method">
 <dt id="pygtftk.gtf_interface.GTF.write_bed">
-<code class="descname">write_bed</code><span class="sig-paren">(</span><em>outputfile=None</em>, <em>name='gene_id'</em>, <em>sep='|'</em>, <em>add_chr=0</em>, <em>more_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.write_bed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write_bed</code><span class="sig-paren">(</span><em class="sig-param">outputfile=None</em>, <em class="sig-param">name='gene_id'</em>, <em class="sig-param">sep='|'</em>, <em class="sig-param">add_chr=0</em>, <em class="sig-param">more_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.write_bed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a GTF file in BED format. This function uses a direct call to the C interface.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1516,12 +1516,12 @@ using select_by_key.</p>
 <p>Class declaration of the FASTA object (may be returned by GTF object methods).</p>
 <dl class="class">
 <dt id="pygtftk.fasta_interface.FASTA">
-<em class="property">class </em><code class="descclassname">pygtftk.fasta_interface.</code><code class="descname">FASTA</code><span class="sig-paren">(</span><em>fn</em>, <em>ptr</em>, <em>intron</em>, <em>rev_comp</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.fasta_interface.FASTA" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.fasta_interface.</code><code class="sig-name descname">FASTA</code><span class="sig-paren">(</span><em class="sig-param">fn</em>, <em class="sig-param">ptr</em>, <em class="sig-param">intron</em>, <em class="sig-param">rev_comp</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.fasta_interface.FASTA" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class representation of a fasta file connection. A end product
 from a GTF object.</p>
 <dl class="method">
 <dt id="pygtftk.fasta_interface.FASTA.transcript_as_bioseq_records">
-<code class="descname">transcript_as_bioseq_records</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.fasta_interface.FASTA.transcript_as_bioseq_records" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">transcript_as_bioseq_records</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.fasta_interface.FASTA.transcript_as_bioseq_records" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate over transcript sequences with or without intron depending on arguments provided to GTF.get_sequences(). Returns objects of class Bio.SeqRecord.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1543,7 +1543,7 @@ from a GTF object.</p>
 
 <dl class="method">
 <dt id="pygtftk.fasta_interface.FASTA.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>outputfile</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.fasta_interface.FASTA.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">outputfile</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.fasta_interface.FASTA.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the sequences to a fasta file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1576,12 +1576,12 @@ from a GTF object.</p>
 <p>Class declaration of the TAB object (may be returned by a GTF instance).</p>
 <dl class="class">
 <dt id="pygtftk.tab_interface.TAB">
-<em class="property">class </em><code class="descclassname">pygtftk.tab_interface.</code><code class="descname">TAB</code><span class="sig-paren">(</span><em>fn</em>, <em>ptr</em>, <em>dll=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.tab_interface.</code><code class="sig-name descname">TAB</code><span class="sig-paren">(</span><em class="sig-param">fn</em>, <em class="sig-param">ptr</em>, <em class="sig-param">dll=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class representation of a tabulated matrix. An end product
 from a GTF object.</p>
 <dl class="method">
 <dt id="pygtftk.tab_interface.TAB.as_data_frame">
-<code class="descname">as_data_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.as_data_frame" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_data_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.as_data_frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the TAB object into a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1599,7 +1599,7 @@ from a GTF object.</p>
 
 <dl class="method">
 <dt id="pygtftk.tab_interface.TAB.as_simple_list">
-<code class="descname">as_simple_list</code><span class="sig-paren">(</span><em>which_col=0</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.as_simple_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_simple_list</code><span class="sig-paren">(</span><em class="sig-param">which_col=0</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.as_simple_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the selected column of a TAB object into a list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1620,7 +1620,7 @@ from a GTF object.</p>
 
 <dl class="method">
 <dt id="pygtftk.tab_interface.TAB.iter_as_list">
-<code class="descname">iter_as_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.iter_as_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">iter_as_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.iter_as_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate over the TAB object and return a list of self.nb_columns elements.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1638,7 +1638,7 @@ from a GTF object.</p>
 
 <dl class="method">
 <dt id="pygtftk.tab_interface.TAB.iterate_with_header">
-<code class="descname">iterate_with_header</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.iterate_with_header" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">iterate_with_header</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.iterate_with_header" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate over FieldSets. The first line contains the field names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1657,7 +1657,7 @@ from a GTF object.</p>
 
 <dl class="method">
 <dt id="pygtftk.tab_interface.TAB.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>outfile=None</em>, <em>sep='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">outfile=None</em>, <em class="sig-param">sep='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a tab object to a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1696,11 +1696,11 @@ returned respectively:</p>
 </div></blockquote>
 <dl class="class">
 <dt id="pygtftk.Line.FastaSequence">
-<em class="property">class </em><code class="descclassname">pygtftk.Line.</code><code class="descname">FastaSequence</code><span class="sig-paren">(</span><em>ptr=None</em>, <em>alist=None</em>, <em>feat='transcript'</em>, <em>rev_comp=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FastaSequence" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.Line.</code><code class="sig-name descname">FastaSequence</code><span class="sig-paren">(</span><em class="sig-param">ptr=None</em>, <em class="sig-param">alist=None</em>, <em class="sig-param">feat='transcript'</em>, <em class="sig-param">rev_comp=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FastaSequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class representating a fasta file line.</p>
 <dl class="method">
 <dt id="pygtftk.Line.FastaSequence.format">
-<code class="descname">format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FastaSequence.format" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FastaSequence.format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a formated fasta sequence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1716,7 +1716,7 @@ returned respectively:</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.FastaSequence.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>file_out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FastaSequence.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">file_out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FastaSequence.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write FastaSequence to a file or stdout (if file is None).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1738,11 +1738,11 @@ returned respectively:</p>
 
 <dl class="class">
 <dt id="pygtftk.Line.Feature">
-<em class="property">class </em><code class="descclassname">pygtftk.Line.</code><code class="descname">Feature</code><span class="sig-paren">(</span><em>ptr=None</em>, <em>alist=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.Line.</code><code class="sig-name descname">Feature</code><span class="sig-paren">(</span><em class="sig-param">ptr=None</em>, <em class="sig-param">alist=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class representation of a genomic feature. Corresponds to a GTF line.</p>
 <dl class="method">
 <dt id="pygtftk.Line.Feature.add_attr">
-<code class="descname">add_attr</code><span class="sig-paren">(</span><em>key</em>, <em>val</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.add_attr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_attr</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">val</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.add_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an attribute to the Feature instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1758,7 +1758,7 @@ returned respectively:</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.add_attr_and_write">
-<code class="descname">add_attr_and_write</code><span class="sig-paren">(</span><em>key</em>, <em>val</em>, <em>outputfile</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.add_attr_and_write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_attr_and_write</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">val</em>, <em class="sig-param">outputfile</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.add_attr_and_write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a key/attribute record and write to a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1779,7 +1779,7 @@ returned respectively:</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.format">
-<code class="descname">format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.format" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns Feature as a string in gtf file format. Typically
 to write to a gtf file.</p>
 <dl class="field-list simple">
@@ -1796,7 +1796,7 @@ to write to a gtf file.</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.format_tab">
-<code class="descname">format_tab</code><span class="sig-paren">(</span><em>attr_list</em>, <em>sep='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.format_tab" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">format_tab</code><span class="sig-paren">(</span><em class="sig-param">attr_list</em>, <em class="sig-param">sep='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.format_tab" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns Feature as a string in tabulated format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1817,9 +1817,9 @@ to write to a gtf file.</p>
 </div>
 </dd></dl>
 
-<dl class="classmethod">
+<dl class="method">
 <dt id="pygtftk.Line.Feature.from_list">
-<em class="property">classmethod </em><code class="descname">from_list</code><span class="sig-paren">(</span><em>a_list</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.from_list" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_list</code><span class="sig-paren">(</span><em class="sig-param">a_list</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.from_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a Feature object from a list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Params alist</dt>
@@ -1844,7 +1844,7 @@ to write to a gtf file.</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.get_3p_end">
-<code class="descname">get_3p_end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_3p_end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_3p_end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_3p_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the 3’ end of the feature. Returns ‘end’ if on ‘+’ strand ‘start’
 otherwise (one based).</p>
 <dl class="field-list simple">
@@ -1860,7 +1860,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.get_5p_end">
-<code class="descname">get_5p_end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_5p_end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_5p_end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_5p_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the 5’ end of the feature. Returns ‘start’ if on ‘+’ strand ‘end’
 otherwise (one based).</p>
 <dl class="field-list simple">
@@ -1882,7 +1882,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.get_attr_names">
-<code class="descname">get_attr_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_attr_names" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_attr_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_attr_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the attribute names from the Feature.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1898,7 +1898,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.get_attr_value">
-<code class="descname">get_attr_value</code><span class="sig-paren">(</span><em>attr_name</em>, <em>upon_none='continue'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_attr_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_attr_value</code><span class="sig-paren">(</span><em class="sig-param">attr_name</em>, <em class="sig-param">upon_none='continue'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_attr_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the value of a basic or extended attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1923,7 +1923,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.get_gn_id">
-<code class="descname">get_gn_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_gn_id" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_gn_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_gn_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get value for ‘gene_id’ attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1938,7 +1938,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.get_tx_id">
-<code class="descname">get_tx_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_tx_id" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_tx_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.get_tx_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get value for ‘transcript_id’ attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1953,7 +1953,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.set_attr">
-<code class="descname">set_attr</code><span class="sig-paren">(</span><em>key</em>, <em>val</em>, <em>upon_none='continue'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.set_attr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">val</em>, <em class="sig-param">upon_none='continue'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.set_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set an attribute value of the Feature instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1976,7 +1976,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>file_out='-'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">file_out='-'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write Feature to a file or stdout (if file is ‘-‘).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -1996,7 +1996,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.write_bed">
-<code class="descname">write_bed</code><span class="sig-paren">(</span><em>name=None</em>, <em>format='bed6'</em>, <em>outputfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.write_bed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write_bed</code><span class="sig-paren">(</span><em class="sig-param">name=None</em>, <em class="sig-param">format='bed6'</em>, <em class="sig-param">outputfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.write_bed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the Feature instance in bed format (Zero-based).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2026,7 +2026,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.write_bed_3p_end">
-<code class="descname">write_bed_3p_end</code><span class="sig-paren">(</span><em>name=None</em>, <em>format='bed6'</em>, <em>outputfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.write_bed_3p_end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write_bed_3p_end</code><span class="sig-paren">(</span><em class="sig-param">name=None</em>, <em class="sig-param">format='bed6'</em>, <em class="sig-param">outputfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.write_bed_3p_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the 3p end coordinates of feature in bed format (Zero-based).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2057,7 +2057,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.write_bed_5p_end">
-<code class="descname">write_bed_5p_end</code><span class="sig-paren">(</span><em>name=None</em>, <em>format='bed6'</em>, <em>outputfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.write_bed_5p_end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write_bed_5p_end</code><span class="sig-paren">(</span><em class="sig-param">name=None</em>, <em class="sig-param">format='bed6'</em>, <em class="sig-param">outputfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.write_bed_5p_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the 5p end coordinates of feature in bed format (Zero-based).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2088,7 +2088,7 @@ otherwise (one based).</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.Feature.write_gtf_to_bed6">
-<code class="descname">write_gtf_to_bed6</code><span class="sig-paren">(</span><em>name=('transcript_id'</em>, <em>'gene_id')</em>, <em>sep='|'</em>, <em>add_feature_type=False</em>, <em>outputfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.write_gtf_to_bed6" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write_gtf_to_bed6</code><span class="sig-paren">(</span><em class="sig-param">name=('transcript_id'</em>, <em class="sig-param">'gene_id')</em>, <em class="sig-param">sep='|'</em>, <em class="sig-param">add_feature_type=False</em>, <em class="sig-param">outputfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.write_gtf_to_bed6" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the Feature instance in bed format (Zero-based). Select the
 key/values to add as a name.</p>
 <dl class="field-list simple">
@@ -2123,11 +2123,11 @@ key/values to add as a name.</p>
 
 <dl class="class">
 <dt id="pygtftk.Line.FieldSet">
-<em class="property">class </em><code class="descclassname">pygtftk.Line.</code><code class="descname">FieldSet</code><span class="sig-paren">(</span><em>ptr=None</em>, <em>size=None</em>, <em>alist=None</em>, <em>ft_type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FieldSet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.Line.</code><code class="sig-name descname">FieldSet</code><span class="sig-paren">(</span><em class="sig-param">ptr=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">alist=None</em>, <em class="sig-param">ft_type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FieldSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class representating a set of Fields obtained from a splitted line.</p>
 <dl class="method">
 <dt id="pygtftk.Line.FieldSet.format">
-<code class="descname">format</code><span class="sig-paren">(</span><em>separator='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FieldSet.format" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">format</code><span class="sig-paren">(</span><em class="sig-param">separator='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FieldSet.format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a tabulated string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2146,7 +2146,7 @@ key/values to add as a name.</p>
 
 <dl class="method">
 <dt id="pygtftk.Line.FieldSet.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>file_out=None</em>, <em>separator='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FieldSet.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">file_out=None</em>, <em class="sig-param">separator='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FieldSet.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write FieldSet to a file or stdout (if file is None).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2181,7 +2181,7 @@ key/values to add as a name.</p>
 significance overlap of two sets of genomic regions, provided as BED files.</p>
 <dl class="function">
 <dt id="pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch">
-<code class="descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="descname">compute_all_intersections_minibatch</code><span class="sig-paren">(</span><em>Lr1</em>, <em>Li1</em>, <em>Lr2</em>, <em>Li2</em>, <em>all_chrom1</em>, <em>all_chrom2</em>, <em>minibatch_size</em>, <em>use_markov_shuffling</em>, <em>nb_threads</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_all_intersections_minibatch</code><span class="sig-paren">(</span><em class="sig-param">Lr1</em>, <em class="sig-param">Li1</em>, <em class="sig-param">Lr2</em>, <em class="sig-param">Li2</em>, <em class="sig-param">all_chrom1</em>, <em class="sig-param">all_chrom2</em>, <em class="sig-param">minibatch_size</em>, <em class="sig-param">use_markov_shuffling</em>, <em class="sig-param">nb_threads</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main processing function. Computes a minibatch of shuffles for the given parameters.</p>
 <p>This function will be called by the hub function <cite>compute_overlap_stats</cite> to
 create a batch of shuffled “fake” BED files.
@@ -2207,7 +2207,7 @@ lengths, inter-region lengths, and chromosomes for each of the two input files.<
 
 <dl class="function">
 <dt id="pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats">
-<code class="descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="descname">compute_overlap_stats</code><span class="sig-paren">(</span><em>bedA</em>, <em>bedB</em>, <em>chrom_len</em>, <em>minibatch_size</em>, <em>minibatch_nb</em>, <em>bed_excl</em>, <em>use_markov_shuffling</em>, <em>nb_threads</em>, <em>ft_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_overlap_stats</code><span class="sig-paren">(</span><em class="sig-param">bedA</em>, <em class="sig-param">bedB</em>, <em class="sig-param">chrom_len</em>, <em class="sig-param">minibatch_size</em>, <em class="sig-param">minibatch_nb</em>, <em class="sig-param">bed_excl</em>, <em class="sig-param">use_markov_shuffling</em>, <em class="sig-param">nb_threads</em>, <em class="sig-param">ft_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the hub function to compute overlap statistics through Monte Carlo
 shuffling with integration of the inter-region lengths.</p>
 <p>The function will generate shuffled BEDs from bedA and bedB independantly,
@@ -2238,7 +2238,7 @@ regions given in A and B are independant).</p>
 <p>Contains various utility functions relative to the negative binomial distribution.</p>
 <dl class="function">
 <dt id="pygtftk.stats.intersect.negbin_fit.check_negbin_adjustment">
-<code class="descclassname">pygtftk.stats.intersect.negbin_fit.</code><code class="descname">check_negbin_adjustment</code><span class="sig-paren">(</span><em>obs</em>, <em>mean</em>, <em>var</em>, <em>bins_number=16</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.negbin_fit.check_negbin_adjustment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.negbin_fit.</code><code class="sig-name descname">check_negbin_adjustment</code><span class="sig-paren">(</span><em class="sig-param">obs</em>, <em class="sig-param">mean</em>, <em class="sig-param">var</em>, <em class="sig-param">bins_number=16</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.negbin_fit.check_negbin_adjustment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Considers a Negative Binomial distribution of given mean and var, and
 performs an adjustement test of this distrubution with regards to obs.</p>
 <p>Returns the result of a Cramer’s V adjustment test.</p>
@@ -2288,7 +2288,7 @@ fits above 0.9 should be considered good.</p>
 
 <dl class="function">
 <dt id="pygtftk.stats.intersect.negbin_fit.empirical_p_val">
-<code class="descclassname">pygtftk.stats.intersect.negbin_fit.</code><code class="descname">empirical_p_val</code><span class="sig-paren">(</span><em>x</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.negbin_fit.empirical_p_val" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.negbin_fit.</code><code class="sig-name descname">empirical_p_val</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.negbin_fit.empirical_p_val" title="Permalink to this definition">¶</a></dt>
 <dd><p>Quick wrapper : empirical two-sided p value.</p>
 <p>Returns the proportion of elements greater than x or smaller than x in the data, whichever proportion is smaller.
 This can be used with any dataset, not just a negative-binomial-compliant one.</p>
@@ -2296,7 +2296,7 @@ This can be used with any dataset, not just a negative-binomial-compliant one.</
 
 <dl class="function">
 <dt id="pygtftk.stats.intersect.negbin_fit.negbin_pval">
-<code class="descclassname">pygtftk.stats.intersect.negbin_fit.</code><code class="descname">negbin_pval</code><span class="sig-paren">(</span><em>k</em>, <em>mean</em>, <em>var</em>, <em>precision=1500</em>, <em>ft_type='Unknown'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.negbin_fit.negbin_pval" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.negbin_fit.</code><code class="sig-name descname">negbin_pval</code><span class="sig-paren">(</span><em class="sig-param">k</em>, <em class="sig-param">mean</em>, <em class="sig-param">var</em>, <em class="sig-param">precision=1500</em>, <em class="sig-param">ft_type='Unknown'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.negbin_fit.negbin_pval" title="Permalink to this definition">¶</a></dt>
 <dd><p>P-value for a negative binomial distribution of the given moments (mean, var).</p>
 <p>This is the two-sided p-value : it will return the minimum of the left-sided
 and right-sided p-value</p>
@@ -2328,7 +2328,7 @@ or equal to the variance, set the variance to mean + epsilon and send a warning<
 <span id="the-pygtftk-stats-intersect-beta-module"></span><h2>The pygtftk.stats.intersect.beta module<a class="headerlink" href="#module-pygtftk.stats.intersect.beta" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pygtftk.stats.intersect.beta.BetaCalculator">
-<em class="property">class </em><code class="descclassname">pygtftk.stats.intersect.beta.</code><code class="descname">BetaCalculator</code><span class="sig-paren">(</span><em>precision=1500</em>, <em>use_log=True</em>, <em>itermax=100000</em>, <em>ft_type='Unknown'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.beta.</code><code class="sig-name descname">BetaCalculator</code><span class="sig-paren">(</span><em class="sig-param">precision=1500</em>, <em class="sig-param">use_log=True</em>, <em class="sig-param">itermax=100000</em>, <em class="sig-param">ft_type='Unknown'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computing the beta distribution in Python using mpmath.</p>
 <p>Using routines from the GNU Scientific Library (<cite>beta_inc.c</cite>):
 &lt;Copyright (C) 2007 Brian Gough and  Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman&gt;</p>
@@ -2352,19 +2352,19 @@ mpmath.quad(lambdat: t**(A-1)*(1-t)**(B-1), [0, p])</p>
 </div>
 <dl class="method">
 <dt id="pygtftk.stats.intersect.beta.BetaCalculator.beta">
-<code class="descname">beta</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.beta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">beta</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.beta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uses either mpmath’s gamma or log-gamma function to compute values of the beta function.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pygtftk.stats.intersect.beta.BetaCalculator.betainc">
-<code class="descname">betainc</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.betainc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">betainc</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.betainc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Non-regularized incomplete beta. See betaincreg().</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pygtftk.stats.intersect.beta.BetaCalculator.betaincreg">
-<code class="descname">betaincreg</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.betaincreg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">betaincreg</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.betaincreg" title="Permalink to this definition">¶</a></dt>
 <dd><p>betaincreg(a,b,x) evaluates the incomplete beta function (regularized).
 It requires a, b &gt; 0 and 0 &lt;= x &lt;= 1.</p>
 <p>Code translated from: GNU Scientific Library</p>
@@ -2372,7 +2372,7 @@ It requires a, b &gt; 0 and 0 &lt;= x &lt;= 1.</p>
 
 <dl class="method">
 <dt id="pygtftk.stats.intersect.beta.BetaCalculator.contfractbeta">
-<code class="descname">contfractbeta</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.contfractbeta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">contfractbeta</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.contfractbeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the continued fraction form of the incomplete Beta function.</p>
 <p>Code translated from: GNU Scientific Library</p>
 <p>Uses the modified Lentz’s method.</p>
@@ -2386,17 +2386,17 @@ It requires a, b &gt; 0 and 0 &lt;= x &lt;= 1.</p>
 <p>A set of useful functions.</p>
 <dl class="exception">
 <dt id="pygtftk.utils.GTFtkError">
-<em class="property">exception </em><code class="descclassname">pygtftk.utils.</code><code class="descname">GTFtkError</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.GTFtkError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">GTFtkError</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.GTFtkError" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="exception">
 <dt id="pygtftk.utils.GTFtkInteractiveError">
-<em class="property">exception </em><code class="descclassname">pygtftk.utils.</code><code class="descname">GTFtkInteractiveError</code><a class="headerlink" href="#pygtftk.utils.GTFtkInteractiveError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">GTFtkInteractiveError</code><a class="headerlink" href="#pygtftk.utils.GTFtkInteractiveError" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="pygtftk.utils.add_prefix_to_file">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">add_prefix_to_file</code><span class="sig-paren">(</span><em>infile</em>, <em>prefix=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.add_prefix_to_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">add_prefix_to_file</code><span class="sig-paren">(</span><em class="sig-param">infile</em>, <em class="sig-param">prefix=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.add_prefix_to_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a file object or path (as string) in which the
 base name is prefixed with ‘prefix’. Returns a file object (write mode)
 or path depending on input type.</p>
@@ -2419,7 +2419,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.check_boolean_exprs">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">check_boolean_exprs</code><span class="sig-paren">(</span><em>exprs=None</em>, <em>operand=()</em>, <em>send_error=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.check_boolean_exprs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">check_boolean_exprs</code><span class="sig-paren">(</span><em class="sig-param">exprs=None</em>, <em class="sig-param">operand=()</em>, <em class="sig-param">send_error=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.check_boolean_exprs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check whether a boolean expression is properly formed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2443,7 +2443,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.check_file_or_dir_exists">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">check_file_or_dir_exists</code><span class="sig-paren">(</span><em>file_or_dir=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.check_file_or_dir_exists" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">check_file_or_dir_exists</code><span class="sig-paren">(</span><em class="sig-param">file_or_dir=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.check_file_or_dir_exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a file/directory or a list of files/directories exist. Raise error if a file is not found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2462,7 +2462,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.check_r_installed">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">check_r_installed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.check_r_installed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">check_r_installed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.check_r_installed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check R is installed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -2476,7 +2476,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.check_r_packages">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">check_r_packages</code><span class="sig-paren">(</span><em>r_pkg_list=None</em>, <em>no_error=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.check_r_packages" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">check_r_packages</code><span class="sig-paren">(</span><em class="sig-param">r_pkg_list=None</em>, <em class="sig-param">no_error=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.check_r_packages" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return True if R packages are installed. Return False otherwise.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2495,7 +2495,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.chomp">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">chomp</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.chomp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">chomp</code><span class="sig-paren">(</span><em class="sig-param">string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.chomp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete carriage return and line feed from end of string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -2510,7 +2510,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.chrom_info_as_dict">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">chrom_info_as_dict</code><span class="sig-paren">(</span><em>chrom_info_file</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.chrom_info_as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">chrom_info_as_dict</code><span class="sig-paren">(</span><em class="sig-param">chrom_info_file</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.chrom_info_as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check the format of the chromosome info file and return a dict.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2531,7 +2531,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.chrom_info_to_bed_file">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">chrom_info_to_bed_file</code><span class="sig-paren">(</span><em>chrom_file</em>, <em>chr_list=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.chrom_info_to_bed_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">chrom_info_to_bed_file</code><span class="sig-paren">(</span><em class="sig-param">chrom_file</em>, <em class="sig-param">chr_list=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.chrom_info_to_bed_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a bed file (file object) from a chrom info file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2562,7 +2562,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.close_properly">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">close_properly</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.close_properly" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">close_properly</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.close_properly" title="Permalink to this definition">¶</a></dt>
 <dd><p>Close a set of file if they are not None.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -2575,7 +2575,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.flatten_list">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">flatten_list</code><span class="sig-paren">(</span><em>x</em>, <em>outlist=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.flatten_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">flatten_list</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">outlist=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.flatten_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flatten a list of lists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2602,7 +2602,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.flatten_list_recur">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">flatten_list_recur</code><span class="sig-paren">(</span><em>a_list</em>, <em>sep=' '</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.flatten_list_recur" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">flatten_list_recur</code><span class="sig-paren">(</span><em class="sig-param">a_list</em>, <em class="sig-param">sep=' '</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.flatten_list_recur" title="Permalink to this definition">¶</a></dt>
 <dd><p>Join a list of list.
 :param a_list: a list.
 :param sep: the separator.</p>
@@ -2610,7 +2610,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.get_example_feature">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">get_example_feature</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.get_example_feature" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">get_example_feature</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.get_example_feature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an example Feature (i.e GTF line).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -2624,7 +2624,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.get_example_file">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">get_example_file</code><span class="sig-paren">(</span><em>datasetname='simple'</em>, <em>ext='gtf'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.get_example_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">get_example_file</code><span class="sig-paren">(</span><em class="sig-param">datasetname='simple'</em>, <em class="sig-param">ext='gtf'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.get_example_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the path to a gtf file example located in pygtftk library path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2649,7 +2649,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.head_file">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">head_file</code><span class="sig-paren">(</span><em>afile=None</em>, <em>nb_line=6</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.head_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">head_file</code><span class="sig-paren">(</span><em class="sig-param">afile=None</em>, <em class="sig-param">nb_line=6</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.head_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display the first lines of a file (debug).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2671,7 +2671,7 @@ or path depending on input type.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.intervals">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">intervals</code><span class="sig-paren">(</span><em>l</em>, <em>n</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.intervals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">intervals</code><span class="sig-paren">(</span><em class="sig-param">l</em>, <em class="sig-param">n</em>, <em class="sig-param">silent=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.intervals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of tuple that correspond to n ~ equally spaced intervals
 between 0 and l. Note that n must be lower than len(l).</p>
 <dl class="field-list simple">
@@ -2695,7 +2695,7 @@ between 0 and l. Note that n must be lower than len(l).</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.is_comment">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">is_comment</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.is_comment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">is_comment</code><span class="sig-paren">(</span><em class="sig-param">string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.is_comment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check wether a string is a comment (starts with #…).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2712,7 +2712,7 @@ between 0 and l. Note that n must be lower than len(l).</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.is_empty">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">is_empty</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.is_empty" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">is_empty</code><span class="sig-paren">(</span><em class="sig-param">string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.is_empty" title="Permalink to this definition">¶</a></dt>
 <dd><p>Is the string empty.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2729,7 +2729,7 @@ between 0 and l. Note that n must be lower than len(l).</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.is_exon">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">is_exon</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.is_exon" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">is_exon</code><span class="sig-paren">(</span><em class="sig-param">string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.is_exon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Does the string contains ‘exon’ preceded or not by spaces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2746,7 +2746,7 @@ between 0 and l. Note that n must be lower than len(l).</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.is_fasta_header">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">is_fasta_header</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.is_fasta_header" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">is_fasta_header</code><span class="sig-paren">(</span><em class="sig-param">string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.is_fasta_header" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the line is a fasta header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2763,7 +2763,7 @@ between 0 and l. Note that n must be lower than len(l).</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.make_outdir_and_file">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">make_outdir_and_file</code><span class="sig-paren">(</span><em>out_dir=None</em>, <em>alist=None</em>, <em>force=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.make_outdir_and_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">make_outdir_and_file</code><span class="sig-paren">(</span><em class="sig-param">out_dir=None</em>, <em class="sig-param">alist=None</em>, <em class="sig-param">force=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.make_outdir_and_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create output directory and a set of associated files (alist).
 Return a list of file handler (write mode) for the requested files.</p>
 <dl class="field-list simple">
@@ -2784,7 +2784,7 @@ Return a list of file handler (write mode) for the requested files.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.make_tmp_dir">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">make_tmp_dir</code><span class="sig-paren">(</span><em>prefix='tmp'</em>, <em>store=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.make_tmp_dir" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">make_tmp_dir</code><span class="sig-paren">(</span><em class="sig-param">prefix='tmp'</em>, <em class="sig-param">store=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.make_tmp_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function should be call to create a temporary file as all files
 declared in TMP_FILE_LIST will be remove upon command exit.</p>
 <dl class="field-list simple">
@@ -2810,7 +2810,7 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.make_tmp_file">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">make_tmp_file</code><span class="sig-paren">(</span><em>prefix='tmp'</em>, <em>suffix=''</em>, <em>store=True</em>, <em>dir=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.make_tmp_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">make_tmp_file</code><span class="sig-paren">(</span><em class="sig-param">prefix='tmp'</em>, <em class="sig-param">suffix=''</em>, <em class="sig-param">store=True</em>, <em class="sig-param">dir=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.make_tmp_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function should be call to create a temporary file as all files
 declared in TMP_FILE_LIST will be remove upon command exit.</p>
 <dl class="field-list simple">
@@ -2838,7 +2838,7 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.median_comp">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">median_comp</code><span class="sig-paren">(</span><em>alist</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.median_comp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">median_comp</code><span class="sig-paren">(</span><em class="sig-param">alist</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.median_comp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the median from a list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2858,7 +2858,7 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.message">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">message</code><span class="sig-paren">(</span><em>msg</em>, <em>nl=True</em>, <em>type='INFO'</em>, <em>force=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.message" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">message</code><span class="sig-paren">(</span><em class="sig-param">msg</em>, <em class="sig-param">nl=True</em>, <em class="sig-param">type='INFO'</em>, <em class="sig-param">force=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a formated message on STDERR.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2877,7 +2877,7 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.mkdir_p">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">mkdir_p</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.mkdir_p" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">mkdir_p</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.mkdir_p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a directory silently if already exists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
@@ -2893,19 +2893,19 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.nested_dict">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">nested_dict</code><span class="sig-paren">(</span><em>n</em>, <em>type</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.nested_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">nested_dict</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">type</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.nested_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>“<a class="reference external" href="http://stackoverflow.com/questions/29348345">http://stackoverflow.com/questions/29348345</a></p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pygtftk.utils.random_string">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">random_string</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.random_string" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">random_string</code><span class="sig-paren">(</span><em class="sig-param">n</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.random_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a random string (alpha numeric) of length n.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pygtftk.utils.silentremove">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">silentremove</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.silentremove" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">silentremove</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.silentremove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove silently (without error and warning) a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2924,7 +2924,7 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.simple_line_count">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">simple_line_count</code><span class="sig-paren">(</span><em>afile</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.simple_line_count" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">simple_line_count</code><span class="sig-paren">(</span><em class="sig-param">afile</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.simple_line_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count the number of lines in a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2944,7 +2944,7 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.simple_nb_column">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">simple_nb_column</code><span class="sig-paren">(</span><em>afile</em>, <em>separator='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.simple_nb_column" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">simple_nb_column</code><span class="sig-paren">(</span><em class="sig-param">afile</em>, <em class="sig-param">separator='\t'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.simple_nb_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count the maximum number of columns in a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2967,7 +2967,7 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.sort_2_lists">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">sort_2_lists</code><span class="sig-paren">(</span><em>list1</em>, <em>list2</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.sort_2_lists" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">sort_2_lists</code><span class="sig-paren">(</span><em class="sig-param">list1</em>, <em class="sig-param">list2</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.sort_2_lists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sort list1 in increasing order and list2 occordingly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2990,7 +2990,7 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.tab_line">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">tab_line</code><span class="sig-paren">(</span><em>token=None</em>, <em>newline=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.tab_line" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">tab_line</code><span class="sig-paren">(</span><em class="sig-param">token=None</em>, <em class="sig-param">newline=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.tab_line" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a tabulated string from an input list with an optional
 newline</p>
 <dl class="field-list simple">
@@ -3012,7 +3012,7 @@ newline</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.to_alphanum">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">to_alphanum</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.to_alphanum" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">to_alphanum</code><span class="sig-paren">(</span><em class="sig-param">string</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.to_alphanum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new string in which non alphanumeric character have been replaced by ‘_’. If non alphanumeric characters
 are found at the beginning or end of the string, they are deleted.</p>
 <dl class="field-list simple">
@@ -3029,13 +3029,13 @@ are found at the beginning or end of the string, they are deleted.</p>
 
 <dl class="function">
 <dt id="pygtftk.utils.to_list">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">to_list</code><span class="sig-paren">(</span><em>obj</em>, <em>split_char=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.to_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">to_list</code><span class="sig-paren">(</span><em class="sig-param">obj</em>, <em class="sig-param">split_char=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.to_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a None, str, tuple to list. May also split if required.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pygtftk.utils.write_properly">
-<code class="descclassname">pygtftk.utils.</code><code class="descname">write_properly</code><span class="sig-paren">(</span><em>a_string</em>, <em>afile</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.write_properly" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">write_properly</code><span class="sig-paren">(</span><em class="sig-param">a_string</em>, <em class="sig-param">afile</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.write_properly" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a string to a file. If file is None, write string to stdout.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3088,10 +3088,10 @@ are found at the beginning or end of the string, they are deleted.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -3116,13 +3116,13 @@ are found at the beginning or end of the string, they are deleted.</p>
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 25, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Last updated on Aug 01, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.1.
     </div>
   </body>
 </html>
