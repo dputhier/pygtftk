@@ -1186,7 +1186,7 @@ else:
         #ologram: proper number of shuffled intersections
         @test "ologram_3" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 2`
-          [ "$result" = "14.77" ]
+          [ "$result" = "14.97" ]
         }
 
         #ologram: overlapping bp
@@ -1198,19 +1198,19 @@ else:
         #ologram: shuffled overlapping bp
         @test "ologram_5" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
-          [ "$result" = "65.98" ]
+          [ "$result" = "61.35" ]
         }
 
         #ologram: shuffled overlapping bp variance
         @test "ologram_6" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 9`
-          [ "$result" = "18.54" ]
+          [ "$result" = "32.94" ]
         }
 
         #ologram: shuffled overlapping bp fitting
         @test "ologram_7" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10`
-          [ "$result" = "0.70573" ]
+          [ "$result" = "0.8227700000000001" ]
         }
         '''
 
