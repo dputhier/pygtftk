@@ -127,11 +127,15 @@ __notes__ = """
  the excluded regions, but the same ones will be excluded from the peak_file and the GTF.
  Try using an exclusion file that is as small (around a thousand elements) as possible.
 
+ -- NB/TODO: Current multithreading needs to be optimized. We recommend using the current version with a single core.
+ 
  -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
  for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
  This is not recommended in the general case and can be *very* time-consuming (hours).
 
  -- ALPHA : support for multiple overlaps is in progress (within or between sets). The backend supports it but no statistics are made on it yet.
+ 
+ 
  """
 
 
