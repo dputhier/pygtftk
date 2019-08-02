@@ -15,7 +15,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Help on gtftk Unix commands &#8212; gtftk 1.0.7 documentation</title>
+    <title>Help on gtftk Unix commands &#8212; gtftk 1.0.9 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="installation.html" title="Installing pygtftk/gtftk"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,13 +67,12 @@
 
   Example:
 
-  gtftk get_example -f chromInfo -o simple.chromInfo ; 
+  gtftk get_example -f chromInfo -o simple.chromInfo ;
   gtftk get_example  | gtftk feature_size -t mature_rna | gtftk nb_exons |\
   gtftk intron_sizes | gtftk exon_sizes | gtftk convergent -u 24 -d 24  -c simple.chromInfo | \
   gtftk divergent -u 101 -d 10  -c simple.chromInfo  | \
   gtftk overlapping -u 0 -d 0 -t transcript -c simple.chromInfo -a |  \
   gtftk select_by_key -k feature -v transcript |   gtftk tabulate -k &quot;*&quot; -b -x
-  
 
   Type &#39;gtftk sub-command -h&#39; for more information.
 
@@ -138,7 +137,6 @@ Available sub-commands/plugins:
 ------ conversion ------
 
    bed_to_gtf                 Convert a bed file to a gtf but with lots of empty fields...
-   bigwig_to_bed              Convert a bigwig to a BED3 format.
    convert                    Convert a GTF to various format including bed.
    convert_ensembl            Convert the GTF file to ensembl format. Essentially add &#39;transcript&#39;/&#39;gene&#39; features.
    tabulate                   Convert a GTF to tabulated format.
@@ -150,8 +148,13 @@ Available sub-commands/plugins:
    divergent                  Find transcripts with divergent promoters.
    exon_sizes                 Add a new key to transcript features containing a comma-separated list of exon sizes.
    intron_sizes               Add a new key to transcript features containing a comma-separated list of intron sizes.
-   ologram                    Statistics on bed file intersections with genomic features.
    overlapping                Find (non)overlapping transcripts.
+   tss_numbering              Add the tss number to each transcript (5&#39;-&gt;3&#39;).
+  
+------ ologram ------
+
+   merge_ologram_stats        Build a heatmap from several ologram output files (tsv).
+   ologram                    Statistics on bed file intersections with genomic features.
   
 ------- sequence -------
 
@@ -175,8 +178,11 @@ Available sub-commands/plugins:
   
 ----- miscellaneous ----
 
+   bigwig_to_bed              Convert a bigwig to a BED3 format.
    col_from_tab               Select columns from a tabulated file based on their names.
    control_list               Returns a list of gene matched for expression based on reference values.
+   get_ceas_records           Convert a CEAS sqlite file back into a GTF.
+   great_reg_domains          Attempt to compute labeled regions using GREAT &#39;association rule&#39;
 
 ------------------------
 </pre></div>
@@ -258,10 +264,10 @@ gtftk -b &gt;&gt; ~/.bashrc
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -286,13 +292,13 @@ gtftk -b &gt;&gt; ~/.bashrc
         <li class="right" >
           <a href="installation.html" title="Installing pygtftk/gtftk"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 25, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Last updated on Aug 01, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.1.
     </div>
   </body>
 </html>

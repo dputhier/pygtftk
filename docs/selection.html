@@ -15,7 +15,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘selection’ &#8212; gtftk 1.0.7 documentation</title>
+    <title>Commands from section ‘selection’ &#8212; gtftk 1.0.9 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="editing.html" title="Commands from section ‘Editing’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -68,11 +68,74 @@
 <div class="section" id="select-by-key">
 <h2>select_by_key<a class="headerlink" href="#select-by-key" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Extract lines from the gtf based on key and values.</p>
-<p><strong>Example:</strong> Select some features (genes) then some gene_id.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k feature -v gene | gtftk select_by_key -k gene_id -v G0002,G0003,G0004
+<p><strong>Example:</strong> Select some gene_id.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k gene_id -v G0002,G0003,G0004
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
+chr1	gtftk	transcript	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;;
+chr1	gtftk	exon	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;; exon_id &quot;G0002T001E001&quot;;
+chr1	gtftk	CDS	180	182	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;; ccds_id &quot;CDS_G0002T001&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;;
+chr1	gtftk	transcript	50	61	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;;
+chr1	gtftk	exon	50	54	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;; exon_id &quot;G0003T001E001&quot;;
+chr1	gtftk	exon	57	61	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;; exon_id &quot;G0003T001E002&quot;;
+chr1	gtftk	CDS	50	52	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;; ccds_id &quot;CDS_G0003T001&quot;;
 chr1	gtftk	gene	65	76	.	+	.	gene_id &quot;G0004&quot;;
+chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;;
+chr1	gtftk	exon	65	68	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; exon_id &quot;G0004T002E001&quot;;
+chr1	gtftk	exon	71	71	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; exon_id &quot;G0004T002E002&quot;;
+chr1	gtftk	exon	74	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; exon_id &quot;G0004T002E003&quot;;
+chr1	gtftk	CDS	66	68	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; ccds_id &quot;CDS_G0004T002&quot;;
+chr1	gtftk	CDS	71	71	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; ccds_id &quot;CDS_G0004T002&quot;;
+chr1	gtftk	CDS	74	75	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; ccds_id &quot;CDS_G0004T002&quot;;
+chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;;
+chr1	gtftk	exon	65	68	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;; exon_id &quot;G0004T001E001&quot;;
+chr1	gtftk	exon	71	71	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;; exon_id &quot;G0004T001E002&quot;;
+chr1	gtftk	exon	74	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;; exon_id &quot;G0004T001E003&quot;;
+chr1	gtftk	CDS	65	67	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;; ccds_id &quot;CDS_G0004T001&quot;;
+</pre></div>
+</div>
+<p><strong>Example:</strong> Select using basic attributes (chrom, source, feature…). Note that seqid, seqname and chrom are synonymous.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k feature -v transcript,exon | gtftk select_by_key -k seqname -v chr1
+chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;;
+chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;; exon_id &quot;G0001T002E001&quot;;
+chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T001&quot;;
+chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T001&quot;; exon_id &quot;G0001T001E001&quot;;
+chr1	gtftk	transcript	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;;
+chr1	gtftk	exon	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;; exon_id &quot;G0002T001E001&quot;;
+chr1	gtftk	transcript	50	61	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;;
+chr1	gtftk	exon	50	54	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;; exon_id &quot;G0003T001E001&quot;;
+chr1	gtftk	exon	57	61	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;; exon_id &quot;G0003T001E002&quot;;
+chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;;
+chr1	gtftk	exon	65	68	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; exon_id &quot;G0004T002E001&quot;;
+chr1	gtftk	exon	71	71	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; exon_id &quot;G0004T002E002&quot;;
+chr1	gtftk	exon	74	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; exon_id &quot;G0004T002E003&quot;;
+chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;;
+chr1	gtftk	exon	65	68	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;; exon_id &quot;G0004T001E001&quot;;
+chr1	gtftk	exon	71	71	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;; exon_id &quot;G0004T001E002&quot;;
+chr1	gtftk	exon	74	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;; exon_id &quot;G0004T001E003&quot;;
+chr1	gtftk	transcript	33	47	.	-	.	gene_id &quot;G0005&quot;; transcript_id &quot;G0005T001&quot;;
+chr1	gtftk	exon	33	35	.	-	.	gene_id &quot;G0005&quot;; transcript_id &quot;G0005T001&quot;; exon_id &quot;G0005T001E001&quot;;
+chr1	gtftk	exon	42	47	.	-	.	gene_id &quot;G0005&quot;; transcript_id &quot;G0005T001&quot;; exon_id &quot;G0005T001E002&quot;;
+chr1	gtftk	transcript	22	35	.	-	.	gene_id &quot;G0006&quot;; transcript_id &quot;G0006T001&quot;;
+chr1	gtftk	exon	22	25	.	-	.	gene_id &quot;G0006&quot;; transcript_id &quot;G0006T001&quot;; exon_id &quot;G0006T001E001&quot;;
+chr1	gtftk	exon	28	30	.	-	.	gene_id &quot;G0006&quot;; transcript_id &quot;G0006T001&quot;; exon_id &quot;G0006T001E002&quot;;
+chr1	gtftk	exon	33	35	.	-	.	gene_id &quot;G0006&quot;; transcript_id &quot;G0006T001&quot;; exon_id &quot;G0006T001E003&quot;;
+chr1	gtftk	transcript	28	35	.	-	.	gene_id &quot;G0006&quot;; transcript_id &quot;G0006T002&quot;;
+chr1	gtftk	exon	28	30	.	-	.	gene_id &quot;G0006&quot;; transcript_id &quot;G0006T002&quot;; exon_id &quot;G0006T002E001&quot;;
+chr1	gtftk	exon	33	35	.	-	.	gene_id &quot;G0006&quot;; transcript_id &quot;G0006T002&quot;; exon_id &quot;G0006T002E002&quot;;
+chr1	gtftk	transcript	107	116	.	+	.	gene_id &quot;G0007&quot;; transcript_id &quot;G0007T001&quot;;
+chr1	gtftk	exon	107	116	.	+	.	gene_id &quot;G0007&quot;; transcript_id &quot;G0007T001&quot;; exon_id &quot;G0007T001E001&quot;;
+chr1	gtftk	transcript	107	116	.	+	.	gene_id &quot;G0007&quot;; transcript_id &quot;G0007T002&quot;;
+chr1	gtftk	exon	107	116	.	+	.	gene_id &quot;G0007&quot;; transcript_id &quot;G0007T002&quot;; exon_id &quot;G0007T002E001&quot;;
+chr1	gtftk	transcript	210	222	.	-	.	gene_id &quot;G0008&quot;; transcript_id &quot;G0008T001&quot;;
+chr1	gtftk	exon	210	214	.	-	.	gene_id &quot;G0008&quot;; transcript_id &quot;G0008T001&quot;; exon_id &quot;G0008T001E001&quot;;
+chr1	gtftk	exon	220	222	.	-	.	gene_id &quot;G0008&quot;; transcript_id &quot;G0008T001&quot;; exon_id &quot;G0008T001E002&quot;;
+chr1	gtftk	transcript	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T002&quot;;
+chr1	gtftk	exon	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T002&quot;; exon_id &quot;G0009T002E001&quot;;
+chr1	gtftk	transcript	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T001&quot;;
+chr1	gtftk	exon	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T001&quot;; exon_id &quot;G0009T001E001&quot;;
+chr1	gtftk	transcript	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &quot;G0010T001&quot;;
+chr1	gtftk	exon	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &quot;G0010T001&quot;; exon_id &quot;G0010T001E001&quot;;
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
@@ -98,7 +161,7 @@ Arguments:
  -o, --outputfile             Output file. (default: &lt;stdout&gt;)
  -k, --key                    The key name. (default: None)
  -c, --col                    The column number (one-based) that contains the values in the file. File is tab-delimited. (default: 1)
- -n, --invert-match           Not/invert match. Selected lines whose requested key is not associated with the requested value. (default: False)
+ -n, --invert-match           Not/invert match. Select lines whose selected key is not associated with the selected values. (default: False)
  -b, --bed-format             Ask for bed format output. (default: False)
  -m, --names                  If Bed output. The key(s) that should be used as name. (default: gene_id,transcript_id)
  -s, --separator              If Bed output. The separator to be used for separating name elements (see -n). (default: |)
@@ -383,7 +446,7 @@ Command-wise optional arguments:
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_list -n 3 -i simple.gtf | gtftk count
 transcript	3
 exon	6
-CDS	3
+CDS	5
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
@@ -428,7 +491,7 @@ G0003	G0003T001
 G0004	G0004T001
 G0005	G0005T001
 G0006	G0006T002
-G0007	G0007T001
+G0007	G0007T002
 G0008	G0008T001
 G0009	G0009T002
 G0010	G0010T001
@@ -725,10 +788,10 @@ Command-wise optional arguments:
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -753,13 +816,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="editing.html" title="Commands from section ‘Editing’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 25, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Last updated on Aug 01, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.1.
     </div>
   </body>
 </html>

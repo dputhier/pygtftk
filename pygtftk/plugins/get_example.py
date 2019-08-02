@@ -47,7 +47,9 @@ def make_parser():
                                 "simple_06",
                                 "mini_real_10M",
                                 "control_list",
-                                "ologram_1"],
+                                "ologram_1",
+                                "ologram_1",
+                                "mini_real_ens"],
                             default="simple",
                             required=False)
 

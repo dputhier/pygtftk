@@ -19,10 +19,16 @@ select_by_key
 **Description:** Extract lines from the gtf based on key and values.
 
 
-**Example:** Select some features (genes) then some gene_id.
+**Example:** Select some gene_id.
 
-.. command-output:: gtftk select_by_key -i simple.gtf -k feature -v gene | gtftk select_by_key -k gene_id -v G0002,G0003,G0004
+.. command-output:: gtftk select_by_key -i simple.gtf -k gene_id -v G0002,G0003,G0004
 	:shell:
+
+**Example:** Select using basic attributes (chrom, source, feature...). Note that seqid, seqname and chrom are synonymous.
+
+.. command-output:: gtftk select_by_key -i simple.gtf -k feature -v transcript,exon | gtftk select_by_key -k seqname -v chr1
+	:shell:
+
 
 
 **Arguments:**
