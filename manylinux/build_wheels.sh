@@ -4,6 +4,7 @@ set -e
 
 # Install a system package required by our library
 yum install zlib-devel -y
+yum install bzip2-devel -y
 
 # Compile wheels
 for PYBIN in $(ls --color=none -d1 /opt/python/*/bin| grep -P "(35)|(36)"); do
