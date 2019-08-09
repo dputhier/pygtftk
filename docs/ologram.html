@@ -98,18 +98,7 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
  |-- 16:12-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
  |-- 16:13-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (stop_codon)
  |-- 16:13-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (Intergenic)
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/utils.py:54: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
   if cbook.iterable(val) and not is_string(val):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <br>
@@ -124,18 +113,7 @@ The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.
 <br>
 <br><p><strong>Example:</strong> Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/utils.py:54: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
   if cbook.iterable(val) and not is_string(val):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <br>
@@ -155,18 +133,7 @@ The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.
 <p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
  |-- 16:16-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/utils.py:54: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
   if cbook.iterable(val) and not is_string(val):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <br>
@@ -182,18 +149,7 @@ The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
  |-- 16:18-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/utils.py:54: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
   if cbook.iterable(val) and not is_string(val):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <br>
@@ -314,12 +270,6 @@ Command-wise optional arguments:
 <p>Several tsv files resulting from OLOGRAM analyses can be merged into a single diagram report using the merge_ologram_stats.</p>
 <p><strong>Example:</strong> For this example will will used the results obtained for 3 epigenetic marks on human chromosome 1.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk merge_ologram_stats H3K4me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv H3K36me3_ologram_stats.tsv -l H3K4me3,H3K79me2,H3K36me3  -o merge_ologram_stats_01.pdf
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <br>
