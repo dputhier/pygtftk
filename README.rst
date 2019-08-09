@@ -1,6 +1,6 @@
 =================         =================
 Pip package               |Pippackage|_
-Bioconda package             |bioconda|_
+Bioconda package          |bioconda|_
 License                   |license|_
 Platforms                 |platform|_
 Languages                 |lang|_
@@ -15,6 +15,7 @@ Issues                    |issues|_
 Citing                    |citing|_
 Documentation             |documentation|_
 =================         =================
+
 
 .. |codacy| image:: https://api.codacy.com/project/badge/Grade/0a977718b4d44992a794cf5ddef7822e
 .. _codacy: https://www.codacy.com/app/dputhier/pygtftk?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dputhier/pygtftk&amp;utm_campaign=Badge_Grade
@@ -81,7 +82,7 @@ The newly released command, **OLOGRAM (OverLap Of Genomic Regions Analysis using
 
 The gtftk set of Unix commands can be easily extended using a basic plugin architecture.
 
-All these aspects are covered in the help sections ; please see the `documentation<https://dputhier.github.io/pygtftk/>`_.
+All these aspects are covered in the help sections ; please see the `documentation <https://dputhier.github.io/pygtftk/>`_.
 
 While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still in active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the GitHub repository.
 
