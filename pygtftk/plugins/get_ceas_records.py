@@ -53,7 +53,7 @@ def get_ceas_records(
         show_tables=False,
         target_table='GeneTable'):
     """
-    Convert a CEAS sqlite file back into a GTF.
+    Convert a CEAS sqlite file back into a flat file.
     """
 
     # ----------------------------------------------------------------------
@@ -143,7 +143,7 @@ else:
     """
 
     CMD = CmdObject(name="get_ceas_records",
-                    message="Convert a CEAS sqlite file back into a GTF.",
+                    message="Convert a CEAS sqlite file back into a flat file.",
                     parser=make_parser(),
                     fun=os.path.abspath(__file__),
                     updated=__updated__,
