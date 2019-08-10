@@ -213,39 +213,18 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 <p>A simple overlayed profile of all epigenetic marks around promoter. Here <em>—group-by</em> is, by default set to <em>bwig</em> and <em>—facet-var</em> is set to None. Thus a single plot with several lines corresponding to bwig coverage is obtained.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if  example_01.png
  |-- 16:09-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_01.png"><img alt="_images/example_01.png" src="_images/example_01.png" style="width: 75%;" /></a>
 <p>Changing colors and applying color order can be done using the following syntax:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -c &#39;red,blue,violet&#39; -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if  example_01b.png
  |-- 16:09-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_01b.png"><img alt="_images/example_01b.png" src="_images/example_01b.png" style="width: 75%;" /></a>
 <p>Transcript coverage is obtained using the <em>mini_real_tx.zip</em> matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5’ and 3’ regions:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if  example_02.png
  |-- 16:09-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_02.png"><img alt="_images/example_02.png" src="_images/example_02.png" style="width: 75%;" /></a>
@@ -254,11 +233,8 @@ The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_05.png -e -V 2 -fc 2
  |-- 16:09-DEBUG-profile : Using pandas version 0.24.2
- |-- 16:09-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/pandas/__init__.py
  |-- 16:09-DEBUG-profile : Using numpy version 1.16.4
- |-- 16:09-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/numpy/__init__.py
  |-- 16:09-DEBUG-profile : Using plotnine version 0.5.1
- |-- 16:09-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/__init__.py
  |-- 16:09-DEBUG-profile : Creating directory : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_c92ct0d9
  |-- 16:09-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_c92ct0d9
  |-- 16:09-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_c92ct0d9/mini_real_promoter
@@ -276,13 +252,7 @@ The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.
  |-- 16:09-INFO-profile : Preparing diagram
  |-- 16:09-INFO-profile : Theming and ordering. Please be patient...
  |-- 16:09-INFO-profile : Preparing x axis
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
  |-- 16:09-INFO-profile : facet_col 2
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
  |-- 16:09-INFO-profile : Page width set to 6
  |-- 16:09-INFO-profile : Page height set to 5.0
  |-- 16:09-INFO-profile : Saving diagram to file : example_05.png
@@ -294,11 +264,8 @@ The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.
 <p>Alternatively, the groups can be set to chromosomes or transcript classes:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_06.png -V 2 -nm ranging
  |-- 16:09-DEBUG-profile : Using pandas version 0.24.2
- |-- 16:09-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/pandas/__init__.py
  |-- 16:09-DEBUG-profile : Using numpy version 1.16.4
- |-- 16:09-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/numpy/__init__.py
  |-- 16:09-DEBUG-profile : Using plotnine version 0.5.1
- |-- 16:09-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/__init__.py
  |-- 16:09-DEBUG-profile : Creating directory : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_m_a64x17
  |-- 16:09-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_m_a64x17
  |-- 16:09-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_m_a64x17/mini_real_promoter
@@ -317,13 +284,7 @@ The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.
  |-- 16:09-INFO-profile : Preparing diagram
  |-- 16:09-INFO-profile : Theming and ordering. Please be patient...
  |-- 16:09-INFO-profile : Preparing x axis
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
  |-- 16:09-INFO-profile : facet_col 3
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
  |-- 16:09-INFO-profile : Page width set to 9
  |-- 16:09-INFO-profile : Page height set to 2.0
  |-- 16:09-INFO-profile : Saving diagram to file : example_06.png
@@ -334,11 +295,8 @@ The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.
 <a class="reference external image-reference" href="_static/example_06.png"><img alt="_images/example_06.png" src="_images/example_06.png" style="width: 75%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_06b.png -V 2 -nm ranging
  |-- 16:09-DEBUG-profile : Using pandas version 0.24.2
- |-- 16:09-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/pandas/__init__.py
  |-- 16:09-DEBUG-profile : Using numpy version 1.16.4
- |-- 16:09-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/numpy/__init__.py
  |-- 16:09-DEBUG-profile : Using plotnine version 0.5.1
- |-- 16:09-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/__init__.py
  |-- 16:09-DEBUG-profile : Creating directory : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_0o2ghyjv
  |-- 16:09-DEBUG-profile : Uncompressing : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_0o2ghyjv
  |-- 16:09-DEBUG-profile : Reading : /var/folders/nl/stqvvbcn4pg9v65k8kyjv5yh0000gn/T/profile_matrix__pygtftk_0o2ghyjv/mini_real_promoter
@@ -353,13 +311,7 @@ The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.
  |-- 16:10-INFO-profile : Preparing diagram
  |-- 16:10-INFO-profile : Theming and ordering. Please be patient...
  |-- 16:10-INFO-profile : Preparing x axis
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
  |-- 16:10-INFO-profile : facet_col 3
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
  |-- 16:10-INFO-profile : Page width set to 9
  |-- 16:10-INFO-profile : Page height set to 2.0
  |-- 16:10-INFO-profile : Saving diagram to file : example_06b.png
@@ -370,28 +322,10 @@ The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.
 <a class="reference external image-reference" href="_static/example_06b.png"><img alt="_images/example_06b.png" src="_images/example_06b.png" style="width: 75%;" /></a>
 <p>Note that facets may also be associated to epigenetic marks. In this case each the –group-by can be set to <em>tx_classes</em> or <em>chrom</em>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if  example_07.png -w -nm ranging
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_07.png"><img alt="_images/example_07.png" src="_images/example_07.png" style="width: 75%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -g chrom -f bwig  -o profile_tx -pf png -if  example_08.png  -w -nm ranging
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
-/Users/puthier/miniconda3/envs/pygtftk_test/lib/python3.6/site-packages/plotnine/scales/scale.py:93: MatplotlibDeprecationWarning: 
-The iterable function was deprecated in Matplotlib 3.1 and will be removed in 3.3. Use np.iterable instead.
-  if cbook.iterable(self.breaks) and cbook.iterable(self.labels):
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_08.png"><img alt="_images/example_08.png" src="_images/example_08.png" style="width: 75%;" /></a>

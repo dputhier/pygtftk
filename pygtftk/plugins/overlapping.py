@@ -59,7 +59,7 @@ def make_parser():
                             required=True)
 
     parser_grp.add_argument('-u', '--upstream',
-                            help="Extend the region in 5' by a given value (int)."
+                            help="Extend the region in 5'."
                                  " Used to define the region around the TSS/TTS.",
                             default=1500,
                             metavar="UPSTREAM",
@@ -67,7 +67,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-d', '--downstream',
-                            help="Extend the region in 3' by a given value (int)."
+                            help="Extend the region in 3'."
                                  " Used to define the region around the TSS/TTS.",
                             default=1500,
                             metavar="DOWNSTREAM",
