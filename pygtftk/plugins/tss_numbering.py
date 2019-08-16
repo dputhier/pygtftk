@@ -128,7 +128,7 @@ def tss_numbering(
 
         gn_how_many_tss_file = make_tmp_file(prefix='gn_how_many_tss', suffix='.txt')
 
-        for a_key, a_val in gn_how_many_tss_file.items():
+        for a_key, a_val in gn_how_many_tss.items():
             gn_how_many_tss_file.write(a_key + "\t" + a_val + "\n")
 
         gn_how_many_tss_file.close()
