@@ -478,7 +478,7 @@ def profile(inputfile=None,
             # -------------------------------------------------------------------------
 
             message("Reading transcript file.")
-            df_classes = pd.read_csv(transcript_file.name, sep='\t', header=None)
+            df_classes = pd.read_csv(transcript_file.name, sep='\t', header=None, dtype=str)
 
             if df_classes.shape[0] == 0:
                 message("No lines found in transcript file.",
