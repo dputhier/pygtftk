@@ -91,7 +91,7 @@ rule computePromoterCoverage_mk_matrix:
     output: 'output/08_prepare_profile/{s}_{r}_matrix.zip'
     params: lab=LAB_STR
     shell: """
-    gtftk mk_matrix -l {params.lab} -V 1 -i {input.g} -o output/08_prepare_profile/{wildcards.s}_{wildcards.r}_matrix -u 2500 -d 2500 -k 4 -c  {input.s} {input.bw} 
+    gtftk mk_matrix -l {params.lab} -V 1 -i {input.g} -o output/08_prepare_profile/{wildcards.s}_{wildcards.r}_matrix -u 2500 -d 2500 -k 4 -c  {input.s} -y {input.bw} 
     """
 
 
