@@ -1010,7 +1010,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order):
                                             margin={'r': 0},
                                             angle=0),
                    axis_text_x=element_text(size=5,
-                                            angle=45)
+                                            angle=90,
+                                            hjust=1)
                    )
 
         # Add a nicer set of colors.
