@@ -498,7 +498,7 @@ def profile(inputfile=None,
             # Select the transcript of interest and add classes info to the data.frame
             # -------------------------------------------------------------------------
 
-            message("Checking how many transcript where found in the transcript list.")
+            message("Checking how many transcripts where found in the transcript list.")
 
             nb_retained = len([x for x in all_tx if x in tx_ordering])
 
