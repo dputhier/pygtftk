@@ -438,7 +438,8 @@ class FormattedFile(argparse.FileType):
                     file_bo = BedTool(string)
                     nb_line = len(file_bo)
                 except:
-                    msg = "Unable to load file: " + string + "."
+
+                    msg = "Unable to load file: " + string + ". Check the format please."
                     message(msg, type="ERROR")
                     sys.exit()
 

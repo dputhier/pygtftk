@@ -72,21 +72,29 @@ rule get_tts:
     input: 'output/04_get_biotype/{bio}/{s}/{r}.gtf'
     output: 'output/05_get_tss/{bio}/{s}/{r}.bed'
     shell: """
-    gtftk get_5p_3p_coords -i {input} -v -o {output}
+    gtftk get_5p_3p_coords -i {input} -v  -n gene_name | sort | uniq > {output}
+    """
+
+rule getChromosomeSize:
+    output: 'output/05b_chrom_size/chrom_size_{s}_{r}.txt'
+    params: v=GV
+    shell: """
+    mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -e \
+    "select chrom, size from {params.v}.chromInfo" > {output}
     """
 
 rule slop_tts:
-    input: 'output/05_get_tss/{bio}/{s}/{r}.bed'
+    input: bed='output/05_get_tss/{bio}/{s}/{r}.bed', chr='output/05b_chrom_size/chrom_size_{s}_{r}.txt'
     output: 'output/06_slop_tss/{bio}/{s}/{r}.bed'
     shell: """
-    slopBed -i {input} -l 0 -r 50 -s -g chrom_info.txt > {output}
+    slopBed -i {input.bed} -l 50 -r 50 -s -g {input.chr} > {output}
     """
 
 rule fasta_from_bed:
     input: bed='output/06_slop_tss/{bio}/{s}/{r}.bed', fa='{gv}.fa'
     output: 'output/07_fasta_from_bed/{bio}/{s}/{r}_{gv}.fasta'
     shell: """
-    fastaFromBed -fi {input.fa} -bed {input.bed} -fo {output} 
+    fastaFromBed -s  -fi {input.fa} -bed {input.bed} -fo {output} 
     """
 
 rule weblogo:

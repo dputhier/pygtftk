@@ -1091,9 +1091,12 @@ def intervals(l, n, silent=False):
 
     result = list()
 
-    if not len(l) >= n and not silent:
-        raise GTFtkError("Cant' create " + str(n) + " equally spaced intervals "
-                                                    "between 0 and " + str(l) + ".")
+    if not len(l) >= n:
+        if not silent:
+            raise GTFtkError("Cant' create " + str(n) + " equally spaced intervals "
+                                                        "between 0 and " + str(l) + ".")
+        else:
+            return None
 
     def chunks(l, n):
         """ Yield n successive chunks from l.

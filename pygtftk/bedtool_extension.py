@@ -1,6 +1,9 @@
+import math
+
+import numpy as np
 from pybedtools import BedTool
 
-from pygtftk.utils import make_tmp_file
+from pygtftk.utils import make_tmp_file, GTFtkError
 from pygtftk.utils import message
 
 
@@ -78,3 +81,148 @@ def get_midpoints(self):
 
 
 BedTool.get_midpoints = get_midpoints
+
+
+def get_quantile_pos(self, quantile=0.5):
+    """Returns a bedtools object containing the position of the nth quantile of each feature.
+       E.g n=0.5 return the midpoints.
+
+
+        :Example:
+        >>> from pygtftk import bedtool_extension
+        >>> fromscratch1 = bedtool_extension.BedTool('chrX 0 100', from_string=True)
+        >>> for i in fromscratch1.get_quantile(): pass
+    """
+
+    message("Calling 'get_quantile_pos()'.", type="DEBUG")
+
+    quantile_file = make_tmp_file("quantile_" + str(quantile), ".bed")
+
+    n = 1
+
+    for line in self:
+
+        if line.name == ".":
+            name = str(n)
+        else:
+            name = line.name
+
+        if line.strand == ".":
+            strand = "+"
+        else:
+            strand = line.strand
+
+        if line.score == ".":
+            score = "."
+        else:
+            score = line.score
+
+        diff = line.end - line.start
+
+        # By default the coordinate is always rounded up
+        quantile_val = math.ceil(np.quantile(range(diff), quantile))
+
+        # update start/end
+        line.start = line.start + int(quantile_val)
+        line.end = line.start + 1
+
+        quantile_file.write("\t".join([line.chrom,
+                                       str(line.start),
+                                       str(line.end),
+                                       name,
+                                       score,
+                                       strand]) + "\n")
+        n += 1
+
+    quantile_file.close()
+
+    return BedTool(fn=quantile_file.name)
+
+
+BedTool.get_quantile_pos = get_quantile_pos
+
+
+def merge_by_strand(self):
+    """
+    An alternative to the classical merge function from Bedtools that will merge by strands and produce a stranded bed
+    file (i.e. with "+"/"-" in col 6).
+
+    :return: a Bedtool object.
+    """
+
+    # -------------------------------------------------------------------------
+    # Split by strand
+    # -------------------------------------------------------------------------
+
+    pos_strand_file = make_tmp_file(prefix="merge_with_strand_output_pos", suffix=".bed")
+    neg_strand_file = make_tmp_file(prefix="merge_with_strand_output_neg", suffix=".bed")
+
+    for line in self:
+        if line.strand == "+":
+            pos_strand_file.write("\t".join([line.chrom,
+                                             str(line.start),
+                                             str(line.end),
+                                             line.name,
+                                             str(line.score),
+                                             str(line.strand)]) + "\n")
+        elif line.strand == "-":
+            neg_strand_file.write("\t".join([line.chrom,
+                                             str(line.start),
+                                             str(line.end),
+                                             line.name,
+                                             str(line.score),
+                                             str(line.strand)]) + "\n")
+
+        else:
+            raise GTFtkError("Feature strand is unknown.")
+
+    pos_strand_file.close()
+    neg_strand_file.close()
+
+    # -------------------------------------------------------------------------
+    # Merge independently
+    # -------------------------------------------------------------------------
+
+    pos_bo = BedTool(pos_strand_file.name).merge()
+    neg_bo = BedTool(neg_strand_file.name).merge()
+
+    # -------------------------------------------------------------------------
+    # Write merged features with additional columns
+    # -------------------------------------------------------------------------
+
+    pos_strand_file_bed6 = make_tmp_file(prefix="merge_with_strand_output_pos_bed6", suffix=".bed")
+    neg_strand_file_bed6 = make_tmp_file(prefix="merge_with_strand_output_neg_bed6", suffix=".bed")
+
+    feat_num = 1
+
+    for line in pos_bo:
+        pos_strand_file_bed6.write("\t".join([line.chrom,
+                                              str(line.start),
+                                              str(line.end),
+                                              "feature_" + str(feat_num),
+                                              "0",
+                                              "+"]) + "\n")
+        feat_num += 1
+
+    feat_num = 1
+
+    for line in neg_bo:
+        neg_strand_file_bed6.write("\t".join([line.chrom,
+                                              str(line.start),
+                                              str(line.end),
+                                              "feature_" + str(feat_num),
+                                              "0",
+                                              "-"]) + "\n")
+        feat_num += 1
+
+    pos_strand_file_bed6.close()
+    neg_strand_file_bed6.close()
+
+    # -------------------------------------------------------------------------
+    # Read as bedtool and concatenate file
+    # -------------------------------------------------------------------------
+
+    return BedTool(pos_strand_file_bed6.name).cat(neg_strand_file_bed6.name, postmerge=False)
+
+
+BedTool.merge_by_strand = merge_by_strand
