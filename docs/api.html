@@ -15,7 +15,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Help on Python package (pygtftk) &#8212; gtftk 1.0.9 documentation</title>
+    <title>Help on Python package (pygtftk) &#8212; gtftk 1.1.0 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -2181,20 +2181,21 @@ key/values to add as a name.</p>
 significance overlap of two sets of genomic regions, provided as BED files.</p>
 <dl class="function">
 <dt id="pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_all_intersections_minibatch</code><span class="sig-paren">(</span><em class="sig-param">Lr1</em>, <em class="sig-param">Li1</em>, <em class="sig-param">Lr2</em>, <em class="sig-param">Li2</em>, <em class="sig-param">all_chrom1</em>, <em class="sig-param">all_chrom2</em>, <em class="sig-param">minibatch_size</em>, <em class="sig-param">use_markov_shuffling</em>, <em class="sig-param">nb_threads</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_all_intersections_minibatch</code><span class="sig-paren">(</span><em class="sig-param">Lr1</em>, <em class="sig-param">Li1</em>, <em class="sig-param">Lrs</em>, <em class="sig-param">Lis</em>, <em class="sig-param">all_chrom1</em>, <em class="sig-param">all_chrom2</em>, <em class="sig-param">minibatch_size</em>, <em class="sig-param">use_markov_shuffling</em>, <em class="sig-param">nb_threads</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main processing function. Computes a minibatch of shuffles for the given parameters.</p>
 <p>This function will be called by the hub function <cite>compute_overlap_stats</cite> to
 create a batch of shuffled “fake” BED files.
 Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2 are all outputs from the
 bed_Li1to_lists_of_intervals() function calls : those are the lists of region
 lengths, inter-region lengths, and chromosomes for each of the two input files.</p>
+<p>Lrs and Lis are lists containing [Lr2] and [Li2] if there is only one query set, but can contain more [Lr1, Lr2, Lr3, …] if there is more than one</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Lr1</strong> – An output from the bed_to_lists_of_intervals() function calls.</p></li>
 <li><p><strong>Li1</strong> – An output from the bed_to_lists_of_intervals() function calls.</p></li>
-<li><p><strong>Lr2</strong> – An output from the bed_to_lists_of_intervals() function calls.</p></li>
-<li><p><strong>Li2</strong> – An output from the bed_to_lists_of_intervals() function calls.</p></li>
+<li><p><strong>Lrs</strong> – A list of outputs from the bed_to_lists_of_intervals() function calls.</p></li>
+<li><p><strong>Lis</strong> – A list of outputs from the bed_to_lists_of_intervals() function calls.</p></li>
 <li><p><strong>all_chrom1</strong> – An output from the bed_to_lists_of_intervals() function calls.</p></li>
 <li><p><strong>all_chrom2</strong> – An output from the bed_to_lists_of_intervals() function calls.</p></li>
 <li><p><strong>minibatch_size</strong> – The size of the batchs for shuffling.</p></li>
@@ -2207,7 +2208,7 @@ lengths, inter-region lengths, and chromosomes for each of the two input files.<
 
 <dl class="function">
 <dt id="pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_overlap_stats</code><span class="sig-paren">(</span><em class="sig-param">bedA</em>, <em class="sig-param">bedB</em>, <em class="sig-param">chrom_len</em>, <em class="sig-param">minibatch_size</em>, <em class="sig-param">minibatch_nb</em>, <em class="sig-param">bed_excl</em>, <em class="sig-param">use_markov_shuffling</em>, <em class="sig-param">nb_threads</em>, <em class="sig-param">ft_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_overlap_stats</code><span class="sig-paren">(</span><em class="sig-param">bedA</em>, <em class="sig-param">bedsB</em>, <em class="sig-param">chrom_len</em>, <em class="sig-param">minibatch_size</em>, <em class="sig-param">minibatch_nb</em>, <em class="sig-param">bed_excl</em>, <em class="sig-param">use_markov_shuffling</em>, <em class="sig-param">nb_threads</em>, <em class="sig-param">ft_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the hub function to compute overlap statistics through Monte Carlo
 shuffling with integration of the inter-region lengths.</p>
 <p>The function will generate shuffled BEDs from bedA and bedB independantly,
@@ -2219,7 +2220,7 @@ regions given in A and B are independant).</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bedA</strong> – The first bed file.</p></li>
-<li><p><strong>bedB</strong> – The second bed file.</p></li>
+<li><p><strong>bedsB</strong> – The second bed file. Can also be a list of bed files for multiple overlaps.</p></li>
 <li><p><strong>chrom_len</strong> – the dictionary of chromosome lengths</p></li>
 <li><p><strong>minibatch_size</strong> – the size of the minibatch for shuffling.</p></li>
 <li><p><strong>minibatch_nb</strong> – The number of minibatchs.</p></li>
@@ -2331,13 +2332,17 @@ or equal to the variance, set the variance to mean + epsilon and send a warning<
 <em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.beta.</code><code class="sig-name descname">BetaCalculator</code><span class="sig-paren">(</span><em class="sig-param">precision=1500</em>, <em class="sig-param">use_log=True</em>, <em class="sig-param">itermax=100000</em>, <em class="sig-param">ft_type='Unknown'</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computing the beta distribution in Python using mpmath.</p>
 <p>Using routines from the GNU Scientific Library (<cite>beta_inc.c</cite>):
-&lt;Copyright (C) 2007 Brian Gough and  Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman&gt;</p>
+&lt;Copyright (C) 2007 Brian Gough and Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman&gt;</p>
 <p>Available under the GNU GPL v3 license.</p>
 <dl class="simple">
 <dt>Formulas :</dt><dd><p>self.betainc(A, B, p) &lt;–&gt;
 mpmath.betainc(A, B, 0, p) &lt;–&gt;
 mpmath.quad(lambdat: t**(A-1)*(1-t)**(B-1), [0, p])</p>
 </dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
 </dl>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.beta</span> <span class="k">import</span> <span class="n">BetaCalculator</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">mpmath</span>
@@ -2376,6 +2381,10 @@ It requires a, b &gt; 0 and 0 &lt;= x &lt;= 1.</p>
 <dd><p>Evaluates the continued fraction form of the incomplete Beta function.</p>
 <p>Code translated from: GNU Scientific Library</p>
 <p>Uses the modified Lentz’s method.</p>
+<p>You can see a representation of this form in the Digial Library of
+Mathematical functions &lt;<a class="reference external" href="https://dlmf.nist.gov/8.17#SS5.p1">https://dlmf.nist.gov/8.17#SS5.p1</a>&gt;.
+The goal of the method is to calculate the successive ‘d’ terms,
+separately for odd and even.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3116,13 +3125,13 @@ are found at the beginning or end of the string, they are deleted.</p>
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Aug 01, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.1.
+      Last updated on Nov 21, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
     </div>
   </body>
 </html>
