@@ -220,7 +220,7 @@ release_pip_unix:
  	rm -f manylinux/pygtftk-*whl                                ; \
 	cd manylinux                                                ; \
 	docker rmi -f manylinux                                     ; \
-	docker rm -f imanylinux || true  ; \                                      ;\
+	docker rm -f imanylinux || true  							; \
 	docker build -t manylinux .                                 ; \
 	docker create  -t --name imanylinux  manylinux /bin/bash    ; \
 	docker cp  imanylinux:/tmp/ /tmp                            ; \
