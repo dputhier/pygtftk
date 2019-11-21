@@ -5,17 +5,21 @@
 
 ### Bug Fixes
 
-
+*   None.
 
 ### API/CLI Changes
 
+*   None.
 
 ### Code changes
 
+*   None.
 
 ### New Features
 
+* Support for Python 3.7.
 * The tss_numbering command now allows to add the number of different TSSs to the gene feature.
+
 
 ## v1.0.9
 
