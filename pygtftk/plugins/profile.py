@@ -886,7 +886,7 @@ def profile(inputfile=None,
         df_aggr_var.remove('pos')
         df_aggr_var += ['len']
         dm_nb = dm
-        dm_nb = dm_nb.groupby(df_aggr_var, as_index=False).agg({stat: ['max', 'min']})
+        dm_nb = dm_nb.groupby(df_aggr_var, as_index=True).agg({stat: ['max', 'min']}).reset_index()
         dm_nb.columns = [x[1] if len(x) > 1 and x[1] != '' else x[0] for x in dm_nb.columns.ravel()]
         max_val = dm_nb['max'].iloc[dm_nb['max'].idxmax(),]
         min_val = dm_nb['min'].iloc[dm_nb['min'].idxmax(),]

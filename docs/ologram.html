@@ -15,7 +15,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘ologram’ &#8212; gtftk 1.0.9 documentation</title>
+    <title>Commands from section ‘ologram’ &#8212; gtftk 1.1.0 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -95,9 +95,9 @@ The program will return statistics for both the number of intersections and the 
 <p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in
 the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 16:12-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
- |-- 16:13-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (stop_codon)
- |-- 16:13-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (Intergenic)
+ |-- 14:39-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
+ |-- 14:41-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (stop_codon)
+ |-- 14:42-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (Intergenic)
 </pre></div>
 </div>
 <br>
@@ -110,7 +110,10 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </tr>
 </table>
 <br>
-<br><p><strong>Example:</strong> Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
+<br><div class="section" id="head">
+<h3>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD<a class="headerlink" href="#head" title="Permalink to this headline">¶</a></h3>
+<p>&gt;&gt;&gt;&gt;&gt;&gt;&gt; 1.0.9
+<strong>Example:</strong> Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
 </pre></div>
 </div>
@@ -130,7 +133,7 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </div>
 <p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 16:16-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
+ |-- 14:46-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
 </pre></div>
 </div>
 <br>
@@ -145,7 +148,7 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 16:18-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 14:49-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
 </pre></div>
 </div>
 <br>
@@ -210,6 +213,8 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
      &quot;sub-genome&quot; obtained by removing the excluded regions, but the same ones will be excluded from
      the peak_file and the GTF. Try using an exclusion file that is as small (around a thousand
      elements) as possible.
+     *  NB/TODO: Current multithreading needs to be optimized. We recommend using the current
+     version with a single core.
      *  BETA : About --use-markov. This arguments control whether to use Markov model realisations
      (of order 2) instead of independant shuffles for respectively region lengths and inter-region
      lengths. This can better capture the structure of the genomic regions repartitions. This is not
@@ -261,6 +266,7 @@ Command-wise optional arguments:
 </pre></div>
 </div>
 </div>
+</div>
 <div class="section" id="merge-ologram-stats">
 <h2>merge_ologram_stats<a class="headerlink" href="#merge-ologram-stats" title="Permalink to this headline">¶</a></h2>
 <p>Several tsv files resulting from OLOGRAM analyses can be merged into a single diagram report using the merge_ologram_stats.</p>
@@ -277,8 +283,40 @@ Command-wise optional arguments:
 </td>
 </tr>
 </table>
-<br>
-<br></div>
+<br><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk merge_ologram_stats -h
+  Usage: gtftk merge_ologram_stats [-pw pdf_width] [-ph pdf_height] -o output [-l labels] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file] inputfiles [inputfiles ...]
+
+  Description: 
+     *  Merge a set of OLOGRAM outputs into a single output. Build a heatmap from the results.  See the
+     /pygtftk/plugins/ologram.py file, as well as the documentation, for more information about
+     OLOGRAM.
+
+  Notes:
+     *  By default, labels in the diagram are derived from the name of the enclosing folder. E.g. if
+     file is a/b/c/00_ologram_stats.tsv, &#39;c&#39; will be used as label.
+     *  Otherwise use --labels to set the labels.
+
+  Version:  2019-05-27
+
+Arguments:
+ inputfiles                   Complete paths to the OLOGRAM output files
+ -pw, --pdf-width             Output pdf file width (inches). (default: None)
+ -ph, --pdf-height            Output pdf file height (inches). (default: None)
+ -o, --output                 Pdf file name. (default: None)
+ -l, --labels                 A comma separated list of labels. (default: None)
+
+Command-wise optional arguments:
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -290,7 +328,10 @@ Command-wise optional arguments:
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Commands from section ‘ologram’</a><ul>
-<li><a class="reference internal" href="#ologram">ologram</a></li>
+<li><a class="reference internal" href="#ologram">ologram</a><ul>
+<li><a class="reference internal" href="#head">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#merge-ologram-stats">merge_ologram_stats</a></li>
 </ul>
 </li>
@@ -338,13 +379,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.9 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Aug 01, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.1.
+      Last updated on Nov 21, 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
     </div>
   </body>
 </html>

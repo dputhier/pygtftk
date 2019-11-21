@@ -206,6 +206,7 @@ release_doc:
 	@ cp  -r docs/build/html/* docs
 	@ rm -rf docs/build
 	@ make clean
+	@ rm -rf docs/workflow/*/.snakemake
 	@ git add docs/*
 	@ git commit -m "Updated img in source and source/_static "
 	@ git push
