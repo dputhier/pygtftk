@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.1.0
+
+
+### Bug Fixes
+
+
+
+### API/CLI Changes
+
+
+### Code changes
+
+
+### New Features
+
+* The tss_numbering command now allows to add the number of different TSSs to the gene feature.
+
 ## v1.0.9
 
 
@@ -27,6 +44,7 @@ format in order to produced a set of 'labeled' regions with the same rules as th
 Enrichment of Annotations Tool) documentation. We can not warrant that the procedure is exactly the same. See the CLI
 for more details.
 * Added -y/--display-fit-quality to ologram
+
 
 ## v1.0.8
 

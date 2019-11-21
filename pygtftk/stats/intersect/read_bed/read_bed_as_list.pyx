@@ -54,7 +54,7 @@ def bed_to_lists_of_intervals(bed, chromsizes):
     >>> npt.assert_array_equal(result[0]['chr1'], np.array([ 5, 10]))
     >>> npt.assert_array_equal(result[1]['chr1'], np.array([ 10, 25, 250]))
     >>> npt.assert_array_equal(result[2], np.array(['chr1']))
-    
+
     """
 
     # Convert bedfile to pandas array
@@ -138,22 +138,15 @@ def exclude_chromsizes(exclusion, chromsizes):
 
 
 
-
-
-
-
-
-
-
-
+# ----------------------- Exclusion for each bed file ------------------------ #
+# The function to perform it is C++ code which we must interface through Cython
 
 # Declare the interface to C++ code
-cdef extern from "exclude.h" namespace "exclusion":
+cdef extern from "exclude.hpp" namespace "exclusion":
   void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* bedfile_ends,
                                         long long* exclusion_starts, long long* exclusion_ends,
                                         long long* result_starts, long long* result_ends,
                                         long bed_size, long excl_size)
-
 
 
 cdef cpp_wrapper(np.ndarray[longlong, ndim=1, mode="c"] bedfile_start_nparray,
@@ -175,7 +168,7 @@ cdef cpp_wrapper(np.ndarray[longlong, ndim=1, mode="c"] bedfile_start_nparray,
                                         &result_start_nparray[0],    &result_end_nparray[0],
                                         bed_size, excl_size)
     # Remember that in C++ you must actually pass a pointer to the first value, not an array.
-    # Remember that the operations are performed in-place (we are passing references)
+    # Also note that the operations are performed in-place (we are passing references)
     # so we now work directly on result_start_nparray and result_end_nparray
 
     return None
@@ -254,11 +247,6 @@ def exclude_concatenate_for_this_chrom(chrom, exclusion, bedfile):
 
 
 
-
-
-
-
-
 def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
     r"""
     When given a bedfile (in pybedtools BedFile format) and an exclusion bed file
@@ -318,7 +306,7 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
     # In most use cases however it should be sufficient.
 
     with Pool(nb_threads) as p:
-        partial_exclusion = partial(exclude_concatenate_for_this_chrom,exclusion=exclusion,bedfile=bedfile)
+        partial_exclusion = partial(exclude_concatenate_for_this_chrom, exclusion=exclusion, bedfile=bedfile)
         list_of_partial_results = p.map(partial_exclusion, all_chroms, chunksize=1)
 
     result = pd.concat(list_of_partial_results, ignore_index = True)

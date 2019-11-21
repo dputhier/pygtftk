@@ -17,7 +17,8 @@ from pygtftk.utils import message
 __updated__ = "2018-01-20"
 
 __notes__ = """
-- For each gene reports as a new key the tss number of each transcript.
+- For each transcript feature add a key containing its tss number relative to the most 5'.
+- See -\-add-nb-tss-to-gene to add the number of different tss to each gene feature.
 """
 
 
@@ -56,6 +57,16 @@ def make_parser():
                             type=str,
                             required=False)
 
+    parser_grp.add_argument('-g', '--add-nb-tss-to-gene',
+                            help="Add the number of different tss to each gene",
+                            action='store_true')
+
+    parser_grp.add_argument('-l', '--gene-key',
+                            help="The name of the key if --add-nb-tss-to-gene is selected.",
+                            default='nb_tss',
+                            type=str,
+                            required=False)
+
     return parser
 
 
@@ -64,7 +75,9 @@ def tss_numbering(
         outputfile=None,
         compute_dist=False,
         key_name='tss_number',
-        key_name_dist='dist_to_first_tss'):
+        key_name_dist='dist_to_first_tss',
+        add_nb_tss_to_gene=False,
+        gene_key='nb_tss'):
     """
     Computes the distance between TSS of gene transcripts.
     """
@@ -91,10 +104,18 @@ def tss_numbering(
 
     tss_number_file = make_tmp_file(prefix='tx_to_tss_number', suffix='.txt')
 
+    gn_how_many_tss = dict()
+
     for gn_id in gn_to_tx_to_tss:
         for tx_id in gn_to_tx_to_tss[gn_id]:
             tss_num = str(gn_to_tx_to_tss[gn_id][tx_id])
             tss_number_file.write(tx_id + "\t" + tss_num + "\n")
+            if gn_id not in gn_how_many_tss:
+                gn_how_many_tss[gn_id] = tss_num
+            else:
+                if int(tss_num) > int(gn_how_many_tss[gn_id]):
+                    gn_how_many_tss[gn_id] = tss_num
+
     tss_number_file.close()
 
     gtf = gtf.add_attr_from_file(feat='transcript',
@@ -102,6 +123,21 @@ def tss_numbering(
                                  new_key=key_name,
                                  inputfile=open(tss_number_file.name),
                                  has_header=False)
+
+    if add_nb_tss_to_gene:
+
+        gn_how_many_tss_file = make_tmp_file(prefix='gn_how_many_tss', suffix='.txt')
+
+        for a_key, a_val in gn_how_many_tss.items():
+            gn_how_many_tss_file.write(a_key + "\t" + a_val + "\n")
+
+        gn_how_many_tss_file.close()
+
+        gtf = gtf.add_attr_from_file(feat='gene',
+                                     key='gene_id',
+                                     new_key=gene_key,
+                                     inputfile=open(gn_how_many_tss_file.name),
+                                     has_header=False)
 
     if compute_dist:
         gn_to_tx_ordered_by_tss = gtf.get_gn_to_tx(ordered_5p=True)

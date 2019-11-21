@@ -478,7 +478,7 @@ def profile(inputfile=None,
             # -------------------------------------------------------------------------
 
             message("Reading transcript file.")
-            df_classes = pd.read_csv(transcript_file.name, sep='\t', header=None)
+            df_classes = pd.read_csv(transcript_file.name, sep='\t', header=None, dtype=str)
 
             if df_classes.shape[0] == 0:
                 message("No lines found in transcript file.",
@@ -498,7 +498,7 @@ def profile(inputfile=None,
             # Select the transcript of interest and add classes info to the data.frame
             # -------------------------------------------------------------------------
 
-            message("Checking how many transcript where found in the transcript list.")
+            message("Checking how many transcripts where found in the transcript list.")
 
             nb_retained = len([x for x in all_tx if x in tx_ordering])
 
@@ -886,7 +886,7 @@ def profile(inputfile=None,
         df_aggr_var.remove('pos')
         df_aggr_var += ['len']
         dm_nb = dm
-        dm_nb = dm_nb.groupby(df_aggr_var, as_index=False).agg({stat: ['max', 'min']})
+        dm_nb = dm_nb.groupby(df_aggr_var, as_index=True).agg({stat: ['max', 'min']}).reset_index()
         dm_nb.columns = [x[1] if len(x) > 1 and x[1] != '' else x[0] for x in dm_nb.columns.ravel()]
         max_val = dm_nb['max'].iloc[dm_nb['max'].idxmax(),]
         min_val = dm_nb['min'].iloc[dm_nb['min'].idxmax(),]

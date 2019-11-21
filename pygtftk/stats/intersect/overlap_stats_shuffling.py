@@ -23,7 +23,7 @@ from pygtftk.utils import message
 ################################################################################
 
 
-def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
+def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
                                         all_chrom1, all_chrom2,
                                         minibatch_size,
                                         use_markov_shuffling,
@@ -37,10 +37,12 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     bed_Li1to_lists_of_intervals() function calls : those are the lists of region
     lengths, inter-region lengths, and chromosomes for each of the two input files.
 
+    Lrs and Lis are lists containing [Lr2] and [Li2] if there is only one query set, but can contain more [Lr1, Lr2, Lr3, ...] if there is more than one
+
     :param Lr1: An output from the bed_to_lists_of_intervals() function calls.
     :param Li1: An output from the bed_to_lists_of_intervals() function calls.
-    :param Lr2: An output from the bed_to_lists_of_intervals() function calls.
-    :param Li2: An output from the bed_to_lists_of_intervals() function calls.
+    :param Lrs: A list of outputs from the bed_to_lists_of_intervals() function calls.
+    :param Lis: A list of outputs from the bed_to_lists_of_intervals() function calls.
     :param all_chrom1:  An output from the bed_to_lists_of_intervals() function calls.
     :param all_chrom2: An output from the bed_to_lists_of_intervals() function calls.
     :param minibatch_size: The size of the batchs for shuffling.
@@ -59,7 +61,12 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     all_chroms = [str(x) for x in all_chroms]  # Revert from numpy list to traditional python list
 
     shuffled_Lr1_batches, shuffled_Li1_batches = dict(), dict()
-    shuffled_Lr2_batches, shuffled_Li2_batches = dict(), dict()
+
+    shuffled_Lrs_batches = list()
+    shuffled_Lis_batches = list()
+    for set in range(len(Lis)):
+        shuffled_Lrs_batches += [dict()]
+        shuffled_Lis_batches += [dict()]
 
     ## Wrapper to make the code cleaner
     # Tile the list of length (repeat) as many times as we want shuffles, then
@@ -74,13 +81,68 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     # NOTE for improvement : if new types of shuffles are added, the corresponding
     # wrappers should be added here.
 
+    # --------------------------------------------------------------------------
+    # NOTE for improvement : We may wish to shuffle across all chromosomes,
+    # instead of chromosome-by-chromosome.
+    # A workaround to do so is implemented here by exchanging the base Lrs and
+    # Lis (the true ones) before producing the N shuffles
+    # --------------------------------------------------------------------------
+    # TODO This is not used yet (the code is commented and no arguments call it)
+    # because we need to agree on implementation parameters : namely, when
+    # shuffling across all chromosomes, should we put the same number of regions
+    # on each chromosome ? Follow a Poisson law ? etc.
+    # --------------------------------------------------------------------------
+    """
+    def shuffle_L_across_chrom(L):
+        '''
+        Takes a dictionary of lists and returns a new dictionary where the elements
+        of all the lists have been shuffled across all lists.
+
+        This simply consists in flattening and rebuilding the dictionary.
+        '''
+
+        size_per_chrom = dict()
+        flattened_list = list()
+
+        # Flatten the dictionary
+        for chrom in L.keys():
+            L_for_this_chrom = L[chrom] # This is a list !
+
+            # TODO This is what needs to be fixed. For now it rebuilds the
+            # dictionary with the same number or arguments as before
+            size_per_chrom[chrom] = len(L_for_this_chrom)
+
+            flattened_list += L_for_this_chrom
+
+        # Rebuild the dictionary
+        for chrom in L.keys():
+            # Pick as many elements from the flattened list as there were before
+            # and remove them from the flattened list
+            L[chrom] = [flattened_list.pop(np.random.randint(len(flattened_list))) for _ in range(size_per_chrom[chrom])]
+
+        return L
+
+    # Shuffle the *true* Lrs and Lis, for all.
+    if shuffle_across_all_chrom:
+
+        Lr1 = shuffle_L_across_chrom(Lr1)
+        Li1 = shuffle_L_across_chrom(Li1)
+
+        for set in range(len(Lis)):
+            Lrs[set] = shuffle_L_across_chrom(Lrs[set])
+            Lis[set] = shuffle_L_across_chrom(Lis[set])
+    """
+
     # Produce the shuffles on a chromosome basis
     start = time.time()
     for chrom in all_chroms:
         shuffled_Lr1_batches[chrom] = batch_and_shuffle_list(Lr1[chrom])
         shuffled_Li1_batches[chrom] = batch_and_shuffle_list(Li1[chrom])
-        shuffled_Lr2_batches[chrom] = batch_and_shuffle_list(Lr2[chrom])
-        shuffled_Li2_batches[chrom] = batch_and_shuffle_list(Li2[chrom])
+
+        for set in range(len(Lis)):
+            shuffled_Lrs_batches[set][chrom] = batch_and_shuffle_list(Lrs[set][chrom])
+            shuffled_Lis_batches[set][chrom] = batch_and_shuffle_list(Lis[set][chrom])
+
     stop = time.time()
     message('Batch generated and shuffled in ' + str(stop - start) + ' s.', type='DEBUG')
 
@@ -88,8 +150,13 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     start = time.time()
     batch_to_bedlist_with_params = ft.partial(cs.batch_to_bedlist, all_chroms=all_chroms, minibatch_size=minibatch_size,
                                               nb_threads=nb_threads)
-    bedsA, bedsB = batch_to_bedlist_with_params(shuffled_Lr1_batches, shuffled_Li1_batches, shuffled_Lr2_batches,
-                                                shuffled_Li2_batches)
+
+    bedsA = batch_to_bedlist_with_params(shuffled_Lr1_batches, shuffled_Li1_batches)
+    bedsB = list()
+
+    for set in range(len(Lis)):
+        bedsB += [batch_to_bedlist_with_params(shuffled_Lrs_batches[set], shuffled_Lis_batches[set])]
+
     stop = time.time()
     message('Batch converted to fake beds in : ' + str(stop - start) + ' s.', type='DEBUG')
 
@@ -97,6 +164,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
     # Using our custom cython intersect, process intersection between each pair
     # of 'fake bed files'
     start = time.time()
+    # WARNING : bedsA is a list of beds, but bedB is a list of list of beds !
     all_intersections = oc.compute_intersections_cython(bedsA, bedsB, all_chroms, nb_threads)
     stop = time.time()
     message('All intersections computed by custom code in : ' + str(stop - start) + ' s.', type='DEBUG')
@@ -108,7 +176,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2,
 # ---------------------------------- CORE ------------------------------------ #
 ################################################################################
 
-def compute_overlap_stats(bedA, bedB,
+def compute_overlap_stats(bedA, bedsB,
                           chrom_len,
                           minibatch_size, minibatch_nb,
                           bed_excl,
@@ -127,7 +195,7 @@ def compute_overlap_stats(bedA, bedB,
     Author : Quentin FERRE <quentin.q.ferre@gmail.com>
 
     :param bedA: The first bed file.
-    :param bedB: The second bed file.
+    :param bedsB: The second bed file. Can also be a list of bed files for multiple overlaps.
     :param chrom_len: the dictionary of chromosome lengths
     :param minibatch_size: the size of the minibatch for shuffling.
     :param minibatch_nb: The number of minibatchs.
@@ -138,11 +206,15 @@ def compute_overlap_stats(bedA, bedB,
 
     """
 
+    # If bedB is a singleton, make it a list in bedsB (as in, plural)
+    bedsB = [bedsB] if not isinstance(bedsB, list) else list(bedsB)
+
     message('Beginning shuffling for ' + ft_type)
     message('BedA: ' + bedA.fn, type='DEBUG')
     message('Nb. features in BedA: ' + str(len(bedA)), type='DEBUG')
-    message('BedB: ' + bedB.fn, type='DEBUG')
-    message('Nb. features in BedB: ' + str(len(bedB)), type='DEBUG')
+    for bedB in bedsB:
+        message('BedB: ' + bedB.fn, type='DEBUG')
+        message('Nb. features in BedB: ' + str(len(bedB)), type='DEBUG')
     message('BATCHES : ' + str(minibatch_nb) + ' batches of ' + str(minibatch_size) + ' shuffles.', type='DEBUG')
     message('Total number of shuffles : ' + str(minibatch_nb * minibatch_size) + '.', type='DEBUG')
     message('NB_THREADS = ' + str(nb_threads) + '.', type='DEBUG')
@@ -151,8 +223,8 @@ def compute_overlap_stats(bedA, bedB,
     start = time.time()
 
     # Just in case, force type and merge bedA ; same for bedB
-    bed_A_as_pybedtool = pybedtools.BedTool(bedA).sort().merge()
-    bed_B_as_pybedtool = pybedtools.BedTool(bedB).sort().merge()
+    bedA = pybedtools.BedTool(bedA).sort().merge()
+    bedsB = [pybedtools.BedTool(bedB).sort().merge() for bedB in bedsB]
 
     # If there is an exclusion to be done, do it.
 
@@ -162,13 +234,14 @@ def compute_overlap_stats(bedA, bedB,
         exclstart = time.time()
         message('Performing exclusion on the second file, proceeding. This may take a few minutes.', type='INFO')
 
-        bed_B_as_pybedtool = read_bed.exclude_concatenate(bed_B_as_pybedtool, bed_excl, nb_threads)
+        bedsB = [read_bed.exclude_concatenate(bedB, bed_excl, nb_threads) for bedB in bedsB]
 
         exclstop = time.time()
         message('Exclusion completed in ' + str(exclstop - exclstart) + ' s.', type='DEBUG')
 
     # Abort if there are less than 2 remaining regions in bedA and bedB
-    if (len(bed_A_as_pybedtool) < 2) | (len(bed_B_as_pybedtool) < 2):
+
+    if (len(bedA) < 2) | (any([len(bedB) < 2 for bedB in bedsB])):
         message(
             'Less than 2 remaining regions in one of the BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.',
             type='WARNING')
@@ -190,12 +263,20 @@ def compute_overlap_stats(bedA, bedB,
         return result_abort
 
     # Proper reading of the bed file as a list of intervals
-    Lr1, Li1, all_chrom1 = read_bed.bed_to_lists_of_intervals(bed_A_as_pybedtool, chrom_len)
-    Lr2, Li2, all_chrom2 = read_bed.bed_to_lists_of_intervals(bed_B_as_pybedtool, chrom_len)
 
-    # convert to string (#106)
+    Lr1, Li1, all_chrom1 = read_bed.bed_to_lists_of_intervals(bedA, chrom_len)
     all_chrom1 = all_chrom1.astype(str)
-    all_chrom2 = all_chrom2.astype(str)
+
+    Lrs = list()
+    Lis = list()
+
+    for set in range(len(bedsB)):
+        Lrs_toappend, Lis_toappend, all_chrom2 = read_bed.bed_to_lists_of_intervals(bedsB[set], chrom_len)
+        all_chrom2 = all_chrom2.astype(str)
+        Lrs += [Lrs_toappend]
+        Lis += [Lis_toappend]
+
+    # WARNING note that all_chrom2 is overwritten every time.
 
     stop = time.time()
     message('BED files read as lists of intervals in ' + str(stop - start) + ' s', type='DEBUG')
@@ -211,8 +292,8 @@ def compute_overlap_stats(bedA, bedB,
         # Display of current progress
         message("--- Minibatch nb. : " + str(k + 1) + " / " + str(minibatch_nb), type='DEBUG')
 
-        all_intersections = all_intersections + compute_all_intersections_minibatch(Lr1, Li1, Lr2, Li2, all_chrom1,
-                                                                                    all_chrom2,
+        all_intersections = all_intersections + compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
+                                                                                    all_chrom1, all_chrom2,
                                                                                     minibatches[k],
                                                                                     use_markov_shuffling, nb_threads)
     message('All intersections have been generated.', type='DEBUG')
@@ -221,6 +302,13 @@ def compute_overlap_stats(bedA, bedB,
 
     # NOTE For future improvement, since the shuffling itself is done chromosome
     # by chromosome, making some statistics 'by chromosome' should be possible.
+
+    # WARNING for now, the code below assumes only two sets of regions. The backend supports multiple intersections,
+    # but the statistics do not take them into account for now. It has been designed, however, to be easy to do by
+    # changing the source code of read_bed.compute_stats_for_intersection()
+    if len(bedsB) > 1:
+        message(
+            'WARNING - Although the backend supports it, statistics on multiple overlaps are not implemented yet. The results will not take them into account. Please see the source of of compute_overlap_stats() if you wish to work on it before we do.')
 
     start = time.time()
     with Pool(nb_threads) as p:
@@ -282,8 +370,9 @@ def compute_overlap_stats(bedA, bedB,
 
     ## True intersection
     # true_intersection = bedA.intersect(bedB)
-    true_intersection = bed_A_as_pybedtool.intersect(
-        bed_B_as_pybedtool)  # Perform intersection with the exclusion regions removed !
+    true_intersection = bedA.intersect(
+        bedsB[0])  # Perform intersection with the exclusion regions removed !
+    # TODO We can simply use our own algorithm for this if we do multiple overlaps
 
     true_intersect_nb = len(true_intersection)
     true_bp_overlaps = sum([x.length for x in true_intersection])

@@ -57,6 +57,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     >>> obs = rv.rvs(2000)
     >>> fit = np.around(check_negbin_adjustment(obs, mean, var),2)
     >>> assert fit > 0.95
+
     """
 
     # Force cast obs to integers, just in case.
@@ -181,7 +182,7 @@ def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
     p = mpmath.mpf(1 / (mean / r + 1))
 
     # To circumvent scipy floating point precision issues, we implement a
-    # custom p-value calcualtion (see 'beta.py' for details)
+    # custom p-value calculation (see 'beta.py' for details)
     mybetacalc = BetaCalculator(use_log=True, precision=precision, ft_type=ft_type)
     incomplete_beta = mybetacalc.betainc(a=r, b=k + 1, x=p)
     complete_beta = mybetacalc.beta(a=r, b=k + 1)

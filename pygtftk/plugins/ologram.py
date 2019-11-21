@@ -57,6 +57,7 @@ from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 from pygtftk.utils import sort_2_lists
+import gc
 
 __updated__ = "2019-04-17"
 __doc__ = """
@@ -668,7 +669,7 @@ def ologram(inputfile=None,
 
                 del gtf_sub
 
-                hits[feat_type] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type=feat_type)
+                hits[feat_type] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type=feat_type)
 
             nb_gene_line = len(gtf.select_by_key(key="feature", value="gene"))
             nb_tx_line = len(gtf.select_by_key(key="feature", value="transcript"))
@@ -686,7 +687,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_intergenic", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Intergenic"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Intergenic")
+                hits["Intergenic"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Intergenic")
 
                 # -------------------------------------------------------------------------
                 # Get the intronic regions
@@ -698,7 +699,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_introns", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Introns"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Introns")
+                hits["Introns"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Introns")
 
                 # -------------------------------------------------------------------------
                 # Get the promoter regions
@@ -714,7 +715,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_promoters", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Promoters"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Promoter")
+                hits["Promoters"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Promoter")
 
                 # -------------------------------------------------------------------------
                 # Get the tts regions
@@ -729,7 +730,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_terminator", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Terminator"] = overlap_partial(bedA=peak_file, bedB=gtf_sub_bed, ft_type="Terminator")
+                hits["Terminator"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Terminator")
 
         # -------------------------------------------------------------------------
         # if the user request --more-keys (e.g. gene_biotype)
@@ -767,7 +768,7 @@ def ologram(inputfile=None,
 
                         ft_type = ":".join([user_key, val])  # Key for the dictionary
                         hits[ft_type] = overlap_partial(bedA=peak_file,
-                                                        bedB=gtf_sub_bed,
+                                                        bedsB=gtf_sub_bed,
                                                         ft_type=ft_type)
                         message("Processing " + str(ft_type), type="INFO")
 
@@ -817,7 +818,7 @@ def ologram(inputfile=None,
             bed_anno_tosave.saveas(tmp_bed.name)
 
             hits[bed_lab] = overlap_partial(bedA=peak_file,
-                                            bedB=BedTool(bed_anno.name),
+                                            bedsB=BedTool(bed_anno.name),
                                             ft_type=bed_lab)
 
     # TODO : prepare another possibility, where an option such as
@@ -1190,7 +1191,7 @@ else:
         #ologram: proper number of shuffled intersections
         @test "ologram_3" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 2`
-          [ "$result" = "14.97" ]
+          [ "$result" = "14.77" ]
         }
 
         #ologram: overlapping bp
@@ -1202,19 +1203,19 @@ else:
         #ologram: shuffled overlapping bp
         @test "ologram_5" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
-          [ "$result" = "61.35" ]
+          [ "$result" = "65.98" ]
         }
 
         #ologram: shuffled overlapping bp variance
         @test "ologram_6" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 9`
-          [ "$result" = "32.94" ]
+          [ "$result" = "18.54" ]
         }
 
         #ologram: shuffled overlapping bp fitting
         @test "ologram_7" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10`
-          [ "$result" = "0.8227700000000001" ]
+          [ "$result" = "0.70573" ]
         }
         '''
 

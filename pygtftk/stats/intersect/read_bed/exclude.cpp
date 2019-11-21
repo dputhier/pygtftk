@@ -13,7 +13,7 @@
   *
   * We use hand-crafted C++ here because of the computational cost. For the other
   * parts of the code, manually integrating C++ code was not worth the hassle
-  * compared to the advantages of easily interfacing with Cython.
+  * compared to the advantages of easy writing with Cython.
   *
   * Some helper variables are declared to make the code more legible (eg. excl_length)
   *
@@ -45,12 +45,13 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "exclude.h"
+#include "exclude.hpp"
 
 namespace exclusion {
 
 
-
+/* Template of functions to write in a boolean logical array (result_array)
+ * whether each value of a given other array is under a threshold. */
 template <class T>
 void arrayWiseIsLower(const T * array, T value, long array_size, bool * result_array){
 
@@ -62,7 +63,8 @@ void arrayWiseIsLower(const T * array, T value, long array_size, bool * result_a
     p_result++;
   }
 
-  // TODO : if the array is sorted, this can be done more efficiently with std::lower_bound !
+  // TODO : if the array is sorted, this can be done more efficiently with
+  // std::lower_bound ; but it is already fast enough in most cases.
 
   return;
 }
@@ -120,9 +122,10 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
 
 
     /******************************* Determining cases *****************************/
-    /* The cases are arranged in priority order !
-     * In the original code, they were "else ifs"
-     * This means a case can only be considered if all previous cases are false. */
+    /* The cases are arranged in priority order ! So be careful if you reorder
+     * them. In the original code, they were "else ifs". Here this means we must
+     * specify that a case can only be considered if all previous are false. */
+
     bool* case_0 = new bool[bed_size]();
     for(long i = 0; i < bed_size; ++i){
       case_0[i] = re_lt_es[i];
@@ -172,8 +175,8 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
 
     /***************************** Main processing ****************************/
 
-    // TODO : try putting all `if`s in a single loop. Without elses, they are
-    // still treatable as masked assignments so the compiler should like it.
+    // TODO : try putting all `if`s in the same `for` loop. Without elses, they
+    // are still treatable as masked assignments so the compiler should like it.
 
 
 
