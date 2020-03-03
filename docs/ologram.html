@@ -111,8 +111,6 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </table>
 <br>
 <br><div class="section" id="head">
-<h3>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD<a class="headerlink" href="#head" title="Permalink to this headline">¶</a></h3>
-<p>&gt;&gt;&gt;&gt;&gt;&gt;&gt; 1.0.9
 <strong>Example:</strong> Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
 </pre></div>
@@ -329,7 +327,6 @@ Command-wise optional arguments:
   <ul>
 <li><a class="reference internal" href="#">Commands from section ‘ologram’</a><ul>
 <li><a class="reference internal" href="#ologram">ologram</a><ul>
-<li><a class="reference internal" href="#head">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#merge-ologram-stats">merge_ologram_stats</a></li>
