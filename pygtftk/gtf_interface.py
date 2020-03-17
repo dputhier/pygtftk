@@ -2949,6 +2949,7 @@ class GTF(object):
             else:
                 name_out = value_name
 
+            name_out = [str(x) for x in name_out]
             name_out = sep.join(name_out)
 
             i.write_bed_5p_end(name=name_out,
@@ -3083,7 +3084,7 @@ class GTF(object):
                     name_out += [str(k) + "=" + str(v)]
             else:
                 name_out = value_name
-
+            name_out = [str(x) for x in name_out]
             name_out = sep.join(name_out)
             i.write_bed_3p_end(name=name_out,
                                outputfile=tx_bed)

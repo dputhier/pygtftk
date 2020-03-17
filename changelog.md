@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.1.1
+
+
+### Bug Fixes
+
+* Fix -n with integer values in get_5p_3p_coords.
+
+### API/CLI Changes
+
+
+### Code changes
+
+
+### New Features
+
+* The tss_numbering command now allows to add the number of different TSSs to the gene feature.
+
+
 ## v1.1.0
 
 
