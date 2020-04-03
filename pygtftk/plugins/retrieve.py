@@ -268,7 +268,8 @@ def retrieve(species_name='homo_sapiens',
             os.rename(target_gtf, os.path.join(outputdir, target_gtf))
 
             if to_stdout:
-                gtf = GTF(os.path.join(outputdir, target_gtf))
+                gtf = GTF(os.path.join(outputdir, target_gtf),
+                          check_ensembl_format=False)
 
                 gtf.write("-", gc_off=True)
 
