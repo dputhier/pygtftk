@@ -7,6 +7,7 @@
 
 *   Fix #116 (pandas version issue)
 *   Fix an issue related to pybedtool/bedtool version (naming of sequences that differs due to name/name+/nameOnly arguments).
+*   Fixed an issue with multiprocessing (related to py3.8 compatibility).
 
 ### API/CLI Changes
 
