@@ -6,6 +6,7 @@
 ### Bug Fixes
 
 *   Fix #116 (pandas version issue)
+*   Fix an issue related to pybedtool/bedtool version (naming of sequences that differs due to name/name+/nameOnly arguments).
 
 ### API/CLI Changes
 
