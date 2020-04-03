@@ -369,7 +369,7 @@ else:
 
     #great_reg_domains: check that this dataset always provide the same result
     @test "great_reg_domains_1" {
-     result=`gtftk great_reg_domains -i simple.gtf -c simple -u 1 -d 1 -t 20 | md5sum-lite | sed 's/ .*//'`
+     result=`gtftk great_reg_domains -i simple.gtf -c simple -u 1 -d 1 -t 20 | md5 -r | sed 's/ .*//'`
       [ "$result" = "7c91eb8597871f0c9d79a51566be0a38" ]
     }
 
