@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.1.1
+
+
+### Bug Fixes
+
+*   Fix #116 (pandas version issue)
+
+### API/CLI Changes
+
+*   None.
+
+### Code changes
+
+*   None.
+
+### New Features
+
+* md5sum-lite call have been replaced by "md5 -r" under darwin platforms.
+
 ## v1.1.0
 
 
