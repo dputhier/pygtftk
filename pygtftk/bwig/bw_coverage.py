@@ -21,6 +21,10 @@ from pygtftk.utils import intervals
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
+# Fix an issue with multiprocessing observed in py3.8
+# https://stackoverflow.com/questions/45720153
+__spec__ = None
+
 # -------------------------------------------------------------------------
 # TMP_FILE_POOL_MANAGER stores temporary file name
 # make_tmp_file_pool is function that add temporary files to TMP_FILE_POOL_MANAGER
@@ -28,8 +32,7 @@ from pygtftk.utils import message
 # variable)
 # -------------------------------------------------------------------------
 
-TMP_FILE_POOL_MANAGER = multiprocessing.Manager().list()
-
+TMP_FILE_POOL_MANAGER = []
 
 def make_tmp_file_pool(prefix='tmp',
                        suffix='',
@@ -40,7 +43,7 @@ def make_tmp_file_pool(prefix='tmp',
 
     :Example:
 
-    >>> from pygtftk.utils import make_tmp_file_pool
+    >>> from pygtftk.bwig.bw_coverage import make_tmp_file_pool
     >>> tmp_file = make_tmp_file_pool()
     >>> assert os.path.exists(tmp_file.name)
     >>> tmp_file = make_tmp_file_pool(prefix="pref")
@@ -49,6 +52,9 @@ def make_tmp_file_pool(prefix='tmp',
     >>> assert os.path.exists(tmp_file.name)
 
     """
+
+    global TMP_FILE_POOL_MANAGER
+    TMP_FILE_POOL_MANAGER += multiprocessing.Manager().list()
 
     dir_target = None
 
