@@ -3,11 +3,10 @@
  Get feature sequences (i.e. column 3) in a flexible fasta format from a GTF file.
 """
 import argparse
+import gc
 import os
 import re
 import sys
-
-import gc
 
 from pybedtools.helpers import BEDToolsError
 
@@ -157,15 +156,16 @@ def get_feat_seq(inputfile=None,
     try:
         # The nameOnly argument is not supported
         # through all Bedtools versions
+
         feat_seq = gtf.select_by_key("feature",
                                      feature_type
                                      ).to_bed(name=label.split(","),
                                               sep=separator
                                               ).sequence(fi=genome.name,
-                                                         name=True,
                                                          nameOnly=True,
                                                          s=force_strandedness)
     except BEDToolsError:
+
         feat_seq = gtf.select_by_key("feature",
                                      feature_type
                                      ).to_bed(name=label.split(","),
@@ -173,14 +173,13 @@ def get_feat_seq(inputfile=None,
                                               ).sequence(fi=genome.name,
                                                          name=True,
                                                          s=force_strandedness)
-
 
     id_printed = set()
 
     to_print = True
 
     for _, line in enumerate(open(feat_seq.seqfn)):
-        print("LINE=" + line)
+
         if line.startswith(">"):
 
             # This (+/-) may be added by pybedtool
