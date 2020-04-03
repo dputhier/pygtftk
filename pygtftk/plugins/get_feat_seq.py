@@ -9,6 +9,8 @@ import sys
 
 import gc
 
+from pybedtools.helpers import BEDToolsError
+
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -152,19 +154,33 @@ def get_feat_seq(inputfile=None,
 
     message("Retrieving fasta sequences.")
 
-    feat_seq = gtf.select_by_key("feature",
-                                 feature_type
-                                 ).to_bed(name=label.split(","),
-                                          sep=separator
-                                          ).sequence(fi=genome.name,
-                                                     name=True,
-                                                     s=force_strandedness)
+    try:
+        # The nameOnly argument is not supported
+        # through all Bedtools versions
+        feat_seq = gtf.select_by_key("feature",
+                                     feature_type
+                                     ).to_bed(name=label.split(","),
+                                              sep=separator
+                                              ).sequence(fi=genome.name,
+                                                         name=True,
+                                                         nameOnly=True,
+                                                         s=force_strandedness)
+    except BEDToolsError:
+        feat_seq = gtf.select_by_key("feature",
+                                     feature_type
+                                     ).to_bed(name=label.split(","),
+                                              sep=separator
+                                              ).sequence(fi=genome.name,
+                                                         name=True,
+                                                         s=force_strandedness)
+
 
     id_printed = set()
 
     to_print = True
 
     for _, line in enumerate(open(feat_seq.seqfn)):
+        print("LINE=" + line)
         if line.startswith(">"):
 
             # This (+/-) may be added by pybedtool
