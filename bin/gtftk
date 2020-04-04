@@ -26,6 +26,10 @@ from pygtftk.utils import silentremove
 from pygtftk.version import __version__
 from pygtftk.bwig.bw_coverage import TMP_FILE_POOL_MANAGER
 
+if sys.version_info[0] == 3:
+    if sys.version_info[1] > 7:
+        __spec__ = ""
+
 # Avoid warning message emitted by numpy
 # https://tinyurl.com/ybev6zrw
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
