@@ -136,7 +136,7 @@ class GetTests(argparse._StoreTrueAction):
                 if platform == "darwin":
                     print(test)
                 else:
-                    test = test.replace("md5sum-lite", "md5sum")
+                    test = test.replace("md5 -r", "md5sum")
                     print(test)
             else:
                 cmd_with_no_test += [cmd]
@@ -180,7 +180,7 @@ class GetTestsNoCon(argparse._StoreTrueAction):
                     if platform == "darwin":
                         print(test)
                     else:
-                        test = test.replace("md5sum-lite", "md5sum")
+                        test = test.replace("md5 -r", "md5sum")
                         print(test)
                 else:
                     cmd_with_no_test += [cmd]

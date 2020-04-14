@@ -134,21 +134,21 @@ else:
       [ "$result" -eq 70 ]
     }
 
-    # Check the md5sum-lite signature of get_example
+    # Check the md5 -r signature of get_example
     @test "convert_ensembl_10" {
-     result=`gtftk get_example | md5sum-lite | sed 's/ .*//' `
+     result=`gtftk get_example | md5 -r | sed 's/ .*//' `
       [ "$result" = "679aa6be7ee8d8402f4d05e05d2b49d5" ]
     }
        
-    # Check that the md5sum-lite signature is the same after regenerating...
+    # Check that the md5 -r signature is the same after regenerating...
     @test "convert_ensembl_11" {
-     result=`gtftk get_example | grep -v "gene.*gene_id.*G0010"| gtftk convert_ensembl | md5sum-lite | sed 's/ .*//'`
+     result=`gtftk get_example | grep -v "gene.*gene_id.*G0010"| gtftk convert_ensembl | md5 -r | sed 's/ .*//'`
       [ "$result" = "679aa6be7ee8d8402f4d05e05d2b49d5" ]
     }
            
-    # Delete all genes and transcripts, regenerate, check md5sum-lite...
+    # Delete all genes and transcripts, regenerate, check md5 -r...
     @test "convert_ensembl_12" {
-     result=`gtftk get_example | awk '$3 != "transcript"' | awk '$3 != "gene"' | gtftk convert_ensembl  | md5sum-lite | sed 's/ .*//'`
+     result=`gtftk get_example | awk '$3 != "transcript"' | awk '$3 != "gene"' | gtftk convert_ensembl  | md5 -r | sed 's/ .*//'`
       [ "$result" = "679aa6be7ee8d8402f4d05e05d2b49d5" ]
     }
         

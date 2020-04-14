@@ -377,35 +377,35 @@ else:
                     
     # Check the size of transcript seq compared to ensembl. 
     @test "get_tx_seq_17" {
-     result=`cat observed_size.txt | md5sum-lite | sed 's/ .*//'`
+     result=`cat observed_size.txt | md5 -r | sed 's/ .*//'`
       [ "$result" = "1d145f52046dba514040623f1efe2072" ]
     }  
 
     # Check the sequence of tx on plus strand compared to ensembl. 
-    # should be the same as 'cat expected_sequence_plus.fa | md5sum-lite'
+    # should be the same as 'cat expected_sequence_plus.fa | md5 -r'
     @test "get_tx_seq_18" {
-         result=`gtftk get_tx_seq -i ids_plus.gtf -g chr1_hg38_10M.fa -l transcript_id | perl -ne 'print uc $_'> observed_sequence_plus.fa; cat observed_sequence_plus.fa | md5sum-lite | sed 's/ .*//'`
+         result=`gtftk get_tx_seq -i ids_plus.gtf -g chr1_hg38_10M.fa -l transcript_id | perl -ne 'print uc $_'> observed_sequence_plus.fa; cat observed_sequence_plus.fa | md5 -r | sed 's/ .*//'`
       [ "$result" = "7327e4010944c2def4431bf5ef77a4f1" ]
     } 
 
     # Check the sequence of tx on plus strand compared to ensembl (no rev-comp). 
-    # should be the same as 'cat expected_sequence_plus.fa | md5sum-lite'
+    # should be the same as 'cat expected_sequence_plus.fa | md5 -r'
     @test "get_tx_seq_19" {
-     result=`gtftk get_tx_seq -i ids_plus.gtf -g chr1_hg38_10M.fa -l transcript_id -n | perl -ne 'print uc $_'> observed_sequence_plus.fa; cat observed_sequence_plus.fa | md5sum-lite | sed 's/ .*//'`
+     result=`gtftk get_tx_seq -i ids_plus.gtf -g chr1_hg38_10M.fa -l transcript_id -n | perl -ne 'print uc $_'> observed_sequence_plus.fa; cat observed_sequence_plus.fa | md5 -r | sed 's/ .*//'`
       [ "$result" = "7327e4010944c2def4431bf5ef77a4f1" ]
     } 
     
     # Check the sequence of tx on minus strand compared to ensembl (rev_comp). 
-    # should be the same as 'cat expected_sequence_minus_rv.fa | md5sum-lite'
+    # should be the same as 'cat expected_sequence_minus_rv.fa | md5 -r'
     @test "get_tx_seq_20" {
-     result=`gtftk get_tx_seq -i ids_minus.gtf -g chr1_hg38_10M.fa -l transcript_id | perl -ne 'print uc $_'> observed_sequence_minus_rv.fa; cat observed_sequence_minus_rv.fa | md5sum-lite | sed 's/ .*//'`
+     result=`gtftk get_tx_seq -i ids_minus.gtf -g chr1_hg38_10M.fa -l transcript_id | perl -ne 'print uc $_'> observed_sequence_minus_rv.fa; cat observed_sequence_minus_rv.fa | md5 -r | sed 's/ .*//'`
       [ "$result" = "6f40e63555a4bb6f849261b0fe9e928c" ]
     } 
 
     # Check the sequence of tx on minus strand compared to ensembl (no rev_comp). 
-    # should be the same as 'cat expected_sequence_minus_no_rv.fa | md5sum-lite'
+    # should be the same as 'cat expected_sequence_minus_no_rv.fa | md5 -r'
     @test "get_tx_seq_21" {
-     result=`gtftk get_tx_seq -i ids_minus.gtf -g chr1_hg38_10M.fa -l transcript_id -n | perl -ne 'print uc $_'> observed_sequence_minus_no_rv.fa; cat observed_sequence_minus_no_rv.fa | md5sum-lite | sed 's/ .*//'`
+     result=`gtftk get_tx_seq -i ids_minus.gtf -g chr1_hg38_10M.fa -l transcript_id -n | perl -ne 'print uc $_'> observed_sequence_minus_no_rv.fa; cat observed_sequence_minus_no_rv.fa | md5 -r | sed 's/ .*//'`
       [ "$result" = "87c15b230b6057be091566ac29ada7a1" ]
     } 
         

@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html lang="en">
   <head>
     <meta charset="utf-8" /><script type="text/javascript">
 
@@ -15,14 +15,14 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>The pygtftk.bwig.bw_coverage module &#8212; gtftk 1.1.0 documentation</title>
+    <title>The pygtftk.bwig.bw_coverage module &#8212; gtftk 1.1.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="api.html" title="Help on Python package (pygtftk)"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -56,9 +56,9 @@
   <div class="section" id="module-pygtftk.bwig.bw_coverage">
 <span id="the-pygtftk-bwig-bw-coverage-module"></span><h1>The pygtftk.bwig.bw_coverage module<a class="headerlink" href="#module-pygtftk.bwig.bw_coverage" title="Permalink to this headline">¶</a></h1>
 <p>A module to compute bigwig coverage over a set of regions (bed).</p>
-<dl class="function">
+<dl class="py function">
 <dt id="pygtftk.bwig.bw_coverage.bw_cov_mp">
-<code class="sig-prename descclassname">pygtftk.bwig.bw_coverage.</code><code class="sig-name descname">bw_cov_mp</code><span class="sig-paren">(</span><em class="sig-param">bw_list=None</em>, <em class="sig-param">region_file=None</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">bin_nb=None</em>, <em class="sig-param">nb_proc=None</em>, <em class="sig-param">n_highest=None</em>, <em class="sig-param">zero_to_na=False</em>, <em class="sig-param">pseudo_count=None</em>, <em class="sig-param">stat='mean'</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.bw_cov_mp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.bwig.bw_coverage.</code><code class="sig-name descname">bw_cov_mp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bw_list</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">region_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bin_nb</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nb_proc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_highest</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zero_to_na</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pseudo_count</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stat</span><span class="o">=</span><span class="default_value">'mean'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.bw_cov_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute bigwig coverage (multi-processed) for a set of regions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -79,9 +79,9 @@
 <p>Returns a file.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="pygtftk.bwig.bw_coverage.bw_profile_mp">
-<code class="sig-prename descclassname">pygtftk.bwig.bw_coverage.</code><code class="sig-name descname">bw_profile_mp</code><span class="sig-paren">(</span><em class="sig-param">in_bed_file=None</em>, <em class="sig-param">nb_proc=None</em>, <em class="sig-param">big_wig=None</em>, <em class="sig-param">bin_nb=None</em>, <em class="sig-param">pseudo_count=0</em>, <em class="sig-param">stranded=True</em>, <em class="sig-param">type=None</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">outputfile=None</em>, <em class="sig-param">zero_to_na=False</em>, <em class="sig-param">bed_format=False</em>, <em class="sig-param">add_score=False</em>, <em class="sig-param">stat='mean'</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.bw_profile_mp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.bwig.bw_coverage.</code><code class="sig-name descname">bw_profile_mp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_bed_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nb_proc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">big_wig</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bin_nb</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pseudo_count</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">stranded</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outputfile</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zero_to_na</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bed_format</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">add_score</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">stat</span><span class="o">=</span><span class="default_value">'mean'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.bw_profile_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute bigwig profile for a set of regions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -106,15 +106,15 @@
 <p>Returns a file.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="pygtftk.bwig.bw_coverage.make_tmp_file_pool">
-<code class="sig-prename descclassname">pygtftk.bwig.bw_coverage.</code><code class="sig-name descname">make_tmp_file_pool</code><span class="sig-paren">(</span><em class="sig-param">prefix='tmp'</em>, <em class="sig-param">suffix=''</em>, <em class="sig-param">store=True</em>, <em class="sig-param">dir=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.make_tmp_file_pool" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.bwig.bw_coverage.</code><code class="sig-name descname">make_tmp_file_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span><span class="o">=</span><span class="default_value">'tmp'</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">store</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dir</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.bwig.bw_coverage.make_tmp_file_pool" title="Permalink to this definition">¶</a></dt>
 <dd><p>This</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="k">import</span> <span class="n">make_tmp_file_pool</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="kn">import</span> <span class="n">make_tmp_file_pool</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tmp_file</span> <span class="o">=</span> <span class="n">make_tmp_file_pool</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tmp_file</span> <span class="o">=</span> <span class="n">make_tmp_file_pool</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;pref&quot;</span><span class="p">)</span>
@@ -155,7 +155,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -175,13 +175,13 @@
         <li class="right" >
           <a href="api.html" title="Help on Python package (pygtftk)"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Nov 21, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
+      Last updated on Apr 14, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.1.
     </div>
   </body>
 </html>

@@ -1,39 +1,50 @@
 # Changelog
 
-## v1.1.1
+
+## v1.1.0
+=======
+>>>>>>> 1.1.1
 
 
 ### Bug Fixes
 
-* Fix -n with integer values in get_5p_3p_coords.
+*   Fix #116 (pandas version issue)
+*   Fix an issue related to pybedtool/bedtool version (naming of sequences that differs due to name/name+/nameOnly arguments).
+*   Fix -n with integer values in get_5p_3p_coords.
 
 ### API/CLI Changes
 
+*   None.
 
 ### Code changes
 
+*   None.
 
 ### New Features
 
+* md5sum-lite call have been replaced by "md5 -r" under darwin platforms.
 * The tss_numbering command now allows to add the number of different TSSs to the gene feature.
-
 
 ## v1.1.0
 
 
 ### Bug Fixes
 
-
+*   None.
 
 ### API/CLI Changes
 
+*   None.
 
 ### Code changes
 
+*   None.
 
 ### New Features
 
+* Support for Python 3.7.
 * The tss_numbering command now allows to add the number of different TSSs to the gene feature.
+
 
 ## v1.0.9
 

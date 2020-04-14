@@ -260,7 +260,7 @@ else:
     test = """
     #closest_genes: check whole file
     @test "closest_genes_1" {
-     result=`gtftk get_example | gtftk closest_genes -f | md5sum-lite | sed 's/ .*//'`
+     result=`gtftk get_example | gtftk closest_genes -f | md5 -r | sed 's/ .*//'`
       [ "$result" = "3cef10d2528151dbbe2ff3affb05de00" ]
     }
         

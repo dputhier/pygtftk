@@ -184,13 +184,13 @@ else:
         
     #tss_numbering 
     @test "tss_numbering_0" {
-     result=`gtftk get_example -d mini_real | gtftk select_by_key -k gene_id -v ENSG00000175756 | gtftk tss_numbering| gtftk select_by_key -t| gtftk tabulate -x -k transcript_id,start,end,strand,tss_number | md5sum-lite | perl -npe 's/\\s.*//'`
+     result=`gtftk get_example -d mini_real | gtftk select_by_key -k gene_id -v ENSG00000175756 | gtftk tss_numbering| gtftk select_by_key -t| gtftk tabulate -x -k transcript_id,start,end,strand,tss_number | md5 -r | perl -npe 's/\\s.*//'`
       [ "$result" = 'e01c4c1c167c8f2551584a3a6352b48b' ]
     }
 
     #tss_numbering 
     @test "tss_numbering_1" {
-     result=`gtftk get_example -d mini_real | gtftk select_by_key -k gene_id -v ENSG00000142611 | gtftk tss_numbering| gtftk select_by_key -t| gtftk tabulate -x -k transcript_id,start,end,strand,tss_number | md5sum-lite | perl -npe 's/\\s.*//'`
+     result=`gtftk get_example -d mini_real | gtftk select_by_key -k gene_id -v ENSG00000142611 | gtftk tss_numbering| gtftk select_by_key -t| gtftk tabulate -x -k transcript_id,start,end,strand,tss_number | md5 -r | perl -npe 's/\\s.*//'`
       [ "$result" = 'c4a9b29bd0385b57ed64cde6325b46fe' ]
     }
 
@@ -198,7 +198,7 @@ else:
     # G0011T002	250	280	-	1	0
     # tss_numbering 
     @test "tss_numbering_2" {
-     result=`gtftk get_example -d simple_03 | gtftk tss_numbering -c | gtftk select_by_key -t | gtftk tabulate -x -k transcript_id,start,end,strand,tss_number,dist_to_first_tss | grep G0011 |md5sum-lite | perl -npe 's/\\s.*//'`
+     result=`gtftk get_example -d simple_03 | gtftk tss_numbering -c | gtftk select_by_key -t | gtftk tabulate -x -k transcript_id,start,end,strand,tss_number,dist_to_first_tss | grep G0011 |md5 -r | perl -npe 's/\\s.*//'`
       [ "$result" = '7e950a2fbe9c832736f1f6def27ea6de' ]
     }
 
@@ -207,7 +207,7 @@ else:
     # G0002T002	185	189	+	2	5
     # tss_numbering 
     @test "tss_numbering_2" {
-     result=`gtftk get_example -d simple_03 | gtftk tss_numbering -c | gtftk select_by_key -t | gtftk tabulate -x -k transcript_id,start,end,strand,tss_number,dist_to_first_tss | grep G0002 |md5sum-lite | perl -npe 's/\\s.*//'`
+     result=`gtftk get_example -d simple_03 | gtftk tss_numbering -c | gtftk select_by_key -t | gtftk tabulate -x -k transcript_id,start,end,strand,tss_number,dist_to_first_tss | grep G0002 |md5 -r | perl -npe 's/\\s.*//'`
       [ "$result" = '636ea1db16f5a44c3c6d83b46f372655' ]
     }
 
