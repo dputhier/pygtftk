@@ -15,7 +15,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Help on Python package (pygtftk) &#8212; gtftk 1.1.1 documentation</title>
+    <title>Help on Python package (pygtftk) &#8212; gtftk 1.1.2 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -158,7 +158,7 @@ or FASTA object.</p>
 
 <dl class="py method">
 <dt id="pygtftk.gtf_interface.GTF.add_attr_from_list">
-<code class="sig-name descname">add_attr_from_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">'transcript_id'</span></em>, <em class="sig-param"><span class="n">key_value</span><span class="o">=</span><span class="default_value"></span></em>, <em class="sig-param"><span class="n">new_key</span><span class="o">=</span><span class="default_value">'new_key'</span></em>, <em class="sig-param"><span class="n">new_key_value</span><span class="o">=</span><span class="default_value"></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_from_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_attr_from_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">'transcript_id'</span></em>, <em class="sig-param"><span class="n">key_value</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">new_key</span><span class="o">=</span><span class="default_value">'new_key'</span></em>, <em class="sig-param"><span class="n">new_key_value</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.add_attr_from_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add key/value pairs to the GTF object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -471,7 +471,7 @@ start, end, score or frame.</p>
 
 <dl class="py method">
 <dt id="pygtftk.gtf_interface.GTF.get_3p_end">
-<code class="sig-name descname">get_3p_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat_type</span><span class="o">=</span><span class="default_value">'transcript'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'transcript_id'</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'|'</span></em>, <em class="sig-param"><span class="n">as_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">more_name</span><span class="o">=</span><span class="default_value"></span></em>, <em class="sig-param"><span class="n">feature_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">explicit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_3p_end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_3p_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat_type</span><span class="o">=</span><span class="default_value">'transcript'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'transcript_id'</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'|'</span></em>, <em class="sig-param"><span class="n">as_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">more_name</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">feature_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">explicit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_3p_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Bedtool object containing the 3’ coordinates of selected
 features (Bed6 format) or a dict (zero-based coordinate).</p>
 <dl class="field-list simple">
@@ -506,7 +506,7 @@ features (Bed6 format) or a dict (zero-based coordinate).</p>
 
 <dl class="py method">
 <dt id="pygtftk.gtf_interface.GTF.get_5p_end">
-<code class="sig-name descname">get_5p_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat_type</span><span class="o">=</span><span class="default_value">'transcript'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'transcript_id'</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'|'</span></em>, <em class="sig-param"><span class="n">as_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">more_name</span><span class="o">=</span><span class="default_value"></span></em>, <em class="sig-param"><span class="n">one_based</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">feature_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">explicit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_5p_end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_5p_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat_type</span><span class="o">=</span><span class="default_value">'transcript'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'transcript_id'</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'|'</span></em>, <em class="sig-param"><span class="n">as_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">more_name</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">one_based</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">feature_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">explicit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_5p_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Bedtool object containing the 5’ coordinates of selected
 features (Bed6 format) or a dict (zero-based coordinate).</p>
 <dl class="field-list simple">
@@ -908,7 +908,7 @@ as values.</p>
 
 <dl class="py method">
 <dt id="pygtftk.gtf_interface.GTF.get_tss">
-<code class="sig-name descname">get_tss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'transcript_id'</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'|'</span></em>, <em class="sig-param"><span class="n">as_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">more_name</span><span class="o">=</span><span class="default_value"></span></em>, <em class="sig-param"><span class="n">one_based</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">feature_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">explicit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tss" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_tss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'transcript_id'</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'|'</span></em>, <em class="sig-param"><span class="n">as_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">more_name</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">one_based</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">feature_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">explicit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Bedtool object containing the TSSs (Bed6 format) or a dict
 (zero-based coordinate).</p>
 <dl class="field-list simple">
@@ -938,7 +938,7 @@ as values.</p>
 
 <dl class="py method">
 <dt id="pygtftk.gtf_interface.GTF.get_tts">
-<code class="sig-name descname">get_tts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'transcript_id'</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'|'</span></em>, <em class="sig-param"><span class="n">as_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">more_name</span><span class="o">=</span><span class="default_value"></span></em>, <em class="sig-param"><span class="n">feature_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">explicit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tts" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_tts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'transcript_id'</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'|'</span></em>, <em class="sig-param"><span class="n">as_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">more_name</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">feature_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">explicit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF.get_tts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Bedtool object containing the TTSs (Bed6 format) or a dict
 (zero-based coordinate).</p>
 <dl class="field-list simple">
@@ -2428,7 +2428,7 @@ or path depending on input type.</p>
 
 <dl class="py function">
 <dt id="pygtftk.utils.check_boolean_exprs">
-<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">check_boolean_exprs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exprs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">operand</span><span class="o">=</span><span class="default_value"></span></em>, <em class="sig-param"><span class="n">send_error</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.check_boolean_exprs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">check_boolean_exprs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exprs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">operand</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">send_error</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.check_boolean_exprs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check whether a boolean expression is properly formed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2913,6 +2913,22 @@ declared in TMP_FILE_LIST will be remove upon command exit.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="pygtftk.utils.rnd_alpha_numeric_string">
+<code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">rnd_alpha_numeric_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str_len</span><span class="o">=</span><span class="default_value">8</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.rnd_alpha_numeric_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a random alphanumeric string of size str_len.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>str_len</strong> – The length of the output string.</p>
+</dd>
+</dl>
+<p>:Example :</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.utils</span> <span class="kn">import</span> <span class="n">rnd_alpha_numeric_string</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">rnd_alpha_numeric_string</span><span class="p">(</span><span class="n">str_len</span><span class="o">=</span><span class="mi">8</span><span class="p">))</span> <span class="o">==</span> <span class="mi">8</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pygtftk.utils.silentremove">
 <code class="sig-prename descclassname">pygtftk.utils.</code><code class="sig-name descname">silentremove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.silentremove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove silently (without error and warning) a file.</p>
@@ -3125,13 +3141,13 @@ are found at the beginning or end of the string, they are deleted.</p>
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.2 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 14, 2020.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.1.
+      Last updated on Apr 21, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.2.
     </div>
   </body>
 </html>

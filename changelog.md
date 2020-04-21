@@ -1,10 +1,27 @@
 # Changelog
 
 
-## v1.1.0
-=======
->>>>>>> 1.1.1
+## v1.1.2
 
+
+### Bug Fixes
+
+*   None
+
+### API/CLI Changes
+
+*   None.
+
+### Code changes
+
+*   None.
+
+### New Features
+
+*   The --more-bed-labels is now facultative in OLOGRAM.
+
+
+## v1.1.1
 
 ### Bug Fixes
 
