@@ -921,6 +921,22 @@ def left_strip_str(string):
     return "\n".join(new_line)
 
 
+def rnd_alpha_numeric_string(str_len=8):
+    """
+    Returns a random alphanumeric string of size str_len.
+
+    :param str_len: The length of the output string.
+
+
+    :Example :
+
+    >>> from pygtftk.utils import rnd_alpha_numeric_string
+    >>> assert len(rnd_alpha_numeric_string(str_len=8)) == 8
+    """
+    letters_and_digits = string.ascii_letters + string.digits
+    return ''.join((random.choice(letters_and_digits) for i in range(str_len)))
+
+
 # ---------------------------------------------------------------
 # Lists and dicts
 # ---------------------------------------------------------------

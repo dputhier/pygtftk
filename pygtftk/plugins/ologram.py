@@ -22,8 +22,6 @@
 import argparse
 import warnings
 
-import gc
-
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 import multiprocessing
@@ -598,9 +596,15 @@ def ologram(inputfile=None,
             if len(more_bed_labels) != len(set(more_bed_labels)):
                 message("Redundant labels not allowed.", type="ERROR")
         else:
-            message(
-                "--more-bed-labels should be set if --more-bed is used.",
-                type="ERROR")
+            more_bed_labels = []
+            for a_bed in more_bed:
+                a_bed = os.path.basename(a_bed.name)
+                a_bed = re.sub("_converted\.[Bb][Ee][Dd][3456]{0,1}$", "", a_bed)
+                # This one is a little bit complexe...
+                # this is in case pygtftk name appear in the initial name...
+                a_bed = re.sub("_pygtftk_?((?!pygtftk).)*$", "", a_bed)
+                more_bed_labels += [a_bed]
+            message("--more-bed-label will be set to: " + ",".join(more_bed_labels), type="DEBUG")
 
     # -------------------------------------------------------------------------
     # Preparing output files
