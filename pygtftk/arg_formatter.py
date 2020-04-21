@@ -18,6 +18,7 @@ import pygtftk
 from pygtftk.utils import check_file_or_dir_exists, make_tmp_file, close_properly
 from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import message
+from pygtftk.utils import rnd_alpha_numeric_string
 
 
 # ---------------------------------------------------------------
@@ -457,9 +458,18 @@ class FormattedFile(argparse.FileType):
                 field_count = file_bo.field_count()
 
                 if field_count != 6:
+
+                    # Retrieve the file basename to force temporary files
+                    # to get the same file name (with a random char string)
+                    base_name = os.path.basename(string)
+                    base_name = re.sub("\.[Bb][Ee][Dd][3456]{0,1}$", "", base_name)
+                    rnd_str = rnd_alpha_numeric_string(8)
+
                     message("Converting to bed6 format (" + string + ").", type="WARNING")
-                    tmp_file = make_tmp_file(prefix="bed6_",
-                                             suffix=".bed")
+                    tmp_file = make_tmp_file(prefix=base_name,
+                                             suffix="_converted.bed6")
+                    message("Temporary file name: " + tmp_file.name, type="DEBUG")
+
                     for record in file_bo:
                         region_nb += 1
 
