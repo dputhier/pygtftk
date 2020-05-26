@@ -9,17 +9,17 @@ When using gtfk a GTF object methods may return:
 
 """
 
-import sys
-from collections import OrderedDict
-from collections import defaultdict
-
 import gc
 import glob
 import io
-import numpy as np
 import os
 import re
+import sys
 import textwrap
+from collections import OrderedDict
+from collections import defaultdict
+
+import numpy as np
 from cffi import FFI
 from nose.plugins.skip import SkipTest
 from pybedtools.bedtool import BedTool
@@ -2950,6 +2950,7 @@ class GTF(object):
                 name_out = value_name
 
             name_out = [str(x) for x in name_out]
+            
             name_out = sep.join(name_out)
 
             i.write_bed_5p_end(name=name_out,

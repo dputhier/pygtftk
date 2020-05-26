@@ -11,7 +11,7 @@ plotnine >=0.5.1
 GitPython >=2.1.8
 cloudpickle >=0.4.0
 ftputil >=3.3.1
-pandas >=0.23.3
+pandas >=0.23.3,!=1.0.0,!=1.0.0rc0
 pybigwig >=0.3.12
 setuptools
 cython
