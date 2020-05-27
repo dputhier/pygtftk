@@ -231,17 +231,22 @@ release_pip_unix:
 	echo "Manylinux wheels should be in wheels folder."         ; \
 	echo "Have a look at log in wheels/log and upload user twine if OK."
 
+
 release_pip_osx:
 	@ echo "#-----------------------------------------------#"
 	@ echo "# Creating osx compliant package (pip)          #"
 	@ echo "#-----------------------------------------------#"
 	@ mkdir -p wheels
-	@ conda activate pygtftk_36                          ; \
-	rm -rf dist build; python setup.py bdist_wheel             ; \
+	@ conda create -n  python_dev_37 python=3.7 -y; \
+	conda activate python_dev_37                          ; \
+	pip install -r requirements.txt ; \
+	rm -rf dist build; python3.7 setup.py bdist_wheel             ; \
 	cp dist/*whl wheels                                          ; \
 	rm -rf dist build
-	@ conda activate pygtftk_3.7                          ; \
-	rm -rf dist build; python setup.py bdist_wheel               ; \
+	@ conda create -n  python_dev_36 python=3.6 -y ;\
+	conda activate python_dev_36                          ; \
+	pip install -r requirements.txt ;\
+	rm -rf dist build; python3.6 setup.py bdist_wheel               ; \
     cp dist/*whl wheels                                          ; \
     rm -rf dist build
 
