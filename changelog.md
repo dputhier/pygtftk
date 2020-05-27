@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.1.4
+
+### Bug Fixes
+
+*   None
+
+### API/CLI Changes
+
+*   No more compatible with Python 3.5 (as BioPython).
+
+### Code changes
+
+*   None.
+
+### New Features
+
+*   None.
 
 ## v1.1.3
 

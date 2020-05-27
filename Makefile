@@ -217,7 +217,7 @@ release_pip_unix:
 	@ echo "# Creating manylinux compliant package (pip)    #"
 	@ echo "#-----------------------------------------------#"
 	@rm -rf /tmp/tmp                                            ; \
- 	rm -f manylinux/pygtftk-*whl                                ; \
+	rm -f manylinux/pygtftk-*whl                                ; \
 	cd manylinux                                                ; \
 	docker rmi -f manylinux                                     ; \
 	docker rm -f imanylinux || true  							; \
@@ -236,10 +236,11 @@ release_pip_osx:
 	@ echo "# Creating osx compliant package (pip)          #"
 	@ echo "#-----------------------------------------------#"
 	@ mkdir -p wheels
-	@ rm -rf dist build; python setup.py bdist_wheel             ; \
+	@ conda activate pygtftk_36                          ; \
+	rm -rf dist build; python setup.py bdist_wheel             ; \
 	cp dist/*whl wheels                                          ; \
 	rm -rf dist build
-	@ conda activate pygtftk_python_3.5                          ; \
+	@ conda activate pygtftk_3.7                          ; \
 	rm -rf dist build; python setup.py bdist_wheel               ; \
     cp dist/*whl wheels                                          ; \
     rm -rf dist build
