@@ -1,20 +1,20 @@
-================         =================
-Pip package               |Pippackage|_
-Bioconda package          |bioconda|_
-License                   |license|_
-Platforms                 |platform|_
-Languages                 |lang|_
-Build status              |build|_
-Repository size           |size|_
-Latest conda              |latestconda|
-Downloads                 |downloads|_
-Codacy                    |codacy|_
-Contribution              |contrib|_
-Github hits               |hits|_
-Issues                    |issues|_
-Citing                    |citing|_
-Documentation             |documentation|_
-=================         =================
+==================        =================
+Pip package                |Pippackage|_
+Bioconda package           |bioconda|_
+License                    |license|_
+Platforms                  |platform|_
+Languages                  |lang|_
+Build status               |build|_
+Repository size            |size|_
+Latest conda               |latestconda|
+Downloads                  |downloads|_
+Codacy                     |codacy|_
+Contribution               |contrib|_
+Github hits                |hits|_
+Issues                     |issues|_
+Citing                     |citing|_
+Documentation              |documentation|_
+==================        =================
 
 
 .. |codacy| image:: https://api.codacy.com/project/badge/Grade/0a977718b4d44992a794cf5ddef7822e
