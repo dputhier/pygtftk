@@ -1,8 +1,29 @@
 # Changelog
 
 
+	
+## v1.1.3
 
-## v1.1.1
+
+### Bug Fixes
+
+*   fix #123, #122, #121, #120
+
+### API/CLI Changes
+
+*   None.
+
+### Code changes
+
+*   None.
+
+### New Features
+
+*   None.
+
+
+
+## v1.1.2
 
 
 ### Bug Fixes

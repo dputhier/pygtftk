@@ -4,9 +4,10 @@
 """
 
 import argparse
-import os
 import sys
 from collections import OrderedDict
+
+import os
 
 from pygtftk import arg_formatter
 from pygtftk.biomart import Biomart
@@ -145,7 +146,7 @@ else:
     # Select_by_go all
     @test "select_by_go_1" {
      result=`gtftk get_example -d mini_real | gtftk select_by_go -V 3 -s hsapiens | gtftk tabulate -uH -k gene_name | wc -l`
-      [ "$result" -gt 50 ]
+      [ "$result" -gt 40 ]
     }
     
     '''

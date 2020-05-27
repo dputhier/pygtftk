@@ -47,7 +47,7 @@ if PY2:
 # -------------------------------------------------------------------------
 
 
-__author__ = 'Fabrice Lopez,Quentin Ferré, Guillaume Charbonnier, Denis Puthier'
+__author__ = 'fabrice Lopez,Denis Puthier'
 __email__ = 'denis.puthier@univ-amu.fr'
 __description__ = 'The Python GTF toolkit (pygtftk) package: easy handling of GTF files'
 __license__ = 'GPL-2'
@@ -316,7 +316,7 @@ setup(name="pygtftk",
                         'cloudpickle >=0.5.6',
                         'ftputil >=3.3.1',
                         'pybedtools >=0.7.8',
-                        'pandas >=0.23.3',
+                        'pandas >=0.23.3, !=1.0.0, !=1.0.0rc0',
                         'requests >=2.13.0',
                         'pyBigWig >=0.3.12',
                         'cffi >=1.10.0',
