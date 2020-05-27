@@ -12,7 +12,7 @@ dependencies:
 - bedtools ==2.27.1
 - cloudpickle >=0.4.0
 - ftputil >=3.3.1,<4.0.0
-- pandas >=0.23.3
+- pandas >=0.23.3,!=1.0.0,!=1.0.0rc0
 - scipy >=1.1.0
 - pybedtools >=0.7.8
 - bats
