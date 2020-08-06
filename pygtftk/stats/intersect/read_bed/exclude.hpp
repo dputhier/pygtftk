@@ -1,3 +1,5 @@
+// Header for exclude.cpp ; see the read_bed_as_list.pyx file for its
+// integration in the main Cython code.
 namespace exclusion {
   void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* bedfile_ends,
                                           long long* exclusion_starts, long long* exclusion_ends,
