@@ -215,3 +215,187 @@ def empirical_p_val(x, data):
     signif = min(higher, lower)
 
     return signif / len(arr)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+import numpy as np
+
+import pandas as pd
+import pybedtools
+import scipy
+import scipy.stats
+from scipy import optimize
+
+import pymc3 as pm
+import theano.tensor as tt
+import theano
+
+from multiprocessing import Pool
+import functools as ft
+import time, sys
+
+# This code is completely useless as simply calculating r and p from the
+# mean and variance of the observed data is just as efficient.
+
+# I keep it because it may be useful in other problems and provide an example
+# of MLE fitting and Bayesian fitting in Python : may be useful in
+# multivariate estimations, for example.
+
+
+# ----------------------------- MLE fitting ---------------------------------- #
+# Standard MLE fitting with scipy.optimize
+
+def fit_negbin_mle(obs):
+
+    def negbinom_likelihood_numpy(params,obs):
+        # Distribution parameters
+        log_mean, log_var = params
+        mean, var = np.exp(log_mean), np.exp(log_var)
+        r = mean**2 / (var-mean)
+        p = 1/(mean/r + 1)
+
+        # Calculating likelihood = sum of PMF
+        def log_of_fact(n):
+            return (n * np.log(n) - n) + (1/6) * (8*(n**3) + 4*(n**2) + (1/30)) + (0.5*np.log(np.pi))
+        # NOTE : using a worse approximation of factorials resulted in errors
+        def log_of_binom(n,p): return log_of_fact(n) - log_of_fact(p) - log_of_fact(n-p)
+        def custom_nb_logpmf(k): return log_of_binom(k+r-1,k) + k*np.log(1-p) + r*np.log(p)
+
+        # We use a sum and not a product because we are working with the log pmf
+        result = np.sum([custom_nb_logpmf(x) for x in obs])
+        return -1 * result # NOTE Don't forget we want to maximize log-likelihood, so minimize -1*log-likelihood !
+
+    E = np.mean(obs)
+    V = np.var(obs)
+
+    initial_guess = [np.log(E),np.log(V)]
+    #initial_guess = [1,1]
+    # WARNING : when artificially deluding it (ie setting initial guesses at [1,1]), it returns a result where fitted mean == fitted var !
+
+    fitted = optimize.minimize(negbinom_likelihood_numpy,
+                        initial_guess, method='Nelder-Mead', # NOTE Must use Nelder-mead
+                        args=(obs))
+    fitted_log_E, fitted_log_V = fitted.x
+
+    return np.exp(fitted_log_E), np.exp(fitted_log_V)
+
+
+
+
+
+
+
+
+# ----------------------------- Bayesian fitting ----------------------------- #
+
+# Bayesian fitting may be superfluous; it just inserts the info from tries
+# that mean estimator is quickly good. So maybe offer it as an option for more
+# robustness.
+
+# Actually a simple optimisation returns the same result as bayesian for a fraction of the time.
+# So keep Bayesian in this repository, but implement classical fitting in
+# the release version.
+
+def fit_pymc_model(obs):
+    """
+    Will fit a negative binomial distribution to this list of observations.
+    """
+    obs = np.array(obs)
+    mean_obs = np.mean(obs)
+    var_obs = np.var(obs)
+
+    theano.gof.cc.get_module_cache().clear() # Clear theano cache, just in case
+
+    def likelihood(obs, log_of_mean,var_obs,var_mult):
+        # Distribution parameters
+        mean = tt.exp(log_of_mean)
+        var = var_obs*var_mult
+
+        r = mean**2 / (var-mean)
+        p = 1/(mean/r + 1)
+
+        # Calculating likelihood = sum of PMF
+        def log_of_fact(n):
+            return (n * tt.log(n) - n) + (1/6) * (8*(n**3) + 4*(n**2) + (1/30)) + (0.5*tt.log(np.pi))
+        def log_of_binom(n,p): return log_of_fact(n) - log_of_fact(p) - log_of_fact(n-p)
+        def custom_nb_logpmf(k): return log_of_binom(k+r-1,k) + k*tt.log(1-p)+ r*tt.log(p)
+        result = np.sum([custom_nb_logpmf(x) for x in obs])
+        return result
+
+    with pm.Model() as model:
+
+        ### Priors
+        # We know true mean will likely be close to the observed one
+        # Furthermore, pymc has troubles with values>1E10 (memory overflow), so we use a log
+        log_of_mean = pm.Normal('Log_of_esperance', mu=np.log(mean_obs), sd=0.25)
+        # We know the real variance is likely lower the empirical one (although it could be higher)
+        var_mult = pm.Normal('Variance_multiplier', mu=0.75, sd=0.25)
+
+        # Compute the likelihood
+        like = pm.DensityDist('Likelihood',
+                    likelihood,
+                    observed = dict(obs=obs,log_of_mean=log_of_mean,var_obs=var_obs,var_mult=var_mult))
+        trace = pm.sample(1000, njobs=4,
+                            init='adapt_diag')
+        # NOTE See how to reduce verbosity
+        # NOTE We use 'adapt_diag' as the initializer because 'jitter'
+        # could result in a 'NaN bad energy at init' error
+
+    pm.traceplot(trace)
+    pm.summary(trace)
+
+    # Return the fitted esperance and variance
+    esperance_fitted = np.exp(pm.summary(trace).loc['Log_of_esperance','mean'])
+    variance_fitted = pm.summary(trace).loc['Variance_multiplier','mean'] * var_obs
+
+    return (esperance_fitted,variance_fitted)
+
+
+'''
