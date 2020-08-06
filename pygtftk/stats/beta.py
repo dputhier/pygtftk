@@ -60,6 +60,9 @@ class BetaCalculator:
         Uses either mpmath's gamma or log-gamma function to compute values of the beta function.
         """
 
+        # HOTFIX prevent the original a, b from being numpy elements
+        a = float(a) ; b = float(b)
+
         a, b = mpmath.mpf(a), mpmath.mpf(b)
 
         if self.use_log: beta = mpmath.exp(mpmath.loggamma(a) + mpmath.loggamma(b) - mpmath.loggamma(a + b))
@@ -132,6 +135,9 @@ class BetaCalculator:
         """
 
         # In terms of methods, this function requires contfractbeta(), defined above.
+
+        # HOTFIX prevent the original a, b or x from being numpy elements
+        a = float(a) ; b = float(b) ; x = float(x)
 
         # Transpose a, x, x into mpmath objects.
         a, b, x = mpmath.mpf(a), mpmath.mpf(b), mpmath.mpf(x)
