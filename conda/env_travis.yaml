@@ -9,11 +9,11 @@ dependencies:
 - python >=3.5,<3.7
 - GitPython >=2.1.8
 - pyparsing
-- bedtools ==2.27.1
+- bedtools >=2.27.1
 - cloudpickle >=0.4.0
 - ftputil >=3.3.1,<4.0.0
 - pandas >=0.23.3
-- scipy ==1.2.0
+- scipy >=1.2.0
 - pybedtools >=0.7.8
 - bats
 - pyyaml >=3.12
@@ -29,3 +29,6 @@ dependencies:
 - cython >=0.29.6
 - mpmath >=1.1.0
 - scikit-learn >=0.21.2
+- python-graphviz
+- seaborn
+- openmp
