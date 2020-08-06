@@ -27,7 +27,7 @@ from pygtftk.utils import message
 ################################################################################
 
 def bed_to_lists_of_intervals(bed, chromsizes):
-    """
+    r"""
     Reads a bed file (as a pybedtools.BedTool object) and returns respectively
     two dictionaries, with the list of region lengths and interregions lengths
     (resp. Lr and Li), as well as a list of all chromosomes.
@@ -57,7 +57,7 @@ def bed_to_lists_of_intervals(bed, chromsizes):
 
     """
 
-    # Convert bedfile to pandas array
+    # Convert bedfile to pandas dataframe
     bed = bed.to_dataframe()
 
     Lr = dict()
@@ -89,14 +89,6 @@ def bed_to_lists_of_intervals(bed, chromsizes):
         # Remember to convert chrom to a string (it may have been a numeric, but the rest of the program requires it to be a string)
         Lr[str(chrom)] = np.array(lr)
         Li[str(chrom)] = np.array(li)
-
-
-
-
-    # NOTE FOR IMPROVEMENT : we can shuffle all elements of the various lists of
-    # Lr and Li, so we no longer conserve the Li and Lr per chromosme, so as to
-    # shuffle across all chromosomes, rebuilding new lists of the same size, but
-    # with elements drawn from concatenated Lr and Li.
 
     return Lr, Li, all_chrom
 
@@ -139,7 +131,7 @@ def exclude_chromsizes(exclusion, chromsizes):
 
 
 # ----------------------- Exclusion for each bed file ------------------------ #
-# The function to perform it is C++ code which we must interface through Cython
+# The function to perform it is C++ code, which we interface through Cython.
 
 # Declare the interface to C++ code
 cdef extern from "exclude.hpp" namespace "exclusion":
@@ -149,7 +141,7 @@ cdef extern from "exclude.hpp" namespace "exclusion":
                                         long bed_size, long excl_size)
 
 
-cdef cpp_wrapper(np.ndarray[longlong, ndim=1, mode="c"] bedfile_start_nparray,
+cdef cpp_wrapper_for_exclusion(np.ndarray[longlong, ndim=1, mode="c"] bedfile_start_nparray,
                 np.ndarray[longlong, ndim=1, mode="c"] bedfile_end_nparray,
                 np.ndarray[longlong, ndim=1, mode="c"] exclusion_start_nparray,
                 np.ndarray[longlong, ndim=1, mode="c"] exclusion_end_nparray,
@@ -208,16 +200,17 @@ def exclude_concatenate_for_this_chrom(chrom, exclusion, bedfile):
     result_end_nparray = np.copy(bedfile_end_nparray)
 
     # Convert those arrays to ensure that they are np.ndarray[long long, ndim=2, mode="c"]
+    # NOTE : np.longlong is int64
     allarrays = [bedfile_start_nparray, bedfile_end_nparray, exclusion_start_nparray, exclusion_end_nparray, result_start_nparray, result_end_nparray]
     bedfile_start_nparray, bedfile_end_nparray, exclusion_start_nparray, exclusion_end_nparray, result_start_nparray, result_end_nparray = (np.array(array, dtype = np.longlong, order = 'C') for array in allarrays)
 
-    # Force bed_size and excl_size into np.longs
+    # Force bed_size and excl_size into np.longs (int32)
     bed_size  = np.long(bedfile_start_nparray.shape[0])
     excl_size = np.long(exclusion_start_nparray.shape[0])
 
     try:
       # C++ call here (through the wrapper)
-      cpp_wrapper(bedfile_start_nparray, bedfile_end_nparray,
+      cpp_wrapper_for_exclusion(bedfile_start_nparray, bedfile_end_nparray,
                 exclusion_start_nparray, exclusion_end_nparray,
                 result_start_nparray, result_end_nparray,
                 bed_size, excl_size)
@@ -283,8 +276,8 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
 
     """
 
-    # Raw edition does not work in pybedtools, so need to use pandas dataframe instead.
-    # Also, merge and sort the files before, just in case they were not.
+    # Raw edition does not work in pybedtools, so need to use pandas dataframe
+    # instead. Also, merge and sort the files before, just in case they were not.
     bedfile = bedfile.sort().merge()
     bedfile = bedfile.to_dataframe()
     exclusion = exclusion.sort().merge()
@@ -293,15 +286,19 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
     ### Exclude regions chromosome by chromosome, with multiprocessing
     all_chroms = list(exclusion.chrom) # All chromosomes in exclusion
 
-    # To avoid wasted time in the multiprocessing, sort the chromosomes by number of peaks
-    # Furthermore, python Pool map() function will split the list of arguments into chunks which can be a problem since it can result in one thread having only short chromosomes
-    # and one only long chromosome, resulting in wasting the first thred's potential. To correct this, chunksize is set to 1. This will be sligtly less efficient but saves time
-    # here because not all tasks are as computationally expensive.
+    # To avoid wasted time in the multiprocessing, sort the chromosomes by
+    # number of peaks.
+    # Python's Pool map() function will split the list of arguments into chunks,
+    # which can be a problem since it can result in one thread having, for
+    # instance, only short chromosomes resulting in a waste of the first thread's
+    # potential. To correct this, chunksize is set to 1. This will be sligtly
+    # less efficient but saves time here because not all tasks are equally
+    # computationally expensive (chromosomes of different lengths)
     occ = dict(Counter(all_chroms))
     all_chroms = sorted(occ.keys(), key = lambda k: occ[k])
     all_chroms.reverse()
 
-    # TODO for later : if RAM turns out to be critical, do not pass the entire
+    # TODO : if RAM turns out to be critical, do not pass the entire
     # 'exclusion' and 'bedfile' dataframes but subset by chromosome before.
     # In most use cases however it should be sufficient.
 
@@ -315,22 +312,3 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
     result_bedfile = pybedtools.BedTool.from_dataframe(result)
     result_bedfile = result_bedfile.sort().merge() # Needed due to multiprocessing
     return result_bedfile
-
-
-
-
-
-################################################################################
-# ----------------- Compute statistics on the intersections ------------------ #
-################################################################################
-
-def compute_stats_for_intersection(myintersect):
-    """
-    Wrapper to compute all stats we could want on a single intersect result object.
-    The argument (myintersect) is a single bedfile, either as a pybedtools intersect
-    result, or a list of tuples.
-    """
-    bp_overlap = [x[2] - x[1] for x in myintersect]
-    intersect_nb = len(myintersect)
-    stats = (bp_overlap, intersect_nb)
-    return stats
