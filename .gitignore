@@ -12,6 +12,7 @@ __pycache__/
 *create_shuffles.c
 *overlap_regions.c
 *read_bed_as_list.cpp
+*multiproc.c
 
 # Distribution / packaging
 .Python
@@ -79,6 +80,9 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# VSCode
+.vscode
 
 # pyenv
 .python-version
