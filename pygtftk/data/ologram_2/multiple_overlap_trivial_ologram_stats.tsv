@@ -1,0 +1,4 @@
+feature_type	nb_intersections_expectation_shuffled	nb_intersections_variance_shuffled	nb_intersections_negbinom_fit_quality	nb_intersections_log2_fold_change	nb_intersections_true	nb_intersections_pvalue	summed_bp_overlaps_expectation_shuffled	summed_bp_overlaps_variance_shuffled	summed_bp_overlaps_negbinom_fit_quality	summed_bp_overlaps_log2_fold_change	summed_bp_overlaps_true	summed_bp_overlaps_pvalue
+[Query + A + ... ]	2041.4	1707.71	0.8461200000000001	0.8104	3580	8.280999999999998e-208	157083900.88	11019752500901.38	0.87111	2.1425	693564977	0
+[Query + A + B + ... ]	317.65	418.13	0.86474	2.53733	1844	0.0	19237438.2	1852705948706.02	0.8487	4.261830000000001	369051232	0
+[Query + A + B + C + ... ]	24.77	30.15	0.8771899999999999	5.21183	918	0.0	1206862.62	100449336662.32	0.9303100000000001	7.2941	189409647	0
