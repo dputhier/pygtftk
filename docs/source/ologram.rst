@@ -52,6 +52,12 @@ is randomly shuffled across the genome (inter-region lengths are considered). Th
 under the null hypothesis (the peaks and this feature are independent) is deduced thanks to this Monte Carlo approach.
 The program will return statistics for both the number of intersections and the total lengths (in basepairs) of all intersections.
 
+
+.. note:: The null hypothesis of the statistical test is:
+	- H0: The regions of the query (--peak-file) are located independently of the reference (--inputfile or --more-bed) with respect to overlap.
+	- H1: The regions of the query (--peak-file) tend to overlap the reference (--inputfile or --more-bed).
+
+
 .. warning:: The ologram examples below use 8 CPUs. Please adapt.
 
 
@@ -85,7 +91,8 @@ the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
   <br>
   <br>
 
-**Example:** Now we are using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs...). The --no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts...).
+
+**Example:** We are now using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs...). The --no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts...).
 
 .. command-output:: gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
 	:shell:
@@ -104,6 +111,10 @@ the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
   </table>
   <br>
   <br>
+
+
+.. warning:: It may be important to consider the quality of the fit that is an indicator of the reliability of the p-value. This value is available in the tsv table produced by ologram. The fit quality may also be deplaced on the diagram using the -y/--display-fit-quality argument.
+
 
 **Example:** A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.
 
@@ -412,35 +423,9 @@ Please read the notes below for more details !!!!!! NOTABLY ON PARAMETER CHOICE 
 
 
 
-
-
-
 WARNING : if using lots of file, modl may clog and have too big of a matrix !!
 Then you should specify custom combis only (show how)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Explain squishing also
 
 
 
@@ -456,13 +441,19 @@ ologram_merge_stats
 **Description:** Merge results from different *OLOGRAM* calls in a heatmap for visualisation.
 
 
-Can still work with OLOGRAM-MODL type results, since they follow the same basic format of one element/combination per line.
 
 
+Several tsv files resulting from OLOGRAM analyses can be merged into a single diagram report using the merge_ologram_stats.
 
-.. command-output:: gtftk ologram_merge_stats H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merged_ologram.pdf --labels H3K4me3,H3K36me3,H3K79me2
+**Example:** For this example will will used the results obtained for 3 epigenetic marks on human chromosome 1.
+
+
+.. command-output:: gtftk ologram_merge_stats H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merge_ologram_stats_01.pdf --labels H3K4me3,H3K36me3,H3K79me2
 	:shell:
 
+
+
+Can still work with OLOGRAM-MODL type results, since they follow the same basic format of one element/combination per line.
 
 .. raw:: html
 
@@ -470,7 +461,7 @@ Can still work with OLOGRAM-MODL type results, since they follow the same basic 
   <table>
   <tr>
   <td valign="top">
-  <iframe src="_static/example_pa_05.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  <iframe src="_static/merge_ologram_stats_01.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
   </iframe>
   </td>
   </tr>

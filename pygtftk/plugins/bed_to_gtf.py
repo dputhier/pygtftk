@@ -8,6 +8,7 @@ import argparse
 import os
 import sys
 
+import gc
 from pybedtools import BedTool
 
 import pygtftk.utils
@@ -118,7 +119,7 @@ def bed_to_gtf(
         write_properly("\t".join(list_out), outputfile)
 
         n += 1
-
+    gc.disable()
     close_properly(outputfile)
 
 

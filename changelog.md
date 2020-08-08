@@ -12,9 +12,9 @@
 
 
 
-## v1.2?
+## v1.1.5?
 
-This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find intersections between multiple sets of genomic regions at once and then compute their enrichment with the OLOGRAM. An optional algorithm (MODL) to find interesting combinations with sparse dictionary learning and greedy submodular optimisation has also been added. Furthermore, it also contains major speedups to OLOGRAM itself.
+This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find intersections between multiple sets of genomic regions at once and then compute their enrichment with OLOGRAM. An optional algorithm (MODL) to find interesting combinations with sparse dictionary learning and greedy submodular optimisation has also been added. Furthermore, it also contains major speedups to OLOGRAM itself.
 
 ### Bug Fixes
 
@@ -34,6 +34,7 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 *   Major speedups achieved in OLOGRAM by better typecasting in the Cython code.
 *   Major speedup in OLOGRAM due to rewriting the pandas melt() function in C/Cython.
 *   Added multithreading batch-by-batch for OLOGRAM
+*   Renamed *merge_ologram_stats* to *ologram_merge_stats*.
 *   Improved *ologram_merge_stats* visuals.
 *   Added new *simple_07* and *ologram_2* example datasets to study multiple overlaps.
 *   Added scikit-learn as a dependency.
@@ -83,6 +84,132 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 
 
 
+## v1.1.4
+
+### Bug Fixes
+
+*   None
+
+### API/CLI Changes
+
+*   No more compatible with Python 3.5 (as BioPython).
+
+### Code changes
+
+*   None.
+
+### New Features
+
+*   None.
+
+## v1.1.3
+
+
+### Bug Fixes
+
+*   fix #123, #122, #121, #120
+
+### API/CLI Changes
+
+*   None.
+
+### Code changes
+
+*   None.
+
+### New Features
+
+*   None.
+
+## v1.1.2
+
+
+### Bug Fixes
+
+*   None
+
+### API/CLI Changes
+
+*   None.
+
+### Code changes
+
+*   None.
+
+### New Features
+
+*   The --more-bed-labels is now facultative in OLOGRAM.
+
+
+## v1.1.1
+
+### Bug Fixes
+
+*   Fix #116 (pandas version issue)
+*   Fix an issue related to pybedtool/bedtool version (naming of sequences that differs due to name/name+/nameOnly arguments).
+*   Fix -n with integer values in get_5p_3p_coords.
+
+### API/CLI Changes
+
+*   None.
+
+### Code changes
+
+*   None.
+
+### New Features
+
+* md5sum-lite call have been replaced by "md5 -r" under darwin platforms.
+* The tss_numbering command now allows to add the number of different TSSs to the gene feature.
+
+## v1.1.0
+
+
+### Bug Fixes
+
+*   None.
+
+### API/CLI Changes
+
+*   None.
+
+### Code changes
+
+*   None.
+
+### New Features
+
+* Support for Python 3.7.
+* The tss_numbering command now allows to add the number of different TSSs to the gene feature.
+
+
+## v1.0.9
+
+
+### Bug Fixes
+
+*   None.
+
+### API/CLI Changes
+
+*   None.
+*   bigwig_to_bed is know part of miscellaneous commands.
+
+### Code changes
+
+*   The select_by_key command now accept seq_name and seqname in addition to seqid and chrom as a key.
+
+### New Features
+
+*  This version contains the tss_numbering plugin. Annotate transcripts by computing their TSS position relative to the most five prime TSS of the corresponding gene.
+*  The get_attr_value_list command now accepts a list of keys as input.
+*  The get_attr_value_list command has an additional argument (--print-key-name).
+*  Added a new miscellaneous command, get_ceas_record that extract records from CEAS (Cis-regulatory Element Annotation System).
+*  Added a new miscellaneous command, great_reg_domains. This tool represents an attempt to process genomic annotations in GTF
+format in order to produced a set of 'labeled' regions with the same rules as those described in GREAT (Genomic Regions
+Enrichment of Annotations Tool) documentation. We can not warrant that the procedure is exactly the same. See the CLI
+for more details.
+* Added -y/--display-fit-quality to ologram
 
 
 ## v1.0.8

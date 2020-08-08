@@ -123,7 +123,7 @@ test_para_travis: $(OUTPUT4)
 
 clean:
 	@make bats_cmd CMD=clean
-	@git checkout docs/source/conf.py pygtftk/version.py; rm -rf mk_matrix_6 ologram_output* expected_s* ids* diff_fasta.py chr1_hg38_10M.fa* observed_s* order_fasta.py simple* control_list_reference.txt control_list_data.txt add_attr_to_pos.tab test.py pygtftk.egg-info build airway_love.txt* ENCFF630HEX_Total_RNAseq_K562_count_mini.txt STDIN.e* closest_1.tsv STDIN.o* dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/; make clean; cd ..; find . -type f -name '*~' -exec rm -f '{}' \;
+	@git checkout docs/source/conf.py pygtftk/version.py; rm -rf rm -rf .DS_Store .RData .Rhistory conda/.DS_Store docs/.DS_Store log.txt pygtftk/.DS_Store pygtftk/data/.DS_Store mk_matrix_6 ologram_output* H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv hg38_chr1_counts_ENCFF630HEX.tsv H3K4me3_ologram_stats.tsv expected_s* ids* diff_fasta.py chr1_hg38_10M.fa* observed_s* order_fasta.py simple* control_list_reference.txt control_list_data.txt add_attr_to_pos.tab test.py pygtftk.egg-info build airway_love.txt* ENCFF630HEX_Total_RNAseq_K562_count_mini.txt STDIN.e* closest_1.tsv STDIN.o* dist cmd_list.txt example_list.txt tmp_list.txt simple.chromInfo prgm_list.txt test_list.txt *.bats *.completed *mini_real* heatmap_* tx_classes* *~ \#* hh profile_* toto tott;  cd docs/; make clean; cd ..; find . -type f -name '*~' -exec rm -f '{}' \;
 
 check_cmd_has_example:
 	@for i in $$(gtftk -l); do if grep -q  "^$$i" docs/source/*.rst; then echo "" >/dev/null; else echo $$i; fi; done
@@ -179,7 +179,7 @@ release_test:
 	@ echo "#-----------------------------------------------#"
 	@ echo "# Performing tests (bats)                       #"
 	@ echo "#-----------------------------------------------#"
-	@ make test_para -j 6
+	@ make test_para -j 14
 
 release_nose:
 	@ echo "#-----------------------------------------------#"
@@ -193,10 +193,10 @@ release_doc:
 	@ echo "#-----------------------------------------------#"
 	@ make doc
 	@ git pull
-	@ git add docs/source/example*png
-	@ git add docs/source/example*pdf
-	@ cp docs/source/example*png docs/source/_static
-	@ cp docs/source/example*pdf docs/source/_static
+	@ git add docs/source/*png
+	@ git add docs/source/*pdf
+	@ cp docs/source/*png docs/source/_static
+	@ cp docs/source/*pdf docs/source/_static
 	@ git add docs/source/_static/*png
 	@ git add docs/source/_static/*pdf
 	@ git add docs/source/example*png
@@ -206,6 +206,7 @@ release_doc:
 	@ cp  -r docs/build/html/* docs
 	@ rm -rf docs/build
 	@ make clean
+	@ rm -rf docs/workflow/*/.snakemake
 	@ git add docs/*
 	@ git commit -m "Updated img in source and source/_static "
 	@ git push
@@ -216,10 +217,10 @@ release_pip_unix:
 	@ echo "# Creating manylinux compliant package (pip)    #"
 	@ echo "#-----------------------------------------------#"
 	@rm -rf /tmp/tmp                                            ; \
- 	rm -f manylinux/pygtftk-*whl                                ; \
+	rm -f manylinux/pygtftk-*whl                                ; \
 	cd manylinux                                                ; \
 	docker rmi -f manylinux                                     ; \
-	docker rm -f imanylinux || true  ; \                                      ;\
+	docker rm -f imanylinux || true  							; \
 	docker build -t manylinux .                                 ; \
 	docker create  -t --name imanylinux  manylinux /bin/bash    ; \
 	docker cp  imanylinux:/tmp/ /tmp                            ; \
@@ -235,10 +236,11 @@ release_pip_osx:
 	@ echo "# Creating osx compliant package (pip)          #"
 	@ echo "#-----------------------------------------------#"
 	@ mkdir -p wheels
-	@ rm -rf dist build; python setup.py bdist_wheel             ; \
+	@ conda activate pygtftk_36                          ; \
+	rm -rf dist build; python setup.py bdist_wheel             ; \
 	cp dist/*whl wheels                                          ; \
 	rm -rf dist build
-	@ conda activate pygtftk_python_3.5                          ; \
+	@ conda activate pygtftk_3.7                          ; \
 	rm -rf dist build; python setup.py bdist_wheel               ; \
     cp dist/*whl wheels                                          ; \
     rm -rf dist build

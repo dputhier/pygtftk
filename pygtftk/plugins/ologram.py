@@ -32,6 +32,7 @@ import time
 import copy
 import warnings
 from functools import partial
+import matplotlib.cbook
 
 import numpy as np
 import pandas as pd
@@ -56,6 +57,7 @@ from pygtftk.utils import make_outdir_and_file
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 from pygtftk.utils import sort_2_lists
+import gc
 
 __updated__ = "2020-08-01"
 __doc__ = """
@@ -71,6 +73,14 @@ __doc__ = """
  hypothesis (the peaks and this feature are independent) is deduced thanks to
  this Monte Carlo approach. The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
+ 
+ The null hypothesis is:
+ 
+ H0: The regions of the query (--peak-file) are located independently of the 
+ reference (--inputfile or --more-bed) with respect to overlap.
+ 
+ H1: The regions of the query (--peak-file) tend to overlap the 
+ reference (--inputfile or --more-bed). 
 
  OLOGRAM can now also calculate enrichment for n-wise combinations (e.g. [Query + A + B]
  or [Query + B + C]) on sets of regions defined by the user (--more-bed argument).
@@ -122,6 +132,8 @@ __notes__ = """
  -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
  the excluded regions, but the same ones will be excluded from the peak_file and the GTF/more-bed files.
 
+ -- NB/TODO: Current multithreading needs to be optimized. We recommend using the current version with a single core.
+ 
  -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
  for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
  This is not recommended in the general case and can be *very* time-consuming (hours).
@@ -457,6 +469,11 @@ def make_parser():
                             action='store_true',
                             required=False)
 
+    parser_grp.add_argument('-y', '--display-fit-quality',
+                            help="Display the negative binomial fit quality on the diagrams. ",
+                            action='store_true',
+                            required=False)
+
     parser_grp.add_argument('-tp', '--tsv-file-path',
                             help="Provide an alternative path for text output file.",
                             default=None,
@@ -545,7 +562,8 @@ def ologram(inputfile=None,
             seed=42,
             sort_features=False,
             minibatch_nb=8,
-            minibatch_size=25
+            minibatch_size=25,
+            display_fit_quality=False
             ):
     """
     This function is intended to perform statistics on peak intersection. It will compare your peaks to
@@ -795,6 +813,7 @@ def ologram(inputfile=None,
 
             for elmt in more_bed_labels:
                 if not re.search("^[A-Za-z0-9_]+$", elmt):
+                    message("Problem with:" + elmt, type="WARNING")
                     message(
                         "Only alphanumeric characters and '_' allowed for --more-bed-labels",
                         type="ERROR")
@@ -808,31 +827,24 @@ def ologram(inputfile=None,
                 message("Redundant labels not allowed.", type="ERROR")
         else:
 
-
             message(
-                "--more-bed-labels was not set, defaulting to --more-bed file names.",
+                "--more-bed-labels was not set, automatically defaulting to --more-bed file names.",
                 type="WARNING")
 
-
-            # If more_bed is set but not more_bed_labels, will default to using more_bed base names without alphanumeric characters
-            # TODO say so in the doc !!!!
-            # TODO move imports to the top
-            import pathlib
+            # If more_bed is set but not more_bed_labels, will default to using more_bed base names without non-alphanumeric characters
 
             more_bed_labels = []
             for elmt in more_bed:
-                base_name = pathlib.Path(elmt.name).stem
-                cleaned_base_name = re.sub("[^A-Za-z0-9]+", '_', base_name)
-                more_bed_labels += [cleaned_base_name]
+                #base_name = pathlib.Path(elmt.name).stem
+                cleaned_name = os.path.basename(elmt.name)
 
-            print(more_bed_labels)
-            """
-            TODO I FOUND A PROBLEM. When I am passing bed3 they are converted to bed6 with temporary names.
-            To fix it, must alter the make_tmp_file() call in FormattedFile when converting to bed6, so that it keeps the stem as
-            a prefix, and then add a check that if we have a temp file name we do some additional cleaning.
+                cleaned_name = re.sub("_converted\.[Bb][Ee][Dd][3456]{0,1}$", "", cleaned_name)                
+                cleaned_name = re.sub("_pygtftk_?((?!pygtftk).)*$", "", cleaned_name) # In case pygtftk name appears in the initial name...
+                cleaned_name = re.sub("[^A-Za-z0-9]+", '_', cleaned_name)
 
-            OKAY DENIS HAS FIXED IT IN A HOTFIX, COLLECT IT AND PUT IT HERE
-            """
+                more_bed_labels += [cleaned_name]
+
+            message("--more-bed-label will be set to: " + ",".join(more_bed_labels), type="DEBUG")
 
 
 
@@ -928,7 +940,7 @@ def ologram(inputfile=None,
                 # Get the intronic regions
                 # -------------------------------------------------------------------------
 
-                message("Processing on : Introns", type="INFO")
+                message("Processing : Introns", type="INFO")
                 gtf_sub_bed = gtf.get_introns()
 
                 tmp_bed = make_tmp_file(prefix="ologram_introns", suffix=".bed")
@@ -995,7 +1007,10 @@ def ologram(inputfile=None,
                                                            "gene_id",
                                                            "exon_id"]).sort().merge()  # merging bed file !
                         del gtf_sub
-                        tmp_bed = make_tmp_file(prefix="ologram_terminator", suffix=".bed")
+                        cur_prefix = "ologram_" + re.sub('\W+', '_',
+                                                         user_key) + "_" + re.sub('\W+', '_',
+                                                                                  val)
+                        tmp_bed = make_tmp_file(prefix=cur_prefix, suffix=".bed")
                         gtf_sub_bed.saveas(tmp_bed.name)
 
                         ft_type = ":".join([user_key, val])  # Key for the dictionary
@@ -1011,7 +1026,6 @@ def ologram(inputfile=None,
     # Stock all of the more_beds if needed for multiple overlaps
     all_more_beds = list()
     all_bed_labels = list()
-
 
     if more_bed is not None:
         message("Processing user-defined regions (bed format).")
@@ -1068,7 +1082,6 @@ def ologram(inputfile=None,
 
             import copy
 
-
             tmp_bed = make_tmp_file(prefix=bed_lab, suffix=".bed")
             bed_anno_tosave = BedTool(bed_anno.name)
             bed_anno_tosave.saveas(tmp_bed.name)
@@ -1090,12 +1103,6 @@ def ologram(inputfile=None,
                 hits[bed_lab] = overlap_partial(bedA=peak_file,
                                             bedsB=BedTool(bed_anno.name),
                                             ft_type=bed_lab)
-
-
-
-
-
-
 
     # TODO : prepare another possibility, where an option such as
     # `-all-more-beds-together` is used,  we do the multiple overlap of the
@@ -1128,10 +1135,6 @@ def ologram(inputfile=None,
 
         for combi_human_readable, result in results_to_add.items():
             hits[str(combi_human_readable)] = result
-
-
-
-
 
 
 
@@ -1224,12 +1227,12 @@ def ologram(inputfile=None,
     # -------------------------------------------------------------------------
 
     if pdf_file is not None:
-        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, more_bed_multiple_overlap)
+        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, more_bed_multiple_overlap, display_fit_quality)
         close_properly(pdf_file)
     close_properly(data_file)
 
 
-def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, should_plot_multiple_combis):
+def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, should_plot_multiple_combis, display_fit_quality):
     """
     Main plotting function by Q. FERRE and D. PUTHIER.
     """
@@ -1258,7 +1261,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
     # or 'nb_intersections'
     # -------------------------------------------------------------------------
 
-    def plot_this(statname, plot_type='barplot', feature_order = None):
+    def plot_this(statname, feature_order=None, display_fit_quality=False):
 
         # ------------------------- DATA PROCESSING -------------------------- #
 
@@ -1331,6 +1334,16 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         text = text.apply(format_pvalue)
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
         text_pos.index = range(len(text_pos))
+
+        if display_fit_quality:
+            fit_qual_text = dm[statname + '_negbinom_fit_quality'].append(na_series)
+            fit_qual_text.index = range(len(fit_qual_text))
+
+            text_with_fit = list()
+            for t, f in zip(text.tolist(), fit_qual_text.tolist()):
+                text_with_fit += [t + "\n" + 'fit={0:.2g}'.format(f)]
+            text = pd.Series(text_with_fit)
+
         aes_plot = aes(x='Feature', y=text_pos, label=text)
         p += geom_label(mapping=aes_plot, stat='identity',
                         size=5, boxstyle='round', label_size=0.2,
@@ -1540,9 +1553,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
     # -------------------------------------------------------------------------
 
     # Compute the plots for both statistics
-    p1, p1_feature_order = plot_this('summed_bp_overlaps', feature_order)
+    p1, p1_feature_order = plot_this('summed_bp_overlaps', feature_order, display_fit_quality)
     p1 += ylab("Nb. of overlapping base pairs") + ggtitle('Total overlap length per region type')
-    p2, p2_feature_order = plot_this('nb_intersections', feature_order) 
+    p2, p2_feature_order = plot_this('nb_intersections', feature_order, display_fit_quality) 
     p2 += ylab("Number of intersections") + ggtitle('Total nb. of intersections per region type')
     p3 = plot_volcano()
 
@@ -1577,6 +1590,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
     # this solution...
     # -------------------------------------------------------------------------
 
+    warnings.filterwarnings("ignore", category=matplotlib.cbook.MatplotlibDeprecationWarning)
+
     def fxn():
         warnings.warn("deprecated", DeprecationWarning)
 
@@ -1604,6 +1619,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
                           plots=plots,
                           width=pdf_width,
                           height=pdf_height)
+
+    gc.disable()
 
 
 def main():

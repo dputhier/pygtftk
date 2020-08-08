@@ -7,6 +7,8 @@ import argparse
 import os
 import sys
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -148,6 +150,7 @@ def join_attr(
         gtf.write(outputfile,
                   gc_off=True)
 
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 

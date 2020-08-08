@@ -4,13 +4,17 @@ set -e
 
 # Install a system package required by our library
 yum install zlib-devel -y
+yum install bzip2-devel -y
+yum install xz xz-devel -y
 
 # Compile wheels
-for PYBIN in $(ls --color=none -d1 /opt/python/*/bin| grep -P "(35)|(36)"); do
+for PYBIN in $(ls --color=none -d1 /opt/python/*/bin| grep -P "(35)|(36)|(37)"); do
     echo "${PYBIN}"
     echo ""
     "${PYBIN}/pip" install -U pip
     "${PYBIN}/pip" install numpy>=1.10.0
+    "${PYBIN}/pip" install cython
+    "${PYBIN}/pip" install pysam
     "${PYBIN}/pip" install -r /io/requirements.txt
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done

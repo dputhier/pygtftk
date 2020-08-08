@@ -6,6 +6,8 @@ import argparse
 import os
 import sys
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -52,6 +54,7 @@ def seqid_list(
     for i in GTF(inputfile, check_ensembl_format=False).get_chroms(nr=True):
         outputfile.write(str(i) + separator)
 
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 

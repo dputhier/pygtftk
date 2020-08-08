@@ -1,6 +1,6 @@
-=================         =================
+================         =================
 Pip package               |Pippackage|_
-Bioconda package             |bioconda|_
+Bioconda package          |bioconda|_
 License                   |license|_
 Platforms                 |platform|_
 Languages                 |lang|_
@@ -15,6 +15,7 @@ Issues                    |issues|_
 Citing                    |citing|_
 Documentation             |documentation|_
 =================         =================
+
 
 .. |codacy| image:: https://api.codacy.com/project/badge/Grade/0a977718b4d44992a794cf5ddef7822e
 .. _codacy: https://www.codacy.com/app/dputhier/pygtftk?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dputhier/pygtftk&amp;utm_campaign=Badge_Grade
@@ -68,7 +69,7 @@ Documentation             |documentation|_
 Python GTF toolkit (pygtftk)
 =============================
 
-The **Python GTF toolkit (pygtftk) package** is intended to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python  >=3.5,<3.7 and relies on **libgtftk**, a library of functions **written in C**.
+The **Python GTF toolkit (pygtftk) package** is intended to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python  >=3.6,<3.7 and relies on **libgtftk**, a library of functions **written in C**.
 
 The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files.
 
@@ -83,7 +84,7 @@ With the most recent update, OLOGRAM is now also capable of computing the enrich
 
 The gtftk set of Unix commands can be easily extended using a basic plugin architecture.
 
-All these aspects are covered in the help sections ; please see the `documentation<https://dputhier.github.io/pygtftk/>`_.
+All these aspects are covered in the help sections ; please see the `documentation <https://dputhier.github.io/pygtftk/>`_.
 
 While the gtftk Unix program comes with hundreds of unitary and functional tests, it is still in active development and may thus suffer from bugs that remain to be discovered. Feel free to post any problem or required enhancement in the issue section of the GitHub repository.
 

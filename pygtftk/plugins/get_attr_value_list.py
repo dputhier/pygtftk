@@ -11,6 +11,7 @@ from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
+import gc
 
 __updated__ = "2018-02-11"
 
@@ -34,28 +35,34 @@ def make_parser():
                             type=arg_formatter.FormattedFile(mode='w', file_ext='txt'))
 
     parser_grp.add_argument('-k', '--key-name',
-                            help="Key name.",
+                            help="The comma separated list of key name.",
                             default=None,
                             type=str,
                             required=True)
 
     parser_grp.add_argument('-s', '--separator',
-                            help="The separator to be used for separating key names.",
-                            default="\n",
-                            metavar="SEP",
-                            type=str)
+                            help="The separator used if -c or -p are true.",
+                            default="\t",
+                            type=str,
+                            required=False)
+
 
     parser_grp.add_argument('-c', '--count',
                             help="Add the counts for each key (separator will be set to '\t' by default).",
                             action="store_true")
 
+
+    parser_grp.add_argument('-p', '--print-key-name',
+                            help="Also print the key name in the first column.",
+                            action="store_true")
     return parser
 
 
 def get_attr_value_list(
         inputfile=None,
         outputfile=None,
-        key_name=None,
+        key_name="gene_id",
+        print_key_name=False,
         separator="\n",
         count=False):
     """
@@ -65,14 +72,26 @@ def get_attr_value_list(
     gtf = GTF(inputfile, check_ensembl_format=False)
 
     if not count:
-        for i in gtf.get_attr_value_list(key_name):
-            outputfile.write(i + separator)
+        for akey in key_name.split(","):
+            for i in gtf.get_attr_value_list(akey):
+                if print_key_name:
+                    outputfile.write(akey + separator + i + "\n")
+                else:
+                    outputfile.write(i + "\n")
+        gc.disable()
         close_properly(outputfile, inputfile)
+
     else:
         if separator == "\n":
             separator = "\t"
-        for i in gtf.get_attr_value_list(key_name, count=True):
-            outputfile.write(i[0] + separator + i[1] + "\n")
+
+        for akey in key_name.split(","):
+            for i in gtf.get_attr_value_list(akey, count=True):
+                if print_key_name:
+                    outputfile.write(akey + separator + i[0] + separator + i[1] + "\n")
+                else:
+                    outputfile.write(i[0] + separator + i[1] + "\n")
+        gc.disable()
         close_properly(outputfile, inputfile)
 
 

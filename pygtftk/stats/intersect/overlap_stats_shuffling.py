@@ -83,7 +83,6 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
         shuffled_Lrs_batches += [dict()]
         shuffled_Lis_batches += [dict()]
 
-
     ## Wrapper to make the code cleaner
     # Tile the list of length (repeat) as many times as we want shuffles, then
     # shuffle the rows independantly.
@@ -309,7 +308,6 @@ def compute_overlap_stats(bedA, bedsB,
     # --------------------- Read list of intervals --------------------------- #
     start = time.time()
 
-
     # Just in case, force type and merge bedA ; same for bedB
     bedA = pybedtools.BedTool(bedA).sort().merge()
     bedsB = [pybedtools.BedTool(bedB).sort().merge() for bedB in bedsB]
@@ -375,6 +373,7 @@ def compute_overlap_stats(bedA, bedsB,
     ## Proper reading of the bed files as a list of intervals, for bedA and also
     # all files in bedsB
     Lr1, Li1, all_chrom1 = read_bed.bed_to_lists_of_intervals(bedA, chrom_len)
+    all_chrom1 = all_chrom1.astype(str)
 
     Lrs = list()
     Lis = list()

@@ -8,7 +8,9 @@ the n windows (--nb-window) with the highest coverage values.
 import argparse
 import os
 import sys
+import re
 
+import gc
 import pandas as pd
 from pybedtools import BedTool
 
@@ -20,6 +22,7 @@ from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly, message
 from pygtftk.utils import make_tmp_file
+
 
 __updated__ = "2018-02-05"
 
@@ -345,7 +348,10 @@ def coverage(
 
         df_first = pd.read_csv(result_bed.name, sep="\t", header=None)
 
-        df_first = df_first.ix[:, [0, 1, 2, 3, 5, 4]]
+        if int(re.sub("\..*", "", pd.__version__)) > 0:
+            df_first = df_first.iloc[:, [0, 1, 2, 3, 5, 4]]
+        else:
+            df_first = df_first.ix[:, [0, 1, 2, 3, 5, 4]]
 
         df_list = []
 
@@ -386,7 +392,7 @@ def coverage(
         if nb_line == 0:
             message("No line available in output...",
                     type="ERROR")
-
+    gc.disable()
     close_properly(inputfile, outputfile)
 
 

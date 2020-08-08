@@ -31,11 +31,12 @@ add_prefix
 del_attr
 ~~~~~~~~~~~~~~~~~~~~~~
 
+
 **Description:** Delete an attribute and its corresponding values.
 
 **Example:**
 
-.. command-output:: gtftk del_attr -i simple.gtf -k transcript_id,gene_id,exon_id | head -3
+.. command-output:: gtftk del_attr -i simple.gtf -k transcript_id,exon_id
     :shell:
 
 **Arguments:**
@@ -43,6 +44,8 @@ del_attr
 .. command-output:: gtftk del_attr -h
     :shell:
 
+.. note:: In version 1.0.9 gene_id can not be deleted. This will be fixed in next version.
+    :shell:
 
 ------------------------------------------------------------------------------------------------------------------
 

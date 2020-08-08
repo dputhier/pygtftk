@@ -8,6 +8,8 @@ import os
 import sys
 from _collections import defaultdict
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
@@ -237,6 +239,8 @@ def closest_genes(
                                                 closest,
                                                 dist]) + "\n")
 
+        gc.disable()
+
     close_properly(outputfile, inputfile)
 
 
@@ -256,7 +260,7 @@ else:
     test = """
     #closest_genes: check whole file
     @test "closest_genes_1" {
-     result=`gtftk get_example | gtftk closest_genes -f | md5sum-lite | sed 's/ .*//'`
+     result=`gtftk get_example | gtftk closest_genes -f | md5 -r | sed 's/ .*//'`
       [ "$result" = "3cef10d2528151dbbe2ff3affb05de00" ]
     }
         

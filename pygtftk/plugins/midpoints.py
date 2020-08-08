@@ -8,6 +8,7 @@ import argparse
 import os
 import sys
 
+import gc
 from pybedtools import BedTool
 
 from pygtftk import arg_formatter
@@ -121,6 +122,7 @@ def midpoints(
 
             outputfile.write(str(line))
 
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 

@@ -7,23 +7,23 @@ BIGWIG = ["ENCFF670CNM", "ENCFF629ABG" ,"ENCFF641ALU", "ENCFF716SHQ"]
 LABELS = ["H3K4me3", "H3K27ac", "H3K36me3", "H3K4me1"]
 LAB_STR= ",".join(LABELS)
 
-GV="mm10"
+GV="hg38"
 
-# DNA binding, apoptosis, Actin cytoskeleton,
-# Cell surface
-GO_ID = ["0003700", "0097194", "0015629", "0009986"]
+GENE_BIOTYPE = ["antisense_RNA",
+                "lincRNA",
+                "protein_coding"]
 
 WDIR = os.getcwd()
 workdir: WDIR
 
 
 rule final:
-    input: expand('output/09_profile/profile_{s}_{r}.pdf', s=SPECIES, r=RELEASE, g=GO_ID)
+    input: expand('output/09_profile/profile_{s}_{r}.pdf', s=SPECIES, r=RELEASE, g=GENE_BIOTYPE)
 
 def get_bw(wildcards):
     return wildcards.bw
 
-rule retrieveBigwig:
+rule get_bigwig:
     params: bw=get_bw
     output: 'output/00_bigwig/{bw}.bw'
     shell: """
@@ -32,43 +32,42 @@ rule retrieveBigwig:
     """
 
 
-rule retrieveGTF_retrieve:
+rule retrieve_gtf:
     output: 'output/01_get_gtf/{s}_{r}.gtf'
     shell: """
     gtftk retrieve -V 1 -C -s {wildcards.s} -r {wildcards.r} -cd > {output}
     """
 
-rule selectChrom_select_by_regexp:
+rule select_chrom_by_regexp:
     input: 'output/01_get_gtf/{s}_{r}.gtf'
     output: 'output/02_select_chrom/{s}_{r}.gtf'
     shell: """
     gtftk select_by_regexp -V 1  -k chrom -r "chr[0-9XY]+" -i {input} -o {output}
     """
 
-rule oneTranscriptPerGene_random_tx:
+rule select_random_tx:
     input: 'output/02_select_chrom/{s}_{r}.gtf'
     output: 'output/03_select_random_transcript/{s}_{r}.gtf'
     shell: """
     gtftk random_tx -V 1 -m 1  -i {input} -o {output}
     """
 
-rule selectByGeneOntology_select_by_go:
+rule select_by_gene_biotype:
     input: 'output/03_select_random_transcript/{s}_{r}.gtf'
-    output: 'output/04_select_by_go_{g}/{s}_{r}.gtf'
-    params: s=SPECIES_SHORT
+    output: 'output/04_select_by_genebiotype_{g}/{s}_{r}.gtf'
     shell: """
-    gtftk select_by_go -s {params.s} -g {wildcards.g} -i {input} -o {output}
+    gtftk select_by_key -v  {wildcards.g} -k gene_biotype -i {input} -o {output}
     """
 
 rule retrieveGeneClasses_tabulate:
-    input: 'output/04_select_by_go_{g}/{s}_{r}.gtf'
+    input: 'output/04_select_by_genebiotype_{g}/{s}_{r}.gtf'
     output: 'output/05_prepare_classes_{g}/{s}_{r}.txt'
     shell: """
     gtftk tabulate -Hun -k transcript_id -i  {input} | awk 'BEGIN{{OFS="\t"}}{{print $1,"{wildcards.g}"}}' > {output}
     """
 
 rule mergeClasses:
-    input: expand('output/05_prepare_classes_{g}/{s}_{r}.txt', s=SPECIES, r=RELEASE, g=GO_ID)
+    input: expand('output/05_prepare_classes_{g}/{s}_{r}.txt', s=SPECIES, r=RELEASE, g=GENE_BIOTYPE)
     output: 'output/06_merge/merge_class.txt'
     shell: """
     cat {input} > {output}
@@ -82,8 +81,6 @@ rule getChromosomeSize:
     "select chrom, size from {params.v}.chromInfo" > {output}
     """
 
-
-
 rule computePromoterCoverage_mk_matrix:
     input:  g='output/03_select_random_transcript/{s}_{r}.gtf', \
             bw=expand('output/00_bigwig/{bw}.bw', bw=BIGWIG), \
@@ -91,7 +88,7 @@ rule computePromoterCoverage_mk_matrix:
     output: 'output/08_prepare_profile/{s}_{r}_matrix.zip'
     params: lab=LAB_STR
     shell: """
-    gtftk mk_matrix -l {params.lab} -V 1 -i {input.g} -o output/08_prepare_profile/{wildcards.s}_{wildcards.r}_matrix -u 2500 -d 2500 -k 4 -c  {input.s} {input.bw} 
+    gtftk mk_matrix -l {params.lab} -t transcript -V 1 -i {input.g} -o output/08_prepare_profile/{wildcards.s}_{wildcards.r}_matrix -u 2500 -d 2500 -k 4 -c  {input.s} -y {input.bw} 
     """
 
 

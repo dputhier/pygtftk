@@ -4,8 +4,10 @@
 """
 
 import argparse
-import os
+import gc
 import sys
+
+import os
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
@@ -102,9 +104,13 @@ def get_5p_3p_coords(inputfile=None,
     else:
         message("Computing 3' coordinates of '" + ft_type + "'.")
 
-    nms = names.split(",")
-
     gtf = GTF(inputfile, check_ensembl_format=False)
+
+    if names != "*":
+        nms = names.split(",")
+    else:
+
+        nms = gtf.select_by_key("feature", "transcript").get_attr_list(add_basic=False)
 
     if not invert:
 
@@ -147,7 +153,7 @@ def get_5p_3p_coords(inputfile=None,
                             i.score,
                             i.strand]
             outputfile.write("\t".join(out_list) + "\n")
-
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 

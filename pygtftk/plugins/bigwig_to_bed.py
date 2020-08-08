@@ -1,12 +1,12 @@
 '''
-Convert a bigwig to a BED3 format by selecting regions with coverage above --lower-val.
-This tool is not part of pygtftk distribution (and thus is not supposed to be maintained).
+Convert a bigwig to a BED3 format by selecting regions based on a boolean expression.
 '''
 
 import argparse
 import os
-import pyBigWig
 import sys
+
+import pyBigWig
 
 from pygtftk import arg_formatter
 from pygtftk.utils import check_boolean_exprs
@@ -147,5 +147,5 @@ else:
               parser=make_parser(),
               fun=os.path.abspath(__file__),
               desc=__doc__,
-              group="conversion",
+              group="miscellaneous",
               test=test)

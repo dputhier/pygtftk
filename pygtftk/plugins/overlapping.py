@@ -13,6 +13,8 @@ import os
 import sys
 from collections import defaultdict
 
+import gc
+
 from pygtftk import arg_formatter
 from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
@@ -57,7 +59,7 @@ def make_parser():
                             required=True)
 
     parser_grp.add_argument('-u', '--upstream',
-                            help="Extend the region in 5' by a given value (int)."
+                            help="Extend the region in 5'."
                                  " Used to define the region around the TSS/TTS.",
                             default=1500,
                             metavar="UPSTREAM",
@@ -65,7 +67,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-d', '--downstream',
-                            help="Extend the region in 3' by a given value (int)."
+                            help="Extend the region in 3'."
                                  " Used to define the region around the TSS/TTS.",
                             default=1500,
                             metavar="DOWNSTREAM",
@@ -267,6 +269,7 @@ transcript from another gene.
                           values,
                           invert_match).write(outputfile, gc_off=True)
 
+    gc.disable()
     close_properly(outputfile, inputfile)
 
 

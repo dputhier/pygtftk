@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html lang="en">
   <head>
     <meta charset="utf-8" /><script type="text/javascript">
 
@@ -15,14 +15,14 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘miscellaneous’ &#8212; gtftk 1.0.7 documentation</title>
+    <title>Commands from section ‘miscellaneous’ &#8212; gtftk 1.1.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="coverage.html" title="Commands from section ‘coverage’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,13 +67,13 @@
 <p><strong>Description:</strong> Returns a list of gene matched for expression based on reference values. Based on a reference gene list (or more generally IDs) this command tries to extract a set of other genes/IDs matched for signal/expression. The –reference-gene-file contains the list of reference IDs while the –inputfile contains a tuple gene/signal for all genes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk control_list -i mini_real_counts_ENCFF630HEX.tsv -r mini_real_control_1.txt -D -V 2 -s -l -p 1 -ju -if example_13.png -pf png
- |-- 16:41-INFO-control_list : 0 duplicate lines have been deleted in reference file.
- |-- 16:41-INFO-control_list : Found 50 genes of the reference in the provided signal file
- |-- 16:41-INFO-control_list : All reference genes were found.
- |-- 16:41-INFO-control_list : Searching for genes with matched signal.
- |-- 16:42-INFO-control_list : Preparing a dataframe for plotting.
- |-- 16:42-INFO-control_list : Saving diagram to file : example_13.png
- |-- 16:42-INFO-control_list : Be patient. This may be long for large datasets.
+ |-- 12:27-INFO-control_list : 0 duplicate lines have been deleted in reference file.
+ |-- 12:27-INFO-control_list : Found 50 genes of the reference in the provided signal file
+ |-- 12:27-INFO-control_list : All reference genes were found.
+ |-- 12:27-INFO-control_list : Searching for genes with matched signal.
+ |-- 12:27-INFO-control_list : Preparing a dataframe for plotting.
+ |-- 12:27-INFO-control_list : Saving diagram to file : example_13.png
+ |-- 12:27-INFO-control_list : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_13.png"><img alt="_images/example_13.png" src="_images/example_13.png" /></a>
@@ -206,15 +206,15 @@ Command-wise optional arguments:
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -234,13 +234,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="coverage.html" title="Commands from section ‘coverage’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 25, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Last updated on May 27, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
     </div>
   </body>
 </html>

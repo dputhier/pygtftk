@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html lang="en">
   <head>
     <meta charset="utf-8" /><script type="text/javascript">
 
@@ -15,14 +15,14 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘Editing’ &#8212; gtftk 1.0.7 documentation</title>
+    <title>Commands from section ‘Editing’ &#8212; gtftk 1.1.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="information.html" title="Commands from section ‘information’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -105,10 +105,77 @@ Command-wise optional arguments:
 <h2>del_attr<a class="headerlink" href="#del-attr" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Delete an attribute and its corresponding values.</p>
 <p><strong>Example:</strong></p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk del_attr -i simple.gtf -k transcript_id,gene_id,exon_id | head -3
-chr1	gtftk	gene	125	138	.	+	.	
-chr1	gtftk	transcript	125	138	.	+	.	
-chr1	gtftk	exon	125	138	.	+	.
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk del_attr -i simple.gtf -k transcript_id,exon_id
+chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
+chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;;
+chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;;
+chr1	gtftk	CDS	125	130	.	+	.	gene_id &quot;G0001&quot;; ccds_id &quot;CDS_G0001T002&quot;;
+chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;;
+chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;;
+chr1	gtftk	CDS	130	132	.	+	.	gene_id &quot;G0001&quot;; ccds_id &quot;CDS_G0001T001&quot;;
+chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
+chr1	gtftk	transcript	180	189	.	+	.	gene_id &quot;G0002&quot;;
+chr1	gtftk	exon	180	189	.	+	.	gene_id &quot;G0002&quot;;
+chr1	gtftk	CDS	180	182	.	+	.	gene_id &quot;G0002&quot;; ccds_id &quot;CDS_G0002T001&quot;;
+chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;;
+chr1	gtftk	transcript	50	61	.	-	.	gene_id &quot;G0003&quot;;
+chr1	gtftk	exon	50	54	.	-	.	gene_id &quot;G0003&quot;;
+chr1	gtftk	exon	57	61	.	-	.	gene_id &quot;G0003&quot;;
+chr1	gtftk	CDS	50	52	.	-	.	gene_id &quot;G0003&quot;; ccds_id &quot;CDS_G0003T001&quot;;
+chr1	gtftk	gene	65	76	.	+	.	gene_id &quot;G0004&quot;;
+chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;;
+chr1	gtftk	exon	65	68	.	+	.	gene_id &quot;G0004&quot;;
+chr1	gtftk	exon	71	71	.	+	.	gene_id &quot;G0004&quot;;
+chr1	gtftk	exon	74	76	.	+	.	gene_id &quot;G0004&quot;;
+chr1	gtftk	CDS	66	68	.	+	.	gene_id &quot;G0004&quot;; ccds_id &quot;CDS_G0004T002&quot;;
+chr1	gtftk	CDS	71	71	.	+	.	gene_id &quot;G0004&quot;; ccds_id &quot;CDS_G0004T002&quot;;
+chr1	gtftk	CDS	74	75	.	+	.	gene_id &quot;G0004&quot;; ccds_id &quot;CDS_G0004T002&quot;;
+chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;;
+chr1	gtftk	exon	65	68	.	+	.	gene_id &quot;G0004&quot;;
+chr1	gtftk	exon	71	71	.	+	.	gene_id &quot;G0004&quot;;
+chr1	gtftk	exon	74	76	.	+	.	gene_id &quot;G0004&quot;;
+chr1	gtftk	CDS	65	67	.	+	.	gene_id &quot;G0004&quot;; ccds_id &quot;CDS_G0004T001&quot;;
+chr1	gtftk	gene	33	47	.	-	.	gene_id &quot;G0005&quot;;
+chr1	gtftk	transcript	33	47	.	-	.	gene_id &quot;G0005&quot;;
+chr1	gtftk	exon	33	35	.	-	.	gene_id &quot;G0005&quot;;
+chr1	gtftk	exon	42	47	.	-	.	gene_id &quot;G0005&quot;;
+chr1	gtftk	CDS	43	45	.	-	.	gene_id &quot;G0005&quot;; ccds_id &quot;CDS_G0005T001&quot;;
+chr1	gtftk	gene	22	35	.	-	.	gene_id &quot;G0006&quot;;
+chr1	gtftk	transcript	22	35	.	-	.	gene_id &quot;G0006&quot;;
+chr1	gtftk	exon	22	25	.	-	.	gene_id &quot;G0006&quot;;
+chr1	gtftk	exon	28	30	.	-	.	gene_id &quot;G0006&quot;;
+chr1	gtftk	exon	33	35	.	-	.	gene_id &quot;G0006&quot;;
+chr1	gtftk	CDS	22	25	.	-	.	gene_id &quot;G0006&quot;; ccds_id &quot;CDS_G0006T001&quot;;
+chr1	gtftk	CDS	28	30	.	-	.	gene_id &quot;G0006&quot;; ccds_id &quot;CDS_G0006T001&quot;;
+chr1	gtftk	CDS	33	34	.	-	.	gene_id &quot;G0006&quot;; ccds_id &quot;CDS_G0006T001&quot;;
+chr1	gtftk	transcript	28	35	.	-	.	gene_id &quot;G0006&quot;;
+chr1	gtftk	exon	28	30	.	-	.	gene_id &quot;G0006&quot;;
+chr1	gtftk	exon	33	35	.	-	.	gene_id &quot;G0006&quot;;
+chr1	gtftk	CDS	29	30	.	-	.	gene_id &quot;G0006&quot;; ccds_id &quot;CDS_G0006T002&quot;;
+chr1	gtftk	CDS	33	33	.	-	.	gene_id &quot;G0006&quot;; ccds_id &quot;CDS_G0006T002&quot;;
+chr1	gtftk	gene	107	116	.	+	.	gene_id &quot;G0007&quot;;
+chr1	gtftk	transcript	107	116	.	+	.	gene_id &quot;G0007&quot;;
+chr1	gtftk	exon	107	116	.	+	.	gene_id &quot;G0007&quot;;
+chr1	gtftk	CDS	112	114	.	+	.	gene_id &quot;G0007&quot;; ccds_id &quot;CDS_G0007T001&quot;;
+chr1	gtftk	transcript	107	116	.	+	.	gene_id &quot;G0007&quot;;
+chr1	gtftk	exon	107	116	.	+	.	gene_id &quot;G0007&quot;;
+chr1	gtftk	CDS	110	115	.	+	.	gene_id &quot;G0007&quot;; ccds_id &quot;CDS_G0007T002&quot;;
+chr1	gtftk	gene	210	222	.	-	.	gene_id &quot;G0008&quot;;
+chr1	gtftk	transcript	210	222	.	-	.	gene_id &quot;G0008&quot;;
+chr1	gtftk	exon	210	214	.	-	.	gene_id &quot;G0008&quot;;
+chr1	gtftk	exon	220	222	.	-	.	gene_id &quot;G0008&quot;;
+chr1	gtftk	CDS	211	213	.	-	.	gene_id &quot;G0008&quot;; ccds_id &quot;CDS_G0008T001&quot;;
+chr1	gtftk	gene	3	14	.	-	.	gene_id &quot;G0009&quot;;
+chr1	gtftk	transcript	3	14	.	-	.	gene_id &quot;G0009&quot;;
+chr1	gtftk	exon	3	14	.	-	.	gene_id &quot;G0009&quot;;
+chr1	gtftk	CDS	5	10	.	-	.	gene_id &quot;G0009&quot;; ccds_id &quot;CDS_G0009T002&quot;;
+chr1	gtftk	transcript	3	14	.	-	.	gene_id &quot;G0009&quot;;
+chr1	gtftk	exon	3	14	.	-	.	gene_id &quot;G0009&quot;;
+chr1	gtftk	CDS	3	8	.	-	.	gene_id &quot;G0009&quot;; ccds_id &quot;CDS_G0009T001&quot;;
+chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
+chr1	gtftk	transcript	176	186	.	+	.	gene_id &quot;G0010&quot;;
+chr1	gtftk	exon	176	186	.	+	.	gene_id &quot;G0010&quot;;
+chr1	gtftk	CDS	184	186	.	+	.	gene_id &quot;G0010&quot;; ccds_id &quot;CDS_G0010T001&quot;;
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
@@ -119,8 +186,10 @@ chr1	gtftk	exon	125	138	.	+	.
      *  Delete one or several attributes from the gtf file.
 
   Notes:
-     *  You may also use &#39;complex&#39; regexp such as : &quot;(^.*_id$|^.*_biotype$)&quot;
+     *  You may also use &#39;complex&#39; regexp such as : &quot;(_id)|(_b.*pe)&quot;
      *  Example: gtftk get_example -d mini_real | gtftk del_attr -k &quot;(^.*_id$|^.*_biotype$)&quot; -r -v
+     *  TODO: currently a segfault is thrown when no keys are left after deletion (libgtftk issue
+     #98).
 
   Version:  2018-01-20
 
@@ -361,7 +430,7 @@ G0009	0.5555	0.7
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i simple.gtf -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
- |-- 16:41-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
+ |-- 12:26-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; S1 &quot;0.2322&quot;; S2 &quot;0.4&quot;; S1_d &quot;A&quot;;
@@ -380,7 +449,7 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 <p>The <em>profile</em> command that could be used to asses the associated epigenetic marks of these 10 gene classes.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
- |-- 16:41-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
+ |-- 12:26-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
   96 A
   83 B
   89 C
@@ -469,15 +538,15 @@ Command-wise optional arguments:
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -497,13 +566,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="information.html" title="Commands from section ‘information’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.0.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Apr 25, 2019.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Last updated on May 27, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
     </div>
   </body>
 </html>

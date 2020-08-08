@@ -9,6 +9,7 @@ import re
 import sys
 
 import ftputil
+import gc
 from ftputil.error import FTPOSError
 
 import pygtftk
@@ -267,7 +268,8 @@ def retrieve(species_name='homo_sapiens',
             os.rename(target_gtf, os.path.join(outputdir, target_gtf))
 
             if to_stdout:
-                gtf = GTF(os.path.join(outputdir, target_gtf))
+                gtf = GTF(os.path.join(outputdir, target_gtf),
+                          check_ensembl_format=False)
 
                 gtf.write("-", gc_off=True)
 
@@ -282,6 +284,8 @@ def retrieve(species_name='homo_sapiens',
     else:
         message("Species could not be found for release: " + release,
                 type='ERROR')
+
+    gc.disable()
 
 
 def main():

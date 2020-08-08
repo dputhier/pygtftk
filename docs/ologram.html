@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" /><script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-139058009-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <title>Commands from section ‘ologram’ &#8212; gtftk 1.1.4 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Commands from section ‘coordinates’" href="coordinates.html" />
+    <link rel="prev" title="Commands from section ‘annotation’" href="annotation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="coordinates.html" title="Commands from section ‘coordinates’"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="annotation.html" title="Commands from section ‘annotation’"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="commands-from-section-ologram">
+<h1>Commands from section ‘ologram’<a class="headerlink" href="#commands-from-section-ologram" title="Permalink to this headline">¶</a></h1>
+<p>In the examples of this section, we will need the following example files:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d hg38_chr1 -f &#39;*&#39;
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d ologram_1 -f &#39;*&#39;
+</pre></div>
+</div>
+<p><strong>Note for contributors</strong> : All files relevant to OLOGRAM are :
+- <em>pygtftk/plugins/ologram.py</em> ; which is a wrapper.
+- <em>pygtftk/plugins/merge_ologram_stats.py</em> ; a convenience function to merge OLOGRAM results.
+- All files <em>in pygtftk/stats/intersect/</em> perform the calculations.</p>
+<hr class="docutils" />
+<div class="section" id="ologram">
+<h2>ologram<a class="headerlink" href="#ologram" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> OLOGRAM – OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks
+(in bed format) using (i) genomic features extracted from a GTF file (e.g promoter, tts, gene body, UTR…)
+(ii) genomic regions tagged with particular keys/values in a GTF file (e.g. gene_biotype “protein_coding”,
+gene_biotype “LncRNA”…) or (iii) from a BED file (e.g. user-defined regions). Each couple peak file/region
+is randomly shuffled across the genome (inter-region lengths are considered). Then the probability of intersection
+under the null hypothesis (the peaks and this feature are independent) is deduced thanks to this Monte Carlo approach.
+The program will return statistics for both the number of intersections and the total lengths (in basepairs) of all intersections.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The null hypothesis of the statistical test is:
+- H0: The regions of the query (–peak-file) are located independently of the reference (–inputfile or –more-bed) with respect to overlap.
+- H1: The regions of the query (–peak-file) tend to overlap the reference (–inputfile or –more-bed).</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The ologram examples below use 8 CPUs. Please adapt.</p>
+</div>
+<p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in
+the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 12:27-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
+ |-- 12:27-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 12:28-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (stop_codon)
+ |-- 12:29-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (Intergenic)
+</pre></div>
+</div>
+<br>
+<table>
+<tr>
+<td valign="top">
+<iframe src="_static/example_pa_01.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+</iframe>
+</td>
+</tr>
+</table>
+<br>
+<br><p><strong>Example:</strong> We are now using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 12:30-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+</pre></div>
+</div>
+<br>
+<table>
+<tr>
+<td valign="top">
+<iframe src="_static/example_pa_02.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+</iframe>
+</td>
+</tr>
+</table>
+<br>
+<br><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It may be important to consider the quality of the fit that is an indicator of the reliability of the p-value. This value is available in the tsv table produced by ologram. The fit quality may also be deplaced on the diagram using the -y/–display-fit-quality argument.</p>
+</div>
+<p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 12:31-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
+ |-- 12:31-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+</pre></div>
+</div>
+<br>
+<table>
+<tr>
+<td valign="top">
+<iframe src="_static/example_pa_03.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+</iframe>
+</td>
+</tr>
+</table>
+<br>
+<br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
+ |-- 12:33-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 12:33-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+</pre></div>
+</div>
+<br>
+<table>
+<tr>
+<td valign="top">
+<iframe src="_static/example_pa_04.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+</iframe>
+</td>
+</tr>
+</table>
+<br>
+<br><p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -h
+  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-bi BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-pf pdf_file_alt] [-x] [-y] [-tp tsv_file_path] [-j {None,nb_intersections_expectation_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_expectation_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-z] [-f] [-w] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
+
+  Description: 
+     *  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks (in bed
+     format) using (i) genomic features extracted from a GTF file (e.g promoter, tts, gene body,
+     UTR...) (ii) genomic regions tagged with particular keys/values in a GTF file (e.g.
+     gene_biotype &quot;protein_coding&quot;, gene_biotype &quot;LncRNA&quot;...) or (iii) from a BED file (e.g. user-
+     defined regions).  Each pair {peak file, feature} is randomly shuffled independently across the
+     genome (inter-region lengths are considered). Then the probability of intersection under the
+     null hypothesis (the peaks and this feature are independent) is deduced thanks to this Monte
+     Carlo approach.  The program will return statistics for both the number of intersections and
+     the total lengths (in basepairs) of all intersections.  The null hypothesis is:  H0: The
+     regions of the query (--peak-file) are located independently of the  reference (--inputfile or
+     --more-bed) with respect to overlap.  H1: The regions of the query (--peak-file) tend to
+     overlap the  reference (--inputfile or --more-bed).   Authors : Quentin FERRE
+     &lt;quentin.q.ferre@gmail.com&gt;, Guillaume CHARBONNIER &lt;guillaume.charbonnier@outlook.com&gt; and
+     Denis PUTHIER &lt;denis.puthier@univ-amu.fr&gt;.
+
+  Notes:
+     *  Ologram is multithreaded and can use many cores. Although ologram itself is not RAM-
+     intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb. It is
+     recommended you do not run other programs in the meantime on a laptop.
+     *  Genome size is computed from the provided chromInfo file (-c). It should thus only contain
+     ordinary chromosomes.
+     *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
+     case the corresponding size of conventional chromosomes are used. ChrM is not used.
+     *  The program produces a pdf file and a tsv file (&#39;_stats_&#39;) containing intersection
+     statistics for the shuffled BEDs under H0 (peak_file and the considered genomic region are
+     independant): number of intersections (N = number of lines in the bed intersect) and total
+     number of overlapping base pairs (S).  The output figure gives, for both statistics,
+     expectation and standard deviation (error bars) in the shuffles compared to the actual values.
+     It also gives, under the &#39;fit&#39; label for each statistic, the goodness of fit of the statistic
+     under (H0) to a Negative Binomial assessed by a Cramer&#39;s V score (fit_quality gives 1-V ; as
+     per Cramer (1948) a good fit should have a fit quality above (1 - 0.25 = 0.75) if your nb. of
+     shuffles is in the hundreds, but closer to 0.9 if it is in the thousands or above.  The p-value
+     of the true intersection under the distribution characterized by the shuffles is also given,
+     under &#39;p_value&#39;. Finally, the log2 fold change between true and shuffles is also given.
+     *  If --more-keys is used additional region sets will be tested based on the associated key
+     value. As an example, if --more-keys is set to the &#39;gene_biotype&#39; (a key generally found in
+     ensembl GTF), the region related to &#39;protein_coding&#39;, &#39;lncRNA&#39; or any other values for that key
+     will be retrieved merged and tested for enrichment.
+     *  Use --no-basic-feature if you want to perform enrichment analysis on focused annotations
+     only (--more-bed or --more-key).
+     *  The goal of the minibatches is to save RAM. You should increase the number of minibatches,
+     instead of their size. You may need to use very small minibatches if you have large sets of
+     regions.
+     *  You can exclude regions from the shuffling. This is done by shuffling across a concatenated
+     &quot;sub-genome&quot; obtained by removing the excluded regions, but the same ones will be excluded from
+     the peak_file and the GTF. Try using an exclusion file that is as small (around a thousand
+     elements) as possible.
+     *  NB/TODO: Current multithreading needs to be optimized. We recommend using the current
+     version with a single core.
+     *  BETA : About --use-markov. This arguments control whether to use Markov model realisations
+     (of order 2) instead of independant shuffles for respectively region lengths and inter-region
+     lengths. This can better capture the structure of the genomic regions repartitions. This is not
+     recommended in the general case and can be *very* time-consuming (hours).
+     *  ALPHA : support for multiple overlaps is in progress (within or between sets). The backend
+     supports it but no statistics are made on it yet.
+
+  Version:  2019-04-17
+
+Arguments:
+ -i, --inputfile              Path to the GTF file. Defaults to STDIN (default: &lt;stdin&gt;)
+ -c, --chrom-info             Tabulated two-columns file. Chromosomes as column 1, sizes as column 2 (default: None)
+ -p, --peak-file              The file containing the peaks/regions to be annotated. (bed format). (default: None)
+ -b, --more-bed               A list of bed files to be considered as additional genomic annotations. (default: None)
+ -l, --more-bed-labels        A comma separated list of labels (see --more-bed) (default: None)
+ -e, --bed-excl               Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features. (bed format). (default: None)
+ -bi, --bed-incl              Opposite of --bed-excl, will perform the same operation but keep only those regions. (default: None)
+ -u, --upstream               Extend the TSS and TTS of in 5&#39; by a given value. (default: 1000)
+ -d, --downstream             Extend the TSS and TTS of in 3&#39; by a given value. (default: 1000)
+ -m, --more-keys              A comma separated list of key used for labeling the genome. See Notes. (default: None)
+ -n, --no-basic-feature       No statistics for basic features of GTF. Concentrates on --more-bed and --more-keys. (default: False)
+ -k, --nb-threads             Number of threads for multiprocessing. (default: 1)
+ -s, --seed                   Numpy random seed. (default: 42)
+ -mn, --minibatch-nb          Number of minibatches of shuffles. (default: 10)
+ -ms, --minibatch-size        Size of each minibatch, in number of shuffles. (default: 20)
+ -ma, --use-markov            Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes. (default: False)
+ -o, --outputdir              Output directory name. (default: ologram_output)
+ -pw, --pdf-width             Output pdf file width (inches). (default: None)
+ -ph, --pdf-height            Output pdf file height (inches). (default: None)
+ -pf, --pdf-file-alt          Provide an alternative path for the main image. (default: None)
+ -x, --no-pdf                 Do not produce any image file. (default: False)
+ -y, --display-fit-quality    Display the negative binomial fit quality on the diagrams. (default: False)
+ -tp, --tsv-file-path         Provide an alternative path for text output file. (default: None)
+ -j, --sort-features          Whether to sort features in diagrams according to a computed statistic. (default: None)
+ -z, --no-gtf                 No GTF file is provided as input. (default: False)
+ -f, --force-chrom-gtf        Discard silently, from GTF, genes outside chromosomes defined in --chrom-info. (default: False)
+ -w, --force-chrom-peak       Discard silently, from --peak-file, peaks outside chromosomes defined in --chrom-info. (default: False)
+ -q, --force-chrom-more-bed   Discard silently, from --more-bed files, regions outside chromosomes defined in --chrom-info. (default: False)
+
+Command-wise optional arguments:
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
+</pre></div>
+</div>
+</div>
+<div class="section" id="merge-ologram-stats">
+<h2>merge_ologram_stats<a class="headerlink" href="#merge-ologram-stats" title="Permalink to this headline">¶</a></h2>
+<p>Several tsv files resulting from OLOGRAM analyses can be merged into a single diagram report using the merge_ologram_stats.</p>
+<p><strong>Example:</strong> For this example will will used the results obtained for 3 epigenetic marks on human chromosome 1.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk merge_ologram_stats H3K4me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv H3K36me3_ologram_stats.tsv -l H3K4me3,H3K79me2,H3K36me3  -o merge_ologram_stats_01.pdf
+</pre></div>
+</div>
+<br>
+<table>
+<tr>
+<td valign="top">
+<iframe src="_static/merge_ologram_stats_01.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+</iframe>
+</td>
+</tr>
+</table>
+<br><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk merge_ologram_stats -h
+  Usage: gtftk merge_ologram_stats [-pw pdf_width] [-ph pdf_height] -o output [-l labels] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file] inputfiles [inputfiles ...]
+
+  Description: 
+     *  Merge a set of OLOGRAM outputs into a single output. Build a heatmap from the results.  See the
+     /pygtftk/plugins/ologram.py file, as well as the documentation, for more information about
+     OLOGRAM.
+
+  Notes:
+     *  By default, labels in the diagram are derived from the name of the enclosing folder. E.g. if
+     file is a/b/c/00_ologram_stats.tsv, &#39;c&#39; will be used as label.
+     *  Otherwise use --labels to set the labels.
+
+  Version:  2019-05-27
+
+Arguments:
+ inputfiles                   Complete paths to the OLOGRAM output files
+ -pw, --pdf-width             Output pdf file width (inches). (default: None)
+ -ph, --pdf-height            Output pdf file height (inches). (default: None)
+ -o, --output                 Pdf file name. (default: None)
+ -l, --labels                 A comma separated list of labels. (default: None)
+
+Command-wise optional arguments:
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Commands from section ‘ologram’</a><ul>
+<li><a class="reference internal" href="#ologram">ologram</a></li>
+<li><a class="reference internal" href="#merge-ologram-stats">merge_ologram_stats</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="annotation.html"
+                        title="previous chapter">Commands from section ‘annotation’</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="coordinates.html"
+                        title="next chapter">Commands from section ‘coordinates’</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ologram.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="coordinates.html" title="Commands from section ‘coordinates’"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="annotation.html" title="Commands from section ‘annotation’"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, F. Lopez and D. Puthier.
+      Last updated on May 27, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>

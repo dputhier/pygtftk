@@ -3,10 +3,11 @@
  Computes the distance between TSSs of pairs of gene transcripts.
 """
 
-import argparse
-import os
 import sys
 from collections import defaultdict
+
+import argparse
+import os
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
@@ -45,9 +46,8 @@ def make_parser():
     return parser
 
 
-def tss_dist(
-        inputfile=None,
-        outputfile=None):
+def tss_dist(inputfile=None,
+             outputfile=None):
     """
     Computes the distance between TSS of gene transcripts.
     """
@@ -75,7 +75,9 @@ def tss_dist(
                                 "tss_num_2"]) + "\n")
     try:
         for gn_id in sorted(gn_tss_dist.keys()):
+
             tx_list = sorted(list(gn_tss_dist[gn_id].keys()))
+
             for i in range(len(tx_list) - 1):
 
                 for j in range(i + 1, len(tx_list)):
@@ -154,7 +156,7 @@ else:
     }            
 
     @test "tss_dist_5" {
-     result=`gtftk get_example -d simple_06 | gtftk tss_dist | md5sum-lite | perl -npe 's/\\s.*//'`
+     result=`gtftk get_example -d simple_06 | gtftk tss_dist | md5 -r | perl -npe 's/\\s.*//'`
       [ "$result" = "8ed7258ed14b5cb518332b1f29d31e5e" ]
     }
     
