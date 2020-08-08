@@ -253,7 +253,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-l', '--more-bed-labels',
-                            help="A comma separated list of labels (see --more-bed)",
+                            help="A comma separated list of labels (see --more-bed). Optional.",
                             default=None,
                             type=str,
                             required=False)
@@ -1678,48 +1678,34 @@ else:
 
 
 
-
-
-
-
-
-
-
-
-
-    # Add a BATS test with multiple overlaps and dict learning !!!
+    # TODO Finish adding a BATS test with multiple overlaps and dict learning !!!
 
     """
 
     #ologram: get example files
-    @test "ologram_0" {
+    @test "ologram_8" {
          result=`gtftk get_example -d simple_07 -f '*'`
       [ "$result" = "" ]
     }
 
 
     #ologram: multiple overlaps and dict learning
-    @test "ologram_8" {
-         result=`rm -Rf ologram_output; rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap
+    @test "ologram_9" {
+         result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap`
+      [ "$result" = "" ]
+    }
+
+    #ologram: multiple overlaps and dict learning
+    @test "ologram_10" {
+         result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap --multiple-overlap-target-combi-size 3 --multiple-overlap-max-number-of-combinations 4
          --max-combi-whatever 2`
       [ "$result" = "" ]
     }
 
 
-
-
-
-    #ologram: check which combinations were found and in which abuncance
-
+    # TODO ologram: check which combinations were found and in which abuncance
+    # In simple_07 .1. is a subset of raw and .2. is a subset of 1, so the combis should be [1,1,0] and [1,1,1]
     """
-
-    """
-    I have a bats test where .1. is a subset of raw and .2. is a subset of 1, so the combis should be [1,1,0] and [1,1,1]
-    """
-
-
-
-
 
 
 
