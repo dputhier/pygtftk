@@ -79,6 +79,8 @@ The newly released command, **OLOGRAM (OverLap Of Genomic Regions Analysis using
 - Same with custom keys/values through the gtftk CLI (e.g. adding a numeric value to a gene and discretizing this value to create gene classes).
 - User supplied BED files.
 
+With the most recent update, OLOGRAM is now also capable of computing the enrichment of **n-wise combinations** (ie. A+B, A+B+C, etc.) to find correlation groups of regions. Please see the documentation page of *OLOGRAM* for more details.
+
 The gtftk set of Unix commands can be easily extended using a basic plugin architecture.
 
 All these aspects are covered in the help sections ; please see the `documentation<https://dputhier.github.io/pygtftk/>`_.

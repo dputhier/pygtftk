@@ -114,6 +114,11 @@ Examples of use are available at : <give the link to the two githubs for ologram
 
 
 
+More details, see the NOTES !!! They should be below with the argument
+
+
+
+
 
 
 
@@ -264,13 +269,15 @@ TO REFLECT THAT
 
 
 
+ologram (multiple overlaps)
+~~~~~~~~~~~~~~~~~~~~~~
 
 
 
 
 
 
-It is also possible to use the **OLOGRAM-MODL** plugin to find multiple overlaps (ie. between n>= 2 sets) enrichment.
+It is also possible to use the **OLOGRAM-MODL** Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n>= 2 sets) enrichment.
 This is done on the BEDs supplied with the `--more-bed` argument. 
 
 
@@ -278,9 +285,19 @@ This is done on the BEDs supplied with the `--more-bed` argument.
 
 
 
-You can ask for all combinations, but 2**N can be big. We also give the option to use sparse dictionary learning on the true overlaps
-to identify interesting combinations, but you can also specify them yourself.
+You can ask for all combinations, but 2**N can be big. 
 
+
+
+We also give the option to use sparse dictionary learning on the true overlaps
+to identify interesting combinations, but you can also specify them yourself.
+Mon algorithme MODL (Multiple Overlap Dictionary Learning) de détection des combinaisons via factorisation matricielle et filtrage par algorithme glouton y est intégré. Pour rappel, cet algorithme ne sert qu'à filtrer l'output d'OLOGRAM en termes de combinaisons affichées (OLOGRAM ne calculera l'enrichissement que des combinaisons jugées intéressantes). Par défaut le programme ne l'utilise pas et renvoie toutes les combinaisons... RENCONTREES DANS LES VRAIES DATA, pas dans les shuffles.
+  The parameter to use it is --multiple-overlap-max-combinations
+
+Ceci dit je pense que vous n'en aurez pas trop besoin de MODL dans la plupart des cas.
+This is mostly useful if there are many files to reduce the number of displayed combinations.
+Unlike classical association rules mining algorithms, this focuses on mining complexes and correlation groups (item sets).
+Donc (maybe in ologram.py __notes__ only) Quand vous demander à MODL de restreindre le nombre de combinaisons, demandez le top 20 ou 30 pas plus. C'est fait pour trouver des complexes, pas des règles d'association : si vous demandez plus de combi le temps de calcul augmente de manière exponentielle (heures ou jours !). Si vous les voulez toutes, ignorez MODL.
 The idea is to use this algorithm to not have all 2**N combinations show. It is designed to find relevant bio clusters.
 
 
@@ -311,6 +328,11 @@ NEW : you can also use apriori for this purpose with the argument --use-apriori-
 
 
 
+I heartily recommend using --bed-incl or --bed-excl to restrict the shuffles (ie. shuffling on enhancers only), otherwise longer combis are statitically very improbable
+
+
+
+
 To use MODL, use the --multiple-overlap-max-number-of-combinations argument, with the wanted number of combinations
 Also explain rile of --multiple_overlap_target_combi_size : combis longer than this will be ignored. Useful for exact.
 
@@ -318,10 +340,12 @@ Also explain rile of --multiple_overlap_target_combi_size : combis longer than t
 
 
 
-Here explain exact and the three cases (see Zim)
+**Exact combinations **: Here explain exact and the three cases (see Zim)
+  Actually two, simple ! By default you have inexact combis, meaning that at a given position overlaps of A+B+C will count as one towards A+B+...
+  To get eact overlaps (A+B but NOT C), put --target--combi size equal to number of --more-beds plus 1 for the query (in the example above, it would be XXX)
+  You will know combis are inexact when ther are "..." in the labels.
 
-
-
+In most cases use the -z or --no-gtf argument and only pass --more-bed
 
 **Example:**
 
@@ -363,7 +387,7 @@ AND ANOTHER EXAMPKE WITH THE --max-size-of-combi-or-something ARGUMENT TO EXPLAI
   <table>
   <tr>
   <td valign="top">
-  <iframe src="_static/example_pa_06.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  <iframe src="_static/example_ologram_modl.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
   </iframe>
   </td>
   </tr>
@@ -384,15 +408,35 @@ AND ANOTHER EXAMPKE WITH THE --max-size-of-combi-or-something ARGUMENT TO EXPLAI
 
 
 
+MODL can also be used independantly as a combination mining algorithm.
+
+You need data with one line per transaction and one column per element
+
+For more details, see code comments and paper.
+
+
+SHOULD THIS GO IN API.RST INSTEAD ?
+
+``` python
+    >>> from pygtftk.stats.intersect.dict_learning import Modl, test_data_for_modl
+    >>> import numpy as np
+    >>> np.random.seed(42)
+    >>> flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.1, cor_groups = [(0,1),(0,1,2,3),(4,5)])
+    >>> combi_miner = Modl(flags_matrix, 
+    >>>        multiple_overlap_target_combi_size = -1,    # Limit the size of the combinations
+    >>>        multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
+    >>>        nb_threads = 1,
+    >>>        step_1_factor_allowance = 2)    # How many words to ask for in each step 1 rebuilding
+    >>> interesting_combis = combi_miner.find_interesting_combinations()
+    >>> assert set(interesting_combis) == set([(1,1,0,0,0,0),(1,1,1,1,0,0),(0,0,0,0,1,1)])
+    
+```
 
 
 
 
 
-
-
-
-
+Please read the nodes below for more details !
 
 
 
@@ -477,7 +521,7 @@ Can still work with OLOGRAM-MODL type results, since they follow the same basic 
   <br>
   <br>
 
-
+This also works on multiple overlap results
 
 **Arguments:**
 
@@ -511,6 +555,12 @@ SHOW THE RESULT HERE QUICKLY ON SIMPLE_07
 label is optional
 
 
+SAY IT IS THE PREFERRED REPRESENTATINO FOR OLOGRAM multiple overlap results
+
+
+Remember that you can EDIT the tsv before passing it to ologram_modl_treeify, for example keeping only the combinations you want
+
+
 .. command-output:: gtftk ologram_merge_stats -h
 	:shell:
 # Grab newest tsv file and turn it into a tree to visualize the results
@@ -528,7 +578,7 @@ SHOW A QUICK EXAMPLE !!!!!
   <table>
   <tr>
   <td valign="top">
-  <iframe src="_static/example_pa_07.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  <iframe src="_static/example_ologram_treeify.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
   </iframe>
   </td>
   </tr>
@@ -536,7 +586,7 @@ SHOW A QUICK EXAMPLE !!!!!
   <br>
   <br>
 
-
+Explain : S is total nb of overlapping base pair in reality, fold change is when comapred to shuffle, p value is such
 
 
 ologram_merge_runs

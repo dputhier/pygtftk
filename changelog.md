@@ -1,8 +1,93 @@
 # Changelog
 
+
+
+
+
+
+
+
+
+
+
+
+
+## v1.2?
+
+This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find intersections between multiple sets of genomic regions at once and then compute their enrichment with the OLOGRAM. An optional algorithm (MODL) to find interesting combinations with sparse dictionary learning and greedy submodular optimisation has also been added. Furthermore, it also contains major speedups to OLOGRAM itself.
+
+### Bug Fixes
+
+*   OLOGRAM - Fixed bug in multiple overlaps when using sets with no peak on a given chromosome.
+*   Updated package requirements
+*   OLOGRAM - The display graph has now the X labels at 90 degrees.
+*   OLOGRAM - more-bed-labels should take and clean BED file names as default
+*   OLOGRAM - Various graphical fixes
+
+### API Changes
+
+*   Moved OLOGRAM-related commands to their own section in the documentation.
+*   The MODL algorithm for combination mining can be accessed independantly.
+
+### Code changes
+
+*   Major speedups achieved in OLOGRAM by better typecasting in the Cython code.
+*   Major speedup in OLOGRAM due to rewriting the pandas melt() function in C/Cython.
+*   Added multithreading batch-by-batch for OLOGRAM
+*   Improved *ologram_merge_stats* visuals.
+*   Added new *simple_07* and *ologram_2* example datasets to study multiple overlaps.
+*   Added scikit-learn as a dependency.
+*   Moved OLOGRAm functions to calculate enrichment to their own module.
+
+### New Features
+
+*   This version implements OLOGRAM-MODL to study the enrichment of intersections between multiple sets of genomic regions. Please see the documentation and code comments for more details.
+*   The API contains a Modl class which is a dictionary-learning based itemset mining algorithm, used in OLOGRAM-MODL
+*   Introduced a *treeify_ologram_modl* plugin to visualize n-wise enrichment results as a treee
+*   Introduced a *ologram_merge_runs* command to merge several runs to save RAM, treating each as a superbatch.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## v1.0.8
 
-This version introduces *merge_ologram_stats* command that can be used to produce a heatmap from multiple OLOGRAM results.
+This version introduces *ologram_merge_stats* command that can be used to produce a heatmap from multiple OLOGRAM results.
 
 ### Bug Fixes
 
@@ -18,7 +103,7 @@ This version introduces *merge_ologram_stats* command that can be used to produc
 
 ### New Features
 
-*   This version implements merge_ologram_stats command that can be used to produce a heatmap from multiple OLOGRAM results.
+*   This version implements ologram_merge_stats command that can be used to produce a heatmap from multiple OLOGRAM results.
 
 ## v1.0.7
 

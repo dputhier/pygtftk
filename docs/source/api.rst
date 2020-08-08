@@ -35,19 +35,46 @@ The pygtftk.stats.intersect.overlap_stats_shuffling module
 .. automodule:: pygtftk.stats.intersect.overlap_stats_shuffling
     :members:
 
+The pygtftk.stats.intersect.overlap_stats_compute module
+-----------------------------------------------------------
 
-The pygtftk.stats.intersect.negbin_fit module
+.. automodule:: pygtftk.stats.intersect.overlap_stats_compute
+    :members:
+
+
+The pygtftk.stats.negbin_fit module
 ----------------------------------------------
 
-.. automodule:: pygtftk.stats.intersect.negbin_fit
+.. automodule:: pygtftk.stats.negbin_fit
     :members:
 
-The pygtftk.stats.intersect.beta module
+
+The pygtftk.stats.beta module
 ----------------------------------------
 
-.. automodule:: pygtftk.stats.intersect.beta
+.. automodule:: pygtftk.stats.beta
     :members:
 
+
+The pygtftk.stats.modl.tree module
+----------------------------------------
+
+.. automodule:: pygtftk.stats.modl.tree
+    :members:
+
+
+The pygtftk.stats.modl.dict_learning module
+----------------------------------------
+
+.. automodule:: pygtftk.stats.modl.dict_learning
+    :members:
+
+
+The pygtftk.stats.modl.subroutines module
+----------------------------------------
+
+.. automodule:: pygtftk.stats.modl.subroutines
+    :members:
 
 
 The gtftk.utils module
