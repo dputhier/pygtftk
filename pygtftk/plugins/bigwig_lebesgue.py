@@ -16,6 +16,17 @@ Author : Quentin Ferré <quentin.q.ferre@gmail.com>
 
 """
 This is a WORK-IN-PROGRESS. To be used once intra-set overlaps are implemented in OLOGRAM.
+
+TODO Here are the steps that would be required :
+
+1) Remove the merging of BEDs regions, and ensure negative inter-regions distances are kept.
+
+2) Remember that overlap_regions.find_intersection() can understand several region open at once and can for example return flags of [2,1] if A has 2 open regions.
+
+3) Dictionary learning is non binary so it can learn proportions. But remember that sum(V**2) = 1 always for the words, so for proportion have a set that contains always 1, so it that set has a value of 0.2 in the word you know you need to multiply by 5 for example. Another idea is to look closely at the coefficients in the encoding U
+
+4) In the display of the combination (combi_human_readable), add the factor, ie. "[2*A + B]"
+
 """
 
 

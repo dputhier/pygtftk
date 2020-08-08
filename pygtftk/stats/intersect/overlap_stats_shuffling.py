@@ -67,7 +67,6 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
     np.random.seed(seed)
 
 
-
     # --------------------- Generate and shuffle batches  -------------------- #
     # We generate a matrix with the batches and shuffle them independantly
     # for both bed files
@@ -104,20 +103,6 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
     # middle of the chromosomes for whatever reason). All that matters is
     # to plug them here as lambdas.
     # --------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     # --------------------------------------------------------------------------
@@ -172,44 +157,11 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
             Lis[set] = shuffle_L_across_chrom(Lis[set])
     """
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     """
-    PUT A BIG TODO NOTE IN THE CODE TO OUTPUT STATS PER CHROMOSOME !! in future only. In results, instead of having "exons", "interfenig", have "exons_chr1","exons_chr2","intergenic_chr1", etc.
+    TODO : We could also use this to output stats per chromosome : In results,
+    instead of having "exons", "intergenic", etc., have "exons_chr1", 
+    "exons_chr2", "intergenic_chr1", etc.
     """
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     # Produce the shuffles on a chromosome basis
@@ -250,23 +202,6 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
 
 
 
-
-
-
-    # print(bedsA[0][0:10])
-    # for bedB in bedsB:
-    #     print('--------')
-    #     print(bedB[0][0:10])
-    
-    
-
-
-
-
-
-
-
-
     # -------------------- Processing intersections -------------------------- #
     # Using our custom cython intersect, process intersection between each pair
     # of 'fake bed files'
@@ -275,15 +210,6 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
     all_intersections = oc.compute_intersections_cython(bedsA, bedsB, all_chroms, nb_threads)
     stop = time.time()
     message('All intersections computed by custom code in : ' + str(stop - start) + ' s.', type='DEBUG')
-
-
-
-    # print("--- INTERSECTIONS ----")
-    # print(all_intersections[0][0:10])
-
-
-
-
 
     return all_intersections
 
@@ -294,8 +220,6 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
 ################################################################################
 # ---------------------------------- CORE ------------------------------------ #
 ################################################################################
-
-
 
 class ComputingIntersectionPartial(object):
     """
@@ -336,7 +260,6 @@ def compute_overlap_stats(bedA, bedsB,
                           use_markov_shuffling,
                           nb_threads,
                           ft_type,
-
                           multiple_overlap_target_combi_size = None,
                           multiple_overlap_max_number_of_combinations = None,
                           multiple_overlap_custom_combis = None):
@@ -353,18 +276,6 @@ def compute_overlap_stats(bedA, bedsB,
 
     :param bedA: The first bed file in pybedtools.Bedtool format.
     :param bedsB: The second bed file. Can also be a list of bed files for multiple overlaps.
-
-
-
-
-
-    ADD DETAILS
-
-
-
-
-
-
     :param chrom_len: the dictionary of chromosome lengths
     :param minibatch_size: the size of the minibatch for shuffling.
     :param minibatch_nb: The number of minibatchs.
@@ -372,9 +283,8 @@ def compute_overlap_stats(bedA, bedsB,
     :param use_markov_shuffling: Use a classical or a order-2 Markov shuffling.
     :param nb_threads: Number of threads.
     :param ft_type: The name of the feature.
-    :param multiple_overlap_target_combi_size: For multiple overlaps, target number of sets in the output combinations.
-    :param multiple_overlap_max_number_of_combinations: For multiple overlaps, maximum number of combinations to consider.
-
+    :param multiple_overlap_target_combi_size: For multiple overlaps, maximum number of sets in the output combinations.
+    :param multiple_overlap_max_number_of_combinations: For multiple overlaps, maximum number of combinations to consider. This will use the MOLD mining algorithm. Do not ask for too many.
     :param multiple_overlap_custom_combis: For multiple overlaps, skips combination mining and computes stats directly for these combinations. Path to a file to be read as NumPy matrix.
 
     """
@@ -493,18 +403,14 @@ def compute_overlap_stats(bedA, bedsB,
     ################################ MINIBATCH  ################################
     # Generate all intersections for a shuffled batch of size n
     
-
     minibatches = [minibatch_size for i in range(minibatch_nb)]
-
 
     ## Compute intersections for each minibatch, multiprocessed
 
     # Result queue
     mana = multiprocessing.Manager()
     result_queue = mana.Queue()
-
     all_intersections = list() # Final result list, to be filled when emptying the queue
-
     pool = ProcessPoolExecutor(nb_threads)  # Process pool
 
 
@@ -519,8 +425,6 @@ def compute_overlap_stats(bedA, bedsB,
     # Submit to the pool of processes
     for i in range(len(minibatches)):
         pool.submit(compute_intersection_partial, minibatch_len = minibatches[i], seed = seeds[i])
-        print("Submitted job.")
-
 
     # Empty the queue whenever possible   
     this_many_already_collected = 0
@@ -540,21 +444,13 @@ def compute_overlap_stats(bedA, bedsB,
     del result_queue
 
 
-
-
     message("Total number of shuffles, reminder :"+str(len(all_intersections)), type='DEBUG')
     message("Number of intersections in the first shuffle, for comparison : "+str(len(all_intersections[0])), type='DEBUG')
 
-    message('All intersections have been generated.', type='DEBUG')
+    message('All intersections have been generated.', type='INFO')
 
-    # NOTE : if needed to save RAM, I could compute the stats for each minibatch then discard the minibatch and keep only the stats,
-    # instead of producing all shuffles then computing the stats
-
-
-    # The `all_intersections` objects contains all the computed overlaps, one per shuffle. All shuffles are concatenated,
-    # as such it has a length of n.
-
-
+    # The `all_intersections` objects contains all the computed overlaps, 
+    # one per shuffle. All shuffles are concatenated.
 
 
 
@@ -563,7 +459,6 @@ def compute_overlap_stats(bedA, bedsB,
     # NOTE For future improvement, since the shuffling itself is done chromosome
     # by chromosome, making some statistics 'by chromosome' should be possible.
    
-
     # Fitting of a Negative Binomial distribution on the shuffles is only relevant for classical shuffle, not Markov. We saw experimentally that Markov shuffles do not fit the Neg Binom model.
     nofit = False
     if use_markov_shuffling : nofit = True
@@ -591,20 +486,17 @@ def compute_overlap_stats(bedA, bedsB,
                         multiple_overlap_target_combi_size = multiple_overlap_target_combi_size,
                         multiple_overlap_max_number_of_combinations = multiple_overlap_max_number_of_combinations,
                         multiple_overlap_custom_combis = multiple_overlap_custom_combis)
-
-
-
         # ft_type, in this case, should be a list of the respective names of all files in bedsB
 
-
-        # NOTE : in this case, `result` is a dictionary of results giving one 'result' object per interesting combination. This will be separated into the relevant
+        # NOTE : in this case, `result` is a dictionary of results giving one 'result'
+        # object per interesting combination. This will be separated into the relevant
         # results objects in the main ologram.py code
 
 
 
     # Just in case, explicitly free memory
     del all_intersections
-    # Theoretically it should have been popped by the multiple overlap function above
+    # Theoretically it should have been emptied (pop) by the multiple overlap function above
     gc.collect()
 
     grand_stop = time.time()

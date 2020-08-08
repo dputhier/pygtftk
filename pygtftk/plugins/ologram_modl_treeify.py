@@ -22,7 +22,13 @@ from pygtftk.utils import message
 __updated__ = ''' 2020-06-17 '''
 
 __notes__ = """
--- Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree for easier visualisation.
+ -- Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree for easier visualisation.
+
+ -- This is the preferred representation for OLOGRAM-MODL results. Each node represents 
+ a combination, with its number of overlapping basepairs in true data (S) and the corresponding 
+ fold change and p-value compared to the shuffles.
+
+ -- Result tsv files can be manually edited (ie. removing combinations) before passing them to this plugin
 """
 
 

@@ -184,26 +184,6 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     # --------------------------------------------------------------------------
     # Draft code for diagnostic plots of the distribution of each statistic in
     # the shuffles. Kept for potential future improvement.
@@ -212,8 +192,7 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     from pygtftk.utils import make_tmp_file
 
 
-    # TODO DO NOT MAKE THIS TEMP FILE IF NO_PDF IS TRUE
-    # TODO DRAWING IS COMPUTATIONALLY EXPENSIVE, SO IT SHOULD BE OPTIONAL HERE
+    # TODO Drawing is computationally expensive, make it optional
 
     hist_S = make_tmp_file(prefix='histogram_'+ft_type+'_S_sum_by_shuffle', suffix='.png')
 
@@ -239,12 +218,6 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     plt.plot(x, d, 'k', linewidth=2)
     plt.savefig(hist_S.name)
     plt.close()
-
-
-
-
-
-
 
 
 
@@ -294,23 +267,6 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # -------------------------- Multiple overlap sets --------------------------- #
 
 class ComputingStatsCombiPartial(object):
@@ -348,9 +304,6 @@ class ComputingStatsCombiPartial(object):
 
 
 
-
-
-
 def which_combis_to_get_from(combi, all_possible_combis, exact):
     """
     To build an index later, determine the supplementary combis : meaning, for each
@@ -374,9 +327,6 @@ def which_combis_to_get_from(combi, all_possible_combis, exact):
             res += [c]
     
     return combi, res
-
-
-
 
 
 
@@ -440,9 +390,6 @@ class DictionaryWithIndex():
 
 
 
-
-
-
 def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_threads = 8, nofit = False,
     # Parameters for the finding of interesting combis
     multiple_overlap_target_combi_size = None,
@@ -461,30 +408,20 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     ## ------  Parameters for the finding of interesting combis
 
-    # If the combi size (`multiple_overlap_target_combi_size`) was not set manually,
-    # ologram.py defaults it to '-1' which means we should not impose a maximum length. The -1
-    # will be passed to the combi miner which knows what this is what it means.
+    # If the combi size (`multiple_overlap_target_combi_size`) and the max number of combinations (`multiple_overlap_max_number_of_combinations`) were not set manually, they default to -1 meaning no restrictions.
+
+    # Exactitude : should an intersection of A+B+C count towards looking for A+B ?
+    # By default, yes, meaning we look for "inexact" combis.
+    # We will look instead for exclusive combis if the user manually specifies 
+    # multiple_overlap_target_combi_size equal to the number of sets
+     
+    # Rk number of sets is len(bedsB) +1, let's not forget query !
 
 
-    # TODO : as discussed, exact should be false BY DEFAULT, and true only if the user manually specifies multiple_overlap_target_combi_size equal to the number of sets.
-    # Of course put that in the NOTES as well !
-    if multiple_overlap_target_combi_size == len(bedsB): 
+    if multiple_overlap_target_combi_size == (len(bedsB) + 1): 
         exact = True
     else:
         exact = False
-    """
-    TODO MUST SAY THAT IN DOC AND PAPER
-
-
-    THIS DESERVES ITS OWN SUBHEADING IN THE METHODS
-
-    TODO for clarity might rename multiple_overlap_target_combi_size (and multiple-overlap-target-combi-size)
-    to "MAX COMBI SIZE" !!!!! THIS IS WHAT IT ACTUALLY DOES ! USE FIND AND REPLACE !
-    """
-
-   
-
-
 
 
 
@@ -515,7 +452,6 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # Only mine for combinations if custom combinations were NOT specified
     else :
 
-
         # ------------- Combinations detection
         # First, as this will detemine the minibatch splitting TODO WTF DOES THAT MEAN
         # Detect the interesting combinations
@@ -523,30 +459,11 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         true_intersection = compute_true_intersection(bedA, bedsB)
         flags_matrix = np.array([i[3] for i in true_intersection])
 
-
-
-
-
-
-
-
-        # PLACEHOLDER TODO : in this case, maybe keep only combis WITH QUERY (first element is 0) ?
-        # Especially since we are not doing an inclusive one here.
-        # TODO Add an option to do that in the combis !!!! (maybe simply add combi[0] = 1 to all interesting_combis)
+        # Keep only combis WITH query (first element is not 0)
         flags_matrix = flags_matrix[flags_matrix[:,0] != 0]
-
-
-
-
 
         import time # Needed to re-import here for some reason ?
         start = time.time()
-
-
-
-
-
-
 
 
 
@@ -555,7 +472,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         if multiple_overlap_max_number_of_combinations == -1:
             message('Multiple-overlap combinations number was not restricted, skipping itemset mining step.')
 
-            # In this case the "interesting combis" are all combis
+            # In this case the "interesting combis" are all combis encountered in the true data
             interesting_combis, _ = np.unique(flags_matrix, axis=0, return_counts = True)
 
 
@@ -568,63 +485,37 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         else:
             message('Mining for multiple-overlap interesting combinations using dictionary learning.')
 
-
-
-
-
-
-
-
-
-
             
             # USE THIS NOW AND ADD PLENTY OF LOG MESSAGES !!!
             combi_miner = dl.Modl(flags_matrix,
                 multiple_overlap_target_combi_size,
                 multiple_overlap_max_number_of_combinations,
                 nb_threads) # Critical nb_threads for this
-            interesting_combis = combi_miner.find_interesting_combinations()
             
-
-
             """
-            # TODO HERE OFFER THE OPTION TO USE APRIORI INSTEAD
-            else if apriori_override_min_support_or_something is not None:
-                combi_miner = Apriori(flags_matrix, apriori_override_min_support_or_something)
+            # NOTE for improvement : any combination mining algorihm could be slotted here instead !
+            # TODO Perhaps offer the option to use our draft of implementation of apriori
+            combi_miner = Apriori(flags_matrix, min_support)
             """
 
+            interesting_combis = combi_miner.find_interesting_combinations()
 
-
-            # PLACEHOLDER : for now take unique rows ; and take only top 20
-            # Maybe keep this code just in case and offer it as an option ?
+            # TODO Other possibility, simply take the most common combis
             """
             all_combis, counts_per_combi = np.unique(flags_matrix, axis=0, return_counts = True)
-            MAX_COMBI_NB = 20
-            most_frequent_combis_idx = (-counts_per_combi).argsort()[:MAX_COMBI_NB]
+            most_frequent_combis_idx = (-counts_per_combi).argsort()[:multiple_overlap_max_number_of_combinations]
             interesting_combis = all_combis[most_frequent_combis_idx]
             """
-
-
-
-
-
-
-
-
 
             stop = time.time()
             message('Interesting combinations found via dictionary learning in : ' + str(stop - start) + ' s among ' + str(all_feature_labels) + '.', type='DEBUG')
 
-            """
-            Idea : maybe all combis of peak + only one of the more-beds should always be 'interesting' ?
-            """
 
 
 
 
-
-        # TODO Remove this debug print, or keep it ? I think we should keep it and make it prettier.
-    print("Interesting combis = ",interesting_combis)
+    # TODO Remove this debug print, or keep it ? I think we should keep it and make it prettier.
+    # print("Interesting combis = ",interesting_combis)
 
 
 
@@ -656,13 +547,6 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
 
 
-
-
-
-
-
-
-
     # ------------- Splitting all the intersections for all shuffles
     # Split the list of overlap regions per combis
 
@@ -672,7 +556,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     start = time.time()
 
 
-    print("Splitting all overlaps computed for all shuffles by combination...")
+    message("Splitting all overlaps computed for all shuffles by combination...")
 
 
     # Split all overlaps computed for all shuffles by combination
@@ -683,17 +567,11 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # by reference (?) as all_overlaps !
 
 
-
-
-
-
     # By default, missing keys have an empty list
     overlaps_per_combi = defaultdict(lambda: [])
 
     # TODO : it's not intersections_for_this_minibatch, it's actually intersections_for_this_shuffle no ?
 
-
-    #for intersections_for_this_minibatch in all_overlaps:
     while all_overlaps:
         # Get a minibatch by popping
         intersections_for_this_minibatch = all_overlaps.pop()
@@ -710,14 +588,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
             flags_for_this_overlap = tuple(overlap[3]) # Convert to a tuple because lists cannot be dict keys
 
             ## Add exact matches
-            #filtered_minibatches[flags_for_this_overlap] += [overlap] #used to be [overlap[0:3]]
-            # TRYING SOMETHING : I don't need to remember the flags since I group them by intersection
-            # flag ! This will save lots of memory by remembering only chrom start and end
+            # Don't need to remember the flags since I group them by intersection 
             filtered_minibatches[flags_for_this_overlap] += [overlap[0:3]]
-            # TODO If it works, amend the comments
-            # Seems okay !!!
-
-
 
 
         ## Now add the filtered minibatches as elements of a list
@@ -750,7 +622,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     ## Compute the index of combis to be fetched
     # Relevant for partial matches.
 
-    print("Computing index of exact/inexact combinations...")
+    message("Computing index of exact/inexact combinations...")
 
 
     all_combis = list(overlaps_per_combi.keys())
@@ -761,8 +633,6 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     with Pool(nb_threads) as p:
         mappings = p.map(which_combis_are_exact_partial, all_combis)
         final_mapping = dict(mappings)
-
-
 
 
 
@@ -819,30 +689,13 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # We will pass those true_intersections to stats_single and resume as usual
 
 
-
-
-
-    print("HOW MANY COMBIS ?",len(interesting_combis))
-
-
-
-   
-
-
-    # Result queue
+    ## Result queue
     mana = multiprocessing.Manager()
     result_queue = mana.Queue()
-
     all_results = dict() # Final result dict, to be filled when emptying the queue
-
     pool = ProcessPoolExecutor(nb_threads)  # Process pool
 
-
-
-
     ## Now prepare the jobs for submission
-
-    DEBUG_all_combis_human_readable = []
 
     for combi in interesting_combis :
 
@@ -855,29 +708,11 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
         # Add '...' to the combi if not exact, to show the user that others TFs
         # could also be present in these intersections
-        # NOTE This is one of my best ideas !
-        # TODO SAY SO IN PAPER AND DOC
-
-        print("EXACT COMBIS ? Repeat", exact)
-
         if exact : combi_human_readable = '['+' + '.join(combi_list)+']'
         if not exact : combi_human_readable = '['+' + '.join(combi_list)+' + ... ]'
 
-        print(combi_human_readable)
 
-
-        """
-        ADD IN OLOGRAM.PY NOTES :
-        Multiple overlap combinations will be marked with [feature1, feature2] so you can distinsguish between feature1 and [feauture1] which could be an exclusive depending on parameters
-        Also say that the combinations invoving the query peak file will have '[Query+'
-        """
-
-
-        DEBUG_all_combis_human_readable += [combi_human_readable]
-
-
-
-        message('Computing statistics for the combination : ' + str(combi_human_readable), type='DEBUG')
+        message('Will compute statistics for the combination : ' + str(combi_human_readable), type='DEBUG')
 
         combi_key = tuple(combi) # Convert to a tuple because lists cannot be dict keys
 
@@ -891,54 +726,27 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
         # Submit to the pool of processes
         pool.submit(compute_stats_combi_partial)
-        print("Submitted job.")
-
-
-    print("Submitted",len(DEBUG_all_combis_human_readable),"/",len(interesting_combis),"jobs.")
-
 
     # Now all jobs have been submitted monitor the queue and empty results
-
-    DEBUG_combis_done = []
+    combis_done = []
 
     # Empty the queue whenever possible until all combinations have been processed   
-    this_many_already_collected = 0
-    while this_many_already_collected < len(interesting_combis): 
+    while len(combis_done) < len(interesting_combis): 
 
-       
         if not result_queue.empty(): # If the queue is empty, try again next time
             partial_result = result_queue.get()
-            combi_human_readable, result = partial_result
-            this_many_already_collected += 1
-
-
-            
-            DEBUG_combis_done += [combi_human_readable]
-
-
+            combi_human_readable, result = partial_result          
+            combis_done += [combi_human_readable]
 
             # Add the results to the final result dict
             all_results[combi_human_readable] = result
             
-            message("--- Done stats for combi : " + str(combi_human_readable), type='DEBUG')
-            print("--- Combi",this_many_already_collected,"/",len(interesting_combis),"done.")
-
-
-
-
-            print("STILL MISSING :",[c for c in DEBUG_all_combis_human_readable if c not in DEBUG_combis_done])
-
-        
-
+            message("Finished statistics for combi : " + str(combi_human_readable), type='DEBUG')
+            message("Combination ",len(combis_done),"/",len(interesting_combis),"done.")
 
         time.sleep(0.01) 
 
-    
-
-
 
     del result_queue
-
-
 
     return all_results

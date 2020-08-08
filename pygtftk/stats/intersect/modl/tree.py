@@ -13,8 +13,14 @@ Author : Quentin Ferré <quentin.q.ferre@gmail.com>
 
 from pygtftk.utils import message
 
+from itertools import chain 
+from functools import partial
 
+import graphviz as gv
 
+import numpy as np
+
+from pygtftk.stats.intersect.overlap import overlap_regions as oc
 
 class Node:
     """
@@ -68,6 +74,25 @@ def apply_recursively_to_all_nodes(node, function, global_results):
 
 
 class Library:
+    r"""
+    A tree (or more accurately, graph) based representation of combinations of elements.
+
+    Combinations are represented as tuples. For example, if the possible elements are {A,B,C,D}, the combination A+C is represented as (1,0,1,0).
+
+    Nodes will be assigned under the following principle : each node X that contains all flags of a node Y.
+    For example, (1,0,0) is a parent of (1,0,1) but not the other way around.
+
+    A Library is a set set of nodes starting with a root of (0,0,0,...)
+
+    Example of use :
+
+    >>> from pygtftk.stats.intersect.modl.tree import Library
+    >>> words = [(1,1,0),(1,0,0),(0,1,0)]
+    >>> l = Library()
+    >>> l.build_nodes_for_words(words)
+    >>> l.assign_nodes()
+
+    """
     def __init__(self):
         self.unassigned_nodes = list() # Nodes waiting for assignment
         self.nodes_were_assigned = False
@@ -127,66 +152,24 @@ class Library:
 
             message("Read this combination : "+str(tuple(split_combi)))
 
+            # NOTE If there are "..." like in "[ TAL1 + MYC + ... ]" for the non-exact combis,
+            # it should still work because there is usually no combi with only "..." that would be a shared parent
 
 
 
-
-
-
-
-
-
-
-
-            """
-            TODO ALARM : what if there are "..." ? Like in "[ TAL1 + MYC + ... ]" for the non-exlusive combis ?
-            I think it would end up being seen as a "common TF". An annoying bug, but not a fatal one, and one easily fixed : I MUST DISCARD IT IF PRESENT
-            
-            Wait, it does not seem to be a problem actually ?
-            Aah because there is no "..." oombi alone to be a parent
-            """
-
-
-
-
-
-
-
-
-
-
-        # Translate to binary, and remember features_names
-        from itertools import chain    
-
+        # Translate to binary, and remember features_names 
         sorted_features = sorted(set(chain.from_iterable(combis_in_the_df)))
-
-
-
-        
-        
-
-
-
 
         # Ensure the query name is always first and '...' is always last
         if query_name in sorted_features:
             sorted_features.remove(query_name)
             sorted_features.insert(0, str(query_name))
 
-
-
-
-
-
-
         if '...' in sorted_features:    
             sorted_features.remove('...')
             sorted_features.append('...')
 
         self.features_names = sorted_features
-
-
-
 
 
 
@@ -201,13 +184,9 @@ class Library:
             word = tuple(word)
 
 
-
             word_size = len(word) # Remember the length of the word. TODO Throw exception if there are words of different lengths
 
-
-
             # Query relevant info
-            # TODO put correct rows !!!
             self.unassigned_nodes[index] = Node(word)
             self.unassigned_nodes[index].s = row["summed_bp_overlaps_true"]
             self.unassigned_nodes[index].pval = row['summed_bp_overlaps_pvalue']
@@ -217,7 +196,6 @@ class Library:
         
         # Finally, create root node, all unassigned nodes will branch from it later
         self.root_node = Node(word = tuple([0] * word_size)) 
-
 
 
     # ----- Assigning
@@ -231,8 +209,7 @@ class Library:
         # So we must add them in increasing order of total flags, otherwise adding a node of
         # total 3 before a total 2 would result in the total 3 attaching to a total 1 or to a root.
         # Order of nodes which have same total length is not important, as nodes do not take as parents nodes of the same length
-
-        # NOTE : this means the tree must be built all at once ! TODO EXPLAIN MORE
+        # NOTE : this means the tree must be built all at once !
 
 
         # The tree must be built all at once. See above.
@@ -255,28 +232,26 @@ class Library:
             all_distances = {}
             apply_recursively_to_all_nodes(self.root_node, dist, all_distances)
 
-
             all_distances_less_flags = {node:dist for node, dist in all_distances.items() if sum(node.word) < sum(unode.word)} # Striclty inferior
-
 
             # This throws a ValueError if all_distances_less_flags is empty
             # In case of a tie, add all as parents
             try:
                 closest_distance = min(all_distances_less_flags.values())
                 new_parents_list = [node for node in all_distances_less_flags if all_distances_less_flags[node] == closest_distance]
-                #new_parent = min(all_distances_less_flags, key=all_distances_less_flags.get)
             except : new_parents_list = []
 
             # Add current node as child to new_parent
             for new_parent in new_parents_list:
                 
-                
                 # TODO Maybe re-enable
-                #print('Adding '+str(unode)+' to '+str(new_parent)+' as distance of '+str(all_distances_less_flags[new_parent]))
+                #print('Adding '+str(unode)+' to '+str(new_parent)+' as distance of '+str(all_distances_less_flags[new_parent]))              
                 
-                
-                
-                new_parent.add_child(unode)
+                # Only add it if it is also an exact parent : the child must have
+                # all the elements of its parent PLUS potentially others
+                if oc.does_combi_match_query(unode.word, new_parent.word, exact = False):
+                    new_parent.add_child(unode)
+
 
         self.nodes_were_assigned = True
 
@@ -286,84 +261,35 @@ class Library:
 
 
 
-# KEEP AS UNITARY TEST
-
-if __name__ == "__main__":
-    words = [(1,1,0,0,0,0), (0,0,0,0,1,1),
-                (1,1,0,0,1,1),(0,0,0,1,0,0),
-                (0,0,1,1,0,0),(0,0,0,1,1,0),
-                (1,0,0,0,0,0)]
-    l = Library()
-    l.build_nodes_for_words(words)
-    l.assign_nodes()
 
 
 
-
-def generate_candidates(library, currently_used_words):
-    """
-    # From the library, take the children of all nodes that have the flag "used", unless those children have the flag "used" themselves.
-    # Hmm, but must stop to avoid collecting all nodes
-
-
-    # NO DO NOT CHECK THE NDOE FLAGS.
-    # A node is "used" if it's inside the supplied "currently used"
-
-    currently_used_words must be a list of TUPLES
-
-    """
-
-
-
-    """
-    THIS WILL IKELY BE DISCARDED, OR REPLACED WITH AF UNCTION THAT SIMPLY RETURNS ALL WORDS EXCEPT FOR THE CURRENTLY USED ONES (keep it for future evolutions)
-    """
-
-
-
-
-    def get_candidates(node):
-        candidates = []
-        #if node.used = True:
-        #print(node.word)
-        if node.word in currently_used_words:
-            for c in node.children:
-                #if c.used = False:
-                if c.word in currently_used_words:
-                    #candidates += #[c]
-                    candidates += get_candidates(c)
-                else:
-                    candidates += [c.word]
-
-        return candidates
-
-    # Aaaaand... start !
-    candidates = get_candidates(library.root_node)
-
-    # Mark candidates as used at the end only or the above step will take all nodes
-    #for cand in candidates : cand.used = True
-    # WAIT NO ! IF I DO THAT I WILL MARK ALL CANDIDATES AS USED !
-    # Is that even necessay now that currentlly_used_words is an external ?
-
-
-    # TODO : because nodes can have several parents, make the candidates list equal to a set of itself (hence unique words) each time !
-
-    return candidates
-
-
-# KEEP AS UNITARY TEST
-if __name__ == "__main__":
-    generate_candidates(l, [(0,0,0,0,0,0),(1,0,0,0,0,0)])
-
-
-#import pygraphviz as pgv
-from functools import partial
+# def generate_candidates(library, currently_used_words):
+#     """
+#     From the library, take the children of all nodes that have the flag "used", 
+#     unless those children have the flag "used" themselves.
+#
+#     currently_used_words must be a list of tuples.
+#
+#     Currently not used, kept for future evolutions.
+#     """
+#
+#     def get_candidates(node):
+#         candidates = []
+#         if node.word in currently_used_words:
+#             for c in node.children:
+#                 if c.word in currently_used_words: candidates += get_candidates(c)
+#                 else: candidates += [c.word]
+#         return candidates
+#
+#     # Aaaaand... start !
+#     candidates = get_candidates(library.root_node)
+#     # TODO : because nodes can have several parents, make the candidates list
+#     # equal to a set of itself (hence unique words) each time !
+#     return candidates
 
 
 
-
-
-import numpy as np
 
 
 
@@ -390,19 +316,9 @@ def get_all_candidates_except(library, exclude):
     # Aaaaand... start !
     candidates = get_candidates(library.root_node)
 
-    # Because nodes can have several parents, make the candidates list equal to a set of itself (hence unique words) each time !
+    # Because nodes can have several parents, make the candidates
+    # list equal to a set of itself (hence unique words) each time !
     return list(set(candidates))
-
-
-
-
-# KEEP AS UNITARY TEST
-
-if __name__ == "__main__":
-    get_all_candidates_except(l, [(1,1,0,0,1,1)])
-
-
-
 
 
 
@@ -420,34 +336,22 @@ def colorize(value, maximum = 320):
     max_pos = np.array([30,60,255])
 
 
-    # TODO play around and find other, more pleasing hues !!!!!
-    absolute_value = np.clip(abs(value),0,320)
+    # TODO Find more pleasing hues
+    absolute_value = np.clip(abs(value),-maximum,maximum)
 
-    ratio = absolute_value / maximum #2 * (value-minimum) / (maximum - minimum)
+    ratio = absolute_value / maximum
 
     if value < 0 :  color = ratio * max_neg + (1-ratio)*zero
     if value >= 0 : color = ratio * max_pos + (1-ratio)*zero
 
 
-
-
     r, g, b = color.astype(int)
     return '#%02x%02x%02x' % (r, g, b)
 
-    """
-    TODO : colorize enrichment in blue/green and depletions in red !?
-    """
-
-
-if __name__ == "__main__":
-    [colorize(k) for k in [-320,-250,-200,-150,-100,-50,0,50,100,150,200,250,320]]
+ 
 
 
 
-
-
-
-import graphviz as gv
 
 def output_visualize(tree, output_path, features_names = None):
     """
@@ -511,7 +415,7 @@ def output_visualize(tree, output_path, features_names = None):
 
     def format_node_string(combi_string, s_val, p_val, fc_val):
 
-        color_hex = colorize(np.exp(fc_val))
+        color_hex = colorize(fc_val, maximum = 10)
 
         res = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">'
         res += '<TR> <TD PORT="f1" BGCOLOR="'+str(color_hex)+'"><FONT POINT-SIZE="16"><b>'+str(combi_string)+'</b></FONT></TD> </TR>'
@@ -526,7 +430,7 @@ def output_visualize(tree, output_path, features_names = None):
             node_name = node_to_combi_string(node, features_names)
             child_name = node_to_combi_string(c, features_names)
 
-            # Add nodes
+            ## Add nodes
             # Only add node if not already present of course.
             # If present, the graph's 'body' contains the combi string prefixed with a tab character
 
@@ -551,21 +455,3 @@ def output_visualize(tree, output_path, features_names = None):
     # Now save it
     s.save(output_path + '.dot')
     s.render(output_path, format = 'pdf', view=False, cleanup = True)
-
-
-
-
-
-
-if __name__ == "__main__":
-    import os
-    # And produce a visualisation
-    #outputdir = '~/Téléchargements'
-    #fnames = ['A','B','C','D','E','F']
-    #output_visualize(l, os.path.join(outputdir)+'/tree', fnames)
-
-    # TEMPORARILY DISABLED, MAYBE RE-ENABLE AS UNITARY WITHOUT ACTUALLY PRODUCING THE FILE
-
-
-
-

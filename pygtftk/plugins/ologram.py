@@ -3,8 +3,8 @@
  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
  annotates peaks (in bed format) using (i) genomic features extracted
  from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with
-  particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
-  gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
+ particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
+ gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
 
  Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
  lengths are considered). Then the probability of intersection under the null
@@ -14,8 +14,9 @@
  The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
 
- Authors : Quentin FERRE <quentin.q.ferre@gmail.com>, Guillaume CHARBONNIER
- <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
+ Authors : Quentin FERRE <quentin.q.ferre@gmail.com>,
+ Guillaume CHARBONNIER <guillaume.charbonnier@outlook.com>,
+ and Denis PUTHIER <denis.puthier@univ-amu.fr>.
  """
 
 import argparse
@@ -68,10 +69,11 @@ __doc__ = """
  Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
  lengths are considered). Then the probability of intersection under the null
  hypothesis (the peaks and this feature are independent) is deduced thanks to
- this Monte Carlo approach.
-
- The program will return statistics for both the number of intersections and the
+ this Monte Carlo approach. The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
+
+ OLOGRAM can now also calculate enrichment for n-wise combinations (e.g. [Query + A + B]
+ or [Query + B + C]) on sets of regions defined by the user (--more-bed argument).
 
  Author : Quentin FERRE <quentin.q.ferre@gmail.com>,
  Co-authors : Guillaume CHARBONNIER <guillaume.charbonnier@outlook.com> and
@@ -79,19 +81,13 @@ __doc__ = """
  """
 
 __notes__ = """
- -- OLOGRAM is multithreaded and can use many cores. Although ologram itself is not RAM-intensive,
- base pygtftk processing of a full human GTF can require upwards of 8Gb.
+ -- OLOGRAM is multithreaded and can use many cores, most notably processing one batch
+ of shuffles per core. Note that this can be RAM-intensive, on top of the base pygtftk
+ processing of a full human GTF can require upwards of 8Gb.
  It is recommended you do not run other programs in the meantime on a laptop.
 
-I HAVE IMPLEMENTED A NEW MULTITHREADIN, BATCH BY BATCH. THIS WILL CONSUME MORE MEORY BE CAREFUL
-
-
-
- -- You may pass custom sets of regions as BED files, especially for multiple overlaps, with the --more-bed arguments to look for enrichment in overlaps for custom annotations.
-
-
-
-
+ -- You may pass custom sets of regions as BED files, especially for multiple overlaps, 
+ with the --more-bed arguments to look for enrichment in overlaps for custom annotations.
 
  -- Genome size is computed from the provided chromInfo file (-c). It should thus only
  contain ordinary chromosomes. -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'.
@@ -120,10 +116,6 @@ I HAVE IMPLEMENTED A NEW MULTITHREADIN, BATCH BY BATCH. THIS WILL CONSUME MORE M
 
  -- Use -\-no-basic-feature if you want to perform enrichment analysis on custom, focused annotations only (-\-more-bed or -\-more-key).
 
-
-
-
-
  -- The goal of the minibatches is to save RAM. You should increase the number of minibatches, instead of their size.
  You may need to use very small minibatches if you have large sets of regions.
 
@@ -144,40 +136,22 @@ I HAVE IMPLEMENTED A NEW MULTITHREADIN, BATCH BY BATCH. THIS WILL CONSUME MORE M
 
 
 
+PROBABLY MORE OR LESS COPY WHAT IS BELOW AND ADD TO THE DOC
+BUT WILL THAT BE DOUBLONS ? FIND A WAY TO PHRASE IT SO I DON'T HAVE TO WRITE EVERYTHING TWICE.
+DO REMEMBER THAT THIS IS ALL SHOWN IN THE DOC. Look at the final rst to decide each time.
+
+
+ -- Support for multiple overlaps is available. Please see the documentation for a more complete description.
+ 
+ If the --more-bed-multiple-overlap argument is used, the query peak file will be compared with the custom
+ regions passed to the --more-bed argument, and with them only. For example, you can put as query the binding sites of the Transcription Factor A, in --more-bed the factors B, C and D, and
+ see whether A+B+D is an enriched combination.
+ 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- -- Support for multiple overlaps is available (between sets, 'within sets' is in progress).
-
- For example, you can put as query the binding sites of the Transcription Factor A, in --more-bed the factors B, C and D, and
- see whether for example finding A+B+D is an enriched combination.
-
- Add to notes : if --more-bed-multiple-overlap is set (rememebr to theck that more beds is set too, otherwise send an ERROR)
- the more beds will be compared all at once against the query peak file in a multiple overlap analysis (ADD MORE DETAILS)
-
-
-Explain exact, explain the three cases depending on target combi size
+-- Explain exact, explain the three cases depending on target combi size
 Exact means that, for example, an orverlap of A+B+C will be counted when looking for A+B+... if exact is False (most cases)
 Exact is false by default, it will be true if ...
 
@@ -187,24 +161,55 @@ This will not change the N S and enrichment result, but will restrict the set of
     This is done with the multiple-overlap-max-number-of-combinations
         Not needed in most cases ?
         Is very WORK IN PROGRESS
-        Explain quickly how it works : making many rebuildings on the matrix of true intervals then selecting the best words with a greedy algorithm
+        Explain quickly how it works : making many rebuildings on 
+        the matrix of true intervals then selecting the best words with a greedy algorithm
 
-        SAY EXPLICITLY : see documentation for more information
+        SAY EXPLICITLY : see documentation for more information. 
+        I'M NOT GONNA REWRITE EVERYTHING HERE !
         
+    Remember that it is optional
+    Do not ask for too many combis
 
 
 
 
 
+ 
 
- Explain precisely how you can tune how the combinations are found in dict learning
+ -- For statistical reasons, with multiple sets expected intersections can be low. 
+ This can require using more shuffles, but we recommend instead using fewer shuffles
+ (dozens) because intersections across many files will use RAM. Instead, shuffle
+ across a biologically relevant subsection of the genome (with --bed-incl) instead 
+ of the entire genome.
 
- Explain that you should use more shuffles OR BETTER, ExCLUSION because you need more power to see all combis, but less shuffles per batch to save RAM
+ If you nevertheless want to use many shuffles, look to the ologram_merge_run plugin.
+
+ -- We recommend running the ologram_modl_treeify plugin on the resulting tsv file
+ if you use multiple overlaps.
+
+ 
+ 
+
+
+ Explain that you should use more shuffles OR BETTER, ExCLUSION because 
+ you need more power to see all combis, but less shuffles per batch to save RAM
     CAREFUL ABOUT RAM USAGE FOR TONS OF SHUFFLE.
 
- Explain more dict learning, and say it is only useful if you have lots of sets, otherwise do all. And it is biaised for the enriched ones obviously.
+ Explain more dict learning, and say it is only useful if you have lots of sets,
+  otherwise do all. And it is biaised for the enriched ones obviously.
+
  
+(between sets, 'within sets' maybe for a future version)
+
+
  Talk about the treeify plugin ?
+
+
+
+-- Only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C is not, for both shuffles and true and MODL I believe.
+
+-- Here or doc itself ? modl employs ssquishing,  where each line has its original abundance divided  by abundance of most rare (but not lower than abundance_threshold, 1/10000 by default so combis rarer than that will not be found). eg if X = [A * 1000, B * 10], X' = [A * 100, B * 1]
+
 """
 
 
@@ -322,7 +327,6 @@ def make_parser():
 
     # ------------------ Multiple overlaps & dict learning ------------------- #
 
-
     parser_grp.add_argument('-mo', '--more-bed-multiple-overlap',
                             help="The more-beds specified will be considered all at once for multiple overlaps.",
                             action='store_true',
@@ -330,12 +334,9 @@ def make_parser():
 
 
 
-    # One more argument to add :
-    # -mocs, --multiple-overlap-target-combi-size :
-    # In the combinations the algorithm outputs, it will try to use this many elements in each; See documentation for more info
-    # FOR ME : target_nb_words = multiple-overlap-target-combi-size / len(setsB) likely. EXPLAIN THIS IN THE DOC, do not lie and make it seem like I ask the algo to do use a precise number of elements in the words
+  
     parser_grp.add_argument('-mocs', '--multiple-overlap-target-combi-size',
-                            help="Maximum number of sets in the output combinations. Default to -1 meaning no max number",
+                            help="Maximum number of sets in the output combinations. Default to -1 meaning no max number. Set it to number of --more-bed +1 to get exact (exclusive) combinations",
                             default=-1,
                             type=int,
                             required=False)
@@ -350,22 +351,17 @@ def make_parser():
                             required=False)
 
 
-    """
-    OKAY, THOSE TWO ARGUMENTS ARE ALREADY PASSED AND AVAILABLE ! GOOD !
-
-    TODO MAKE SURE THE DEFAULTS ARE PROPERLY TAKEN INTO ACCOUNT !
-        mocs default whenpassed to Modl should result in NO FILTERING
-        monc default of -1 should result in skipping Modl and using all unique
-    """
-
-
-
+ 
 
 
     # multiple_overlap_custom_combis
-    # TODO : Add -moc, --multiple-overlap-custom-combis which is the path to a matrix giving which combis to consider. The order will be the same as the more-beds, no ?
-    # Decide on the format ! 0 0 1\n 0 1 1, or [[0,1,1],[0,1,1]] !!?? TODO USE THE FIRST FORMAT AND WRITE SO IN THE NOTES !!!!
-    # TODO : to find out where to add the arguments, just do a project-wide search for 'multiple_overlap_max_number_of_combinations' since these will likely be used by mostly the same functions
+    # TODO : Add -moc, --multiple-overlap-custom-combis which is the path to a matrix giv
+    # ing which combis to consider. The order will be the same as the more-beds, no ?
+    # Decide on the format ! 0 0 1\n 0 1 1, or [[0,1,1],[0,1,1]] !!?? TODO USE THE 
+    # FIRST FORMAT AND WRITE SO IN THE DOC !!!!
+    # TODO : to find out where to add the arguments, just do a project-wide search for 
+    # 'multiple_overlap_max_number_of_combinations' since these will likely be used by 
+    # mostly the same functions
     parser_grp.add_argument('-moc', '--multiple-overlap-custom-combis',
                             help="Path to a text ('*.txt') file that will be read as a NumPy matrix, overriding the combinations to be studied. The order is the same as --more-beds.",
                             default=None,
@@ -586,7 +582,7 @@ def ologram(inputfile=None,
 
     if more_bed_multiple_overlap:
         if more_bed is None :
-            message("For multiple overlaps (--more-bed-multiple-overlap), please provide regions for it in --more-bed.",
+            message("Multiple overlaps (--more-bed-multiple-overlap) are only computed with the query and user-defined regions : please provide those with the --more-bed argument.",
                     type="ERROR")
 
     # Useless parameters
@@ -595,10 +591,6 @@ def ologram(inputfile=None,
             message("--multiple-overlap-target-combi-size is ignored when not working with multiple overlaps (--more-bed-multiple-overlap).")
         if multiple_overlap_max_number_of_combinations != -1:
             message("--multiple-overlap-max-number-of-combinations is ignored when not working with multiple overlaps (--more-bed-multiple-overlap).")
-
-    """
-    TODO Be careful, the default for those two are now -1, not None !
-    """
 
 
     # Enforcing custom combinations
@@ -609,7 +601,7 @@ def ologram(inputfile=None,
             message("--multiple-overlap-max-number-of-combinations is ignored when custom combinations are enforced (with --multiple-overlap-custom-combis)")
 
         if not more_bed_multiple_overlap:
-            message("Cannot use--multiple-overlap-custom-combis without --more-bed-multiple-overlap.",
+            message("Cannot use --multiple-overlap-custom-combis without the argument --more-bed-multiple-overlap.",
                     type="ERROR")
 
     # -------------------------------------------------------------------------
@@ -835,11 +827,11 @@ def ologram(inputfile=None,
 
             print(more_bed_labels)
             """
-            I FOUND A PROBLEM. When I am passing bed3 they are converted to bed6 with temporary names.
+            TODO I FOUND A PROBLEM. When I am passing bed3 they are converted to bed6 with temporary names.
             To fix it, must alter the make_tmp_file() call in FormattedFile when converting to bed6, so that it keeps the stem as
             a prefix, and then add a check that if we have a temp file name we do some additional cleaning.
 
-            DENIS HAS FIXED IT IN A HOTFIX, COLLECT IT AND PUT IT HERE
+            OKAY DENIS HAS FIXED IT IN A HOTFIX, COLLECT IT AND PUT IT HERE
             """
 
 

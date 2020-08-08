@@ -231,39 +231,6 @@ def empirical_p_val(x, data):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 '''
 import numpy as np
 
