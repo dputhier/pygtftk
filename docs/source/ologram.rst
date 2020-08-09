@@ -24,16 +24,12 @@ In the examples of this section, we will need the following example files:
 
 
 
-
-
 For more information about OLOGRAM and OLOGRAM-MODL, please see the appropriately titled papers in the Citing section.
 
-More examples can be found in https://github.com/qferre/ologram_supp_mat as a Snakemake workflow, or you can extract commands
-Also add the github of ologoram modl supp mat, DENIS MUST TRANSFER OWNERSHIP
+More examples can be found in https://github.com/qferre/ologram_supp_mat and https://github.com/qferre/ologram-modl_supp_mat 
+These contain example Snakemake workflows, that can be reused or from which commands can be extracted.
 
-
-
-**Note for contributors** : To contribute to OLOGRAM, begin at  *pygtftk/plugins/ologram.py* and unwrap function calls from there, to get a sense of how they interact. We have detailed comments to explain the role of every function.
+**Note for contributors** : To contribute to OLOGRAM, begin at *pygtftk/plugins/ologram.py* and unwrap function calls from there, to get a sense of how they interact. We have detailed comments to explain the role of every function.
 
 
 
@@ -62,15 +58,8 @@ The program will return statistics for both the number of intersections and the 
 
 
 
-More details, see the NOTES !!! They should be below with the argument
 
-
-
-
-
-
-**Example:** Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in
-the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
+**Example:** Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
 
 
 .. command-output:: gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
@@ -161,43 +150,11 @@ the bar plot diagram will be ordered according to 'summed_bp_overlaps_pvalue'.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 **Example:** When not supplying a GTF, you can use --more-bed. The following example will look for pairwise enrichment of the file in input (p, here *query.bed* with the regions defined in --more-bed : here with *A.bed*, then with *B.bed*, then with *C.bed*.
 
 .. command-output:: 
 	gtftk ologram -ms 40 -mn 10 -p query.bed --more-bed A.bed B.bed C.bed -z -c hg38 -V 3 --force-chrom-peak --force-chrom-more-bed
   :shell:
-
-
-
-RQ : NOW I NO LONGER NEED TO SPECIFY MORE-BED-LABELS NO ? NEED TO AMEND THE DOCUMENTAION AND THE FUNCTION NOTES
-TO REFLECT THAT
-
-
-
-
-
-
-
 
 
 
@@ -211,151 +168,39 @@ ologram (multiple overlaps)
 
 While previously we computed paiwise enrichment (ie. Query+A, Query+B ...) , It is also possible to use the **OLOGRAM-MODL** Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n>=2 sets) enrichment (ie. Query+A+B, Query+A+C, ...) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes. 
 
-This is done only on custom regions supploed as BEDs supplied with the `--more-bed` argument. 
+This is done only on custom regions supplied as BEDs supplied with the `--more-bed` argument. In most cases you may use the --no-gtf argument and only pass the regions of interest.
 
 
+For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using --bed-excl or --bed-incl to ensure the longer combinations have a reasonable chance of being randomly encountered in the shuffles.
 
 
+**MODL itemset mining algorithm** :By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. 
 
+In broad strokes, this custom algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
 
+Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. This itemset mining algorithm is a work-in-progress. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
 
 
+**Exact combinations ** : By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + ...]. For exact intersections (ie. [Query + A + B + nothing else]), set the --multiple-overlap-target-combi-size flag to the number of --more-bed plus one. You will know if the combinations are computed as inexact by the "..." in their name in the result file. Intersections not including the query file are discarded.
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed.
-
-
-This however can add up to 2**N and make the result hard to read. As such, We also give the option use a custom itemset mining algorithm on the true overlaps to identify interesting combinations,. You can also manually specify them.
-
-In broad strokes, this custom algorithm MODL (Multiple Overlap Dictionary Learning) this algorithm will perform many matrix factorizations on the matrix of true overlaps to identify relevant groups of TRs. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words
-
-
-ar défaut le programme ne l'utilise pas et renvoie toutes les combinaisons... RENCONTREES DANS LES VRAIES DATA, pas dans les shuffles.
-  The parameter to use it is --multiple-overlap-max-combinations
-
-Ceci dit je pense que vous n'en aurez pas trop besoin de MODL dans la plupart des cas.
-This is mostly useful if there are many files to reduce the number of displayed combinations.
-Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets).
-
-(maybe in ologram.py __notes__ only) Quand vous demander à MODL de restreindre le nombre de combinaisons, demandez le top 20 ou 30 pas plus. C'est fait pour trouver des complexes, pas des règles d'association : si vous demandez plus de combi le temps de calcul augmente de manière exponentielle (heures ou jours ! improvement pending with inductive version maybe). Si vous les voulez toutes, ignorez MODL.
-
-
-Xet algorithme ne sert qu'à filtrer l'output d'OLOGRAM en termes de combinaisons affichées (OLOGRAM ne calculera l'enrichissement que des combinaisons jugées intéressantes). POnce interesting combis have been found, we will compute enrichment using the OLOGRAM method for the combinations as usual.
-Each combination is of the form A+B+C where A, B and C are bed files given as more-bed. They will each have a p value and NB enrichment.
-
-Acknowledge that this plugin of itemset mining is WIP, but it is only used to display only certain combis (use the word "display")
-
-
-To use MODL, use the --multiple-overlap-max-number-of-combinations argument, with the wanted number of combinations
-Also explain rile of --multiple_overlap_target_combi_size : combis longer than this will be ignored. Useful for exact.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-I heartily recommend using --bed-incl or --bed-excl to restrict the shuffles (ie. shuffling on enhancers only), otherwise longer combis are statitically very improbable.
-
-
-
-
-
-
-**Exact combinations **: Here explain exact and the three cases (see Zim)
-  Actually two, simple ! By default you have inexact combis, meaning that at a given position overlaps of A+B+C will count as one towards A+B+...
-  To get eact overlaps (A+B but NOT C), put --target--combi size equal to number of --more-beds plus 1 for the query (in the example above, it would be XXX)
-  You will know combis are inexact when ther are "..." in the labels.
-
-In most cases use the -z or --no-gtf argument and only pass --more-bed
 
 **Example:**
 
-.. command-output:: gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-labels One,Two --more-bed-multiple-overlap
-	:shell:
+.. command-output:: 
 
-
-
-MINIBATCH_NB=10
-MINIBATCH_SIZE=100
-THREADS=8
-QUERY=./source.bed
-DATA_FILES_DIR=./data
-# Query is the file to compare against. Intersections not including the query file will be discarded
-# Data files dir is the path to the directory containing the regions of interest as bed files (A.bed, B.bed, C.bed, etc.)
-# The program will return the enrichment of relevant combinations such as Query+A, Query+B+C, etc.
-# Run OLOGRAM-MODL
-
-
-
-  - --more-bed-multiple-overlap
-# To use the MODL combination filtering algorithm, add the --multiple-overlap-max-number-of-combinations 42 argument to the previous command line, replacing 42 with the wanted number of combinations
-# Also explain rile of --multiple_overlap_target_combi_size
-
-
-  gtftk ologram -z -c hg38 -p ${QUERY} |\                      # The query
-      --more-bed `ls -d ${DATA_FILES_DIR}/*`
-      -o results --force-chrom-peak --force-chrom-more-bed  |\
-      V 3 -k ${THREADS} -mn ${MINIBATCH_NB} -ms ${MINIBATCH_SIZE} |\          # Verbosity, threads, number and size of minibatches
-      --more-bed-multiple-overlap         # Switch : use multiple overlaps on the --more-bed
-      --multiple-overlap-max-number-of-combinations 10     # OPTIONAL ARGUMENT. Use MODL to restrict to THIS MANY combinations (optional)
-      --multiple-overlap-target-combi-size 3               # OPTIONAL ARGUMENT. Combis restricted to this size. Also Explain exact (optional)
-
+  gtftk ologram -z -c simple_07.chromInfo -p simple_07_peaks.bed       # The query (-p) is the file to compare against.
+      --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed           # List of files to compare with
+      # --more-bed `ls -d ./data/*`                                    # This should work instead if all your files are in the 'data' subdirectory
+      -o results --force-chrom-peak --force-chrom-more-bed  
+      -V 3 -k 8 -mn 10 -ms 10                                          # Verbosity, threads, number and size of minibatches
+      --more-bed-multiple-overlap                                      # Use multiple overlaps on the --more-bed
+      --multiple-overlap-max-number-of-combinations 10                 # OPTIONAL ARGUMENT. Use MODL to restrict to THIS MANY combinations (optional)
+      --multiple-overlap-target-combi-size 3                           # OPTIONAL ARGUMENT. Combis restricted to this size. Also Explain exact (optional)
+      --multiple-overlap-custom-combis test_combis.txt                 # OPTIONAL ARGUMENT. Will bypass the selection by the previous two arguments and work only on the combinations defined in this file.
+  :shell:
 
 
 .. raw:: html
@@ -376,38 +221,28 @@ DATA_FILES_DIR=./data
 
 
 
-**MODL algorithm :** MODL can also be used independantly as a combination mining algorithm.
+**MODL algorithm API:** MODL can also be used independantly as a combination mining algorithm. You data needs to be a matrix with one line per transaction and one column per element.
 
-You need data with one line per transaction and one column per element
+For more details, see code comments.
 
-For more details, see code comments and paper.
+Here is an example:
 
 
-SHOULD THIS GO IN API.RST INSTEAD ?
 
 ``` python
-    >>> from pygtftk.stats.intersect.dict_learning import Modl, test_data_for_modl
-    >>> import numpy as np
-    >>> np.random.seed(42)
-    >>> flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.1, cor_groups = [(0,1),(0,1,2,3),(4,5)])
-    >>> combi_miner = Modl(flags_matrix, 
-    >>>        multiple_overlap_target_combi_size = -1,    # Limit the size of the combinations
-    >>>        multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
-    >>>        nb_threads = 1,
-    >>>        step_1_factor_allowance = 2)    # How many words to ask for in each step 1 rebuilding
-    >>> interesting_combis = combi_miner.find_interesting_combinations()
-    >>> assert set(interesting_combis) == set([(1,1,0,0,0,0),(1,1,1,1,0,0),(0,0,0,0,1,1)])
-    
+from pygtftk.stats.intersect.dict_learning import Modl, test_data_for_modl
+flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.1, cor_groups = [(0,1),(0,1,2,3),(4,5)])
+combi_miner = Modl(flags_matrix, 
+       multiple_overlap_target_combi_size = -1,    # Limit the size of the combinations
+       multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
+       nb_threads = 1,
+       step_1_factor_allowance = 2)    # How many words to ask for in each step 1 rebuilding
+interesting_combis = combi_miner.find_interesting_combinations()   
 ```
 
 
 
-
-
-Please read the notes below for more details !!!!!! NOTABLY ON PARAMETER CHOICE ! IMPORTANT !!!!!
-
-
-
+For more details about usage and implementation, please read the notes below :
 
 **Arguments:**
 
@@ -418,42 +253,16 @@ Please read the notes below for more details !!!!!! NOTABLY ON PARAMETER CHOICE 
 
 
 
-
-
-
-
-
-WARNING : if using lots of file, modl may clog and have too big of a matrix !!
-Then you should specify custom combis only (show how)
-Explain squishing also
-
-
-
-
-
-
-
-
-
 ologram_merge_stats
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Merge results from different *OLOGRAM* calls in a heatmap for visualisation.
+**Description:** Several tsv files resulting from *OLOGRAM* analyses can be merged into a single diagram report using the merge_ologram_stats.
 
-
-
-
-Several tsv files resulting from OLOGRAM analyses can be merged into a single diagram report using the merge_ologram_stats.
-
-**Example:** For this example will will used the results obtained for 3 epigenetic marks on human chromosome 1.
-
+**Example:** For this example we will used the results obtained for 3 epigenetic marks on human chromosome 1.
 
 .. command-output:: gtftk ologram_merge_stats H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merge_ologram_stats_01.pdf --labels H3K4me3,H3K36me3,H3K79me2
 	:shell:
 
-
-
-Can still work with OLOGRAM-MODL type results, since they follow the same basic format of one element/combination per line.
 
 .. raw:: html
 
@@ -469,7 +278,7 @@ Can still work with OLOGRAM-MODL type results, since they follow the same basic 
   <br>
   <br>
 
-This also works on multiple overlap results
+This also works with OLOGRAM-MODL results, since they follow the same basic format of one element/combination per line.
 
 **Arguments:**
 
@@ -479,46 +288,17 @@ This also works on multiple overlap results
 
 
 
-
-
-
-
-
-
-
 ologram_modl_treeify
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** visualize n-wise enrichment results as a tree by showing strength of association between sets (based on S p-val). Sort of a correlation network.
-Will also give a tree of combinations.
+**Description:** Visualize n-wise enrichment results (OLOGRAM-MODL) as a tree of combinations. Works on the result (tsv file) of an OLOGRAM analysis called with --more-bed-multiple-overlap.
 
-Hmm now it gives only the tree of combinations, that first tree is actually garbage I think.
+We recommend this representation. The tsv file can be edited before passing it to the command, for example by keeping only the combinations you are interested in.
 
+On the graph, S designated the total number of basepairs in which this combinations is encountered in the real data. Fold change gives the ratio with the number of basepairs in the shuffles, with the associated Negative Binomial p-value.
 
-Works on the result (tsv file) of an ologram call with --multiple-overlap
-
-
-SHOW THE RESULT HERE QUICKLY ON SIMPLE_07
-
-label is optional
-
-
-SAY IT IS THE PREFERRED REPRESENTATINO FOR OLOGRAM multiple overlap results
-
-
-Remember that you can EDIT the tsv before passing it to ologram_modl_treeify, for example keeping only the combinations you want
-
-
-.. command-output:: gtftk ologram_merge_stats -h
+.. command-output:: gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o ./results/treeified.pdf -l ThisWasTheNameOfTheQuery
 	:shell:
-# Grab newest tsv file and turn it into a tree to visualize the results
-gtftk ologram_modl_treeify -i ologram_result.tsv -o ./results/treeified.pdf -l ThisWasTheNameOfTheQuery
-
-
-
-
-
-SHOW A QUICK EXAMPLE !!!!!
 
 .. raw:: html
 
@@ -534,39 +314,34 @@ SHOW A QUICK EXAMPLE !!!!!
   <br>
   <br>
 
-Explain : S is total nb of overlapping base pair in reality, fold change is when comapred to shuffle, p value is such
+.. command-output:: gtftk ologram_modl_treeify -h
+	:shell:
+
+
 
 
 ologram_merge_runs
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** to save memory, merge several runs of OLOGRAM into one run, treating each separate run as a super batch of shuffles
+**Description:** Merge several runs of OLOGRAM into a single run, by treating each a "superbatch" of shuffles.
 
-
-
-
-OLOGRAM remembers all intersections occuring inside all minibatches to calculate statistics. If you are using
-a large number of shuffles and/or very large files, this may cost a lot of RAM.
-
-In practice, you should not need to use more than 100???? shuffles. But if you absolutely require increased precision, 
-you can run OLOGRAM several times, treat each run as a "batch of batches" and merge and recalculate stats on the merged superbatch
-automatically using this command
-
-
+OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a "batch of batches" and merge and recalculate stats on the merged superbatch automatically using this command.
 
 ```bash
 # Make several OLOGRAM runs
 N_RUNS = 100
 for i in {1..$N_RUNS}
 do
-   ologram
+   ologram ...
 done
-# Possible because each run has a different time and will not overwrite the previous results
 
 # Merge those runs
-# use ls to get all files in the directory
 gtftk ologram_merge_runs --inputfiles `ls ./results/*.tsv` -o ./merged_batches_result.tsv -V 3
-
-# Treeify and other ologram commands can now be called on the resulting tsv
-
 ```
+
+Other commands such as ologram_modl_treeify can now be called on the resulting tsv, which respects the OLOGRAM format.
+
+
+.. command-output:: gtftk ologram_merge_runs -h
+	:shell:
+
