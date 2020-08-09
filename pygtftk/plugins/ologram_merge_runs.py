@@ -23,6 +23,8 @@ __updated__ = ''' 2020-07-30 '''
 
 __notes__ = """
 -- Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it. This treats each run as a "superbatch".
+
+-- Statistics can be recalculated simply by averaging as runs are independant from one another.
 """
 
 
@@ -116,8 +118,7 @@ def ologram_merge_runs(inputfiles=None,
         merged_run.loc[combi, 'nb_intersections_variance_shuffled'] = merged_run.loc[combi, 'nb_intersections_variance_shuffled'] /len(runs_to_be_merged)
         merged_run.loc[combi, 'summed_bp_overlaps_expectation_shuffled'] = merged_run.loc[combi, 'summed_bp_overlaps_expectation_shuffled'] /len(runs_to_be_merged)
         merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled'] = merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled'] /len(runs_to_be_merged)
-        # TODO explain in paper and notes that we can average the variance because the runs are independent from one another
-
+  
 
         # Do not divide by zero ! Use the true value as fold change if needed
         expectation_fitted_intersect_nbs = merged_run.loc[combi, 'nb_intersections_expectation_shuffled']
@@ -135,7 +136,7 @@ def ologram_merge_runs(inputfiles=None,
         merged_run.loc[combi, 'summed_bp_overlaps_log2_fold_change'] = '{:.5f}'.format(sbp_fc)
 
         # Fit qualities are not applicable here
-        # TODO say so explicitly
+        # TODO Recalculate them
         merged_run.loc[combi,'summed_bp_overlaps_negbinom_fit_quality'] = np.nan
         merged_run.loc[combi,'nb_intersections_negbinom_fit_quality'] = np.nan
 

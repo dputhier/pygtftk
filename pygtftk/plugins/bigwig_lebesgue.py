@@ -19,7 +19,7 @@ This is a WORK-IN-PROGRESS. To be used once intra-set overlaps are implemented i
 
 TODO Here are the steps that would be required :
 
-1) Remove the merging of BEDs regions, and ensure negative inter-regions distances are kept.
+1) Remove the merging of BEDs regions (calls to bedfile.merge()), and ensure negative inter-regions distances are kept.
 
 2) Remember that overlap_regions.find_intersection() can understand several region open at once and can for example return flags of [2,1] if A has 2 open regions.
 
