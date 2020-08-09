@@ -348,7 +348,7 @@ setup(name="pygtftk",
                         'cython >=0.29.6',
                         'mpmath >=1.1.0',
                         'scikit-learn >=0.21.2',
-                        'python-graphviz',
+                        'graphviz',
                         'seaborn'
     ],
       ext_modules=[lib_pygtftk] + [cython_ologram_1, cython_ologram_2, cython_ologram_3, cython_ologram_4])
