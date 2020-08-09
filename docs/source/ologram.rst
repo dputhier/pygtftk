@@ -230,7 +230,7 @@ Here is an example:
 
 
 ``` python
-from pygtftk.stats.intersect.dict_learning import Modl, test_data_for_modl
+from pygtftk.stats.intersect.modl.dict_learning import Modl, test_data_for_modl
 flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.1, cor_groups = [(0,1),(0,1,2,3),(4,5)])
 combi_miner = Modl(flags_matrix, 
        multiple_overlap_target_combi_size = -1,    # Limit the size of the combinations

@@ -160,8 +160,11 @@ def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
     >>> var = 630200
     >>> k = 65630
     >>> pval = negbin_pval(k, mean, var)
-    >>> assert(pval == 1.1999432787236828e-307)
+    >>> import math
+    >>> assert(math.isclose(pval,1.1999432787236828e-307))
+
     """
+
 
     if mean < 1:
         mean = 1

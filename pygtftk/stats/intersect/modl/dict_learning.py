@@ -147,15 +147,11 @@ class Modl:
     :param nb_threads: Number of threads
     :param step_1_factor_allowance: In step 1 of building the candidates, how many words are allowed in the Dictionary Learning as a proportion of multiple_overlap_max_number_of_combinations
     
-    >>> from pygtftk.stats.intersect.dict_learning import Modl, test_data_for_modl
+    >>> from pygtftk.stats.intersect.modl.dict_learning import Modl, test_data_for_modl
     >>> import numpy as np
     >>> np.random.seed(42)
     >>> flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.1, cor_groups = [(0,1),(0,1,2,3),(4,5)])
-    >>> combi_miner = Modl(flags_matrix, 
-    >>>        multiple_overlap_target_combi_size = -1,    # Limit the size of the combinations
-    >>>        multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
-    >>>        nb_threads = 1,
-    >>>        step_1_factor_allowance = 2)    # How many words to ask for in each step 1 rebuilding
+    >>> combi_miner = Modl(flags_matrix, multiple_overlap_max_number_of_combinations = 3)
     >>> interesting_combis = combi_miner.find_interesting_combinations()
     >>> assert set(interesting_combis) == set([(1,1,0,0,0,0),(1,1,1,1,0,0),(0,0,0,0,1,1)])
     

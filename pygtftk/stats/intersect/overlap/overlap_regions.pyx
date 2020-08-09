@@ -460,6 +460,7 @@ cpdef bint does_combi_match_query(tuple combi, tuple query, bint exact = False):
     False
     >>> does_combi_match_query((1,2,1),(1,1,1), exact = True)
     True
+    
     """
 
     cdef int niter = len(combi)
