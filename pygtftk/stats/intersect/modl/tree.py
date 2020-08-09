@@ -69,7 +69,7 @@ def apply_recursively_to_all_nodes(node, function, global_results):
     for c in node.children:
         apply_recursively_to_all_nodes(c, function, global_results) # Move to the child
 
-    # TODO : permit stop conditions
+    # TODO Permit stop conditions, as a callable
 
 
 
@@ -335,8 +335,6 @@ def colorize(value, maximum = 320):
     zero = np.array([255,255,255])
     max_pos = np.array([30,60,255])
 
-
-    # TODO Find more pleasing hues
     absolute_value = np.clip(abs(value),-maximum,maximum)
 
     ratio = absolute_value / maximum

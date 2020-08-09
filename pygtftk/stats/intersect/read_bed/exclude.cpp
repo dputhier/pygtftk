@@ -64,7 +64,7 @@ void arrayWiseIsLower(const T * array, T value, long array_size, bool * result_a
     p_result++;
   }
 
-  // TODO : if the array is sorted, this can be done more efficiently with
+  // TODO If the array is sorted, this can be done more efficiently with
   // std::lower_bound ; but the current code is already fast enough in most cases.
 
   return;
@@ -170,7 +170,7 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
     }
 
     // Cleanup
-    // TODO : Rewrite this code with smart pointers and no manual deletion
+    // TODO Rewrite this code with smart pointers and no manual deletion
     delete[] rs_lt_es;
     delete[] re_lt_es;
     delete[] rs_lt_ee;
@@ -178,7 +178,7 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
 
     /***************************** Main processing ****************************/
 
-    // TODO : try putting all `if`s in the same `for` loop. Without elses, they
+    // TODO Try putting all `if`s in the same `for` loop. Without elses, they
     // are still treatable as masked assignments so the compiler should like it.
 
 
@@ -249,7 +249,7 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
     }
 
     // Cleanup
-    // TODO : Rewrite this code with smart pointers and no manual deletion
+    // TODO Rewrite this code with smart pointers and no manual deletion
     delete[] case_0;
     delete[] case_1;
     delete[] case_2;

@@ -138,13 +138,12 @@ cdef list apply_func_multiproc_cython(list python_list_of_numpy_arrays, list pyt
         # It is designed to be used as a list of thread-local buffers to share
         # the work using prange
 
-        # TODO : which schedule to use ?
-        # Likely dynamic as the tasks do not always have the same size (I often multiproc by chromosome)
+        # TODO Which schedule to use ? Likely dynamic as the tasks do not always have the same size (I often multiproc by chromosome)
 
         for i in prange(n, schedule='dynamic'):
 
             # Debug print
-            # TODO RE-ADD THIS !!
+            # TODO Re-add this
             #stdio.printf("tid: %d   cpuid: %d\n", openmp.omp_get_thread_num(), sched_getcpu())
 
 
@@ -237,7 +236,7 @@ cdef FUNC_2DARRAY_RESULT example_func(long long* arr, long long* shape, long lon
 
 
     return result
-    # TODO and what about the shape of the result ?
+
 
 
 cdef printcustom(FUNC_2DARRAY_RESULT result):
@@ -334,11 +333,6 @@ prg.sum(queue, A.shape, None, # queue, global_size, local_size
 
     # global_size gives the number of workgroups, or Blocks in CUDA terms.
     # local_size is the size of each of them in terms of threads
-
-    # TODO : just need to find that out. Maybe assign one Block per array for multiprocessing !!
-    # It's not so simple. Or is it ? Yeah it is ! Use the individual array size as local_size, and the number of arrays as global_size ?
-    # NO ! not recommended ! Although it would work, that is not the intended design. it would try to allocate too many resources at once I think.
-
 
 cl.enqueue_copy(queue, C_buf, C) # Transpose C_buf into C
 """

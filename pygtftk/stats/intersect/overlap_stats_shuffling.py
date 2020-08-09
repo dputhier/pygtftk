@@ -157,7 +157,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
     """
 
     """
-    TODO : We could also use this to output stats per chromosome : In results,
+    TODO We could also use this to output stats per chromosome : In results,
     instead of having "exons", "intergenic", etc., have "exons_chr1", 
     "exons_chr2", "intergenic_chr1", etc.
     """
@@ -171,7 +171,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
 
         for set in range(len(Lis)):
 
-            # WARNING Some BEDs may have no peaks on certain chromosomes.
+            # Some BEDs may have no peaks on certain chromosomes.
             # Watch for KeyError exception for this case.
             try : shuffled_Lrs_batches[set][chrom] = batch_and_shuffle_list(Lrs[set][chrom])
             except KeyError: shuffled_Lrs_batches[set][chrom] = np.tile([0], (minibatch_size, 1))
@@ -311,7 +311,6 @@ def compute_overlap_stats(bedA, bedsB,
     # Just in case, force type and merge bedA ; same for bedB
     bedA = pybedtools.BedTool(bedA).sort().merge()
     bedsB = [pybedtools.BedTool(bedB).sort().merge() for bedB in bedsB]
-    # TODO explain here no need for sort and merge depending
 
     stop = time.time()
     message('BED files merged and sorted via PyBedtools in ' + str(stop - start) + ' s', type='DEBUG')

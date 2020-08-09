@@ -62,7 +62,7 @@ class Apriori:
 
 
         # Only conserve frequent item-set 
-        n = self.nb_transactions # TODO is this correct , otherwise use their n=len(transactionList)
+        n = self.nb_transactions
         for item, count in _local_set.items():
             support = float(count)/len(transactions)
 
@@ -102,7 +102,7 @@ class Apriori:
 
         # --- Main loop
         # Main idea is to "grow" in length
-        k = 1 # TODO one implementation started at 2
+        k = 1
         current_frequent_term_set = freq_one_item_set
 
         while current_frequent_term_set != set():

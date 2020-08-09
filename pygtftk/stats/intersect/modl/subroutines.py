@@ -324,7 +324,7 @@ def build_best_dict_from_library(data, library, queried_words_nb,
 
         # If we have more words than the user wants, remove the worst one
         if (len(dictionary) > queried_words_nb):
-            # TODO Remove worst word with respect to error (try all, opposite of above)
+            # Remove worst word with respect to error (try all, opposite of above)
 
         # When the word added and the word removed are the same (meaning
         # the word it wants to add does not improve on the dict) stop and
