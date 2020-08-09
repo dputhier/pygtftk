@@ -18,3 +18,4 @@ cython >=0.29.6
 mpmath >=1.1.0
 scikit-learn >=0.21.2
 python-graphviz
+seaborn
