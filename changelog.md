@@ -1,18 +1,7 @@
 # Changelog
 
 
-
-
-
-
-
-
-
-
-
-
-
-## v1.1.5?
+## v1.1.5
 
 This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find intersections between multiple sets of genomic regions at once and then compute their enrichment with OLOGRAM. An optional algorithm (MODL) to find interesting combinations with sparse dictionary learning and greedy submodular optimisation has also been added. Furthermore, it also contains major speedups to OLOGRAM itself.
 
@@ -23,6 +12,7 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 *   OLOGRAM - The display graph has now the X labels at 90 degrees.
 *   OLOGRAM - more-bed-labels should take and clean BED file names as default
 *   OLOGRAM - Various graphical fixes
+*   fix #124
 
 ### API Changes
 
@@ -46,41 +36,6 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 *   The API contains a Modl class which is a dictionary-learning based itemset mining algorithm, used in OLOGRAM-MODL
 *   Introduced a *treeify_ologram_modl* plugin to visualize n-wise enrichment results as a treee
 *   Introduced a *ologram_merge_runs* command to merge several runs to save RAM, treating each as a superbatch.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
