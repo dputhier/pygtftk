@@ -1,10 +1,13 @@
 """
 This module contains the MODL algorithm, an itemset mining algorithm that broadly consists of two steps.
 
-Considering an input matrix with transactions/regions.intersections in lines and elements/items/sets in columns,
-the algorithm will :
-    - learn (MiniBatchDictionaryLearning) several factorisations with different sparsity constraints to build a library of candidate words (eg. (1,1,0,0,1))
-    - select the best words to rebuild the original matrix using a greedy algorithm, by trying to rebuild the original matrix with a subset of selected words, adding the word that best improves the rebuilding to said subset each time.
+Considering an input matrix with transactions/regions.intersections in lines and
+elements/items/sets in columns, the algorithm will : (I) learn (MiniBatchDictionaryLearning)
+several factorisations with different sparsity constraints to build a library of
+candidate words (eg. (1,1,0,0,1)) and (II) select the best words to rebuild the 
+original matrix using a greedy algorithm, by trying to rebuild the original 
+matrix with a subset of selected words, adding the word that best improves the 
+rebuilding to said subset each time.
 
 Dictionary learning is an optimization problem solved by alternatively updating the 
 sparse code, as a solution to multiple Lasso problems, considering the dictionary fixed,
@@ -12,9 +15,9 @@ and then updating the dictionary to best fit the sparse code.
 
 In OLOGRAM, we use this on the matrix of true overlap flags to find usual common overlaps.
 
-This is mostly useful if there are many files to reduce the number of displayed combinations.
-
-Unlike classical association rules mining algorithms, this focuses on mining complexes and correlation groups (item sets).
+This is mostly useful if there are many files to reduce the number of displayed combinations,
+and to counteract the effect of noise on the data. Unlike classical association
+rules mining algorithms, this focuses on mining complexes and correlation groups (item sets).
 
 Author : Quentin FERRE <quentin.q.ferre@gmail.com>
 

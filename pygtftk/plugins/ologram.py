@@ -151,9 +151,10 @@ __notes__ = """
  on the intersections on the true data. This is done with the -\-multiple-overlap-max-number-of-combinations argument.
  This will not change the N,S and enrichment result, but will restrict the set of interesting combis for which those are calculated and displayed
 
- -- MODL is designed to find complexes and not association rules, so we do not recommend asking formore than 20-50 combinations to
+ -- MODL is designed to find complexes more than association rules, so we do not recommend asking for more than 20-50 combinations to
  keep the running time reasonable.
- Note that MODL is completely optional. It is mostly needed when the list of -\-more-bed is very long and you do not want to filter the results manually.
+ Note that MODL is completely optional. It is mostly needed when the list of -\-more-bed is very long and you do not want to filter the results manually, and when you are working with noisy
+ data which could obfuscate the interesting combinations.
  MODL employs a form of subsampling ont the original matrix and will discard combinations rarer than 1/10000 occurences. This is done as the matrix of intersections will usually have many redundant lines and can be squished as such without changing the result.
  It is also possible to bypass it and provide a custom list of combinations to be considered.
 

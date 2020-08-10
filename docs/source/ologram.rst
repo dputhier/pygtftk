@@ -174,11 +174,18 @@ This is done only on custom regions supplied as BEDs supplied with the `--more-b
 For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using --bed-excl or --bed-incl to ensure the longer combinations have a reasonable chance of being randomly encountered in the shuffles.
 
 
-**MODL itemset mining algorithm** :By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. 
+**MODL itemset mining algorithm**: By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations.
+
+
+As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. 
 
 In broad strokes, this custom algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
 
-Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. This itemset mining algorithm is a work-in-progress. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
+Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is resistant to noise
+as we show later, and is useful to extract meaningful frequent combinations from noisy data.
+
+
+This itemset mining algorithm is a work-in-progress. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
 
 
 **Exact combinations ** : By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + ...]. For exact intersections (ie. [Query + A + B + nothing else]), set the --multiple-overlap-target-combi-size flag to the number of --more-bed plus one. You will know if the combinations are computed as inexact by the "..." in their name in the result file. Intersections not including the query file are discarded.
@@ -197,8 +204,8 @@ Unlike classical association rules mining algorithms, this focuses on mining rel
       -o results --force-chrom-peak --force-chrom-more-bed  
       -V 3 -k 8 -mn 10 -ms 10                                          # Verbosity, threads, number and size of minibatches
       --more-bed-multiple-overlap                                      # Use multiple overlaps on the --more-bed
-      --multiple-overlap-max-number-of-combinations 10                 # OPTIONAL ARGUMENT. Use MODL to restrict to THIS MANY combinations (optional)
-      --multiple-overlap-target-combi-size 3                           # OPTIONAL ARGUMENT. Combis restricted to this size. Also Explain exact (optional)
+      --multiple-overlap-max-number-of-combinations 10                 # OPTIONAL ARGUMENT. Use MODL to restrict to this many combinations.
+      --multiple-overlap-target-combi-size 3                           # OPTIONAL ARGUMENT. Combis mined longer than this size will not be shown.
       --multiple-overlap-custom-combis test_combis.txt                 # OPTIONAL ARGUMENT. Will bypass the selection by the previous two arguments and work only on the combinations defined in this file.
   :shell:
 
@@ -218,7 +225,7 @@ Unlike classical association rules mining algorithms, this focuses on mining rel
   <br>
 
 
-
+As the computation of multiple overlaps can be RAM-intensive, if you have a very large amount of candidate genomic feature sets (hundreds) we recommend selecting less candidates among them first by running a pairwise analysis.
 
 
 **MODL algorithm API:** MODL can also be used independantly as a combination mining algorithm. You data needs to be a matrix with one line per transaction and one column per element.
