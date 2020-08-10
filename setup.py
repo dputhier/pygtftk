@@ -46,7 +46,7 @@ if PY2:
 # -------------------------------------------------------------------------
 
 
-__author__ = 'Fabrice Lopez, Denis Puthier, Quentin Ferré'
+__author__ = 'Fabrice Lopez and Denis Puthier'
 __email__ = 'denis.puthier@univ-amu.fr'
 __description__ = 'The Python GTF toolkit (pygtftk) package: easy handling of GTF files'
 __license__ = 'GPL-2'

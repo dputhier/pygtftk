@@ -150,11 +150,11 @@ The program will return statistics for both the number of intersections and the 
 
 
 
-**Example:** When not supplying a GTF, you can use --more-bed. The following example will look for pairwise enrichment of the file in input (p, here *query.bed* with the regions defined in --more-bed : here with *A.bed*, then with *B.bed*, then with *C.bed*.
+**Example:** When not supplying a GTF, you can use --more-bed. The following example will look for pairwise enrichment of the file in input (p, here *query.bed* with the regions defined in --more-bed : here query with *A.bed*, then query with *B.bed*, then query with *C.bed*.
 
-.. command-output:: 
+.. code-block:: bash
 	gtftk ologram -ms 40 -mn 10 -p query.bed --more-bed A.bed B.bed C.bed -z -c hg38 -V 3 --force-chrom-peak --force-chrom-more-bed
-  :shell:
+
 
 
 
@@ -181,8 +181,8 @@ As such, we also give the option to use a custom itemset mining algorithm on the
 
 In broad strokes, this custom algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
 
-Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is resistant to noise
-as we show later, and is useful to extract meaningful frequent combinations from noisy data.
+Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is designed to be resistant
+to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).
 
 
 This itemset mining algorithm is a work-in-progress. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
@@ -228,7 +228,11 @@ This itemset mining algorithm is a work-in-progress. If you want the enrichment 
 As the computation of multiple overlaps can be RAM-intensive, if you have a very large amount of candidate genomic feature sets (hundreds) we recommend selecting less candidates among them first by running a pairwise analysis.
 
 
-**MODL algorithm API:** MODL can also be used independantly as a combination mining algorithm. You data needs to be a matrix with one line per transaction and one column per element.
+**MODL algorithm API:** MODL can also be used independantly as a combination mining algorithm. 
+
+This can work on any type of data, biological or not, that respects the conventional formatting for lists of transactions: the data needs to be a matrix with one line per transaction and one column per element.
+
+For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C.
 
 For more details, see code comments.
 
@@ -236,16 +240,16 @@ Here is an example:
 
 
 
-``` python
-from pygtftk.stats.intersect.modl.dict_learning import Modl, test_data_for_modl
-flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.1, cor_groups = [(0,1),(0,1,2,3),(4,5)])
-combi_miner = Modl(flags_matrix, 
-       multiple_overlap_target_combi_size = -1,    # Limit the size of the combinations
-       multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
-       nb_threads = 1,
-       step_1_factor_allowance = 2)    # How many words to ask for in each step 1 rebuilding
-interesting_combis = combi_miner.find_interesting_combinations()   
-```
+.. code-block:: python
+  from pygtftk.stats.intersect.modl.dict_learning import Modl, test_data_for_modl
+  flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.1, cor_groups = [(0,1),(0,1,2,3),(4,5)])
+  combi_miner = Modl(flags_matrix, 
+        multiple_overlap_target_combi_size = -1,    # Limit the size of the combinations
+        multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
+        nb_threads = 1,
+        step_1_factor_allowance = 2)    # How many words to ask for in each step 1 rebuilding
+  interesting_combis = combi_miner.find_interesting_combinations()   
+
 
 
 
@@ -334,17 +338,17 @@ ologram_merge_runs
 
 OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a "batch of batches" and merge and recalculate stats on the merged superbatch automatically using this command.
 
-```bash
-# Make several OLOGRAM runs
-N_RUNS = 100
-for i in {1..$N_RUNS}
-do
-   ologram ...
-done
+.. code-block:: bash
+  # Make several OLOGRAM runs
+  N_RUNS = 100
+  for i in {1..$N_RUNS}
+  do
+    ologram ...
+  done
 
-# Merge those runs
-gtftk ologram_merge_runs --inputfiles `ls ./results/*.tsv` -o ./merged_batches_result.tsv -V 3
-```
+  # Merge those runs
+  gtftk ologram_merge_runs --inputfiles `ls ./results/*.tsv` -o ./merged_batches_result.tsv -V 3
+
 
 Other commands such as ologram_modl_treeify can now be called on the resulting tsv, which respects the OLOGRAM format.
 
