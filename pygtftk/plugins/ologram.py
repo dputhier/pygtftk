@@ -1433,7 +1433,7 @@ else:
         #ologram: proper number of shuffled intersections
         @test "ologram_3" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 2`
-          [ "$result" = "14.77" ]
+          [ "$result" = "14.88" ]
         }
 
         #ologram: overlapping bp
@@ -1445,19 +1445,19 @@ else:
         #ologram: shuffled overlapping bp
         @test "ologram_5" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
-          [ "$result" = "65.98" ]
+          [ "$result" = "65.61" ]
         }
 
         #ologram: shuffled overlapping bp variance
         @test "ologram_6" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 9`
-          [ "$result" = "18.54" ]
+          [ "$result" = "17.69" ]
         }
 
         #ologram: shuffled overlapping bp fitting
         @test "ologram_7" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10`
-          [ "$result" = "0.70573" ]
+          [ "$result" = "0.6482100000000001" ]
         }
         
 
@@ -1467,22 +1467,25 @@ else:
         [ "$result" = "" ]
         }
 
-        #ologram-modl: multiple overlaps and dict learning
+        #ologram-modl: multiple overlaps
         @test "ologram_9" {
             result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap`
         [ "$result" = "" ]
         }
 
-        #ologram-modl: multiple overlaps and dict learning
+        #ologram-modl: check result
         @test "ologram_10" {
-            result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap --multiple-overlap-target-combi-size 3 --multiple-overlap-max-number-of-combinations 4
-            --max-combi-whatever 2`
+         result=`cat ologram_output/00_ologram_stats.tsv | grep "simple_07_peaks_2" | cut -f 2`
+          [ "$result" = "5.45" ]
+        }
+
+        #ologram-modl: multiple overlaps and dict learning
+        @test "ologram_11" {
+            result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap --multiple-overlap-target-combi-size 3 --multiple-overlap-max-number-of-combinations 4`
         [ "$result" = "" ]
         }
 
         '''
-        # TODO ologram: check which combinations were found and in which abuncance
-        # In simple_07 .1. is a subset of raw and .2. is a subset of 1, so the combis should be [1,1,0] and [1,1,1]
 
 
 

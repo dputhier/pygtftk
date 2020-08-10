@@ -118,7 +118,7 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
 
         # Encode using DL     
         start_time = time.time()
-        message("> Alpha is", str(alpha), type = 'DEBUG')
+        message("> Alpha is "+str(alpha), type = 'DEBUG')
 
         # Ignore convergence warnings from faulty alphas
         with warnings.catch_warnings():
@@ -150,7 +150,7 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
 
         # Binarize them (ie transform 0.9 - 0.9 - 0.001 into 1-1-0)
         # The sum of V_df**2 for each word is always 1.0 so our cutoff to say if a feature is used
-        # is V**2 > 1/n_features - epsilon for rounding errors. 
+        # is V**2 > 1/n_features**2 - epsilon for rounding errors. 
         # We cannot simply binarize, since 0.001 would be binarized to 1 yet it is likely not interesting.
         # WARNING : no longer true if I have intra set overlap (ie 1-1-2 for example) so when looking for the combis I might need to ignore intra set overlap
 
@@ -163,7 +163,7 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
             # Remove padding
             this_word = this_word[:-1]
 
-            this_word_binarized = ((this_word - 1/nb_features) > EPSILON).astype(int)
+            this_word_binarized = ((this_word - 1/nb_features**2) > EPSILON).astype(int)
             this_word_binarized = tuple(this_word_binarized.tolist())
 
             this_word_usage = np.sum(U.values[:,i])

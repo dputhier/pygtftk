@@ -115,7 +115,7 @@ else:
 
     #ologram: produce tree
     @test "ologram_modl_treeify_1" {
-         result=`gtftk ologram_modl_treeify multiple_overlap_trivial_ologram_stats.tsv -o tree_multi.pdf -l QueryLabel`
+         result=`gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o tree_multi.pdf -l QueryLabel`
       [ "$result" = "" ]
     }
     '''

@@ -176,6 +176,8 @@ class Modl:
             abundance_threshold = 1E-4)
         # NOTE The original data is kept under self.original_data but is NOT currently used.
 
+
+
         ## Parameters
         # Those are respectively the desired number of signifcant combis, 
         # and the maximum size of the combis (for the filter library step)
@@ -200,7 +202,8 @@ class Modl:
         """
 
         ## Generate subsamples from self.data
-        N = 3
+        # Normally 3 (or less if there are less than 3 lines in the matrix)
+        N = min(3, self.data.shape[0])
         # Prepare N subsamples each time, to increase learned combi diversity
         # This is done like a cross validation, to ensure no line is forgotten      
         kf = KFold(n_splits=N, shuffle=False, random_state=42)
@@ -254,7 +257,7 @@ class Modl:
         # I currently keep 3* queried
         final_words = final_words[:3*self.queried_words_nb]
 
-        message('Keeping only top words from step 1 by usage. Final list of words is', str(final_words))
+        message('Keeping only top words from step 1 by usage. Final list of words is '+str(final_words))
 
 
         # Finally, record the words : do all the operations to create a Library

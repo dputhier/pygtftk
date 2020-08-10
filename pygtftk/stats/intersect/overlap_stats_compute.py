@@ -483,8 +483,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         else:
             message('Mining for multiple-overlap interesting combinations using dictionary learning.')
 
-            
-            # USE THIS NOW AND ADD PLENTY OF LOG MESSAGES !!!
+            # Use the MODL algorithm
             combi_miner = dl.Modl(flags_matrix,
                 multiple_overlap_target_combi_size,
                 multiple_overlap_max_number_of_combinations,
