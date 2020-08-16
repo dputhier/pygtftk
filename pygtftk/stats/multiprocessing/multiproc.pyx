@@ -28,7 +28,7 @@ However there will be few shapes so that's okay.
 """
 
 cimport cython
-cimport openmp
+#cimport openmp
 import numpy as np
 cimport numpy as np
 cimport libc.stdio as stdio
@@ -132,26 +132,19 @@ cdef list apply_func_multiproc_cython(list python_list_of_numpy_arrays, list pyt
 
     with nogil, parallel(num_threads = n_threads_cy):
 
-
-
         # The "local buffer" are the lists we created above in a sequential loop
         # It is designed to be used as a list of thread-local buffers to share
         # the work using prange
-
         # TODO Which schedule to use ? Likely dynamic as the tasks do not always have the same size (I often multiproc by chromosome)
-
         for i in prange(n, schedule='dynamic'):
 
             # Debug print
-            # TODO Re-add this
+            # TODO Re-add this, but rememper to re-add "cimport openmp"
             #stdio.printf("tid: %d   cpuid: %d\n", openmp.omp_get_thread_num(), sched_getcpu())
-
-
 
             results[i] = cython_func(list_of_arrays[i], list_of_shapes[i], list_of_parameters[i])
             # NOTE : Must use `ptr[0]` instead of `*ptr` in Cython ! Also as we see here above, 'i' can be used to iterate over
             # multiple lists of arrays, as created above.
-
 
 
 
@@ -168,10 +161,7 @@ cdef list apply_func_multiproc_cython(list python_list_of_numpy_arrays, list pyt
         arr_adding = np.PyArray_SimpleNewFromData(2, myshape, np.NPY_LONGLONG, arr_point)
 
         # Tell Python that it can deallocate the memory when the object gets garbage collected
-        
-        # np.PyArray_UpdateFlags(arr_adding, arr_adding.flags.num | np.NPY_OWNDATA) # NO ! THIS DOES NOT WORK, AND DOES NOT SEND AN ERROR MESSAGE
-        
-        PyArray_ENABLEFLAGS(arr_adding, np.NPY_OWNDATA)
+        PyArray_ENABLEFLAGS(arr_adding, np.NPY_OWNDATA) # NOTE Careful to use this line and not np.PyArray_UpdateFlags which does not work and does not send an error message for some reason
     
         results_return += [arr_adding]
 
@@ -185,8 +175,6 @@ cdef list apply_func_multiproc_cython(list python_list_of_numpy_arrays, list pyt
         free(list_of_parameters)
         free(results)
         # NOTE Do not free the pointers ! They have been recast as NumPy arrays ! 
-
-
 
 
 

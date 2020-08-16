@@ -31,4 +31,3 @@ dependencies:
 - scikit-learn >=0.21.2
 - python-graphviz
 - seaborn
-- openmp

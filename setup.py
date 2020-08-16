@@ -165,8 +165,20 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
 
 platform.system()
 
-extra_comp_cython = ['-W', '-fopenmp', '-O3']
-extra_link_cython = ['-fopenmp']
+
+extra_comp_cython = ['-W', '-O3']
+extra_link_cython = []
+
+
+# Use OpenMP only on Linux, as clang by default does not support it on OSX
+# TODO Make it a parameter
+if platform.system() == 'Darwin':
+    print("No openMP for you !")
+if platform.system() == 'Linux':
+    extra_comp_cython += ['-fopenmp']
+    extra_link_cython += ['-fopenmp']
+
+
 
 # Avoid Cython warning about NumPy API deprecation upon installation
 if platform.system() == 'Darwin':
