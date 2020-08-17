@@ -84,13 +84,14 @@ def test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0, cor_groups 
 def squish_matrix(x, abundance_threshold = 0, shuffle = True):
     r"""
     To reduce redundancy, take all uniques rows and create a matrix where each line has its original
-        abundance divided by abundance of most rare (but not lower than abundance_threshold, 1/10000 by default)
-            eg if X = [A * 1000, B * 10], X' = [A * 100, B * 1]
+        sqrt(abundance) divided by sqrt(abundance of most rare) (but not lower than abundance_threshold, 1/10000 by default)
+            eg if X = [A * 100, B * 10], X' = [A * 3, B * 1]
+    We use the square root of those abudances instead to dimnish the emphasis on the most frequent combinations     
 
     >>> import numpy as np
     >>> X = np.array([[1,1,0,0]]*1000 + [[0,0,1,1]]*100)
     >>> X_squished = squish_matrix(X, shuffle = False)
-    >>> np.testing.assert_equal(X_squished, np.array([[0,0,1,1]]*1 + [[1,1,0,0]]*10)) # Note that the rows have been sorted by abundance   
+    >>> np.testing.assert_equal(X_squished, np.array([[0,0,1,1]]*1 + [[1,1,0,0]]*32)) # Note that the rows have been sorted by abundance   
     
     """
 
@@ -98,14 +99,23 @@ def squish_matrix(x, abundance_threshold = 0, shuffle = True):
     all_rows, counts_per_row = np.unique(x, axis=0, return_counts = True)
 
 
+    # Use sqrt to reduce difference between most and least abundant
+    min_abundance = np.sqrt(abundance_threshold*x.shape[0])
+    counts_per_row = np.sqrt(counts_per_row)
+
     # Divide counts by lowest count observed (but never divide by under abundance_threshold)
-    minimal_count = max(np.min(counts_per_row), abundance_threshold*x.shape[0])
-    counts_relative = np.around(counts_per_row / minimal_count).astype(int)
+    minimal_count = max(np.min(counts_per_row), min_abundance)
+    counts_relative = counts_per_row / minimal_count
+
+    # Round up
+    counts_relative = np.ceil(counts_relative).astype(int)
 
     # Rebuild a new matrix with those counts
     squished_matrix = []     
     for row, count in zip(all_rows, counts_relative):
+
         squished_matrix += [row] * count
+
 
     final_matrix = np.array(squished_matrix)
     if shuffle: np.random.shuffle(final_matrix) # Shuffle it for good measure
@@ -149,6 +159,9 @@ class Modl:
     :param multiple_overlap_max_number_of_combinations: Final desired number of combinations
     :param nb_threads: Number of threads
     :param step_1_factor_allowance: In step 1 of building the candidates, how many words are allowed in the Dictionary Learning as a proportion of multiple_overlap_max_number_of_combinations
+    :param error_function: error function used in step 2. Default to manhattan error. 
+
+    Passing a custom error function, it must have the signature  error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity
     
     >>> from pygtftk.stats.intersect.modl.dict_learning import Modl, test_data_for_modl
     >>> import numpy as np
@@ -164,7 +177,8 @@ class Modl:
                  multiple_overlap_target_combi_size = -1,
                  multiple_overlap_max_number_of_combinations = 5,
                  nb_threads = 1,
-                 step_1_factor_allowance = 2):
+                 step_1_factor_allowance = 2, 
+                 error_function = None):
 
         # Matrix of overlap flags to work with
         self.original_data = flags_matrix
@@ -172,9 +186,11 @@ class Modl:
         ## Squishing
         # NOTE Redundancy in lines is not useful and only increases computing time for
         # for a linear change in all errors. So to save time while not losing much information
-        # we use a squished matrix where each line has its original abundance divided 
+        # we use a smothered matrix where each line has its original abundance divided 
         # by abundance of most rare (but not lower than abundance_threshold, 1/10000 by default)
         # eg if X = [A * 1000, B * 10], X' = [A * 100, B * 1]
+        # Then, to diminish the emphasis on frequent lines, we use in the end
+        # the square root of that abundance.
         self.data = squish_matrix(self.original_data,
             abundance_threshold = 1E-4)
         # NOTE The original data is kept under self.original_data but is NOT currently used.
@@ -192,6 +208,10 @@ class Modl:
         # In step 1 of the reconstructions, how many words to ask for each time,
         # as a proportion of multiple_overlap_max_number_of_combinations
         self.step_1_factor_allowance = step_1_factor_allowance
+
+        # Remember the error function for step 2
+        self.error_function = error_function
+
 
         self.nb_threads = nb_threads
 
@@ -216,7 +236,7 @@ class Modl:
 
 
         # ---- Candidate words generation
-        # Encode with Lasso-LARS and a variety of alphas
+        # Encode with and a variety of alphas
 
         # In the encoding, to get some diversity, request k* the final queried
         # number of combinations.
@@ -286,13 +306,13 @@ class Modl:
         if self.queried_words_nb > upper_floor_words: 
             self.queried_words_nb = upper_floor_words
             message("Requesting too many words, reducing to "+str(self.queried_words_nb)) 
-        # NOTE It will actually be+1 to make room for the root (0,0,0,...) word, but this is added later
+        # NOTE It will actually be +1 to make room for the root (0,0,0,...) word, but this is added later
         
         # Read the parameters that were supplied when creating the Modl object
         best_dict = modl_subroutines.build_best_dict_from_library(
             self.data, self.library,    # Data and Library of candidates
             self.queried_words_nb,      # N best words
-            error_function,             # Potential custom error function
+            self.error_function,        # Potential custom error function
             self.nb_threads)
         
         
