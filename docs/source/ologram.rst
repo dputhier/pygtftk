@@ -176,7 +176,6 @@ For statistical reasons, we recommend shuffling across a relevant subsection of 
 
 **MODL itemset mining algorithm**: By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations.
 
-
 As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. 
 
 In broad strokes, this custom algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
@@ -185,7 +184,7 @@ Unlike classical association rules mining algorithms, this focuses on mining rel
 to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).
 
 
-This itemset mining algorithm is a work-in-progress. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
+This itemset mining algorithm is a work-in-progress. Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
 
 
 **Exact combinations ** : By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + ...]. For exact intersections (ie. [Query + A + B + nothing else]), set the --multiple-overlap-target-combi-size flag to the number of --more-bed plus one. You will know if the combinations are computed as inexact by the "..." in their name in the result file. Intersections not including the query file are discarded.
@@ -234,23 +233,31 @@ This can work on any type of data, biological or not, that respects the conventi
 
 For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C.
 
+For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1.
+factor allowance is K in K*n words in step 1 where n is final queries nb of words.
+
+MODL and will discard combinations rarer than 1/10000 occurences to reduce computing times and will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements.
+
+If you are passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity.  All are NumPY matrices.
+
 For more details, see code comments.
 
 Here is an example:
 
-
-
 .. code-block:: python
   from pygtftk.stats.intersect.modl.dict_learning import Modl, test_data_for_modl
   flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.1, cor_groups = [(0,1),(0,1,2,3),(4,5)])
+
+  from pygtftk import utils
+  utils.VERBOSITY = 2 # Ensure DEBUG messages are shown
+
   combi_miner = Modl(flags_matrix, 
         multiple_overlap_target_combi_size = -1,    # Limit the size of the combinations
         multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
         nb_threads = 1,
-        step_1_factor_allowance = 2)    # How many words to ask for in each step 1 rebuilding
+        step_1_factor_allowance = 2, # How many words to ask for in each step 1 rebuilding
+        error_function = None)    # Custom error function in step2
   interesting_combis = combi_miner.find_interesting_combinations()   
-
-
 
 
 For more details about usage and implementation, please read the notes below :
@@ -262,6 +269,8 @@ For more details about usage and implementation, please read the notes below :
 
 
 
+
+Since MODL is a highlighter of cimbinations, you can run OLOGRAM both with and without it to help you pre-select features. As the resutls of MODL are not affected by the shuffles, you can run the actual analysis with many shuffles and MODL with only one shuffle to simply the interesting combinations.
 
 
 ologram_merge_stats
@@ -338,6 +347,8 @@ ologram_merge_runs
 
 OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a "batch of batches" and merge and recalculate stats on the merged superbatch automatically using this command.
 
+Around 100 shuffles is usually enough, since a Negative Binomial under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways. 
+
 .. code-block:: bash
   # Make several OLOGRAM runs
   N_RUNS = 100
@@ -352,7 +363,5 @@ OLOGRAM remembers all intersections occuring inside all minibatches, so as to ca
 
 Other commands such as ologram_modl_treeify can now be called on the resulting tsv, which respects the OLOGRAM format.
 
-
 .. command-output:: gtftk ologram_merge_runs -h
 	:shell:
-

@@ -136,6 +136,8 @@ __notes__ = """
  for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
  This is not recommended in the general case and can be *very* time-consuming (hours).
 
+ -- In region definition, if you are considering regions of length 1, please be careful to write them in the BEDs as "chr1 100 101" and not "chr1 100 100" or "chr 1 100" which have a length of 0.
+
 
  -- Support for multiple overlaps is available. Please see the documentation for more information.
  If the -\-more-bed-multiple-overlap argument is used, the query peak file will be 
@@ -146,16 +148,17 @@ __notes__ = """
  -- By default, interesections are counted as "inexact", meaning an overlap of [A + B + C] will count towards [A + B + ...].
  For exact intersections (ie. [A + B + nothing else]), set the -\-multiple-overlap-target-combi-size flag to the number of -\-more-bed +1 (+1 for the query)
  In any case, only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C is not. Intersection within sets are supported by the backend and may come in a future version.
+ We recommend using -\-multiple-overlap-target-combi-size only when not using MODL since filtering is applied after the first step of candidate mining.
 
  -- Furthermore, you may use our MODL algorithm to find biological complexes of interest, by mining for frequent itemsets
  on the intersections on the true data. This is done with the -\-multiple-overlap-max-number-of-combinations argument.
  This will not change the N,S and enrichment result, but will restrict the set of interesting combis for which those are calculated and displayed
 
  -- MODL is designed to find complexes more than association rules, so we do not recommend asking for more than 20-50 combinations to
- keep the running time reasonable.
+ keep the running time reasonable and keep the found combinations still relevant.
  Note that MODL is completely optional. It is mostly needed when the list of -\-more-bed is very long and you do not want to filter the results manually, and when you are working with noisy
  data which could obfuscate the interesting combinations.
- MODL employs a form of subsampling ont the original matrix and will discard combinations rarer than 1/10000 occurences. This is done as the matrix of intersections will usually have many redundant lines and can be squished as such without changing the result.
+ MODL employs a form of subsampling on the original matrix and will discard combinations rarer than 1/10000 occurences to reduce computing times. It will also reduce the abundance of all lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. This is done as the matrix of intersections will usually have many redundant lines and as such can be squished without changing the result.
  It is also possible to bypass it and provide a custom list of combinations to be considered.
 
  -- For statistical reasons, with multiple sets average expected intersections can be low. 
@@ -169,7 +172,7 @@ __notes__ = """
 
  -- If you manually specify the combinations to be studied with -\-multiple-overlap-custom-combis, use the following format for the text file : 
  The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed", "1 0 1 1" means Query + B + C). Data should be whitespace separated with one combination per line.
-
+ 
 """
 
 

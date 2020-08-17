@@ -8,7 +8,6 @@ This treats each run as a "superbatch".
 import argparse
 import os
 import re
-import warnings
 
 import numpy as np
 import pandas as pd

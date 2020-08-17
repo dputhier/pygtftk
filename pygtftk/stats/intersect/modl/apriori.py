@@ -154,6 +154,8 @@ def matrix_to_list_of_transactions(x, names):
     From a matrix with one line per transaction and one column per element with 1 if present and 0 if absent, 
     returns a list of transaction
     """
+    names = np.array(names)
+
     # Get the list of all nonzero elements in each row
     result = []
     for row in x:
