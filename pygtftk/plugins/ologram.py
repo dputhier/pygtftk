@@ -718,9 +718,12 @@ def ologram(inputfile=None,
                 cleaned_name = re.sub("_pygtftk_?((?!pygtftk).)*$", "", cleaned_name) # In case pygtftk name appears in the initial name...
                 cleaned_name = re.sub("[^A-Za-z0-9]+", '_', cleaned_name)
 
+                # Remove "_bed" if those are the last characters
+                if cleaned_name[-4:] == "_bed": cleaned_name = cleaned_name[:-4]
+
                 more_bed_labels += [cleaned_name]
 
-            message("--more-bed-label will be set to: " + ",".join(more_bed_labels), type="DEBUG")
+            message("--more-bed-labels will be set to: " + ", ".join(more_bed_labels), type="DEBUG")
 
 
 
@@ -1274,7 +1277,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         df_raw = []
         for combi in combin:
             dict_current = {}
-            dict_current['combi'] = '+'.join(combi)
+            dict_current['combi'] = ' + '.join(combi)
 
             for e in all_elements:
                 current_elem = str(e)

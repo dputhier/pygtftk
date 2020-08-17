@@ -116,7 +116,7 @@ class Library:
 
 
         # For each word in words, create a node and add it to the list
-        for word in words :
+        for word in words:
             self.unassigned_nodes += [Node(word)]
 
             word_size = len(word) # Remember the length of the word. TODO Throw exception if there are words of different lengths
