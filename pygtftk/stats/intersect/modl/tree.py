@@ -147,7 +147,15 @@ class Library:
             split_combi = combi_raw.split('+')
             if split_combi[0] == 'Query' : split_combi[0] = str(query_name) # Replace query name with potential custom name
 
+            # ALways read ellipsis character as three dots instead
+            ELLIPSIS = u'\u2026'
+            for i in range(len(split_combi)):
+                if split_combi[i] == ELLIPSIS : split_combi[i] = "..."
+
+
             combis_in_the_df[index] = tuple(split_combi)
+
+
 
 
             message("Read this combination : "+str(tuple(split_combi)))
@@ -198,6 +206,15 @@ class Library:
         self.root_node = Node(word = tuple([0] * word_size)) 
 
 
+# [Query + A + A_bis + ... ]
+# [Query + C + ... ]
+# [Query + A + A_bis + C + ... ]
+# [Query + B + A + A_bis + ... ]
+# [Query + B + ... ]
+# [Query + B + C + ... ]
+
+
+
     # ----- Assigning
 
     def assign_nodes(self):
@@ -232,7 +249,15 @@ class Library:
             all_distances = {}
             apply_recursively_to_all_nodes(self.root_node, dist, all_distances)
 
-            all_distances_less_flags = {node:dist for node, dist in all_distances.items() if sum(node.word) < sum(unode.word)} # Striclty inferior
+            all_distances_less_flags = {}
+            for node, dist in all_distances.items():
+                # Strictly less flags
+                if sum(node.word) < sum(unode.word):
+                    # Only add it if it is also an exact parent : the child must have
+                    # all the elements of its parent PLUS potentially others
+                    if oc.does_combi_match_query(unode.word, node.word, exact = False):
+                        all_distances_less_flags[node] = dist
+
 
             # This throws a ValueError if all_distances_less_flags is empty
             # In case of a tie, add all as parents
@@ -243,14 +268,8 @@ class Library:
 
             # Add current node as child to new_parent
             for new_parent in new_parents_list:
-                
-                # TODO Maybe re-enable
-                #print('Adding '+str(unode)+' to '+str(new_parent)+' as distance of '+str(all_distances_less_flags[new_parent]))              
-                
-                # Only add it if it is also an exact parent : the child must have
-                # all the elements of its parent PLUS potentially others
-                if oc.does_combi_match_query(unode.word, new_parent.word, exact = False):
-                    new_parent.add_child(unode)
+                message('Adding '+str(unode)+' to '+str(new_parent)+' as distance of '+str(all_distances_less_flags[new_parent]), type = 'DEBUG')                          
+                new_parent.add_child(unode)
 
 
         self.nodes_were_assigned = True
@@ -313,7 +332,7 @@ def get_all_candidates_except(library, exclude):
 
         return candidates
 
-    # Aaaaand... start !
+    # And start !
     candidates = get_candidates(library.root_node)
 
     # Because nodes can have several parents, make the candidates
@@ -384,7 +403,6 @@ def output_visualize(tree, output_path, features_names = None):
     # Convert a tree node to proper features, giving a string for the display graph
     def node_to_combi_string(node, features_names = None, new_line_every = 2):
 
-
         if features_names is not None :
 
             # Root node special handler
@@ -428,6 +446,9 @@ def output_visualize(tree, output_path, features_names = None):
             node_name = node_to_combi_string(node, features_names)
             child_name = node_to_combi_string(c, features_names)
 
+
+            message("Drawing "+node_name+' --> '+child_name, type = 'DEBUG')
+
             ## Add nodes
             # Only add node if not already present of course.
             # If present, the graph's 'body' contains the combi string prefixed with a tab character
@@ -449,6 +470,11 @@ def output_visualize(tree, output_path, features_names = None):
     mygraphfunc = partial(produce_dot_for_node, graph = s)
     global_results = {}
     apply_recursively_to_all_nodes(root_node, mygraphfunc, global_results)
+
+
+    # DEBUG
+    apply_recursively_to_all_nodes(root_node, print, global_results)
+
 
     # Now save it
     s.save(output_path + '.dot')
