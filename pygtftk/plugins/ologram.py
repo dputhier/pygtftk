@@ -136,8 +136,7 @@ __notes__ = """
  for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
  This is not recommended in the general case and can be *very* time-consuming (hours).
 
- -- In region definition, if you are considering regions of length 1, please be careful to write them in the BEDs as "chr1 100 101" and not "chr1 100 100" or "chr 1 100" which have a length of 0.
-
+ -- While they will be accepted by OLOGRAM, in BED files lines such as "chr1 100 100" or "chr1 100" would represent empty regions (of length 0) and as such are an error.
 
  -- Support for multiple overlaps is available. Please see the documentation for more information.
  If the -\-more-bed-multiple-overlap argument is used, the query peak file will be 
@@ -147,7 +146,8 @@ __notes__ = """
  
  -- By default, interesections are counted as "inexact", meaning an overlap of [A + B + C] will count towards [A + B + ...].
  For exact intersections (ie. [A + B + nothing else]), set the -\-multiple-overlap-target-combi-size flag to the number of -\-more-bed +1 (+1 for the query)
- In any case, only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C is not. Intersection within sets are supported by the backend and may come in a future version.
+ In any case, only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C is not.
+ Intersection within sets are supported by the backend and may come in a future version.
  We recommend using -\-multiple-overlap-target-combi-size only when not using MODL since filtering is applied after the first step of candidate mining.
 
  -- Furthermore, you may use our MODL algorithm to find biological complexes of interest, by mining for frequent itemsets
@@ -158,13 +158,18 @@ __notes__ = """
  keep the running time reasonable and keep the found combinations still relevant.
  Note that MODL is completely optional. It is mostly needed when the list of -\-more-bed is very long and you do not want to filter the results manually, and when you are working with noisy
  data which could obfuscate the interesting combinations.
- MODL employs a form of subsampling on the original matrix and will discard combinations rarer than 1/10000 occurences to reduce computing times. It will also reduce the abundance of all lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. This is done as the matrix of intersections will usually have many redundant lines and as such can be squished without changing the result.
+ MODL employs a form of subsampling on the original matrix and will discard combinations rarer than 1/10000 occurences to reduce computing times.
+ It will also reduce the abundance of all lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. This is done as the matrix of intersections will usually have many redundant lines and as such can be squished without changing the result.
  It is also possible to bypass it and provide a custom list of combinations to be considered.
 
- -- For statistical reasons, with multiple sets average expected intersections can be low. 
- This can require using more shuffles, but we recommend instead shuffling only across a
- biologically relevant subsection of the genome (with -\-bed-incl). Also using fewer shuffles
- (dozens), because remembering intersections across many files will use RAM. 
+ -- For statistical reality reasons, with multiple sets average expected intersections (when they are all independant) can be very low. 
+ Furthermore, if C is depleted with query but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched."
+ 
+ -- A low number of intersecting basepairs can require using more shuffles, but very-low-average
+ Negative Binomial distributions are not really signficant. We recommend instead shuffling only across a
+ biologically relevant subsection of the genome (with -\-bed-incl) : for example, if studying 
+ ranscriptoinal Regulators, shuffling only on inferred Cis Regulatory Modules or promoters.
+ This also allows using fewer shuffles (dozens), because remembering intersections across many files will use RAM. 
  If you nevertheless need to use many shuffles, look to the ologram_merge_run plugin.
 
  -- We recommend running the ologram_modl_treeify plugin on the resulting tsv file
@@ -913,7 +918,6 @@ def ologram(inputfile=None,
         message("Processing user-defined regions (bed format).")
         for bed_anno, bed_lab in zip(more_bed, more_bed_labels):
             message("Processing " + str(bed_lab), type="INFO")
-
 
 
             if not force_chrom_more_bed:

@@ -73,7 +73,7 @@ def ologram_modl_treeify(inputfile=None, output=None, query_label="Query"):
     # Pval set to 0 or -1 are changed to 1e-320 and NaN respectively
     df_res.loc[df_res['summed_bp_overlaps_pvalue'] == 0, 'summed_bp_overlaps_pvalue'] = 1e-320
     df_res.loc[df_res['summed_bp_overlaps_pvalue'] == -1, 'summed_bp_overlaps_pvalue'] = np.nan
- 
+    
     # -------------------------------------------------------------------------
     # Produce and save the visualization
     # -------------------------------------------------------------------------

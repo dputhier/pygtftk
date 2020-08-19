@@ -20,10 +20,13 @@ from scipy.stats import nbinom
 import matplotlib.pyplot as plt
 
 from pygtftk.utils import message
+from pygtftk.utils import make_tmp_file
 
 from pygtftk.stats import negbin_fit as nf
 from pygtftk.stats.intersect.modl import dict_learning as dl
 from pygtftk.stats.intersect.overlap import overlap_regions as oc
+
+
 
 # ----------------------------- Useful wrappers ------------------------------ #
 
@@ -189,9 +192,7 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     # the shuffles. Kept for potential future improvement.
     # --------------------------------------------------------------------------
 
-    from pygtftk.utils import make_tmp_file
-
-
+    
     # TODO Drawing is computationally expensive, make it optional
 
     hist_S = make_tmp_file(prefix='histogram_'+ft_type+'_S_sum_by_shuffle', suffix='.png')
@@ -219,6 +220,10 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     plt.savefig(hist_S.name)
     plt.close()
 
+    """
+    TODO : currently, those files remain in /tmp because this function is subprocessed.
+    I must prepare a temp file manager like make_tmp_file_pool() to keep them in the directory specified by -K
+    """
 
 
 
