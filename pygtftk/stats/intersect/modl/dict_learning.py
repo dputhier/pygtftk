@@ -24,20 +24,19 @@ Author : Quentin FERRE <quentin.q.ferre@gmail.com>
 This code is available under the GNU GPL license.
 """
 
-import copy, time
+import copy, time, os
 
 import numpy as np
 import pandas as pd
 import random
 
-# Library tree custom code
 from pygtftk.stats.intersect.modl import tree   
 
 from sklearn.decomposition import SparseCoder
 from sklearn.decomposition import MiniBatchDictionaryLearning
 from sklearn.model_selection import KFold
 
-
+from pygtftk import utils
 from pygtftk.utils import message
 
 
@@ -216,6 +215,14 @@ class Modl:
         self.nb_threads = nb_threads
 
 
+
+
+
+
+
+
+
+
     # ------------------------ Elementary subroutines ------------------------ #
 
     def generate_candidate_words(self):
@@ -327,8 +334,44 @@ class Modl:
         """
         MAIN FUNCTION. Will call the others.
         """
+
+        try:
+            previous_warning_level = os.environ["PYTHONWARNINGS"]
+        except:
+            previous_warning_level = 'default'
+
+        # Should we ignore SKLEARN warnings ?
+        
+        #import re, warnings
+        if utils.VERBOSITY < 2: # Only if not debugging
+
+            os.environ["PYTHONWARNINGS"] = "ignore"
+            #warnings.filterwarnings('ignore', module='^{}\.'.format(re.escape("sklearn")))
+
+            message("Filtering out sklearn warnings.")
+
+            """
+            TODO CHECK THAT THIS WORKS !
+                SIMPLY LOOK IN THE SNAKEMAKE PYTHO LOG, SINCE I TEST MODL :)
+
+                Look in step 2 of course when I desactivate utils
+
+                MANUALLY CHECK THAT VERBOSITY IS NOT OVERWRITTEN BY IMPORT
+
+                No, it just does not work.
+
+            """
+
+            # Hardcode it
+
+
+
+        # Now call the functions
         self.generate_candidate_words()
         self.filter_library()
         self.select_best_words_from_library()
+
+        # Re-enable warnings
+        os.environ["PYTHONWARNINGS"] = previous_warning_level
 
         return self.best_words

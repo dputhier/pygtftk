@@ -13,7 +13,7 @@ import pandas as pd
 
 from sklearn.decomposition import SparseCoder
 from sklearn.decomposition import MiniBatchDictionaryLearning
-from sklearn.exceptions import ConvergenceWarning
+
 
 from pygtftk.stats.intersect.modl import tree
 
@@ -149,7 +149,7 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
     while not stop:
 
         # Encode using DL     
-        start_time = time.time()
+        #start_time = time.time()
         message("> Alpha is "+str(alpha), type = 'DEBUG')
 
         # NOTE For some reason, the algorithm will never learn the word (1,1,1,...,1,1) even if it the only row in the data.
@@ -161,7 +161,7 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
         U, V, error = learn_dictionary_and_encode(Xpadded, n_atoms = n_words, alpha = alpha,
                                                n_jobs = nb_threads)
 
-        stop_time = time.time() # Careful not to name it 'stop' and overwrite the stop flag :)
+        #stop_time = time.time() # Careful not to name it 'stop' and overwrite the stop flag :)
         #print('One DL step took ', str(stop_time-start_time), 'seconds.')
 
 
