@@ -5,18 +5,17 @@ Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree for easier 
 See the /pygtftk/plugins/ologram.py file, as well as the documentation, for more information about OLOGRAM.
 """
 
-import pandas as pd
-import numpy as np
-
-import itertools
 import argparse
-import warnings
 import os
+import warnings
+from distutils.spawn import find_executable
 
-from pygtftk.stats.intersect.modl import tree
+import numpy as np
+import pandas as pd
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
+from pygtftk.stats.intersect.modl import tree
 from pygtftk.utils import message
 
 __updated__ = ''' 2020-06-17 '''
@@ -59,9 +58,15 @@ def make_parser():
     return parser
 
 
-
 def ologram_modl_treeify(inputfile=None, output=None, query_label="Query"):
- 
+    # -------------------------------------------------------------------------
+    # Check graphviz is installed
+    # to avoid ugly error messages.
+    # -------------------------------------------------------------------------
+    if not find_executable("dot"):
+        message("gtftk ologram_modl_treeify needs graphviz to be installed on your system.",
+                type="ERROR")
+
     # -------------------------------------------------------------------------
     # Reading the input dataframe
     # -------------------------------------------------------------------------
@@ -73,7 +78,7 @@ def ologram_modl_treeify(inputfile=None, output=None, query_label="Query"):
     # Pval set to 0 or -1 are changed to 1e-320 and NaN respectively
     df_res.loc[df_res['summed_bp_overlaps_pvalue'] == 0, 'summed_bp_overlaps_pvalue'] = 1e-320
     df_res.loc[df_res['summed_bp_overlaps_pvalue'] == -1, 'summed_bp_overlaps_pvalue'] = np.nan
-    
+
     # -------------------------------------------------------------------------
     # Produce and save the visualization
     # -------------------------------------------------------------------------
@@ -89,7 +94,6 @@ def ologram_modl_treeify(inputfile=None, output=None, query_label="Query"):
         tree.output_visualize(L, output.name)
         message("Saving diagrams to files with root : " + output.name)
 
-    
 
 def main():
     """The main function."""
@@ -98,7 +102,7 @@ def main():
     args = myparser.parse_args()
     args = dict(args.__dict__)
     ologram_modl_treeify(**args)
-    
+
 
 if __name__ == '__main__':
     main()
@@ -120,7 +124,6 @@ else:
     }
     '''
 
-    
     cmd = CmdObject(name="ologram_modl_treeify",
                     message="Build a tree representation from an OLOGRAM-MODL multiple combinations result files (tsv).",
                     parser=make_parser(),
@@ -130,4 +133,3 @@ else:
                     notes=__notes__,
                     updated=__updated__,
                     test=test)
-    
