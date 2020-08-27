@@ -155,9 +155,6 @@ class Library:
 
             combis_in_the_df[index] = tuple(split_combi)
 
-
-
-
             message("Read this combination : "+str(tuple(split_combi)))
 
             # NOTE If there are "..." like in "[ TAL1 + MYC + ... ]" for the non-exact combis,
@@ -205,13 +202,6 @@ class Library:
         # Finally, create root node, all unassigned nodes will branch from it later
         self.root_node = Node(word = tuple([0] * word_size)) 
 
-
-# [Query + A + A_bis + ... ]
-# [Query + C + ... ]
-# [Query + A + A_bis + C + ... ]
-# [Query + B + A + A_bis + ... ]
-# [Query + B + ... ]
-# [Query + B + C + ... ]
 
 
 
@@ -473,7 +463,7 @@ def output_visualize(tree, output_path, features_names = None):
 
 
     # DEBUG
-    apply_recursively_to_all_nodes(root_node, print, global_results)
+    #apply_recursively_to_all_nodes(root_node, print, global_results)
 
 
     # Now save it
