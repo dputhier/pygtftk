@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.1.5
+
+
+### Bug Fixes
+
+*   Fix #128 (merge_attr error when using same key as source and destination).
+
+### API/CLI Changes
+
+*   None.
+
+### Code changes
+
+*   None.
+
+### New Features
+
+*   None.
+
 
 ## v1.1.4
 
