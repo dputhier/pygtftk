@@ -193,20 +193,30 @@ This itemset mining algorithm is a work-in-progress. Whether you use MODL will n
 
 
 
-**Example:**
+**Simple example:**
 
-.. command-output:: 
+Comparing the query (-p) against two other BED files, analyzing multiple overlaps.
+
+.. command-output:: gtftk ologram -z -w -q -c simple_07.chromInfo -p simple_07_peaks.bed --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap
+  :shell:
+
+
+**Detailed example:**
+
+.. code-block:: bash
 
   gtftk ologram -z -c simple_07.chromInfo -p simple_07_peaks.bed       # The query (-p) is the file to compare against.
-      --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed           # List of files to compare with
-      # --more-bed `ls -d ./data/*`                                    # This should work instead if all your files are in the 'data' subdirectory
+    --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed           # List of files to compare with
+    # --more-bed `ls -d ./data/*`                                    # This should work instead if all your files are in the 'data' subdirectory
+    -o results --force-chrom-peak --force-chrom-more-bed  
       -o results --force-chrom-peak --force-chrom-more-bed  
-      -V 3 -k 8 -mn 10 -ms 10                                          # Verbosity, threads, number and size of minibatches
-      --more-bed-multiple-overlap                                      # Use multiple overlaps on the --more-bed
-      --multiple-overlap-max-number-of-combinations 10                 # OPTIONAL ARGUMENT. Use MODL to restrict to this many combinations.
-      --multiple-overlap-target-combi-size 3                           # OPTIONAL ARGUMENT. Combis mined longer than this size will not be shown.
-      --multiple-overlap-custom-combis test_combis.txt                 # OPTIONAL ARGUMENT. Will bypass the selection by the previous two arguments and work only on the combinations defined in this file.
-  :shell:
+    -o results --force-chrom-peak --force-chrom-more-bed  
+    -V 3 -k 8 -mn 10 -ms 10                                          # Verbosity, threads, number and size of minibatches
+    --more-bed-multiple-overlap                                      # Use multiple overlaps on the --more-bed
+    --multiple-overlap-max-number-of-combinations 10                 # OPTIONAL ARGUMENT. Use MODL to restrict to this many combinations.
+    --multiple-overlap-target-combi-size 3                           # OPTIONAL ARGUMENT. Combis mined longer than this size will not be shown.
+    --multiple-overlap-custom-combis test_combis.txt                 # OPTIONAL ARGUMENT. Will bypass the selection by the previous two arguments and work only on the combinations defined in this file.
+
 
 
 .. raw:: html
@@ -245,6 +255,7 @@ For more details, see code comments.
 Here is an example:
 
 .. code-block:: python
+
   from pygtftk.stats.intersect.modl.dict_learning import Modl, test_data_for_modl
   flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.1, cor_groups = [(0,1),(0,1,2,3),(4,5)])
 
@@ -252,11 +263,11 @@ Here is an example:
   utils.VERBOSITY = 2 # Ensure DEBUG messages are shown
 
   combi_miner = Modl(flags_matrix, 
-        multiple_overlap_target_combi_size = -1,    # Limit the size of the combinations
-        multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
-        nb_threads = 1,
-        step_1_factor_allowance = 2, # How many words to ask for in each step 1 rebuilding
-        error_function = None)    # Custom error function in step2
+    multiple_overlap_target_combi_size = -1,            # Limit the size of the combinations
+    multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
+    nb_threads = 1,
+    step_1_factor_allowance = 2,                        # How many words to ask for in each step 1 rebuilding, as a multiplier of multiple_overlap_max_number_of_combinations
+    error_function = None)                              # Custom error function in step 2
   interesting_combis = combi_miner.find_interesting_combinations()   
 
 
@@ -268,9 +279,7 @@ For more details about usage and implementation, please read the notes below :
 	:shell:
 
 
-
-
-Since MODL is a highlighter of cimbinations, you can run OLOGRAM both with and without it to help you pre-select features. As the resutls of MODL are not affected by the shuffles, you can run the actual analysis with many shuffles and MODL with only one shuffle to simply the interesting combinations.
+Since the results of MODL only depend on the true intersections and not on the shuffles, you can run MODL with 1 shuffle to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv, using MODL's selection as a starting point, and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying). Then, run ologram_modl_treeify on the resulting filtered tsv.
 
 
 ologram_merge_stats

@@ -162,13 +162,16 @@ __notes__ = """
  It will also reduce the abundance of all lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. This is done as the matrix of intersections will usually have many redundant lines and as such can be squished without changing the result.
  It is also possible to bypass it and provide a custom list of combinations to be considered.
 
- -- For statistical reality reasons, with multiple sets average expected intersections (when they are all independant) can be very low. 
- Furthermore, if C is depleted with query but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched."
+ -- For statistical reality reasons, with multiple sets the expected overlaps for the longer combinations (A+B+C+D+... when they are all independant) can be very low. 
+ This is especially true for small regions such as Transcriptional Regulator biding sites where the total coverage of all sets considered is low. 
+ Note that the fact that we are using a Negative Binomial rather than empirical p-values helps alleviate this problem. 
+ Furthermore, if C is depleted with query but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched.
  
  -- A low number of intersecting basepairs can require using more shuffles, but very-low-average
  Negative Binomial distributions are not really signficant. We recommend instead shuffling only across a
  biologically relevant subsection of the genome (with -\-bed-incl) : for example, if studying 
- ranscriptoinal Regulators, shuffling only on inferred Cis Regulatory Modules or promoters.
+ Transcriptional Regulators, shuffling only on inferred Cis Regulatory Modules or promoters. Or perhaps run a first pairwise 
+ analysis to identify likely candidates, and then shuffle only across a subgenome obtained by merging all regions in the query.
  This also allows using fewer shuffles (dozens), because remembering intersections across many files will use RAM. 
  If you nevertheless need to use many shuffles, look to the ologram_merge_run plugin.
 
@@ -179,6 +182,12 @@ __notes__ = """
  The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed", "1 0 1 1" means Query + B + C). Data should be whitespace separated with one combination per line.
  
 """
+
+
+
+
+
+
 
 
 def make_parser():
