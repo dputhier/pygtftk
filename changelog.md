@@ -13,6 +13,7 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 *   OLOGRAM - more-bed-labels should take and clean BED file names as default
 *   OLOGRAM - Various graphical fixes
 *   fix #124
+*   fix BED to BED convertion in arg_formatted.FormattedFile(). BED6+ files were considered as BED6- files.
 
 ### API Changes
 
