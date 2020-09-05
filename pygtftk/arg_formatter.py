@@ -4,13 +4,13 @@ Command Line Interface display format.
 """
 
 import argparse
-import glob
 import io
-import operator
-import os
 import re
 import sys
 
+import glob
+import operator
+import os
 import pybedtools
 from pybedtools import BedTool
 
@@ -457,7 +457,7 @@ class FormattedFile(argparse.FileType):
                 region_nb = 0
                 field_count = file_bo.field_count()
 
-                if field_count != 6:
+                if field_count < 6:
 
                     # Retrieve the file basename to force temporary files
                     # to get the same file name (with a random char string)
