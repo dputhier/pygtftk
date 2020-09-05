@@ -6,12 +6,12 @@ See the /pygtftk/plugins/ologram.py file, as well as the documentation, for more
 """
 
 import argparse
-import os
-import warnings
-from distutils.spawn import find_executable
 
 import numpy as np
+import os
 import pandas as pd
+import warnings
+from distutils.spawn import find_executable
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
@@ -39,7 +39,7 @@ def make_parser():
 
     parser_grp.add_argument('-i', '--inputfile',
                             help="Complete path to the OLOGRAM output file",
-                            type=arg_formatter.FormattedFile(mode='r', file_ext=('txt', 'tsv')),
+                            type=arg_formatter.FormattedFile(mode='r', file_ext=('tsv')),
                             required=True)
 
     parser_grp.add_argument('-o', '--output',
