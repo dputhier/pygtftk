@@ -153,6 +153,7 @@ The program will return statistics for both the number of intersections and the 
 **Example:** When not supplying a GTF, you can use --more-bed. The following example will look for pairwise enrichment of the file in input (p, here *query.bed* with the regions defined in --more-bed : here query with *A.bed*, then query with *B.bed*, then query with *C.bed*.
 
 .. code-block:: bash
+
 	gtftk ologram -ms 40 -mn 10 -p query.bed --more-bed A.bed B.bed C.bed -z -c hg38 -V 3 --force-chrom-peak --force-chrom-more-bed
 
 
@@ -359,6 +360,7 @@ OLOGRAM remembers all intersections occuring inside all minibatches, so as to ca
 Around 100 shuffles is usually enough, since a Negative Binomial under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways. 
 
 .. code-block:: bash
+
   # Make several OLOGRAM runs
   N_RUNS = 100
   for i in {1..$N_RUNS}

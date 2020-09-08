@@ -82,10 +82,11 @@ def test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0, cor_groups 
 
 def squish_matrix(x, abundance_threshold = 0, shuffle = True):
     r"""
-    To reduce redundancy, take all uniques rows and create a matrix where each line has its original
-        sqrt(abundance) divided by sqrt(abundance of most rare) (but not lower than abundance_threshold, 1/10000 by default)
-            eg if X = [A * 100, B * 10], X' = [A * 3, B * 1]
-    We use the square root of those abudances instead to dimnish the emphasis on the most frequent combinations     
+    To reduce redundancy in the matrix lines, take all unique rows of X and 
+    build a squished matrix where each line now has the square root of its 
+    original abundance divided by sqrt(abundance of most rate), but not lower 
+    than abundance_threshold, 1/10000 by default. We use the square root of 
+    those abudances instead to dimnish the emphasis on the most frequent combinations.      
 
     >>> import numpy as np
     >>> X = np.array([[1,1,0,0]]*1000 + [[0,0,1,1]]*100)
