@@ -14,6 +14,7 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 *   OLOGRAM - Various graphical fixes
 *   fix #124
 *   fix BED to BED convertion in arg_formatted.FormattedFile(). BED6+ files were considered as BED6- files.
+*   fix #136 although --show-group-number is no more supported with gtftk profile when plotnine > 0.6.0 is used.
 
 ### API Changes
 

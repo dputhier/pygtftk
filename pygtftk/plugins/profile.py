@@ -193,7 +193,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-w', '--show-group-number',
-                            help='Show the number of element per group.',
+                            help='Show the number of element per group (groupe size).',
                             action="store_true",
                             required=False)
 
@@ -1146,27 +1146,33 @@ def profile(inputfile=None,
     #
     # -------------------------------------------------------------------------
 
+    # !! I'm adding a try here to avoid problem with plotnine > 0.7.0.
+    # I will try to create an example later in order to submit an issue 
+
     if show_group_number:
-        if facet_var is None:
-            p += geom_text(data=dm.drop_duplicates(subset=[group_by]),
-                           mapping=aes(x='x',
-                                       y='max_grp',
-                                       label='nb_obs',
-                                       hjust='hjust',
-                                       color=group_by),
-                           show_legend=False,
-                           size=6,
-                           ha='left')
-        else:
-            p += geom_text(data=dm.drop_duplicates(subset=[group_by, facet_var]),
-                           mapping=aes(x='x',
-                                       y='max_grp',
-                                       label='nb_obs',
-                                       hjust='hjust',
-                                       color=group_by),
-                           show_legend=False,
-                           size=6,
-                           ha='left')
+        try:
+            if facet_var is None:
+                p += geom_text(data=dm.drop_duplicates(subset=[group_by]),
+                               mapping=aes(x='x',
+                                           y='max_grp',
+                                           label='nb_obs',
+                                           hjust='hjust',
+                                           color=group_by),
+                               show_legend=False,
+                               size=6,
+                               ha='left')
+            else:
+                p += geom_text(data=dm.drop_duplicates(subset=[group_by, facet_var]),
+                               mapping=aes(x='x',
+                                           y='max_grp',
+                                           label='nb_obs',
+                                           hjust='hjust',
+                                           color=group_by),
+                               show_legend=False,
+                               size=6,
+                               ha='left')
+        except PlotnineError as err:
+            message('PlotnineError error, can not show group number: ' + err.message, type="WARNING")
 
     # --------------------------------------------------------------------------
     #
