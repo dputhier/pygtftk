@@ -165,7 +165,7 @@ The program will return statistics for both the number of intersections and the 
 
 
 ologram (multiple overlaps)
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 While previously we computed paiwise enrichment (ie. Query+A, Query+B ...) , It is also possible to use the **OLOGRAM-MODL** Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n>=2 sets) enrichment (ie. Query+A+B, Query+A+C, ...) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes. 
 
@@ -175,7 +175,7 @@ This is done only on custom regions supplied as BEDs supplied with the `--more-b
 For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using --bed-excl or --bed-incl to ensure the longer combinations have a reasonable chance of being randomly encountered in the shuffles.
 
 
-**MODL itemset mining algorithm**: By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations.
+**MODL itemset mining algorithm:** By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations.
 
 As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. 
 
@@ -188,7 +188,7 @@ to noise which is a known problem in biological data. Its goal is to extract mea
 This itemset mining algorithm is a work-in-progress. Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
 
 
-**Exact combinations ** : By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + ...]. For exact intersections (ie. [Query + A + B + nothing else]), set the --multiple-overlap-target-combi-size flag to the number of --more-bed plus one. You will know if the combinations are computed as inexact by the "..." in their name in the result file. Intersections not including the query file are discarded.
+**Exact combinations:** By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + ...]. For exact intersections (ie. [Query + A + B + nothing else]), set the --multiple-overlap-target-combi-size flag to the number of --more-bed plus one. You will know if the combinations are computed as inexact by the '...' in their name in the result file. Intersections not including the query file are discarded.
 
 
 
