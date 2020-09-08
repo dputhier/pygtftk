@@ -5,10 +5,10 @@
 """
 
 import argparse
-import os
+import gc
 import sys
 
-import gc
+import os
 from pybedtools import BedTool
 
 import pygtftk.utils
