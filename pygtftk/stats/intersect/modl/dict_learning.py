@@ -89,9 +89,10 @@ def squish_matrix(x, abundance_threshold = 0, shuffle = True):
     those abudances instead to dimnish the emphasis on the most frequent combinations.      
 
     >>> import numpy as np
+    >>> from pygtftk.stats.intersect.modl.dict_learning import squish_matrix
     >>> X = np.array([[1,1,0,0]]*1000 + [[0,0,1,1]]*100)
     >>> X_squished = squish_matrix(X, shuffle = False)
-    >>> np.testing.assert_equal(X_squished, np.array([[0,0,1,1]]*1 + [[1,1,0,0]]*32)) # Note that the rows have been sorted by abundance   
+    >>> np.testing.assert_equal(X_squished, np.array([[0,0,1,1]]*1 + [[1,1,0,0]]*4)) # Note that the rows have been sorted by abundance   
     
     """
 
