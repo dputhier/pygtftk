@@ -3,7 +3,8 @@
 
 <html lang="en">
   <head>
-    <meta charset="utf-8" /><script type="text/javascript">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -15,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘ologram’ &#8212; gtftk 1.1.4 documentation</title>
+    <title>Commands from section ‘ologram’ &#8212; gtftk 1.2.0 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +45,8 @@
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Commands from section ‘ologram’</a></li> 
       </ul>
     </div>  
 
@@ -57,21 +59,33 @@
 <h1>Commands from section ‘ologram’<a class="headerlink" href="#commands-from-section-ologram" title="Permalink to this headline">¶</a></h1>
 <p>In the examples of this section, we will need the following example files:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
+ |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
+ |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d hg38_chr1 -f &#39;*&#39;
+ |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d ologram_1 -f &#39;*&#39;
+ |-- 10:44-INFO : Checking configuration file.
 </pre></div>
 </div>
-<p><strong>Note for contributors</strong> : All files relevant to OLOGRAM are :
-- <em>pygtftk/plugins/ologram.py</em> ; which is a wrapper.
-- <em>pygtftk/plugins/merge_ologram_stats.py</em> ; a convenience function to merge OLOGRAM results.
-- All files <em>in pygtftk/stats/intersect/</em> perform the calculations.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple_07 -f &#39;*&#39;
+ |-- 10:44-INFO : Checking configuration file.
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d ologram_2 -f &#39;*&#39;
+ |-- 10:44-INFO : Checking configuration file.
+</pre></div>
+</div>
+<p>For more information about OLOGRAM and OLOGRAM-MODL, please see the appropriately titled papers in the Citing section.</p>
+<p>More examples can be found in <a class="reference external" href="https://github.com/qferre/ologram_supp_mat">https://github.com/qferre/ologram_supp_mat</a> and <a class="reference external" href="https://github.com/qferre/ologram-modl_supp_mat">https://github.com/qferre/ologram-modl_supp_mat</a>
+These contain example Snakemake workflows, that can be reused or from which commands can be extracted.</p>
+<p><strong>Note for contributors</strong> : To contribute to OLOGRAM, begin at <em>pygtftk/plugins/ologram.py</em> and unwrap function calls from there, to get a sense of how they interact. We have detailed comments to explain the role of every function.</p>
 <hr class="docutils" />
 <div class="section" id="ologram">
 <h2>ologram<a class="headerlink" href="#ologram" title="Permalink to this headline">¶</a></h2>
@@ -92,13 +106,11 @@ The program will return statistics for both the number of intersections and the 
 <p class="admonition-title">Warning</p>
 <p>The ologram examples below use 8 CPUs. Please adapt.</p>
 </div>
-<p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in
-the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
+<p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 12:27-WARNING : Converting to bed6 format (ENCFF112BHN_H3K4me3_chr1.bed).
- |-- 12:27-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 12:28-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (stop_codon)
- |-- 12:29-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (Intergenic)
+ |-- 10:44-INFO : Checking configuration file.
+ |-- 10:44-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 10:44-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
 </pre></div>
 </div>
 <br>
@@ -113,7 +125,9 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 <br>
 <br><p><strong>Example:</strong> We are now using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 12:30-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 10:45-INFO : Checking configuration file.
+ |-- 10:45-INFO : Checking configuration file.
+ |-- 10:45-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -132,8 +146,11 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </div>
 <p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 12:31-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
- |-- 12:31-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 10:46-INFO : Checking configuration file.
+ |-- 10:46-INFO : Checking configuration file.
+ |-- 10:46-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
+ |-- 10:46-INFO : Checking configuration file.
+ |-- 10:46-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -148,8 +165,11 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 12:33-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
- |-- 12:33-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 10:47-INFO : Checking configuration file.
+ |-- 10:47-INFO : Checking configuration file.
+ |-- 10:47-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 10:47-INFO : Checking configuration file.
+ |-- 10:47-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -162,9 +182,91 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
 </tr>
 </table>
 <br>
-<br><p><strong>Arguments:</strong></p>
+<br><p><strong>Example:</strong> When not supplying a GTF, you can use –more-bed. The following example will look for pairwise enrichment of the file in input (p, here <em>query.bed</em> with the regions defined in –more-bed : here query with <em>A.bed</em>, then query with <em>B.bed</em>, then query with <em>C.bed</em>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gtftk ologram -ms <span class="m">40</span> -mn <span class="m">10</span> -p query.bed --more-bed A.bed B.bed C.bed -z -c hg38 -V <span class="m">3</span> --force-chrom-peak --force-chrom-more-bed
+</pre></div>
+</div>
+</div>
+<div class="section" id="ologram-multiple-overlaps">
+<h2>ologram (multiple overlaps)<a class="headerlink" href="#ologram-multiple-overlaps" title="Permalink to this headline">¶</a></h2>
+<p>While previously we computed paiwise enrichment (ie. Query+A, Query+B …) , It is also possible to use the <strong>OLOGRAM-MODL</strong> Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n&gt;=2 sets) enrichment (ie. Query+A+B, Query+A+C, …) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes.</p>
+<p>This is done only on custom regions supplied as BEDs supplied with the <cite>–more-bed</cite> argument. In most cases you may use the –no-gtf argument and only pass the regions of interest.</p>
+<p>For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using –bed-excl or –bed-incl to ensure the longer combinations have a reasonable chance of being randomly encountered in the shuffles.</p>
+<p><strong>MODL itemset mining algorithm:</strong> By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations.</p>
+<p>As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations.</p>
+<p>In broad strokes, this custom algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as –more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).</p>
+<p>Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is designed to be resistant
+to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).</p>
+<p>This itemset mining algorithm is a work-in-progress. Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the –multiple-overlap-max-number-of-combinations argument.</p>
+<p><strong>Exact combinations:</strong> By default, OLOGRAM will compute “inexact” combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + …]. For exact intersections (ie. [Query + A + B + nothing else]), set the –multiple-overlap-target-combi-size flag to the number of –more-bed plus one. You will know if the combinations are computed as inexact by the ‘…’ in their name in the result file. Intersections not including the query file are discarded.</p>
+<p><strong>Simple example:</strong></p>
+<p>Comparing the query (-p) against two other BED files, analyzing multiple overlaps.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -z -w -q -c simple_07.chromInfo -p simple_07_peaks.bed --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap
+ |-- 10:48-INFO : Checking configuration file.
+ |-- 10:48-WARNING : Converting to bed6 format (simple_07_peaks.bed).
+ |-- 10:48-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
+ |-- 10:48-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
+ |-- 10:48-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 10:48-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
+ |-- 10:48-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 10:48-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 10:48-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
+</pre></div>
+</div>
+<p><strong>Detailed example:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gtftk ologram -z -c simple_07.chromInfo -p simple_07_peaks.bed       <span class="c1"># The query (-p) is the file to compare against.</span>
+  --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed           <span class="c1"># List of files to compare with</span>
+  <span class="c1"># --more-bed `ls -d ./data/*`                                    # This should work instead if all your files are in the &#39;data&#39; subdirectory</span>
+  -o results --force-chrom-peak --force-chrom-more-bed
+    -o results --force-chrom-peak --force-chrom-more-bed
+  -o results --force-chrom-peak --force-chrom-more-bed
+  -V <span class="m">3</span> -k <span class="m">8</span> -mn <span class="m">10</span> -ms <span class="m">10</span>                                          <span class="c1"># Verbosity, threads, number and size of minibatches</span>
+  --more-bed-multiple-overlap                                      <span class="c1"># Use multiple overlaps on the --more-bed</span>
+  --multiple-overlap-max-number-of-combinations <span class="m">10</span>                 <span class="c1"># OPTIONAL ARGUMENT. Use MODL to restrict to this many combinations.</span>
+  --multiple-overlap-target-combi-size <span class="m">3</span>                           <span class="c1"># OPTIONAL ARGUMENT. Combis mined longer than this size will not be shown.</span>
+  --multiple-overlap-custom-combis test_combis.txt                 <span class="c1"># OPTIONAL ARGUMENT. Will bypass the selection by the previous two arguments and work only on the combinations defined in this file.</span>
+</pre></div>
+</div>
+<br>
+<table>
+<tr>
+<td valign="top">
+<iframe src="_static/example_ologram_modl.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+</iframe>
+</td>
+</tr>
+</table>
+<br>
+<br><p>As the computation of multiple overlaps can be RAM-intensive, if you have a very large amount of candidate genomic feature sets (hundreds) we recommend selecting less candidates among them first by running a pairwise analysis.</p>
+<p><strong>MODL algorithm API:</strong> MODL can also be used independantly as a combination mining algorithm.</p>
+<p>This can work on any type of data, biological or not, that respects the conventional formatting for lists of transactions: the data needs to be a matrix with one line per transaction and one column per element.</p>
+<p>For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C.</p>
+<p>For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1.
+factor allowance is K in K*n words in step 1 where n is final queries nb of words.</p>
+<p>MODL and will discard combinations rarer than 1/10000 occurences to reduce computing times and will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements.</p>
+<p>If you are passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity.  All are NumPY matrices.</p>
+<p>For more details, see code comments.</p>
+<p>Here is an example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.modl.dict_learning</span> <span class="kn">import</span> <span class="n">Modl</span><span class="p">,</span> <span class="n">test_data_for_modl</span>
+<span class="n">flags_matrix</span> <span class="o">=</span> <span class="n">test_data_for_modl</span><span class="p">(</span><span class="n">nflags</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">number_of_sets</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">cor_groups</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+
+<span class="kn">from</span> <span class="nn">pygtftk</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">VERBOSITY</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># Ensure DEBUG messages are shown</span>
+
+<span class="n">combi_miner</span> <span class="o">=</span> <span class="n">Modl</span><span class="p">(</span><span class="n">flags_matrix</span><span class="p">,</span>
+  <span class="n">multiple_overlap_target_combi_size</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>            <span class="c1"># Limit the size of the combinations</span>
+  <span class="n">multiple_overlap_max_number_of_combinations</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>    <span class="c1"># How many words to find ?</span>
+  <span class="n">nb_threads</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="n">step_1_factor_allowance</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>                        <span class="c1"># How many words to ask for in each step 1 rebuilding, as a multiplier of multiple_overlap_max_number_of_combinations</span>
+  <span class="n">error_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>                              <span class="c1"># Custom error function in step 2</span>
+<span class="n">interesting_combis</span> <span class="o">=</span> <span class="n">combi_miner</span><span class="o">.</span><span class="n">find_interesting_combinations</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For more details about usage and implementation, please read the notes below :</p>
+<p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -h
-  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-bi BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-pf pdf_file_alt] [-x] [-y] [-tp tsv_file_path] [-j {None,nb_intersections_expectation_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_expectation_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-z] [-f] [-w] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
+ |-- 10:48-INFO : Checking configuration file.
+  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-bi BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-mo] [-mocs multiple_overlap_target_combi_size] [-monc multiple_overlap_max_number_of_combinations] [-moc multiple_overlap_custom_combis] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-pf pdf_file_alt] [-x] [-y] [-tp tsv_file_path] [-j {None,nb_intersections_expectation_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_expectation_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-z] [-f] [-w] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks (in bed
@@ -174,22 +276,28 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
      defined regions).  Each pair {peak file, feature} is randomly shuffled independently across the
      genome (inter-region lengths are considered). Then the probability of intersection under the
      null hypothesis (the peaks and this feature are independent) is deduced thanks to this Monte
-     Carlo approach.  The program will return statistics for both the number of intersections and
-     the total lengths (in basepairs) of all intersections.  The null hypothesis is:  H0: The
-     regions of the query (--peak-file) are located independently of the  reference (--inputfile or
-     --more-bed) with respect to overlap.  H1: The regions of the query (--peak-file) tend to
-     overlap the  reference (--inputfile or --more-bed).   Authors : Quentin FERRE
-     &lt;quentin.q.ferre@gmail.com&gt;, Guillaume CHARBONNIER &lt;guillaume.charbonnier@outlook.com&gt; and
-     Denis PUTHIER &lt;denis.puthier@univ-amu.fr&gt;.
+     Carlo approach. The program will return statistics for both the number of intersections and the
+     total lengths (in basepairs) of all intersections.  The null hypothesis is:  H0: The regions of
+     the query (--peak-file) are located independently of the  reference (--inputfile or --more-bed)
+     with respect to overlap.  H1: The regions of the query (--peak-file) tend to overlap the
+     reference (--inputfile or --more-bed).   OLOGRAM can now also calculate enrichment for n-wise
+     combinations (e.g. [Query + A + B] or [Query + B + C]) on sets of regions defined by the user
+     (--more-bed argument).  Author : Quentin FERRE &lt;quentin.q.ferre@gmail.com&gt;, Co-authors :
+     Guillaume CHARBONNIER &lt;guillaume.charbonnier@outlook.com&gt; and Denis PUTHIER
+     &lt;denis.puthier@univ-amu.fr&gt;.
 
   Notes:
-     *  Ologram is multithreaded and can use many cores. Although ologram itself is not RAM-
-     intensive, base pygtftk processing of a full human GTF can require upwards of 8Gb. It is
-     recommended you do not run other programs in the meantime on a laptop.
+     *  OLOGRAM is multithreaded and can use many cores, most notably processing one batch of
+     shuffles per core. Note that this can be RAM-intensive, on top of the base pygtftk processing
+     of a full human GTF can require upwards of 8Gb. It is recommended you do not run other programs
+     in the meantime on a laptop.
+     *  You may pass custom sets of regions as BED files, especially for multiple overlaps,  with
+     the
+     *  more-bed arguments to look for enrichment in overlaps for custom annotations.
      *  Genome size is computed from the provided chromInfo file (-c). It should thus only contain
-     ordinary chromosomes.
-     *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
-     case the corresponding size of conventional chromosomes are used. ChrM is not used.
+     ordinary chromosomes. --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39;
+     or &#39;rn4&#39;. In this case the corresponding size of conventional chromosomes are used. ChrM is not
+     used.
      *  The program produces a pdf file and a tsv file (&#39;_stats_&#39;) containing intersection
      statistics for the shuffled BEDs under H0 (peak_file and the considered genomic region are
      independant): number of intersections (N = number of lines in the bed intersect) and total
@@ -205,73 +313,127 @@ the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue�
      value. As an example, if --more-keys is set to the &#39;gene_biotype&#39; (a key generally found in
      ensembl GTF), the region related to &#39;protein_coding&#39;, &#39;lncRNA&#39; or any other values for that key
      will be retrieved merged and tested for enrichment.
-     *  Use --no-basic-feature if you want to perform enrichment analysis on focused annotations
-     only (--more-bed or --more-key).
+     *  Use --no-basic-feature if you want to perform enrichment analysis on custom, focused
+     annotations only (--more-bed or --more-key).
      *  The goal of the minibatches is to save RAM. You should increase the number of minibatches,
      instead of their size. You may need to use very small minibatches if you have large sets of
      regions.
      *  You can exclude regions from the shuffling. This is done by shuffling across a concatenated
      &quot;sub-genome&quot; obtained by removing the excluded regions, but the same ones will be excluded from
-     the peak_file and the GTF. Try using an exclusion file that is as small (around a thousand
-     elements) as possible.
-     *  NB/TODO: Current multithreading needs to be optimized. We recommend using the current
-     version with a single core.
+     the peak_file and the GTF/more-bed files.
      *  BETA : About --use-markov. This arguments control whether to use Markov model realisations
      (of order 2) instead of independant shuffles for respectively region lengths and inter-region
      lengths. This can better capture the structure of the genomic regions repartitions. This is not
      recommended in the general case and can be *very* time-consuming (hours).
-     *  ALPHA : support for multiple overlaps is in progress (within or between sets). The backend
-     supports it but no statistics are made on it yet.
+     *  While they will be accepted by OLOGRAM, in BED files lines such as &quot;chr1 100 100&quot; or &quot;chr1
+     100&quot; would represent empty regions (of length 0) and as such are an error.
+     *  Support for multiple overlaps is available. Please see the documentation for more
+     information. If the --more-bed-multiple-overlap argument is used, the query peak file will be
+     compared with the custom regions passed to the --more-bed argument, and with  them only. For
+     example, you can put as query the  binding sites of the Transcription Factor A, in --more-bed
+     the factors B, C and D, and see whether A+B+D is an enriched combination.
+     *  By default, interesections are counted as &quot;inexact&quot;, meaning an overlap of [A + B + C] will
+     count towards [A + B + ...]. For exact intersections (ie. [A + B + nothing else]), set the
+     --multiple-overlap-target-combi-size flag to the number of --more-bed +1 (+1 for the query)
+     In any case, only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C
+     is not. Intersection within sets are supported by the backend and may come in a future version.
+     We recommend using --multiple-overlap-target-combi-size only when not using MODL since
+     filtering is applied after the first step of candidate mining.
+     *  Furthermore, you may use our MODL algorithm to find biological complexes of interest, by
+     mining for frequent itemsets on the intersections on the true data. This is done with the
+     --multiple-overlap-max-number-of-combinations argument. This will not change the N,S and
+     enrichment result, but will restrict the set of interesting combis for which those are
+     calculated and displayed
+     *  MODL is designed to find complexes more than association rules, so we do not recommend
+     asking for more than 20-50 combinations to keep the running time reasonable and keep the found
+     combinations still relevant. Note that MODL is completely optional. It is mostly needed when
+     the list of --more-bed is very long and you do not want to filter the results manually, and
+     when you are working with noisy data which could obfuscate the interesting combinations. MODL
+     employs a form of subsampling on the original matrix and will discard combinations rarer than
+     1/10000 occurences to reduce computing times. It will also reduce the abundance of all lines in
+     the matrix to their square roots to reduce the emphasis on the most frequent elements. This is
+     done as the matrix of intersections will usually have many redundant lines and as such can be
+     squished without changing the result. It is also possible to bypass it and provide a custom
+     list of combinations to be considered.
+     *  For statistical reality reasons, with multiple sets the expected overlaps for the longer
+     combinations (A+B+C+D+... when they are all independant) can be very low.  This is especially
+     true for small regions such as Transcriptional Regulator biding sites where the total coverage
+     of all sets considered is low.  Note that the fact that we are using a Negative Binomial rather
+     than empirical p-values helps alleviate this problem.  Furthermore, if C is depleted with query
+     but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched.
+     *  A low number of intersecting basepairs can require using more shuffles, but very-low-average
+     Negative Binomial distributions are not really signficant. We recommend instead shuffling only
+     across a biologically relevant subsection of the genome (with --bed-incl) : for example, if
+     studying  Transcriptional Regulators, shuffling only on inferred Cis Regulatory Modules or
+     promoters. Or perhaps run a first pairwise  analysis to identify likely candidates, and then
+     shuffle only across a subgenome obtained by merging all regions in the query. This also allows
+     using fewer shuffles (dozens), because remembering intersections across many files will use
+     RAM.  If you nevertheless need to use many shuffles, look to the ologram_merge_run plugin.
+     *  We recommend running the ologram_modl_treeify plugin on the resulting tsv file if you use
+     multiple overlaps.
+     *  If you manually specify the combinations to be studied with --multiple-overlap-custom-
+     combis, use the following format for the text file :  The order is the same as --more-beds
+     (ie. if --more-bed is &quot;A.bed B.bed C.bed&quot;, &quot;1 0 1 1&quot; means Query + B + C). Data should be
+     whitespace separated with one combination per line.
 
-  Version:  2019-04-17
+  Version:  2020-08-01
 
 Arguments:
- -i, --inputfile              Path to the GTF file. Defaults to STDIN (default: &lt;stdin&gt;)
- -c, --chrom-info             Tabulated two-columns file. Chromosomes as column 1, sizes as column 2 (default: None)
- -p, --peak-file              The file containing the peaks/regions to be annotated. (bed format). (default: None)
- -b, --more-bed               A list of bed files to be considered as additional genomic annotations. (default: None)
- -l, --more-bed-labels        A comma separated list of labels (see --more-bed) (default: None)
- -e, --bed-excl               Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features. (bed format). (default: None)
- -bi, --bed-incl              Opposite of --bed-excl, will perform the same operation but keep only those regions. (default: None)
- -u, --upstream               Extend the TSS and TTS of in 5&#39; by a given value. (default: 1000)
- -d, --downstream             Extend the TSS and TTS of in 3&#39; by a given value. (default: 1000)
- -m, --more-keys              A comma separated list of key used for labeling the genome. See Notes. (default: None)
- -n, --no-basic-feature       No statistics for basic features of GTF. Concentrates on --more-bed and --more-keys. (default: False)
- -k, --nb-threads             Number of threads for multiprocessing. (default: 1)
- -s, --seed                   Numpy random seed. (default: 42)
- -mn, --minibatch-nb          Number of minibatches of shuffles. (default: 10)
- -ms, --minibatch-size        Size of each minibatch, in number of shuffles. (default: 20)
- -ma, --use-markov            Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes. (default: False)
- -o, --outputdir              Output directory name. (default: ologram_output)
- -pw, --pdf-width             Output pdf file width (inches). (default: None)
- -ph, --pdf-height            Output pdf file height (inches). (default: None)
- -pf, --pdf-file-alt          Provide an alternative path for the main image. (default: None)
- -x, --no-pdf                 Do not produce any image file. (default: False)
- -y, --display-fit-quality    Display the negative binomial fit quality on the diagrams. (default: False)
- -tp, --tsv-file-path         Provide an alternative path for text output file. (default: None)
- -j, --sort-features          Whether to sort features in diagrams according to a computed statistic. (default: None)
- -z, --no-gtf                 No GTF file is provided as input. (default: False)
- -f, --force-chrom-gtf        Discard silently, from GTF, genes outside chromosomes defined in --chrom-info. (default: False)
- -w, --force-chrom-peak       Discard silently, from --peak-file, peaks outside chromosomes defined in --chrom-info. (default: False)
- -q, --force-chrom-more-bed   Discard silently, from --more-bed files, regions outside chromosomes defined in --chrom-info. (default: False)
+ -i, --inputfile                        Path to the GTF file. Defaults to STDIN (default: &lt;stdin&gt;)
+ -c, --chrom-info                       Tabulated two-columns file. Chromosomes as column 1, sizes as column 2 (default: None)
+ -p, --peak-file                        The file containing the peaks/regions to be annotated. (bed format). (default: None)
+ -b, --more-bed                         A list of bed files to be considered as additional genomic annotations. (default: None)
+ -l, --more-bed-labels                  A comma separated list of labels (see --more-bed). Optional. (default: None)
+ -e, --bed-excl                         Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features. (bed format). (default: None)
+ -bi, --bed-incl                        Opposite of --bed-excl, will perform the same operation but keep only those regions. (default: None)
+ -u, --upstream                         Extend the TSS and TTS of in 5&#39; by a given value. (default: 1000)
+ -d, --downstream                       Extend the TSS and TTS of in 3&#39; by a given value. (default: 1000)
+ -m, --more-keys                        A comma separated list of key used for labeling the genome. See Notes. (default: None)
+ -n, --no-basic-feature                 No statistics for basic features of GTF. Concentrates on --more-bed and --more-keys. (default: False)
+ -mo, --more-bed-multiple-overlap       The more-beds specified will be considered all at once for multiple overlaps. (default: False)
+ -mocs, --multiple-overlap-target-combi-size
+                                        Maximum number of sets in the output combinations. Default to -1 meaning no max number. Set it to number of --more-bed +1 to get exact (exclusive) combinations (default: -1)
+ -monc, --multiple-overlap-max-number-of-combinations
+                                        Maximum number of combinations to consider by applying the MODL algorithm to the matrix of full overlaps. Defaults to -1, which means MODL is NOT applied and all combinations are returned (default: -1)
+ -moc, --multiple-overlap-custom-combis
+                                        Path to a text (&#39;*.txt&#39;) file that will be read as a NumPy matrix, overriding the combinations to be studied. See notes for the format of the text file. (default: None)
+ -k, --nb-threads                       Number of threads for multiprocessing. (default: 1)
+ -s, --seed                             Numpy random seed. (default: 42)
+ -mn, --minibatch-nb                    Number of minibatches of shuffles. (default: 10)
+ -ms, --minibatch-size                  Size of each minibatch, in number of shuffles. (default: 20)
+ -ma, --use-markov                      Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes. (default: False)
+ -o, --outputdir                        Output directory name. (default: ologram_output)
+ -pw, --pdf-width                       Output pdf file width (inches). (default: None)
+ -ph, --pdf-height                      Output pdf file height (inches). (default: None)
+ -pf, --pdf-file-alt                    Provide an alternative path for the main image. (default: None)
+ -x, --no-pdf                           Do not produce any image file. (default: False)
+ -y, --display-fit-quality              Display the negative binomial fit quality on the diagrams. (default: False)
+ -tp, --tsv-file-path                   Provide an alternative path for text output file. (default: None)
+ -j, --sort-features                    Whether to sort features in diagrams according to a computed statistic. (default: None)
+ -z, --no-gtf                           No GTF file is provided as input. (default: False)
+ -f, --force-chrom-gtf                  Discard silently, from GTF, genes outside chromosomes defined in --chrom-info. (default: False)
+ -w, --force-chrom-peak                 Discard silently, from --peak-file, peaks outside chromosomes defined in --chrom-info. (default: False)
+ -q, --force-chrom-more-bed             Discard silently, from --more-bed files, regions outside chromosomes defined in --chrom-info. (default: False)
 
 Command-wise optional arguments:
- -h, --help                   Show this help message and exit.
- -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
- -D, --no-date                Do not add date to output file names. (default: False)
- -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
- -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
- -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
- -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
- -W, --write-message-to-file  Store all message into a file. (default: None)
+ -h, --help                             Show this help message and exit.
+ -V, --verbosity                        Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                          Do not add date to output file names. (default: False)
+ -C, --add-chr                          Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                          Keep all temporary files into this folder. (default: None)
+ -A, --keep-all                         Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file                      Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file            Store all message into a file. (default: None)
 </pre></div>
 </div>
+<p>Since the results of MODL only depend on the true intersections and not on the shuffles, you can run MODL with 1 shuffle to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv, using MODL’s selection as a starting point, and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying). Then, run ologram_modl_treeify on the resulting filtered tsv.</p>
 </div>
-<div class="section" id="merge-ologram-stats">
-<h2>merge_ologram_stats<a class="headerlink" href="#merge-ologram-stats" title="Permalink to this headline">¶</a></h2>
-<p>Several tsv files resulting from OLOGRAM analyses can be merged into a single diagram report using the merge_ologram_stats.</p>
-<p><strong>Example:</strong> For this example will will used the results obtained for 3 epigenetic marks on human chromosome 1.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk merge_ologram_stats H3K4me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv H3K36me3_ologram_stats.tsv -l H3K4me3,H3K79me2,H3K36me3  -o merge_ologram_stats_01.pdf
+<div class="section" id="ologram-merge-stats">
+<h2>ologram_merge_stats<a class="headerlink" href="#ologram-merge-stats" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Several tsv files resulting from <em>OLOGRAM</em> analyses can be merged into a single diagram report using the merge_ologram_stats.</p>
+<p><strong>Example:</strong> For this example we will used the results obtained for 3 epigenetic marks on human chromosome 1.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_merge_stats H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merge_ologram_stats_01.pdf --labels H3K4me3,H3K36me3,H3K79me2
+ |-- 10:48-INFO : Checking configuration file.
 </pre></div>
 </div>
 <br>
@@ -283,8 +445,12 @@ Command-wise optional arguments:
 </td>
 </tr>
 </table>
-<br><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk merge_ologram_stats -h
-  Usage: gtftk merge_ologram_stats [-pw pdf_width] [-ph pdf_height] -o output [-l labels] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file] inputfiles [inputfiles ...]
+<br>
+<br><p>This also works with OLOGRAM-MODL results, since they follow the same basic format of one element/combination per line.</p>
+<p><strong>Arguments:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_merge_stats -h
+ |-- 10:48-INFO : Checking configuration file.
+  Usage: gtftk ologram_merge_stats [-pw pdf_width] [-ph pdf_height] -o output [-l labels] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file] inputfiles [inputfiles ...]
 
   Description: 
      *  Merge a set of OLOGRAM outputs into a single output. Build a heatmap from the results.  See the
@@ -317,9 +483,115 @@ Command-wise optional arguments:
 </pre></div>
 </div>
 </div>
+<div class="section" id="ologram-modl-treeify">
+<h2>ologram_modl_treeify<a class="headerlink" href="#ologram-modl-treeify" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Visualize n-wise enrichment results (OLOGRAM-MODL) as a tree of combinations. Works on the result (tsv file) of an OLOGRAM analysis called with –more-bed-multiple-overlap.</p>
+<p>We recommend this representation. The tsv file can be edited before passing it to the command, for example by keeping only the combinations you are interested in.</p>
+<p>On the graph, S designated the total number of basepairs in which this combinations is encountered in the real data. Fold change gives the ratio with the number of basepairs in the shuffles, with the associated Negative Binomial p-value.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o ./results/treeified.pdf -l ThisWasTheNameOfTheQuery
+ |-- 10:48-INFO : Checking configuration file.
+ |-- 10:48-WARNING : Directory not found. Creating.
+</pre></div>
+</div>
+<br>
+<table>
+<tr>
+<td valign="top">
+<iframe src="_static/example_ologram_treeify.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+</iframe>
+</td>
+</tr>
+</table>
+<br>
+<br><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_modl_treeify -h
+ |-- 10:48-INFO : Checking configuration file.
+  Usage: gtftk ologram_modl_treeify -i inputfile -o output [-l query_label] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
+
+  Description: 
+     *  Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree for easier visualisation  See
+     the /pygtftk/plugins/ologram.py file, as well as the documentation, for more information about
+     OLOGRAM.
+
+  Notes:
+     *  Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree for easier
+     visualisation.
+     *  This is the preferred representation for OLOGRAM-MODL results. Each node represents  a
+     combination, with its number of overlapping basepairs in true data (S) and the corresponding
+     fold change and p-value compared to the shuffles.
+     *  Result tsv files can be manually edited (ie. removing combinations) before passing them to
+     this plugin
+
+  Version:  2020-06-17
+
+Arguments:
+ -i, --inputfile              Complete path to the OLOGRAM output file (default: None)
+ -o, --output                 Pdf file name (default: None)
+ -l, --query-label            Name of the query for display (default: Query)
+
+Command-wise optional arguments:
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
+</pre></div>
+</div>
+</div>
+<div class="section" id="ologram-merge-runs">
+<h2>ologram_merge_runs<a class="headerlink" href="#ologram-merge-runs" title="Permalink to this headline">¶</a></h2>
+<p><strong>Description:</strong> Merge several runs of OLOGRAM into a single run, by treating each a “superbatch” of shuffles.</p>
+<p>OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a “batch of batches” and merge and recalculate stats on the merged superbatch automatically using this command.</p>
+<p>Around 100 shuffles is usually enough, since a Negative Binomial under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make several OLOGRAM runs</span>
+<span class="nv">N_RUNS</span> <span class="o">=</span> <span class="m">100</span>
+<span class="k">for</span> i in <span class="o">{</span><span class="m">1</span>..<span class="nv">$N_RUNS</span><span class="o">}</span>
+<span class="k">do</span>
+  ologram ...
+<span class="k">done</span>
+
+<span class="c1"># Merge those runs</span>
+gtftk ologram_merge_runs --inputfiles <span class="sb">`</span>ls ./results/*.tsv<span class="sb">`</span> -o ./merged_batches_result.tsv -V <span class="m">3</span>
+</pre></div>
+</div>
+<p>Other commands such as ologram_modl_treeify can now be called on the resulting tsv, which respects the OLOGRAM format.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_merge_runs -h
+ |-- 10:48-INFO : Checking configuration file.
+  Usage: gtftk ologram_merge_runs [-i inputfiles [inputfiles ...]] -o output [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
+
+  Description: 
+     *  Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it.  This
+     treats each run as a &quot;superbatch&quot;.
+
+  Notes:
+     *  Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it. This
+     treats each run as a &quot;superbatch&quot;.
+     *  Statistics can be recalculated simply by averaging as runs are independant from one another.
+
+  Version:  2020-07-30
+
+Arguments:
+ -i, --inputfiles             Complete paths to the OLOGRAM output text files (default: None)
+ -o, --output                 Merged output file. (default: None)
+
+Command-wise optional arguments:
+ -h, --help                   Show this help message and exit.
+ -V, --verbosity              Set output verbosity ([0-3]). (default: 0)
+ -D, --no-date                Do not add date to output file names. (default: False)
+ -C, --add-chr                Add &#39;chr&#39; to chromosome names before printing output. (default: False)
+ -K, --tmp-dir                Keep all temporary files into this folder. (default: None)
+ -A, --keep-all               Try to keep all temporary files even if process does not terminate normally. (default: False)
+ -L, --logger-file            Stores the arguments passed to the command into a file. (default: None)
+ -W, --write-message-to-file  Store all message into a file. (default: None)
+</pre></div>
+</div>
+</div>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -329,7 +601,10 @@ Command-wise optional arguments:
   <ul>
 <li><a class="reference internal" href="#">Commands from section ‘ologram’</a><ul>
 <li><a class="reference internal" href="#ologram">ologram</a></li>
-<li><a class="reference internal" href="#merge-ologram-stats">merge_ologram_stats</a></li>
+<li><a class="reference internal" href="#ologram-multiple-overlaps">ologram (multiple overlaps)</a></li>
+<li><a class="reference internal" href="#ologram-merge-stats">ologram_merge_stats</a></li>
+<li><a class="reference internal" href="#ologram-modl-treeify">ologram_modl_treeify</a></li>
+<li><a class="reference internal" href="#ologram-merge-runs">ologram_merge_runs</a></li>
 </ul>
 </li>
 </ul>
@@ -376,13 +651,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Commands from section ‘ologram’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on May 27, 2020.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+      Last updated on Sep 10, 2020.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
 </html>

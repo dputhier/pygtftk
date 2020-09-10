@@ -1,21 +1,21 @@
-================         =================
-Pip package               |Pippackage|_
-Bioconda package          |bioconda|_
-License                   |license|_
-Platforms                 |platform|_
-Languages                 |lang|_
-Build status              |build|_
-Repository size           |size|_
-Latest conda              |latestconda|
-Downloads                 |downloads|_
-Codacy                    |codacy|_
-Contribution              |contrib|_
-Github hits               |hits|_
-Issues                    |issues|_
-Citing                    |citing|_
-Documentation             |documentation|_
-=================         =================
-
+==================        =================
+Pip package                |Pippackage|_
+Bioconda package           |bioconda|_
+License                    |license|_
+Platforms                  |platform|_
+Languages                  |lang|_
+Build status               |build|_
+Repository size            |size|_
+Latest conda               |latestconda|
+Downloads                  |downloads|_
+Codacy                     |codacy|_
+Contribution               |contrib|_
+Github hits                |hits|_
+Issues                     |issues|_
+Citing pygtftk             |citing_pygtftk|_
+Citing OLOGRAM             |citing_ologram|_
+Documentation              |documentation|_
+==================        =================
 
 .. |codacy| image:: https://api.codacy.com/project/badge/Grade/0a977718b4d44992a794cf5ddef7822e
 .. _codacy: https://www.codacy.com/app/dputhier/pygtftk?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dputhier/pygtftk&amp;utm_campaign=Badge_Grade
@@ -56,14 +56,17 @@ Documentation             |documentation|_
 .. |issues| image:: https://img.shields.io/github/issues-raw/dputhier/pygtftk.svg
 .. _issues: https://github.com/dputhier/pygtftk/issues
 
-.. |citing| image:: https://img.shields.io/badge/pygtftk-https%3A%2F%2Fdoi.org%2F10.1093%2Fbioinformatics%2Fbtz116-blue.svg
-.. _citing: https://doi.org/10.1093/bioinformatics/btz116
+.. |citing_pygtftk| image:: https://img.shields.io/badge/citing__pygtftk-https%3A%2F%2Fdoi.org%2F10.1093%2Fbioinformatics%2Fbtz116-blue
+.. _citing_pygtftk: https://doi.org/10.1093/bioinformatics/btz116
 
 .. |documentation| image:: https://img.shields.io/badge/Documentation-https%3A%2F%2Fdputhier.github.io%2Fpygtftk%2F-blue.svg
 .. _documentation: https://dputhier.github.io/pygtftk/
 
 .. |lang| image:: https://img.shields.io/badge/Languages-Python%2C%20C%2C%20Cython%2C%20C++-blue.svg
 .. _lang: https://github.com/dputhier/pygtftk
+
+.. |citing_ologram| image:: https://img.shields.io/badge/citing__ologram-https%3A%2F%2Fdoi.org%2F10.1093%2Fbioinformatics%2Fbtz810-blue
+.. _citing_ologram: https://doi.org/10.1093/bioinformatics/btz810
 
 
 Python GTF toolkit (pygtftk)

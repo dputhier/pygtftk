@@ -3,7 +3,8 @@
 
 <html lang="en">
   <head>
-    <meta charset="utf-8" /><script type="text/javascript">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -15,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Help on Python package (pygtftk) &#8212; gtftk 1.1.4 documentation</title>
+    <title>Help on Python package (pygtftk) &#8212; gtftk 1.2.0 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +45,8 @@
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Help on Python package (pygtftk)</a></li> 
       </ul>
     </div>  
 
@@ -2179,16 +2181,28 @@ key/values to add as a name.</p>
 <span id="the-pygtftk-stats-intersect-overlap-stats-shuffling-module"></span><h2>The pygtftk.stats.intersect.overlap_stats_shuffling module<a class="headerlink" href="#module-pygtftk.stats.intersect.overlap_stats_shuffling" title="Permalink to this headline">¶</a></h2>
 <p>This is the main function to compute random shuffles to assess statistical
 significance overlap of two sets of genomic regions, provided as BED files.</p>
+<p>Called directly by the ologram.py plugin. All other functions calls descend from
+this one.</p>
+<p>Author : Quentin Ferré &lt;<a class="reference external" href="mailto:quentin&#46;q&#46;ferre&#37;&#52;&#48;gmail&#46;com">quentin<span>&#46;</span>q<span>&#46;</span>ferre<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</p>
+<dl class="py class">
+<dt id="pygtftk.stats.intersect.overlap_stats_shuffling.ComputingIntersectionPartial">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">ComputingIntersectionPartial</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Lr1</span></em>, <em class="sig-param"><span class="n">Li1</span></em>, <em class="sig-param"><span class="n">Lrs</span></em>, <em class="sig-param"><span class="n">Lis</span></em>, <em class="sig-param"><span class="n">all_chrom1</span></em>, <em class="sig-param"><span class="n">all_chrom2</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em>, <em class="sig-param"><span class="n">result_queue</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.ComputingIntersectionPartial" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a replacer for a wrapper for compute_all_intersections_minibatch, needed for multiprocessing below
+This was needed because the argument that changes in multiproessing in minibatch_len, and it’s not the leftmost argument, 
+so functools.partial cannot be used</p>
+</dd></dl>
+
 <dl class="py function">
 <dt id="pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_all_intersections_minibatch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Lr1</span></em>, <em class="sig-param"><span class="n">Li1</span></em>, <em class="sig-param"><span class="n">Lrs</span></em>, <em class="sig-param"><span class="n">Lis</span></em>, <em class="sig-param"><span class="n">all_chrom1</span></em>, <em class="sig-param"><span class="n">all_chrom2</span></em>, <em class="sig-param"><span class="n">minibatch_size</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_all_intersections_minibatch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Lr1</span></em>, <em class="sig-param"><span class="n">Li1</span></em>, <em class="sig-param"><span class="n">Lrs</span></em>, <em class="sig-param"><span class="n">Lis</span></em>, <em class="sig-param"><span class="n">all_chrom1</span></em>, <em class="sig-param"><span class="n">all_chrom2</span></em>, <em class="sig-param"><span class="n">minibatch_size</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">42</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main processing function. Computes a minibatch of shuffles for the given parameters.</p>
 <p>This function will be called by the hub function <cite>compute_overlap_stats</cite> to
 create a batch of shuffled “fake” BED files.
-Lr1,Li1,Lr2,Li2,all_chrom1,all_chrom2 are all outputs from the
-bed_Li1to_lists_of_intervals() function calls : those are the lists of region
+The Lrs and Li and all_chroms are all outputs from the
+bed_to_lists_of_intervals() function calls : those are the lists of region
 lengths, inter-region lengths, and chromosomes for each of the two input files.</p>
-<p>Lrs and Lis are lists containing [Lr2] and [Li2] if there is only one query set, but can contain more [Lr1, Lr2, Lr3, …] if there is more than one</p>
+<p>Lrs and Lis are lists containing [Lr2] and [Li2] if there is only one query
+set, but can contain [Lr2, Lr3, …] if there is more than one.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2208,7 +2222,7 @@ lengths, inter-region lengths, and chromosomes for each of the two input files.<
 
 <dl class="py function">
 <dt id="pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_overlap_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bedA</span></em>, <em class="sig-param"><span class="n">bedsB</span></em>, <em class="sig-param"><span class="n">chrom_len</span></em>, <em class="sig-param"><span class="n">minibatch_size</span></em>, <em class="sig-param"><span class="n">minibatch_nb</span></em>, <em class="sig-param"><span class="n">bed_excl</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em>, <em class="sig-param"><span class="n">ft_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_overlap_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bedA</span></em>, <em class="sig-param"><span class="n">bedsB</span></em>, <em class="sig-param"><span class="n">chrom_len</span></em>, <em class="sig-param"><span class="n">minibatch_size</span></em>, <em class="sig-param"><span class="n">minibatch_nb</span></em>, <em class="sig-param"><span class="n">bed_excl</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em>, <em class="sig-param"><span class="n">ft_type</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_custom_combis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the hub function to compute overlap statistics through Monte Carlo
 shuffling with integration of the inter-region lengths.</p>
 <p>The function will generate shuffled BEDs from bedA and bedB independantly,
@@ -2219,7 +2233,7 @@ regions given in A and B are independant).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bedA</strong> – The first bed file.</p></li>
+<li><p><strong>bedA</strong> – The first bed file in pybedtools.Bedtool format.</p></li>
 <li><p><strong>bedsB</strong> – The second bed file. Can also be a list of bed files for multiple overlaps.</p></li>
 <li><p><strong>chrom_len</strong> – the dictionary of chromosome lengths</p></li>
 <li><p><strong>minibatch_size</strong> – the size of the minibatch for shuffling.</p></li>
@@ -2228,18 +2242,115 @@ regions given in A and B are independant).</p>
 <li><p><strong>use_markov_shuffling</strong> – Use a classical or a order-2 Markov shuffling.</p></li>
 <li><p><strong>nb_threads</strong> – Number of threads.</p></li>
 <li><p><strong>ft_type</strong> – The name of the feature.</p></li>
+<li><p><strong>multiple_overlap_target_combi_size</strong> – For multiple overlaps, maximum number of sets in the output combinations.</p></li>
+<li><p><strong>multiple_overlap_max_number_of_combinations</strong> – For multiple overlaps, maximum number of combinations to consider. This will use the MOLD mining algorithm. Do not ask for too many.</p></li>
+<li><p><strong>multiple_overlap_custom_combis</strong> – For multiple overlaps, skips combination mining and computes stats directly for these combinations. Path to a file to be read as NumPy matrix.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 </div>
-<div class="section" id="module-pygtftk.stats.intersect.negbin_fit">
-<span id="the-pygtftk-stats-intersect-negbin-fit-module"></span><h2>The pygtftk.stats.intersect.negbin_fit module<a class="headerlink" href="#module-pygtftk.stats.intersect.negbin_fit" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pygtftk.stats.intersect.overlap_stats_compute">
+<span id="the-pygtftk-stats-intersect-overlap-stats-compute-module"></span><h2>The pygtftk.stats.intersect.overlap_stats_compute module<a class="headerlink" href="#module-pygtftk.stats.intersect.overlap_stats_compute" title="Permalink to this headline">¶</a></h2>
+<p>Compute overlap statistics on shuffled sets.</p>
+<p>Called by overap_stats_shuffling.compute_overlap_stats(), hence the name.</p>
+<p>Those functions tend to take as input lists of shuffles and output statistics</p>
+<dl class="py class">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.ComputingStatsCombiPartial">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">ComputingStatsCombiPartial</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">all_intersections_for_this_combi</span></em>, <em class="sig-param"><span class="n">ft_type</span></em>, <em class="sig-param"><span class="n">true_intersection</span></em>, <em class="sig-param"><span class="n">this_combi_only</span></em>, <em class="sig-param"><span class="n">nofit</span></em>, <em class="sig-param"><span class="n">result_queue</span></em>, <em class="sig-param"><span class="n">combi_human_readable</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.ComputingStatsCombiPartial" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a wrapper to compute statistics for one combination</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">DictionaryWithIndex</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">index</em>, <em class="sig-param">data_default_factory=&lt;function DictionaryWithIndex.&lt;lambda&gt;&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper allowing to query a dictionary so that an item can also return values from several other items.
+The dictionary will return concatenated values from several keys when asked for.</p>
+<p>It will return values from itself PLUS everything in the index</p>
+<p>Specifically designed for lists of overlaps in OLOGRAM-MODL, meaning
+the final result will be a list with the same number elements, whose i-th element for i in 1..n
+will be the concatenated i-th elements of all candidate lists</p>
+<p>Example :</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:[</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;C&#39;</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span><span class="s1">&#39;B&#39;</span><span class="p">:[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]],</span><span class="s1">&#39;C&#39;</span><span class="p">:[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">]]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">di</span> <span class="o">=</span> <span class="n">DictionaryWithIndex</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">di</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex.get_simple_concatenation">
+<code class="sig-name descname">get_simple_concatenation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex.get_simple_concatenation" title="Permalink to this definition">¶</a></dt>
+<dd><p>For the true overlaps. Do not merge individual shuffles, there are no shuffles to be merged.
+Simply concatenate the lists.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.compute_stats_for_intersection">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">compute_stats_for_intersection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">myintersect</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.compute_stats_for_intersection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to compute all stats we want on a single intersect result object.
+The argument (myintersect) is a single bedfile, either as a pybedtools intersect
+result, or a list of tuples/lists like [[‘chr1’,10,20],[‘chr2’,30,40]].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.compute_true_intersection">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">compute_true_intersection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bedA</span></em>, <em class="sig-param"><span class="n">bedsB</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.compute_true_intersection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the custom-computed tur intersection between bedA and all in bedsB combined, where
+bedA is a pybedtools.BedTool object and bedsB is a list of such objects.</p>
+<p>Returns also the intersection flags.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.stats_multiple_overlap">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">stats_multiple_overlap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">all_overlaps</span></em>, <em class="sig-param"><span class="n">bedA</span></em>, <em class="sig-param"><span class="n">bedsB</span></em>, <em class="sig-param"><span class="n">all_feature_labels</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">nofit</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_custom_combis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.stats_multiple_overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instead of returning one set of overlap stats per query type (ie. exons, gens, bedfile1, bedfile2, etc…)
+it will return one per multiple overlap (ie. here there was a peak for bedfile1+gene, or bedfile1+bedfile2+gene, etc.)</p>
+<p>Only do so for “common/interesting combis”, found by dict learning on original data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>all_overlaps</strong> – The list of all overlaps computed for all shuffles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.stats_single">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">stats_single</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">all_intersections_for_this_combi</span></em>, <em class="sig-param"><span class="n">true_intersection</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'some feature'</span></em>, <em class="sig-param"><span class="n">nofit</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">this_combi_only</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.stats_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute statistics such as total number of overlapping base pairs for a given feature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>intersections_for_this_combi</strong> – an object returned by compute_all_intersections_minibatch giving all intersections between the shuffled bedA and bedsB.</p></li>
+<li><p><strong>true_intersection</strong> – the result of overlap_stats_compute.compute_true_intersection(bedA, bedsB) where bedA is the query and bedB is the list of the bed files between whose shuffles the aforementioned intersections have been computed. Used here to calculate the true intersections between them and calculate a Neg Binom p-value.</p></li>
+<li><p><strong>ft_type</strong> – for debug messages, which feature/combi are we currently processing ?</p></li>
+<li><p><strong>nofit</strong> – if True, does not do Negative Binomial fitting</p></li>
+<li><p><strong>this_combi_only</strong> – a list of flags (e.g. [1,0,0,1]) corresponding to expected flags in the interescetions, one per file (see find_intersection() source and documentation). If not None, we will consider only intersections that have this flag for the number of true intersections and true overlapping basepairs</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.which_combis_to_get_from">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">which_combis_to_get_from</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">combi</span></em>, <em class="sig-param"><span class="n">all_possible_combis</span></em>, <em class="sig-param"><span class="n">exact</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.which_combis_to_get_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>To build an index later, determine the supplementary combis : meaning, for each
+combi, which other combi needs to be queried.</p>
+<p>Relevant if we desire inexact or exact combis;
+Reminded : a combi A is a “inexact” match for combi B if all flags of combi B
+are also present in combi A, along with potentially others.</p>
+<p>Returns an index giving the supplementary combis</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pygtftk.stats.negbin_fit">
+<span id="the-pygtftk-stats-negbin-fit-module"></span><h2>The pygtftk.stats.negbin_fit module<a class="headerlink" href="#module-pygtftk.stats.negbin_fit" title="Permalink to this headline">¶</a></h2>
 <p>Contains various utility functions relative to the negative binomial distribution.</p>
 <dl class="py function">
-<dt id="pygtftk.stats.intersect.negbin_fit.check_negbin_adjustment">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.negbin_fit.</code><code class="sig-name descname">check_negbin_adjustment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span></em>, <em class="sig-param"><span class="n">mean</span></em>, <em class="sig-param"><span class="n">var</span></em>, <em class="sig-param"><span class="n">bins_number</span><span class="o">=</span><span class="default_value">16</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.negbin_fit.check_negbin_adjustment" title="Permalink to this definition">¶</a></dt>
+<dt id="pygtftk.stats.negbin_fit.check_negbin_adjustment">
+<code class="sig-prename descclassname">pygtftk.stats.negbin_fit.</code><code class="sig-name descname">check_negbin_adjustment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span></em>, <em class="sig-param"><span class="n">mean</span></em>, <em class="sig-param"><span class="n">var</span></em>, <em class="sig-param"><span class="n">bins_number</span><span class="o">=</span><span class="default_value">16</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.negbin_fit.check_negbin_adjustment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Considers a Negative Binomial distribution of given mean and var, and
 performs an adjustement test of this distrubution with regards to obs.</p>
 <p>Returns the result of a Cramer’s V adjustment test.</p>
@@ -2288,16 +2399,17 @@ fits above 0.9 should be considered good.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pygtftk.stats.intersect.negbin_fit.empirical_p_val">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.negbin_fit.</code><code class="sig-name descname">empirical_p_val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.negbin_fit.empirical_p_val" title="Permalink to this definition">¶</a></dt>
+<dt id="pygtftk.stats.negbin_fit.empirical_p_val">
+<code class="sig-prename descclassname">pygtftk.stats.negbin_fit.</code><code class="sig-name descname">empirical_p_val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.negbin_fit.empirical_p_val" title="Permalink to this definition">¶</a></dt>
 <dd><p>Quick wrapper : empirical two-sided p value.</p>
-<p>Returns the proportion of elements greater than x or smaller than x in the data, whichever proportion is smaller.
+<p>Returns the proportion of elements greater than x (or smaller than x) in
+the data (resp. whichever proportion is smaller).
 This can be used with any dataset, not just a negative-binomial-compliant one.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pygtftk.stats.intersect.negbin_fit.negbin_pval">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.negbin_fit.</code><code class="sig-name descname">negbin_pval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">mean</span></em>, <em class="sig-param"><span class="n">var</span></em>, <em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">1500</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'Unknown'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.negbin_fit.negbin_pval" title="Permalink to this definition">¶</a></dt>
+<dt id="pygtftk.stats.negbin_fit.negbin_pval">
+<code class="sig-prename descclassname">pygtftk.stats.negbin_fit.</code><code class="sig-name descname">negbin_pval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">mean</span></em>, <em class="sig-param"><span class="n">var</span></em>, <em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">1500</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'Unknown'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.negbin_fit.negbin_pval" title="Permalink to this definition">¶</a></dt>
 <dd><p>P-value for a negative binomial distribution of the given moments (mean, var).</p>
 <p>This is the two-sided p-value : it will return the minimum of the left-sided
 and right-sided p-value</p>
@@ -2314,22 +2426,23 @@ or equal to the variance, set the variance to mean + epsilon and send a warning<
 </ul>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.negbin_fit</span> <span class="kn">import</span> <span class="n">negbin_pval</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.negbin_fit</span> <span class="kn">import</span> <span class="n">negbin_pval</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mean</span> <span class="o">=</span> <span class="mi">18400</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">var</span> <span class="o">=</span> <span class="mi">630200</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="mi">65630</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pval</span> <span class="o">=</span> <span class="n">negbin_pval</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">pval</span> <span class="o">==</span> <span class="mf">1.1999432787236828e-307</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">math</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">pval</span><span class="p">,</span><span class="mf">1.1999432787236828e-307</span><span class="p">))</span>
 </pre></div>
 </div>
 </dd></dl>
 
 </div>
-<div class="section" id="module-pygtftk.stats.intersect.beta">
-<span id="the-pygtftk-stats-intersect-beta-module"></span><h2>The pygtftk.stats.intersect.beta module<a class="headerlink" href="#module-pygtftk.stats.intersect.beta" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pygtftk.stats.beta">
+<span id="the-pygtftk-stats-beta-module"></span><h2>The pygtftk.stats.beta module<a class="headerlink" href="#module-pygtftk.stats.beta" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="pygtftk.stats.intersect.beta.BetaCalculator">
-<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.beta.</code><code class="sig-name descname">BetaCalculator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">1500</span></em>, <em class="sig-param"><span class="n">use_log</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">itermax</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'Unknown'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator" title="Permalink to this definition">¶</a></dt>
+<dt id="pygtftk.stats.beta.BetaCalculator">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.beta.</code><code class="sig-name descname">BetaCalculator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">1500</span></em>, <em class="sig-param"><span class="n">use_log</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">itermax</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'Unknown'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.BetaCalculator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computing the beta distribution in Python using mpmath.</p>
 <p>Using routines from the GNU Scientific Library (<cite>beta_inc.c</cite>):
 &lt;Copyright (C) 2007 Brian Gough and Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman&gt;</p>
@@ -2344,7 +2457,7 @@ mpmath.quad(lambdat: t**(A-1)*(1-t)**(B-1), [0, p])</p>
 <dt class="field-odd">Example</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.beta</span> <span class="kn">import</span> <span class="n">BetaCalculator</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.beta</span> <span class="kn">import</span> <span class="n">BetaCalculator</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">mpmath</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mycalc</span> <span class="o">=</span> <span class="n">BetaCalculator</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">res_A</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mpmath</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
@@ -2356,28 +2469,28 @@ mpmath.quad(lambdat: t**(A-1)*(1-t)**(B-1), [0, p])</p>
 </pre></div>
 </div>
 <dl class="py method">
-<dt id="pygtftk.stats.intersect.beta.BetaCalculator.beta">
-<code class="sig-name descname">beta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.beta" title="Permalink to this definition">¶</a></dt>
+<dt id="pygtftk.stats.beta.BetaCalculator.beta">
+<code class="sig-name descname">beta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.BetaCalculator.beta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uses either mpmath’s gamma or log-gamma function to compute values of the beta function.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pygtftk.stats.intersect.beta.BetaCalculator.betainc">
-<code class="sig-name descname">betainc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.betainc" title="Permalink to this definition">¶</a></dt>
+<dt id="pygtftk.stats.beta.BetaCalculator.betainc">
+<code class="sig-name descname">betainc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.BetaCalculator.betainc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Non-regularized incomplete beta. See betaincreg().</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pygtftk.stats.intersect.beta.BetaCalculator.betaincreg">
-<code class="sig-name descname">betaincreg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.betaincreg" title="Permalink to this definition">¶</a></dt>
+<dt id="pygtftk.stats.beta.BetaCalculator.betaincreg">
+<code class="sig-name descname">betaincreg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.BetaCalculator.betaincreg" title="Permalink to this definition">¶</a></dt>
 <dd><p>betaincreg(a,b,x) evaluates the incomplete beta function (regularized).
 It requires a, b &gt; 0 and 0 &lt;= x &lt;= 1.</p>
 <p>Code translated from: GNU Scientific Library</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pygtftk.stats.intersect.beta.BetaCalculator.contfractbeta">
-<code class="sig-name descname">contfractbeta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.beta.BetaCalculator.contfractbeta" title="Permalink to this definition">¶</a></dt>
+<dt id="pygtftk.stats.beta.BetaCalculator.contfractbeta">
+<code class="sig-name descname">contfractbeta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.BetaCalculator.contfractbeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the continued fraction form of the incomplete Beta function.</p>
 <p>Code translated from: GNU Scientific Library</p>
 <p>Uses the modified Lentz’s method.</p>
@@ -2387,6 +2500,224 @@ The goal of the method is to calculate the successive ‘d’ terms,
 separately for odd and even.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-pygtftk.stats.intersect.modl.tree">
+<span id="the-pygtftk-stats-intersect-modl-tree-module"></span><h2>The pygtftk.stats.intersect.modl.tree module<a class="headerlink" href="#module-pygtftk.stats.intersect.modl.tree" title="Permalink to this headline">¶</a></h2>
+<p>A tree (or more accurately, graph) based representation of combinations of elements.</p>
+<p>Combinations are represented as tuples. For example, if the possible elements are {A,B,C,D}, the combination A+C is represented as (1,0,1,0).</p>
+<p>Nodes will be assigned under the following principle : each node X that contains all flags of a node Y.
+For example, (1,0,0) is a parent of (1,0,1) but not the other way around.</p>
+<p>A Library is a set set of nodes starting with a root of (0,0,0,…)</p>
+<p>Author : Quentin Ferré &lt;<a class="reference external" href="mailto:quentin&#46;q&#46;ferre&#37;&#52;&#48;gmail&#46;com">quentin<span>&#46;</span>q<span>&#46;</span>ferre<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</p>
+<dl class="py class">
+<dt id="pygtftk.stats.intersect.modl.tree.Library">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.modl.tree.</code><code class="sig-name descname">Library</code><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.Library" title="Permalink to this definition">¶</a></dt>
+<dd><p>A tree (or more accurately, graph) based representation of combinations of elements.</p>
+<p>Combinations are represented as tuples. For example, if the possible elements are {A,B,C,D}, the combination A+C is represented as (1,0,1,0).</p>
+<p>Nodes will be assigned under the following principle : each node X that contains all flags of a node Y.
+For example, (1,0,0) is a parent of (1,0,1) but not the other way around.</p>
+<p>A Library is a set set of nodes starting with a root of (0,0,0,…)</p>
+<p>Example of use :</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.modl.tree</span> <span class="kn">import</span> <span class="n">Library</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">words</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">build_nodes_for_words</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">assign_nodes</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="pygtftk.stats.intersect.modl.tree.Library.build_nodes_for_words">
+<code class="sig-name descname">build_nodes_for_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">words</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.Library.build_nodes_for_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds unassigned nodes for all words.</p>
+<p><cite>words</cite> must be a list of tuples like [(1,0,0),(1,1,0)]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pygtftk.stats.intersect.modl.tree.Library.build_nodes_for_words_from_ologram_result_df">
+<code class="sig-name descname">build_nodes_for_words_from_ologram_result_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">result_df</span></em>, <em class="sig-param"><span class="n">query_name</span><span class="o">=</span><span class="default_value">'Query'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.Library.build_nodes_for_words_from_ologram_result_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used for graphical display later on</p>
+<p>The nodes should also have a pval and fc and s that can be given and that we can query later on
+So the build_nodes_for_words function can also take a pandas dataframe that is an OLOGRAM output !!</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pygtftk.stats.intersect.modl.tree.Node">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.modl.tree.</code><code class="sig-name descname">Node</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">word</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a node of the tree. Each node is a word. 
+A word must be a tuple such as (1,1,0,0) meaning A+B if the possibilities are {A,B,C,D}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.modl.tree.apply_recursively_to_all_nodes">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.tree.</code><code class="sig-name descname">apply_recursively_to_all_nodes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">node</span></em>, <em class="sig-param"><span class="n">function</span></em>, <em class="sig-param"><span class="n">global_results</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.apply_recursively_to_all_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>General utility function to recursively apply a function to all nodes of a tree.
+Also pass a global_results dict to be added to.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.modl.tree.get_all_candidates_except">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.tree.</code><code class="sig-name descname">get_all_candidates_except</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">library</span></em>, <em class="sig-param"><span class="n">exclude</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.get_all_candidates_except" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the words of all nodes, except those words that are in the exclusion list</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.modl.tree.output_visualize">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.tree.</code><code class="sig-name descname">output_visualize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tree</span></em>, <em class="sig-param"><span class="n">output_path</span></em>, <em class="sig-param"><span class="n">features_names</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.output_visualize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output a visualisation a a given Library (the <cite>tree</cite> argument)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tree</strong> – : The library to write</p></li>
+<li><p><strong>output_path</strong> – Path to write to</p></li>
+<li><p><strong>features_names</strong> – Conversion key giving the name of each feature in the vector. For example if features_names = [‘A’,’B’,’C’], (0,1,1) will be translated as B+C</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pygtftk.stats.intersect.modl.dict_learning">
+<span id="the-pygtftk-stats-intersect-modl-dict-learning-module"></span><h2>The pygtftk.stats.intersect.modl.dict_learning module<a class="headerlink" href="#module-pygtftk.stats.intersect.modl.dict_learning" title="Permalink to this headline">¶</a></h2>
+<p>This module contains the MODL algorithm, an itemset mining algorithm that broadly consists of two steps.</p>
+<p>Considering an input matrix with transactions/regions.intersections in lines and
+elements/items/sets in columns, the algorithm will : (I) learn (MiniBatchDictionaryLearning)
+several factorisations with different sparsity constraints to build a library of
+candidate words (eg. (1,1,0,0,1)) and (II) select the best words to rebuild the 
+original matrix using a greedy algorithm, by trying to rebuild the original 
+matrix with a subset of selected words, adding the word that best improves the 
+rebuilding to said subset each time.</p>
+<p>Dictionary learning is an optimization problem solved by alternatively updating the 
+sparse code, as a solution to multiple Lasso problems, considering the dictionary fixed,
+and then updating the dictionary to best fit the sparse code.</p>
+<p>In OLOGRAM, we use this on the matrix of true overlap flags to find usual common overlaps.</p>
+<p>This is mostly useful if there are many files to reduce the number of displayed combinations,
+and to counteract the effect of noise on the data. Unlike classical association
+rules mining algorithms, this focuses on mining complexes and correlation groups (item sets).</p>
+<p>Author : Quentin FERRE &lt;<a class="reference external" href="mailto:quentin&#46;q&#46;ferre&#37;&#52;&#48;gmail&#46;com">quentin<span>&#46;</span>q<span>&#46;</span>ferre<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</p>
+<p>This code is available under the GNU GPL license.</p>
+<dl class="py class">
+<dt id="pygtftk.stats.intersect.modl.dict_learning.Modl">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.modl.dict_learning.</code><code class="sig-name descname">Modl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flags_matrix</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">step_1_factor_allowance</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">error_function</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.Modl" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class encapsulates the MODL approach :</p>
+<p>Takes as input a matrix of flags, with one flag per intersection,
+and returns the list of interesting combis.</p>
+<p>For more details, please see the module description of pygtftk/stats/intersect/modl/dict_learning.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flags_matrix</strong> – Matrix of overlaps</p></li>
+<li><p><strong>multiple_overlap_target_combi_size</strong> – Candidates longer than this will be discarded</p></li>
+<li><p><strong>multiple_overlap_max_number_of_combinations</strong> – Final desired number of combinations</p></li>
+<li><p><strong>nb_threads</strong> – Number of threads</p></li>
+<li><p><strong>step_1_factor_allowance</strong> – In step 1 of building the candidates, how many words are allowed in the Dictionary Learning as a proportion of multiple_overlap_max_number_of_combinations</p></li>
+<li><p><strong>error_function</strong> – error function used in step 2. Default to manhattan error.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Passing a custom error function, it must have the signature  error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.modl.dict_learning</span> <span class="kn">import</span> <span class="n">Modl</span><span class="p">,</span> <span class="n">test_data_for_modl</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flags_matrix</span> <span class="o">=</span> <span class="n">test_data_for_modl</span><span class="p">(</span><span class="n">nflags</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">number_of_sets</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">cor_groups</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">combi_miner</span> <span class="o">=</span> <span class="n">Modl</span><span class="p">(</span><span class="n">flags_matrix</span><span class="p">,</span> <span class="n">multiple_overlap_max_number_of_combinations</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interesting_combis</span> <span class="o">=</span> <span class="n">combi_miner</span><span class="o">.</span><span class="n">find_interesting_combinations</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">interesting_combis</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)])</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="pygtftk.stats.intersect.modl.dict_learning.Modl.find_interesting_combinations">
+<code class="sig-name descname">find_interesting_combinations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.Modl.find_interesting_combinations" title="Permalink to this definition">¶</a></dt>
+<dd><p>MAIN FUNCTION. Will call the others.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pygtftk.stats.intersect.modl.dict_learning.Modl.generate_candidate_words">
+<code class="sig-name descname">generate_candidate_words</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.Modl.generate_candidate_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the library by running dictionary-learning based matrix factorizations 
+on the data matrix</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pygtftk.stats.intersect.modl.dict_learning.Modl.select_best_words_from_library">
+<code class="sig-name descname">select_best_words_from_library</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">error_function</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.Modl.select_best_words_from_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is step 2. Takes the library of candidates produced at step 1
+and will get the best N words among it that best rebuild the original matrix.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.modl.dict_learning.squish_matrix">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.dict_learning.</code><code class="sig-name descname">squish_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">abundance_threshold</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">shuffle</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.squish_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>To reduce redundancy in the matrix lines, take all unique rows of X and 
+build a squished matrix where each line now has the square root of its 
+original abundance divided by sqrt(abundance of most rate), but not lower 
+than abundance_threshold, 1/10000 by default. We use the square root of 
+those abudances instead to dimnish the emphasis on the most frequent combinations.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span><span class="o">*</span><span class="mi">1000</span> <span class="o">+</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_squished</span> <span class="o">=</span> <span class="n">squish_matrix</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_equal</span><span class="p">(</span><span class="n">X_squished</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span><span class="o">*</span><span class="mi">1</span> <span class="o">+</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span><span class="o">*</span><span class="mi">32</span><span class="p">))</span> <span class="c1"># Note that the rows have been sorted by abundance   </span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.modl.dict_learning.test_data_for_modl">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.dict_learning.</code><code class="sig-name descname">test_data_for_modl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nflags</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">number_of_sets</span><span class="o">=</span><span class="default_value">6</span></em>, <em class="sig-param"><span class="n">noise</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">cor_groups</span><span class="o">=</span><span class="default_value">[0, 1, 0, 1, 2, 3, 4, 5]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.test_data_for_modl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate testing data for the dictionary learning module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pygtftk.stats.intersect.modl.subroutines">
+<span id="the-pygtftk-stats-intersect-modl-subroutines-module"></span><h2>The pygtftk.stats.intersect.modl.subroutines module<a class="headerlink" href="#module-pygtftk.stats.intersect.modl.subroutines" title="Permalink to this headline">¶</a></h2>
+<p>Pure subroutines of the MODL algorithm.</p>
+<p>Author : Quentin Ferré &lt;<a class="reference external" href="mailto:quentin&#46;q&#46;ferre&#37;&#52;&#48;gmail&#46;com">quentin<span>&#46;</span>q<span>&#46;</span>ferre<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</p>
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.modl.subroutines.build_best_dict_from_library">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.subroutines.</code><code class="sig-name descname">build_best_dict_from_library</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">library</span></em>, <em class="sig-param"><span class="n">queried_words_nb</span></em>, <em class="sig-param"><span class="n">error_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">transform_alpha</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.subroutines.build_best_dict_from_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a data matrix and a library, will select the best n = queried_words_nb words
+with a greedy algorithm from the library to rebuild the data.</p>
+<p><cite>data</cite> is a matrix with one transaction per row and one element per column, as usual</p>
+<p>The greeedy algorithm works because the problem in this particular instance
+is submodular. In broad strokes, it is assumed that the gain in term of reconstruction
+with the Sparse Coder of adding the word X to a set S is no higher than adding X to a
+set T that contains S. Also, more words cannot make the sparse coder do a worse job so
+the function is monotonous.</p>
+<p>Instead of the reconstruction error, you may pass a different callable of the form
+error_function(data, rebuilt_data, encoded) that returns an error value so there
+can be a supervision but the submodularity might no longer hold.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.modl.subroutines.generate_candidate_words">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.subroutines.</code><code class="sig-name descname">generate_candidate_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">n_words</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.subroutines.generate_candidate_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a data matrix, will generate a library of candidate words by trying many
+different Dictionary Learnings (different alphas only for now)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.modl.subroutines.learn_dictionary_and_encode">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.subroutines.</code><code class="sig-name descname">learn_dictionary_and_encode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">n_atoms</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">n_iter</span><span class="o">=</span><span class="default_value">200</span></em>, <em class="sig-param"><span class="n">random_seed</span><span class="o">=</span><span class="default_value">42</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">fit_algorithm</span><span class="o">=</span><span class="default_value">'cd'</span></em>, <em class="sig-param"><span class="n">transform_algorithm</span><span class="o">=</span><span class="default_value">'lasso_cd'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.subroutines.learn_dictionary_and_encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will learn a dictionary for the data (row-wise) and encode it, with the specified parameters.
+Returns the dictionary, components as a dataframe, and encoded data.</p>
+<p>By default, allows 20 words with alpha of 0.5.</p>
+<p>More info at : <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.MiniBatchDictionaryLearning.html">https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.MiniBatchDictionaryLearning.html</a></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.modl.dict_learning</span> <span class="kn">import</span> <span class="n">test_data_for_modl</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.modl.subroutines</span> <span class="kn">import</span> <span class="n">learn_dictionary_and_encode</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flags_matrix</span> <span class="o">=</span> <span class="n">test_data_for_modl</span><span class="p">(</span><span class="n">nflags</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">number_of_sets</span> <span class="o">=</span> <span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">U_df</span><span class="p">,</span> <span class="n">V_df</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">learn_dictionary_and_encode</span><span class="p">(</span><span class="n">flags_matrix</span><span class="p">,</span> <span class="n">n_atoms</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stop_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -3079,6 +3410,7 @@ are found at the beginning or end of the string, they are deleted.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -3092,8 +3424,12 @@ are found at the beginning or end of the string, they are deleted.</p>
 <li><a class="reference internal" href="#module-pygtftk.tab_interface">The TAB class</a></li>
 <li><a class="reference internal" href="#module-pygtftk.Line">The Line module</a></li>
 <li><a class="reference internal" href="#module-pygtftk.stats.intersect.overlap_stats_shuffling">The pygtftk.stats.intersect.overlap_stats_shuffling module</a></li>
-<li><a class="reference internal" href="#module-pygtftk.stats.intersect.negbin_fit">The pygtftk.stats.intersect.negbin_fit module</a></li>
-<li><a class="reference internal" href="#module-pygtftk.stats.intersect.beta">The pygtftk.stats.intersect.beta module</a></li>
+<li><a class="reference internal" href="#module-pygtftk.stats.intersect.overlap_stats_compute">The pygtftk.stats.intersect.overlap_stats_compute module</a></li>
+<li><a class="reference internal" href="#module-pygtftk.stats.negbin_fit">The pygtftk.stats.negbin_fit module</a></li>
+<li><a class="reference internal" href="#module-pygtftk.stats.beta">The pygtftk.stats.beta module</a></li>
+<li><a class="reference internal" href="#module-pygtftk.stats.intersect.modl.tree">The pygtftk.stats.intersect.modl.tree module</a></li>
+<li><a class="reference internal" href="#module-pygtftk.stats.intersect.modl.dict_learning">The pygtftk.stats.intersect.modl.dict_learning module</a></li>
+<li><a class="reference internal" href="#module-pygtftk.stats.intersect.modl.subroutines">The pygtftk.stats.intersect.modl.subroutines module</a></li>
 <li><a class="reference internal" href="#module-pygtftk.utils">The gtftk.utils module</a></li>
 </ul>
 </li>
@@ -3141,13 +3477,14 @@ are found at the beginning or end of the string, they are deleted.</p>
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Help on Python package (pygtftk)</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on May 27, 2020.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+      Last updated on Sep 10, 2020.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
 </html>

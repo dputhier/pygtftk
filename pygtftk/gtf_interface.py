@@ -10,16 +10,16 @@ When using gtfk a GTF object methods may return:
 """
 
 import gc
+import glob
 import io
+import os
 import re
 import sys
+import textwrap
 from collections import OrderedDict
 from collections import defaultdict
 
-import glob
 import numpy as np
-import os
-import textwrap
 from cffi import FFI
 from nose.plugins.skip import SkipTest
 from pybedtools.bedtool import BedTool
@@ -737,8 +737,9 @@ class GTF(object):
                                   no_na=False,
                                   hide_undef=False).write(tmp_file,
                                                           sep=sep)
+
                 self = self.del_attr("*", new_key, force=True)
-                self = self.add_attr_column(tmp_file, new_key)
+                self = self.add_attr_column(tmp_file.name, new_key)
                 return self
 
             else:

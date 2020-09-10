@@ -3,7 +3,8 @@
 
 <html lang="en">
   <head>
-    <meta charset="utf-8" /><script type="text/javascript">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -15,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘annotation’ &#8212; gtftk 1.1.4 documentation</title>
+    <title>Commands from section ‘annotation’ &#8212; gtftk 1.2.0 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +45,8 @@
         <li class="right" >
           <a href="conversion.html" title="Commands from section ‘conversion’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Commands from section ‘annotation’</a></li> 
       </ul>
     </div>  
 
@@ -57,12 +59,15 @@
 <h1>Commands from section ‘annotation’<a class="headerlink" href="#commands-from-section-annotation" title="Permalink to this headline">¶</a></h1>
 <p>In the example of this section we will need the following example files:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
+ |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
+ |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d hg38_chr1 -f &#39;*&#39;
+ |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <hr class="docutils" />
@@ -71,6 +76,7 @@
 <p><strong>Description:</strong> Find the n closest genes for each transcript.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk closest_genes  -i simple.gtf -f
+ |-- 10:41-INFO : Checking configuration file.
 genes	closest_genes	distances
 G0001	G0007	18
 G0002	G0010	4
@@ -86,6 +92,7 @@ G0010	G0002	4
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk closest_genes -h
+ |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk closest_genes [-i GTF] [-o GTF/TXT] [-r {tss,tts,gene}] [-nb nb_neighbors] [-t {tss,tts,gene}] [-s] [-S] [-f] [-H] [-k] [-id {gene_id,gene_name}] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -132,6 +139,9 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Find transcripts whose body/TSS/TTS region extended in 5’ and 3’ (-u/-d) overlaps with any transcript from another gene. Strandness is not considered by default. Used –invert-match to find those that do not overlap. If –annotate-gtf is used, all lines of the input GTF file will be printed and a new key containing the list of overlapping transcripts will be added to the transcript features/lines (key will be ‘overlapping_*’ with * one of body/TSS/TTS). The –annotate-gtf and –invert-match arguments are mutually exclusive.</p>
 <p><strong>Example:</strong> Find transcript whose promoter overlap transcript from other genes.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk overlapping -i simple.gtf -c simple.chromInfo -t promoter -u 10 -d 10 -a    | gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,overlap_promoter_u0.01k_d0.01k | head
+ |-- 10:41-INFO : Checking configuration file.
+ |-- 10:41-INFO : Checking configuration file.
+ |-- 10:41-INFO : Checking configuration file.
 transcript_id	overlap_promoter_u0.01k_d0.01k
 G0001T002	G0007T001,G0007T002
 G0001T001	G0007T001,G0007T002
@@ -146,6 +156,7 @@ G0006T002	G0005T001
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk overlapping -h
+ |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk overlapping [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-t {transcript,promoter,tts}] [-s] [-S] [-n] [-a] [-k key_name] [-b] [-@] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -205,6 +216,9 @@ is the closest relative to the considered promoter. The tss to tss distance is
 also provided as an additional key (dist_to_divergent).</p>
 <p><strong>Example:</strong> Flag divergent transcripts in the example dataset. Select them and produce a tabulated output.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk divergent -i simple.gtf -c simple.chromInfo -u 10 -d 10| gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,divergent,dist_to_divergent | head  -n 7
+ |-- 10:41-INFO : Checking configuration file.
+ |-- 10:41-INFO : Checking configuration file.
+ |-- 10:41-INFO : Checking configuration file.
 transcript_id	divergent	dist_to_divergent
 G0003T001	G0004T002	4
 G0004T002	G0003T001	4
@@ -213,6 +227,7 @@ G0004T001	G0003T001	4
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk divergent -h
+ |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk divergent [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-n] [-S] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -267,6 +282,9 @@ transcript whose tts is the closest relative to the considered tts.
 The tts to tts distance is also provided as an additional key (dist_to_convergent).</p>
 <p><strong>Example:</strong> Flag divergent transcripts in the example dataset. Select them and produce a tabulated output.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk convergent -i simple.gtf -c simple.chromInfo -u 25 -d 25| gtftk select_by_key -k feature -v transcript | gtftk tabulate -k transcript_id,convergent,dist_to_convergent| head -n 4
+ |-- 10:41-INFO : Checking configuration file.
+ |-- 10:41-INFO : Checking configuration file.
+ |-- 10:41-INFO : Checking configuration file.
 transcript_id	convergent	dist_to_convergent
 G0002T001	G0008T001	21
 G0008T001	G0002T001	21
@@ -275,6 +293,7 @@ G0010T001	G0008T001	24
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk convergent -h
+ |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk convergent [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -317,6 +336,9 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Add a new key to transcript features containing a comma-separated list of exon sizes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk exon_sizes -i simple.gtf | gtftk select_by_key -t | gtftk tabulate -k transcript_id,exon_sizes
+ |-- 10:41-INFO : Checking configuration file.
+ |-- 10:41-INFO : Checking configuration file.
+ |-- 10:41-INFO : Checking configuration file.
 transcript_id	exon_sizes
 G0001T002	14
 G0001T001	14
@@ -337,6 +359,7 @@ G0010T001	11
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk exon_sizes -h
+ |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk exon_sizes [-i GTF] [-o TXT] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -367,6 +390,9 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Add a new key to transcript features containing a comma-separated list of intron sizes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intron_sizes -i simple.gtf | gtftk select_by_key -t | gtftk tabulate -k transcript_id,intron_sizes
+ |-- 10:41-INFO : Checking configuration file.
+ |-- 10:41-INFO : Checking configuration file.
+ |-- 10:41-INFO : Checking configuration file.
 transcript_id	intron_sizes
 G0001T002	0
 G0001T001	0
@@ -387,6 +413,7 @@ G0010T001	0
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intron_sizes -h
+ |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk intron_sizes [-i GTF] [-o GTF] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -414,6 +441,7 @@ Command-wise optional arguments:
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -474,13 +502,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="conversion.html" title="Commands from section ‘conversion’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Commands from section ‘annotation’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on May 27, 2020.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+      Last updated on Sep 10, 2020.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
 </html>

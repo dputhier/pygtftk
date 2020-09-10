@@ -45,7 +45,6 @@ del_attr
     :shell:
 
 .. note:: In version 1.0.9 gene_id can not be deleted. This will be fixed in next version.
-    :shell:
 
 ------------------------------------------------------------------------------------------------------------------
 
