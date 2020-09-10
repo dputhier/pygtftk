@@ -165,10 +165,8 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
 
 platform.system()
 
-
 extra_comp_cython = ['-W', '-O3']
 extra_link_cython = []
-
 
 # Use OpenMP only on Linux, as clang by default does not support it on OSX
 # TODO Make it a parameter
@@ -178,13 +176,18 @@ if platform.system() == 'Linux':
     extra_comp_cython += ['-fopenmp']
     extra_link_cython += ['-fopenmp']
 
-
-
 # Avoid Cython warning about NumPy API deprecation upon installation
 if platform.system() == 'Darwin':
     extra_comp_cython += ['-Wno-#warnings']
 if platform.system() == 'Linux':
     extra_comp_cython += ['-Wno-cpp']
+
+# Avoid error "fatal error: 'complex' file not found" under OSX (Python 3.6)
+
+if platform.system() == 'Darwin':
+    if platform.python_version_tuple()[0:2] == ('3', '6'):
+        extra_comp_cython += ["-stdlib=libc++"]
+        extra_link_cython += ["-stdlib=libc++"]
 
 # NOTE : the separation in several different modules was needed to make it
 # work on MacOSX for some unfathomable reason.
@@ -201,13 +204,15 @@ cython_ologram_2 = Extension(name='pygtftk.stats.intersect.overlap.overlap_regio
 
 cython_ologram_3 = Extension(name='pygtftk.stats.intersect.read_bed.read_bed_as_list',
                              sources=["pygtftk/stats/intersect/read_bed/read_bed_as_list.pyx",
-                                      "pygtftk/stats/intersect/read_bed/exclude.cpp"], # Include custom Cpp code
+                                      "pygtftk/stats/intersect/read_bed/exclude.cpp"],  # Include custom Cpp code
                              extra_compile_args=extra_comp_cython, extra_link_args=extra_link_cython,
                              include_dirs=[np.get_include()],
                              language='c++')
 
 cython_ologram_4 = Extension(name='pygtftk.stats.multiprocessing.multiproc',
-                             sources=["pygtftk/stats/multiprocessing/multiproc.pyx", "pygtftk/stats/multiprocessing/multiproc_structs.pxd", "pygtftk/stats/multiprocessing/multiproc.pxd"],
+                             sources=["pygtftk/stats/multiprocessing/multiproc.pyx",
+                                      "pygtftk/stats/multiprocessing/multiproc_structs.pxd",
+                                      "pygtftk/stats/multiprocessing/multiproc.pxd"],
                              extra_compile_args=extra_comp_cython, extra_link_args=extra_link_cython,
                              language='c')
 
@@ -362,12 +367,8 @@ setup(name="pygtftk",
                         'scikit-learn >=0.21.2',
                         'graphviz',
                         'seaborn'
-    ],
+                        ],
       ext_modules=[lib_pygtftk] + [cython_ologram_1, cython_ologram_2, cython_ologram_3, cython_ologram_4])
-
-
-
-
 
 # ----------------------------------------------------------------------
 # Update gtftk config directory
