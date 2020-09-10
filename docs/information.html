@@ -3,7 +3,8 @@
 
 <html lang="en">
   <head>
-    <meta charset="utf-8" /><script type="text/javascript">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -15,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘information’ &#8212; gtftk 1.1.4 documentation</title>
+    <title>Commands from section ‘information’ &#8212; gtftk 1.2.0 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,7 +45,8 @@
         <li class="right" >
           <a href="gtftk_args.html" title="Help on gtftk Unix commands"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Commands from section ‘information’</a></li> 
       </ul>
     </div>  
 
@@ -57,9 +59,11 @@
 <h1>Commands from section ‘information’<a class="headerlink" href="#commands-from-section-information" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
+ |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
+ |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="section" id="apropos">
@@ -67,14 +71,16 @@
 <p><strong>Description:</strong> Search in all command description files those related to a user-defined keyword.</p>
 <p><strong>Example:</strong> Search all commands related to promoters.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk apropos -k promoter
- |-- 12:27-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
-	- ologram.
+ |-- 10:43-INFO : Checking configuration file.
+ |-- 10:43-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
 	- coverage.
+	- ologram.
 	- divergent.
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk apropos -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk apropos -k keyword [-n] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -112,6 +118,7 @@ Command-wise optional arguments:
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk retrieve -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk retrieve [-s SPECIES] [-o GTF.GZ] [-e {vertebrate,protists,fungi,plants,metazoa}] [-r RELEASE] [-l] [-hs] [-c] [-d] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -148,17 +155,20 @@ Command-wise optional arguments:
 <p>We can see from the example below that this gtf file <strong>follows the ensembl format</strong> and contains the <strong>transcript and gene features</strong> (column 3).</p>
 <p><strong>Example:</strong> The very basic (and artificial) example.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example | head -2
+ |-- 10:43-INFO : Checking configuration file.
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;;
 </pre></div>
 </div>
 <p>let’s get all files from the <em>simple</em> dataset.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
+ |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -h
-  Usage: gtftk get_example [-d {simple,mini_real,mini_real_noov_rnd_tx,tiny_real,hg38_chr1,simple_02,simple_03,simple_04,simple_05,simple_06,mini_real_10M,control_list,ologram_1,ologram_1,mini_real_ens}] [-f {*,gtf,bed,bw,bam,join,join_mat,chromInfo,tsv,fa,fa.idx,genes,geneList,2.bw,genome}] [-o OUTPUT] [-l] [-a] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
+ |-- 10:43-INFO : Checking configuration file.
+  Usage: gtftk get_example [-d {simple,mini_real,mini_real_noov_rnd_tx,tiny_real,hg38_chr1,simple_02,simple_03,simple_04,simple_05,simple_06,simple_07,mini_real_10M,control_list,ologram_1,ologram_2,mini_real_ens}] [-f {*,gtf,bed,bw,bam,join,join_mat,chromInfo,tsv,fa,fa.idx,genes,geneList,2.bw,genome}] [-o OUTPUT] [-l] [-a] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
      *  Print example files including GTF.
@@ -194,6 +204,9 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Add exon number transcript-wise (based on 5’ to 3’ orientation).</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -i simple.gtf -k exon_number | gtftk select_by_key -k feature -v exon | gtftk tabulate -k chrom,start,end,exon_number,transcript_id | head -n 20
+ |-- 10:43-INFO : Checking configuration file.
+ |-- 10:43-INFO : Checking configuration file.
+ |-- 10:43-INFO : Checking configuration file.
 seqid	start	end	exon_number	transcript_id
 chr1	125	138	1	G0001T002
 chr1	125	138	1	G0001T001
@@ -218,6 +231,7 @@ chr1	107	116	1	G0007T001
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk add_exon_nb [-i GTF] [-o GTF] [-k exon_numbering_key] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -248,6 +262,7 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Count the number of features (transcripts, genes, exons, introns).</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk count -i simple.gtf -t example_gtf
+ |-- 10:43-INFO : Checking configuration file.
 gene	10	example_gtf
 transcript	15	example_gtf
 exon	25	example_gtf
@@ -256,6 +271,7 @@ CDS	20	example_gtf
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk count -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk count [-i GTF] [-o TXT] [-d header] [-t TEXT] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -287,12 +303,14 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Count the number of values for a set of keys.</p>
 <p><strong>Example:</strong> Count the number of non-redondant entries for chromosomes and transcript_id.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk count_key_values -i simple.gtf -k chrom,transcript_id -u
+ |-- 10:43-INFO : Checking configuration file.
 chrom	1
 transcript_id	15
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk count_key_values -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk count_key_values [-i GTF] [-o TXT] [-k keys] [-t TEXT] [-u] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -330,6 +348,7 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Get the list of attributes from a GTF file.</p>
 <p><strong>Example:</strong> Get the list of attributes in the “simple” dataset.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_attr_list -i simple.gtf
+ |-- 10:43-INFO : Checking configuration file.
 gene_id
 transcript_id
 exon_id
@@ -338,6 +357,7 @@ ccds_id
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_attr_list -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk get_attr_list [-i GTF] [-o TXT] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -368,6 +388,7 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Get the list of values observed for an attributes.</p>
 <p><strong>Example:</strong> Get the number of time each gene_id is used.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_attr_value_list -i simple.gtf -k gene_id -c -s &#39;;&#39;
+ |-- 10:43-INFO : Checking configuration file.
 G0001;7
 G0002;4
 G0003;5
@@ -382,6 +403,7 @@ G0010;4
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_attr_value_list -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk get_attr_value_list [-i GTF] [-o TXT] -k key_name [-s separator] [-c] [-p] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -415,6 +437,7 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Get the list of features enclosed in the GTF.</p>
 <p><strong>Example:</strong> Get the list of features enclosed in the GTF.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_feature_list -i simple.gtf
+ |-- 10:43-INFO : Checking configuration file.
 gene
 transcript
 exon
@@ -423,6 +446,7 @@ CDS
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_feature_list -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk get_feature_list [-i GTF] [-o TXT] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -453,6 +477,7 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Count the number of exons and add it as a novel key/value. Output may also be in text format if requested.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk nb_exons -i simple.gtf | head -n 5
+ |-- 10:43-INFO : Checking configuration file.
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;; nb_exons &quot;1&quot;;
 chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;; exon_id &quot;G0001T002E001&quot;;
@@ -462,6 +487,7 @@ chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &qu
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk nb_exons -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk nb_exons [-i GTF] [-o TXT/GTF] [-f] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -494,6 +520,8 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Count the number of transcript per gene.</p>
 <p><strong>Example:</strong> Count the number of transcript per gene.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk nb_transcripts -i simple.gtf | gtftk select_by_key -g
+ |-- 10:43-INFO : Checking configuration file.
+ |-- 10:43-INFO : Checking configuration file.
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;; nb_tx &quot;2&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;; nb_tx &quot;1&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; nb_tx &quot;1&quot;;
@@ -508,6 +536,7 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;; nb_tx &quot;1&quot;;
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk nb_transcripts -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk nb_transcripts [-i GTF] [-o GTF/TXT] [-f] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -539,11 +568,13 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Return the chromosome list.</p>
 <p><strong>Example:</strong> Return the chromosome list.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk seqid_list -i simple.gtf
+ |-- 10:43-INFO : Checking configuration file.
 chr1
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk seqid_list -h
+ |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk seqid_list [-i GTF] [-o TXT] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -574,6 +605,8 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Compute the distance between TSSs of pairs of gene transcripts. The tss_num_1 and tss_num_2 columns contains the TSSs number (for transcript_id_1 and transcript_id_2 respectively). Numering starts from 1 (most 5’ TSS  for a gene) to the number of different TSS coordinates. Two or more transcripts will have the same tss_num if they share a TSS.</p>
 <p><strong>Example:</strong> An example on the mini_real dataset.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_list -i mini_real.gtf.gz -t gene -n 1 -s 2 | gtftk tss_dist
+ |-- 10:43-INFO : Checking configuration file.
+ |-- 10:43-INFO : Checking configuration file.
 gene_id	transcript_id_1	transcript_id_2	dist	tss_num_1	tss_num_2
 ENSG00000107829	ENST00000457105	ENST00000331272	36	1	2
 ENSG00000107829	ENST00000331272	ENST00000470093	68360	2	4
@@ -589,6 +622,7 @@ ENSG00000107829	ENST00000489578	ENST00000482428	63561	3	5
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk tss_dist -h
+ |-- 10:44-INFO : Checking configuration file.
   Usage: gtftk tss_dist [-i GTF] [-o TXT] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -624,6 +658,8 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Get the size and limits (start/end) of features enclosed in the GTF. If bed format is requested returns the limits in bed format and the size as a score. Otherwise output GTF file with ‘feat_size’ as a new key and size as value</p>
 <p><strong>Example:</strong> Add trancript size (mature RNA) to the gtf.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk feature_size -i simple.gtf -t mature_rna | gtftk select_by_key -k feature -v transcript | head -n 5
+ |-- 10:44-INFO : Checking configuration file.
+ |-- 10:44-INFO : Checking configuration file.
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;; feat_size &quot;14&quot;;
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T001&quot;; feat_size &quot;14&quot;;
 chr1	gtftk	transcript	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;; feat_size &quot;10&quot;;
@@ -633,6 +669,7 @@ chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk feature_size -h
+ |-- 10:44-INFO : Checking configuration file.
   Usage: gtftk feature_size [-i GTF] [-o GTF/BED] [-t ft_type] [-n NAME] [-k KEY_NAME] [-s SEP] [-b] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -667,6 +704,7 @@ Command-wise optional arguments:
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -735,13 +773,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="gtftk_args.html" title="Help on gtftk Unix commands"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Commands from section ‘information’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on May 27, 2020.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+      Last updated on Sep 10, 2020.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
 </html>

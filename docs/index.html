@@ -3,7 +3,8 @@
 
 <html lang="en">
   <head>
-    <meta charset="utf-8" /><meta content="Python GTF toolkit (pygtftk) package" name="description" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta content="Python GTF toolkit (pygtftk) package" name="description" />
 <meta content="bioinformatics gene gtf bed bigwig genomics transcript exon cds genomic tss tts splicing dna-sequences intron ngs chip-seq rna-seq python" name="keywords" />
 <script type="text/javascript">
 
@@ -17,7 +18,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Welcome to pygtftk documentation page &#8212; gtftk 1.1.4 documentation</title>
+    <title>Welcome to pygtftk documentation page &#8212; gtftk 1.2.0 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -42,7 +43,8 @@
         <li class="right" >
           <a href="about.html" title="Warning about supported GTF file formats"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">gtftk 1.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to pygtftk documentation page</a></li> 
       </ul>
     </div>  
 
@@ -133,7 +135,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ologram.html">Commands from section ‘ologram’</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ologram.html#ologram">ologram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ologram.html#merge-ologram-stats">merge_ologram_stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ologram.html#ologram-multiple-overlaps">ologram (multiple overlaps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ologram.html#ologram-merge-stats">ologram_merge_stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ologram.html#ologram-modl-treeify">ologram_modl_treeify</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ologram.html#ologram-merge-runs">ologram_merge_runs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="coordinates.html">Commands from section ‘coordinates’</a><ul>
@@ -167,8 +172,12 @@
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.tab_interface">The TAB class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.Line">The Line module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.stats.intersect.overlap_stats_shuffling">The pygtftk.stats.intersect.overlap_stats_shuffling module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.stats.intersect.negbin_fit">The pygtftk.stats.intersect.negbin_fit module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.stats.intersect.beta">The pygtftk.stats.intersect.beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.stats.intersect.overlap_stats_compute">The pygtftk.stats.intersect.overlap_stats_compute module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.stats.negbin_fit">The pygtftk.stats.negbin_fit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.stats.beta">The pygtftk.stats.beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.stats.intersect.modl.tree">The pygtftk.stats.intersect.modl.tree module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.stats.intersect.modl.dict_learning">The pygtftk.stats.intersect.modl.dict_learning module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.stats.intersect.modl.subroutines">The pygtftk.stats.intersect.modl.subroutines module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-pygtftk.utils">The gtftk.utils module</a></li>
 </ul>
 </li>
@@ -179,6 +188,7 @@
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -226,13 +236,14 @@
         <li class="right" >
           <a href="about.html" title="Warning about supported GTF file formats"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">gtftk 1.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to pygtftk documentation page</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on May 27, 2020.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+      Last updated on Sep 10, 2020.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
 </html>
