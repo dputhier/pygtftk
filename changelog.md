@@ -2,7 +2,6 @@
 
 ## v1.1.5
 
-
 ### Bug Fixes
 
 *   Fix #128 (merge_attr error when using same key as source and destination).
@@ -18,7 +17,6 @@
 ### New Features
 
 *   None.
-
 
 ## v1.1.5
 
@@ -57,8 +55,6 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 *   The API contains a Modl class which is a dictionary-learning based itemset mining algorithm, used in OLOGRAM-MODL
 *   Introduced a *treeify_ologram_modl* plugin to visualize n-wise enrichment results as a treee
 *   Introduced a *ologram_merge_runs* command to merge several runs to save RAM, treating each as a superbatch.
-
-
 
 ## v1.1.4
 
@@ -99,7 +95,6 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 
 ## v1.1.2
 
-
 ### Bug Fixes
 
 *   None
@@ -115,7 +110,6 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 ### New Features
 
 *   The --more-bed-labels is now facultative in OLOGRAM.
-
 
 ## v1.1.1
 
@@ -140,7 +134,6 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 
 ## v1.1.0
 
-
 ### Bug Fixes
 
 *   None.
@@ -158,9 +151,7 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 * Support for Python 3.7.
 * The tss_numbering command now allows to add the number of different TSSs to the gene feature.
 
-
 ## v1.0.9
-
 
 ### Bug Fixes
 
@@ -186,7 +177,6 @@ format in order to produced a set of 'labeled' regions with the same rules as th
 Enrichment of Annotations Tool) documentation. We can not warrant that the procedure is exactly the same. See the CLI
 for more details.
 * Added -y/--display-fit-quality to ologram
-
 
 ## v1.0.8
 
@@ -227,7 +217,6 @@ This version contains some minor code refactoring. See 1.0.6 for recent major ch
 ### New Features
 
 *   None.
-
 
 ## v1.0.6
 
