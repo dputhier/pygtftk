@@ -4,13 +4,13 @@ Command Line Interface display format.
 """
 
 import argparse
-import glob
 import io
-import operator
-import os
 import re
 import sys
 
+import glob
+import operator
+import os
 import pybedtools
 from pybedtools import BedTool
 
@@ -366,6 +366,7 @@ class FormattedFile(argparse.FileType):
         bed_regexp_gz = re.sub("\$", "\.[Gg][Zz]$", bed_regexp)
         gtf_regexp = '\.[Gg][Tt][Ff]$'
         gtf_regexp_gz = re.sub("\$", "\.[Gg][Zz]$", gtf_regexp)
+        tsv_regexp = '\.[Tt][Ss][Vv]$'
         txt_regexp = '(\.[Tt][Xx][Tt]$)|(\.[Cc][Ss][Vv]$)|(\.[Dd][Ss][Vv]$)|(\.[Tt][Aa][Bb]$)|(\.[Tt][Ss][Vv]$)'
         txt_regexp_gz = re.sub("\$", "\.[Gg][Zz]$", txt_regexp)
         bigwig_regexp = '(\.[Bb][Ww]$)|(\.[Bb][Ii][Gg][Ww][Ii][Gg]$)'
@@ -379,6 +380,7 @@ class FormattedFile(argparse.FileType):
                       'fasta': fasta_regexp,
                       'fasta.gz': fasta_regexp_gz,
                       'txt': txt_regexp,
+                      'tsv': tsv_regexp,
                       'txt.gz': txt_regexp_gz,
                       'bigwig': bigwig_regexp,
                       'zip': zip_regexp,
@@ -457,7 +459,7 @@ class FormattedFile(argparse.FileType):
                 region_nb = 0
                 field_count = file_bo.field_count()
 
-                if field_count != 6:
+                if field_count < 6:
 
                     # Retrieve the file basename to force temporary files
                     # to get the same file name (with a random char string)

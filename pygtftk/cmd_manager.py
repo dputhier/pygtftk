@@ -473,6 +473,7 @@ class CmdManager(object):
         # ----------------------------------------------------------------------
         # Config directory and config files
         # ----------------------------------------------------------------------
+        message("Checking configuration file.", force=True)
 
         CmdManager.config_dir = os.path.join(os.path.expanduser("~"),
                                              ".gtftk",

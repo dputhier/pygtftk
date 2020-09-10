@@ -11,6 +11,8 @@ import pybedtools
 from functools import partial
 from multiprocessing import Pool
 
+cimport pygtftk.stats.multiprocessing.multiproc as multiproc
+from pygtftk.stats.multiprocessing.multiproc_structs cimport *
 
 ################################################################################
 # -------------------------- Shuffling bed files ----------------------------- #
@@ -63,7 +65,7 @@ Markov shuffling is very much in BETA-TEST at the moment. Please note that :
   of the old one, resulting in a more patterned distribution.
 """
 
-cdef noise(int x, int factor=1000):
+cdef noise(long x, long factor=1000):
     """
     When generating new lengths, add some noise so they are not always multiples
     of 1000 (or the factor). This could have artificially increased (or decreased)
@@ -72,11 +74,11 @@ cdef noise(int x, int factor=1000):
 
     Generates random uniform noise between 0 and factor-1, and substract it to x.
     """
-    cdef int noise
-    noise = int(np.random.uniform() * abs(factor-1))
+    cdef long noise
+    noise = np.around(np.random.uniform() * abs(factor-1)).astype(np.int32)
     return x - noise
 
-cdef roundup(int x, int factor=1000):
+cdef roundup(long long x, long factor=1000):
     """
     We round up the lengths to the thousands to avoir overfitting the model by
     learning the exact values.
@@ -130,20 +132,19 @@ cdef generate_markov_cython(int dummy, np.ndarray corpus, dict word_dict):
     The dummy argument is not used here, it's only so we can multiprocess it easily later.
     """
 
-    cdef int first_word
-    cdef int second_word
+    cdef long long first_word
+    cdef long long second_word
     cdef list chain
     cdef int n_words
     cdef np.ndarray rangei
-    cdef (int, int) last_words
-    cdef int result
+    cdef (long long, long long) last_words
+    cdef long long result
 
     # Randomly pick two words to begin
     first_word, second_word = roundup(np.random.choice(corpus)), roundup(np.random.choice(corpus))
     chain = [first_word, second_word]
     n_words = len(corpus) -2 # -2 because we already have 2 words in the chain
 
-    #nb_of_randos = 0
     rangei = np.arange(n_words)
     for i in rangei:
         last_words = roundup(chain[-2]), roundup(chain[-1])
@@ -153,7 +154,6 @@ cdef generate_markov_cython(int dummy, np.ndarray corpus, dict word_dict):
             result = np.random.choice(word_dict[last_words])
         except KeyError:
             result = np.random.choice(corpus)
-            #nb_of_randos = nb_of_randos + 1
         chain.append(noise(result)) # Add noise
 
     return chain
@@ -196,8 +196,6 @@ def markov_shuffle(arr, nb_threads = 8):
 
 
 
-
-
 # NOTE for improvement : it is very possible to add new types of shuffles here.
 # Just remember to update the wrappers in overlap_stats_shuffling (see the
 # corresponding NOTE there)
@@ -210,52 +208,42 @@ def markov_shuffle(arr, nb_threads = 8):
 # ---------------- Generating bed files from shuffled ones ------------------- #
 ################################################################################
 
-cdef generate_fake_bed(Lr_shuffled, Li_shuffled, chrom):
+cdef generate_fake_bed(list Lr_shuffled, list Li_shuffled, str chrom):
     """
     Given a list of genomic region lengths and inter-genomic lengths, will
     generate a corresponding BED file as a list of lines.
     """
-    cdef list fake_bed
-    fake_bed = list()
-    cdef int current_position
-    current_position = 0
+    cdef list fake_bed = list()
+    cdef long long current_position = 0
     cdef int k
-
-    cdef np.ndarray rangek
-    rangek = np.arange(len(Lr_shuffled))
-
-    cdef int start
-    cdef int end
 
     # We must begin with an inter-region length. Indeed, Li_shuffled has one
     # more element than Lr_shuffled, so we set before the loop current_position = Li_shuffled[0]
     # and use Li_shuffled[k+1] in the loop and carry on from here.
+
     current_position = Li_shuffled[0]
-    for k in rangek :
-        start = current_position
-        end = start + Lr_shuffled[k]
-        current_position = end + Li_shuffled[k+1]
+    for k in np.arange(len(Lr_shuffled)) :
+        # Respectively chromosome, start, and end
+        fake_bed.append((chrom, current_position, current_position + Lr_shuffled[k]))
+        current_position = current_position + Lr_shuffled[k] + Li_shuffled[k+1]
 
-        fake_bed.append((str(chrom),int(start),int(end)))
-
+    # --------------------------------------------------------------------------
     # NOTE for improvement : we could use the same algorithm but keep the
     # negative inter-region lengths, to generate non-merged beds : this way,
     # we could work with peaks that have some overlap and not juste merge them,
     # and do some statistics on this within-set overlap as our algorithm now
     # supports multiple overlap.
-
+    #
     # The only sanity check required is making sure negative `current_position`
     # are not possible. To do so, once a 'fake bed' has been created, iterate
     # over all its starts and ends and get the minimum observed coordinate.
     # If negative, substract it from all start and end values to ensure there
     # are no negative values.
-    # Of course, it would also require removing all the `bedfile.merge()` from the
-    # code of other functions when relevant
+    # Of course, it would also require removing all the `bedfile.merge()` from
+    # the code of other functions when relevant.
+    # --------------------------------------------------------------------------
 
     return fake_bed
-
-
-
 
 
 
@@ -268,11 +256,17 @@ def generate_fake_bed_for_i(i,shuffled_Lr_batches,shuffled_Li_batches,all_chroms
 
     current_fake_bed = list()
 
+    lilr_for_multiproc = list()
+
     for chrom in all_chroms:
-        gen = list()
-        gen = generate_fake_bed(
-            shuffled_Lr_batches[chrom][i], shuffled_Li_batches[chrom][i], chrom)
+
+        # Convert Numpy arrays into lists for the next function
+        current_lr = list(shuffled_Lr_batches[chrom][i])
+        current_li = list(shuffled_Li_batches[chrom][i])
+
+        gen = generate_fake_bed(current_lr, current_li, chrom)
         current_fake_bed = current_fake_bed + gen
+
     return current_fake_bed
 
 
@@ -286,11 +280,6 @@ def batch_to_bedlist(shuffled_Lr_batches, shuffled_Li_batches,
             shuffled_Lr_batches=shuffled_Lr_batches,shuffled_Li_batches=shuffled_Li_batches,
             all_chroms=all_chroms)
 
-    beds = list()
-
-    # Multiprocess
-    # TODO If RAM turns out to be critical, map() could be replaced by imap(). To investigate.
-    with Pool(nb_threads) as p:
-        beds = p.map(generate_for_them,np.arange(minibatch_size))
+    beds = [generate_for_them(i) for i in range(minibatch_size)]
 
     return beds

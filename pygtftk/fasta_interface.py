@@ -3,8 +3,6 @@ Class declaration of the FASTA object (may be returned by GTF object methods).
 """
 
 import textwrap
-
-from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from cffi import FFI
@@ -142,8 +140,7 @@ class FASTA(object):
                 description += '|rev_comp'
 
         for i in range(self._data.nb):
-            record = SeqRecord(Seq(ffi.string(self._data.sequence[i].sequence).decode(),
-                                   IUPAC.ambiguous_dna),
+            record = SeqRecord(Seq(ffi.string(self._data.sequence[i].sequence).decode()),
                                id=ffi.string(
                                    self._data.sequence[i].transcript_id).decode(),
                                name=ffi.string(self._data.sequence[i].gene_id).decode(),

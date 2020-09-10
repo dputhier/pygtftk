@@ -74,7 +74,7 @@ Python GTF toolkit (pygtftk)
 
 The **Python GTF toolkit (pygtftk) package** is intended to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python  >=3.6,<3.7 and relies on **libgtftk**, a library of functions **written in C**.
 
-The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to filter, convert, or extract data from GTF files.
+The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to **filter, convert, or extract data from GTF files**.
 
 The newly released command, **OLOGRAM (OverLap Of Genomic Regions Analysis using Monte Carlo)** may be used to compute overlap statistics between user supplied regions (BED format) and annotation derived from :
 
@@ -82,6 +82,8 @@ The newly released command, **OLOGRAM (OverLap Of Genomic Regions Analysis using
 - Regions in a GTFs flagged with built-in keys/values (e.g. check the 'gene_biotype' as provided by ensembl GTFs of the regions in which peaks fall).
 - Same with custom keys/values through the gtftk CLI (e.g. adding a numeric value to a gene and discretizing this value to create gene classes).
 - User supplied BED files.
+
+With the most recent update, OLOGRAM is now also capable of computing the enrichment of **n-wise combinations** (ie. A+B, A+B+C, etc.) to find correlation groups of regions. Please see the documentation page of *OLOGRAM* for more details.
 
 The gtftk set of Unix commands can be easily extended using a basic plugin architecture.
 

@@ -2950,6 +2950,8 @@ class GTF(object):
             else:
                 name_out = [str(x) for x in value_name]
 
+            name_out = [str(x) for x in name_out]
+
             name_out = sep.join(name_out)
 
             i.write_bed_5p_end(name=name_out,

@@ -28,13 +28,12 @@ from Cython.Distutils import build_ext
 # -------------------------------------------------------------------------
 # Python compiler version
 # -------------------------------------------------------------------------
-print("Python version and gcc version used for compilation")
+print("Python version and gcc version used for compilation : ")
 print(sys.version)
 
 # -------------------------------------------------------------------------
 # Python Version
 # -------------------------------------------------------------------------
-
 
 PY2 = sys.version_info[0] == 2
 
@@ -47,7 +46,7 @@ if PY2:
 # -------------------------------------------------------------------------
 
 
-__author__ = 'fabrice Lopez,Denis Puthier'
+__author__ = 'Fabrice Lopez and Denis Puthier'
 __email__ = 'denis.puthier@univ-amu.fr'
 __description__ = 'The Python GTF toolkit (pygtftk) package: easy handling of GTF files'
 __license__ = 'GPL-2'
@@ -160,35 +159,57 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
                         extra_compile_args=extra_compile_args,
                         sources=cmd_src_list)
 
-# ---------------------------- Building Cython ------------------------------- #
+# ----------------------------------------------------------------------
+#  Building Cython modules - mostly for OLOGRAM
+# ----------------------------------------------------------------------
 
-extra_comp_cython = ['-W']
+platform.system()
 
-# Avoid cython warning about numpy API deprecation
-# upon installation
 
+extra_comp_cython = ['-W', '-O3']
+extra_link_cython = []
+
+
+# Use OpenMP only on Linux, as clang by default does not support it on OSX
+# TODO Make it a parameter
+if platform.system() == 'Darwin':
+    print("No openMP for you !")
+if platform.system() == 'Linux':
+    extra_comp_cython += ['-fopenmp']
+    extra_link_cython += ['-fopenmp']
+
+
+
+# Avoid Cython warning about NumPy API deprecation upon installation
 if platform.system() == 'Darwin':
     extra_comp_cython += ['-Wno-#warnings']
+if platform.system() == 'Linux':
+    extra_comp_cython += ['-Wno-cpp']
 
-# Remark : the separation in three different modules was needed to make it
+# NOTE : the separation in several different modules was needed to make it
 # work on MacOSX for some unfathomable reason.
 
-cython_ologram = Extension(name='pygtftk.stats.intersect.create_shuffles',
-                           sources=["pygtftk/stats/intersect/create_shuffles.pyx"],
-                           extra_compile_args=extra_comp_cython,
-                           language='c')
+cython_ologram_1 = Extension(name='pygtftk.stats.intersect.create_shuffles',
+                             sources=["pygtftk/stats/intersect/create_shuffles.pyx"],
+                             extra_compile_args=extra_comp_cython, extra_link_args=extra_link_cython,
+                             language='c')
 
 cython_ologram_2 = Extension(name='pygtftk.stats.intersect.overlap.overlap_regions',
                              sources=["pygtftk/stats/intersect/overlap/overlap_regions.pyx"],
-                             extra_compile_args=extra_comp_cython,
+                             extra_compile_args=extra_comp_cython, extra_link_args=extra_link_cython,
                              language='c')
 
 cython_ologram_3 = Extension(name='pygtftk.stats.intersect.read_bed.read_bed_as_list',
                              sources=["pygtftk/stats/intersect/read_bed/read_bed_as_list.pyx",
-                                      "pygtftk/stats/intersect/read_bed/exclude.cpp"],
-                             extra_compile_args=extra_comp_cython + ['-O3'],
+                                      "pygtftk/stats/intersect/read_bed/exclude.cpp"], # Include custom Cpp code
+                             extra_compile_args=extra_comp_cython, extra_link_args=extra_link_cython,
                              include_dirs=[np.get_include()],
                              language='c++')
+
+cython_ologram_4 = Extension(name='pygtftk.stats.multiprocessing.multiproc',
+                             sources=["pygtftk/stats/multiprocessing/multiproc.pyx", "pygtftk/stats/multiprocessing/multiproc_structs.pxd", "pygtftk/stats/multiprocessing/multiproc.pxd"],
+                             extra_compile_args=extra_comp_cython, extra_link_args=extra_link_cython,
+                             language='c')
 
 # ----------------------------------------------------------------------
 # Description
@@ -254,9 +275,12 @@ setup(name="pygtftk",
                 'docs/source',
                 'pygtftk/bwig',
                 'pygtftk/rtools',
+                'pygtftk/stats',
+                'pygtftk/stats/multiprocessing',
                 'pygtftk/stats/intersect',
                 'pygtftk/stats/intersect/overlap',
                 'pygtftk/stats/intersect/read_bed',
+                'pygtftk/stats/intersect/modl',
                 'pygtftk/data',
                 'pygtftk/data/simple',
                 'pygtftk/data/simple_02',
@@ -264,6 +288,7 @@ setup(name="pygtftk",
                 'pygtftk/data/simple_04',
                 'pygtftk/data/simple_05',
                 'pygtftk/data/simple_06',
+                'pygtftk/data/simple_07',
                 'pygtftk/data/mini_real',
                 'pygtftk/data/mini_real_10M',
                 'pygtftk/data/mini_real_noov_rnd_tx',
@@ -272,6 +297,7 @@ setup(name="pygtftk",
                 'pygtftk/data/mini_real_ens',
                 'pygtftk/data/control_list',
                 'pygtftk/data/ologram_1',
+                'pygtftk/data/ologram_2',
                 'pygtftk/src/',
                 'pygtftk/src/libgtftk',
                 'pygtftk/src/libgtftk/command'],
@@ -282,6 +308,7 @@ setup(name="pygtftk",
                     'pygtftk/data/simple_04': ['*.*'],
                     'pygtftk/data/simple_05': ['*.*'],
                     'pygtftk/data/simple_06': ['*.*'],
+                    'pygtftk/data/simple_07': ['*.*'],
                     'pygtftk/data/mini_real': ['*.*'],
                     'pygtftk/data/mini_real_10M': ['*.*'],
                     'pygtftk/data/mini_real_noov_rnd_tx': ['*.*'],
@@ -289,12 +316,16 @@ setup(name="pygtftk",
                     'pygtftk/data/hg38_chr1': ['*.*'],
                     'pygtftk/data/control_list': ['*.*'],
                     'pygtftk/data/ologram_1': ['*.*'],
+                    'pygtftk/data/ologram_2': ['*.*'],
                     'pygtftk/data/mini_real_ens': ['*.*'],
                     'pygtftk/plugins': ['*.*'],
                     'docs': ['Makefile'],
                     'docs/source': ['*.*'],
+                    'pygtftk/stats': ['*.*'],
                     'pygtftk/stats/intersect': ['*.*'],
                     'pygtftk/stats/intersect/overlap': ['*.*'],
+                    'pygtftk/stats/intersect/modl': ['*.*'],
+                    'pygtftk/stats/multiprocessing': ['*.*'],
                     'pygtftk/stats/intersect/read_bed': ['*.*'],
                     'pygtftk/src': ['*.*'],
                     'pygtftk/src/libgtftk': ['*.*'],
@@ -326,9 +357,17 @@ setup(name="pygtftk",
                         'matplotlib >=3.0.0',
                         'plotnine >=0.5.1',
                         'setuptools',
-                        'cython',
-                        'mpmath'],
-      ext_modules=[lib_pygtftk] + [cython_ologram] + [cython_ologram_2] + [cython_ologram_3])
+                        'cython >=0.29.6',
+                        'mpmath >=1.1.0',
+                        'scikit-learn >=0.21.2',
+                        'graphviz',
+                        'seaborn'
+    ],
+      ext_modules=[lib_pygtftk] + [cython_ologram_1, cython_ologram_2, cython_ologram_3, cython_ologram_4])
+
+
+
+
 
 # ----------------------------------------------------------------------
 # Update gtftk config directory
@@ -354,9 +393,8 @@ if os.path.exists(config_dir):
 # ----------------------------------------------------------------------
 # Print gtftk info (and load the plugins...)
 # ----------------------------------------------------------------------
-# put this in a try as it could
-# raisse an error
-# if the program is not in the PATH.
+# Put this in a `try` as it could raise an exception if the program is not
+# in the PATH.
 try:
     gtftk_sys_config = subprocess.Popen(['gtftk', '-s'], stdout=subprocess.PIPE).stdout.read().rstrip()
     sys.stderr.write(gtftk_sys_config.decode())

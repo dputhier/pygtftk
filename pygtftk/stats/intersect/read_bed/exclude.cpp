@@ -1,23 +1,21 @@
-/* This function will perform exclusion for a single chromosome. It is designed
- * to alleviate the bottleneck observed in the old pandas code.
+/* This function will perform exclusion for a single chromosome.
  *
- * For more details about the function role, please see the documentation in
+ * For more details about role of this function, please see the documentation in
  * read_bed_as_list.pyx
- *
- * Based on the Cython C++ tutorial and NumPy binding tutorial.
  *
  * Author : Quentin FERRE <quentin.ferre@gmail.com>
  */
 
  /* IMPLEMENTATION NOTES
   *
-  * We use hand-crafted C++ here because of the computational cost. For the other
+  * We use hand-crafted C++ here because of the computational cost. It is meant
+  * to alleviate the bottleneck observed in the old pandas code. For the other
   * parts of the code, manually integrating C++ code was not worth the hassle
   * compared to the advantages of easy writing with Cython.
   *
   * Some helper variables are declared to make the code more legible (eg. excl_length)
   *
-  * The reason why we use a result array and do not perform the operations directly
+  * The reason why I use a result array and do not perform the operations directly
   * on the bedfile_starts and bedfile_ends is because this means that after the
   * first exclusion has been performed we would be comparing positions in two
   * different coordinates systems (between 'exclusion' with the original ones
@@ -25,6 +23,7 @@
   * the bedfile but the results expressed as a function of the previous value in
   * result : because the algorithm is iterative with one exclusion after the other.
   *
+  * Code is based on the Cython C++ tutorial and NumPy binding tutorial.
   *
   * // Vectorisation
   *
@@ -32,8 +31,11 @@
   * beause such computations can be SIMD-vectorized easily by the compiler.
   * Then, the results are used as masks for the processing.
   *
+  * This also motivates the use of C++ because, although possible, it is harder
+  * to write SIMD code in Cython.
+  *
   * Masks and operations are written as for loops for better vectorization : we
-  * compile with -O3, so loop unrolling will be used. As such, 'else if'
+  * compile with `-O3`, so loop unrolling will be used by gcc. As such, 'else if'
   * constructions are avoided. Same reason I use array indices instead of pointers.
   * Somewhat counterintuitively, to ensure better vectorisation, it is better to
   * write five for loops.
@@ -49,7 +51,6 @@
 
 namespace exclusion {
 
-
 /* Template of functions to write in a boolean logical array (result_array)
  * whether each value of a given other array is under a threshold. */
 template <class T>
@@ -63,8 +64,8 @@ void arrayWiseIsLower(const T * array, T value, long array_size, bool * result_a
     p_result++;
   }
 
-  // TODO : if the array is sorted, this can be done more efficiently with
-  // std::lower_bound ; but it is already fast enough in most cases.
+  // TODO If the array is sorted, this can be done more efficiently with
+  // std::lower_bound ; but the current code is already fast enough in most cases.
 
   return;
 }
@@ -75,7 +76,7 @@ void arrayWiseIsLower(const T * array, T value, long array_size, bool * result_a
 
 
 
-/* The function is passed numpy arrays. In other words, it is passsed pointers
+/* This function is passed numpy arrays. In other words, it is passsed pointers
  * to C arrays :) Remember that the operations are performed in-place
  * (we are passing references) so this function returns void. */
 void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* bedfile_ends,
@@ -84,13 +85,15 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
                                         long bed_size, long excl_size)
 {
   // Iterating over all exclusion regions will definitely use a pointer.
-  const long long* p_start_excl = exclusion_starts; // pointer onto exclusion_starts
-  const long long* p_end_excl = exclusion_ends; // pointer onto exclusion_ends
+  const long long* p_start_excl = exclusion_starts;   // pointer onto exclusion_starts
+  const long long* p_end_excl = exclusion_ends;       // pointer onto exclusion_ends
 
   const long long* const p_excl_END = p_start_excl + excl_size; // pointer onto end of all_excl_starts
 
   long long start_excl_value;
   long long end_excl_value;
+
+
 
   // For each region in 'exclusion' :
   while (p_start_excl != p_excl_END){
@@ -121,7 +124,7 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
 
 
 
-    /******************************* Determining cases *****************************/
+    /*************************** Determining cases ****************************/
     /* The cases are arranged in priority order ! So be careful if you reorder
      * them. In the original code, they were "else ifs". Here this means we must
      * specify that a case can only be considered if all previous are false. */
@@ -167,7 +170,7 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
     }
 
     // Cleanup
-    // TODO : Rewrite this code with smart pointers and no manual deletion
+    // TODO Rewrite this code with smart pointers and no manual deletion
     delete[] rs_lt_es;
     delete[] re_lt_es;
     delete[] rs_lt_ee;
@@ -175,7 +178,7 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
 
     /***************************** Main processing ****************************/
 
-    // TODO : try putting all `if`s in the same `for` loop. Without elses, they
+    // TODO Try putting all `if`s in the same `for` loop. Without elses, they
     // are still treatable as masked assignments so the compiler should like it.
 
 
@@ -246,7 +249,7 @@ void cpp_excludeConcatenateForThisChrom(long long* bedfile_starts, long long* be
     }
 
     // Cleanup
-    // TODO : Rewrite this code with smart pointers and no manual deletion
+    // TODO Rewrite this code with smart pointers and no manual deletion
     delete[] case_0;
     delete[] case_1;
     delete[] case_2;

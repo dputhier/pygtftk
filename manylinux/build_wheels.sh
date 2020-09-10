@@ -14,6 +14,7 @@ for PYBIN in $(ls --color=none -d1 /opt/python/*/bin| grep -P "(36)|(37)"); do
     "${PYBIN}/pip" install -U pip
     "${PYBIN}/pip" install numpy>=1.10.0
     "${PYBIN}/pip" install cython
+    "${PYBIN}/pip" install pysam
     "${PYBIN}/pip" install -r /io/requirements.txt
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done

@@ -20,7 +20,7 @@ class BetaCalculator:
 
     :Example:
 
-    >>> from pygtftk.stats.intersect.beta import BetaCalculator
+    >>> from pygtftk.stats.beta import BetaCalculator
     >>> import mpmath
     >>> mycalc = BetaCalculator()
     >>> res_A = float(mpmath.beta(5,2))
@@ -60,6 +60,9 @@ class BetaCalculator:
         Uses either mpmath's gamma or log-gamma function to compute values of the beta function.
         """
 
+        # HOTFIX prevent the original a, b from being numpy elements
+        a = float(a) ; b = float(b)
+
         a, b = mpmath.mpf(a), mpmath.mpf(b)
 
         if self.use_log: beta = mpmath.exp(mpmath.loggamma(a) + mpmath.loggamma(b) - mpmath.loggamma(a + b))
@@ -96,22 +99,22 @@ class BetaCalculator:
             coeff = k * (b - k) * x / (((a - 1.0) + 2 * k) * (a + 2 * k))
 
             # First step of the recurrence
-            den_term = 1.0 + coeff * den_term;
-            num_term = 1.0 + coeff / num_term;
-            den_term = 1.0 / den_term;
+            den_term = 1.0 + coeff * den_term
+            num_term = 1.0 + coeff / num_term
+            den_term = 1.0 / den_term
 
-            delta_frac = den_term * num_term;
-            cf *= delta_frac;
+            delta_frac = den_term * num_term
+            cf *= delta_frac
 
-            coeff = -(a + k) * (a + b + k) * x / ((a + 2 * k) * (a + 2 * k + 1.0));
+            coeff = -(a + k) * (a + b + k) * x / ((a + 2 * k) * (a + 2 * k + 1.0))
 
             # Second step
-            den_term = 1.0 + coeff * den_term;
-            num_term = 1.0 + coeff / num_term;
-            den_term = 1.0 / den_term;
+            den_term = 1.0 + coeff * den_term
+            num_term = 1.0 + coeff / num_term
+            den_term = 1.0 / den_term
 
-            delta_frac = den_term * num_term;
-            cf *= delta_frac;
+            delta_frac = den_term * num_term
+            cf *= delta_frac
 
             # Are we done ?
             if (abs(delta_frac - 1.0) < 2.0 * self.epsilon):
@@ -131,8 +134,12 @@ class BetaCalculator:
         Code translated from: GNU Scientific Library
         """
 
-        # In terms of routines, this function requires contfractbeta(), defined above.
+        # In terms of methods, this function requires contfractbeta(), defined above.
 
+        # HOTFIX prevent the original a, b or x from being numpy elements
+        a = float(a) ; b = float(b) ; x = float(x)
+
+        # Transpose a, x, x into mpmath objects.
         a, b, x = mpmath.mpf(a), mpmath.mpf(b), mpmath.mpf(x)
 
         def isnegint(X): return (X < 0) & (X == mpmath.floor(X))
@@ -142,8 +149,10 @@ class BetaCalculator:
             raise ValueError("Bad x in betainc(a,b,x) - x must be between 0 and 1")
         elif isnegint(a) | isnegint(b) | isnegint(a + b):
             raise ValueError("Bad a or b in betainc(a,b,x) -- neither a, b nor a+b can be negative integers")
-        elif (x == 0): return 0
-        elif (x == 1): return 1
+        elif x == 0:
+            return 0
+        elif x == 1:
+            return 1
 
         else:
 
@@ -152,7 +161,7 @@ class BetaCalculator:
             prefactor = -lnbeta + a * mpmath.log(x) + b * mpmath.log(1 - x)
 
             # Use continued fraction directly ...
-            if (x < (a + 1) / (a + b + 2)):
+            if x < (a + 1) / (a + b + 2):
                 fraction = self.contfractbeta(a, b, x)
                 result = mpmath.exp(prefactor) * fraction / a
 

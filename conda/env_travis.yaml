@@ -6,14 +6,14 @@ channels:
 - defaults
 
 dependencies:
-- python ==3.5
+- python >=3.6
 - GitPython >=2.1.8
 - pyparsing
-- bedtools ==2.27.1
+- bedtools >=2.27.1
 - cloudpickle >=0.4.0
 - ftputil >=3.3.1,<4.0.0
-- pandas >=0.23.3
-- scipy >=1.1.0
+- scipy >=1.2.0
+- pandas >=0.23.3,!=1.0.0,!=1.0.0rc0
 - pybedtools >=0.7.8
 - bats
 - pyyaml >=3.12
@@ -25,6 +25,9 @@ dependencies:
 - matplotlib >=2.0.2
 - plotnine >=0.4.0
 - pyBigWig >=0.3.12
-- numpy
-- cython
-- mpmath
+- numpy >=1.15.3
+- cython >=0.29.6
+- mpmath >=1.1.0
+- scikit-learn >=0.21.2
+- python-graphviz
+- seaborn

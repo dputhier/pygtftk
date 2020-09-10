@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 """
-
  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
  annotates peaks (in bed format) using (i) genomic features extracted
  from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with
-  particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
-  gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
+ particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
+ gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
 
  Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
  lengths are considered). Then the probability of intersection under the null
@@ -15,8 +14,9 @@
  The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
 
- Authors : Quentin FERRE <quentin.q.ferre@gmail.com>, Guillaume CHARBONNIER
- <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
+ Authors : Quentin FERRE <quentin.q.ferre@gmail.com>,
+ Guillaume CHARBONNIER <guillaume.charbonnier@outlook.com>,
+ and Denis PUTHIER <denis.puthier@univ-amu.fr>.
  """
 
 import argparse
@@ -29,6 +29,7 @@ import os
 import re
 import sys
 import time
+import copy
 import warnings
 from functools import partial
 import matplotlib.cbook
@@ -46,7 +47,8 @@ from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
-from pygtftk.stats.intersect.read_bed import read_bed_as_list as read_bed  # Only used here for exclusions
+from pygtftk.stats.intersect.read_bed import \
+    read_bed_as_list as read_bed  # Only used here for exclusions
 from pygtftk.stats.intersect.overlap_stats_shuffling import \
     compute_overlap_stats  # Main function from the stats.intersect module
 from pygtftk.utils import chrom_info_as_dict
@@ -57,7 +59,7 @@ from pygtftk.utils import message
 from pygtftk.utils import sort_2_lists
 import gc
 
-__updated__ = "2019-04-17"
+__updated__ = "2020-08-01"
 __doc__ = """
 
  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
@@ -69,9 +71,7 @@ __doc__ = """
  Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
  lengths are considered). Then the probability of intersection under the null
  hypothesis (the peaks and this feature are independent) is deduced thanks to
- this Monte Carlo approach.
-
- The program will return statistics for both the number of intersections and the
+ this Monte Carlo approach. The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
  
  The null hypothesis is:
@@ -82,18 +82,25 @@ __doc__ = """
  H1: The regions of the query (--peak-file) tend to overlap the 
  reference (--inputfile or --more-bed). 
 
- Authors : Quentin FERRE <quentin.q.ferre@gmail.com>, Guillaume CHARBONNIER
- <guillaume.charbonnier@outlook.com> and Denis PUTHIER <denis.puthier@univ-amu.fr>.
+ OLOGRAM can now also calculate enrichment for n-wise combinations (e.g. [Query + A + B]
+ or [Query + B + C]) on sets of regions defined by the user (--more-bed argument).
+
+ Author : Quentin FERRE <quentin.q.ferre@gmail.com>,
+ Co-authors : Guillaume CHARBONNIER <guillaume.charbonnier@outlook.com> and
+ Denis PUTHIER <denis.puthier@univ-amu.fr>.
  """
 
 __notes__ = """
- -- Ologram is multithreaded and can use many cores. Although ologram itself is not RAM-intensive,
- base pygtftk processing of a full human GTF can require upwards of 8Gb.
+ -- OLOGRAM is multithreaded and can use many cores, most notably processing one batch
+ of shuffles per core. Note that this can be RAM-intensive, on top of the base pygtftk
+ processing of a full human GTF can require upwards of 8Gb.
  It is recommended you do not run other programs in the meantime on a laptop.
 
- -- Genome size is computed from the provided chromInfo file (-c). It should thus only contain ordinary chromosomes.
+ -- You may pass custom sets of regions as BED files, especially for multiple overlaps, 
+ with the --more-bed arguments to look for enrichment in overlaps for custom annotations.
 
- -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'.
+ -- Genome size is computed from the provided chromInfo file (-c). It should thus only
+ contain ordinary chromosomes. -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'.
  In this case the corresponding size of conventional chromosomes are used. ChrM is not used.
 
  -- The program produces a pdf file and a tsv file ('_stats_') containing intersection statistics
@@ -117,25 +124,70 @@ __notes__ = """
  region related to 'protein_coding', 'lncRNA' or any other values for that key will be retrieved merged and tested
  for enrichment.
 
- -- Use -\-no-basic-feature if you want to perform enrichment analysis on focused annotations only (-\-more-bed or -\-more-key).
+ -- Use -\-no-basic-feature if you want to perform enrichment analysis on custom, focused annotations only (-\-more-bed or -\-more-key).
 
  -- The goal of the minibatches is to save RAM. You should increase the number of minibatches, instead of their size.
  You may need to use very small minibatches if you have large sets of regions.
 
  -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
- the excluded regions, but the same ones will be excluded from the peak_file and the GTF.
- Try using an exclusion file that is as small (around a thousand elements) as possible.
+ the excluded regions, but the same ones will be excluded from the peak_file and the GTF/more-bed files.
 
- -- NB/TODO: Current multithreading needs to be optimized. We recommend using the current version with a single core.
- 
  -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
  for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
  This is not recommended in the general case and can be *very* time-consuming (hours).
 
- -- ALPHA : support for multiple overlaps is in progress (within or between sets). The backend supports it but no statistics are made on it yet.
+ -- While they will be accepted by OLOGRAM, in BED files lines such as "chr1 100 100" or "chr1 100" would represent empty regions (of length 0) and as such are an error.
+
+ -- Support for multiple overlaps is available. Please see the documentation for more information.
+ If the -\-more-bed-multiple-overlap argument is used, the query peak file will be 
+ compared with the custom regions passed to the -\-more-bed argument, and with 
+ them only. For example, you can put as query the  binding sites of the Transcription
+ Factor A, in -\-more-bed the factors B, C and D, and see whether A+B+D is an enriched combination.
  
+ -- By default, interesections are counted as "inexact", meaning an overlap of [A + B + C] will count towards [A + B + ...].
+ For exact intersections (ie. [A + B + nothing else]), set the -\-multiple-overlap-target-combi-size flag to the number of -\-more-bed +1 (+1 for the query)
+ In any case, only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C is not.
+ Intersection within sets are supported by the backend and may come in a future version.
+ We recommend using -\-multiple-overlap-target-combi-size only when not using MODL since filtering is applied after the first step of candidate mining.
+
+ -- Furthermore, you may use our MODL algorithm to find biological complexes of interest, by mining for frequent itemsets
+ on the intersections on the true data. This is done with the -\-multiple-overlap-max-number-of-combinations argument.
+ This will not change the N,S and enrichment result, but will restrict the set of interesting combis for which those are calculated and displayed
+
+ -- MODL is designed to find complexes more than association rules, so we do not recommend asking for more than 20-50 combinations to
+ keep the running time reasonable and keep the found combinations still relevant.
+ Note that MODL is completely optional. It is mostly needed when the list of -\-more-bed is very long and you do not want to filter the results manually, and when you are working with noisy
+ data which could obfuscate the interesting combinations.
+ MODL employs a form of subsampling on the original matrix and will discard combinations rarer than 1/10000 occurences to reduce computing times.
+ It will also reduce the abundance of all lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. This is done as the matrix of intersections will usually have many redundant lines and as such can be squished without changing the result.
+ It is also possible to bypass it and provide a custom list of combinations to be considered.
+
+ -- For statistical reality reasons, with multiple sets the expected overlaps for the longer combinations (A+B+C+D+... when they are all independant) can be very low. 
+ This is especially true for small regions such as Transcriptional Regulator biding sites where the total coverage of all sets considered is low. 
+ Note that the fact that we are using a Negative Binomial rather than empirical p-values helps alleviate this problem. 
+ Furthermore, if C is depleted with query but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched.
  
- """
+ -- A low number of intersecting basepairs can require using more shuffles, but very-low-average
+ Negative Binomial distributions are not really signficant. We recommend instead shuffling only across a
+ biologically relevant subsection of the genome (with -\-bed-incl) : for example, if studying 
+ Transcriptional Regulators, shuffling only on inferred Cis Regulatory Modules or promoters. Or perhaps run a first pairwise 
+ analysis to identify likely candidates, and then shuffle only across a subgenome obtained by merging all regions in the query.
+ This also allows using fewer shuffles (dozens), because remembering intersections across many files will use RAM. 
+ If you nevertheless need to use many shuffles, look to the ologram_merge_run plugin.
+
+ -- We recommend running the ologram_modl_treeify plugin on the resulting tsv file
+ if you use multiple overlaps.
+
+ -- If you manually specify the combinations to be studied with -\-multiple-overlap-custom-combis, use the following format for the text file : 
+ The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed", "1 0 1 1" means Query + B + C). Data should be whitespace separated with one combination per line.
+ 
+"""
+
+
+
+
+
+
 
 
 def make_parser():
@@ -169,7 +221,7 @@ def make_parser():
                             type=arg_formatter.FormattedFile(mode='r', file_ext='bed'),
                             required=True)
 
-    # --------------------- More regions ------------------------------------- #
+    # --------------------- More regions  ------------------------------------- #
 
     parser_grp.add_argument('-b', '--more-bed',
                             help="A list of bed files to be considered as additional genomic annotations.",
@@ -178,7 +230,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-l', '--more-bed-labels',
-                            help="A comma separated list of labels (see --more-bed)",
+                            help="A comma separated list of labels (see --more-bed). Optional.",
                             default=None,
                             type=str,
                             required=False)
@@ -220,6 +272,34 @@ def make_parser():
                             help="No statistics for basic features of GTF. Concentrates on --more-bed and --more-keys.",
                             action="store_true",
                             required=False)
+
+
+    # ------------------ Multiple overlaps & dict learning ------------------- #
+
+    parser_grp.add_argument('-mo', '--more-bed-multiple-overlap',
+                            help="The more-beds specified will be considered all at once for multiple overlaps.",
+                            action='store_true',
+                            required=False)
+  
+    parser_grp.add_argument('-mocs', '--multiple-overlap-target-combi-size',
+                            help="Maximum number of sets in the output combinations. Default to -1 meaning no max number. Set it to number of --more-bed +1 to get exact (exclusive) combinations",
+                            default=-1,
+                            type=int,
+                            required=False)
+ 
+    parser_grp.add_argument('-monc', '--multiple-overlap-max-number-of-combinations',
+                            help="""Maximum number of combinations to consider by applying the MODL algorithm to the matrix of full overlaps. 
+                                Defaults to -1, which means MODL is NOT applied and all combinations are returned""",
+                            default=-1,
+                            type=int,
+                            required=False)
+
+    parser_grp.add_argument('-moc', '--multiple-overlap-custom-combis',
+                            help="Path to a text ('*.txt') file that will be read as a NumPy matrix, overriding the combinations to be studied. See notes for the format of the text file.",
+                            default=None,
+                            type=arg_formatter.FormattedFile(mode='r', file_ext='txt'),
+                            required=False)
+
 
     # --------------------- Backend ------------------------------------------ #
 
@@ -348,8 +428,10 @@ def ologram(inputfile=None,
             peak_file=None,
             chrom_info=None,
             tsv_file_path=None,
+
             more_bed=None,
             more_bed_labels=None,
+
             no_gtf=False,
             upstream=1000,
             more_keys=None,
@@ -357,6 +439,12 @@ def ologram(inputfile=None,
             no_basic_feature=False,
             bed_excl=None,
             bed_incl=None,
+
+            more_bed_multiple_overlap=False,
+            multiple_overlap_target_combi_size = None,
+            multiple_overlap_max_number_of_combinations = None,
+            multiple_overlap_custom_combis = None,
+
             use_markov=False,
             no_pdf=None,
             pdf_width=5,
@@ -399,6 +487,35 @@ def ologram(inputfile=None,
             'Using only ' + str(nb_threads) + ' threads, but ' + str(
                 available_cores) + ' cores are available. Consider changing the --nb-threads parameter.',
             type='WARNING')
+
+
+    # -------------------------------------------------------------------------
+    # Multiple overlaps on --more-bed parameters check
+    # -------------------------------------------------------------------------
+
+    if more_bed_multiple_overlap:
+        if more_bed is None :
+            message("Multiple overlaps (--more-bed-multiple-overlap) are only computed with the query and user-defined regions : please provide those with the --more-bed argument.",
+                    type="ERROR")
+
+    # Useless parameters
+    if not more_bed_multiple_overlap:
+        if multiple_overlap_target_combi_size != -1:
+            message("--multiple-overlap-target-combi-size is ignored when not working with multiple overlaps (--more-bed-multiple-overlap).")
+        if multiple_overlap_max_number_of_combinations != -1:
+            message("--multiple-overlap-max-number-of-combinations is ignored when not working with multiple overlaps (--more-bed-multiple-overlap).")
+
+
+    # Enforcing custom combinations
+    if multiple_overlap_custom_combis is not None:
+        if multiple_overlap_target_combi_size != -1:
+            message("--multiple-overlap-target-combi-size is ignored when custom combinations are enforced (with --multiple-overlap-custom-combis).")
+        if multiple_overlap_max_number_of_combinations != -1:
+            message("--multiple-overlap-max-number-of-combinations is ignored when custom combinations are enforced (with --multiple-overlap-custom-combis)")
+
+        if not more_bed_multiple_overlap:
+            message("Cannot use --multiple-overlap-custom-combis without the argument --more-bed-multiple-overlap.",
+                    type="ERROR")
 
     # -------------------------------------------------------------------------
     # If the user wishes, don't provide a GTF to the tool
@@ -530,13 +647,19 @@ def ologram(inputfile=None,
         # Split in its constituent commands in case of very large files
 
         exclstart = time.time()
-        message('Exclusion BED found, proceeding on the BED peaks file. This may take a few minutes.', type='INFO')
+        message('Exclusion BED found, proceeding on the BED peaks file. This may take a moment.', type='INFO')
 
         chrom_len = read_bed.exclude_chromsizes(bed_excl, chrom_len)  # Shorten the chrom_len only once, and separately
         peak_file = read_bed.exclude_concatenate(pybedtools.BedTool(peak_file), bed_excl, nb_threads)
 
         exclstop = time.time()
         message('Exclusion completed for the BED PEAKS file in ' + str(exclstop - exclstart) + ' s', type='DEBUG')
+
+
+
+
+
+
 
     # -------------------------------------------------------------------------
     # Read the gtf file and discard any records corresponding to chr not declared
@@ -596,15 +719,31 @@ def ologram(inputfile=None,
             if len(more_bed_labels) != len(set(more_bed_labels)):
                 message("Redundant labels not allowed.", type="ERROR")
         else:
+
+            message(
+                "--more-bed-labels was not set, automatically defaulting to --more-bed file names.",
+                type="WARNING")
+
+            # If more_bed is set but not more_bed_labels, will default to using more_bed base names without non-alphanumeric characters
+
             more_bed_labels = []
-            for a_bed in more_bed:
-                a_bed = os.path.basename(a_bed.name)
-                a_bed = re.sub("_converted\.[Bb][Ee][Dd][3456]{0,1}$", "", a_bed)
-                # This one is a little bit complexe...
-                # this is in case pygtftk name appear in the initial name...
-                a_bed = re.sub("_pygtftk_?((?!pygtftk).)*$", "", a_bed)
-                more_bed_labels += [a_bed]
-            message("--more-bed-label will be set to: " + ",".join(more_bed_labels), type="DEBUG")
+            for elmt in more_bed:
+                #base_name = pathlib.Path(elmt.name).stem
+                cleaned_name = os.path.basename(elmt.name)
+
+                cleaned_name = re.sub("_converted\.[Bb][Ee][Dd][3456]{0,1}$", "", cleaned_name)                
+                cleaned_name = re.sub("_pygtftk_?((?!pygtftk).)*$", "", cleaned_name) # In case pygtftk name appears in the initial name...
+                cleaned_name = re.sub("[^A-Za-z0-9]+", '_', cleaned_name)
+
+                # Remove "_bed" if those are the last characters
+                if cleaned_name[-4:] == "_bed": cleaned_name = cleaned_name[:-4]
+
+                more_bed_labels += [cleaned_name]
+
+            message("--more-bed-labels will be set to: " + ", ".join(more_bed_labels), type="DEBUG")
+
+
+
 
     # -------------------------------------------------------------------------
     # Preparing output files
@@ -719,7 +858,7 @@ def ologram(inputfile=None,
                 tmp_bed = make_tmp_file(prefix="ologram_promoters", suffix=".bed")
                 gtf_sub_bed.saveas(tmp_bed.name)
 
-                hits["Promoters"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Promoter")
+                hits["Promoters"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Promoters")
 
                 # -------------------------------------------------------------------------
                 # Get the tts regions
@@ -737,7 +876,7 @@ def ologram(inputfile=None,
                 hits["Terminator"] = overlap_partial(bedA=peak_file, bedsB=gtf_sub_bed, ft_type="Terminator")
 
         # -------------------------------------------------------------------------
-        # if the user request --more-keys (e.g. gene_biotype)
+        # if the user requests --more-keys (e.g. gene_biotype)
         # -------------------------------------------------------------------------
 
         if more_keys is not None:
@@ -782,11 +921,13 @@ def ologram(inputfile=None,
 
     # Stock all of the more_beds if needed for multiple overlaps
     all_more_beds = list()
+    all_bed_labels = list()
 
     if more_bed is not None:
         message("Processing user-defined regions (bed format).")
         for bed_anno, bed_lab in zip(more_bed, more_bed_labels):
             message("Processing " + str(bed_lab), type="INFO")
+
 
             if not force_chrom_more_bed:
                 chrom_list = set()
@@ -807,31 +948,60 @@ def ologram(inputfile=None,
                         bed_anno_sub.write("\t".join(i.fields) + "\n")
                         n += 1
                 if n == 0:
-                    message("The --more-bed file does not contain any genomic feature "
+                    message("The --more-bed file does not contain any genomic features "
                             "falling in chromosomes declared in --chrom-info.",
                             type="ERROR")
 
                 bed_anno_sub.close()
                 bed_anno = bed_anno_sub
 
-                # Stock all bed annos if multiple overlap is needed
-                all_more_beds += [BedTool(bed_anno.name)]
 
             tmp_bed = make_tmp_file(prefix=bed_lab, suffix=".bed")
             bed_anno_tosave = BedTool(bed_anno.name)
             bed_anno_tosave.saveas(tmp_bed.name)
 
-            hits[bed_lab] = overlap_partial(bedA=peak_file,
+            # Stock all bed annos
+            all_more_beds += [copy.copy(BedTool(bed_anno.name))]
+            all_bed_labels += [bed_lab] # Add label to list
+
+
+            # If multiple overlap was not requested
+            if not more_bed_multiple_overlap:
+                message("Processing multiple overlaps for user-defined regions (bed format).")
+                hits[bed_lab] = overlap_partial(bedA=peak_file,
                                             bedsB=BedTool(bed_anno.name),
                                             ft_type=bed_lab)
 
-    # TODO : prepare another possibility, where an option such as
-    # `-all-more-beds-together` is used,  we do the multiple overlap of the
-    # region with ALL of the more beds.
-    # Now, bedsB can be a list !
-    """
-    hits['multiple_beds'] = overlap_partial(bedA=peak_file, bedsB=all_more_beds)
-    """
+
+    # If multiple overlap was requested, process all the custom --more-bed
+    if more_bed_multiple_overlap:
+        hits['multiple_beds'] = overlap_partial(bedA=peak_file, bedsB=all_more_beds,
+        ft_type=all_bed_labels,
+            multiple_overlap_target_combi_size = multiple_overlap_target_combi_size,
+            multiple_overlap_max_number_of_combinations = multiple_overlap_max_number_of_combinations,
+            multiple_overlap_custom_combis = multiple_overlap_custom_combis)
+
+
+
+
+
+        # NOTE. In other cases, hits[feature_type] is a single dictionary giving
+        # stats. In this case, it is a dictionary of dictionaries, one per set
+        # combination of interest !
+        # So now we must actually unwrap it and add each of its subdictionaries
+        results_to_add = copy.copy(hits['multiple_beds'])
+
+        # Free memory
+        del hits['multiple_beds']
+        del all_more_beds
+
+        for combi_human_readable, result in results_to_add.items():
+            hits[str(combi_human_readable)] = result
+
+
+
+
+
 
     # ------------------ Treating the 'hits' dictionary --------------------- #
 
@@ -845,6 +1015,7 @@ def ologram(inputfile=None,
     for feature_type in hits.keys():
 
         current_dict = hits[feature_type]  # This is an ordered dict
+
 
         # First line should be a header
         if should_print_header:
@@ -892,17 +1063,18 @@ def ologram(inputfile=None,
     else:
         feature_order = None
 
+
     # -------------------------------------------------------------------------
     # Plot the diagram
     # -------------------------------------------------------------------------
 
     if pdf_file is not None:
-        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, display_fit_quality)
+        plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, more_bed_multiple_overlap, display_fit_quality)
         close_properly(pdf_file)
     close_properly(data_file)
 
 
-def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, display_fit_quality):
+def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, should_plot_multiple_combis, display_fit_quality):
     """
     Main plotting function by Q. FERRE and D. PUTHIER.
     """
@@ -931,7 +1103,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, d
     # or 'nb_intersections'
     # -------------------------------------------------------------------------
 
-    def plot_this(statname, plot_type='barplot', display_fit_quality=False):
+    def plot_this(statname, feature_order=None, display_fit_quality=False):
 
         # ------------------------- DATA PROCESSING -------------------------- #
 
@@ -948,7 +1120,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, d
         dmm = data_ni.melt(id_vars='Feature')
         dmm.columns = ['Feature', 'Type', statname]
 
-        # reorder features if required
+        # Reorder features if required
         if feature_order is not None:
             dmm.Feature = pd.Categorical(dmm.Feature.tolist(), categories=feature_order, ordered=True)
 
@@ -1019,6 +1191,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, d
                         size=5, boxstyle='round', label_size=0.2,
                         color='white', fill=signif_color)
 
+
         # Theme
         p += theme(legend_title=element_blank(),
                    legend_position="top",
@@ -1036,13 +1209,18 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, d
                                             margin={'r': 0},
                                             angle=0),
                    axis_text_x=element_text(size=5,
-                                            angle=45)
+                                            angle=90,
+                                            hjust=1)
                    )
 
         # Add a nicer set of colors.
         p += scale_fill_manual(values={'Shuffled': '#757575', 'True': '#0288d1'})
 
-        return p
+
+        # Remember the feature order for potential future use
+        order_of_features = dmm.Feature.tolist()
+
+        return p, order_of_features
 
     # -------------------------------------------------------------------------
     # Volcano plot (combining both N and S results
@@ -1090,18 +1268,92 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, d
 
         return p
 
+
+
+    def plot_multi_features(list_of_combis):
+        """
+        Turn a list of combinations (like ['A+B', 'A+B+C']) into a heatmap
+        """
+                
+        import itertools
+        import pandas as pd
+        import seaborn as sns
+
+        # Turn list of strings into nested list : remove '[]' and spaces and split combi
+        combin = []
+        for combi in list_of_combis:
+            combi_clean = combi.translate({ord(i): None for i in ['[',']',' ']}).split('+')
+            combin += [combi_clean]
+
+        # Get all unique elements
+        def get_unique_elements(combin): return sorted(list(set(itertools.chain(*combin))))
+        all_elements = get_unique_elements(combin)
+
+        # Turn those lists into logical vector for presence
+        df_raw = []
+        for combi in combin:
+            dict_current = {}
+            dict_current['combi'] = ' + '.join(combi)
+
+            for e in all_elements:
+                current_elem = str(e)
+                if e in combi: dict_current[e] = True
+                else: dict_current[e] = False
+
+            df_raw.append(dict_current)
+
+        df = pd.DataFrame(df_raw)
+
+        df_melt = pd.melt(df, id_vars = ["combi"]) # Melt for plotting
+
+
+
+        # Compute a different fill color for each
+        palette = sns.color_palette('deep', len(all_elements))
+        def rgb2hex(r,g,b):
+            return "#{:02x}{:02x}{:02x}".format(int(255*r), int(255*g), int(255*b))
+        elements_palette = {e:rgb2hex(*p) for e,p in zip(all_elements, palette)}
+        elements_palette["Null"] = "#ffffff"
+
+        colors_for_plot = []
+        for _, vrow in df_melt.iterrows():
+            current_color = None
+
+            # Only add the color if the combination contains the element
+            if vrow["value"] == False :
+                current_color = "Null"
+            else:
+                current_color = str(vrow["variable"])
+
+            colors_for_plot.append(current_color)
+
+        df_melt["colors_for_plot"] = colors_for_plot
+
+
+
+        ### Plot
+        from plotnine import ggplot, aes, geom_tile, geom_text, scale_fill_manual, theme, element_rect, element_text
+
+        p = ggplot(df_melt, aes(x = "combi", y = "variable")) + geom_tile(aes(width=.9, height=.9, fill = "colors_for_plot")) + scale_fill_manual(elements_palette, guide = False) + theme(plot_background=element_rect(fill='white')) + theme(axis_text_x=element_text(rotation=90, hjust=1))
+
+        return p
+        # Sharing axis is not possible yet in plotnine, so we make this a separate figure.
+
+
     # -------------------------------------------------------------------------
     # call plotting functions
     # -------------------------------------------------------------------------
 
     # Compute the plots for both statistics
-    p1 = plot_this('summed_bp_overlaps', display_fit_quality=display_fit_quality) + ylab(
-        "Nb. of overlapping base pairs") + ggtitle(
-        'Total overlap length per region type')
-    p2 = plot_this('nb_intersections', display_fit_quality=display_fit_quality) + ylab(
-        "Number of intersections") + ggtitle(
-        'Total nb. of intersections per region type')
+    p1, p1_feature_order = plot_this('summed_bp_overlaps', feature_order, display_fit_quality)
+    p1 += ylab("Nb. of overlapping base pairs") + ggtitle('Total overlap length per region type')
+    p2, p2_feature_order = plot_this('nb_intersections', feature_order, display_fit_quality) 
+    p2 += ylab("Number of intersections") + ggtitle('Total nb. of intersections per region type')
     p3 = plot_volcano()
+
+    # Graphical visualisation of the combinations for multiple overlap cases
+    if should_plot_multiple_combis:
+        p4 = plot_multi_features(p1_feature_order)
 
     # -------------------------------------------------------------------------
     # Computing page size
@@ -1146,11 +1398,17 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, d
         message("Saving diagram to file : " + pdf_file.name)
         message("Be patient. This may be long for large datasets.")
 
+
+        plots = [p1 + theme(figure_size=figsize),
+                 p2 + theme(figure_size=figsize),
+                 p3 + theme(figure_size=figsize)]
+
+        if should_plot_multiple_combis:
+            plots += [p4 + theme(figure_size=figsize)]
+
         # NOTE : We must manually specify figure size with save_as_pdf_pages
         save_as_pdf_pages(filename=pdf_file.name,
-                          plots=[p1 + theme(figure_size=figsize),
-                                 p2 + theme(figure_size=figsize),
-                                 p3 + theme(figure_size=figsize)],
+                          plots=plots,
                           width=pdf_width,
                           height=pdf_height)
 
@@ -1195,7 +1453,7 @@ else:
         #ologram: proper number of shuffled intersections
         @test "ologram_3" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 2`
-          [ "$result" = "14.77" ]
+          [ "$result" = "14.88" ]
         }
 
         #ologram: overlapping bp
@@ -1207,21 +1465,49 @@ else:
         #ologram: shuffled overlapping bp
         @test "ologram_5" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
-          [ "$result" = "65.98" ]
+          [ "$result" = "65.61" ]
         }
 
         #ologram: shuffled overlapping bp variance
         @test "ologram_6" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 9`
-          [ "$result" = "18.54" ]
+          [ "$result" = "17.69" ]
         }
 
         #ologram: shuffled overlapping bp fitting
         @test "ologram_7" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10`
-          [ "$result" = "0.70573" ]
+          [ "$result" = "0.6482100000000001" ]
         }
+        
+
+        #ologram-modl: get example files
+        @test "ologram_8" {
+            result=`gtftk get_example -d simple_07 -f '*'`
+        [ "$result" = "" ]
+        }
+
+        #ologram-modl: multiple overlaps
+        @test "ologram_9" {
+            result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap`
+        [ "$result" = "" ]
+        }
+
+        #ologram-modl: check result
+        @test "ologram_10" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep "simple_07_peaks_2" | cut -f 2`
+          [ "$result" = "5.45" ]
+        }
+
+        #ologram-modl: multiple overlaps and dict learning
+        @test "ologram_11" {
+            result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap --multiple-overlap-target-combi-size 3 --multiple-overlap-max-number-of-combinations 4`
+        [ "$result" = "" ]
+        }
+
         '''
+
+
 
     cmd = CmdObject(name="ologram",
                     message="Statistics on bed file intersections with genomic features.",

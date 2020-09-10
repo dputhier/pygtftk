@@ -4,10 +4,9 @@
 """
 
 import argparse
+import gc
 import os
 import sys
-
-import gc
 
 from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
@@ -83,7 +82,7 @@ def splicing_site(inputfile=None,
     for i in exon_info:
 
         if i[0] == "exon":
-            if i[5] == ".":
+            if i[5] == "." or i[5] == "?":
                 message("Some exon lines do not contain any numbering. "
                         "Use add_exon_nb or set --exon-numbering-key to the proper key.",
                         type="ERROR")

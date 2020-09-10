@@ -70,7 +70,7 @@ def make_parser():
 
 
 
-def merge_ologram_stats(inputfiles=None,
+def ologram_merge_stats(inputfiles=None,
                         pdf_width=None,
                         pdf_height=None,
                         output=None,
@@ -229,7 +229,7 @@ def main():
     myparser = make_parser()
     args = myparser.parse_args()
     args = dict(args.__dict__)
-    merge_ologram_stats(**args)
+    ologram_merge_stats(**args)
 
 
 if __name__ == '__main__':
@@ -240,19 +240,19 @@ else:
     # 'Bats' tests
     test = '''
     #ologram: get example files
-    @test "ologram_0" {
+    @test "ologram_merge_stats_0" {
          result=`gtftk get_example -d ologram_1 -f '*'`
       [ "$result" = "" ]
     }
 
     #ologram: produce heatmap
-    @test "ologram_1" {
-         result=`gtftk merge_ologram_stats H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merged_ologram.pdf --labels H3K4me3,H3K36me3,H3K79me2`
+    @test "ologram_merge_stats_1" {
+         result=`gtftk ologram_merge_stats H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merged_ologram.pdf --labels H3K4me3,H3K36me3,H3K79me2`
       [ "$result" = "" ]
     }
     '''
 
-    cmd = CmdObject(name="merge_ologram_stats",
+    cmd = CmdObject(name="ologram_merge_stats",
                     message="Build a heatmap from several ologram output files (tsv).",
                     parser=make_parser(),
                     fun=os.path.abspath(__file__),
