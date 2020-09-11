@@ -1,10 +1,10 @@
 # Changelog
 
-## v1.1.5
+## v1.2.1
 
 ### Bug Fixes
 
-*   Fix #128 (merge_attr error when using same key as source and destination).
+*  Fix multiprocessing issue with py3.8.
 
 ### API/CLI Changes
 
@@ -18,7 +18,7 @@
 
 *   None.
 
-## v1.1.5
+## v1.2.0
 
 This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find intersections between multiple sets of genomic regions at once and then compute their enrichment with OLOGRAM. An optional algorithm (MODL) to find interesting combinations with sparse dictionary learning and greedy submodular optimisation has also been added. Furthermore, it also contains major speedups to OLOGRAM itself.
 
@@ -32,6 +32,7 @@ This version introduces OLOGRAM-MODL, a new paradigm for OLOGRAM to find interse
 *   fix #124
 *   fix BED to BED convertion in arg_formatted.FormattedFile(). BED6+ files were considered as BED6- files.
 *   fix #136 although --show-group-number is no more supported with gtftk profile when plotnine > 0.6.0 is used.
+*   Fix #128 (merge_attr error when using same key as source and destination).
 
 ### API Changes
 

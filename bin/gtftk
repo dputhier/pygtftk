@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+
+# Avoid AttributeError: module '__main__' has no attribute '__spec__'.
+# A weird bug which seems to be associated to the calling prgm (e.g. spider)
+__spec__ = ""
+
 import hashlib
 import os
 import shutil
@@ -24,7 +30,6 @@ from pygtftk.utils import flatten_list
 from pygtftk.utils import message
 from pygtftk.utils import silentremove
 from pygtftk.version import __version__
-from pygtftk.bwig.bw_coverage import TMP_FILE_POOL_MANAGER
 
 # Avoid warning message emitted by numpy
 # https://tinyurl.com/ybev6zrw
@@ -93,6 +98,7 @@ def main():
 
 if __name__ == "__main__":
 
+    from pygtftk.bwig.bw_coverage import TMP_FILE_POOL_MANAGER
     from signal import signal, SIGPIPE, SIG_DFL
 
     signal(SIGPIPE, SIG_DFL)
