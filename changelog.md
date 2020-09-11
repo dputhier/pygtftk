@@ -12,7 +12,7 @@
 
 ### Code changes
 
-*   None.
+*   Updated requirements.txt according to python 3.8.
 
 ### New Features
 
