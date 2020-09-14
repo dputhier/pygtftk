@@ -19,24 +19,24 @@ mpmath >=1.1.0; python_version < '3.8'
 scikit-learn >=0.21.2; python_version < '3.8'
 graphviz; python_version < '3.8'
 seaborn; python_version < '3.8'
-scipy >= 1.5.2;
-numpy >= 1.19.1;
-pybedtools >= 0.8.1;
-pyyaml >= 5.3.1;
-requests >=2.23.0;
-cffi >= 1.14.0;
-pyparsing >= 2.4.7;
-biopython >=1.78;
-matplotlib >= 3.3.1;
-plotnine >= 0.7.1;
-GitPython >= 3.1.8;
-cloudpickle >= 1.6.0;
-ftputil >= 4.0.0;
-pandas >= 1.1.2;
-pybigwig >= 0.3.17;
-setuptools;
-cython >= 0.29.21;
-mpmath >= 1.1.0;
-scikit-learn >= 0.23.2;
-graphviz >= 0.14.1;
-seaborn >= 0.11.0;
+scipy >= 1.5.2; python_version > '3.7'
+numpy >= 1.19.1; python_version > '3.7'
+pybedtools >= 0.8.1; python_version > '3.7'
+pyyaml >= 5.3.1; python_version > '3.7'
+requests >=2.23.0; python_version > '3.7'
+cffi >= 1.14.0; python_version > '3.7'
+pyparsing >= 2.4.7; python_version > '3.7'
+biopython >=1.78; python_version > '3.7'
+matplotlib >= 3.3.1; python_version > '3.7'
+plotnine >= 0.7.1; python_version > '3.7'
+GitPython >= 3.1.8; python_version > '3.7'
+cloudpickle >= 1.6.0; python_version > '3.7'
+ftputil >= 4.0.0; python_version > '3.7'
+pandas >= 1.1.2; python_version > '3.7'
+pybigwig >= 0.3.17; python_version > '3.7'
+setuptools; python_version > '3.7'
+cython >= 0.29.21; python_version > '3.7'
+mpmath >= 1.1.0; python_version > '3.7'
+scikit-learn >= 0.23.2; python_version > '3.7'
+graphviz >= 0.14.1; python_version > '3.7'
+seaborn >= 0.11.0; python_version > '3.7'
