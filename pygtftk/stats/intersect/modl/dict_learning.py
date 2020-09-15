@@ -80,30 +80,33 @@ def test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0, cor_groups 
 
 
 
-def squish_matrix(x, abundance_threshold = 0, shuffle = True):
+def squish_matrix(x, abundance_threshold = 0, shuffle = True, smother = True):
     r"""
     To reduce redundancy in the matrix lines, take all unique rows of X and 
     build a squished matrix where each line now has the square root of its 
     original abundance divided by sqrt(abundance of most rate), but not lower 
     than abundance_threshold, 1/10000 by default. We use the square root of 
-    those abudances instead to dimnish the emphasis on the most frequent combinations.      
+    those abudances instead to dimnish the emphasis on the most frequent 
+    combinations by default (smother)      
 
     >>> import numpy as np
     >>> from pygtftk.stats.intersect.modl.dict_learning import squish_matrix
     >>> X = np.array([[1,1,0,0]]*1000 + [[0,0,1,1]]*100)
-    >>> X_squished = squish_matrix(X, shuffle = False)
+    >>> X_squished = squish_matrix(X, shuffle = False, smother = True)
     >>> np.testing.assert_equal(X_squished, np.array([[0,0,1,1]]*1 + [[1,1,0,0]]*4)) # Note that the rows have been sorted by abundance   
     
     """
 
     # Get all unique rows and their counts
     all_rows, counts_per_row = np.unique(x, axis=0, return_counts = True)
-
+    min_abundance = abundance_threshold*x.shape[0]
 
     # Use sqrt to reduce difference between most and least abundant
-    min_abundance = np.sqrt(abundance_threshold*x.shape[0])
-    counts_per_row = np.sqrt(counts_per_row)
-
+    # Only if smother is True
+    if smother:
+        min_abundance = np.sqrt(min_abundance)
+        counts_per_row = np.sqrt(counts_per_row)
+        
     # Divide counts by lowest count observed (but never divide by under abundance_threshold)
     minimal_count = max(np.min(counts_per_row), min_abundance)
     counts_relative = counts_per_row / minimal_count
@@ -161,13 +164,14 @@ class Modl:
     :param nb_threads: Number of threads
     :param step_1_factor_allowance: In step 1 of building the candidates, how many words are allowed in the Dictionary Learning as a proportion of multiple_overlap_max_number_of_combinations
     :param error_function: error function used in step 2. Default to manhattan error. 
+    :param smother: Should the smothering which reduces each row's abudane to its square root to emphasize rarer combinations be applied ? Default is True
 
     Passing a custom error function, it must have the signature  error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity
     
     >>> from pygtftk.stats.intersect.modl.dict_learning import Modl, test_data_for_modl
     >>> import numpy as np
     >>> np.random.seed(42)
-    >>> flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.1, cor_groups = [(0,1),(0,1,2,3),(4,5)])
+    >>> flags_matrix = test_data_for_modl(nflags = 1000, number_of_sets = 6, noise = 0.05, cor_groups = [(0,1),(0,1,2,3),(4,5)])
     >>> combi_miner = Modl(flags_matrix, multiple_overlap_max_number_of_combinations = 3)
     >>> interesting_combis = combi_miner.find_interesting_combinations()
     >>> assert set(interesting_combis) == set([(1,1,0,0,0,0),(1,1,1,1,0,0),(0,0,0,0,1,1)])
@@ -179,7 +183,8 @@ class Modl:
                  multiple_overlap_max_number_of_combinations = 5,
                  nb_threads = 1,
                  step_1_factor_allowance = 2, 
-                 error_function = None):
+                 error_function = None,
+                 smother = True):
 
         # Matrix of overlap flags to work with
         self.original_data = flags_matrix
@@ -193,7 +198,7 @@ class Modl:
         # Then, to diminish the emphasis on frequent lines, we use in the end
         # the square root of that abundance.
         self.data = squish_matrix(self.original_data,
-            abundance_threshold = 1E-4)
+            abundance_threshold = 1E-4, smother = self.smother)
         # NOTE The original data is kept under self.original_data but is NOT currently used.
 
 
@@ -277,7 +282,7 @@ class Modl:
         all_candidate_words_ordered = [kv[0] for kv in sorted_kv_by_value]
 
         ## Remove the words longer than the user wants (with sum higher than multiple_overlap_target_combi_size)
-        # DEFAULT is -1, meaning no filtering should be applied and all words should be kept
+        # Default is -1, meaning no filtering should be applied and all words should be kept
         if self.max_word_length == -1: self.max_word_length = np.inf
         final_words = [tuple(word) for word in all_candidate_words_ordered if sum(word) <= self.max_word_length]
 
@@ -337,38 +342,19 @@ class Modl:
         MAIN FUNCTION. Will call the others.
         """
 
+        ## Hardcode ignoring of Python (and by extension SKLearn) warnings
+
         try:
             previous_warning_level = os.environ["PYTHONWARNINGS"]
         except:
             previous_warning_level = 'default'
-
-        # Should we ignore SKLEARN warnings ?
         
-        #import re, warnings
         if utils.VERBOSITY < 2: # Only if not debugging
-
             os.environ["PYTHONWARNINGS"] = "ignore"
             #warnings.filterwarnings('ignore', module='^{}\.'.format(re.escape("sklearn")))
-
             message("Filtering out sklearn warnings.")
 
-            """
-            TODO CHECK THAT THIS WORKS !
-                SIMPLY LOOK IN THE SNAKEMAKE PYTHO LOG, SINCE I TEST MODL :)
-
-                Look in step 2 of course when I desactivate utils
-
-                MANUALLY CHECK THAT VERBOSITY IS NOT OVERWRITTEN BY IMPORT
-
-                No, it just does not work.
-
-            """
-
-            # Hardcode it
-
-
-
-        # Now call the functions
+        ## Now call the functions
         self.generate_candidate_words()
         self.filter_library()
         self.select_best_words_from_library()
