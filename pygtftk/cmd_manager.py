@@ -3,21 +3,21 @@ and their associated functions."""
 
 import argparse
 import errno
-import glob
 import io
 import logging
-import os
 import re
 import shutil
 import subprocess
 import sys
-import textwrap
 from argparse import Action
-from importlib.machinery import SourceFileLoader
 from sys import platform
 
 import cloudpickle
+import glob
+import os
+import textwrap
 import yaml
+from importlib.machinery import SourceFileLoader
 
 import pygtftk
 import pygtftk.cmd_object
@@ -473,7 +473,7 @@ class CmdManager(object):
         # ----------------------------------------------------------------------
         # Config directory and config files
         # ----------------------------------------------------------------------
-        message("Checking configuration file.", force=True)
+        message("Checking configuration file.", type="DEBUG")
 
         CmdManager.config_dir = os.path.join(os.path.expanduser("~"),
                                              ".gtftk",
