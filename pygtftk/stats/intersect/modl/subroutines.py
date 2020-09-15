@@ -230,11 +230,15 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
 # ---------------------------------------------------------------------------- #
 
 
+
+
+
+
 def build_best_dict_from_library(data, library, queried_words_nb,
                 error_function = None,
                 nb_threads = 1,
                 transform_alpha = None):
-    """
+    r"""
     Given a data matrix and a library, will select the best n = queried_words_nb words
     with a greedy algorithm from the library to rebuild the data.
 
@@ -249,6 +253,18 @@ def build_best_dict_from_library(data, library, queried_words_nb,
     Instead of the reconstruction error, you may pass a different callable of the form
     error_function(data, rebuilt_data, encoded) that returns an error value so there
     can be a supervision but the submodularity might no longer hold.
+
+    >>> import numpy as np
+    >>> from pygtftk.stats.intersect.modl import tree
+    >>> from pygtftk.stats.intersect.modl import subroutines as modl_subroutines
+    >>> X = np.array([[1,1,0,0,0,0],[1,1,1,1,0,0],[0,0,0,0,1,1]]*10)
+    >>> candidates = [(1,1,0,0,0,0),(1,1,1,1,0,0),(0,0,0,0,1,1), (1,1,0,0,1,1), (1,0,1,0,1,0),(1,1,0,1,1,0),(1,0,1,1,0,0),(0,1,0,0,1,1)]
+    >>> L = tree.Library()
+    >>> L.build_nodes_for_words(candidates)
+    >>> L.assign_nodes()
+    >>> selection = modl_subroutines.build_best_dict_from_library(X, L, queried_words_nb = 3)
+    >>> assert set(selection) == set([(1,1,0,0,0,0),(1,1,1,1,0,0),(0,0,0,0,1,1)])
+
     """
 
 
