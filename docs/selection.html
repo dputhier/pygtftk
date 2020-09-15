@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘selection’ &#8212; gtftk 1.2.0 documentation</title>
+    <title>Commands from section ‘selection’ &#8212; gtftk 1.2.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="editing.html" title="Commands from section ‘Editing’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘selection’</a></li> 
       </ul>
     </div>  
@@ -59,15 +59,12 @@
 <h1>Commands from section ‘selection’<a class="headerlink" href="#commands-from-section-selection" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d tiny_real -f &#39;*&#39;
- |-- 10:48-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="section" id="select-by-key">
@@ -75,7 +72,6 @@
 <p><strong>Description:</strong> Extract lines from the gtf based on key and values.</p>
 <p><strong>Example:</strong> Select some gene_id.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k gene_id -v G0002,G0003,G0004
- |-- 10:48-INFO : Checking configuration file.
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	transcript	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;;
 chr1	gtftk	exon	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;; exon_id &quot;G0002T001E001&quot;;
@@ -102,8 +98,6 @@ chr1	gtftk	CDS	65	67	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T
 </div>
 <p><strong>Example:</strong> Select using basic attributes (chrom, source, feature…). Note that seqid, seqname and chrom are synonymous.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k feature -v transcript,exon | gtftk select_by_key -k seqname -v chr1
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;;
 chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;; exon_id &quot;G0001T002E001&quot;;
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T001&quot;;
@@ -148,7 +142,6 @@ chr1	gtftk	exon	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &quot;G00
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk select_by_key [-i GTF] [-o GTF] [-k KEY] [-v VALUE] [-f FILE] [-c COL] [-n] [-b] [-m NAME] [-s SEP] [-l] [-t] [-g] [-e] [-d] [-a] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -194,7 +187,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Select lines by testing values of a particular key with a regular expression</p>
 <p><strong>Example:</strong> Select lines corresponding to gene_names matching the regular expression ‘G.*9$’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_regexp -i simple.gtf -k gene_id -r &#39;G.*9$&#39;
- |-- 10:48-INFO : Checking configuration file.
 chr1	gtftk	gene	3	14	.	-	.	gene_id &quot;G0009&quot;;
 chr1	gtftk	transcript	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T002&quot;;
 chr1	gtftk	exon	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T002&quot;; exon_id &quot;G0009T002E001&quot;;
@@ -206,7 +198,6 @@ chr1	gtftk	CDS	3	8	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T00
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_regexp -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk select_by_regexp [-i GTF] [-o GTF] [-k KEY] [-r regexp] [-n] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -243,15 +234,11 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Delete genes containing an intron whose size is below s. If -m is selected, any gene whose sum of intronic region length is above s is deleted. Monoexonic genes are kept.</p>
 <p><strong>Example:</strong> Some genes having transcripts containing an intron whose size is below 80 nucleotides</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_intron_size -s 200 -vd -i tiny_real.gtf.gz | gtftk intron_sizes | gtftk tabulate -k gene_name,transcript_id,intron_sizes -Hun
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 MCAM	ENST00000526992	159,98
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_regexp -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk select_by_regexp [-i GTF] [-o GTF] [-k KEY] [-r regexp] [-n] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -288,8 +275,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> For each gene select the transcript with the highest number of exons.</p>
 <p><strong>Example:</strong> Select lines corresponding to gene_names matching the regular expression ‘BCL.*’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_max_exon_nb -i simple.gtf | gtftk select_by_key -t
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;;
 chr1	gtftk	transcript	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;;
 chr1	gtftk	transcript	50	61	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;;
@@ -304,7 +289,6 @@ chr1	gtftk	transcript	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &qu
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_max_exon_nb -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk select_by_max_exon_nb [-i GTF] [-o GTF] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -335,15 +319,12 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Select transcripts/gene overlapping a given locations. A transcript is defined here as the genomic region from TSS to TTS including introns. This function will return the transcript and all its associated elements (exons, utr…) even if only a fraction (e.g intron) of the transcript is overlapping the feature. If -/-ft-type is set to ‘gene’ returns the gene and all its associated elements.</p>
 <p><strong>Example:</strong> Select transcripts at a given location.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -k feature -v transcript -i simple.gtf | gtftk  select_by_loc -l chr1:10-15
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 chr1	gtftk	transcript	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T002&quot;;
 chr1	gtftk	transcript	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T001&quot;;
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_loc -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk select_by_loc [-i GTF] [-o GTF] (-l LOC | -f BEDFILE) [-t {transcript,gene}] [-n] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -383,9 +364,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Select transcripts based on the number of exons.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_nb_exon -m 2 -i simple.gtf | gtftk nb_exons| gtftk select_by_key -t
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 chr1	gtftk	transcript	50	61	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;; nb_exons &quot;2&quot;;
 chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T002&quot;; nb_exons &quot;3&quot;;
 chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot;G0004T001&quot;; nb_exons &quot;3&quot;;
@@ -397,7 +375,6 @@ chr1	gtftk	transcript	210	222	.	-	.	gene_id &quot;G0008&quot;; transcript_id &qu
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_nb_exon -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk select_by_nb_exon [-i GTF] [-o GTF] [-m min_exon_number] [-M max_exon_number] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -429,8 +406,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Select lines from a GTF file based on a boolean test on numeric values.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i simple.gtf  -j simple.join_mat -k gene_id -m|  gtftk select_by_numeric_value -t &#39;start &lt; 10 and end &gt; 10 and S1 == 0.5555 and S2 == 0.7&#39; -n &quot;.,?&quot;
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 chr1	gtftk	gene	3	14	.	-	.	gene_id &quot;G0009&quot;; S1 &quot;0.5555&quot;; S2 &quot;0.7&quot;;
 chr1	gtftk	transcript	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T002&quot;; S1 &quot;0.5555&quot;; S2 &quot;0.7&quot;;
 chr1	gtftk	exon	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T002&quot;; exon_id &quot;G0009T002E001&quot;; S1 &quot;0.5555&quot;; S2 &quot;0.7&quot;;
@@ -440,7 +415,6 @@ chr1	gtftk	exon	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_numeric_value -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk select_by_numeric_value [-i GTF] [-o GTF] -t test [-n na_omit] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -472,16 +446,13 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Select a random list of genes or transcripts.</p>
 <p><strong>Example:</strong> Select randomly 3 transcripts.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_list -n 3 -i simple.gtf | gtftk count
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 transcript	3
-exon	3
+exon	5
 CDS	3
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_list -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk random_list [-i GTF] [-o GTF] [-n NUMBER] [-t {gene,transcript}] [-s SEED] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -515,11 +486,8 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Select randomly up to m transcript for each gene.</p>
 <p><strong>Example:</strong> Select randomly 1 transcript per gene (<em>-m 1</em>).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_tx -m 1 -i simple.gtf | gtftk select_by_key -k feature -v gene,transcript| gtftk tabulate -k gene_id,transcript_id
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 gene_id	transcript_id
-G0001	G0001T001
+G0001	G0001T002
 G0002	G0002T001
 G0003	G0003T001
 G0004	G0004T002
@@ -527,13 +495,12 @@ G0005	G0005T001
 G0006	G0006T002
 G0007	G0007T002
 G0008	G0008T001
-G0009	G0009T001
+G0009	G0009T002
 G0010	G0010T001
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_tx -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk random_tx [-i GTF] [-o GTF] [-m MAX] [-s SEED] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -565,8 +532,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> If several transcripts of a gene share the same tss, select only one.</p>
 <p><strong>Example:</strong> Use rm_dup_tss to select transcripts that will be used for mk_matrix -k 5 (see later).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk rm_dup_tss -i simple.gtf | gtftk select_by_key -k feature -v transcript
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T001&quot;;
 chr1	gtftk	transcript	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;;
 chr1	gtftk	transcript	50	61	.	-	.	gene_id &quot;G0003&quot;; transcript_id &quot;G0003T001&quot;;
@@ -581,7 +546,6 @@ chr1	gtftk	transcript	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &qu
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk rm_dup_tss -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk rm_dup_tss [-i GTF] [-o GTF] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -618,7 +582,6 @@ Command-wise optional arguments:
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_go -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk select_by_go [-i GTF] [-o GTF] [-g go_id] (-l | -s species) [-n] [-p1 http_proxy] [-p2 https_proxy] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -654,9 +617,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Select transcript based on their size (i.e size of mature/spliced transcript).</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk feature_size -t mature_rna -i simple.gtf |  gtftk select_by_tx_size -m 14 | gtftk tabulate -n -k gene_id,transcript_id,feat_size
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 gene_id	transcript_id	feat_size
 G0001	G0001T002	14
 G0001	G0001T001	14
@@ -664,7 +624,6 @@ G0001	G0001T001	14
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_tx_size -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk select_by_tx_size [-i GTF] [-o GTF] [-m min_size] [-M max_size] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -696,9 +655,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Select the most 5’ transcript of each gene.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_most_5p_tx -i simple.gtf | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 gene_id	transcript_id
 G0001	G0001T002
 G0002	G0002T001
@@ -714,7 +670,6 @@ G0010	G0010T001
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_most_5p_tx -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk select_most_5p_tx [-i GTF] [-o GTF] [-g] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -748,9 +703,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Get the shortest or longest transcript of each gene</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk short_long -i simple.gtf | gtftk select_by_key -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
- |-- 10:48-INFO : Checking configuration file.
 gene_id	transcript_id
 G0001	G0001T002
 G0002	G0002T001
@@ -766,7 +718,6 @@ G0010	G0010T001
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk short_long -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk short_long [-i GTF] [-o GTF] [-l] [-g] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -868,13 +819,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="editing.html" title="Commands from section ‘Editing’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘selection’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Sep 10, 2020.
+      Last updated on Sep 15, 2020.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>

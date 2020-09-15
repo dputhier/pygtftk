@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘conversion’ &#8212; gtftk 1.2.0 documentation</title>
+    <title>Commands from section ‘conversion’ &#8212; gtftk 1.2.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="selection.html" title="Commands from section ‘selection’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘conversion’</a></li> 
       </ul>
     </div>  
@@ -59,7 +59,6 @@
 <h1>Commands from section ‘conversion’<a class="headerlink" href="#commands-from-section-conversion" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="section" id="convert">
@@ -72,8 +71,6 @@
 </ul>
 <p><strong>Example:</strong> Get the gene features and convert them to bed6.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k feature -v gene | gtftk convert -n gene_id  -f bed6| head -n 3
- |-- 10:41-INFO : Checking configuration file.
- |-- 10:41-INFO : Checking configuration file.
 chr1	124	138	G0001	.	+
 chr1	179	189	G0002	.	+
 chr1	49	61	G0003	.	-
@@ -81,7 +78,6 @@ chr1	49	61	G0003	.	-
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk convert -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk convert [-i GTF] [-o BED/BED3/BED6] [-n NAME] [-s SEP] [-m more_names] [-f {bed,bed3,bed6}] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -115,8 +111,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Extract key/values from the GTF and convert them to tabulated format. When requesting coordinates they will be provided in 1-based format.</p>
 <p><strong>Example:</strong> Simply get the list of transcripts and gene.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k feature -v transcript| gtftk tabulate -k gene_id,transcript_id -s &quot;|&quot;
- |-- 10:41-INFO : Checking configuration file.
- |-- 10:41-INFO : Checking configuration file.
 gene_id|transcript_id
 G0001|G0001T002
 G0001|G0001T001
@@ -141,7 +135,6 @@ G0010|G0010T001
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk tabulate -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk tabulate [-i GTF] [-o TXT] [-s SEPARATOR] [-k KEY,KEY...] [-u] [-H] [-n] [-x] [-b] [-t | -g | -a | -e] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -191,8 +184,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Convert a bed file to gtf-like format.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk convert -i simple.gtf | gtftk bed_to_gtf -t transcript | head -n 5
- |-- 10:41-INFO : Checking configuration file.
- |-- 10:41-INFO : Checking configuration file.
 chr1	Unknown	transcript	125	138	.	+	.	gene_id &quot;G0001|?&quot;; transcript_id &quot;G0001|?&quot;;
 chr1	Unknown	transcript	125	138	.	+	.	gene_id &quot;G0001|G0001T002&quot;; transcript_id &quot;G0001|G0001T002&quot;;
 chr1	Unknown	transcript	125	138	.	+	.	gene_id &quot;G0001|G0001T002&quot;; transcript_id &quot;G0001|G0001T002&quot;;
@@ -202,7 +193,6 @@ chr1	Unknown	transcript	125	138	.	+	.	gene_id &quot;G0001|G0001T001&quot;; trans
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk bed_to_gtf -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk bed_to_gtf [-i BED] [-o GTF] [-t ft_type] [-s source] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -235,9 +225,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Convert the GTF file to ensembl format. Essentially add ‘transcript’/’gene’ features.</p>
 <p><strong>Example:</strong> Delete gene and transcript feature. Regenerate them.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i simple.gtf -k feature -v gene,transcript -n| gtftk convert_ensembl | gtftk select_by_key -k gene_id -v G0001
- |-- 10:41-INFO : Checking configuration file.
- |-- 10:41-INFO : Checking configuration file.
- |-- 10:41-INFO : Checking configuration file.
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;;
 chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;; exon_id &quot;G0001T002E001&quot;;
@@ -249,7 +236,6 @@ chr1	gtftk	CDS	130	132	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G000
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk bed_to_gtf -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk bed_to_gtf [-i BED] [-o GTF] [-t ft_type] [-s source] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -338,13 +324,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="selection.html" title="Commands from section ‘selection’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘conversion’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Sep 10, 2020.
+      Last updated on Sep 15, 2020.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>

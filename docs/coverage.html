@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘coverage’ &#8212; gtftk 1.2.0 documentation</title>
+    <title>Commands from section ‘coverage’ &#8212; gtftk 1.2.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="sequence.html" title="Commands from section ‘sequence’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘coverage’</a></li> 
       </ul>
     </div>  
@@ -59,11 +59,9 @@
 <h1>Commands from section ‘coverage’<a class="headerlink" href="#commands-from-section-coverage" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q  -d mini_real_noov_rnd_tx -f &#39;*&#39;
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="section" id="coverage">
@@ -77,7 +75,6 @@ If –matrix-out is selected, the signal for each bigwig will be provided in a d
 </div>
 <p>We will compute coverage of promoters regions using 3 bigWig files as input.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk coverage -l H3K4me3,H3K79me2,H3K36me3 -u 5000 -d 5000 -i mini_real_noov_rnd_tx.gtf.gz -c hg38 -m transcript_id,gene_name -x ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -k 8 &gt; coverage.bed
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <p>Now we can have a look at the result:</p>
@@ -96,7 +93,6 @@ chr1	9178749	9188750	ENST00000437157|MIR34AHG	-	1.331067	1.272973	1.436956
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk coverage -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk coverage [-i GTF/BED] [-o TXT] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-w nb_window] [-k nb_proc] [-f ft_type] [-l labels] [-m name_column] [-p pseudo_count] [-n n_highest] [-x] [-zn] [-a key_name] [-s {mean,sum}] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file] bw_list [bw_list ...]
 
   Description: 
@@ -164,16 +160,13 @@ Will will create tree example datasets:</p>
 <p>The mk_matrix example below use 8 CPUs. Please adapt.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk mk_matrix -k 8 -i mini_real_noov_rnd_tx.gtf.gz -d 5000 -u 5000 -w 200 -c hg38  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_promoter
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <p>The following command computes coverage profil along the whole transcript.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk mk_matrix -k 8 --bin-around-frac 0.5 -i mini_real_noov_rnd_tx.gtf.gz -t transcript  -d 5000 -u 5000 -w 200 -c hg38  -l  H3K4me3,H3K79me,H3K36me3 -y ENCFF742FDS_H3K4me3_K562_sub.bw ENCFF947DVY_H3K79me2_K562_sub.bw ENCFF431HAA_H3K36me3_K562_sub.bw -o mini_real_tx
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk mk_matrix -h
- |-- 10:42-INFO : Checking configuration file.
   Usage: gtftk mk_matrix [-i GTF/BED] -y bigwiglist [bigwiglist ...] -o GTF/TXT [-l labels] [-t {promoter,tts,transcript,user_regions,single_nuc}] [-p pseudo_count] [-u upstream] [-d downstream] -c chrom_info [-w bin_nb] [-k nb_proc] [-b bin_around_frac] [-zn] [-nst] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -221,22 +214,19 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 <p><strong>Basic profiles</strong></p>
 <p>A simple overlayed profile of all epigenetic marks around promoter. Here <em>—group-by</em> is, by default set to <em>bwig</em> and <em>—facet-var</em> is set to None. Thus a single plot with several lines corresponding to bwig coverage is obtained.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if  example_01.png
- |-- 10:42-INFO : Checking configuration file.
- |-- 10:42-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 17:44-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_01.png"><img alt="_images/example_01.png" src="_images/example_01.png" style="width: 75%;" /></a>
 <p>Changing colors and applying color order can be done using the following syntax:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -c &#39;red,blue,violet&#39; -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if  example_01b.png
- |-- 10:42-INFO : Checking configuration file.
- |-- 10:42-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 17:44-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_01b.png"><img alt="_images/example_01b.png" src="_images/example_01b.png" style="width: 75%;" /></a>
 <p>Transcript coverage is obtained using the <em>mini_real_tx.zip</em> matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5’ and 3’ regions:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if  example_02.png
- |-- 10:42-INFO : Checking configuration file.
- |-- 10:42-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 17:44-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_02.png"><img alt="_images/example_02.png" src="_images/example_02.png" style="width: 75%;" /></a>
@@ -244,121 +234,115 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 <p>Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to bwig classes and the facets to transcript classes. Things can be simply done by providing an additional file containing the transcript and their associated classes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_05.png -e -V 2 -fc 2
- |-- 10:42-INFO : Checking configuration file.
- |-- 10:42-DEBUG-profile : Using pandas version 1.1.1
- |-- 10:42-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_dev/lib/python3.7/site-packages/pandas/__init__.py
- |-- 10:42-DEBUG-profile : Using numpy version 1.19.1
- |-- 10:42-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_dev/lib/python3.7/site-packages/numpy/__init__.py
- |-- 10:42-DEBUG-profile : Using plotnine version 0.7.1
- |-- 10:42-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_dev/lib/python3.7/site-packages/plotnine/__init__.py
- |-- 10:42-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_od1lmag1
- |-- 10:42-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_od1lmag1
- |-- 10:42-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_od1lmag1/mini_real_promoter
- |-- 10:42-INFO-profile : Getting configuration info from input file.
- |-- 10:42-INFO-profile : Reading transcript file.
- |-- 10:42-INFO-profile : Deleting duplicates in transcript-file.
- |-- 10:42-INFO-profile : Checking how many transcripts where found in the transcript list.
- |-- 10:42-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
- |-- 10:42-DEBUG-profile : Color order : [&#39;H3K79me&#39;, &#39;H3K36me3&#39;, &#39;H3K4me3&#39;]
- |-- 10:42-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
- |-- 10:42-INFO-profile : Searching coverage columns.
- |-- 10:42-INFO-profile : Melting.
- |-- 10:42-INFO-profile : Ceiling
- |-- 10:42-INFO-profile : Computing column ordering.
- |-- 10:42-INFO-profile : Preparing diagram
- |-- 10:42-INFO-profile : Theming and ordering. Please be patient...
- |-- 10:42-INFO-profile : Preparing x axis
- |-- 10:42-INFO-profile : facet_col 2
- |-- 10:42-INFO-profile : Page width set to 6
- |-- 10:42-INFO-profile : Page height set to 5.0
- |-- 10:42-INFO-profile : Saving diagram to file : example_05.png
- |-- 10:42-INFO-profile : Be patient. This may be long for large datasets.
- |-- 10:42-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_od1lmag1
+ |-- 17:45-DEBUG-profile : Using pandas version 1.1.2
+ |-- 17:45-DEBUG-profile : Pandas location /Users/puthier/anaconda3/envs/pygtftk_dev37/lib/python3.7/site-packages/pandas/__init__.py
+ |-- 17:45-DEBUG-profile : Using numpy version 1.19.1
+ |-- 17:45-DEBUG-profile : Pandas numpy /Users/puthier/anaconda3/envs/pygtftk_dev37/lib/python3.7/site-packages/numpy/__init__.py
+ |-- 17:45-DEBUG-profile : Using plotnine version 0.7.1
+ |-- 17:45-DEBUG-profile : Pandas plotnine /Users/puthier/anaconda3/envs/pygtftk_dev37/lib/python3.7/site-packages/plotnine/__init__.py
+ |-- 17:45-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ye5gzvnv
+ |-- 17:45-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ye5gzvnv
+ |-- 17:45-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ye5gzvnv/mini_real_promoter
+ |-- 17:45-INFO-profile : Getting configuration info from input file.
+ |-- 17:45-INFO-profile : Reading transcript file.
+ |-- 17:45-INFO-profile : Deleting duplicates in transcript-file.
+ |-- 17:45-INFO-profile : Checking how many transcripts where found in the transcript list.
+ |-- 17:45-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
+ |-- 17:45-DEBUG-profile : Color order : [&#39;H3K79me&#39;, &#39;H3K4me3&#39;, &#39;H3K36me3&#39;]
+ |-- 17:45-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
+ |-- 17:45-INFO-profile : Searching coverage columns.
+ |-- 17:45-INFO-profile : Melting.
+ |-- 17:45-INFO-profile : Ceiling
+ |-- 17:45-INFO-profile : Computing column ordering.
+ |-- 17:45-INFO-profile : Preparing diagram
+ |-- 17:45-INFO-profile : Theming and ordering. Please be patient...
+ |-- 17:45-INFO-profile : Preparing x axis
+ |-- 17:45-INFO-profile : facet_col 2
+ |-- 17:45-INFO-profile : Page width set to 6
+ |-- 17:45-INFO-profile : Page height set to 5.0
+ |-- 17:45-INFO-profile : Saving diagram to file : example_05.png
+ |-- 17:45-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 17:45-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ye5gzvnv
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_05.png"><img alt="_images/example_05.png" src="_images/example_05.png" style="width: 75%;" /></a>
 <p>Alternatively, the groups can be set to chromosomes or transcript classes:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_06.png -V 2 -nm ranging
- |-- 10:42-INFO : Checking configuration file.
- |-- 10:42-DEBUG-profile : Using pandas version 1.1.1
- |-- 10:42-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_dev/lib/python3.7/site-packages/pandas/__init__.py
- |-- 10:42-DEBUG-profile : Using numpy version 1.19.1
- |-- 10:42-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_dev/lib/python3.7/site-packages/numpy/__init__.py
- |-- 10:42-DEBUG-profile : Using plotnine version 0.7.1
- |-- 10:42-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_dev/lib/python3.7/site-packages/plotnine/__init__.py
- |-- 10:42-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ho5h_1x1
- |-- 10:42-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ho5h_1x1
- |-- 10:42-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ho5h_1x1/mini_real_promoter
- |-- 10:42-INFO-profile : Getting configuration info from input file.
- |-- 10:42-INFO-profile : Reading transcript file.
- |-- 10:42-INFO-profile : Deleting duplicates in transcript-file.
- |-- 10:42-INFO-profile : Checking how many transcripts where found in the transcript list.
- |-- 10:42-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
- |-- 10:42-DEBUG-profile : Color order : [&#39;antisense&#39;, &#39;lincRNA&#39;, &#39;protein_coding&#39;]
- |-- 10:42-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
- |-- 10:42-INFO-profile : Searching coverage columns.
- |-- 10:42-INFO-profile : Melting.
- |-- 10:42-INFO-profile : Ceiling
- |-- 10:42-INFO-profile : Normalizing (ranging)
- |-- 10:42-INFO-profile : Computing column ordering.
- |-- 10:42-INFO-profile : Preparing diagram
- |-- 10:42-INFO-profile : Theming and ordering. Please be patient...
- |-- 10:42-INFO-profile : Preparing x axis
- |-- 10:42-INFO-profile : facet_col 3
- |-- 10:42-INFO-profile : Page width set to 9
- |-- 10:42-INFO-profile : Page height set to 2.0
- |-- 10:42-INFO-profile : Saving diagram to file : example_06.png
- |-- 10:42-INFO-profile : Be patient. This may be long for large datasets.
- |-- 10:42-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ho5h_1x1
+ |-- 17:45-DEBUG-profile : Using pandas version 1.1.2
+ |-- 17:45-DEBUG-profile : Pandas location /Users/puthier/anaconda3/envs/pygtftk_dev37/lib/python3.7/site-packages/pandas/__init__.py
+ |-- 17:45-DEBUG-profile : Using numpy version 1.19.1
+ |-- 17:45-DEBUG-profile : Pandas numpy /Users/puthier/anaconda3/envs/pygtftk_dev37/lib/python3.7/site-packages/numpy/__init__.py
+ |-- 17:45-DEBUG-profile : Using plotnine version 0.7.1
+ |-- 17:45-DEBUG-profile : Pandas plotnine /Users/puthier/anaconda3/envs/pygtftk_dev37/lib/python3.7/site-packages/plotnine/__init__.py
+ |-- 17:45-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_rsqg2dqt
+ |-- 17:45-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_rsqg2dqt
+ |-- 17:45-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_rsqg2dqt/mini_real_promoter
+ |-- 17:45-INFO-profile : Getting configuration info from input file.
+ |-- 17:45-INFO-profile : Reading transcript file.
+ |-- 17:45-INFO-profile : Deleting duplicates in transcript-file.
+ |-- 17:45-INFO-profile : Checking how many transcripts where found in the transcript list.
+ |-- 17:45-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
+ |-- 17:45-DEBUG-profile : Color order : [&#39;protein_coding&#39;, &#39;antisense&#39;, &#39;lincRNA&#39;]
+ |-- 17:45-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
+ |-- 17:45-INFO-profile : Searching coverage columns.
+ |-- 17:45-INFO-profile : Melting.
+ |-- 17:45-INFO-profile : Ceiling
+ |-- 17:45-INFO-profile : Normalizing (ranging)
+ |-- 17:45-INFO-profile : Computing column ordering.
+ |-- 17:45-INFO-profile : Preparing diagram
+ |-- 17:45-INFO-profile : Theming and ordering. Please be patient...
+ |-- 17:45-INFO-profile : Preparing x axis
+ |-- 17:45-INFO-profile : facet_col 3
+ |-- 17:45-INFO-profile : Page width set to 9
+ |-- 17:45-INFO-profile : Page height set to 2.0
+ |-- 17:45-INFO-profile : Saving diagram to file : example_06.png
+ |-- 17:45-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 17:45-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_rsqg2dqt
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_06.png"><img alt="_images/example_06.png" src="_images/example_06.png" style="width: 75%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_06b.png -V 2 -nm ranging
- |-- 10:42-INFO : Checking configuration file.
- |-- 10:42-DEBUG-profile : Using pandas version 1.1.1
- |-- 10:42-DEBUG-profile : Pandas location /Users/puthier/miniconda3/envs/pygtftk_dev/lib/python3.7/site-packages/pandas/__init__.py
- |-- 10:42-DEBUG-profile : Using numpy version 1.19.1
- |-- 10:42-DEBUG-profile : Pandas numpy /Users/puthier/miniconda3/envs/pygtftk_dev/lib/python3.7/site-packages/numpy/__init__.py
- |-- 10:42-DEBUG-profile : Using plotnine version 0.7.1
- |-- 10:42-DEBUG-profile : Pandas plotnine /Users/puthier/miniconda3/envs/pygtftk_dev/lib/python3.7/site-packages/plotnine/__init__.py
- |-- 10:42-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_6nuakin0
- |-- 10:42-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_6nuakin0
- |-- 10:42-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_6nuakin0/mini_real_promoter
- |-- 10:42-INFO-profile : Getting configuration info from input file.
- |-- 10:42-DEBUG-profile : Color order : [&#39;chr18&#39;, &#39;chr12&#39;, &#39;chr22&#39;, &#39;chr16&#39;, &#39;chrX&#39;, &#39;chr11&#39;, &#39;chr20&#39;, &#39;chr10&#39;, &#39;chr9&#39;, &#39;chr6&#39;, &#39;chr19&#39;, &#39;chr21&#39;, &#39;chr8&#39;, &#39;chr3&#39;, &#39;chr15&#39;, &#39;chr4&#39;, &#39;chr7&#39;, &#39;chr13&#39;, &#39;chr2&#39;, &#39;chr17&#39;, &#39;chr1&#39;, &#39;chr5&#39;, &#39;chr14&#39;]
- |-- 10:42-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#6c007c&#39;, &#39;#850096&#39;, &#39;#2500a5&#39;, &#39;#0000ca&#39;, &#39;#0041dd&#39;, &#39;#0086dd&#39;, &#39;#009fca&#39;, &#39;#00aaa1&#39;, &#39;#00a76f&#39;, &#39;#009c00&#39;, &#39;#00bb00&#39;, &#39;#00da00&#39;, &#39;#00f900&#39;, &#39;#88ff00&#39;, &#39;#dbf400&#39;, &#39;#f7db00&#39;, &#39;#ffb500&#39;, &#39;#ff6100&#39;, &#39;#f60000&#39;, &#39;#da0000&#39;, &#39;#cc1313&#39;, &#39;#cccccc&#39;]
- |-- 10:42-INFO-profile : Searching coverage columns.
- |-- 10:42-INFO-profile : Melting.
- |-- 10:42-INFO-profile : Ceiling
- |-- 10:42-INFO-profile : Normalizing (ranging)
- |-- 10:42-INFO-profile : Computing column ordering.
- |-- 10:42-INFO-profile : Preparing diagram
- |-- 10:42-INFO-profile : Theming and ordering. Please be patient...
- |-- 10:42-INFO-profile : Preparing x axis
- |-- 10:42-INFO-profile : facet_col 3
- |-- 10:42-INFO-profile : Page width set to 9
- |-- 10:42-INFO-profile : Page height set to 2.0
- |-- 10:42-INFO-profile : Saving diagram to file : example_06b.png
- |-- 10:42-INFO-profile : Be patient. This may be long for large datasets.
- |-- 10:42-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_6nuakin0
+ |-- 17:45-DEBUG-profile : Using pandas version 1.1.2
+ |-- 17:45-DEBUG-profile : Pandas location /Users/puthier/anaconda3/envs/pygtftk_dev37/lib/python3.7/site-packages/pandas/__init__.py
+ |-- 17:45-DEBUG-profile : Using numpy version 1.19.1
+ |-- 17:45-DEBUG-profile : Pandas numpy /Users/puthier/anaconda3/envs/pygtftk_dev37/lib/python3.7/site-packages/numpy/__init__.py
+ |-- 17:45-DEBUG-profile : Using plotnine version 0.7.1
+ |-- 17:45-DEBUG-profile : Pandas plotnine /Users/puthier/anaconda3/envs/pygtftk_dev37/lib/python3.7/site-packages/plotnine/__init__.py
+ |-- 17:45-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ygqhag_x
+ |-- 17:45-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ygqhag_x
+ |-- 17:45-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ygqhag_x/mini_real_promoter
+ |-- 17:45-INFO-profile : Getting configuration info from input file.
+ |-- 17:45-DEBUG-profile : Color order : [&#39;chr18&#39;, &#39;chr9&#39;, &#39;chr8&#39;, &#39;chr15&#39;, &#39;chr1&#39;, &#39;chr2&#39;, &#39;chr12&#39;, &#39;chr14&#39;, &#39;chr10&#39;, &#39;chr13&#39;, &#39;chr4&#39;, &#39;chr16&#39;, &#39;chr19&#39;, &#39;chr11&#39;, &#39;chr17&#39;, &#39;chr7&#39;, &#39;chr22&#39;, &#39;chr21&#39;, &#39;chr5&#39;, &#39;chr3&#39;, &#39;chr20&#39;, &#39;chrX&#39;, &#39;chr6&#39;]
+ |-- 17:45-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#6c007c&#39;, &#39;#850096&#39;, &#39;#2500a5&#39;, &#39;#0000ca&#39;, &#39;#0041dd&#39;, &#39;#0086dd&#39;, &#39;#009fca&#39;, &#39;#00aaa1&#39;, &#39;#00a76f&#39;, &#39;#009c00&#39;, &#39;#00bb00&#39;, &#39;#00da00&#39;, &#39;#00f900&#39;, &#39;#88ff00&#39;, &#39;#dbf400&#39;, &#39;#f7db00&#39;, &#39;#ffb500&#39;, &#39;#ff6100&#39;, &#39;#f60000&#39;, &#39;#da0000&#39;, &#39;#cc1313&#39;, &#39;#cccccc&#39;]
+ |-- 17:45-INFO-profile : Searching coverage columns.
+ |-- 17:45-INFO-profile : Melting.
+ |-- 17:45-INFO-profile : Ceiling
+ |-- 17:45-INFO-profile : Normalizing (ranging)
+ |-- 17:45-INFO-profile : Computing column ordering.
+ |-- 17:45-INFO-profile : Preparing diagram
+ |-- 17:45-INFO-profile : Theming and ordering. Please be patient...
+ |-- 17:45-INFO-profile : Preparing x axis
+ |-- 17:45-INFO-profile : facet_col 3
+ |-- 17:45-INFO-profile : Page width set to 9
+ |-- 17:45-INFO-profile : Page height set to 2.0
+ |-- 17:45-INFO-profile : Saving diagram to file : example_06b.png
+ |-- 17:45-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 17:45-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_ygqhag_x
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_06b.png"><img alt="_images/example_06b.png" src="_images/example_06b.png" style="width: 75%;" /></a>
 <p>Note that facets may also be associated to epigenetic marks. In this case each the –group-by can be set to <em>tx_classes</em> or <em>chrom</em>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if  example_07.png -w -nm ranging
- |-- 10:42-INFO : Checking configuration file.
- |-- 10:42-WARNING-profile : PlotnineError error, can not show group number: Aesthetics {&#39;ha&#39;} specified two times.
+ |-- 17:45-WARNING-profile : PlotnineError error, can not show group number: Aesthetics {&#39;ha&#39;} specified two times.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_07.png"><img alt="_images/example_07.png" src="_images/example_07.png" style="width: 75%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -g chrom -f bwig  -o profile_tx -pf png -if  example_08.png  -w -nm ranging
- |-- 10:42-INFO : Checking configuration file.
- |-- 10:43-WARNING-profile : PlotnineError error, can not show group number: Aesthetics {&#39;ha&#39;} specified two times.
+ |-- 17:45-WARNING-profile : PlotnineError error, can not show group number: Aesthetics {&#39;ha&#39;} specified two times.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_08.png"><img alt="_images/example_08.png" src="_images/example_08.png" style="width: 75%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -h
- |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk profile -i MATRIX [-o DIR] [-t transcript_file] [-s {mean,median,sum,min,max}] [-e] [-c profile_colors] [-d color_order] [-g {bwig,tx_classes,chrom}] [-f {bwig,tx_classes,chrom}] [-pw page_width] [-ph page_height] [-pf {pdf,png}] [-lw line_width] [-bc border_color] [-x x_lab] [-at axis_text] [-st strip_text] [-u subset_bwig] [-fc facet_col] [-w] [-if user_img_file] [-ul upper_limit] [-nm {none,ranging}] [-tl] [-ti title] [-dpi dpi] [-th {538,bw,grey,gray,linedraw,light,dark,minimal,classic,void,test,matplotlib,seaborn}] [-m palette] [-l] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -478,13 +462,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="sequence.html" title="Commands from section ‘sequence’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘coverage’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Sep 10, 2020.
+      Last updated on Sep 15, 2020.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
