@@ -102,8 +102,8 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:46-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 17:47-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
+ |-- 9:11-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 9:11-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
 </pre></div>
 </div>
 <br>
@@ -118,7 +118,7 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> We are now using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:48-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 9:12-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -137,8 +137,8 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:49-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
- |-- 17:49-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 9:13-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
+ |-- 9:13-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -153,8 +153,8 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:50-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
- |-- 17:50-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 9:14-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 9:14-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -187,14 +187,14 @@ to noise which is a known problem in biological data. Its goal is to extract mea
 <p><strong>Simple example:</strong></p>
 <p>Comparing the query (-p) against two other BED files, analyzing multiple overlaps.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -z -w -q -c simple_07.chromInfo -p simple_07_peaks.bed --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap
- |-- 17:50-WARNING : Converting to bed6 format (simple_07_peaks.bed).
- |-- 17:50-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
- |-- 17:50-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
- |-- 17:50-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 17:50-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
- |-- 17:50-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
- |-- 17:50-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
- |-- 17:50-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
+ |-- 9:15-WARNING : Converting to bed6 format (simple_07_peaks.bed).
+ |-- 9:15-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
+ |-- 9:15-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
+ |-- 9:15-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 9:15-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
+ |-- 9:15-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 9:15-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 9:15-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
 </pre></div>
 </div>
 <p><strong>Detailed example:</strong></p>
@@ -472,15 +472,14 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Visualize n-wise enrichment results (OLOGRAM-MODL) as a tree of combinations. Works on the result (tsv file) of an OLOGRAM analysis called with –more-bed-multiple-overlap.</p>
 <p>We recommend this representation. The tsv file can be edited before passing it to the command, for example by keeping only the combinations you are interested in.</p>
 <p>On the graph, S designated the total number of basepairs in which this combinations is encountered in the real data. Fold change gives the ratio with the number of basepairs in the shuffles, with the associated Negative Binomial p-value.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o ./results/treeified.pdf -l ThisWasTheNameOfTheQuery
- |-- 17:50-WARNING : Directory not found. Creating.
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o treeified.pdf -l ThisWasTheNameOfTheQuery
 </pre></div>
 </div>
 <br>
 <table>
 <tr>
 <td valign="top">
-<iframe src="_static/example_ologram_treeify.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+<iframe src="_static/treeified.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
 </iframe>
 </td>
 </tr>
@@ -638,7 +637,7 @@ Command-wise optional arguments:
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Sep 15, 2020.
+      Last updated on Sep 16, 2020.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
