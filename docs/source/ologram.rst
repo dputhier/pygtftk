@@ -331,7 +331,7 @@ We recommend this representation. The tsv file can be edited before passing it t
 
 On the graph, S designated the total number of basepairs in which this combinations is encountered in the real data. Fold change gives the ratio with the number of basepairs in the shuffles, with the associated Negative Binomial p-value.
 
-.. command-output:: gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o ./results/treeified.pdf -l ThisWasTheNameOfTheQuery
+.. command-output:: gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o treeified.pdf -l ThisWasTheNameOfTheQuery
 	:shell:
 
 .. raw:: html
@@ -340,7 +340,7 @@ On the graph, S designated the total number of basepairs in which this combinati
   <table>
   <tr>
   <td valign="top">
-  <iframe src="_static/example_ologram_treeify.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  <iframe src="_static/treeified.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
   </iframe>
   </td>
   </tr>

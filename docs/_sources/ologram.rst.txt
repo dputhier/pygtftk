@@ -248,6 +248,9 @@ For a factor allowance of k and n final queried words, the matrix will be rebuil
 factor allowance is K in K*n words in step 1 where n is final queries nb of words.
 
 MODL and will discard combinations rarer than 1/10000 occurences to reduce computing times and will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements.
+However, this can magnify the impact of the noise quadratically as well, and can be disabled when using the manual API.
+
+
 
 If you are passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity.  All are NumPY matrices.
 
@@ -268,7 +271,8 @@ Here is an example:
     multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
     nb_threads = 1,
     step_1_factor_allowance = 2,                        # How many words to ask for in each step 1 rebuilding, as a multiplier of multiple_overlap_max_number_of_combinations
-    error_function = None)                              # Custom error function in step 2
+    error_function = None,                              # Custom error function in step 2
+    smother = True)                                     # Should the smothering (quadratic reduction of abundance) be applied ?
   interesting_combis = combi_miner.find_interesting_combinations()   
 
 
@@ -327,7 +331,7 @@ We recommend this representation. The tsv file can be edited before passing it t
 
 On the graph, S designated the total number of basepairs in which this combinations is encountered in the real data. Fold change gives the ratio with the number of basepairs in the shuffles, with the associated Negative Binomial p-value.
 
-.. command-output:: gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o ./results/treeified.pdf -l ThisWasTheNameOfTheQuery
+.. command-output:: gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o treeified.pdf -l ThisWasTheNameOfTheQuery
 	:shell:
 
 .. raw:: html
@@ -336,7 +340,7 @@ On the graph, S designated the total number of basepairs in which this combinati
   <table>
   <tr>
   <td valign="top">
-  <iframe src="_static/example_ologram_treeify.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
+  <iframe src="_static/treeified.pdf" title="your_title" align="top" width="500" height="620" width="50%" frameborder="0" scrolling="auto" target="Message">
   </iframe>
   </td>
   </tr>

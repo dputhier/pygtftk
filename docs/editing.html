@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘Editing’ &#8212; gtftk 1.2.0 documentation</title>
+    <title>Commands from section ‘Editing’ &#8212; gtftk 1.2.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="information.html" title="Commands from section ‘information’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘Editing’</a></li> 
       </ul>
     </div>  
@@ -59,11 +59,9 @@
 <h1>Commands from section ‘Editing’<a class="headerlink" href="#commands-from-section-editing" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &quot;*&quot;
- |-- 10:43-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="section" id="add-prefix">
@@ -71,14 +69,12 @@
 <p><strong>Description:</strong> Add a prefix (or suffix) to one of the attribute value (<em>e.g.</em> gene_id)</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_prefix -i simple.gtf -k transcript_id -t &quot;novel_&quot;| head -2
- |-- 10:43-INFO : Checking configuration file.
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;novel_G0001T002&quot;;
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_prefix -h
- |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk add_prefix [-i GTF] [-o GTF] [-k KEY] [-t TEXT] [-s] [-f target_feature] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -112,7 +108,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Delete an attribute and its corresponding values.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk del_attr -i simple.gtf -k transcript_id,exon_id
- |-- 10:43-INFO : Checking configuration file.
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	exon	125	138	.	+	.	gene_id &quot;G0001&quot;;
@@ -187,7 +182,6 @@ chr1	gtftk	CDS	184	186	.	+	.	gene_id &quot;G0010&quot;; ccds_id &quot;CDS_G0010T
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk del_attr -h
- |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk del_attr [-i GTF] [-o GTF] -k KEY [-r] [-v] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -251,8 +245,6 @@ G0009	0.5555
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i simple.gtf -k gene_id -j simple.join -n a_score -t gene| gtftk select_by_key -k feature -v gene
- |-- 10:43-INFO : Checking configuration file.
- |-- 10:43-INFO : Checking configuration file.
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; a_score &quot;0.2322&quot;;
@@ -274,8 +266,6 @@ G0009	0.5555	0.7
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i simple.gtf -k gene_id -j simple.join_mat -m -t gene| gtftk select_by_key -k feature -v gene
- |-- 10:43-INFO : Checking configuration file.
- |-- 10:43-INFO : Checking configuration file.
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; S1 &quot;0.2322&quot;; S2 &quot;0.4&quot;;
@@ -290,7 +280,6 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -h
- |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk join_attr [-i GTF] [-o GTF] -k KEY -j JOIN_FILE [-H] [-m] [-n NEW_KEY] [-t target_feature] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -342,8 +331,6 @@ G0004	0.999	0.6
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_multi_file -i simple.gtf -k gene_id -t gene -m simple.join_mat_2 simple.join_mat_3| gtftk select_by_key -g
- |-- 10:43-INFO : Checking configuration file.
- |-- 10:43-INFO : Checking configuration file.
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; S3 &quot;A&quot;; S4 &quot;B&quot;; S5 &quot;0.2322&quot;; S6 &quot;0.4&quot;;
@@ -358,7 +345,6 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_multi_file -h
- |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk join_multi_file [-i GTF] [-o GTF] -k KEY [-t target_feature] [-m matrix_files [matrix_files ...]] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -391,8 +377,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Merge a set of attributes into a destination attribute.</p>
 <p><strong>Example:</strong> Merge gene_id and transcript_id into a new key associated to transcript features.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk merge_attr -i simple.gtf -k transcript_id,gene_id -d txgn_id -s &quot;|&quot; -f transcript | gtftk select_by_key -t
- |-- 10:43-INFO : Checking configuration file.
- |-- 10:43-INFO : Checking configuration file.
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T002&quot;; txgn_id &quot;G0001T002|G0001&quot;;
 chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &quot;G0001T001&quot;; txgn_id &quot;G0001T001|G0001&quot;;
 chr1	gtftk	transcript	180	189	.	+	.	gene_id &quot;G0002&quot;; transcript_id &quot;G0002T001&quot;; txgn_id &quot;G0002T001|G0002&quot;;
@@ -412,7 +396,6 @@ chr1	gtftk	transcript	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &qu
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_multi_file -h
- |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk join_multi_file [-i GTF] [-o GTF] -k KEY [-t target_feature] [-m matrix_files [matrix_files ...]] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -453,10 +436,7 @@ G0009	0.5555	0.7
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i simple.gtf -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
- |-- 10:43-INFO : Checking configuration file.
- |-- 10:43-INFO : Checking configuration file.
- |-- 10:43-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
- |-- 10:43-INFO : Checking configuration file.
+ |-- 22:08-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; S1 &quot;0.2322&quot;; S2 &quot;0.4&quot;; S1_d &quot;A&quot;;
@@ -475,10 +455,7 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 <p>The <em>profile</em> command that could be used to asses the associated epigenetic marks of these 10 gene classes.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
- |-- 10:43-INFO : Checking configuration file.
- |-- 10:43-INFO : Checking configuration file.
- |-- 10:43-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
- |-- 10:43-INFO : Checking configuration file.
+ |-- 22:08-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
   96 A
   83 B
   89 C
@@ -493,7 +470,6 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk discretize_key -h
- |-- 10:43-INFO : Checking configuration file.
   Usage: gtftk discretize_key [-i GTF] [-o GTF] -k src_key -d dest_key -n KEY [-l labels] [-p] [-g] [-u] [-r precision] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -597,13 +573,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="information.html" title="Commands from section ‘information’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘Editing’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Sep 10, 2020.
+      Last updated on Sep 16, 2020.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>

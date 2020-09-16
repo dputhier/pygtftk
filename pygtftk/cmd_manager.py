@@ -3,21 +3,21 @@ and their associated functions."""
 
 import argparse
 import errno
-import glob
 import io
 import logging
-import os
 import re
 import shutil
 import subprocess
 import sys
-import textwrap
 from argparse import Action
-from importlib.machinery import SourceFileLoader
 from sys import platform
 
 import cloudpickle
+import glob
+import os
+import textwrap
 import yaml
+from importlib.machinery import SourceFileLoader
 
 import pygtftk
 import pygtftk.cmd_object

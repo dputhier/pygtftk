@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘coordinates’ &#8212; gtftk 1.2.0 documentation</title>
+    <title>Commands from section ‘coordinates’ &#8212; gtftk 1.2.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="ologram.html" title="Commands from section ‘ologram’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘coordinates’</a></li> 
       </ul>
     </div>  
@@ -59,7 +59,6 @@
 <h1>Commands from section ‘coordinates’<a class="headerlink" href="#commands-from-section-coordinates" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="section" id="midpoints">
@@ -67,7 +66,6 @@
 <p><strong>Description:</strong> Get the genomic midpoint of each feature: genes, transcripts, exons or introns. Output is currently in bed format only.</p>
 <p><strong>Example:</strong> Get the midpoints of all transcripts and exons.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk midpoints -i simple.gtf -t transcript,exon -n transcript_id,feature | head -n 5
- |-- 10:41-INFO : Checking configuration file.
 chr1	7	9	G0009T002|transcript	.	-
 chr1	7	9	G0009T001|exon	.	-
 chr1	7	9	G0009T001|transcript	.	-
@@ -77,7 +75,6 @@ chr1	27	29	G0006T001|transcript	.	-
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk midpoints -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk midpoints [-i GTF/BED] [-o BED] [-t ft_type] [-n NAME] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -111,7 +108,6 @@ Command-wise optional arguments:
 Output is bed format.</p>
 <p><strong>Example:</strong> Get the 5p ends of transcripts and exons.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_5p_3p_coords  -i simple.gtf  -t transcript,exon -n transcript_id,gene_id,feature | head -n 5
- |-- 10:41-INFO : Checking configuration file.
 chr1	124	125	G0001T002|G0001|transcript	.	+
 chr1	124	125	G0001T002|G0001|exon	.	+
 chr1	124	125	G0001T001|G0001|transcript	.	+
@@ -121,7 +117,6 @@ chr1	179	180	G0002T001|G0002|transcript	.	+
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_5p_3p_coords -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk get_5p_3p_coords [-i GTF] [-o BED] [-t ft_type] [-v] [-p transpose] [-n NAME] [-m more_names] [-s SEP] [-e] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -163,7 +158,6 @@ the bed file boundaries. The command will print the coordinates of genomic
 regions without transcript features.</p>
 <p><strong>Example:</strong> Simply get intergenic regions.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intergenic -i simple.gtf -c simple.chromInfo
- |-- 10:41-INFO : Checking configuration file.
 chr1	0	2	region_1	0	.
 chr1	14	21	region_2	0	.
 chr1	47	49	region_3	0	.
@@ -178,7 +172,6 @@ chr2	0	600	region_10	0	.
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intergenic -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk intergenic [-i GTF] [-o BED] -c CHROMINFO [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -218,7 +211,6 @@ Otherwise, the intronic regions corresponding to each transcript are returned
 (may contain exonic overlap and redundancy).</p>
 <p><strong>Example:</strong> Simply get intronic regions.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intronic -i simple.gtf | head -n 5
- |-- 10:41-INFO : Checking configuration file.
 chr1	25	27
 chr1	30	32
 chr1	35	41
@@ -228,7 +220,6 @@ chr1	68	70
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk intronic -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk intronic [-i GTF] [-o BED] [-b] [-n NAME] [-s SEP] [-w] [-F] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -266,8 +257,6 @@ Command-wise optional arguments:
 add_exon_nb command. The score column of the bed file contains the number of the closest exon relative to the splice site.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -i simple.gtf -k exon_nbr | gtftk splicing_site  -k exon_nbr| head
- |-- 10:41-INFO : Checking configuration file.
- |-- 10:41-INFO : Checking configuration file.
 chr1	54	55	acceptor|G0003T001E001|G0003T001|G0003	2	-
 chr1	55	56	donor|G0003T001E002|G0003T001|G0003	1	-
 chr1	68	69	donor|G0004T002E001|G0004T002|G0004	1	+
@@ -282,7 +271,6 @@ chr1	72	73	acceptor|G0004T001E003|G0004T001|G0004	3	+
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk splicing_site -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk splicing_site [-i GTF] [-o BED] [-k exon_numbering_key] [-n NAME] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -321,18 +309,15 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Shift coordinates in 3’ or 5’ direction.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example|  head -n 1
- |-- 10:41-INFO : Checking configuration file.
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk shift -i simple.gtf  -s -10 -c simple.chromInfo | head -n 1
- |-- 10:41-INFO : Checking configuration file.
 chr1	gtftk	gene	115	128	.	+	.	gene_id &quot;G0001&quot;;
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk shift -h
- |-- 10:41-INFO : Checking configuration file.
   Usage: gtftk shift [-i GTF] [-o GTF] -s shift_value [-d] [-a] -c CHROMINFO [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -440,13 +425,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="ologram.html" title="Commands from section ‘ologram’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘coordinates’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Sep 10, 2020.
+      Last updated on Sep 16, 2020.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
