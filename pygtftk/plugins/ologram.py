@@ -158,9 +158,11 @@ __notes__ = """
  keep the running time reasonable and keep the found combinations still relevant.
  Note that MODL is completely optional. It is mostly needed when the list of -\-more-bed is very long and you do not want to filter the results manually, and when you are working with noisy
  data which could obfuscate the interesting combinations.
- MODL employs a form of subsampling on the original matrix and will discard combinations rarer than 1/10000 occurences to reduce computing times. This can magnify the noise however and can be disabled when using MODL separately.
+ MODL employs a form of subsampling on the original matrix and will discard combinations rarer than 1/10000 occurences to reduce computing times. This can magnify the noise however and can be disabled. When using MODL separately, you can disable this and also ask for the candidates to be normalized by the square of their sum to de-emphasize longer words. 
  It will also reduce the abundance of all lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. This is done as the matrix of intersections will usually have many redundant lines and as such can be squished without changing the result.
  It is also possible to bypass it and provide a custom list of combinations to be considered.
+
+ -- MODL can be used separately in Python. An example of how to compute an intersection matrix manually from BED files is presented in the documentation.
 
  -- For statistical reality reasons, with multiple sets the expected overlaps for the longer combinations (A+B+C+D+... when they are all independant) can be very low. 
  This is especially true for small regions such as Transcriptional Regulator biding sites where the total coverage of all sets considered is low. 

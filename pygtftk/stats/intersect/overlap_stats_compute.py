@@ -32,7 +32,7 @@ from pygtftk.stats.intersect.overlap import overlap_regions as oc
 
 def compute_true_intersection(bedA, bedsB):
     """
-    Returns the custom-computed tur intersection between bedA and all in bedsB combined, where
+    Returns the custom-computed true intersection between bedA and all in bedsB combined, where
     bedA is a pybedtools.BedTool object and bedsB is a list of such objects.
 
     Returns also the intersection flags.
@@ -468,6 +468,16 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         import time # Needed to re-import here for some reason ?
         start = time.time()
 
+
+
+        """
+        # TODO Add the abundances as a debug message ?
+        u, count = np.unique(flags_matrix, return_counts = True, axis=0)
+        count_sort_ind = np.argsort(-count)
+        df = pd.DataFrame(u[count_sort_ind])
+        df['COUNT'] = count[count_sort_ind] 
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None):   print(df)
+        """
 
 
         # Default multiple_overlap_max_number_of_combinations is -1, meaning

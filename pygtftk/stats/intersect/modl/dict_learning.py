@@ -165,8 +165,9 @@ class Modl:
     :param step_1_factor_allowance: In step 1 of building the candidates, how many words are allowed in the Dictionary Learning as a proportion of multiple_overlap_max_number_of_combinations
     :param error_function: error function used in step 2. Default to manhattan error. 
     :param smother: Should the smothering which reduces each row's abudane to its square root to emphasize rarer combinations be applied ? Default is True
+    :param normalize_words: Normalize the words by their summed squares in step 2. Default False.
 
-    Passing a custom error function, it must have the signature  error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity
+    Passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity
     
     >>> from pygtftk.stats.intersect.modl.dict_learning import Modl, test_data_for_modl
     >>> import numpy as np
@@ -184,7 +185,8 @@ class Modl:
                  nb_threads = 1,
                  step_1_factor_allowance = 2, 
                  error_function = None,
-                 smother = True):
+                 smother = True,
+                 normalize_words = False):
 
         # Matrix of overlap flags to work with
         self.original_data = flags_matrix
@@ -218,6 +220,12 @@ class Modl:
 
         # Remember the error function for step 2
         self.error_function = error_function
+
+        # Do we normalize the words by their summed squared in step 2 ?
+        self.normalize_words = normalize_words
+ 
+
+
 
 
 
@@ -309,7 +317,7 @@ class Modl:
 
         
 
-    def select_best_words_from_library(self, error_function = None):
+    def select_best_words_from_library(self):
         """
         This is step 2. Takes the library of candidates produced at step 1
         and will get the best N words among it that best rebuild the original matrix.
@@ -329,7 +337,8 @@ class Modl:
             self.data, self.library,    # Data and Library of candidates
             self.queried_words_nb,      # N best words
             self.error_function,        # Potential custom error function
-            self.nb_threads)
+            self.nb_threads,
+            self.normalize_words)       # Normalize words by sum of square
         
         
         # Final step : register the best dictionary
