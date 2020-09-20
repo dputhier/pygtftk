@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘sequence’ &#8212; gtftk 1.2.0 documentation</title>
+    <title>Commands from section ‘sequence’ &#8212; gtftk 1.2.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="coordinates.html" title="Commands from section ‘coordinates’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘sequence’</a></li> 
       </ul>
     </div>  
@@ -59,7 +59,6 @@
 <h1>Commands from section ‘sequence’<a class="headerlink" href="#commands-from-section-sequence" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="section" id="get-tx-seq">
@@ -67,7 +66,6 @@
 <p><strong>Description:</strong> Get transcript sequences in fasta format.</p>
 <p><strong>Example:</strong> Get sequences of transcripts in 5’ to 3’ orientation</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_tx_seq -g simple.fa -i simple.gtf | head -n 4
- |-- 10:48-INFO : Checking configuration file.
 &gt;transcript|G0001T002|G0001|chr1|125|138
 cccccgttacgtag
 &gt;transcript|G0001T001|G0001|chr1|125|138
@@ -76,14 +74,12 @@ cccccgttacgtag
 </div>
 <p>Note that the format is rather flexible and any combination of key can be exported to the header.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_tx_seq -i simple.gtf -g simple.fa  -l gene_id,transcript_id,feature,chrom,start,end,strand  | head -n 2
- |-- 10:48-INFO : Checking configuration file.
 &gt;G0001|G0001T002|transcript|chr1|125|138|+
 cccccgttacgtag
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_tx_seq -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk get_tx_seq [-i GTF] [-o FASTA] -g FASTA [-w] [-s SEP] [-l label] [-f] [-d] [-a assembly] [-c] [-n] [-e] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -128,7 +124,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Get feature sequence (e.g exon, UTR…).</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_feat_seq -i simple.gtf -g simple.fa  -l feature,transcript_id,start -t  exon -n | head -10
- |-- 10:48-INFO : Checking configuration file.
 index file simple.fa.fai not found, generating...
 &gt;exon|G0001T002|124
 cccccgttacgtag
@@ -144,7 +139,6 @@ taatt
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_feat_seq -h
- |-- 10:48-INFO : Checking configuration file.
   Usage: gtftk get_feat_seq [-i GTF] [-o FASTA] -g FASTA [-s separator] [-l label] [-t feature_type] [-n] [-r] [-u] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -242,13 +236,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="coordinates.html" title="Commands from section ‘coordinates’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘sequence’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Sep 10, 2020.
+      Last updated on Sep 16, 2020.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>

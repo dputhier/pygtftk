@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘miscellaneous’ &#8212; gtftk 1.2.0 documentation</title>
+    <title>Commands from section ‘miscellaneous’ &#8212; gtftk 1.2.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="coverage.html" title="Commands from section ‘coverage’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘miscellaneous’</a></li> 
       </ul>
     </div>  
@@ -59,11 +59,9 @@
 <h1>Commands from section ‘miscellaneous’<a class="headerlink" href="#commands-from-section-miscellaneous" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
- |-- 10:41-INFO : Checking configuration file.
 </pre></div>
 </div>
 <div class="section" id="control-list">
@@ -71,20 +69,18 @@
 <p><strong>Description:</strong> Returns a list of gene matched for expression based on reference values. Based on a reference gene list (or more generally IDs) this command tries to extract a set of other genes/IDs matched for signal/expression. The –reference-gene-file contains the list of reference IDs while the –inputfile contains a tuple gene/signal for all genes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk control_list -i mini_real_counts_ENCFF630HEX.tsv -r mini_real_control_1.txt -D -V 2 -s -l -p 1 -ju -if example_13.png -pf png
- |-- 10:44-INFO : Checking configuration file.
- |-- 10:44-INFO-control_list : 0 duplicate lines have been deleted in reference file.
- |-- 10:44-INFO-control_list : Found 50 genes of the reference in the provided signal file
- |-- 10:44-INFO-control_list : All reference genes were found.
- |-- 10:44-INFO-control_list : Searching for genes with matched signal.
- |-- 10:44-INFO-control_list : Preparing a dataframe for plotting.
- |-- 10:44-INFO-control_list : Saving diagram to file : example_13.png
- |-- 10:44-INFO-control_list : Be patient. This may be long for large datasets.
+ |-- 9:11-INFO-control_list : 0 duplicate lines have been deleted in reference file.
+ |-- 9:11-INFO-control_list : Found 50 genes of the reference in the provided signal file
+ |-- 9:11-INFO-control_list : All reference genes were found.
+ |-- 9:11-INFO-control_list : Searching for genes with matched signal.
+ |-- 9:11-INFO-control_list : Preparing a dataframe for plotting.
+ |-- 9:11-INFO-control_list : Saving diagram to file : example_13.png
+ |-- 9:11-INFO-control_list : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_13.png"><img alt="_images/example_13.png" src="_images/example_13.png" /></a>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk control_list -h
- |-- 10:44-INFO : Checking configuration file.
   Usage: gtftk control_list --in-file TXT --reference-gene-file TXT [--out-dir DIR] [--log2] [--pseudo-count pseudo_count] [-pw page_width] [-ph page_height] [-pf {pdf,png}] [-dpi dpi] [--skip-first] [--rug] [--jitter] [-if user_img_file] [-c set_colors] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -133,9 +129,6 @@ Command-wise optional arguments:
 <p><strong>Description:</strong> Select columns from a tabulated file based on their names.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -t -i simple.gtf | gtftk tabulate -k &#39;*&#39; -x | gtftk col_from_tab -c transcript_id,gene_id
- |-- 10:44-INFO : Checking configuration file.
- |-- 10:44-INFO : Checking configuration file.
- |-- 10:44-INFO : Checking configuration file.
 transcript_id	gene_id
 G0001T002	G0001
 G0001T001	G0001
@@ -156,7 +149,6 @@ G0010T001	G0010
 </div>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk col_from_tab -h
- |-- 10:44-INFO : Checking configuration file.
   Usage: gtftk col_from_tab [-i TXT] [-o TXT] -c columns [-n] [-u] [-s SEP] [-H] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
@@ -245,13 +237,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="coverage.html" title="Commands from section ‘coverage’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘miscellaneous’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Sep 10, 2020.
+      Last updated on Sep 16, 2020.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
