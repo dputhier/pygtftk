@@ -167,30 +167,13 @@ The program will return statistics for both the number of intersections and the 
 ologram (multiple overlaps)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-While previously we computed paiwise enrichment (ie. Query+A, Query+B ...) , It is also possible to use the **OLOGRAM-MODL** Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n>=2 sets) enrichment (ie. Query+A+B, Query+A+C, ...) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes. 
+While previously we computed paiwise enrichment (ie. Query+A, Query+B, ...) , it is also possible to use the **OLOGRAM-MODL** Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n>=2 sets) enrichment (ie. Query+A+B, Query+A+C, ...) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes. 
 
 This is done only on custom regions supplied as BEDs supplied with the `--more-bed` argument. In most cases you may use the --no-gtf argument and only pass the regions of interest.
 
-
-For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using --bed-excl or --bed-incl to ensure the longer combinations have a reasonable chance of being randomly encountered in the shuffles.
-
-
-**MODL itemset mining algorithm:** By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations.
-
-As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. 
-
-In broad strokes, this custom algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
-
-Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is designed to be resistant
-to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).
-
-
-This itemset mining algorithm is a work-in-progress. Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
-
+For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using --bed-excl or --bed-incl to ensure the longer combinations have a reasonable chance of being randomly encountered in the shuffles. Conversely, if you do not filter the combinations, keep in mind that the longer ones may be enriched even though they are present only on a few base pairs, because at random they would be even rarer.
 
 **Exact combinations:** By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + ...]. For exact intersections (ie. [Query + A + B + nothing else]), set the --multiple-overlap-target-combi-size flag to the number of --more-bed plus one. You will know if the combinations are computed as inexact by the '...' in their name in the result file. Intersections not including the query file are discarded.
-
-
 
 
 
@@ -238,19 +221,30 @@ Comparing the query (-p) against two other BED files, analyzing multiple overlap
 As the computation of multiple overlaps can be RAM-intensive, if you have a very large amount of candidate genomic feature sets (hundreds) we recommend selecting less candidates among them first by running a pairwise analysis.
 
 
+
+**MODL itemset mining algorithm:** By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations. As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. 
+
+
+
+Details
+-----------------
+
+
+In broad strokes, the custom itemset algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
+
+Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is designed to be resistant
+to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).
+
+
+This itemset mining algorithm is a work-in-progress. Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
+
+
+
 **MODL algorithm API:** MODL can also be used independantly as a combination mining algorithm. 
 
-This can work on any type of data, biological or not, that respects the conventional formatting for lists of transactions: the data needs to be a matrix with one line per transaction and one column per element.
+This can work on any type of data, biological or not, that respects the conventional formatting for lists of transactions: the data needs to be a matrix with one line per transaction and one column per element. For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C.
 
-For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C.
-
-For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1.
-factor allowance is K in K*n words in step 1 where n is final queries nb of words.
-
-MODL and will discard combinations rarer than 1/10000 occurences to reduce computing times and will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements.
-However, this can magnify the impact of the noise quadratically as well, and can be disabled when using the manual API.
-
-
+For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1. MODL will discard combinations rarer than 1/10000 occurences to reduce computing times. It will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. However, the latter can magnify the impact of the noise as well and can be disabled when using the manual API. To de-emphasize longer words, which can help in this case, we can also normalize words by their summed square in step 2.
 
 If you are passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity.  All are NumPY matrices.
 
@@ -272,11 +266,12 @@ Here is an example:
     nb_threads = 1,
     step_1_factor_allowance = 2,                        # How many words to ask for in each step 1 rebuilding, as a multiplier of multiple_overlap_max_number_of_combinations
     error_function = None,                              # Custom error function in step 2
-    smother = True)                                     # Should the smothering (quadratic reduction of abundance) be applied ?
+    smother = True,                                     # Should the smothering (quadratic reduction of abundance) be applied ?
+    normalize_words = False)                            # Normalize words by their summed squared in step 2 ?
   interesting_combis = combi_miner.find_interesting_combinations()   
 
 
-For more details about usage and implementation, please read the notes below :
+For more details about usage and implementation, please read the notes below.
 
 **Arguments:**
 
@@ -284,7 +279,27 @@ For more details about usage and implementation, please read the notes below :
 	:shell:
 
 
-Since the results of MODL only depend on the true intersections and not on the shuffles, you can run MODL with 1 shuffle to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv, using MODL's selection as a starting point, and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying). Then, run ologram_modl_treeify on the resulting filtered tsv.
+
+**Manual intersection computing:** To manually compute an overlap matrix between any number of BED files, the following Python code can be used.
+
+.. code-block:: python
+
+  import pybedtools
+  import numpy as np
+  from pygtftk.stats.intersect.overlap_stats_compute import compute_true_intersection
+
+  # Register the BED files as pybedtools.BedTool objects
+  bedA = pybedtools.BedTool(path_to_your_query)
+  bedsB = [pybedtools.BedTool(bedfilepath) for bedfilepath in list_of_all_paths_to_more_bed]
+      
+  # Use our custom intersection computing algorithm to get the matrix of overlaps
+  true_intersection = compute_true_intersection(bedA, bedsB)
+  flags_matrix = np.array([i[3] for i in true_intersection])
+
+The resulting flags_matrix is a NumPy array that can be edited, and on which MODL can be run.
+
+Since the results of MODL only depend on the true intersections and not on the shuffles, you can run MODL with 1 shuffle or on a manually computed matrix as above to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv file, using MODL's selection as a starting point and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying).
+
 
 
 ologram_merge_stats
