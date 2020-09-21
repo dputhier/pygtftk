@@ -54,7 +54,7 @@ The program will return statistics for both the number of intersections and the 
 	- H1: The regions of the query (--peak-file) tend to overlap the reference (--inputfile or --more-bed).
 
 
-.. warning:: The ologram examples below use 8 CPUs. Please adapt.
+.. warning:: The ologram examples below use 8 CPUs. Please adapt the number of threads.
 
 
 
@@ -340,11 +340,13 @@ This also works with OLOGRAM-MODL results, since they follow the same basic form
 ologram_modl_treeify
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Description:** Visualize n-wise enrichment results (OLOGRAM-MODL) as a tree of combinations. Works on the result (tsv file) of an OLOGRAM analysis called with --more-bed-multiple-overlap.
+**Description:** Visualize n-wise enrichment results (OLOGRAM-MODL) as a tree of combinations. Works on the result (tsv file) of an OLOGRAM analysis called with --more-bed-multiple-overlap. On the graph, S designated the total number of basepairs in which this combinations is encountered in the real data. Fold change gives the ratio with the number of basepairs in the shuffles, with the associated Negative Binomial p-value.
 
-We recommend this representation. The tsv file can be edited before passing it to the command, for example by keeping only the combinations you are interested in.
+This recommended representation is useful to find master regulators, by showing which additions to a combinations increase its enrichment, and allowing to see whether overlaps that contain the element X also contain the element Y (looking at how a child combination accounts for the S of its parent in an inexact counting).
 
-On the graph, S designated the total number of basepairs in which this combinations is encountered in the real data. Fold change gives the ratio with the number of basepairs in the shuffles, with the associated Negative Binomial p-value.
+The tsv result file can be edited before passing it to the command, for example by keeping only the combinations you are interested in, such as all combinations containing the Transcription Factor you are studying. We recommend running MODL to make a pre-selection.
+
+We also recommend discarding the rarest combinations found on such a very small number of basepairs that they are unlikely tobe biologically significant. This is mostly relevant when you have many sets (k >= 5) since longer combinations will often be enriched through sheer unlikelihood. 
 
 .. command-output:: gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o treeified.pdf -l ThisWasTheNameOfTheQuery
 	:shell:
