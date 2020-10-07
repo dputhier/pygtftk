@@ -236,7 +236,7 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
 
 def build_best_dict_from_library(data, library, queried_words_nb,
                 error_function = None,
-                nb_threads = 1,
+                nb_threads = 1, normalize_words = False,
                 transform_alpha = None):
     r"""
     Given a data matrix and a library, will select the best n = queried_words_nb words
@@ -310,6 +310,27 @@ def build_best_dict_from_library(data, library, queried_words_nb,
         all_candidate_words = tree.get_all_candidates_except(library, D)
 
 
+
+
+        # Normalize the words by the sum of their square.
+        # Helps counter a tendency to select longer words, which
+        # can increase sensitivity to noise.
+        if normalize_words:
+            new_candidates = []
+            for candidate in all_candidate_words:
+                neo = np.array(candidate)
+                neo = neo**2/np.sum(neo**2)
+                neo = np.sqrt(neo)
+                new_candidates += [tuple(neo)]
+            all_candidate_words = new_candidates
+
+
+
+
+
+
+
+
         # Test all words for this iteration
         candidates_with_errors = dict()
 
@@ -372,6 +393,7 @@ def build_best_dict_from_library(data, library, queried_words_nb,
             best_candidate = min(candidates_with_errors, key=candidates_with_errors.get)
             # In case of a tie, the first word is selected.
 
+
             dictionary += [best_candidate]
         # It should never happen, but if there are no more candidates add an empty word.
         except:
@@ -405,9 +427,17 @@ def build_best_dict_from_library(data, library, queried_words_nb,
 
 
 
+
     message("Final dictionary :"+str(dictionary), type = 'DEBUG')
 
     # Conclusion of the function : remove the (0,0,0,...) word and make words unique, just in case
     best_words = list(set(dictionary))
     best_words.remove(tuple([0] * nb_features))
+
+    # If the words had been normalized, un-normalize them.
+    if normalize_words:
+        best_words = np.array(best_words).astype(bool).astype(int)
+
+
+
     return best_words

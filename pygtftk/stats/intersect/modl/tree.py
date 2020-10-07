@@ -53,23 +53,51 @@ class Node:
 
 
 
-def apply_recursively_to_all_nodes(node, function, global_results):
-    """
+def apply_recursively_to_all_nodes(node, function, global_results,
+        no_duplicates = True,
+        stop_condition = lambda c, gr: False):
+    r"""
     General utility function to recursively apply a function to all nodes of a tree.
     Also pass a global_results dict to be added to.
+
+    Since nodes can have several parents, by default this will remember which nodes
+    have been seen and not operate on them twice (`no_duplicates`).
+
+    A stop condition fonction of signature stop_condition(current_node, global_results)
+    can be passed : the recursion will stop if it returns True at any point. 
+
+    >>> from pygtftk.stats.intersect.modl.tree import Library, apply_recursively_to_all_nodes
+    >>> from pygtftk import utils
+    >>> utils.VERBOSITY = 0
+    >>> words = [(1,0,0), (1,1,0), (0,1,0), (1,1,1)]
+    >>> l = Library()
+    >>> l.build_nodes_for_words(words)
+    >>> l.assign_nodes()
+    >>> manual_print_words = set([str(n) for n in l.assigned_nodes])
+    >>> gr = dict()
+    >>> apply_recursively_to_all_nodes(l.root_node, str, gr)
+    >>> recursive_print_words = set(gr.values())
+    >>> assert recursive_print_words == manual_print_words
+
     """
 
     # Apply the function to the node
     result = function(node) 
 
-    # Record result ; need to use a method to work on the reference and send back to the outer scope
+    # Record result; need to use a method to work on the reference and send back to the outer scope
     global_results.update({node:result})  
     
     # Then, for all children of the node ...
     for c in node.children:
-        apply_recursively_to_all_nodes(c, function, global_results) # Move to the child
 
-    # TODO Permit stop conditions, as a callable
+        # If no_duplicates is True, we proceed only if c is not already in the results
+        if not((c in global_results.keys()) and no_duplicates):
+
+            # We also check for the stop function
+            if not stop_condition(c, global_results):
+
+                apply_recursively_to_all_nodes(c, function, global_results) # Move to the child
+
 
 
 
@@ -97,6 +125,8 @@ class Library:
         self.unassigned_nodes = list() # Nodes waiting for assignment
         self.nodes_were_assigned = False
 
+        self.assigned_nodes = list() # Nodes that were assigned
+
 
     # ----- Building
 
@@ -123,6 +153,8 @@ class Library:
 
         # Finally, create root node, all unassigned nodes will branch from it later
         self.root_node = Node(word = tuple([0] * word_size)) 
+        # Add the root to the assigned words
+        self.assigned_nodes.append(self.root_node)
 
 
     def build_nodes_for_words_from_ologram_result_df(self, result_df, query_name = "Query"):
@@ -201,7 +233,8 @@ class Library:
         
         # Finally, create root node, all unassigned nodes will branch from it later
         self.root_node = Node(word = tuple([0] * word_size)) 
-
+        # Add the root to the assigned words
+        self.assigned_nodes.append(self.root_node)
 
 
 
@@ -232,22 +265,23 @@ class Library:
 
             # Distance is simply number of different flags
             def dist(other_node):
-                d = [(a-b)**2 for a,b in zip(unode.word,other_node.word)]
-                return sum(d)
+
+                # Only add it if it is also an exact parent : the child must have
+                # all the elements of its parent PLUS potentially others
+                # This should also include the fact that is has less flags
+                if oc.does_combi_match_query(unode.word, other_node.word, exact = False):
+                    dist = [(a-b)**2 for a,b in zip(unode.word,other_node.word)]
+                    return sum(dist)
+                else: 
+                    return np.inf
+                     
 
             # Get all distances
-            all_distances = {}
-            apply_recursively_to_all_nodes(self.root_node, dist, all_distances)
-
-            all_distances_less_flags = {}
-            for node, dist in all_distances.items():
-                # Strictly less flags
-                if sum(node.word) < sum(unode.word):
-                    # Only add it if it is also an exact parent : the child must have
-                    # all the elements of its parent PLUS potentially others
-                    if oc.does_combi_match_query(unode.word, node.word, exact = False):
-                        all_distances_less_flags[node] = dist
-
+            all_distances_less_flags = dict()
+            #apply_recursively_to_all_nodes(self.root_node, dist, all_distances_less_flags)
+            for anode in self.assigned_nodes:
+                all_distances_less_flags[anode] = dist(anode)
+        
 
             # This throws a ValueError if all_distances_less_flags is empty
             # In case of a tie, add all as parents
@@ -260,6 +294,9 @@ class Library:
             for new_parent in new_parents_list:
                 message('Adding '+str(unode)+' to '+str(new_parent)+' as distance of '+str(all_distances_less_flags[new_parent]), type = 'DEBUG')                          
                 new_parent.add_child(unode)
+
+            # Now add the node to the list of assigned nodes
+            self.assigned_nodes.append(unode)
 
 
         self.nodes_were_assigned = True
