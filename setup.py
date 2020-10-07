@@ -11,19 +11,19 @@ Authors: D. Puthier and F. Lopez
 # A set of builtin packages
 # -------------------------------------------------------------------------
 
-import glob
-import hashlib
-import os
-import platform
 import re
 import shutil
 import subprocess
 import sys
 from subprocess import DEVNULL
-from tempfile import NamedTemporaryFile
 
+import glob
+import hashlib
 import numpy as np
+import os
+import platform
 from Cython.Distutils import build_ext
+from tempfile import NamedTemporaryFile
 
 # -------------------------------------------------------------------------
 # Python compiler version
@@ -54,7 +54,7 @@ __url__ = 'https://github.com/dputhier/pygtftk'
 __url_source__ = 'https://github.com/dputhier/pygtftk'
 __url_tracker__ = 'https://github.com/dputhier/pygtftk'
 __keywords__ = 'genomics bioinformatics GTF BED'
-__python_requires__ = '>=3.6,<3.8'
+__python_requires__ = '>=3.6,<=3.8'
 __classifiers__ = ("License :: OSI Approved :: MIT License",
                    "Operating System :: MacOS",
                    "Operating System :: POSIX :: Linux",
@@ -62,6 +62,7 @@ __classifiers__ = ("License :: OSI Approved :: MIT License",
                    "Environment :: Console",
                    "Programming Language :: Python :: 3.6",
                    "Programming Language :: Python :: 3.7",
+                   "Programming Language :: Python :: 3.8",
                    "Intended Audience :: Science/Research",
                    "Natural Language :: English",
                    "Topic :: Scientific/Engineering :: Bio-Informatics",
@@ -165,10 +166,8 @@ lib_pygtftk = Extension(name='pygtftk/lib/libgtftk',
 
 platform.system()
 
-
 extra_comp_cython = ['-W', '-O3']
 extra_link_cython = []
-
 
 # Use OpenMP only on Linux, as clang by default does not support it on OSX
 # TODO Make it a parameter
@@ -178,13 +177,18 @@ if platform.system() == 'Linux':
     extra_comp_cython += ['-fopenmp']
     extra_link_cython += ['-fopenmp']
 
-
-
 # Avoid Cython warning about NumPy API deprecation upon installation
 if platform.system() == 'Darwin':
     extra_comp_cython += ['-Wno-#warnings']
 if platform.system() == 'Linux':
     extra_comp_cython += ['-Wno-cpp']
+
+# Avoid error "fatal error: 'complex' file not found" under OSX (Python 3.6)
+
+if platform.system() == 'Darwin':
+    if platform.python_version_tuple()[0:2] == ('3', '6'):
+        extra_comp_cython += ["-stdlib=libc++"]
+        extra_link_cython += ["-stdlib=libc++"]
 
 # NOTE : the separation in several different modules was needed to make it
 # work on MacOSX for some unfathomable reason.
@@ -201,13 +205,15 @@ cython_ologram_2 = Extension(name='pygtftk.stats.intersect.overlap.overlap_regio
 
 cython_ologram_3 = Extension(name='pygtftk.stats.intersect.read_bed.read_bed_as_list',
                              sources=["pygtftk/stats/intersect/read_bed/read_bed_as_list.pyx",
-                                      "pygtftk/stats/intersect/read_bed/exclude.cpp"], # Include custom Cpp code
+                                      "pygtftk/stats/intersect/read_bed/exclude.cpp"],  # Include custom Cpp code
                              extra_compile_args=extra_comp_cython, extra_link_args=extra_link_cython,
                              include_dirs=[np.get_include()],
                              language='c++')
 
 cython_ologram_4 = Extension(name='pygtftk.stats.multiprocessing.multiproc',
-                             sources=["pygtftk/stats/multiprocessing/multiproc.pyx", "pygtftk/stats/multiprocessing/multiproc_structs.pxd", "pygtftk/stats/multiprocessing/multiproc.pxd"],
+                             sources=["pygtftk/stats/multiprocessing/multiproc.pyx",
+                                      "pygtftk/stats/multiprocessing/multiproc_structs.pxd",
+                                      "pygtftk/stats/multiprocessing/multiproc.pxd"],
                              extra_compile_args=extra_comp_cython, extra_link_args=extra_link_cython,
                              language='c')
 
@@ -253,6 +259,8 @@ os.remove(tmp_file_conf.name)
 # Declare the setup function
 # ----------------------------------------------------------------------
 
+with open('requirements.txt') as f:
+    pack_required = f.read().splitlines()
 
 setup(name="pygtftk",
       include_dirs=[np.get_include()],
@@ -341,33 +349,8 @@ setup(name="pygtftk",
                   'sphinx_bootstrap_theme >=0.4.9',
                   'sphinxcontrib-googleanalytics'],
           'gffutils': ['gffutils']},
-      install_requires=['nose',
-                        'pyyaml >=3.12',
-                        'cloudpickle >=0.5.6',
-                        'ftputil >=3.3.1',
-                        'pybedtools >=0.7.8',
-                        'pandas >=0.23.3, !=1.0.0, !=1.0.0rc0',
-                        'requests >=2.13.0',
-                        'pyBigWig >=0.3.12',
-                        'cffi >=1.10.0',
-                        'biopython >=1.69',
-                        'pyparsing >=2.2.0',
-                        'GitPython >=2.1.8',
-                        'pyparsing',
-                        'matplotlib >=3.0.0',
-                        'plotnine >=0.5.1',
-                        'setuptools',
-                        'cython >=0.29.6',
-                        'mpmath >=1.1.0',
-                        'scikit-learn >=0.21.2',
-                        'graphviz',
-                        'seaborn'
-    ],
+      install_requires=pack_required,
       ext_modules=[lib_pygtftk] + [cython_ologram_1, cython_ologram_2, cython_ologram_3, cython_ologram_4])
-
-
-
-
 
 # ----------------------------------------------------------------------
 # Update gtftk config directory

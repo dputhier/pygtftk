@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘ologram’ &#8212; gtftk 1.2.1 documentation</title>
+    <title>Commands from section ‘ologram’ &#8212; gtftk 1.2.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘ologram’</a></li> 
       </ul>
     </div>  
@@ -98,12 +98,12 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The ologram examples below use 8 CPUs. Please adapt.</p>
+<p>The ologram examples below use 8 CPUs. Please adapt the number of threads.</p>
 </div>
 <p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 9:11-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 9:11-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
+ |-- 0:59-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 1:00-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
 </pre></div>
 </div>
 <br>
@@ -118,7 +118,7 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> We are now using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 9:12-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 1:00-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -137,8 +137,8 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 9:13-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
- |-- 9:13-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 1:02-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
+ |-- 1:01-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -153,8 +153,8 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 9:14-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
- |-- 9:14-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 1:03-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 1:03-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -174,27 +174,21 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <div class="section" id="ologram-multiple-overlaps">
 <h2>ologram (multiple overlaps)<a class="headerlink" href="#ologram-multiple-overlaps" title="Permalink to this headline">¶</a></h2>
-<p>While previously we computed paiwise enrichment (ie. Query+A, Query+B …) , It is also possible to use the <strong>OLOGRAM-MODL</strong> Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n&gt;=2 sets) enrichment (ie. Query+A+B, Query+A+C, …) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes.</p>
+<p>While previously we computed paiwise enrichment (ie. Query+A, Query+B, …) , it is also possible to use the <strong>OLOGRAM-MODL</strong> Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n&gt;=2 sets) enrichment (ie. Query+A+B, Query+A+C, …) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes.</p>
 <p>This is done only on custom regions supplied as BEDs supplied with the <cite>–more-bed</cite> argument. In most cases you may use the –no-gtf argument and only pass the regions of interest.</p>
-<p>For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using –bed-excl or –bed-incl to ensure the longer combinations have a reasonable chance of being randomly encountered in the shuffles.</p>
-<p><strong>MODL itemset mining algorithm:</strong> By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations.</p>
-<p>As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations.</p>
-<p>In broad strokes, this custom algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as –more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).</p>
-<p>Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is designed to be resistant
-to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).</p>
-<p>This itemset mining algorithm is a work-in-progress. Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the –multiple-overlap-max-number-of-combinations argument.</p>
+<p>For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using –bed-excl or –bed-incl to ensure the longer combinations have a reasonable chance of being randomly encountered in the shuffles. Conversely, if you do not filter the combinations, keep in mind that the longer ones may be enriched even though they are present only on a few base pairs, because at random they would be even rarer.</p>
 <p><strong>Exact combinations:</strong> By default, OLOGRAM will compute “inexact” combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + …]. For exact intersections (ie. [Query + A + B + nothing else]), set the –multiple-overlap-target-combi-size flag to the number of –more-bed plus one. You will know if the combinations are computed as inexact by the ‘…’ in their name in the result file. Intersections not including the query file are discarded.</p>
 <p><strong>Simple example:</strong></p>
 <p>Comparing the query (-p) against two other BED files, analyzing multiple overlaps.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -z -w -q -c simple_07.chromInfo -p simple_07_peaks.bed --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap
- |-- 9:15-WARNING : Converting to bed6 format (simple_07_peaks.bed).
- |-- 9:15-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
- |-- 9:15-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
- |-- 9:15-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 9:15-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
- |-- 9:15-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
- |-- 9:15-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
- |-- 9:15-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
+ |-- 1:03-WARNING : Converting to bed6 format (simple_07_peaks.bed).
+ |-- 1:03-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
+ |-- 1:03-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
+ |-- 1:03-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 1:03-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
+ |-- 1:03-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 1:03-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 1:03-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
 </pre></div>
 </div>
 <p><strong>Detailed example:</strong></p>
@@ -222,13 +216,18 @@ to noise which is a known problem in biological data. Its goal is to extract mea
 </table>
 <br>
 <br><p>As the computation of multiple overlaps can be RAM-intensive, if you have a very large amount of candidate genomic feature sets (hundreds) we recommend selecting less candidates among them first by running a pairwise analysis.</p>
+<p><strong>MODL itemset mining algorithm:</strong> By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations. As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations.</p>
+</div>
+</div>
+<div class="section" id="details">
+<h1>Details<a class="headerlink" href="#details" title="Permalink to this headline">¶</a></h1>
+<p>In broad strokes, the custom itemset algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as –more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).</p>
+<p>Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is designed to be resistant
+to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).</p>
+<p>This itemset mining algorithm is a work-in-progress. Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the –multiple-overlap-max-number-of-combinations argument.</p>
 <p><strong>MODL algorithm API:</strong> MODL can also be used independantly as a combination mining algorithm.</p>
-<p>This can work on any type of data, biological or not, that respects the conventional formatting for lists of transactions: the data needs to be a matrix with one line per transaction and one column per element.</p>
-<p>For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C.</p>
-<p>For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1.
-factor allowance is K in K*n words in step 1 where n is final queries nb of words.</p>
-<p>MODL and will discard combinations rarer than 1/10000 occurences to reduce computing times and will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements.
-However, this can magnify the impact of the noise quadratically as well, and can be disabled when using the manual API.</p>
+<p>This can work on any type of data, biological or not, that respects the conventional formatting for lists of transactions: the data needs to be a matrix with one line per transaction and one column per element. For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C.</p>
+<p>For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1. MODL will discard combinations rarer than 1/10000 occurences to reduce computing times. It will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. However, the latter can magnify the impact of the noise as well and can be disabled when using the manual API. To de-emphasize longer words, which can help in this case, we can also normalize words by their summed square in step 2.</p>
 <p>If you are passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity.  All are NumPY matrices.</p>
 <p>For more details, see code comments.</p>
 <p>Here is an example:</p>
@@ -244,11 +243,12 @@ However, this can magnify the impact of the noise quadratically as well, and can
   <span class="n">nb_threads</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
   <span class="n">step_1_factor_allowance</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>                        <span class="c1"># How many words to ask for in each step 1 rebuilding, as a multiplier of multiple_overlap_max_number_of_combinations</span>
   <span class="n">error_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>                              <span class="c1"># Custom error function in step 2</span>
-  <span class="n">smother</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>                                     <span class="c1"># Should the smothering (quadratic reduction of abundance) be applied ?</span>
+  <span class="n">smother</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>                                     <span class="c1"># Should the smothering (quadratic reduction of abundance) be applied ?</span>
+  <span class="n">normalize_words</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>                            <span class="c1"># Normalize words by their summed squared in step 2 ?</span>
 <span class="n">interesting_combis</span> <span class="o">=</span> <span class="n">combi_miner</span><span class="o">.</span><span class="n">find_interesting_combinations</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>For more details about usage and implementation, please read the notes below :</p>
+<p>For more details about usage and implementation, please read the notes below.</p>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -h
   Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-bi BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-mo] [-mocs multiple_overlap_target_combi_size] [-monc multiple_overlap_max_number_of_combinations] [-moc multiple_overlap_custom_combis] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-pf pdf_file_alt] [-x] [-y] [-tp tsv_file_path] [-j {None,nb_intersections_expectation_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_expectation_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-z] [-f] [-w] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
@@ -336,11 +336,14 @@ However, this can magnify the impact of the noise quadratically as well, and can
      when you are working with noisy data which could obfuscate the interesting combinations. MODL
      employs a form of subsampling on the original matrix and will discard combinations rarer than
      1/10000 occurences to reduce computing times. This can magnify the noise however and can be
-     disabled when using MODL separately. It will also reduce the abundance of all lines in the
-     matrix to their square roots to reduce the emphasis on the most frequent elements. This is done
-     as the matrix of intersections will usually have many redundant lines and as such can be
-     squished without changing the result. It is also possible to bypass it and provide a custom
-     list of combinations to be considered.
+     disabled. When using MODL separately, you can disable this and also ask for the candidates to
+     be normalized by the square of their sum to de-emphasize longer words.  It will also reduce the
+     abundance of all lines in the matrix to their square roots to reduce the emphasis on the most
+     frequent elements. This is done as the matrix of intersections will usually have many redundant
+     lines and as such can be squished without changing the result. It is also possible to bypass it
+     and provide a custom list of combinations to be considered.
+     *  MODL can be used separately in Python. An example of how to compute an intersection matrix
+     manually from BED files is presented in the documentation.
      *  For statistical reality reasons, with multiple sets the expected overlaps for the longer
      combinations (A+B+C+D+... when they are all independant) can be very low.  This is especially
      true for small regions such as Transcriptional Regulator biding sites where the total coverage
@@ -412,8 +415,22 @@ Command-wise optional arguments:
  -W, --write-message-to-file            Store all message into a file. (default: None)
 </pre></div>
 </div>
-<p>Since the results of MODL only depend on the true intersections and not on the shuffles, you can run MODL with 1 shuffle to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv, using MODL’s selection as a starting point, and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying). Then, run ologram_modl_treeify on the resulting filtered tsv.</p>
+<p><strong>Manual intersection computing:</strong> To manually compute an overlap matrix between any number of BED files, the following Python code can be used.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pybedtools</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.overlap_stats_compute</span> <span class="kn">import</span> <span class="n">compute_true_intersection</span>
+
+<span class="c1"># Register the BED files as pybedtools.BedTool objects</span>
+<span class="n">bedA</span> <span class="o">=</span> <span class="n">pybedtools</span><span class="o">.</span><span class="n">BedTool</span><span class="p">(</span><span class="n">path_to_your_query</span><span class="p">)</span>
+<span class="n">bedsB</span> <span class="o">=</span> <span class="p">[</span><span class="n">pybedtools</span><span class="o">.</span><span class="n">BedTool</span><span class="p">(</span><span class="n">bedfilepath</span><span class="p">)</span> <span class="k">for</span> <span class="n">bedfilepath</span> <span class="ow">in</span> <span class="n">list_of_all_paths_to_more_bed</span><span class="p">]</span>
+
+<span class="c1"># Use our custom intersection computing algorithm to get the matrix of overlaps</span>
+<span class="n">true_intersection</span> <span class="o">=</span> <span class="n">compute_true_intersection</span><span class="p">(</span><span class="n">bedA</span><span class="p">,</span> <span class="n">bedsB</span><span class="p">)</span>
+<span class="n">flags_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">true_intersection</span><span class="p">])</span>
+</pre></div>
 </div>
+<p>The resulting flags_matrix is a NumPy array that can be edited, and on which MODL can be run.</p>
+<p>Since the results of MODL only depend on the true intersections and not on the shuffles, you can run MODL with 1 shuffle or on a manually computed matrix as above to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv file, using MODL’s selection as a starting point and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying).</p>
 <div class="section" id="ologram-merge-stats">
 <h2>ologram_merge_stats<a class="headerlink" href="#ologram-merge-stats" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Several tsv files resulting from <em>OLOGRAM</em> analyses can be merged into a single diagram report using the merge_ologram_stats.</p>
@@ -469,9 +486,10 @@ Command-wise optional arguments:
 </div>
 <div class="section" id="ologram-modl-treeify">
 <h2>ologram_modl_treeify<a class="headerlink" href="#ologram-modl-treeify" title="Permalink to this headline">¶</a></h2>
-<p><strong>Description:</strong> Visualize n-wise enrichment results (OLOGRAM-MODL) as a tree of combinations. Works on the result (tsv file) of an OLOGRAM analysis called with –more-bed-multiple-overlap.</p>
-<p>We recommend this representation. The tsv file can be edited before passing it to the command, for example by keeping only the combinations you are interested in.</p>
-<p>On the graph, S designated the total number of basepairs in which this combinations is encountered in the real data. Fold change gives the ratio with the number of basepairs in the shuffles, with the associated Negative Binomial p-value.</p>
+<p><strong>Description:</strong> Visualize n-wise enrichment results (OLOGRAM-MODL) as a tree of combinations. Works on the result (tsv file) of an OLOGRAM analysis called with –more-bed-multiple-overlap. On the graph, S designated the total number of basepairs in which this combinations is encountered in the real data. Fold change gives the ratio with the number of basepairs in the shuffles, with the associated Negative Binomial p-value.</p>
+<p>This recommended representation is useful to find master regulators, by showing which additions to a combinations increase its enrichment, and allowing to see whether overlaps that contain the element X also contain the element Y (looking at how a child combination accounts for the S of its parent in an inexact counting).</p>
+<p>The tsv result file can be edited before passing it to the command, for example by keeping only the combinations you are interested in, such as all combinations containing the Transcription Factor you are studying. We recommend running MODL to make a pre-selection.</p>
+<p>We also recommend discarding the rarest combinations found on such a very small number of basepairs that they are unlikely tobe biologically significant. This is mostly relevant when you have many sets (k &gt;= 5) since longer combinations will often be enriched through sheer unlikelihood.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o treeified.pdf -l ThisWasTheNameOfTheQuery
 </pre></div>
 </div>
@@ -582,6 +600,9 @@ Command-wise optional arguments:
 <li><a class="reference internal" href="#">Commands from section ‘ologram’</a><ul>
 <li><a class="reference internal" href="#ologram">ologram</a></li>
 <li><a class="reference internal" href="#ologram-multiple-overlaps">ologram (multiple overlaps)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#details">Details</a><ul>
 <li><a class="reference internal" href="#ologram-merge-stats">ologram_merge_stats</a></li>
 <li><a class="reference internal" href="#ologram-modl-treeify">ologram_modl_treeify</a></li>
 <li><a class="reference internal" href="#ologram-merge-runs">ologram_merge_runs</a></li>
@@ -631,13 +652,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘ologram’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Sep 16, 2020.
+      Last updated on Oct 08, 2020.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
