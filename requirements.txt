@@ -1,42 +1,26 @@
-scipy ==1.2.0; python_version < '3.8'
-numpy >=1.15.3; python_version < '3.8'
-pybedtools >=0.7.8; python_version < '3.8'
-pyyaml >=3.12; python_version < '3.8'
-requests >=2.13.0; python_version < '3.8'
-cffi >=1.10.0; python_version < '3.8'
-pyparsing >=2.2.0; python_version < '3.8'
+GitPython >=2.1.8
 biopython >=1.69; python_version < '3.8'
-matplotlib >=3.0.0; python_version < '3.8'
-plotnine >=0.5.1; python_version < '3.8'
-GitPython >=2.1.8; python_version < '3.8'
-cloudpickle >=0.4.0; python_version < '3.8'
-ftputil >=3.3.1; python_version < '3.8'
-pandas >=0.23.3,!=1.0.0,!=1.0.0rc0; python_version < '3.8'
-pybigwig >=0.3.12; python_version < '3.8'
-setuptools; python_version < '3.8'
-cython >=0.29.6; python_version < '3.8'
-mpmath >=1.1.0; python_version < '3.8'
-scikit-learn >=0.21.2; python_version < '3.8'
-graphviz; python_version < '3.8'
-seaborn; python_version < '3.8'
-scipy >= 1.5.2; python_version > '3.7'
-numpy >= 1.19.1; python_version > '3.7'
-pybedtools >= 0.8.1; python_version > '3.7'
-pyyaml >= 5.3.1; python_version > '3.7'
-requests >=2.23.0; python_version > '3.7'
-cffi >= 1.14.0; python_version > '3.7'
-pyparsing >= 2.4.7; python_version > '3.7'
 biopython >=1.78; python_version > '3.7'
-matplotlib >= 3.3.1; python_version > '3.7'
-plotnine >= 0.7.1; python_version > '3.7'
-GitPython >= 3.1.8; python_version > '3.7'
-cloudpickle >= 1.6.0; python_version > '3.7'
-ftputil >= 4.0.0; python_version > '3.7'
-pandas >= 1.1.2; python_version > '3.7'
-pybigwig >= 0.3.17; python_version > '3.7'
-setuptools; python_version > '3.7'
+cffi >=1.10.0
+cloudpickle
 cython >= 0.29.21; python_version > '3.7'
-mpmath >= 1.1.0; python_version > '3.7'
-scikit-learn >= 0.23.2; python_version > '3.7'
-graphviz >= 0.14.1; python_version > '3.7'
-seaborn >= 0.11.0; python_version > '3.7'
+cython >=0.29.6; python_version < '3.8'
+ftputil >= 4.0.0; python_version > '3.7'
+ftputil >=3.3.1; python_version < '3.8'
+graphviz
+matplotlib >= 3.3.1
+mpmath >= 1.1.0
+numpy >= 1.19.1; python_version > '3.7'
+numpy >=1.15.3; python_version < '3.8'
+pandas >= 1.1.2
+plotnine >= 0.7.1
+pybedtools >= 0.8.1
+pybigwig >= 0.3.17
+pyparsing >=2.2.0
+pyyaml
+requests >=2.23.0
+scikit-learn >= 0.23.2
+scipy ==1.2.0; python_version < '3.8'
+scipy >= 1.5.2; python_version > '3.7'
+seaborn
+setuptools
