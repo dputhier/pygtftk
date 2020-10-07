@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.4
+
+### Bug Fixes
+
+*   Fixed Python version in Setup.py.
+
+### API/CLI Changes
+
+*   None.
+
 ## v1.2.3
 
 ### Bug Fixes
