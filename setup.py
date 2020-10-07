@@ -11,19 +11,19 @@ Authors: D. Puthier and F. Lopez
 # A set of builtin packages
 # -------------------------------------------------------------------------
 
-import glob
-import hashlib
-import os
-import platform
 import re
 import shutil
 import subprocess
 import sys
 from subprocess import DEVNULL
-from tempfile import NamedTemporaryFile
 
+import glob
+import hashlib
 import numpy as np
+import os
+import platform
 from Cython.Distutils import build_ext
+from tempfile import NamedTemporaryFile
 
 # -------------------------------------------------------------------------
 # Python compiler version
@@ -259,6 +259,8 @@ os.remove(tmp_file_conf.name)
 # Declare the setup function
 # ----------------------------------------------------------------------
 
+with open('requirements.txt') as f:
+    pack_required = f.read().splitlines()
 
 setup(name="pygtftk",
       include_dirs=[np.get_include()],
@@ -347,28 +349,7 @@ setup(name="pygtftk",
                   'sphinx_bootstrap_theme >=0.4.9',
                   'sphinxcontrib-googleanalytics'],
           'gffutils': ['gffutils']},
-      install_requires=['nose',
-                        'pyyaml >=3.12',
-                        'cloudpickle >=0.5.6',
-                        'ftputil >=3.3.1',
-                        'pybedtools >=0.7.8',
-                        'pandas >=0.23.3, !=1.0.0, !=1.0.0rc0',
-                        'requests >=2.13.0',
-                        'pyBigWig >=0.3.12',
-                        'cffi >=1.10.0',
-                        'biopython >=1.69',
-                        'pyparsing >=2.2.0',
-                        'GitPython >=2.1.8',
-                        'pyparsing',
-                        'matplotlib >=3.0.0',
-                        'plotnine >=0.5.1',
-                        'setuptools',
-                        'cython >=0.29.6',
-                        'mpmath >=1.1.0',
-                        'scikit-learn >=0.21.2',
-                        'graphviz',
-                        'seaborn'
-                        ],
+      install_requires=pack_required,
       ext_modules=[lib_pygtftk] + [cython_ologram_1, cython_ologram_2, cython_ologram_3, cython_ologram_4])
 
 # ----------------------------------------------------------------------
