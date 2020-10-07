@@ -61,12 +61,15 @@ class BetaCalculator:
         """
 
         # HOTFIX prevent the original a, b from being numpy elements
-        a = float(a) ; b = float(b)
+        a = float(a);
+        b = float(b)
 
         a, b = mpmath.mpf(a), mpmath.mpf(b)
 
-        if self.use_log: beta = mpmath.exp(mpmath.loggamma(a) + mpmath.loggamma(b) - mpmath.loggamma(a + b))
-        else: beta = mpmath.gamma(a) * mpmath.gamma(b) / mpmath.gamma(a + b)
+        if self.use_log:
+            beta = mpmath.exp(mpmath.loggamma(a) + mpmath.loggamma(b) - mpmath.loggamma(a + b))
+        else:
+            beta = mpmath.gamma(a) * mpmath.gamma(b) / mpmath.gamma(a + b)
 
         return beta
 
@@ -137,12 +140,15 @@ class BetaCalculator:
         # In terms of methods, this function requires contfractbeta(), defined above.
 
         # HOTFIX prevent the original a, b or x from being numpy elements
-        a = float(a) ; b = float(b) ; x = float(x)
+        a = float(a);
+        b = float(b);
+        x = float(x)
 
         # Transpose a, x, x into mpmath objects.
         a, b, x = mpmath.mpf(a), mpmath.mpf(b), mpmath.mpf(x)
 
-        def isnegint(X): return (X < 0) & (X == mpmath.floor(X))
+        def isnegint(X):
+            return (X < 0) & (X == mpmath.floor(X))
 
         # Trivial cases
         if (x < 0) | (x > 1):
