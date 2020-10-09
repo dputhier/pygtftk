@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.5
+
+### Bug Fixes
+
+*   Fix requirements.txt
+
+### API/CLI Changes
+
+*   None.
+
 ## v1.2.4
 
 ### Bug Fixes
