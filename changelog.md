@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.6
+
+### Bug Fixes
+
+*   Fix bioconda building for OSX.
+
+### API/CLI Changes
+
+*   None.
+
 ## v1.2.5
 
 ### Bug Fixes
