@@ -1,17 +1,13 @@
 GitPython >=2.1.8
-biopython >=1.69; python_version < '3.8'
-biopython >=1.78; python_version > '3.7'
+biopython >=1.78
 cffi >=1.10.0
 cloudpickle
-cython >= 0.29.21; python_version > '3.7'
-cython >=0.29.6; python_version < '3.8'
-ftputil >= 4.0.0; python_version > '3.7'
-ftputil >=3.3.1; python_version < '3.8'
+cython >= 0.29.21
+ftputil >= 4.0.0
 graphviz
 matplotlib >= 3.3.1
 mpmath >= 1.1.0
-numpy >= 1.19.1; python_version > '3.7'
-numpy >=1.15.3; python_version < '3.8'
+numpy >= 1.19.1
 pandas >= 1.1.2
 plotnine >= 0.7.1
 pybedtools >= 0.8.1
@@ -20,7 +16,6 @@ pyparsing >=2.2.0
 pyyaml
 requests >=2.23.0
 scikit-learn >= 0.23.2
-scipy ==1.2.0; python_version < '3.8'
-scipy >= 1.5.2; python_version > '3.7'
+scipy >= 1.5.2
 seaborn
 setuptools
