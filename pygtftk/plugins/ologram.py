@@ -391,7 +391,7 @@ def make_parser():
                                      "summed_bp_overlaps_log2_fold_change",
                                      "summed_bp_overlaps_true",
                                      "summed_bp_overlaps_pvalue"],
-                            default=None,
+                            default="summed_bp_overlaps_true",
                             type=str,
                             required=False)
 
@@ -1367,9 +1367,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         panel_width = 0.6
         pdf_width = panel_width * nb_ft
 
-        if pdf_width > 100:
-            pdf_width = 100
-            message("Setting --pdf-width to 100 (limit)")
+        if pdf_width > 200:
+            pdf_width = 200
+            message("Setting --pdf-width to 200 (limit)")
 
     if pdf_height is None:
         pdf_height = 5
