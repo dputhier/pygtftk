@@ -165,7 +165,8 @@ class Modl:
     :param step_1_factor_allowance: In step 1 of building the candidates, how many words are allowed in the Dictionary Learning as a proportion of multiple_overlap_max_number_of_combinations
     :param error_function: error function used in step 2. Default to manhattan error. 
     :param smother: Should the smothering which reduces each row's abudane to its square root to emphasize rarer combinations be applied ? Default is True
-    :param normalize_words: Normalize the words by their summed squares in step 2. Default False.
+    :param normalize_words: Normalize the words by their summed squares in step 2. Default True.
+    :param step_2_alpha: Override the alpha used in step 2.
 
     Passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity
     
@@ -186,7 +187,8 @@ class Modl:
                  step_1_factor_allowance = 2, 
                  error_function = None,
                  smother = True,
-                 normalize_words = False):
+                 normalize_words = True,
+                 step_2_alpha = None):
 
         # Matrix of overlap flags to work with
         self.original_data = flags_matrix
@@ -224,10 +226,8 @@ class Modl:
         # Do we normalize the words by their summed squared in step 2 ?
         self.normalize_words = normalize_words
  
-
-
-
-
+        # Override alpha in step 2 ?
+        self.step_2_alpha = step_2_alpha
 
         self.nb_threads = nb_threads
 
@@ -338,8 +338,8 @@ class Modl:
             self.queried_words_nb,      # N best words
             self.error_function,        # Potential custom error function
             self.nb_threads,
-            self.normalize_words)       # Normalize words by sum of square
-        
+            self.normalize_words,       # Normalize words by sum of square
+            self.step_2_alpha)          # Sparsity control
         
         # Final step : register the best dictionary
         self.best_words = best_dict

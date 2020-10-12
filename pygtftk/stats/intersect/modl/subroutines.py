@@ -229,8 +229,47 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
 #                        Step 2 of the MODL algorithm                          #
 # ---------------------------------------------------------------------------- #
 
+def normalize_and_jitter_matrix_rows(X, normalize = True, jitter = True):
+    r"""
+    Apply normalization so that sum of suquare of each row is 1,
+    Add a slight epsilon so two rows may not have exact same dot product with a given vector
+    Sort in lexicographic order
 
+    >>> import numpy as np
+    >>> import numpy.testing as npt
+    >>> from pygtftk.stats.intersect.modl.subroutines import normalize_and_jitter_matrix_rows
+    >>> D = np.array([[1,1,0],[0,1,0],[0,1,1]])
+    >>> Dc = normalize_and_jitter_matrix_rows(D)
+    >>> Dc_theory = [[0, 1, 0], [3.534E-4, 7.071E-1, 7.071E-1], [7.071E-1, 7.071E-1, 5E-4]]
+    >>> npt.assert_almost_equal(Dc, Dc_theory, decimal = 4)
+    """
 
+    X = np.array(X) # Enforce NumPy array
+    X = X[np.lexsort(np.rot90(X))] # Sort the dictionary in lexicographic order BEFORE applying all of this
+
+    ## Applying corrections to the words : normalize and jitter
+    new_X = []
+    i = 0
+    for row in X: 
+        
+        # To prevent atoms in D from having the exact same dot product with any word
+        # that LARS will try to rebuild, add a very small jitter to the words 
+        # -> sqrt(i) times 1E-4 to each element of the i-th row of D
+        neo = np.array([x + np.sqrt(i)*1E-4 for x in row])
+        i += 1        
+
+        # Normalize the words by the sum of their square. Helps counter a tendency to select longer words, which can increase sensitivity to noise.
+        if normalize:
+            squared_sum = np.sum(neo**2)
+            if squared_sum > 0: # Avoid division by zero
+                neo = np.sqrt(neo**2/squared_sum)
+
+        new_X += [neo]
+
+    # Now convert to array
+    X = np.array(new_X)
+    
+    return X
 
 
 
@@ -273,6 +312,7 @@ def build_best_dict_from_library(data, library, queried_words_nb,
     # Initial dictionary
     nb_features = data.shape[1]
 
+    dictionary = [tuple([0] * nb_features)] # Must initialize with a word, might as well be full zeros.
 
     # Use nonzero alpha for the coder as well, only if not manually specified.
     if transform_alpha is None:
@@ -281,12 +321,10 @@ def build_best_dict_from_library(data, library, queried_words_nb,
         transform_alpha = min(1/np.sqrt(nb_features), 0.5)
 
 
-    # Use nonzero alpha for the coder as well
-    if transform_alpha is None:
-        transform_alpha = 1/nb_features
+
 
     ## Coder object, to be updated iteratively
-    coder = SparseCoder(dictionary=D.astype('float64'), # Rq : must make it float64 for some reason
+    coder = SparseCoder(dictionary=np.array(dictionary).astype('float64'), # Rq : must make it float64 for some reason
         transform_algorithm='lasso_lars', #transform_algorithm='lasso_cd',
         transform_alpha = transform_alpha,
         positive_code = True, # Very important to ensure we also force positivity here !
@@ -302,36 +340,9 @@ def build_best_dict_from_library(data, library, queried_words_nb,
     stop = False
     while stop is False:
 
-        # Update coder with the current dictionary, with the word added at last iteration
-        D = np.array(dictionary)
-        coder.components_ = D
-
-
-        # Generate all_candidate_words for this iteration (for now, simply all 
-        # words of the library that have not been already used)
-        all_candidate_words = tree.get_all_candidates_except(library, D)
-
-
-
-
-        # Normalize the words by the sum of their square.
-        # Helps counter a tendency to select longer words, which
-        # can increase sensitivity to noise.
-        if normalize_words:
-            new_candidates = []
-            for candidate in all_candidate_words:
-                neo = np.array(candidate)
-                neo = neo**2/np.sum(neo**2)
-                neo = np.sqrt(neo)
-                new_candidates += [tuple(neo)]
-            all_candidate_words = new_candidates
-
-
-
-
-
-
-
+        ## Generate all_candidate_words for this iteration
+        # For now, simply all words of the library that are not already used
+        all_candidate_words = tree.get_all_candidates_except(library, dictionary)
 
         # Test all words for this iteration
         candidates_with_errors = dict()
@@ -342,18 +353,24 @@ def build_best_dict_from_library(data, library, queried_words_nb,
 
         for candidate in all_candidate_words:
 
+            # Create a new dictionary for this test
             dict_being_tested = dictionary + [candidate]
+
             Dt = np.array(dict_being_tested)
+            
+            # Normalization helps counter a tendency to selcet longer words, and jitter fixes a LARS bug with atoms that have the same dot product
+            # Also lexicographic sort.
+            Dt_corrected = normalize_and_jitter_matrix_rows(Dt, normalize_words)
+            Dt = Dt_corrected
+            
             # Update dictionary to the one being currently tested
             coder.components_ = Dt.astype('float64')
-
 
 
             try:
                 encoded = coder.transform(data)
             
                 rebuilt_data = np.matmul(encoded, Dt)
-
 
                 # We use Manhattan error so compromises are discouraged : with L2,
                 # when rebuilding [(1,0,0)*many,(1,0,1),(0,0,1)*many], (1,0,1) would be picked first
@@ -364,7 +381,8 @@ def build_best_dict_from_library(data, library, queried_words_nb,
                     error_mat = np.abs(X_rebuilt-X_true)
                     error = np.sum(error_mat)
 
-                    alpha = 1/X_true.shape[1]
+                    alpha = transform_alpha # Fetch the alpha used when calling the main function
+
                     regul = np.sum(code) * alpha
 
                     final_error = error + regul
@@ -386,16 +404,11 @@ def build_best_dict_from_library(data, library, queried_words_nb,
 
             message(str(candidate)+'\t'+str(error), type = 'DEBUG')
 
-            
-
-
       
-        # Add best candidate to final dict and remove from candidates
+        # Add best candidate to final dict and remove from candidates.
         try:
-            best_candidate = min(candidates_with_errors, key=candidates_with_errors.get)
             # In case of a tie, the first word is selected.
-
-
+            best_candidate = min(candidates_with_errors, key=candidates_with_errors.get)
             dictionary += [best_candidate]
         # It should never happen, but if there are no more candidates add an empty word.
         except:
