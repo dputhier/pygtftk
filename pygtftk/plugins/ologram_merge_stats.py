@@ -27,6 +27,8 @@ __updated__ = ''' 2019-05-27 '''
 __notes__ = """
 -- By default, labels in the diagram are derived from the name of the enclosing folder. E.g. if file is a/b/c/00_ologram_stats.tsv, 'c' will be used as label.
 -- Otherwise use -\-labels to set the labels.
+
+-- Squares without a diamond mean the p-value was NaN due to poor fitting. This is mostly the case for higher-order combis in multiple overlaps that were so rare that they are not encountered in the shuffles.
 """
 
 
@@ -125,8 +127,8 @@ def ologram_merge_stats(inputfiles=None,
         df_tmp = df_tmp.assign(**{"-log_10(pval)": -np.log10(df_tmp.summed_bp_overlaps_pvalue)})
 
         # Which p-values are signifcant ?
-        # TODO Add Benjamini-Hochberg multitesting correction
-        df_tmp = df_tmp.assign(**{"pval_signif": df_tmp.summed_bp_overlaps_pvalue < 0.01})
+        # TODO For now, draws all p-values. Add Benjamini-Hochberg correction, and distinguish between NaN and 0.
+        df_tmp = df_tmp.assign(**{"pval_signif": df_tmp.summed_bp_overlaps_pvalue > 0})
 
         # Add the df to the list to be subsequently merged
         df_list += [df_tmp]
@@ -157,7 +159,7 @@ def ologram_merge_stats(inputfiles=None,
 
     # Points for p-val. Must be after geom_tile()
     my_plot += geom_point(data = df_merged.loc[df_merged['pval_signif']],
-        mapping = aes(x='dataset',y='Feature',color = '-log_10(pval)'), size=5, shape ='D', inherit_aes = False)
+        mapping = aes(x='dataset',y='Feature',color = '-log_10(pval)'), size=4, shape ='D', inherit_aes = False)
     my_plot += scale_color_gradientn(colors = ["#160E00","#FFB025","#FFE7BD"])
     my_plot += labs(color = "-log10(p-value)")
 
@@ -188,9 +190,9 @@ def ologram_merge_stats(inputfiles=None,
         panel_height = 0.6
         pdf_height = panel_height * nb_ft
 
-        if pdf_height > 100:
-            pdf_height = 100
-            message("Setting --pdf-height to 100 (limit)")
+        if pdf_height > 500:
+            pdf_height = 500
+            message("Setting --pdf-height to 500 (limit)")
 
     message("Page width set to " + str(pdf_width))
     message("Page height set to " + str(pdf_height))
