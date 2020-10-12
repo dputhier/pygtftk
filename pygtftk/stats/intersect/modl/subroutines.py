@@ -274,9 +274,11 @@ def build_best_dict_from_library(data, library, queried_words_nb,
     nb_features = data.shape[1]
 
 
-
-    dictionary = [tuple([0] * nb_features)] # Must initialize with a word, might as well be full zeros.
-    D = np.array(dictionary)
+    # Use nonzero alpha for the coder as well, only if not manually specified.
+    if transform_alpha is None:
+               
+        # To encourage use of fewer words, we by default use a rather high alpha (but capped at 0.5)
+        transform_alpha = min(1/np.sqrt(nb_features), 0.5)
 
 
     # Use nonzero alpha for the coder as well
