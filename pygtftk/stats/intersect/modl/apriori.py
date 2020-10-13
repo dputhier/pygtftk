@@ -20,6 +20,15 @@ class Apriori:
         Apriori-based itemset miner.
         
         min_support is the minimum frequency that an itemset must have to be considered "frequent".
+
+        To run apriori, use the following steps, if X is a matrix with one line per transaction, one column per item and a '1' if the item is presnet in the transaction :
+
+        >>> transactions = matrix_to_list_of_transactions(X, names)
+        >>> myminer = Apriori(min_support = 0)
+        >>> myminer.run_apriori(transactions)
+        >>> results = myminer.produce_results()
+        >>> apriori_results_df = apriori_results_to_matrix(results, names)
+        
         """
         self.min_support = min_support
 
