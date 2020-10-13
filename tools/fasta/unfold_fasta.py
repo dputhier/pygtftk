@@ -5,7 +5,7 @@ import sys
 
 from Bio import SeqIO
 
-__DESC__ = '''Take a FASTA as input and produced a new FASTA file with record 
+__DESC__ = '''Take a FASTA as input and produced a new FASTA file with record
 ordered as in --id-file.'''
 
 

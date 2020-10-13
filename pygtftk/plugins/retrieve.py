@@ -4,12 +4,12 @@
 """
 
 import argparse
+import gc
 import os
 import re
 import sys
 
 import ftputil
-import gc
 from ftputil.error import FTPOSError
 
 import pygtftk
@@ -132,12 +132,15 @@ def retrieve(species_name='homo_sapiens',
         password = "anonymous@gtftk.fr"
 
     try:
+        message("Trying to connect")
         ftp = ftputil.FTPHost(host, user, password)
         if pygtftk.utils.VERBOSITY:
             message("Connected to ensembl FTP website.")
     except FTPOSError as err:
         message(str(err))
         message("Unable to connect (FTPOSError).", type="ERROR")
+
+    message("Connection successful.")
 
     try:
         ftp.chdir('/pub')

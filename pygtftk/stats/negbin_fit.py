@@ -165,7 +165,6 @@ def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
 
     """
 
-
     if mean < 1:
         mean = 1
         msg = "Computing log(p-val) for a Neg "
@@ -200,9 +199,6 @@ def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
     return float(twosided_pval)
 
 
-
-
-
 def empirical_p_val(x, data):
     """
     Quick wrapper : empirical two-sided p value.
@@ -218,20 +214,6 @@ def empirical_p_val(x, data):
     signif = min(higher, lower)
 
     return signif / len(arr)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 '''
