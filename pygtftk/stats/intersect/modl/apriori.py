@@ -24,6 +24,9 @@ class Apriori:
 
         To run apriori, use the following steps, if X is a matrix with one line per transaction, one column per item and a '1' if the item is presnet in the transaction :
 
+        >>> X = [[1,1,0],[1,0,1]]
+        >>> names = ['A','B','C']
+        >>> from pygtftk.stats.intersect.modl.apriori import Apriori, matrix_to_list_of_transactions, apriori_results_to_matrix
         >>> transactions = matrix_to_list_of_transactions(X, names)
         >>> myminer = Apriori(min_support = 0)
         >>> myminer.run_apriori(transactions)
@@ -153,7 +156,9 @@ def matrix_to_list_of_transactions(x, names):
     From a matrix with one line per transaction and one column per element with 1 if present and 0 if absent, 
     returns a list of transaction
     """
+    # Enforce type
     names = np.array(names)
+    x = np.array(x)
 
     # Get the list of all nonzero elements in each row
     result = []

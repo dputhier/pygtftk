@@ -240,8 +240,8 @@ def normalize_and_jitter_matrix_rows(X, normalize = True, jitter = True):
     >>> from pygtftk.stats.intersect.modl.subroutines import normalize_and_jitter_matrix_rows
     >>> D = np.array([[1,1,0],[0,1,0],[0,1,1]])
     >>> Dc = normalize_and_jitter_matrix_rows(D)
-    >>> Dc_theory = [[0, 1, 0], [3.534E-4, 7.071E-1, 7.071E-1], [7.071E-1, 7.071E-1, 5E-4]]
-    >>> npt.assert_almost_equal(Dc, Dc_theory, decimal = 4)
+    >>> Dc_theory = [[0, 1, 0], [7.0736E-5, 7.07107E-1, 7.07107E-1], [7.07107E-1, 7.07107E-1, 9.99859E-05]]
+    >>> npt.assert_almost_equal(Dc, Dc_theory, decimal = 5)
     """
 
     X = np.array(X) # Enforce NumPy array
@@ -448,11 +448,5 @@ def build_best_dict_from_library(data, library, queried_words_nb,
     # Conclusion of the function : remove the (0,0,0,...) word and make words unique, just in case
     best_words = list(set(dictionary))
     best_words.remove(tuple([0] * nb_features))
-
-    # If the words had been normalized, un-normalize them.
-    if normalize_words:
-        best_words = np.array(best_words).astype(bool).astype(int)
-
-
 
     return best_words
