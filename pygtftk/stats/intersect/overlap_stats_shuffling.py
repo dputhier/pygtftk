@@ -89,13 +89,18 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
         def batch_and_shuffle_list(l): return cs.markov_shuffle(np.tile(l, (minibatch_size, 1)), nb_threads=nb_threads)
 
     # --------------------------------------------------------------------------
-    # NOTE for improvement : if new types of shuffles are added, the corresponding
-    # wrappers should be added here.
-    # All that matters is that these shufflers return a shuffled matrix of
-    # distances. We could also implement weighted shuffles, or shuffles that rely
+    # NOTE for improvement : 
+    #   - If new types of shuffles are added, the corresponding wrappers should 
+    # be added here. All that matters is that these shufflers return a shuffled 
+    # matrix of distances. 
+    #   - We could also implement weighted shuffles, or shuffles that rely
     # on an external seed (for example, ensuring that long regions fall in the
     # middle of the chromosomes for whatever reason). All that matters is
     # to plug them here as lambdas.
+    #   - Relatedly, to have a common seed or remember information between the
+    # shuffles (ie. shuffle sets A and B the same way), we just need to make
+    # batch_and_shuffle_list take two arguments : (l, parameter) and change the
+    # function call below.
     # --------------------------------------------------------------------------
 
     # --------------------------------------------------------------------------

@@ -28,6 +28,8 @@ __notes__ = """
  fold change and p-value compared to the shuffles.
 
  -- Result tsv files can be manually edited (ie. removing combinations) before passing them to this plugin
+
+ -- For a quick filtering, it is possible to show only the top T combinations sorted by total basepairs in real data.
 """
 
 
@@ -55,10 +57,17 @@ def make_parser():
                             type=str,
                             required=False)
 
+    parser_grp.add_argument('-t', '--top-s',
+                            help="Optional. Only the top t combinations sorted by total basepairs in real data will be displayed.",
+                            default=-1,
+                            type=int,
+                            required=False)
+
+
     return parser
 
 
-def ologram_modl_treeify(inputfile=None, output=None, query_label="Query"):
+def ologram_modl_treeify(inputfile=None, output=None, query_label="Query", top_s = -1):
     # -------------------------------------------------------------------------
     # Check graphviz is installed
     # to avoid ugly error messages.
@@ -78,6 +87,11 @@ def ologram_modl_treeify(inputfile=None, output=None, query_label="Query"):
     # Pval set to 0 or -1 are changed to 1e-320 and NaN respectively
     df_res.loc[df_res['summed_bp_overlaps_pvalue'] == 0, 'summed_bp_overlaps_pvalue'] = 1e-320
     df_res.loc[df_res['summed_bp_overlaps_pvalue'] == -1, 'summed_bp_overlaps_pvalue'] = np.nan
+
+    # Optional : use only the top T combinations, sorted by total basepairs in real data
+    if top_s != -1:
+        df_res = df_res.nlargest(top_s, 'summed_bp_overlaps_true').reset_index(drop = True)
+
 
     # -------------------------------------------------------------------------
     # Produce and save the visualization

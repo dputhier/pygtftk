@@ -158,17 +158,18 @@ __notes__ = """
  keep the running time reasonable and keep the found combinations still relevant.
  Note that MODL is completely optional. It is mostly needed when the list of -\-more-bed is very long and you do not want to filter the results manually, and when you are working with noisy
  data which could obfuscate the interesting combinations.
- MODL employs a form of subsampling on the original matrix and will discard combinations rarer than 1/10000 occurences to reduce computing times. This can magnify the noise however and can be disabled. When using MODL separately, you can disable this and also ask for the candidates to be normalized by the square of their sum to de-emphasize longer words. 
+ MODL employs a form of subsampling on the original matrix and will discard combinations rarer than 1/10000 occurences to reduce computing times. This can magnify the noise however and can be disabled when using MODL separately.  
  It will also reduce the abundance of all lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. This is done as the matrix of intersections will usually have many redundant lines and as such can be squished without changing the result.
  It is also possible to bypass it and provide a custom list of combinations to be considered.
 
  -- MODL can be used separately in Python. An example of how to compute an intersection matrix manually from BED files is presented in the documentation.
 
- -- For statistical reality reasons, with multiple sets the expected overlaps for the longer combinations (A+B+C+D+... when they are all independant) can be very low. 
+ -- For statistical reality reasons, with multiple sets the expected overlaps for the longer combinations (A+B+C+D+... when they are all independant) can be very low.
+ As a result, longer combinations tend to be more enriched : this should be kept in mind when comparing enrichment values. 
  This is especially true for small regions such as Transcriptional Regulator biding sites where the total coverage of all sets considered is low. 
- Note that the fact that we are using a Negative Binomial rather than empirical p-values helps alleviate this problem. 
+ Note that the fact that we are using a Negative Binomial rather than empirical p-values helps alleviate this problem. If a combination is so rare that it is not encoutered even once in the shuffles, it will have a p-value of NaN.
  Furthermore, if C is depleted with query but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched.
- 
+
  -- A low number of intersecting basepairs can require using more shuffles, but very-low-average
  Negative Binomial distributions are not really signficant. We recommend instead shuffling only across a
  biologically relevant subsection of the genome (with -\-bed-incl) : for example, if studying 
@@ -177,8 +178,7 @@ __notes__ = """
  This also allows using fewer shuffles (dozens), because remembering intersections across many files will use RAM. 
  If you nevertheless need to use many shuffles, look to the ologram_merge_run plugin.
 
- -- We recommend running the ologram_modl_treeify plugin on the resulting tsv file
- if you use multiple overlaps.
+ -- We recommend running the ologram_modl_treeify plugin on the resulting tsv file if you use multiple overlaps.
 
  -- If you manually specify the combinations to be studied with -\-multiple-overlap-custom-combis, use the following format for the text file : 
  The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed", "1 0 1 1" means Query + B + C). Data should be whitespace separated with one combination per line.
@@ -391,7 +391,7 @@ def make_parser():
                                      "summed_bp_overlaps_log2_fold_change",
                                      "summed_bp_overlaps_true",
                                      "summed_bp_overlaps_pvalue"],
-                            default=None,
+                            default="summed_bp_overlaps_true",
                             type=str,
                             required=False)
 
@@ -1367,9 +1367,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         panel_width = 0.6
         pdf_width = panel_width * nb_ft
 
-        if pdf_width > 100:
-            pdf_width = 100
-            message("Setting --pdf-width to 100 (limit)")
+        if pdf_width > 200:
+            pdf_width = 200
+            message("Setting --pdf-width to 200 (limit)")
 
     if pdf_height is None:
         pdf_height = 5

@@ -480,6 +480,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
             interesting_combis = combi_miner.find_interesting_combinations()
 
             # TODO Other possibility, simply take the most common combis
+            # This can also be done by the ologram_modl_treeify plugin
             """
             all_combis, counts_per_combi = np.unique(flags_matrix, axis=0, return_counts = True)
             most_frequent_combis_idx = (-counts_per_combi).argsort()[:multiple_overlap_max_number_of_combinations]
