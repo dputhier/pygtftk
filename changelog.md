@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.2.7
+
+### Bug Fixes
+
+*   Fixed LARS coder bug.
+
+### API/CLI Changes
+
+*   Improved OLOGRAM documentation.
+*   Increased default alpha
+
 ## v1.2.6
 
 ### Bug Fixes
