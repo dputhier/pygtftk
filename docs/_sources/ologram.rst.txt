@@ -175,6 +175,7 @@ For statistical reasons, we recommend shuffling across a relevant subsection of 
 
 **Exact combinations:** By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + ...]. For exact intersections (ie. [Query + A + B + nothing else]), set the --multiple-overlap-target-combi-size flag to the number of --more-bed plus one. You will know if the combinations are computed as inexact by the '...' in their name in the result file. Intersections not including the query file are discarded.
 
+With inexact combinations, if A+B is very enriched and C is depleted, A+B+C will be enriched. It is more interesting to look at C's contribution to the enrichment. Relatedly, longer combinations are usually more enriched since they involve more theoretically independant sets. Combinations of similar orders should be compared.
 
 
 **Simple example:**
@@ -226,8 +227,8 @@ As the computation of multiple overlaps can be RAM-intensive, if you have a very
 
 
 
-Details
------------------
+Itemset mining details
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 In broad strokes, the custom itemset algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
@@ -244,7 +245,7 @@ This itemset mining algorithm is a work-in-progress. Whether you use MODL will n
 
 This can work on any type of data, biological or not, that respects the conventional formatting for lists of transactions: the data needs to be a matrix with one line per transaction and one column per element. For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C.
 
-For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1. MODL will discard combinations rarer than 1/10000 occurences to reduce computing times. It will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. However, the latter can magnify the impact of the noise as well and can be disabled when using the manual API. To de-emphasize longer words, which can help in this case, we can also normalize words by their summed square in step 2.
+For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1. MODL will discard combinations rarer than 1/10000 occurences to reduce computing times. It will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. However, the latter can magnify the impact of the noise as well and can be disabled when using the manual API. To de-emphasize longer words, which can help in this case, we normalize words by their summed square in step 2.
 
 If you are passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity.  All are NumPY matrices.
 
@@ -267,7 +268,8 @@ Here is an example:
     step_1_factor_allowance = 2,                        # How many words to ask for in each step 1 rebuilding, as a multiplier of multiple_overlap_max_number_of_combinations
     error_function = None,                              # Custom error function in step 2
     smother = True,                                     # Should the smothering (quadratic reduction of abundance) be applied ?
-    normalize_words = False)                            # Normalize words by their summed squared in step 2 ?
+    normalize_words = True,                             # Normalize words by their summed squared in step 2 ?
+    step_2_alpha = None)                                # Override the alpha (sparsity control) used in step 2
   interesting_combis = combi_miner.find_interesting_combinations()   
 
 
@@ -300,6 +302,7 @@ The resulting flags_matrix is a NumPy array that can be edited, and on which MOD
 
 Since the results of MODL only depend on the true intersections and not on the shuffles, you can run MODL with 1 shuffle or on a manually computed matrix as above to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv file, using MODL's selection as a starting point and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying).
 
+It is also possible to run any itemset miner you wish on this matrix. An implementation of apriori is provided in the `pygtftk.stats.intersect.modl.apriori.Apriori` class.
 
 
 ologram_merge_stats
@@ -329,11 +332,14 @@ ologram_merge_stats
 
 This also works with OLOGRAM-MODL results, since they follow the same basic format of one element/combination per line.
 
+Cases without a p-value diamond mean it was NaN. It usually means was too rare to be encountered in the shuffles.
+
+An example of use case for this tool would be to compare between different cell lines, or to slop (extend) your query regions by different lengths and compare the enrichment to find at which distance of each other several sets are on average.
+
 **Arguments:**
 
 .. command-output:: gtftk ologram_merge_stats -h
 	:shell:
-
 
 
 
@@ -344,9 +350,10 @@ ologram_modl_treeify
 
 This recommended representation is useful to find master regulators, by showing which additions to a combinations increase its enrichment, and allowing to see whether overlaps that contain the element X also contain the element Y (looking at how a child combination accounts for the S of its parent in an inexact counting).
 
-The tsv result file can be edited before passing it to the command, for example by keeping only the combinations you are interested in, such as all combinations containing the Transcription Factor you are studying. We recommend running MODL to make a pre-selection.
+P-values of NaN (-1 in the original tsv) are due to poor fitting. They are mostly present in high order combinations, that were so rare that they are not encountered in the shuffles even once. We also recommend discarding the rarest combinations found on such a very small number of basepairs that they are unlikely to be biologically significant. This is mostly relevant when you have many sets (k >= 5) since longer combinations will often be enriched through sheer unlikelihood. To that effect, there is a parameter to display only the combinations with the highest S.
 
-We also recommend discarding the rarest combinations found on such a very small number of basepairs that they are unlikely tobe biologically significant. This is mostly relevant when you have many sets (k >= 5) since longer combinations will often be enriched through sheer unlikelihood. 
+The tsv result file can be edited before passing it to the command, for example by keeping only the combinations you are interested in. 
+You can either (1) run OLOGRAM-MODl with no filtering and get a tree of all combinations, (2) use MODL to get a pre-selection that can be tailored, or (3) take the run with all combinations from the possibility 1 and use the -t argument to take the most frequent combinations.
 
 .. command-output:: gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o treeified.pdf -l ThisWasTheNameOfTheQuery
 	:shell:
@@ -367,8 +374,6 @@ We also recommend discarding the rarest combinations found on such a very small 
 
 .. command-output:: gtftk ologram_modl_treeify -h
 	:shell:
-
-
 
 
 ologram_merge_runs
