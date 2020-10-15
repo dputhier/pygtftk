@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Help on Python package (pygtftk) &#8212; gtftk 1.2.6 documentation</title>
+    <title>Help on Python package (pygtftk) &#8212; gtftk 1.2.7 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Help on Python package (pygtftk)</a></li> 
       </ul>
     </div>  
@@ -2619,7 +2619,7 @@ rules mining algorithms, this focuses on mining complexes and correlation groups
 <p>This code is available under the GNU GPL license.</p>
 <dl class="py class">
 <dt id="pygtftk.stats.intersect.modl.dict_learning.Modl">
-<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.modl.dict_learning.</code><code class="sig-name descname">Modl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flags_matrix</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">step_1_factor_allowance</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">error_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">smother</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">normalize_words</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.Modl" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.modl.dict_learning.</code><code class="sig-name descname">Modl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flags_matrix</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">step_1_factor_allowance</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">error_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">smother</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">normalize_words</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">step_2_alpha</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.Modl" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class encapsulates the MODL approach :</p>
 <p>Takes as input a matrix of flags, with one flag per intersection,
 and returns the list of interesting combis.</p>
@@ -2634,7 +2634,8 @@ and returns the list of interesting combis.</p>
 <li><p><strong>step_1_factor_allowance</strong> – In step 1 of building the candidates, how many words are allowed in the Dictionary Learning as a proportion of multiple_overlap_max_number_of_combinations</p></li>
 <li><p><strong>error_function</strong> – error function used in step 2. Default to manhattan error.</p></li>
 <li><p><strong>smother</strong> – Should the smothering which reduces each row’s abudane to its square root to emphasize rarer combinations be applied ? Default is True</p></li>
-<li><p><strong>normalize_words</strong> – Normalize the words by their summed squares in step 2. Default False.</p></li>
+<li><p><strong>normalize_words</strong> – Normalize the words by their summed squares in step 2. Default True.</p></li>
+<li><p><strong>step_2_alpha</strong> – Override the alpha used in step 2.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2750,6 +2751,23 @@ Returns the dictionary, components as a dataframe, and encoded data.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">U_df</span><span class="p">,</span> <span class="n">V_df</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">learn_dictionary_and_encode</span><span class="p">(</span><span class="n">flags_matrix</span><span class="p">,</span> <span class="n">n_atoms</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stop_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.modl.subroutines.normalize_and_jitter_matrix_rows">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.subroutines.</code><code class="sig-name descname">normalize_and_jitter_matrix_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">jitter</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.subroutines.normalize_and_jitter_matrix_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply normalization so that sum of suquare of each row is 1,
+Add a slight epsilon so two rows may not have exact same dot product with a given vector
+Sort in lexicographic order</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy.testing</span> <span class="k">as</span> <span class="nn">npt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.modl.subroutines</span> <span class="kn">import</span> <span class="n">normalize_and_jitter_matrix_rows</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Dc</span> <span class="o">=</span> <span class="n">normalize_and_jitter_matrix_rows</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Dc_theory</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">7.0736E-5</span><span class="p">,</span> <span class="mf">7.07107E-1</span><span class="p">,</span> <span class="mf">7.07107E-1</span><span class="p">],</span> <span class="p">[</span><span class="mf">7.07107E-1</span><span class="p">,</span> <span class="mf">7.07107E-1</span><span class="p">,</span> <span class="mf">9.99859E-05</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">npt</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">Dc</span><span class="p">,</span> <span class="n">Dc_theory</span><span class="p">,</span> <span class="n">decimal</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3511,13 +3529,13 @@ are found at the beginning or end of the string, they are deleted.</p>
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Help on Python package (pygtftk)</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 09, 2020.
+      Last updated on Oct 15, 2020.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
