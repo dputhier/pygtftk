@@ -228,7 +228,7 @@ As the computation of multiple overlaps can be RAM-intensive, if you have a very
 
 
 Itemset mining details
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 In broad strokes, the custom itemset algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
