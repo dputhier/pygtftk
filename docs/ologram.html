@@ -102,8 +102,8 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:12-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 17:13-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
+ |-- 17:26-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 17:26-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
 </pre></div>
 </div>
 <br>
@@ -118,7 +118,7 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> We are now using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:14-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 17:27-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -137,8 +137,8 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:15-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
- |-- 17:15-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 17:28-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
+ |-- 17:28-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -153,8 +153,8 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:16-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
- |-- 17:16-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 17:29-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 17:29-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -182,14 +182,14 @@ The program will return statistics for both the number of intersections and the 
 <p><strong>Simple example:</strong></p>
 <p>Comparing the query (-p) against two other BED files, analyzing multiple overlaps.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -z -w -q -c simple_07.chromInfo -p simple_07_peaks.bed --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap
- |-- 17:16-WARNING : Converting to bed6 format (simple_07_peaks.bed).
- |-- 17:16-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
- |-- 17:16-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
- |-- 17:16-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 17:16-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
- |-- 17:16-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
- |-- 17:16-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
- |-- 17:16-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
+ |-- 17:30-WARNING : Converting to bed6 format (simple_07_peaks.bed).
+ |-- 17:30-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
+ |-- 17:30-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
+ |-- 17:30-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 17:30-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
+ |-- 17:30-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 17:30-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 17:30-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
 </pre></div>
 </div>
 <p><strong>Detailed example:</strong></p>
@@ -219,9 +219,8 @@ The program will return statistics for both the number of intersections and the 
 <br><p>As the computation of multiple overlaps can be RAM-intensive, if you have a very large amount of candidate genomic feature sets (hundreds) we recommend selecting less candidates among them first by running a pairwise analysis.</p>
 <p><strong>MODL itemset mining algorithm:</strong> By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations. As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations.</p>
 </div>
-</div>
 <div class="section" id="itemset-mining-details">
-<h1>Itemset mining details<a class="headerlink" href="#itemset-mining-details" title="Permalink to this headline">¶</a></h1>
+<h2>Itemset mining details<a class="headerlink" href="#itemset-mining-details" title="Permalink to this headline">¶</a></h2>
 <p>In broad strokes, the custom itemset algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as –more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).</p>
 <p>Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is designed to be resistant
 to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).</p>
@@ -436,6 +435,7 @@ Command-wise optional arguments:
 <p>The resulting flags_matrix is a NumPy array that can be edited, and on which MODL can be run.</p>
 <p>Since the results of MODL only depend on the true intersections and not on the shuffles, you can run MODL with 1 shuffle or on a manually computed matrix as above to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv file, using MODL’s selection as a starting point and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying).</p>
 <p>It is also possible to run any itemset miner you wish on this matrix. An implementation of apriori is provided in the <cite>pygtftk.stats.intersect.modl.apriori.Apriori</cite> class.</p>
+</div>
 <div class="section" id="ologram-merge-stats">
 <h2>ologram_merge_stats<a class="headerlink" href="#ologram-merge-stats" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Several tsv files resulting from <em>OLOGRAM</em> analyses can be merged into a single diagram report using the merge_ologram_stats.</p>
@@ -614,9 +614,7 @@ Command-wise optional arguments:
 <li><a class="reference internal" href="#">Commands from section ‘ologram’</a><ul>
 <li><a class="reference internal" href="#ologram">ologram</a></li>
 <li><a class="reference internal" href="#ologram-multiple-overlaps">ologram (multiple overlaps)</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#itemset-mining-details">Itemset mining details</a><ul>
+<li><a class="reference internal" href="#itemset-mining-details">Itemset mining details</a></li>
 <li><a class="reference internal" href="#ologram-merge-stats">ologram_merge_stats</a></li>
 <li><a class="reference internal" href="#ologram-modl-treeify">ologram_modl_treeify</a></li>
 <li><a class="reference internal" href="#ologram-merge-runs">ologram_merge_runs</a></li>

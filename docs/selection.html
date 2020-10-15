@@ -447,8 +447,8 @@ Command-wise optional arguments:
 <p><strong>Example:</strong> Select randomly 3 transcripts.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_list -n 3 -i simple.gtf | gtftk count
 transcript	3
-exon	5
-CDS	5
+exon	7
+CDS	3
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
@@ -487,15 +487,15 @@ Command-wise optional arguments:
 <p><strong>Example:</strong> Select randomly 1 transcript per gene (<em>-m 1</em>).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_tx -m 1 -i simple.gtf | gtftk select_by_key -k feature -v gene,transcript| gtftk tabulate -k gene_id,transcript_id
 gene_id	transcript_id
-G0001	G0001T002
+G0001	G0001T001
 G0002	G0002T001
 G0003	G0003T001
-G0004	G0004T001
+G0004	G0004T002
 G0005	G0005T001
-G0006	G0006T002
+G0006	G0006T001
 G0007	G0007T001
 G0008	G0008T001
-G0009	G0009T002
+G0009	G0009T001
 G0010	G0010T001
 </pre></div>
 </div>
