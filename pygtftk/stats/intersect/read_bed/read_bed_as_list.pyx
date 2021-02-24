@@ -298,7 +298,7 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
     all_chroms = sorted(occ.keys(), key = lambda k: occ[k])
     all_chroms.reverse()
 
-    # TODO : if RAM turns out to be critical, do not pass the entire
+    # TODO: if RAM turns out to be critical, do not pass the entire
     # 'exclusion' and 'bedfile' dataframes but subset by chromosome before.
     # In most use cases however it should be sufficient.
 

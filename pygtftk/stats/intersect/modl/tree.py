@@ -142,8 +142,9 @@ class Library:
         for word in words:
             self.unassigned_nodes += [Node(word)]
 
-            word_size = len(
-                word)  # Remember the length of the word. TODO Throw exception if there are words of different lengths
+            # Remember the length of the word.
+            # TODO: Throw exception if there are words of different lengths
+            word_size = len(word)  
 
         # Finally, create root node, all unassigned nodes will branch from it later
         self.root_node = Node(word=tuple([0] * word_size))
@@ -311,7 +312,7 @@ class Library:
 #
 #     # Aaaaand... start !
 #     candidates = get_candidates(library.root_node)
-#     # TODO : because nodes can have several parents, make the candidates list
+#     # TODO: because nodes can have several parents, make the candidates list
 #     # equal to a set of itself (hence unique words) each time !
 #     return candidates
 

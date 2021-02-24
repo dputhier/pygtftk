@@ -9,7 +9,7 @@
 ### API/CLI Changes
 
 *   Improved OLOGRAM documentation.
-*   Increased default alpha
+*   Increased default alpha for MODL.
 
 ## v1.2.6
 
