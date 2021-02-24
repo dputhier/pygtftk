@@ -12,6 +12,7 @@ Meant to achieve the same functionality as `bedtools intersect`, except with mul
 
 import copy
 from multiprocessing import Pool
+import gc
 
 import numpy as np
 cimport numpy as np
@@ -88,7 +89,7 @@ cdef multiproc.FUNC_2DARRAY_RESULT find_overlap(long long* melted, long long* sh
 
 
 
-    # MAJOR TODO : REGIONS ID
+    # MAJOR TODO: REGIONS ID
     # Use a set, as there will be few elements in them as it is computationally
     # inexpensive to query and change them, to change which regions are currently open.
     # Elements of the set will be (set_id,region_id)
@@ -123,15 +124,15 @@ cdef multiproc.FUNC_2DARRAY_RESULT find_overlap(long long* melted, long long* sh
         if status % 2 == 0:
             whichset = <int>(status/2)
             open_regions_flags[whichset] += 1
-            # TODO get the current line number (region_id) and add the `(whichset, region_id) to open_regions
+            # TODO: get the current line number (region_id) and add the `(whichset, region_id) to open_regions
 
         # "Close" statuses : odd numbers
         if status % 2 != 0:
             whichset = <int>((status-1)/2)
             open_regions_flags[whichset] -= 1
-            # TODO get the current line number (region_id) and REMOVE the correct element FROM open_regions
+            # TODO: get the current line number (region_id) and REMOVE the correct element FROM open_regions
 
-        # TODO It would also be very possible to put a score dependant on the region (if we have region_id) instead of '1' in the open_regions_flags, for future improvements.
+        # TODO: It would also be very possible to put a score dependant on the region (if we have region_id) instead of '1' in the open_regions_flags, for future improvements.
 
         # Get number of CURRENTLY open flags
 
@@ -170,7 +171,7 @@ cdef multiproc.FUNC_2DARRAY_RESULT find_overlap(long long* melted, long long* sh
                 # Increment overlap number
                 current_overlap_number += 1
 
-                # TODO When we will keep regions_id do something like this but in C : overlaps.append((overlap_begin,overlap_end, open_regions_flags, open_regions))
+                # TODO: When we will keep regions_id do something like this but in C : overlaps.append((overlap_begin,overlap_end, open_regions_flags, open_regions))
 
             # If there is only 1 or 0 regions open, set overlapping to False.
             # Otherwise, it means there are still two regions open and a new "overlap" portion with the new regions currently open
@@ -341,7 +342,7 @@ cpdef find_intersection(tuple beds, all_chrom, return_flags = True, debug = Fals
 
 
         number_of_sets = int(m.shape[1] / 2) # Two columns per set
-        # TODO keep the line number in the original dataframe to be able to
+        # TODO: keep the line number in the original dataframe to be able to
         # retrace the regions which were shuffled, and pass it as
         # `region_ids` to the cython overlap algorithm
 
@@ -352,10 +353,13 @@ cpdef find_intersection(tuple beds, all_chrom, return_flags = True, debug = Fals
         melted.index = range(len(melted.index))
 
 
-        # TODO ADD DETAILS ABOUT THE SORTING. IT IS NOT TRUE THAT THE 4 COLUMNS WERE SORTED (endpoints weren't) BUT, if coming from our shuffles :
+        # TODO: ADD DETAILS ABOUT THE SORTING. IT IS NOT TRUE THAT THE 4 COLUMNS
+        # WERE SORTED (endpoints weren't) BUT, if coming from our shuffles :
         # - All start columns were sorted
-        # - All end columns were sorted if we have no overlapping intervals, and nearly sorted (K-sorted) otherwise.
-        # These properties mean that mergesort will not have its worst-case complexity of O(n log n)
+        # - All end columns were sorted if we have no overlapping intervals, and
+        # nearly sorted (K-sorted) otherwise.
+        # These properties mean that mergesort will not have its worst-case 
+        # complexity of O(n log n)
 
         # Add the corresponding numpy dataframe to the list of all melted
         melted_for_all_chroms += [melted.values]
@@ -376,16 +380,28 @@ cpdef find_intersection(tuple beds, all_chrom, return_flags = True, debug = Fals
     chrom_id = 0
 
     for ov in ov_allchroms:
-        # TODO Keep more information here from the returned overlaps, such as which regions are involved in each overlap; the code supports it !
+        # TODO: Keep more information here from the returned overlaps, such as 
+        # which regions are involved in each overlap; the code supports it !
 
         # Classical overlaps only give the coordinates without the flags.
         # If we want the flags, keep them : they are the overlap[2] term
-        if not return_flags : overlaps = overlaps + [(all_chrom[chrom_id], overlap[0], overlap[1]) for overlap in ov]
-        else : overlaps = overlaps + [(all_chrom[chrom_id], overlap[0], overlap[1], np.array(overlap[2:2+number_of_sets])) for overlap in ov]
+        if not return_flags: 
+            overlaps = overlaps + [(all_chrom[chrom_id], overlap[0], overlap[1]) for overlap in ov]
+        else: 
+
+            overlaps = overlaps + [
+                (
+                    all_chrom[chrom_id], overlap[0], overlap[1],
+                    np.array(overlap[2:2+number_of_sets], dtype = np.uint32)
+                ) for overlap in ov
+            ]
+
         chrom_id = chrom_id + 1
 
-    
-    del ov_allchroms # Ensure memory is freed
+
+    # Ensure memory is freed
+    del ov_allchroms 
+    gc.collect()
 
     return overlaps
 
@@ -465,17 +481,16 @@ cpdef bint does_combi_match_query(tuple combi, tuple query, bint exact = False):
 
     cdef int niter = len(combi)
 
-    cdef int buffer_combi
-    cdef int buffer_query
+    if exact:
+        for i in range(niter):
 
-    for i in range(niter):
+            if not combi[i]:
+                if query[i]: return False
+            else:
+                if not query[i]: return False
 
-        buffer_combi = combi[i]
-        buffer_query = query[i]
-
-        if exact:
-            if (buffer_combi == 0) and (buffer_query != 0): return False
-            if (buffer_combi != 0) and (buffer_query == 0): return False
-        elif (buffer_query != 0) and (buffer_combi == 0) : return False
+    if not exact:
+        for i in range(niter):
+            if query[i] and not combi[i]: return False
 
     return True
