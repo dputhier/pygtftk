@@ -18,7 +18,7 @@ from pygtftk.utils import message
 
 from pygtftk.stats import negbin_fit as nf
 
-__updated__ = ''' 2020-07-30 '''
+__updated__ = ''' 2021-02-18 '''
 
 __notes__ = """
 -- Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it. This treats each run as a "superbatch".
@@ -46,6 +46,37 @@ def make_parser():
                             required=True)
 
     return parser
+
+
+
+def get_conflated_moments(mean1, mean2, var1, var2, n1, n2):
+    r"""
+    Get the variance and mean of the conflated distribution of 1 and 2. 
+    'mean' and 'var' are their individual means and vairances, and 'n' are the sample sizes.
+
+    Example:
+
+    >>> assert get_conflated_moments(0,1,0,1,0,1) == (1,1)
+    >>> assert get_conflated_moments(1,1,0,0,1,1) == (1,1)
+    >>> assert get_conflated_moments(0,20,0,0,1,1) == (10, 200)
+
+    """
+
+    # If n1 or n2 is zero, disregard them
+    if (n1 == 0) & (n2 == 0): return 0,0
+    elif n1 == 0: return mean2, var2
+    elif n2 == 0: return mean1, var1
+
+    # Weighted average for the mean
+    new_mean = (n1*mean1 + n2*mean2)/(n1+n2)
+
+    # Conflated variance
+    q1 = (n1-1)*var1 + n1*(mean1**2)
+    q2 = (n2-1)*var2 + n2*(mean2**2)
+    qc = q1 + q2
+    new_var = (qc - (n1+n2)*(new_mean**2)) / (n1+n2-1)
+
+    return new_mean, new_var
 
 
 
@@ -92,32 +123,55 @@ def ologram_merge_runs(inputfiles=None,
         merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled'] = 0
 
     # Process each run
+    runs_already_merged = 0
+
     for run in runs_to_be_merged:
         message("Treating a run...")
 
         for combi, row in run.iterrows():
             
-            # Sum the esperances and variances (we can as all runs are independant). We'll average later.
-            merged_run.loc[combi, 'nb_intersections_expectation_shuffled'] += row['nb_intersections_expectation_shuffled']
-            merged_run.loc[combi, 'nb_intersections_variance_shuffled'] += row['nb_intersections_variance_shuffled']
-            merged_run.loc[combi, 'summed_bp_overlaps_expectation_shuffled'] += row['summed_bp_overlaps_expectation_shuffled']
-            merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled'] += row['summed_bp_overlaps_variance_shuffled']        
+            ## Combine the means and variance with the runs previously merged
 
-            # True interesections stay the same every time
+            previous_merged_N_mean = merged_run.loc[combi, 'nb_intersections_expectation_shuffled']
+            previous_merged_N_var =  merged_run.loc[combi, 'nb_intersections_variance_shuffled']
+            previous_merged_S_mean = merged_run.loc[combi, 'summed_bp_overlaps_expectation_shuffled']
+            previous_merged_S_var = merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled'] 
+
+            current_N_mean = row['nb_intersections_expectation_shuffled']
+            current_N_var =  row['nb_intersections_variance_shuffled']
+            current_S_mean = row['summed_bp_overlaps_expectation_shuffled']
+            current_S_var = row['summed_bp_overlaps_variance_shuffled'] 
+
+
+            # Get the new moments
+            new_S_mean, new_S_var = get_conflated_moments(
+                mean1 = previous_merged_S_mean, mean2 = current_S_mean,
+                var1 = previous_merged_S_var, var2 = current_S_var,
+                n1 = runs_already_merged, n2 = 1)
+            new_N_mean, new_N_var = get_conflated_moments(
+                mean1 = previous_merged_N_mean, mean2 = current_N_mean,
+                var1 = previous_merged_N_var, var2 = current_N_var,
+                n1 = runs_already_merged, n2 = 1)
+
+            # Overwrite the moments
+            merged_run.loc[combi, 'nb_intersections_expectation_shuffled'] = new_N_mean
+            merged_run.loc[combi, 'nb_intersections_variance_shuffled'] = new_N_var
+            merged_run.loc[combi, 'summed_bp_overlaps_expectation_shuffled'] = new_S_mean
+            merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled'] = new_S_var       
+
+
+            # Used for the subsequent weighting
+            runs_already_merged = runs_already_merged + 1
+
+            # True intersections stay the same every time
             merged_run.loc[combi, 'nb_intersections_true'] = row['nb_intersections_true']
             merged_run.loc[combi, 'summed_bp_overlaps_true'] = row['summed_bp_overlaps_true']
 
     message("All runs read. Proceeding to merge statistics.")
 
-    ## At the end, average the esperances and variancesand recalculate fold change and p-value    
-    for combi, row in merged_run.iterrows():      
 
-        # Averaging distributions parameters 
-        merged_run.loc[combi, 'nb_intersections_expectation_shuffled'] = merged_run.loc[combi, 'nb_intersections_expectation_shuffled'] /len(runs_to_be_merged)
-        merged_run.loc[combi, 'nb_intersections_variance_shuffled'] = merged_run.loc[combi, 'nb_intersections_variance_shuffled'] /len(runs_to_be_merged)
-        merged_run.loc[combi, 'summed_bp_overlaps_expectation_shuffled'] = merged_run.loc[combi, 'summed_bp_overlaps_expectation_shuffled'] /len(runs_to_be_merged)
-        merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled'] = merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled'] /len(runs_to_be_merged)
-  
+    ## At the end, recalculate fold change and p-value    
+    for combi, row in merged_run.iterrows():      
 
         # Do not divide by zero ! Use the true value as fold change if needed
         expectation_fitted_intersect_nbs = merged_run.loc[combi, 'nb_intersections_expectation_shuffled']
@@ -135,7 +189,7 @@ def ologram_merge_runs(inputfiles=None,
         merged_run.loc[combi, 'summed_bp_overlaps_log2_fold_change'] = '{:.5f}'.format(sbp_fc)
 
         # Fit qualities are not applicable here
-        # TODO Recalculate them
+        # TODO: Recalculate them somehow ?
         merged_run.loc[combi,'summed_bp_overlaps_negbinom_fit_quality'] = np.nan
         merged_run.loc[combi,'nb_intersections_negbinom_fit_quality'] = np.nan
 
@@ -200,3 +254,4 @@ else:
                     notes=__notes__,
                     updated=__updated__,
                     test=test)
+    
