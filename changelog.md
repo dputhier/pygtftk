@@ -1,4 +1,14 @@
+
 # Changelog
+
+## v1.2.8
+
+### Bug Fixes
+
+
+### API/CLI Changes
+
+*   The --chrom-file argument now accepts "mm8_ens", "mm9_ens", "mm10_ens", "hg19_ens", "hg38_ens", "rn3_ens" and "rn4_ens" which correspond to internal chromosome info files in ensembl format (i.e. no 'chr' prefix).
 
 ## v1.2.7
 
