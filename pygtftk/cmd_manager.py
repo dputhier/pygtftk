@@ -612,13 +612,6 @@ class CmdManager(object):
                             tokens[i].strip())).strip(),
                     100, initial_indent='     ', subsequent_indent='     ')
 
-        cmd.desc = cmd.desc + "\n\n" + textwrap.fill(
-            textwrap.dedent(
-                "  Version: " +
-                left_strip_str(
-                    cmd.updated)).strip(),
-            100, initial_indent='  ', subsequent_indent='     ')
-
         cmd.desc = re.sub("\-\\\-", "--", cmd.desc)
 
         # ----------------------------------------------------------------------
