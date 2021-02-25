@@ -249,6 +249,12 @@ release_pip_osx:
 	rm -rf dist build; python3.6 setup.py bdist_wheel               ; \
     cp dist/*whl wheels                                          ; \
     rm -rf dist build
+	@ conda create -n  python_dev_38 python=3.8 -y ;\
+	conda activate python_dev_38                          ; \
+	pip install -r requirements.txt ;\
+	rm -rf dist build; python3.8 setup.py bdist_wheel               ; \
+    cp dist/*whl wheels                                          ; \
+    rm -rf dist build
 
 
 release_pip: release_pip_unix release_pip_osx
