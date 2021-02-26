@@ -179,7 +179,7 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
                                           ft_type=ft_type)
 
     stop = time.time()
-    message(ft_type + '- Negative Binomial distributions fitted in : ' + str(stop - start) + ' s (' + ft_type + ').',
+    message(ft_type + '- Negative Binomial distributions fitted in : ' + str(stop - start) + ' s.',
             type='DEBUG')
 
     # --------------------------------------------------------------------------
@@ -187,36 +187,43 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     # the shuffles. Kept for potential future improvement.
     # --------------------------------------------------------------------------
 
-    # TODO Drawing is computationally expensive, make it optional
+    # TODO: Drawing is computationally expensive, make it optional
 
-    hist_S = make_tmp_file(prefix='histogram_' + ft_type + '_S_sum_by_shuffle', suffix='.png')
 
-    ## Number of overlapping base pairs
-    # Sum by shuffle
-    plt.figure()
-    mean = expectation_fitted_summed_bp_overlaps
-    var = variance_fitted_summed_bp_overlaps
-    r = mean ** 2 / (var - mean)
-    p = 1 / (mean / r + 1)
+    # This may return an error for very long ft_type strings, so wrap it in a try-except block
+    # TODO: Fix this properly
 
-    # Plot the histogram.
-    BINS = 100
-    de = plt.hist(summed_bp_overlaps, bins=BINS)[1]
-    # Plot the PDF.
-    xmin, xmax = min(de), max(de)
-    x = np.linspace(xmin, xmax, BINS)
     try:
-        d = [nbinom.cdf(x[i], r, p) - nbinom.cdf(x[i - 1], r, p) for i in range(1, len(x))]
-        d = np.array([0] + d) * len(summed_bp_overlaps)
-    except:
-        d = [0] * BINS
+        hist_S = make_tmp_file(prefix='histogram_' + ft_type + '_S_sum_by_shuffle', suffix='.png')
 
-    plt.plot(x, d, 'k', linewidth=2)
-    plt.savefig(hist_S.name)
-    plt.close()
+        ## Number of overlapping base pairs
+        # Sum by shuffle
+        plt.figure()
+        mean = expectation_fitted_summed_bp_overlaps
+        var = variance_fitted_summed_bp_overlaps
+        r = mean ** 2 / (var - mean)
+        p = 1 / (mean / r + 1)
+
+        # Plot the histogram.
+        BINS = 100
+        de = plt.hist(summed_bp_overlaps, bins=BINS)[1]
+        # Plot the PDF.
+        xmin, xmax = min(de), max(de)
+        x = np.linspace(xmin, xmax, BINS)
+        try:
+            d = [nbinom.cdf(x[i], r, p) - nbinom.cdf(x[i - 1], r, p) for i in range(1, len(x))]
+            d = np.array([0] + d) * len(summed_bp_overlaps)
+        except:
+            d = [0] * BINS
+
+        plt.plot(x, d, 'k', linewidth=2)
+        plt.savefig(hist_S.name)
+        plt.close()
+    except:
+        pass
 
     """
-    TODO : currently, those files remain in /tmp because this function is subprocessed.
+    TODO: currently, those files remain in /tmp because this function is subprocessed.
     I must prepare a temp file manager like make_tmp_file_pool() to keep them in the directory specified by -K
     """
 
