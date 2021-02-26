@@ -405,42 +405,38 @@ def compute_overlap_stats(bedA, bedsB,
     ## Compute intersections for each minibatch, multiprocessed
 
     # Result queue
-    mana = multiprocessing.Manager()
-    result_queue = mana.Queue()
-    all_intersections = list()  # Final result list, to be filled when emptying the queue
+    all_intersections = list()  # Final result list, to be filled at the end
     pool = ProcessPoolExecutor(nb_threads)  # Process pool
 
-    # Prepare one random seed per batch.This is done to prevent a problem in multiprocessing : since this function
-    # will be mutithreaded, we must ensure each thread has a different random seed
+    # Prepare one random seed per batch. This is done to prevent a problem in
+    # multiprocessing : since this function will be mutithreaded, we must ensure
+    # each thread has been given a different random seed.
     seeds = [np.random.randint(2 ** 32) for _ in range(len(minibatches))]
 
     # Create a sort-of partial call
     compute_intersection_partial = ComputingIntersectionPartial(Lr1, Li1, Lrs, Lis, all_chrom1, all_chrom2,
-                                                                use_markov_shuffling, nb_threads,
-                                                                result_queue)
+                                                                use_markov_shuffling, keep_intact_in_shuffling, nb_threads)
 
     # Submit to the pool of processes
+    futures = list()
+    message("We will perform a total of " + str(len(minibatches)) + "batches of shufflings.")
     for i in range(len(minibatches)):
-        pool.submit(compute_intersection_partial, minibatch_len=minibatches[i], seed=seeds[i])
+        futures += [pool.submit(compute_intersection_partial, minibatch_len=minibatches[i], seed=seeds[i], id = i)]
+    pool.shutdown() # Release the resources as soon as you are done with those, we won't submit any more jobs to you
 
-    # Empty the queue whenever possible   
-    this_many_already_collected = 0
-    while this_many_already_collected < minibatch_nb:  # Continue until all batches have been generated
 
-        # If the queue is empty, try again next time
-        if not result_queue.empty():
-            partial_result = result_queue.get()
-            all_intersections += partial_result
-            this_many_already_collected += 1
-            del partial_result
+    # Transpose the results into all_intersections
+    for future in futures:
+        all_intersections += future.result()
 
-            message(
-                "--- Minibatch nb. : " + str(this_many_already_collected) + " / " + str(minibatch_nb) + " is complete.",
-                type='DEBUG')
 
-        time.sleep(0.01)  # Add a slight delay between collection attempts to not overload the CPU
 
-    del result_queue
+
+    ## Cleanup
+    del pool
+    time.sleep(1)
+    message("Pause for 1 seconds to let garbage collection run...", type = 'DEBUG')
+    gc.collect()
 
     message("Total number of shuffles, reminder :" + str(len(all_intersections)), type='DEBUG')
     message("Number of intersections in the first shuffle, for comparison : " + str(len(all_intersections[0])),
