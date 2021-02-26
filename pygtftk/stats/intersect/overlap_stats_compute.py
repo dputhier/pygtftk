@@ -651,57 +651,131 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     all_results = dict()  # Final result dict, to be filled when emptying the queue
     pool = ProcessPoolExecutor(nb_threads)  # Process pool
 
-    ## Now prepare the jobs for submission
+    ## ---- Now prepare the jobs for submission
 
-    for combi in interesting_combis:
+    def combis_to_partials(combis):
+        """
+        This is NOT a pure function and manipulates external objects. It's simply a helper to make the code more legible
+        """
 
+        jobs = list()
+
+        for combi in combis:
+
+            # Convert the combi into a user-friendly string
         # Convert the combi into a user-friendly string 
-        indices = [i for i in range(1, len(combi)) if combi[i] != 0]  # 0-based !
-        combi_list = [all_feature_labels[i - 1] for i in indices]
+            # Convert the combi into a user-friendly string
+            indices = [i for i in range(1, len(combi)) if combi[i] != 0]  # 0-based !
+            combi_list = [all_feature_labels[i - 1] for i in indices]
 
-        if combi[0] != 0: combi_list = ['Query'] + combi_list
+            if combi[0] != 0: combi_list = ['Query'] + combi_list
 
-        # Add '...' to the combi if not exact, to show the user that others TFs
-        # could also be present in these intersections
-        if exact: combi_human_readable = '[' + ' + '.join(combi_list) + ']'
-        if not exact: combi_human_readable = '[' + ' + '.join(combi_list) + ' + ... ]'
+            # Add '...' to the combi if not exact, to show the user that others TFs
+            # could also be present in these intersections
+            if exact: combi_human_readable = '[' + ' + '.join(combi_list) + ']'
+            if not exact: combi_human_readable = '[' + ' + '.join(combi_list) + ' + ... ]'
 
-        message('Will compute statistics for the combination : ' + str(combi_human_readable), type='DEBUG')
+            message('Will compute statistics for the combination : ' + str(combi_human_readable), type='DEBUG')
 
-        combi_key = tuple(combi)  # Convert to a tuple because lists cannot be dict keys
+            combi_key = tuple(combi)  # Convert to a tuple because lists cannot be dict keys
 
-        # Collect all shuffles for this combination, taking exactitude into account
-        list_overlaps_shuffled_for_this_combi = overlaps_per_combi.get_all(combi_key)
+            # Collect all shuffles for this combination, taking exactitude into account
+            list_overlaps_shuffled_for_this_combi = overlaps_per_combi.get_all(combi_key)
 
-        # Create a sort-of partial call
-        compute_stats_combi_partial = ComputingStatsCombiPartial(list_overlaps_shuffled_for_this_combi,
-                                                                 combi_human_readable,
-                                                                 true_intersections_per_combi.get_simple_concatenation(
-                                                                     combi_key), combi, nofit,
-                                                                 result_queue, combi_human_readable)  # For results
+            # Create a sort-of partial call
+            compute_stats_combi_partial = ComputingStatsCombiPartial(list_overlaps_shuffled_for_this_combi,
+                                                                    combi_human_readable,
+                                                                    true_intersections_per_combi.get_simple_concatenation(combi_key),
+                                                                    combi, nofit,
+                                                                    combi_human_readable)
 
-        # Submit to the pool of processes
-        pool.submit(compute_stats_combi_partial)
+            # Add to the jobs to be executed, that will be returned
+            jobs += [compute_stats_combi_partial]
+        
+        return jobs
+
+
+    # Split the interesting_combis into batches of combis, one per process 
+    # (maybe 10 times that just to be safe and not send too many combis at once
+    # to the pool
+    multiproc_batches_of_combis = np.array_split(np.array(interesting_combis), 10*nb_threads)
+
+    # Remove empty batches
+    multiproc_batches_of_combis = [batch_array for batch_array in multiproc_batches_of_combis if (batch_array.ndim and batch_array.size)]
+
+
 
     # Now all jobs have been submitted monitor the queue and empty results
     combis_done = []
 
-    # Empty the queue whenever possible until all combinations have been processed   
+    jobs_in_progress = 0
+
+    # Submit to, and empty the queue whenever possible until all combinations have been processed   
     while len(combis_done) < len(interesting_combis):
 
-        if not result_queue.empty():  # If the queue is empty, try again next time
-            partial_result = result_queue.get()
-            combi_human_readable, result = partial_result
+        # Once cannot directly monitor this through `pool` object, so instead I set an external `jobs_in_progress` variable
+        # If there are less pools being used than there are available, we can submit a new batch of jobs
+    
+        if jobs_in_progress < nb_threads:
+
+            # Only if there are combinations left to be processed
+            try:
+                current_batch = multiproc_batches_of_combis.pop()
+            except:
+                current_batch = []
+
+
+            # If the batch to be submitted is not empty...
+            # Now submit an entire batch of combis : prepare a list of partials and submit it to the queue
+            if current_batch != []:
+
+                message("Will send this batch of combinations: "+str(current_batch), type = "DEBUG")
+
+                current_calls = combis_to_partials(current_batch)
+
+                try:
+                    pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue) 
+                    message("Submitted a new batch of statistics computations.", type = 'DEBUG')
+                    # Rk : the submit() function returns a Future object. It is not kept here, but could be.
+                except Exception as e:
+                    message("Exception when submitting a batch of stats computations: "+str(e), type = 'DEBUG')
+
+                jobs_in_progress += 1 # A job was submitted, increment jobs_in_progress
+
+            time.sleep(0.01)
+
+
+        # If the queue is empty, wait a bit and try again, to not saturate the CPU with requests
+        if (not result_queue.empty()):  
+
+            combi_human_readable, result = result_queue.get()
             combis_done += [combi_human_readable]
 
             # Add the results to the final result dict
             all_results[combi_human_readable] = result
 
-            message("Finished statistics for combi : " + str(combi_human_readable), type='DEBUG')
+            message("Finished statistics for combi: " + str(combi_human_readable), type='DEBUG')
             message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + "done.")
 
-        time.sleep(0.01)
+            jobs_in_progress -= 1 # A job was completed, decrement jobs_in_progress
 
+            time.sleep(0.01)
+
+        else:
+            time.sleep(1)
+            message("Waiting for results in the result queue...", type = 'DEBUG')
+            #message("Combinations remaining: "+str([c for c in interesting_combis_human_readable if c not in combis_done]), type = 'DEBUG')
+            # Careful, `interesting_combis_human_readable` is not exposed in the current version of the code
+
+
+    # Cleanup
     del result_queue
+
+    pool.shutdown()
+    del pool
+    del mana
+    time.sleep(1)
+    message("Pause for 1 second to let garbage collection run...", type = 'DEBUG')
+    gc.collect()
 
     return all_results
