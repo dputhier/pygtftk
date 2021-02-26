@@ -596,18 +596,35 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     ## Compute the index of combis to be fetched
     # Relevant for partial matches.
 
+    message("Pausing for 5 seconds to let RAM garbage collection run.")
+    time.sleep(5)
+    gc.collect()
+
     message("Computing index of exact/inexact combinations...")
 
     # Compute the index for all combis found, but also for the interesting combis and all true combis. Relevant mostly for inexact combis.
     all_combis = list(
-        set(list(overlaps_per_combi.keys()) + interesting_combis + list(true_intersections_per_combi.keys())))
+        set(list(overlaps_per_combi.keys()) + interesting_combis + list(true_intersections_per_combi.keys()))
+    )
 
-    which_combis_are_exact_partial = functools.partial(which_combis_to_get_from,
+    message("We will index " + str(len(interesting_combis))+"*"+str(len(all_combis)) + " combinations. This can be very long (minutes) for longer combinations.")
+
+
+    # NOTE We do not need to index all combis : the only ones that will ever be queried are the `interesting_combis`. Those need to 
+    # be fully indexed against `all_combis.
+    # However but not every combination in `all_combis` : we do not care what we would need to get if we were to query a combination C
+    # that is in `all_combis`, but not in `interesting_combis`
+    which_combis_to_get_from_partial = functools.partial(which_combis_to_get_from,
                                                        all_possible_combis=all_combis, exact=exact)
 
     with Pool(nb_threads) as p:
-        mappings = p.map(which_combis_are_exact_partial, all_combis)
-        final_mapping = dict(mappings)
+        mappings = p.map(which_combis_to_get_from_partial, interesting_combis)
+        final_mapping = CombinationExactMapping(interesting_combis, dict(mappings))
+
+
+    message("Index computed. Repartition of overlaps...")
+
+
 
     ## Finally, create a DictionayWithIndex object to hold all intersections
     # If exact = False, when querying this dictionary using get_all(c), all 
