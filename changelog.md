@@ -5,6 +5,7 @@
 
 ### Bug Fixes
 
+* Fix merge_attr (#147).
 
 ### API/CLI Changes
 
