@@ -13,8 +13,9 @@ import time
 from collections import OrderedDict, defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from multiprocessing import Pool
-
+import bisect
 import copy
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import nbinom
@@ -266,6 +267,8 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     result['summed_bp_overlaps_true'] = true_bp_overlaps
     result['summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(pval_bp_overlaps)
 
+    #message(ft_type + '- Result dump : ' + str(result), type='DEBUG')
+
     return result
 
 
@@ -279,7 +282,7 @@ class ComputingStatsCombiPartial(object):
     # Remember the parameters
     def __init__(self,
                  all_intersections_for_this_combi, ft_type, true_intersection, this_combi_only, nofit,
-                 result_queue,  # The result queue
+                 #result_queue,  # The result queue
                  combi_human_readable):
         # Parameters for compute_stats_single
         self.all_intersections_for_this_combi = all_intersections_for_this_combi
@@ -288,47 +291,107 @@ class ComputingStatsCombiPartial(object):
         self.this_combi_only = this_combi_only
         self.nofit = nofit
 
-        self.result_queue = result_queue  # Result queue
+        #self.result_queue = result_queue  # Result queue
 
         self.combi_human_readable = combi_human_readable
 
     # Callable
     def __call__(self):
-        my_result = stats_single(self.all_intersections_for_this_combi,
-                                 self.true_intersection, self.ft_type, self.nofit, self.this_combi_only)
+
+        try:
+            my_result = stats_single(self.all_intersections_for_this_combi,
+                                    self.true_intersection, self.ft_type, 
+                                    self.nofit, self.this_combi_only)
+        except Exception as e:
+            message("Exception during stats_single call"+e, type = "DEBUG")
 
         # Put as tuple so we may extract it later and put it in dict, we know which combi was processed
-        self.result_queue.put((self.combi_human_readable, my_result))
-        del my_result
+        #self.result_queue.put((self.combi_human_readable, my_result))
+        #del my_result
+        return (self.combi_human_readable, my_result)
+
 
 
 def which_combis_to_get_from(combi, all_possible_combis, exact):
-    """
+    r"""
     To build an index later, determine the supplementary combis : meaning, for each
-    combi, which other combi needs to be queried.
+    combination, which other combinations needs to be queried.
 
     Relevant if we desire inexact or exact combis;
     Reminded : a combi A is a "inexact" match for combi B if all flags of combi B
     are also present in combi A, along with potentially others.
 
-    Returns an index giving the supplementary combis
+    Returns an index giving the supplementary combinations.
+
+    Example :
+
+    >>> all_combis = [(1,1,0),(1,1,1),(0,0,1)]
+    >>> c,r = which_combis_to_get_from((1,1,0), all_combis, exact = False)
+    >>> assert r.tolist() == [1]
+
     """
 
-    res = []
+    # For all combinations, in the same order, get a list of the IDs of the matching ones
+    matching_vector = list()
+
+    i = 0
     for c in all_possible_combis:
-        # IMPORTANT : get the combis that match for the index, but do not get
-        # the combi itself. The DictionaryWithIndex always adds the elements of
-        # the combi itself, they should not be in the index
+        # IMPORTANT : get all the combis that match the original combi to create
+        # the index, but do not add the original combi itself to the index.
+        # Indeed, the DictionaryWithIndex object always adds the elements of
+        # the original combi itself, so they should not be in the index.
         # We pass the current exact flag : this way, it works whether exact is False or True,
         # returning an empty index in the latter case
-        if oc.does_combi_match_query(c, combi, exact=exact) and not c == combi:
-            res += [c]
 
-    return combi, res
+        if oc.does_combi_match_query(c, combi, exact=exact):
+            if c != combi: 
+                matching_vector += [i]
+        i = i+1
+
+    # The matching vector is a Python list, convert it to numpy array to save some RAM
+    matching_vector = np.asarray(matching_vector, dtype= np.uint64)
+
+    message("Computed exactitude for combi "+str(combi)+"...", type="DEBUG")
+
+    return combi, matching_vector
+
+
+class CombinationExactMapping():
+    r"""
+    A wrapper containing a list of all combinations and a vector giving, for each
+    combination, the ID of all other combinations that are a match for it.
+
+    For example, if working with inexact combinations, [1,1,1] is a match when querying [1,1,0]
+
+    This is done to save RAM when working with very long combinations.
+
+    Example :
+
+    >>> all_combis = [(1,1,0),(1,1,1)]
+    >>> mapping = {(1,1,0):[1]}
+    >>> cm = CombinationExactMapping(all_combis, mapping)
+    >>> assert cm.get_all((1,1,0)) == [(1,1,1)]
+    >>> assert cm.get_all((1,1,1)) == []
+
+    """
+
+    def __init__(self, all_combis, mapping):
+        # The mapping should be a list of the IDs of combinations to return, like in the example
+        self.all_combis = all_combis
+        self.mapping = defaultdict(list, mapping)
+
+    def get_all(self, combi):
+        ids = self.mapping[combi]
+        return [self.all_combis[i] for i in ids]
+
+
+
+
+
 
 
 class DictionaryWithIndex():
-    """
+    r"""
     A wrapper allowing to query a dictionary so that an item can also return values from several other items.
     The dictionary will return concatenated values from several keys when asked for.
 
@@ -341,27 +404,31 @@ class DictionaryWithIndex():
 
     Example :
 
-    >>> index = {'A':['B','C']}
+    >>> all_combis = ['A','B','C']
+    >>> mapping = {'A':[1,2]}
+    >>> index = CombinationExactMapping(all_combis, mapping)
     >>> d = {'A':[[1,1],[1],[1,1]],'B':[[2],[2,2],[2]],'C':[[3,3],[3],[3]]}
     >>> di = DictionaryWithIndex(d, index)
     >>> assert di.get_all('A') == [[1,1,2,3,3], [1,2,2,3], [1,1,2,3]]
+    >>> assert di.get_all('B') == [[2],[2,2],[2]]
 
     """
 
     def __init__(self, data, index, data_default_factory=lambda: []):
         """
         :param data: The dictionary to be wrapped
-        :param index: a dictionary giving for each key in data the *other* keys to be also used when calling each key
-        :param data_default_factory:: A function producing the default value of data after wrapping. Defaults to `lambda:[]`
+        :param index: a CombinationExactMapping object giving for each key in data the *other* keys to be also used when calling each key
+        :param data_default_factory: A function producing the default value of data after wrapping. Defaults to `lambda:[]`
         """
         # Index and data should both be defaultdict to handle missing cases
         self.data = defaultdict(data_default_factory, data)
-        self.index = defaultdict(list, index)
+        self.index = index
 
         gc.collect()  # Force garbage collecting in case of large dictionaries
 
     def get_all(self, key):
-        all_keys_to_get = self.index[key]
+        # Retrieve all combinations from the index
+        all_keys_to_get = self.index.get_all(key)
 
         # Start with the value for the key itself
         # Important to use copy here to not modify the original
@@ -381,10 +448,109 @@ class DictionaryWithIndex():
         For the true overlaps. Do not merge individual shuffles, there are no shuffles to be merged.
         Simply concatenate the lists.
         """
-        all_keys_to_get = self.index[key]
+        all_keys_to_get = self.index.get_all(key)
         val_concat = copy.deepcopy(self.data[key])
         for k in all_keys_to_get: val_concat += self.data[k]
         return val_concat
+
+
+
+
+def do_all_calls(my_calls, my_result_queue):
+    """
+    Helper function that simply runs all functools.partial calls in my_calls and 
+    puts the results in my_result_queue.
+    """
+
+    for call in my_calls:
+
+        try:
+            my_result = call()
+            my_result_queue.put(my_result)
+        except Exception as e:
+            message("Exception raised by do_all_calls(): "+str(e), type = "DEBUG")
+
+
+
+def get_index_if_present(mylist, x):
+    r"""
+    Locate the leftmost value exactly equal to x in a sorted list, otherwise returns None
+
+    Example:
+
+    >>> L = [1,2,5,6,8]
+    >>> assert get_index_if_present(L, 2) == 1
+    >>> assert get_index_if_present(L, 4) == None
+
+    """
+    i = bisect.bisect_left(mylist, x)
+    if i != len(mylist) and mylist[i] == x:
+        return i
+    return None
+
+
+
+class SparseListOfLists:
+    r"""
+    Container for a list of this type :
+        [
+            [elements], [], [], [], [other_elements], [], [], ...
+        ]
+
+    Meaning, a list of lists where many of the lists inside will be empty.
+    This helps save RAM.
+
+    Example:
+
+    >>> l = SparseListOfLists()
+    >>> l.put([])
+    >>> l.put(['Hello'])
+    >>> l.put([])
+    >>> assert [i for i in l] == [[],['Hello'],[]]
+
+    """
+
+    def __init__(self, starting_index = 0):
+        self.elements = []
+        self.full_slots = [] # Which slots do these overlaps correspond to ?
+        self.current_index = starting_index
+
+    def put(self, element):
+        # If `element` is an empty list, False or None, do not add it and simply
+        # increment the index.
+        # In effect, we have added `[]` to the list
+        if not element: 
+            pass
+        else: 
+            self.elements.append(element)
+            self.full_slots.append(self.current_index)
+        self.current_index += 1
+
+
+    def __getitem__(self, key):
+        if key >= self.current_index:
+            raise IndexError
+
+        pos = get_index_if_present(self.full_slots, key)
+        if pos is not None: 
+            return self.elements[pos]
+        else:
+            return list()
+
+    def __iter__(self):
+        self.reading_index = 0
+        return self
+
+    def __next__(self):
+        if self.reading_index < self.current_index:
+            result = self.__getitem__(self.reading_index)
+            self.reading_index +=1
+            return result 
+        else:
+            raise StopIteration
+
+
+
 
 
 def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_threads=8, nofit=False,
@@ -480,13 +646,13 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
             """
             # NOTE for improvement : any combination mining algorihm could be slotted here instead !
-            # TODO Perhaps offer the option to use our draft of implementation of apriori
+            # TODO: Perhaps offer the option to use our draft of implementation of apriori
             combi_miner = Apriori(flags_matrix, min_support)
             """
 
             interesting_combis = combi_miner.find_interesting_combinations()
 
-            # TODO Other possibility, simply take the most common combis
+            # TODO: Other possibility, simply take the most common combis
             # This can also be done by the ologram_modl_treeify plugin
             """
             all_combis, counts_per_combi = np.unique(flags_matrix, axis=0, return_counts = True)
@@ -499,8 +665,9 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                 'Interesting combinations found via dictionary learning in : ' + str(stop - start) + ' s among ' + str(
                     all_feature_labels) + '.', type='DEBUG')
 
-    # TODO Make this debug print prettier
+    # TODO: Make this debug print prettier
     message("Interesting combinations were " + str(interesting_combis), type="DEBUG")
+    message("There were "+str(len(interesting_combis))+" interesting combinations.")
 
     ## Interesting combis sanity checks
     interesting_combis_final = []
@@ -519,7 +686,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
             "No combination of interest found. Try disabling --multiple-overlap-max-number-of-combinations or increasing the number of shuffles.")
 
     ## Precompute the true intesections between bedA and bedsB once and for all
-    message("Computing and true intersections...")
+    message("Computing all true intersections...")
     true_intersection = compute_true_intersection(bedA, bedsB)
 
     # stats_single() requires a list of all true intersections be passed for each combi.
@@ -532,16 +699,26 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         combi = tuple(inter[3])
         true_intersections_per_combi[combi] += [inter]
 
+
+
+
+
+
     # ------------- Splitting all the intersections for all shuffles
     # Split the list of overlap regions per combis
 
     import time  # Needed to re-import here for some reason ?
 
+    message("Pausing for 5 seconds to let RAM garbage collection run.")
+    time.sleep(5)
+    gc.collect()
+
     start = time.time()
 
     message("Splitting all overlaps computed for all shuffles by combination...")
 
-    # Split all overlaps computed for all shuffles by combination
+
+    ## ---- Split all overlaps computed for all shuffles by combination
 
     # NOTE I use pop here, so we begin with the last element, since pop() is O(1).
     # It is necessary to do so to save RAM.
@@ -549,13 +726,14 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # by reference (?) as all_overlaps !
 
     # By default, missing keys have an empty list
-    overlaps_per_combi = defaultdict(lambda: [])
+
+    overlaps_per_combi = defaultdict(lambda: SparseListOfLists(0))
+
+    starting_index = 0
 
     while all_overlaps:
         # Get a minibatch by popping
         intersections_for_this_shuffle = all_overlaps.pop()
-
-        # In RAM terms, we can afford to remember all overlap_flags encountered, as there will be at most as many as there are overlaps, and they are very short vectors.
 
         # For each minibatch, make 'filtered' minibatches for each possible overlap flag, containing only overlaps with these
         # flags. Then, add each filtered minibatch one at a time to the overlaps_per_combi dictionary.
@@ -575,18 +753,21 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
         # For the combinations already encountered and also encountered here, add the filtered batch
         for combi, filtered_batch in filtered_minibatches.items():
-            overlaps_per_combi[combi] += [filtered_batch]
+            overlaps_per_combi[combi].put(filtered_batch)
 
         # For the combinations already encountered but NOT encountered here, add an empty batch
         combis_already_encountered_but_not_here = [
             c for c in overlaps_per_combi.keys() if c not in filtered_minibatches.keys()
         ]
         for c in combis_already_encountered_but_not_here:
-            overlaps_per_combi[c] += [[]]
+            overlaps_per_combi[c].put([])
 
-        # For the combinations not yet encountered, update the default factory to include an additional empty batch
-        new_factory_expression = 'lambda: ' + str(overlaps_per_combi.default_factory() + [[]])
+
+        # For the combinations not yet encountered, update the default factory to include an additional empty batch     
+        starting_index += 1
+        new_factory_expression = 'lambda: SparseListOfLists('+str(starting_index)+')'
         overlaps_per_combi.default_factory = eval(new_factory_expression)
+
 
     ## Partial matches
     # We have registered all exact combis, now add partial matches. Partial matches are defined as "including all flags",
@@ -662,8 +843,6 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
         for combi in combis:
 
-            # Convert the combi into a user-friendly string
-        # Convert the combi into a user-friendly string 
             # Convert the combi into a user-friendly string
             indices = [i for i in range(1, len(combi)) if combi[i] != 0]  # 0-based !
             combi_list = [all_feature_labels[i - 1] for i in indices]
