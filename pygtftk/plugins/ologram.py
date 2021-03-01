@@ -1476,7 +1476,7 @@ else:
         #ologram: shuffled overlapping bp fitting
         @test "ologram_7" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10`
-          [ "$result" = "0.6482100000000001" ]
+          [ "$result" = "0.64821" ]
         }
         
 

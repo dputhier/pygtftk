@@ -253,7 +253,7 @@ class Modl:
         N = min(3, self.data.shape[0])
         # Prepare N subsamples each time, to increase learned combi diversity
         # This is done like a cross validation, to ensure no line is forgotten      
-        kf = KFold(n_splits=N, shuffle=False, random_state=42)
+        kf = KFold(n_splits=N, shuffle=False)
         subsamples = []
         for indexes, _ in kf.split(self.data):
             subsamples += [self.data[indexes,:]]
