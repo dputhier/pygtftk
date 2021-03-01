@@ -507,6 +507,11 @@ class SparseListOfLists:
     >>> l.put(['Hello'])
     >>> l.put([])
     >>> assert [i for i in l] == [[],['Hello'],[]]
+    >>> assert l[0] == []
+    >>> assert l[1] == ['Hello']
+    >>> l[0] = ['Ha']
+    >>> l[1] = ['Ho']
+    >>> assert [i for i in l] == [['Ha'],['Ho'],[]]
 
     """
 
@@ -516,6 +521,9 @@ class SparseListOfLists:
         self.current_index = starting_index
 
     def put(self, element):
+        """
+        Add an element at the tail of the SparseListOfLists
+        """
         # If `element` is an empty list, False or None, do not add it and simply
         # increment the index.
         # In effect, we have added `[]` to the list
@@ -535,7 +543,40 @@ class SparseListOfLists:
         if pos is not None: 
             return self.elements[pos]
         else:
-            return list()
+            return list()   # Return an empty list if the slot was not occupied
+
+
+    def __setitem__(self, key, item):
+        """
+        Modify an element that is already in the SparseListOfLists
+        """
+
+        pos = get_index_if_present(self.full_slots, key)
+
+        # If modifying a slot that contains an element
+        if pos is not None:
+            self.elements[pos] = item
+
+        # If modifying a slot that contains an empty list
+        else:
+            # If adding a non-empty list:
+            if item: 
+                # Get the position where a given element should be inserted in a sorted list to keep the list sorted
+                p = bisect.bisect_left(self.full_slots, key)
+                # Add the elements there
+                self.full_slots.insert(p, key)
+                self.elements.insert(p, item)
+            # If adding an empty list, do nothing
+            else:
+                pass
+
+        # If adding to a slot that has not been reached
+        if key >= self.current_index:
+            raise IndexError
+
+
+    def __len__(self):
+        return max(self.current_index - 1, 0)
 
     def __iter__(self):
         self.reading_index = 0
@@ -800,7 +841,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     with Pool(nb_threads) as p:
         mappings = p.map(which_combis_to_get_from_partial, interesting_combis)
-        final_mapping = CombinationExactMapping(interesting_combis, dict(mappings))
+        final_mapping = CombinationExactMapping(all_combis, dict(mappings))
 
 
     message("Index computed. Repartition of overlaps...")
