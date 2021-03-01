@@ -1,5 +1,39 @@
 # Changelog
 
+## v1.2.8
+
+### Bug Fixes
+
+*   Fixed merged statistics calculation in *ologram_merge_runs*.
+
+*   Fixed memory leak in OLOGRAM's multiprocessing. RAM usage should decrease by 25-70% in certain cases.
+
+*   Fixed a bug where OLOGRAM would needlessly store empty lists if certain combinations were not encountered.
+
+*   Fixed several bugs in OLOGRAM that could result in dead process hanging indefinitely, including a histgram drawing bug.
+
+### API/CLI Changes
+
+*   OLOGRAM will now also produce separate histograms for each combination length.
+
+### Code changes
+
+*   Minor optimizations to overlap computing.
+
+*   pygtftk now requires Python >=3.8, <3.9.
+
+*   Major optimizations to OLOGRAM's handling of RAM using newly-created structures.
+
+*   Reduced OLOGRAM time cost by removing operations (computation of relative combination exactitude) that were not needed.
+
+*   OLOGRAM's statistics computation with multiprocessing now uses a batch system instead of individual jobs.
+
+### New Features
+
+*   OLOGRAM now has an argument to determine if certain sets within --more-beds should be kept intact during the shuffling.
+
+
+
 ## v1.2.7
 
 ### Bug Fixes
