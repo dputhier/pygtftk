@@ -237,6 +237,12 @@ def make_parser():
                             type=str,
                             required=False)
 
+    parser_grp.add_argument('-kis', '--keep-intact-in-shuffling',
+                            help='BETA - A comma separated list of sets number (starts at 0) to be kept intact (fixed) when shuffling, in the order given in --more-bed.',
+                            default=None,
+                            type=str,
+                            required=False)
+
     parser_grp.add_argument('-e', '--bed-excl',
                             help='Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features.'
                                  ' (bed format).',
@@ -329,7 +335,7 @@ def make_parser():
                             default=20,
                             required=False)
 
-    parser_grp.add_argument('-ma', '--use-markov',
+    parser_grp.add_argument('-ma', '--use-markov-shuffling',
                             help='Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes.',
                             action='store_true',
                             required=False)
@@ -447,7 +453,9 @@ def ologram(inputfile=None,
             multiple_overlap_max_number_of_combinations = None,
             multiple_overlap_custom_combis = None,
 
-            use_markov=False,
+            keep_intact_in_shuffling = None,
+            use_markov_shuffling=False,
+
             no_pdf=None,
             pdf_width=5,
             pdf_height=5,
@@ -476,7 +484,7 @@ def ologram(inputfile=None,
 
     # Are we using Markov model realisations instead of shuffling ?
     # If yes, send a warning to the user.
-    if use_markov:
+    if use_markov_shuffling:
         message('Using Markov order 2 shuffling.', type='INFO')
         message(
             'Markov-based null is still in beta at the moment and tends to biais the "null" hypothesis towards association.',
@@ -795,7 +803,8 @@ def ologram(inputfile=None,
     # the two bed files) for code legibility.
     overlap_partial = partial(compute_overlap_stats, chrom_len=chrom_len,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
-                              bed_excl=bed_excl, use_markov_shuffling=use_markov,
+                              bed_excl=bed_excl, use_markov_shuffling=use_markov_shuffling,
+                              keep_intact_in_shuffling = keep_intact_in_shuffling,
                               nb_threads=nb_threads)
 
     # Initialize result dict
