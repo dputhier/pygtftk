@@ -364,7 +364,7 @@ def build_best_dict_from_library(data, library, queried_words_nb,
             Dt = Dt_corrected
             
             # Update dictionary to the one being currently tested
-            coder.components_ = Dt.astype('float64')
+            coder.dictionary = Dt.astype('float64')
 
 
             try:
