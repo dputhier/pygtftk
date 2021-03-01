@@ -4,29 +4,28 @@
 """
 
 import argparse
-import os
+import gc
 import sys
 
-import gc
+import os
 
 from pygtftk import arg_formatter
 from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import GTFtkError
+from pygtftk.utils import chr_size_note
 from pygtftk.utils import chrom_info_as_dict
 from pygtftk.utils import close_properly
 
 __updated__ = "2018-01-20"
 
-__notes__ = """
+__notes__ = chr_size_note() + """
  -- By default shift is not strand specific. Meaning that if -\shift-value is set to 10, all coordinates will be moved 10 bases in 5' direction relative to the forward/watson/plus/top strand.
  -- Use a negative value to shift in 3' direction, a positive value to shift in 5' direction.
  -- If -\-stranded is true, features are transposed in 5' direction relative to their associated strand.
  -- By default, features are not allowed to go outside the genome coordinates. In the current implementation, in case this would happen (using a very large -\shift-value), feature would accumulate at the ends of chromosomes irrespectively of gene or transcript structures giving rise, ultimately, to several exons from the same transcript having the same starts or ends. 
  -- One can forced features to go outside the genome and ultimatly dissapear with large -\-shift-value by using -a.
- -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
- corresponding size of conventional chromosomes are used. ChrM is not used.
 """
 
 

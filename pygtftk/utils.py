@@ -1,22 +1,22 @@
 """A set of useful functions."""
 
 import datetime
-import glob
 import io
-import os
-import random
 import re
-import string
 import sys
 import time
 from collections import defaultdict, OrderedDict
-from distutils.spawn import find_executable
 from subprocess import PIPE
 from subprocess import Popen
-from tempfile import NamedTemporaryFile, mkdtemp
 
+import glob
+import os
+import random
+import string
+from distutils.spawn import find_executable
 from pyparsing import Literal, CaselessLiteral, oneOf, nums, Word, Combine, Optional, operatorPrecedence, opAssoc, \
     Forward, ParseException
+from tempfile import NamedTemporaryFile, mkdtemp
 
 import pygtftk
 
@@ -1254,3 +1254,19 @@ ALL_MPL_PALETTES = ['viridis', 'plasma', 'inferno', 'magma',
                     'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
                     'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg', 'hsv',
                     'gist_rainbow', 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar']
+
+
+# ---------------------------------------------------------------
+# Notes for interface
+# ---------------------------------------------------------------
+
+def chr_size_note():
+    note = '''
+    
+ --chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this
+     case the  corresponding size of conventional chromosomes are used. To get the size of 
+    the chromosome in ensembl format (whithout chr prefix), use 'mm8_ens', 'mm9_ens', 
+    'mm10_ens', 'hg19_ens', 'hg38_ens', 'rn3_ens' or 'rn4_ens'. ChrM is not used.
+
+'''
+    return note

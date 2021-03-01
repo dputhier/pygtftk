@@ -1,8 +1,11 @@
+
 # Changelog
 
 ## v1.2.8
 
 ### Bug Fixes
+
+*   Fix merge_attr (#147).
 
 *   Fixed merged statistics calculation in *ologram_merge_runs*.
 
@@ -16,6 +19,7 @@
 
 *   OLOGRAM will now also produce separate histograms for each combination length.
 
+*   The --chrom-file argument now accepts "mm8_ens", "mm9_ens", "mm10_ens", "hg19_ens", "hg38_ens", "rn3_ens" and "rn4_ens" which correspond to internal chromosome info files in ensembl format (i.e. no 'chr' prefix).
 ### Code changes
 
 *   Minor optimizations to overlap computing.
@@ -31,7 +35,6 @@
 ### New Features
 
 *   OLOGRAM now has an argument to determine if certain sets within --more-beds should be kept intact during the shuffling.
-
 
 
 ## v1.2.7
