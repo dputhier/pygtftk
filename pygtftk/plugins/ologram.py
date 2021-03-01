@@ -985,8 +985,6 @@ def ologram(inputfile=None,
 
 
 
-
-
         # NOTE. In other cases, hits[feature_type] is a single dictionary giving
         # stats. In this case, it is a dictionary of dictionaries, one per set
         # combination of interest !
@@ -1105,18 +1103,26 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
     # or 'nb_intersections'
     # -------------------------------------------------------------------------
 
-    def plot_this(statname, feature_order=None, display_fit_quality=False):
+    def plot_this(statname, feature_order=None, display_fit_quality=False, only_those_combis = None):
 
         # ------------------------- DATA PROCESSING -------------------------- #
 
+        # If requested, keep only the combinations (features) in only_those_combis
+        if only_those_combis is not None:
+            dms = dm.loc[dm['feature_type'].isin(only_those_combis)]
+            # Do NOT reset the index so I keep the correct p-values from dm
+        else:
+            dms = dm
+
         # Collect true and shuffled number of the stat being plotted
-        data_ni = dm[['feature_type', statname + '_expectation_shuffled', statname + '_true']]
+        data_ni = dms[['feature_type', statname + '_expectation_shuffled', statname + '_true']]      
         maximum = data_ni[[statname + '_expectation_shuffled', statname + '_true']].max(axis=1)
 
         data_ni.columns = ['Feature', 'Shuffled', 'True']  # Rename columns
-
+      
         # For later purposes (p-value display), collect the fold change.
         fc = data_ni['True'] / (data_ni['Shuffled'] + 1)
+        fc = fc.to_list()
 
         # Now melt the dataframe
         dmm = data_ni.melt(id_vars='Feature')
@@ -1135,10 +1141,10 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         p += geom_bar(mapping=aes_plot, stat='identity', alpha=0.6, position='dodge', show_legend=True, width=.6)
 
         # Add error bars for the standard deviation of the shuffles
-        errorbar_mins = dm[statname + '_expectation_shuffled'] - np.sqrt(dm[statname + '_variance_shuffled'])
-        errorbar_maxs = dm[statname + '_expectation_shuffled'] + np.sqrt(dm[statname + '_variance_shuffled'])
+        errorbar_mins = dms[statname + '_expectation_shuffled'] - np.sqrt(dms[statname + '_variance_shuffled'])
+        errorbar_maxs = dms[statname + '_expectation_shuffled'] + np.sqrt(dms[statname + '_variance_shuffled'])
 
-        # True values have no error
+        # True values have no error, so append an na series for them
         na_series = pd.Series([np.nan] * len(errorbar_mins))
         errorbar_mins = errorbar_mins.append(na_series)
         errorbar_mins.index = range(len(errorbar_mins))
@@ -1149,8 +1155,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
                            position=position_dodge(.6), size=0.3)
 
         # Text for the p-value
-        text = dm[statname + '_pvalue'].append(na_series)
-        text.index = range(len(text))
+        text = dms.loc[data_ni.index, statname + '_pvalue'].append(na_series)
+        text = text.to_list()
 
         # Format the text
         def format_pvalue(x):
@@ -1166,7 +1172,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         # green if significantly enriched, black otherwise. For display purposes,
         # p<0.05 counts as significant.
         signif_color = pd.Series(['#b3b3b3'] * len(text))
+        
         for i in range(len(text)):
+
             if text[i] < 0.05:  # If significant
                 if fc[i] < 1: signif_color[i] = '#ffa64d'
                 if fc[i] > 1: signif_color[i] = '#6cc67b'
@@ -1174,13 +1182,14 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
             if text[i] < 1E-10:  # Moreover, if very significant
                 if fc[i] < 1: signif_color[i] = '#cc6600'
                 if fc[i] > 1: signif_color[i] = '#3c9040'
-
-        text = text.apply(format_pvalue)
+          
+           
+        text = [format_pvalue(p) for p in text] 
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
         text_pos.index = range(len(text_pos))
 
         if display_fit_quality:
-            fit_qual_text = dm[statname + '_negbinom_fit_quality'].append(na_series)
+            fit_qual_text = dms[statname + '_negbinom_fit_quality'].append(na_series)
             fit_qual_text.index = range(len(fit_qual_text))
 
             text_with_fit = list()
@@ -1271,6 +1280,20 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         return p
 
 
+    def list_of_combis_to_nested_list(list_of_combis):
+        """
+        Turns a list of strings representinf combinations (like ['A+B', 'A+B+C']) into
+        a nested list of combinations (like [['A','B'],['A','B','C']])
+
+        This is a utility function used for display purposes.
+        """
+        combin = []
+        for combi in list_of_combis:
+            combi_clean = combi.translate({ord(i): None for i in ['[',']',' ']}).split('+')
+            combin += [combi_clean]
+        return combin
+
+
 
     def plot_multi_features(list_of_combis):
         """
@@ -1280,12 +1303,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         import itertools
         import pandas as pd
         import seaborn as sns
-
-        # Turn list of strings into nested list : remove '[]' and spaces and split combi
-        combin = []
-        for combi in list_of_combis:
-            combi_clean = combi.translate({ord(i): None for i in ['[',']',' ']}).split('+')
-            combin += [combi_clean]
+   
+        # Turn list of strings into nested list : remove '[]' and spaces and split combis
+        combin = list_of_combis_to_nested_list(list_of_combis)
 
         # Get all unique elements
         def get_unique_elements(combin): return sorted(list(set(itertools.chain(*combin))))
@@ -1357,6 +1377,23 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
     if should_plot_multiple_combis:
         p4 = plot_multi_features(p1_feature_order)
 
+        # And re-do the histograms but with only one order after the other
+        plots_histo_separated = list()
+
+        p1_unique_features = list(sorted(set(p1_feature_order))) # Features were duplicated in p1_feature_order due to the presence of "Shuffled" and "True"
+        split_combis = list_of_combis_to_nested_list(p1_unique_features)
+
+
+        # How many elements in each combi ?
+        orders = [len(x) for x in split_combis]
+        unique_orders = list(sorted(set(orders)))
+
+        for order in unique_orders:
+            combis_of_this_order = [p1_unique_features[i] for i in range(len(p1_unique_features)) if orders[i] == order]
+            
+            p, porder = plot_this('summed_bp_overlaps', feature_order, display_fit_quality, combis_of_this_order)
+            plots_histo_separated += [p]
+
     # -------------------------------------------------------------------------
     # Computing page size
     # -------------------------------------------------------------------------
@@ -1398,7 +1435,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         fxn()
 
         message("Saving diagram to file : " + pdf_file.name)
-        message("Be patient. This may be long for large datasets.")
+        message("Please be patient. Drawing may be long (minutes) for large numbers of datasets/combinations.")
 
 
         plots = [p1 + theme(figure_size=figsize),
@@ -1408,11 +1445,26 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         if should_plot_multiple_combis:
             plots += [p4 + theme(figure_size=figsize)]
 
-        # NOTE : We must manually specify figure size with save_as_pdf_pages
-        save_as_pdf_pages(filename=pdf_file.name,
-                          plots=plots,
-                          width=pdf_width,
-                          height=pdf_height)
+            for p in plots_histo_separated:
+                plots += [p + theme(figure_size=figsize)]
+
+
+        # NOTE : We must manually specify figure size with save_as_pdf_pages     
+        plot_process = multiprocessing.Process(target=save_as_pdf_pages,
+            name="Drawing", kwargs = {"filename":pdf_file.name,
+                                        "plots":plots,
+                                        "width":pdf_width,
+                                        "height":pdf_height})
+        plot_process.start()
+
+        # Wait a maximum of 15 minutes for drawing
+        plot_process.join(60*15)
+
+        # If the drawing thread is still active, terminate it
+        if plot_process.is_alive():
+            message("Drawing the graph took longer than 15 minutes, aborted. The results are still available in text form.")
+            plot_process.terminate()
+            plot_process.join()
 
     gc.disable()
 
