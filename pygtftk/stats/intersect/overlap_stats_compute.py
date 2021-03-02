@@ -274,6 +274,9 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
 
 # -------------------------- Multiple overlap sets --------------------------- #
 
+
+## ------------ Helper objects
+
 class ComputingStatsCombiPartial(object):
     """
     This is a wrapper to compute statistics for one combination
@@ -331,6 +334,8 @@ def which_combis_to_get_from(combi, all_possible_combis, exact):
 
     """
 
+    combi = tuple(combi) # Force conversion to tuple
+
     # For all combinations, in the same order, get a list of the IDs of the matching ones
     matching_vector = list()
 
@@ -343,6 +348,8 @@ def which_combis_to_get_from(combi, all_possible_combis, exact):
         # We pass the current exact flag : this way, it works whether exact is False or True,
         # returning an empty index in the latter case
 
+        c = tuple(c) # Force conversion to tuple
+
         if oc.does_combi_match_query(c, combi, exact=exact):
             if c != combi: 
                 matching_vector += [i]
@@ -354,6 +361,18 @@ def which_combis_to_get_from(combi, all_possible_combis, exact):
     message("Computed exactitude for combi "+str(combi)+"...", type="DEBUG")
 
     return combi, matching_vector
+
+
+def index_all_these(combis_to_index, all_combis, exact, my_result_queue):
+    """
+    Helper function to run which_combis_to_get_from on a list of combis and put the results in a queue
+    """
+    for combi in combis_to_index:
+        res = which_combis_to_get_from(combi = combi, 
+                all_possible_combis = all_combis, exact = exact)
+
+        my_result_queue.put(res)
+
 
 
 class CombinationExactMapping():
@@ -592,7 +611,7 @@ class SparseListOfLists:
 
 
 
-
+## ------ Main function
 
 def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_threads=8, nofit=False,
                            # Parameters for the finding of interesting combis
@@ -836,14 +855,62 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # be fully indexed against `all_combis.
     # However but not every combination in `all_combis` : we do not care what we would need to get if we were to query a combination C
     # that is in `all_combis`, but not in `interesting_combis`
-    which_combis_to_get_from_partial = functools.partial(which_combis_to_get_from,
-                                                       all_possible_combis=all_combis, exact=exact)
 
-    with Pool(nb_threads) as p:
-        mappings = p.map(which_combis_to_get_from_partial, interesting_combis)
-        final_mapping = CombinationExactMapping(all_combis, dict(mappings))
+    
+    # Multiprocessing objects
+    mana = multiprocessing.Manager()
+    result_queue = mana.Queue()
+    pool = ProcessPoolExecutor(nb_threads)
 
+    # Divide the interesting combis into as amny batches as threads, and remove empty batches
+    multiproc_batches_of_combis_exactitude = np.array_split(np.array(interesting_combis), nb_threads)
+    multiproc_batches_of_combis_exactitude = [batch_array for batch_array in multiproc_batches_of_combis_exactitude if (batch_array.ndim and batch_array.size)]
+  
 
+    mappings = [] # Final results list, to be filled when emptying the queue
+
+    jobs_in_progress = 0
+
+    # Submit to, and empty the queue whenever possible until all combinations have been processed   
+    while len(mappings) < len(interesting_combis):
+
+        if jobs_in_progress < nb_threads:
+
+            # Try to get a new batch
+            try: current_batch = multiproc_batches_of_combis_exactitude.pop()
+            except: current_batch = []
+
+            if current_batch != []:
+
+                pool.submit(index_all_these, combis_to_index = current_batch,
+                    all_combis = all_combis, exact = exact,
+                    my_result_queue = result_queue) 
+
+                message("Submitted a batch of exactitude computations to the queue...")
+                jobs_in_progress += 1
+
+            time.sleep(0.01)
+
+        # Monitor the queue and empty it whenever possible
+        if (not result_queue.empty()):  
+
+            result = result_queue.get()
+            mappings += [result]
+
+            jobs_in_progress -= 1
+            time.sleep(0.01)
+
+        else:
+            message("Waiting for indexing of exact/inexact combinations...", type = 'DEBUG')
+            time.sleep(0.5)
+
+    pool.shutdown()
+    
+
+       
+        
+    # Convert the mappings into a sparser object for storage    
+    final_mapping = CombinationExactMapping(all_combis, dict(mappings))
     message("Index computed. Repartition of overlaps...")
 
 
@@ -925,12 +992,13 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
 
 
-    # Now all jobs have been submitted monitor the queue and empty results
+
+    ## Submit to, and empty the queue whenever possible until all combinations have been processed   
+
     combis_done = []
 
     jobs_in_progress = 0
 
-    # Submit to, and empty the queue whenever possible until all combinations have been processed   
     while len(combis_done) < len(interesting_combis):
 
         # Once cannot directly monitor this through `pool` object, so instead I set an external `jobs_in_progress` variable
@@ -949,8 +1017,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
             # Now submit an entire batch of combis : prepare a list of partials and submit it to the queue
             if current_batch != []:
 
-                message("Will send this batch of combinations: "+str(current_batch), type = "DEBUG")
-
+                #message("Will send this batch of combinations: "+str(current_batch), type = "DEBUG")
                 current_calls = combis_to_partials(current_batch)
 
                 try:
