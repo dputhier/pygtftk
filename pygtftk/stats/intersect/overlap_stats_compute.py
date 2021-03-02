@@ -784,9 +784,9 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # It is necessary to do so to save RAM.
     # WARNING : this will empty the original all_intersections list, since it was passed
     # by reference (?) as all_overlaps !
+    total_to_split = len(all_overlaps)
 
     # By default, missing keys have an empty list
-
     overlaps_per_combi = defaultdict(lambda: SparseListOfLists(0))
 
     starting_index = 0
@@ -816,8 +816,10 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
             overlaps_per_combi[combi].put(filtered_batch)
 
         # For the combinations already encountered but NOT encountered here, add an empty batch
+        oc_keys = set(overlaps_per_combi.keys())
+        fm_keys = set(filtered_minibatches.keys())
         combis_already_encountered_but_not_here = [
-            c for c in overlaps_per_combi.keys() if c not in filtered_minibatches.keys()
+            c for c in oc_keys if c not in fm_keys
         ]
         for c in combis_already_encountered_but_not_here:
             overlaps_per_combi[c].put([])
@@ -827,6 +829,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         starting_index += 1
         new_factory_expression = 'lambda: SparseListOfLists('+str(starting_index)+')'
         overlaps_per_combi.default_factory = eval(new_factory_expression)
+
+        message("Splitting done for "+str(starting_index)+'/'+str(total_to_split), type = "DEBUG")
 
 
     ## Partial matches
