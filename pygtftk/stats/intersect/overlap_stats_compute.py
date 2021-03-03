@@ -987,77 +987,102 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
 
     # Split the interesting_combis into batches of combis, one per process 
-    # (maybe 10 times that just to be safe and not send too many combis at once
-    # to the pool
-    multiproc_batches_of_combis = np.array_split(np.array(interesting_combis), 10*nb_threads)
+    # (maybe 20 times that just to be safe and not send too many combis at once
+    # to the pool, with their accompanying all_overlaps)
+    multiproc_batches_of_combis = np.array_split(np.array(interesting_combis), 20*nb_threads)
 
     # Remove empty batches
     multiproc_batches_of_combis = [batch_array for batch_array in multiproc_batches_of_combis if (batch_array.ndim and batch_array.size)]
 
 
-
-
     ## Submit to, and empty the queue whenever possible until all combinations have been processed   
-
     combis_done = []
-
     jobs_in_progress = 0
 
-    while len(combis_done) < len(interesting_combis):
+    if nb_threads > 1:
 
-        # Once cannot directly monitor this through `pool` object, so instead I set an external `jobs_in_progress` variable
-        # If there are less pools being used than there are available, we can submit a new batch of jobs
-    
-        if jobs_in_progress < nb_threads:
+        while len(combis_done) < len(interesting_combis):
+
+            # One cannot directly monitor this through `pool` object, so instead I set an external `jobs_in_progress` variable
+            # If there are less pools being used than there are available, we can submit a new batch of jobs
+            if jobs_in_progress < nb_threads:
+
+                # Only if there are combinations left to be processed
+                try: current_batch = multiproc_batches_of_combis.pop()
+                except: current_batch = []
+
+                # If the batch to be submitted is not empty...
+                # Now submit an entire batch of combis : prepare a list of partials and submit it to the queue
+                if current_batch != []:
+
+                    #message("Will send this batch of combinations: "+str(current_batch), type = "DEBUG")
+                    current_calls = combis_to_partials(current_batch)
+
+                    try:
+                        pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue) 
+                    pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue) 
+                        pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue) 
+                        message("Submitted a new batch of statistics computations.", type = 'DEBUG')
+                        # Rk : the submit() function returns a Future object. It is not kept here, but could be.
+                    except Exception as e:
+                        message("Exception when submitting a batch of stats computations: "+str(e), type = 'DEBUG')
+
+                    jobs_in_progress += 1 # A job was submitted, increment jobs_in_progress
+
+                time.sleep(0.01)
+
+
+            # If the queue is empty, wait a bit and try again, to not saturate the CPU with requests
+            if (not result_queue.empty()):  
+        if (not result_queue.empty()):  
+            if (not result_queue.empty()):  
+
+                combi_human_readable, result = result_queue.get()
+                combis_done += [combi_human_readable]
+
+                # Add the results to the final result dict
+                all_results[combi_human_readable] = result
+
+                message("Finished statistics for combi: " + str(combi_human_readable), type='DEBUG')
+                message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + "done.")
+
+                jobs_in_progress -= 1 # A job was completed, decrement jobs_in_progress
+
+                time.sleep(0.01)
+
+            else:
+                time.sleep(1)
+                message("Waiting for results in the result queue...", type = 'DEBUG')
+                #message("Combinations remaining: "+str([c for c in interesting_combis_human_readable if c not in combis_done]), type = 'DEBUG')
+                # Careful, `interesting_combis_human_readable` is not exposed in the current version of the code
+
+
+    # OVERRIDE : if single-threaded, don't use multiprocessing to save RAM
+    else:
+
+        # Make batches of 2-3 combis instead
+        multiproc_batches_of_combis = np.array_split(np.array(interesting_combis), int(0.3*len(interesting_combis)))
+
+        while len(combis_done) < len(interesting_combis):
 
             # Only if there are combinations left to be processed
-            try:
-                current_batch = multiproc_batches_of_combis.pop()
-            except:
-                current_batch = []
+            try: current_batch = multiproc_batches_of_combis.pop()
+            except: current_batch = []
 
-
-            # If the batch to be submitted is not empty...
-            # Now submit an entire batch of combis : prepare a list of partials and submit it to the queue
             if current_batch != []:
+                do_all_calls(my_calls = current_calls, my_result_queue = result_queue) 
 
-                #message("Will send this batch of combinations: "+str(current_batch), type = "DEBUG")
-                current_calls = combis_to_partials(current_batch)
+            # If the queue is empty, wait a bit and try again, to not saturate the CPU with requests
+            while (not result_queue.empty()):  
 
-                try:
-                    pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue) 
-                    message("Submitted a new batch of statistics computations.", type = 'DEBUG')
-                    # Rk : the submit() function returns a Future object. It is not kept here, but could be.
-                except Exception as e:
-                    message("Exception when submitting a batch of stats computations: "+str(e), type = 'DEBUG')
+                combi_human_readable, result = result_queue.get()
+                combis_done += [combi_human_readable]
 
-                jobs_in_progress += 1 # A job was submitted, increment jobs_in_progress
+                # Add the results to the final result dict
+                all_results[combi_human_readable] = result
 
-            time.sleep(0.01)
-
-
-        # If the queue is empty, wait a bit and try again, to not saturate the CPU with requests
-        if (not result_queue.empty()):  
-
-            combi_human_readable, result = result_queue.get()
-            combis_done += [combi_human_readable]
-
-            # Add the results to the final result dict
-            all_results[combi_human_readable] = result
-
-            message("Finished statistics for combi: " + str(combi_human_readable), type='DEBUG')
-            message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + "done.")
-
-            jobs_in_progress -= 1 # A job was completed, decrement jobs_in_progress
-
-            time.sleep(0.01)
-
-        else:
-            time.sleep(1)
-            message("Waiting for results in the result queue...", type = 'DEBUG')
-            #message("Combinations remaining: "+str([c for c in interesting_combis_human_readable if c not in combis_done]), type = 'DEBUG')
-            # Careful, `interesting_combis_human_readable` is not exposed in the current version of the code
-
+                message("Finished statistics for combi: " + str(combi_human_readable), type='DEBUG')
+                message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + "done.")
 
     # Cleanup
     del result_queue
