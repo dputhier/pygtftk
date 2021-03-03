@@ -11,10 +11,11 @@ import gc
 import multiprocessing
 import time
 from collections import OrderedDict, defaultdict
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from multiprocessing import Pool
 import bisect
 import copy
+import hashlib
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -277,6 +278,39 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
 
 ## ------------ Helper objects
 
+
+class HashableArray(np.ndarray):
+    """
+    A subclass of NumPy's ndarray that can be used as dictionary key.
+    A dictionary of such arrays will consume less RAM than a tuple, especially when pickled.
+
+    This is however immutable, and should not be used on arrays that you intend to modify.
+
+    NOTE It is hashed at creation, so creation can take a bit of time.
+    Use a tuple if that is unacceptable.
+    """
+
+    def __new__(cls, input_array): 
+        # Input array is an already formed ndarray
+        return np.asarray(input_array).view(cls)
+
+    def __array_finalize__(self, obj):
+
+        self.flags.writeable = False    # Set to read-only to prevent modifications
+
+        # Hash myself
+        myhash = int(hashlib.sha1(bytes(self)).hexdigest(), 16)
+
+        # Set myhash to a hash of the byte representation if not already present
+        if obj is None: return
+        self.myhash = getattr(obj, 'myhash', myhash)  
+
+    def __hash__(self):
+        return self.myhash
+
+    def __eq__(self, other):
+        return self.__hash__() == hash(other)
+
 class ComputingStatsCombiPartial(object):
     """
     This is a wrapper to compute statistics for one combination
@@ -348,7 +382,8 @@ def which_combis_to_get_from(combi, all_possible_combis, exact):
         # We pass the current exact flag : this way, it works whether exact is False or True,
         # returning an empty index in the latter case
 
-        c = tuple(c) # Force conversion to tuple
+        # NOTE the combinations in all_possible_combis are converted to tuples
+        # before this function call
 
         if oc.does_combi_match_query(c, combi, exact=exact):
             if c != combi: 
@@ -363,15 +398,20 @@ def which_combis_to_get_from(combi, all_possible_combis, exact):
     return combi, matching_vector
 
 
-def index_all_these(combis_to_index, all_combis, exact, my_result_queue):
+def index_all_these(combis_to_index, all_combis, exact):
     """
-    Helper function to run which_combis_to_get_from on a list of combis and put the results in a queue
+    Helper function to run which_combis_to_get_from on a list of combis
     """
+    results = list()
     for combi in combis_to_index:
+
         res = which_combis_to_get_from(combi = combi, 
                 all_possible_combis = all_combis, exact = exact)
 
-        my_result_queue.put(res)
+        message("Finished indexing "+str(combi), type = "DEBUG")
+
+        results += [res]
+    return results        
 
 
 
