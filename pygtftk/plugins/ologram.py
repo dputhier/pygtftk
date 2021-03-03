@@ -1478,8 +1478,8 @@ else:
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10`
           [ "$result" = "0.64821" ]
         }
-        
 
+    
         #ologram-modl: get example files
         @test "ologram_8" {
             result=`gtftk get_example -d simple_07 -f '*'`
@@ -1502,6 +1502,19 @@ else:
         @test "ologram_11" {
             result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap --multiple-overlap-target-combi-size 3 --multiple-overlap-max-number-of-combinations 4`
         [ "$result" = "" ]
+        }
+
+
+        #ologram: single thread test
+        @test "ologram_12" {
+             result=`rm -Rf ologram_output; gtftk ologram -i simple_02.gtf -p simple_02_peaks.bed -c simple_02.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8`
+          [ "$result" = "" ]
+        }
+
+        #ologram: shuffled overlapping bp
+        @test "ologram_13" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
+          [ "$result" = "65.61" ]
         }
 
         '''

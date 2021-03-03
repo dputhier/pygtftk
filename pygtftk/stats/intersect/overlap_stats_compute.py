@@ -796,7 +796,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     true_intersections_per_combi = defaultdict(list)
     for inter in true_intersection:
-        combi = tuple(inter[3])
+        combi = HashableArray(inter[3])
+        
         true_intersections_per_combi[combi] += [inter]
 
 
@@ -839,12 +840,14 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         # flags. Then, add each filtered minibatch one at a time to the overlaps_per_combi dictionary.
         filtered_minibatches = defaultdict(list)
 
-        for overlap in intersections_for_this_shuffle:
+        while intersections_for_this_shuffle:
+            overlap = intersections_for_this_shuffle.pop()
+            
             # What are the flags (ie. sets present) for this overlap ? For example, "A+C but not B" is (1,0,1)
-            flags_for_this_overlap = tuple(overlap[3])  # Convert to a tuple because lists cannot be dict keys
-
+            flags_for_this_overlap = HashableArray(overlap[3]) # Make a Hashable array as lists cannot be dict keys
+            
             ## Add exact matches
-            # Don't need to remember the flags since I group them by intersection 
+            # Don't need to remember the flags since I group them by flag anyways 
             filtered_minibatches[flags_for_this_overlap] += [overlap[0:3]]
 
         ## Now add the filtered minibatches as elements of a list
@@ -856,10 +859,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
             overlaps_per_combi[combi].put(filtered_batch)
 
         # For the combinations already encountered but NOT encountered here, add an empty batch
-        oc_keys = set(overlaps_per_combi.keys())
-        fm_keys = set(filtered_minibatches.keys())
         combis_already_encountered_but_not_here = [
-            c for c in oc_keys if c not in fm_keys
+            c for c in overlaps_per_combi if c not in filtered_minibatches
         ]
         for c in combis_already_encountered_but_not_here:
             overlaps_per_combi[c].put([])
@@ -872,13 +873,18 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
         message("Splitting done for "+str(starting_index)+'/'+str(total_to_split), type = "DEBUG")
 
+    # Cleanup
+    del intersections_for_this_shuffle
+    del filtered_minibatches
+    del combis_already_encountered_but_not_here
+    del all_overlaps
 
     ## Partial matches
     # We have registered all exact combis, now add partial matches. Partial matches are defined as "including all flags",
     # meaning (1,1,1,0) will be a match if we query (1,1,0,0) since it contains all its flags, but will not be a match for (1,0,0,1)
     # Iterate over all combinations, and if they match add contents of combi B to combi A
 
-    ## Compute the index of combis to be fetched
+    ## ---------------- Compute the index of combis to be fetched
     # Relevant for partial matches.
 
     message("Pausing for 5 seconds to let RAM garbage collection run.")
@@ -888,7 +894,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     message("Computing index of exact/inexact combinations...")
 
     # Compute the index for all combis found, but also for the interesting combis and all true combis. Relevant mostly for inexact combis.
-    all_combis = list(
+    all_combis = frozenset(
         set(list(overlaps_per_combi.keys()) + interesting_combis + list(true_intersections_per_combi.keys()))
     )
 
@@ -900,59 +906,31 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # However but not every combination in `all_combis` : we do not care what we would need to get if we were to query a combination C
     # that is in `all_combis`, but not in `interesting_combis`
 
-    
-    # Multiprocessing objects
-    mana = multiprocessing.Manager()
-    result_queue = mana.Queue()
-    pool = ProcessPoolExecutor(nb_threads)
-
-    # Divide the interesting combis into as amny batches as threads, and remove empty batches
+    # Divide the interesting combis into as many batches as threads, and remove empty batches
     multiproc_batches_of_combis_exactitude = np.array_split(np.array(interesting_combis), nb_threads)
     multiproc_batches_of_combis_exactitude = [batch_array for batch_array in multiproc_batches_of_combis_exactitude if (batch_array.ndim and batch_array.size)]
   
+    # Convert all combis into tuples once and for all
+    all_combis = frozenset(
+        [tuple(c) for c in all_combis]
+    )
 
-    mappings = [] # Final results list, to be filled when emptying the queue
+    # Prepare a partial call
+    index_all_these_partial = functools.partial(
+        index_all_these, all_combis = all_combis, exact = exact
+    )
 
-    jobs_in_progress = 0
 
-    # Submit to, and empty the queue whenever possible until all combinations have been processed   
-    while len(mappings) < len(interesting_combis):
-
-        if jobs_in_progress < nb_threads:
-
-            # Try to get a new batch
-            try: current_batch = multiproc_batches_of_combis_exactitude.pop()
-            except: current_batch = []
-
-            if current_batch != []:
-
-                pool.submit(index_all_these, combis_to_index = current_batch,
-                    all_combis = all_combis, exact = exact,
-                    my_result_queue = result_queue) 
-
-                message("Submitted a batch of exactitude computations to the queue...")
-                jobs_in_progress += 1
-
-            time.sleep(0.01)
-
-        # Monitor the queue and empty it whenever possible
-        if (not result_queue.empty()):  
-
-            result = result_queue.get()
-            mappings += [result]
-
-            jobs_in_progress -= 1
-            time.sleep(0.01)
-
-        else:
-            message("Waiting for indexing of exact/inexact combinations...", type = 'DEBUG')
-            time.sleep(0.5)
-
+    # NOTE I use a ThreadPoolExecutor and not a ProcessPoolExecutor so memory
+    # can be shared, for the all_combis object
+    pool = ThreadPoolExecutor(8)
+    # Map and wait until the end of the computation
+    mappings = pool.map(index_all_these_partial, multiproc_batches_of_combis_exactitude)
     pool.shutdown()
-    
 
-       
-        
+    # Unlist the result
+    mappings = [mapping for sublist in mappings for mapping in sublist]
+
     # Convert the mappings into a sparser object for storage    
     final_mapping = CombinationExactMapping(all_combis, dict(mappings))
     message("Index computed. Repartition of overlaps...")
@@ -1008,8 +986,9 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
             message('Will compute statistics for the combination : ' + str(combi_human_readable), type='DEBUG')
 
-            combi_key = tuple(combi)  # Convert to a tuple because lists cannot be dict keys
-
+            # Convert to a HashableArray because lists cannot be dict keys
+            combi_key = HashableArray(combi)
+            
             # Collect all shuffles for this combination, taking exactitude into account
             list_overlaps_shuffled_for_this_combi = overlaps_per_combi.get_all(combi_key)
 
@@ -1060,8 +1039,6 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
                     try:
                         pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue) 
-                    pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue) 
-                        pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue) 
                         message("Submitted a new batch of statistics computations.", type = 'DEBUG')
                         # Rk : the submit() function returns a Future object. It is not kept here, but could be.
                     except Exception as e:
@@ -1073,8 +1050,6 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
 
             # If the queue is empty, wait a bit and try again, to not saturate the CPU with requests
-            if (not result_queue.empty()):  
-        if (not result_queue.empty()):  
             if (not result_queue.empty()):  
 
                 combi_human_readable, result = result_queue.get()
