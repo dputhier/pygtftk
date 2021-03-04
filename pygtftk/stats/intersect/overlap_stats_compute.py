@@ -289,16 +289,17 @@ class HashableArray(np.ndarray):
     NOTE It is hashed at creation, so creation can take a bit of time.
     Use a tuple if that is unacceptable.
     """
-
     def __new__(cls, input_array): 
-        # Input array is an already formed ndarray
-        return np.asarray(input_array).view(cls)
+        if isinstance(input_array, HashableArray):
+            return input_array
+        else:
+            return np.asarray(input_array).view(cls)
 
     def __array_finalize__(self, obj):
+        # Set to read-only to prevent modifications
+        self.flags.writeable = False
 
-        self.flags.writeable = False    # Set to read-only to prevent modifications
-
-        # Hash myself
+        # Hash the array
         myhash = int(hashlib.sha1(bytes(self)).hexdigest(), 16)
 
         # Set myhash to a hash of the byte representation if not already present
@@ -309,7 +310,11 @@ class HashableArray(np.ndarray):
         return self.myhash
 
     def __eq__(self, other):
-        return self.__hash__() == hash(other)
+        # Force other to cast to a HashableArray
+        other = HashableArray(other) 
+
+        # Compare hashes
+        return self.__hash__() == other.__hash__()
 
 class ComputingStatsCombiPartial(object):
     """
@@ -443,7 +448,8 @@ class CombinationExactMapping():
         ids = self.mapping[combi]
         return [self.all_combis[i] for i in ids]
 
-
+    def __repr__(self):
+        return "all_combis="+self.all_combis.__repr__()+";"+"mapping="+self.mapping.__repr__()
 
 
 
@@ -512,6 +518,8 @@ class DictionaryWithIndex():
         for k in all_keys_to_get: val_concat += self.data[k]
         return val_concat
 
+    def __repr__(self):
+        return "index="+self.index.__repr__()+";"+"data="+self.data.__repr__()
 
 
 
@@ -648,6 +656,9 @@ class SparseListOfLists:
             return result 
         else:
             raise StopIteration
+
+    def __repr__(self):
+        return str([i.__repr__() for i in self])
 
 
 
@@ -796,7 +807,10 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     true_intersections_per_combi = defaultdict(list)
     for inter in true_intersection:
-        combi = HashableArray(inter[3])
+        # NOTE Enforcing np.uint32 type everywhere
+        combi = HashableArray(
+            np.array(inter[3], dtype = np.uint32)
+        ) 
         
         true_intersections_per_combi[combi] += [inter]
 
@@ -832,6 +846,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     starting_index = 0
 
+
     while all_overlaps:
         # Get a minibatch by popping
         intersections_for_this_shuffle = all_overlaps.pop()
@@ -842,10 +857,11 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
         while intersections_for_this_shuffle:
             overlap = intersections_for_this_shuffle.pop()
-            
+
             # What are the flags (ie. sets present) for this overlap ? For example, "A+C but not B" is (1,0,1)
             flags_for_this_overlap = HashableArray(overlap[3]) # Make a Hashable array as lists cannot be dict keys
-            
+            # NOTE This should have np.uint32 type
+
             ## Add exact matches
             # Don't need to remember the flags since I group them by flag anyways 
             filtered_minibatches[flags_for_this_overlap] += [overlap[0:3]]
@@ -894,7 +910,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     message("Computing index of exact/inexact combinations...")
 
     # Compute the index for all combis found, but also for the interesting combis and all true combis. Relevant mostly for inexact combis.
-    all_combis = frozenset(
+    all_combis = tuple(
         set(list(overlaps_per_combi.keys()) + interesting_combis + list(true_intersections_per_combi.keys()))
     )
 
@@ -910,8 +926,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     multiproc_batches_of_combis_exactitude = np.array_split(np.array(interesting_combis), nb_threads)
     multiproc_batches_of_combis_exactitude = [batch_array for batch_array in multiproc_batches_of_combis_exactitude if (batch_array.ndim and batch_array.size)]
   
-    # Convert all combis into tuples once and for all
-    all_combis = frozenset(
+    # Convert all combis into tuples once and for all (all_combis will be a tuple of tuples)
+    all_combis = tuple(
         [tuple(c) for c in all_combis]
     )
 
@@ -928,12 +944,20 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     mappings = pool.map(index_all_these_partial, multiproc_batches_of_combis_exactitude)
     pool.shutdown()
 
-    # Unlist the result
+    # Unlist the result and re-convert all_combis back to a list of uint32 
+    # HashableArrays so the hashes are the same.
+    # NOTE We re-convert back instead of remembering both to save RAM at runtime
+    message("Index computed. Unpacking it (may take a few moments)")
+    all_combis = [
+        HashableArray(
+            np.asarray(c, dtype=np.uint32) 
+        ) for c in all_combis
+    ]
     mappings = [mapping for sublist in mappings for mapping in sublist]
 
     # Convert the mappings into a sparser object for storage    
     final_mapping = CombinationExactMapping(all_combis, dict(mappings))
-    message("Index computed. Repartition of overlaps...")
+    message("Index unpacked. Repartition of overlaps...")
 
 
 
@@ -962,6 +986,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     all_results = dict()  # Final result dict, to be filled when emptying the queue
     pool = ProcessPoolExecutor(nb_threads)  # Process pool
 
+
     ## ---- Now prepare the jobs for submission
 
     def combis_to_partials(combis):
@@ -987,8 +1012,12 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
             message('Will compute statistics for the combination : ' + str(combi_human_readable), type='DEBUG')
 
             # Convert to a HashableArray because lists cannot be dict keys
-            combi_key = HashableArray(combi)
-            
+            # NOTE Enforcing np.uint32 type everywhere, otherwise the hashes will be
+            # different to those in the overlaps_per_combi
+            combi_key = HashableArray(
+                np.array(combi, dtype = np.uint32)
+            )
+
             # Collect all shuffles for this combination, taking exactitude into account
             list_overlaps_shuffled_for_this_combi = overlaps_per_combi.get_all(combi_key)
 
