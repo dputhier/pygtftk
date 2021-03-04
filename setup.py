@@ -54,14 +54,12 @@ __url__ = 'https://github.com/dputhier/pygtftk'
 __url_source__ = 'https://github.com/dputhier/pygtftk'
 __url_tracker__ = 'https://github.com/dputhier/pygtftk'
 __keywords__ = 'genomics bioinformatics GTF BED'
-__python_requires__ = '>=3.6,<3.9'
+__python_requires__ = '>=3.8,<3.9'
 __classifiers__ = ("License :: OSI Approved :: MIT License",
                    "Operating System :: MacOS",
                    "Operating System :: POSIX :: Linux",
                    "Development Status :: 4 - Beta",
                    "Environment :: Console",
-                   "Programming Language :: Python :: 3.6",
-                   "Programming Language :: Python :: 3.7",
                    "Programming Language :: Python :: 3.8",
                    "Intended Audience :: Science/Research",
                    "Natural Language :: English",
@@ -184,7 +182,6 @@ if platform.system() == 'Linux':
     extra_comp_cython += ['-Wno-cpp']
 
 # Avoid error "fatal error: 'complex' file not found" under OSX (Python 3.6)
-
 if platform.system() == 'Darwin':
     if platform.python_version_tuple()[0:2] == ('3', '6'):
         extra_comp_cython += ["-stdlib=libc++"]

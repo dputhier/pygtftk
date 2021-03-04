@@ -61,7 +61,7 @@ from pygtftk.utils import sort_2_lists
 from pygtftk.utils import chr_size_note
 import gc
 
-__updated__ = "2020-08-01"
+__updated__ = ''' 2021-02-18 '''
 __doc__ = """
 
  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
@@ -71,8 +71,7 @@ __doc__ = """
  gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
  
  Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
- lengths are considered). Then the probability of intersection under the null
- hypothesis (the peaks and this feature are independent) is deduced thanks to
+ lengths are considered). Then the probability of intersection under the null hypothesis (the peaks and this feature are independent) is deduced thanks to
  this Monte Carlo approach. The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
  
@@ -84,7 +83,7 @@ __doc__ = """
      H1: The regions of the query (--peak-file) tend to overlap the 
      reference (--inputfile or --more-bed). 
 
- OLOGRAM can now also calculate enrichment for n-wise combinations (e.g. [Query + A + B]
+ OLOGRAM can also calculate enrichment for n-wise combinations (e.g. [Query + A + B]
  or [Query + B + C]) on sets of regions defined by the user (--more-bed argument).
 
  Author : Quentin FERRE <quentin.q.ferre@gmail.com>,
@@ -92,91 +91,51 @@ __doc__ = """
  Denis PUTHIER <denis.puthier@univ-amu.fr>.
  """
 
-__notes__ = chr_size_note() + """     
- -- OLOGRAM is multithreaded and can use many cores, most notably processing one batch
- of shuffles per core. Note that this can be RAM-intensive, on top of the base pygtftk
- processing of a full human GTF can require upwards of 8Gb.
- It is recommended you do not run other programs in the meantime on a laptop.
+__notes__ = chr_size_note() + """  
 
- -- You may pass custom sets of regions as BED files, especially for multiple overlaps, 
- with the --more-bed arguments to look for enrichment in overlaps for custom annotations.
+ Here is a quick example of command line :
+
+ gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed -\-more-bed-multiple-overlap
+
+ This will compute the overlspa of all sets given in --more-bed with the set given in -p, and with each other : for example quantify the enrichment
+ of the overlaps [Query + A + ...], [Query + B + ...] and [Query + A + B]
+
+ For more informations, please see the full documentation.
+
+
+
+ -- OLOGRAM is multithreaded, notably processing one batch of shuffles per core.
+ However, this can be RAM-intensive. If needed, use more minibatches and/or merge them
+ with the ologram_merge_runs command.
+ 
+ -- Genome size is computed from the provided chromInfo file (-c). and should contain only ordinary 
+ chromosomes. -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'.
+ In this case the corresponding size of conventional chromosomes are used. ChrM is not used.
 
  -- The program produces a pdf file and a tsv file ('_stats_') containing intersection statistics
- for the shuffled BEDs under H0 (peak_file and the considered genomic region are independant):
- number of intersections (N = number of lines in the bed intersect) and total number of overlapping
- base pairs (S).
+ for the shuffled BEDs under H0 giving the number of intersections (N) and total number of overlapping
+ base pairs (S). It gives for N and S expectation and standard deviation (error bars)
+ in the shuffles compared to the actual values, as well as the p-value. It also gives, under the 
+ 'fit' label for each statistic, the goodness of fit of the statistic under (H0).
 
- The output figure gives, for both statistics, expectation and standard deviation (error bars)
- in the shuffles compared to the actual values.
-
- It also gives, under the 'fit' label for each statistic, the goodness of fit of the statistic under (H0)
- to a Negative Binomial assessed by a Cramer's V score (fit_quality gives 1-V ; as per Cramer (1948) a good fit
- should have a fit quality above (1 - 0.25 = 0.75) if your nb. of shuffles is in the hundreds, but closer to 0.9
- if it is in the thousands or above.
-
- The p-value of the true intersection under the distribution characterized by the shuffles is also given, under 'p_value'.
- Finally, the log2 fold change between true and shuffles is also given.
-
- -- If -\-more-keys is used additional region sets will be tested based on the associated key value.
- As an example, if -\-more-keys is set to the 'gene_biotype' (a key generally found in ensembl GTF), the
- region related to 'protein_coding', 'lncRNA' or any other values for that key will be retrieved merged and tested
- for enrichment.
-
- -- Use -\-no-basic-feature if you want to perform enrichment analysis on custom, focused annotations only (-\-more-bed or -\-more-key).
-
- -- The goal of the minibatches is to save RAM. You should increase the number of minibatches, instead of their size.
- You may need to use very small minibatches if you have large sets of regions.
+ We also provide histograms with only combinations of a given order to focus the comparisons on comparable elements.
 
  -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
  the excluded regions, but the same ones will be excluded from the peak_file and the GTF/more-bed files.
 
- -- BETA : About -\-use-markov. This arguments control whether to use Markov model realisations (of order 2) instead of independant shuffles
- for respectively region lengths and inter-region lengths. This can better capture the structure of the genomic regions repartitions.
- This is not recommended in the general case and can be *very* time-consuming (hours).
+ -- Use -\-no-basic-feature if you want to perform enrichment analysis on custom, focused annotations only (-\-more-bed or -\-more-key).
 
- -- While they will be accepted by OLOGRAM, in BED files lines such as "chr1 100 100" or "chr1 100" would represent empty regions (of length 0) and as such are an error.
-
- -- Support for multiple overlaps is available. Please see the documentation for more information.
- If the -\-more-bed-multiple-overlap argument is used, the query peak file will be 
+ -- Support for multiple overlaps is available. If the -\-more-bed-multiple-overlap argument is used, the query peak file will be 
  compared with the custom regions passed to the -\-more-bed argument, and with 
- them only. For example, you can put as query the  binding sites of the Transcription
+ them only. For example, you can put as query the binding sites of the Transcription
  Factor A, in -\-more-bed the factors B, C and D, and see whether A+B+D is an enriched combination.
- 
- -- By default, interesections are counted as "inexact", meaning an overlap of [A + B + C] will count towards [A + B + ...].
- For exact intersections (ie. [A + B + nothing else]), set the -\-multiple-overlap-target-combi-size flag to the number of -\-more-bed +1 (+1 for the query)
- In any case, only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C is not.
- Intersection within sets are supported by the backend and may come in a future version.
- We recommend using -\-multiple-overlap-target-combi-size only when not using MODL since filtering is applied after the first step of candidate mining.
 
+ By default, interesections are counted as "inexact", meaning an overlap of [A + B + C] will be counted when looking for  [A + B + ...].
+ 
  -- Furthermore, you may use our MODL algorithm to find biological complexes of interest, by mining for frequent itemsets
  on the intersections on the true data. This is done with the -\-multiple-overlap-max-number-of-combinations argument.
- This will not change the N,S and enrichment result, but will restrict the set of interesting combis for which those are calculated and displayed
+ This will not change the enrichment result, but will restrict the set of interesting combis for which enrichment is calculated
 
- -- MODL is designed to find complexes more than association rules, so we do not recommend asking for more than 20-50 combinations to
- keep the running time reasonable and keep the found combinations still relevant.
- Note that MODL is completely optional. It is mostly needed when the list of -\-more-bed is very long and you do not want to filter the results manually, and when you are working with noisy
- data which could obfuscate the interesting combinations.
- MODL employs a form of subsampling on the original matrix and will discard combinations rarer than 1/10000 occurences to reduce computing times. This can magnify the noise however and can be disabled when using MODL separately.  
- It will also reduce the abundance of all lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. This is done as the matrix of intersections will usually have many redundant lines and as such can be squished without changing the result.
- It is also possible to bypass it and provide a custom list of combinations to be considered.
-
- -- MODL can be used separately in Python. An example of how to compute an intersection matrix manually from BED files is presented in the documentation.
-
- -- For statistical reality reasons, with multiple sets the expected overlaps for the longer combinations (A+B+C+D+... when they are all independant) can be very low.
- As a result, longer combinations tend to be more enriched : this should be kept in mind when comparing enrichment values. 
- This is especially true for small regions such as Transcriptional Regulator biding sites where the total coverage of all sets considered is low. 
- Note that the fact that we are using a Negative Binomial rather than empirical p-values helps alleviate this problem. If a combination is so rare that it is not encoutered even once in the shuffles, it will have a p-value of NaN.
- Furthermore, if C is depleted with query but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched.
-
- -- A low number of intersecting basepairs can require using more shuffles, but very-low-average
- Negative Binomial distributions are not really signficant. We recommend instead shuffling only across a
- biologically relevant subsection of the genome (with -\-bed-incl) : for example, if studying 
- Transcriptional Regulators, shuffling only on inferred Cis Regulatory Modules or promoters. Or perhaps run a first pairwise 
- analysis to identify likely candidates, and then shuffle only across a subgenome obtained by merging all regions in the query.
- This also allows using fewer shuffles (dozens), because remembering intersections across many files will use RAM. 
- If you nevertheless need to use many shuffles, look to the ologram_merge_run plugin.
-
- -- We recommend running the ologram_modl_treeify plugin on the resulting tsv file if you use multiple overlaps.
 
  -- If you manually specify the combinations to be studied with -\-multiple-overlap-custom-combis, use the following format for the text file : 
  The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed", "1 0 1 1" means Query + B + C). Data should be whitespace separated with one combination per line.
@@ -225,6 +184,12 @@ def make_parser():
 
     parser_grp.add_argument('-l', '--more-bed-labels',
                             help="A comma separated list of labels (see --more-bed). Optional.",
+                            default=None,
+                            type=str,
+                            required=False)
+
+    parser_grp.add_argument('-kis', '--keep-intact-in-shuffling',
+                            help='BETA - A comma separated list of sets number (starts at 0) to be kept intact (fixed) when shuffling, in the order given in --more-bed.',
                             default=None,
                             type=str,
                             required=False)
@@ -319,7 +284,7 @@ def make_parser():
                             default=20,
                             required=False)
 
-    parser_grp.add_argument('-ma', '--use-markov',
+    parser_grp.add_argument('-ma', '--use-markov-shuffling',
                             help='Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes.',
                             action='store_true',
                             required=False)
@@ -437,7 +402,9 @@ def ologram(inputfile=None,
             multiple_overlap_max_number_of_combinations=None,
             multiple_overlap_custom_combis=None,
 
-            use_markov=False,
+            keep_intact_in_shuffling = None,
+            use_markov_shuffling=False,
+
             no_pdf=None,
             pdf_width=5,
             pdf_height=5,
@@ -466,7 +433,7 @@ def ologram(inputfile=None,
 
     # Are we using Markov model realisations instead of shuffling ?
     # If yes, send a warning to the user.
-    if use_markov:
+    if use_markov_shuffling:
         message('Using Markov order 2 shuffling.', type='INFO')
         message(
             'Markov-based null is still in beta at the moment and tends to biais the "null" hypothesis towards association.',
@@ -780,7 +747,8 @@ def ologram(inputfile=None,
     # the two bed files) for code legibility.
     overlap_partial = partial(compute_overlap_stats, chrom_len=chrom_len,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
-                              bed_excl=bed_excl, use_markov_shuffling=use_markov,
+                              bed_excl=bed_excl, use_markov_shuffling=use_markov_shuffling,
+                              keep_intact_in_shuffling = keep_intact_in_shuffling,
                               nb_threads=nb_threads)
 
     # Initialize result dict
@@ -959,10 +927,12 @@ def ologram(inputfile=None,
     # If multiple overlap was requested, process all the custom --more-bed
     if more_bed_multiple_overlap:
         hits['multiple_beds'] = overlap_partial(bedA=peak_file, bedsB=all_more_beds,
-                                                ft_type=all_bed_labels,
-                                                multiple_overlap_target_combi_size=multiple_overlap_target_combi_size,
-                                                multiple_overlap_max_number_of_combinations=multiple_overlap_max_number_of_combinations,
-                                                multiple_overlap_custom_combis=multiple_overlap_custom_combis)
+                ft_type=all_bed_labels,
+                multiple_overlap_target_combi_size = multiple_overlap_target_combi_size,
+                multiple_overlap_max_number_of_combinations = multiple_overlap_max_number_of_combinations,
+                multiple_overlap_custom_combis = multiple_overlap_custom_combis)
+
+
 
         # NOTE. In other cases, hits[feature_type] is a single dictionary giving
         # stats. In this case, it is a dictionary of dictionaries, one per set
@@ -1077,18 +1047,26 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
     # or 'nb_intersections'
     # -------------------------------------------------------------------------
 
-    def plot_this(statname, feature_order=None, display_fit_quality=False):
+    def plot_this(statname, feature_order=None, display_fit_quality=False, only_those_combis = None):
 
         # ------------------------- DATA PROCESSING -------------------------- #
 
+        # If requested, keep only the combinations (features) in only_those_combis
+        if only_those_combis is not None:
+            dms = dm.loc[dm['feature_type'].isin(only_those_combis)]
+            # Do NOT reset the index so I keep the correct p-values from dm
+        else:
+            dms = dm
+
         # Collect true and shuffled number of the stat being plotted
-        data_ni = dm[['feature_type', statname + '_expectation_shuffled', statname + '_true']]
+        data_ni = dms[['feature_type', statname + '_expectation_shuffled', statname + '_true']]      
         maximum = data_ni[[statname + '_expectation_shuffled', statname + '_true']].max(axis=1)
 
         data_ni.columns = ['Feature', 'Shuffled', 'True']  # Rename columns
-
+      
         # For later purposes (p-value display), collect the fold change.
         fc = data_ni['True'] / (data_ni['Shuffled'] + 1)
+        fc = fc.to_list()
 
         # Now melt the dataframe
         dmm = data_ni.melt(id_vars='Feature')
@@ -1107,10 +1085,10 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         p += geom_bar(mapping=aes_plot, stat='identity', alpha=0.6, position='dodge', show_legend=True, width=.6)
 
         # Add error bars for the standard deviation of the shuffles
-        errorbar_mins = dm[statname + '_expectation_shuffled'] - np.sqrt(dm[statname + '_variance_shuffled'])
-        errorbar_maxs = dm[statname + '_expectation_shuffled'] + np.sqrt(dm[statname + '_variance_shuffled'])
+        errorbar_mins = dms[statname + '_expectation_shuffled'] - np.sqrt(dms[statname + '_variance_shuffled'])
+        errorbar_maxs = dms[statname + '_expectation_shuffled'] + np.sqrt(dms[statname + '_variance_shuffled'])
 
-        # True values have no error
+        # True values have no error, so append an na series for them
         na_series = pd.Series([np.nan] * len(errorbar_mins))
         errorbar_mins = errorbar_mins.append(na_series)
         errorbar_mins.index = range(len(errorbar_mins))
@@ -1121,8 +1099,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
                            position=position_dodge(.6), size=0.3)
 
         # Text for the p-value
-        text = dm[statname + '_pvalue'].append(na_series)
-        text.index = range(len(text))
+        text = dms.loc[data_ni.index, statname + '_pvalue'].append(na_series)
+        text = text.to_list()
 
         # Format the text
         def format_pvalue(x):
@@ -1138,7 +1116,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         # green if significantly enriched, black otherwise. For display purposes,
         # p<0.05 counts as significant.
         signif_color = pd.Series(['#b3b3b3'] * len(text))
+        
         for i in range(len(text)):
+
             if text[i] < 0.05:  # If significant
                 if fc[i] < 1: signif_color[i] = '#ffa64d'
                 if fc[i] > 1: signif_color[i] = '#6cc67b'
@@ -1146,13 +1126,14 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
             if text[i] < 1E-10:  # Moreover, if very significant
                 if fc[i] < 1: signif_color[i] = '#cc6600'
                 if fc[i] > 1: signif_color[i] = '#3c9040'
-
-        text = text.apply(format_pvalue)
+          
+           
+        text = [format_pvalue(p) for p in text] 
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
         text_pos.index = range(len(text_pos))
 
         if display_fit_quality:
-            fit_qual_text = dm[statname + '_negbinom_fit_quality'].append(na_series)
+            fit_qual_text = dms[statname + '_negbinom_fit_quality'].append(na_series)
             fit_qual_text.index = range(len(fit_qual_text))
 
             text_with_fit = list()
@@ -1240,6 +1221,22 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
 
         return p
 
+
+    def list_of_combis_to_nested_list(list_of_combis):
+        """
+        Turns a list of strings representinf combinations (like ['A+B', 'A+B+C']) into
+        a nested list of combinations (like [['A','B'],['A','B','C']])
+
+        This is a utility function used for display purposes.
+        """
+        combin = []
+        for combi in list_of_combis:
+            combi_clean = combi.translate({ord(i): None for i in ['[', ']', ' ']}).split('+')
+            combin += [combi_clean]
+        return combin
+
+
+
     def plot_multi_features(list_of_combis):
         """
         Turn a list of combinations (like ['A+B', 'A+B+C']) into a heatmap
@@ -1248,12 +1245,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         import itertools
         import pandas as pd
         import seaborn as sns
-
-        # Turn list of strings into nested list : remove '[]' and spaces and split combi
-        combin = []
-        for combi in list_of_combis:
-            combi_clean = combi.translate({ord(i): None for i in ['[', ']', ' ']}).split('+')
-            combin += [combi_clean]
+   
+        # Turn list of strings into nested list : remove '[]' and spaces and split combis
+        combin = list_of_combis_to_nested_list(list_of_combis)
 
         # Get all unique elements
         def get_unique_elements(combin):
@@ -1329,6 +1323,23 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
     if should_plot_multiple_combis:
         p4 = plot_multi_features(p1_feature_order)
 
+        # And re-do the histograms but with only one order after the other
+        plots_histo_separated = list()
+
+        p1_unique_features = list(sorted(set(p1_feature_order))) # Features were duplicated in p1_feature_order due to the presence of "Shuffled" and "True"
+        split_combis = list_of_combis_to_nested_list(p1_unique_features)
+
+
+        # How many elements in each combi ?
+        orders = [len(x) for x in split_combis]
+        unique_orders = list(sorted(set(orders)))
+
+        for order in unique_orders:
+            combis_of_this_order = [p1_unique_features[i] for i in range(len(p1_unique_features)) if orders[i] == order]
+            
+            p, porder = plot_this('summed_bp_overlaps', feature_order, display_fit_quality, combis_of_this_order)
+            plots_histo_separated += [p]
+
     # -------------------------------------------------------------------------
     # Computing page size
     # -------------------------------------------------------------------------
@@ -1370,7 +1381,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         fxn()
 
         message("Saving diagram to file : " + pdf_file.name)
-        message("Be patient. This may be long for large datasets.")
+        message("Please be patient. Drawing may be long (minutes) for large numbers of datasets/combinations.")
 
         plots = [p1 + theme(figure_size=figsize),
                  p2 + theme(figure_size=figsize),
@@ -1379,11 +1390,26 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         if should_plot_multiple_combis:
             plots += [p4 + theme(figure_size=figsize)]
 
-        # NOTE : We must manually specify figure size with save_as_pdf_pages
-        save_as_pdf_pages(filename=pdf_file.name,
-                          plots=plots,
-                          width=pdf_width,
-                          height=pdf_height)
+            for p in plots_histo_separated:
+                plots += [p + theme(figure_size=figsize)]
+
+
+        # NOTE : We must manually specify figure size with save_as_pdf_pages     
+        plot_process = multiprocessing.Process(target=save_as_pdf_pages,
+            name="Drawing", kwargs = {"filename":pdf_file.name,
+                                        "plots":plots,
+                                        "width":pdf_width,
+                                        "height":pdf_height})
+        plot_process.start()
+
+        # Wait a maximum of 15 minutes for drawing
+        plot_process.join(60*15)
+
+        # If the drawing thread is still active, terminate it
+        if plot_process.is_alive():
+            message("Drawing the graph took longer than 15 minutes, aborted. The results are still available in text form.")
+            plot_process.terminate()
+            plot_process.join()
 
     gc.disable()
 
@@ -1450,10 +1476,10 @@ else:
         #ologram: shuffled overlapping bp fitting
         @test "ologram_7" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10`
-          [ "$result" = "0.6482100000000001" ]
+          [ "$result" = "0.64821" ]
         }
-        
 
+    
         #ologram-modl: get example files
         @test "ologram_8" {
             result=`gtftk get_example -d simple_07 -f '*'`
@@ -1476,6 +1502,19 @@ else:
         @test "ologram_11" {
             result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap --multiple-overlap-target-combi-size 3 --multiple-overlap-max-number-of-combinations 4`
         [ "$result" = "" ]
+        }
+
+
+        #ologram: single thread test
+        @test "ologram_12" {
+             result=`rm -Rf ologram_output; gtftk ologram -i simple_02.gtf -p simple_02_peaks.bed -c simple_02.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8`
+          [ "$result" = "" ]
+        }
+
+        #ologram: shuffled overlapping bp
+        @test "ologram_13" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
+          [ "$result" = "65.61" ]
         }
 
         '''

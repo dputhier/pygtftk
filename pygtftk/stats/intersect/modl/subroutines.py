@@ -46,7 +46,7 @@ def learn_dictionary_and_encode(data, n_atoms = 20, alpha = 0.5,
     """
 
 
-    # TODO Many operations here, such as recreating an object of a pandas 
+    # TODO: Many operations here, such as recreating an object of a pandas 
     # dataframe, might not be necessary ?
     
     data = np.array(data) # Force cast as array
@@ -171,7 +171,7 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
         alpha += iternb/nb_features
         # We add iternb/nb_features to not take too long and not unduly favor high alphas (and longer words)
         
-        # TODO Also stop regardless after 2*k iterations ?
+        # TODO: Also stop regardless after 2*k iterations ?
 
         # We stop once alpha is too high and preventing any word from being used
         # in the encoding U (which contained NaNs -- handled before -- or has a sum of 0)
@@ -364,7 +364,7 @@ def build_best_dict_from_library(data, library, queried_words_nb,
             Dt = Dt_corrected
             
             # Update dictionary to the one being currently tested
-            coder.components_ = Dt.astype('float64')
+            coder.dictionary = Dt.astype('float64')
 
 
             try:

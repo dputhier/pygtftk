@@ -167,15 +167,18 @@ The program will return statistics for both the number of intersections and the 
 ologram (multiple overlaps)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-While previously we computed paiwise enrichment (ie. Query+A, Query+B, ...) , it is also possible to use the **OLOGRAM-MODL** Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n>=2 sets) enrichment (ie. Query+A+B, Query+A+C, ...) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes. 
+It is also possible to use the **OLOGRAM-MODL** Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n>=2 sets) enrichment (ie. Query+A+B, Query+A+C, ...) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes. 
 
 This is done only on custom regions supplied as BEDs supplied with the `--more-bed` argument. In most cases you may use the --no-gtf argument and only pass the regions of interest.
 
-For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using --bed-excl or --bed-incl to ensure the longer combinations have a reasonable chance of being randomly encountered in the shuffles. Conversely, if you do not filter the combinations, keep in mind that the longer ones may be enriched even though they are present only on a few base pairs, because at random they would be even rarer.
+For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using --bed-excl or --bed-incl. This ensures the longer combinations have a reasonable chance of being randomly encountered in the shuffles. Conversely, if you do not filter the combinations, keep in mind that the longer ones may be enriched even though they are present only on a few base pairs, because at random they would be even rarer. As such, we recommend focusing comparisons on combinations of similar order (number of sets).
 
-**Exact combinations:** By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + ...]. For exact intersections (ie. [Query + A + B + nothing else]), set the --multiple-overlap-target-combi-size flag to the number of --more-bed plus one. You will know if the combinations are computed as inexact by the '...' in their name in the result file. Intersections not including the query file are discarded.
+**Exact combinations:** By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + ...]. For exact intersections (ie. [Query + A + B + nothing else]), set the --multiple-overlap-target-combi-size flag to the number of --more-bed plus one (for the query). You will know if the combinations are computed as inexact by the '...' in their name in the result file. 
+
+In any case, only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C is not.
 
 With inexact combinations, if A+B is very enriched and C is depleted, A+B+C will be enriched. It is more interesting to look at C's contribution to the enrichment. Relatedly, longer combinations are usually more enriched since they involve more theoretically independant sets. Combinations of similar orders should be compared.
+
 
 
 **Simple example:**
@@ -190,18 +193,18 @@ Comparing the query (-p) against two other BED files, analyzing multiple overlap
 
 .. code-block:: bash
 
-  gtftk ologram -z -c simple_07.chromInfo -p simple_07_peaks.bed       # The query (-p) is the file to compare against.
-    --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed           # List of files to compare with
-    # --more-bed `ls -d ./data/*`                                    # This should work instead if all your files are in the 'data' subdirectory
-    -o results --force-chrom-peak --force-chrom-more-bed  
-      -o results --force-chrom-peak --force-chrom-more-bed  
+  gtftk ologram -z -c simple_07.chromInfo -p simple_07_peaks.bed     # The query (-p) is the file to compare against.
+    --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed           # List of BED files giving the region sets to compare with.
+    # --more-bed `ls -d ./data/*`                                    # This example line would work instead if all your files are in the 'data' subdirectory
     -o results --force-chrom-peak --force-chrom-more-bed  
     -V 3 -k 8 -mn 10 -ms 10                                          # Verbosity, threads, number and size of minibatches
-    --more-bed-multiple-overlap                                      # Use multiple overlaps on the --more-bed
+    --more-bed-multiple-overlap                                      # Toggle the computation of multiple overlaps on the --more-bed
     --multiple-overlap-max-number-of-combinations 10                 # OPTIONAL ARGUMENT. Use MODL to restrict to this many combinations.
     --multiple-overlap-target-combi-size 3                           # OPTIONAL ARGUMENT. Combis mined longer than this size will not be shown.
     --multiple-overlap-custom-combis test_combis.txt                 # OPTIONAL ARGUMENT. Will bypass the selection by the previous two arguments and work only on the combinations defined in this file.
+    --keep-intact-in-shuffling 0,1                                   # BETA - OPTIONAL ARGUMENT. Gives the positions of the files in --more-bed that will be kept fixed in shuffling.
 
+See the result of `gtftk ologram -h` below for more detailed informations about the arguments' formats.
 
 
 .. raw:: html
@@ -222,24 +225,24 @@ Comparing the query (-p) against two other BED files, analyzing multiple overlap
 As the computation of multiple overlaps can be RAM-intensive, if you have a very large amount of candidate genomic feature sets (hundreds) we recommend selecting less candidates among them first by running a pairwise analysis.
 
 
-
-**MODL itemset mining algorithm:** By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations. As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. 
+**MODL itemset mining algorithm:** By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations. As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. Another possibility is to instead manually pass a text file containg the combinations you want to study
 
 
 
 Itemset mining details
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 In broad strokes, the custom itemset algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
 
-Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is designed to be resistant
-to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).
+Unlike classical association rules mining algorithms, this focuses on mining relevant biological complexes/clusters and correlation groups (item sets). As such, we do not recommend asking for more than 20-50 combinations to keep the running time reasonable and keep the found combinations still relevant.
 
+As a matrix factorization based algorithm, it is designed to be resistant to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).
 
-This itemset mining algorithm is a work-in-progress. Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
+This itemset mining algorithm is a work-in-progress, and optional . Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
 
+MODL is mostly needed when the list of -\-more-bed is very long and you do not want to filter the results manually, and when you are working with noisy data which could obfuscate the interesting combinations. It is also possible to bypass it and provide a custom list of combinations to be considered.
 
+ 
 
 **MODL algorithm API:** MODL can also be used independantly as a combination mining algorithm. 
 
@@ -383,7 +386,7 @@ ologram_merge_runs
 
 OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a "batch of batches" and merge and recalculate stats on the merged superbatch automatically using this command.
 
-Around 100 shuffles is usually enough, since a Negative Binomial under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways. 
+Around 100 shuffles is usually enough to robustly fit a Negative Binomial distribution. In terms of precision, a Negative Binomial mean under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways. 
 
 .. code-block:: bash
 
@@ -391,7 +394,7 @@ Around 100 shuffles is usually enough, since a Negative Binomial under 1/100 (me
   N_RUNS = 100
   for i in {1..$N_RUNS}
   do
-    ologram ...
+    gtftk ologram ...     # Replacing this with a complete OLOGRAM command
   done
 
   # Merge those runs
@@ -402,3 +405,31 @@ Other commands such as ologram_modl_treeify can now be called on the resulting t
 
 .. command-output:: gtftk ologram_merge_runs -h
 	:shell:
+
+
+
+
+
+
+Notes
+~~~~~~~~~~~~~~~~~~~~~~
+
+*This section contains more specific notes about the use and interpetation of OLOGRAM*.
+
+-- The goal of the minibatches is to save RAM. You should increase the number of minibatches, instead of their size.
+
+-- If -\-more-keys is used additional region sets will be tested based on the associated key value. As an example, if -\-more-keys is set to the 'gene_biotype' (a key generally found in ensembl GTF), the region related to 'protein_coding', 'lncRNA' or any other values for that key will be retrieved merged and tested for enrichment.
+
+-- For statistical reality reasons, with multiple sets the expected overlaps for the longer combinations (A+B+C+D+... when they are all independant) can be very low. As a result, longer combinations tend to be more enriched: this should be kept in mind when comparing enrichment values between combinations of a different order. 
+
+This is especially true when the total genomic coverage of the sets is low. We recommend instead shuffling only across a biologically relevant subsection of the genome (with -\-bed-incl) : for example, if studying  Transcriptional Regulators, shuffling only on inferred Cis Regulatory Modules or promoters.
+
+Our Negative Binomial model helps alleviate this problem. Even so, if a combination is so rare that it is not encoutered even once in the shuffles, it will have a p-value of NaN. Furthermore, if C is depleted with query but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched.
+
+-- BETA - When using --more-bed (and only that), you can give a list of bed files that should be kept fixated during the shuffles using the --keep-intact-in-shuffling argument.
+
+-- RAM will be the biggest limiting factor. While 100 total shuffles should be enough to fit a Negative Binomial distribution in most cases, if needed try running more batches of fewer shuffles instead of the other way around.
+
+-- If you have many (30+) BED files in --more-bed, consider running a pairwise analysis first to divide them in groups of 10-20, and study the multiple overlaps within those groups. This is also more likely to be biologically significant, as for example Transcription Factor complexes usually have 2-8 members.
+
+-- We recommend running the ologram_modl_treeify plugin on the resulting tsv file if you use multiple overlaps.

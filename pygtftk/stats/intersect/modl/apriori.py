@@ -5,7 +5,7 @@ It mines for association rules and not complexes per se, but can still be useful
 
 Credits : based on code from https://github.com/coorty/apriori-agorithm-python combined with https://github.com/asaini/Apriori/blob/master/apriori.py
 
-TODO Implement it as a potential alternative to MODL ? See notes in overlap_stats_compute.py for how to do it easily.
+TODO: Implement it as a potential alternative to MODL ? See notes in overlap_stats_compute.py for how to do it easily.
 """
 
 from collections import defaultdict

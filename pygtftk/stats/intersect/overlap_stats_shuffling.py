@@ -33,7 +33,8 @@ from pygtftk.utils import message
 def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
                                         all_chrom1, all_chrom2,
                                         minibatch_size,
-                                        use_markov_shuffling,
+                                        use_markov_shuffling, 
+                                        keep_intact_in_shuffling,
                                         nb_threads, seed=42):
     """
     Main processing function. Computes a minibatch of shuffles for the given parameters.
@@ -55,6 +56,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
     :param all_chrom2: An output from the bed_to_lists_of_intervals() function calls.
     :param minibatch_size: The size of the batchs for shuffling.
     :param use_markov_shuffling: Use a classical or a order-2 Markov shuffling.
+    :param keep_intact_in_shuffling: Among the Lrs (and Lis), those whose number/order is here will be kept intact during the shuffling (won't be shuffled)
     :param nb_threads: number of threads.
 
     """
@@ -109,7 +111,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
     # A workaround to do so is implemented here by exchanging the base Lrs and
     # Lis (the true ones) before producing the N shuffles
     # --------------------------------------------------------------------------
-    # TODO This is not used yet (the code is commented and no arguments call it)
+    # TODO: This is not used yet (the code is commented and no arguments call it)
     # because we need to agree on implementation parameters : namely, when
     # shuffling across all chromosomes, should we put the same number of regions
     # on each chromosome ? Follow a Poisson law ? etc.
@@ -130,7 +132,7 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
         for chrom in L.keys():
             L_for_this_chrom = L[chrom] # This is a list !
 
-            # TODO This is what needs to be fixed. For now it rebuilds the
+            # TODO: This is what needs to be fixed. For now it rebuilds the
             # dictionary with the same number or arguments as before
             size_per_chrom[chrom] = len(L_for_this_chrom)
 
@@ -156,10 +158,14 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
     """
 
     """
-    TODO We could also use this to output stats per chromosome : In results,
+    TODO: We could also use this to output stats per chromosome : In results,
     instead of having "exons", "intergenic", etc., have "exons_chr1", 
     "exons_chr2", "intergenic_chr1", etc.
     """
+
+    # Translating the comma-separated string of "keep_intact_in_shuffling" into a list of ids
+    if keep_intact_in_shuffling is None: keep_intact_in_shuffling = []
+    else: keep_intact_in_shuffling = keep_intact_in_shuffling.split(',')
 
     # Produce the shuffles on a chromosome basis
     start = time.time()
@@ -167,19 +173,24 @@ def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
         shuffled_Lr1_batches[chrom] = batch_and_shuffle_list(Lr1[chrom])
         shuffled_Li1_batches[chrom] = batch_and_shuffle_list(Li1[chrom])
 
-        for set in range(len(Lis)):
+        for set_id in range(len(Lis)):
 
-            # Some BEDs may have no peaks on certain chromosomes.
-            # Watch for KeyError exception for this case.
-            try:
-                shuffled_Lrs_batches[set][chrom] = batch_and_shuffle_list(Lrs[set][chrom])
-            except KeyError:
-                shuffled_Lrs_batches[set][chrom] = np.tile([0], (minibatch_size, 1))
+            # If this set id is supposed to be kept intact in the shuffling, do not shuffle it and keep its regions at the same locations
+            if set_id in keep_intact_in_shuffling:
+                shuffled_Lrs_batches[set_id][chrom] = Lrs[set_id][chrom]
 
-            try:
-                shuffled_Lis_batches[set][chrom] = batch_and_shuffle_list(Lis[set][chrom])
-            except KeyError:
-                shuffled_Lis_batches[set][chrom] = np.tile([0, 0], (minibatch_size, 1))
+            else:
+                # Some BEDs may have no peaks on certain chromosomes.
+                # Watch for KeyError exception for this case.
+                try:
+                    shuffled_Lrs_batches[set_id][chrom] = batch_and_shuffle_list(Lrs[set_id][chrom])
+                except KeyError:
+                    shuffled_Lrs_batches[set_id][chrom] = np.tile([0], (minibatch_size, 1))
+
+                try:
+                    shuffled_Lis_batches[set_id][chrom] = batch_and_shuffle_list(Lis[set_id][chrom])
+                except KeyError:
+                    shuffled_Lis_batches[set_id][chrom] = np.tile([0, 0], (minibatch_size, 1))
 
     stop = time.time()
     message('Batch generated and shuffled in ' + str(stop - start) + ' s.', type='DEBUG')
@@ -223,8 +234,7 @@ class ComputingIntersectionPartial(object):
     """
 
     # Remember the parameters
-    def __init__(self, Lr1, Li1, Lrs, Lis, all_chrom1, all_chrom2, use_markov_shuffling, nb_threads,
-                 result_queue):
+    def __init__(self, Lr1, Li1, Lrs, Lis, all_chrom1, all_chrom2, use_markov_shuffling, keep_intact_in_shuffling, nb_threads,):
         # Parameters for compute_all_intersections_minibatch
         self.Lr1 = Lr1
         self.Li1 = Li1
@@ -233,19 +243,19 @@ class ComputingIntersectionPartial(object):
         self.all_chrom1 = all_chrom1
         self.all_chrom2 = all_chrom2
         self.use_markov_shuffling = use_markov_shuffling
+        self.keep_intact_in_shuffling = keep_intact_in_shuffling
         self.nb_threads = nb_threads
 
-        self.result_queue = result_queue  # Result queue
-
+        
     # Callable
-    def __call__(self, minibatch_len, seed):
+    def __call__(self, minibatch_len, seed, id):
         my_result = compute_all_intersections_minibatch(self.Lr1, self.Li1, self.Lrs, self.Lis, self.all_chrom1,
                                                         self.all_chrom2, minibatch_len, self.use_markov_shuffling,
-                                                        self.nb_threads, seed=seed)
+                                                        self.keep_intact_in_shuffling, self.nb_threads, seed=seed)
 
-        self.result_queue.put(my_result)
+        message("--- Minibatch nb. : " + str(id) + " is complete.")
 
-        del my_result
+        return my_result
 
 
 def compute_overlap_stats(bedA, bedsB,
@@ -253,6 +263,7 @@ def compute_overlap_stats(bedA, bedsB,
                           minibatch_size, minibatch_nb,
                           bed_excl,
                           use_markov_shuffling,
+                          keep_intact_in_shuffling,
                           nb_threads,
                           ft_type,
                           multiple_overlap_target_combi_size=None,
@@ -276,6 +287,7 @@ def compute_overlap_stats(bedA, bedsB,
     :param minibatch_nb: The number of minibatchs.
     :param bed_excl: The regions to be excluded.
     :param use_markov_shuffling: Use a classical or a order-2 Markov shuffling.
+    :param keep_intact_in_shuffling: those numbers in bedsB will be kept intact/fixed during the shuffliing
     :param nb_threads: Number of threads.
     :param ft_type: The name of the feature.
     :param multiple_overlap_target_combi_size: For multiple overlaps, maximum number of sets in the output combinations.
@@ -405,42 +417,38 @@ def compute_overlap_stats(bedA, bedsB,
     ## Compute intersections for each minibatch, multiprocessed
 
     # Result queue
-    mana = multiprocessing.Manager()
-    result_queue = mana.Queue()
-    all_intersections = list()  # Final result list, to be filled when emptying the queue
+    all_intersections = list()  # Final result list, to be filled at the end
     pool = ProcessPoolExecutor(nb_threads)  # Process pool
 
-    # Prepare one random seed per batch.This is done to prevent a problem in multiprocessing : since this function
-    # will be mutithreaded, we must ensure each thread has a different random seed
+    # Prepare one random seed per batch. This is done to prevent a problem in
+    # multiprocessing : since this function will be mutithreaded, we must ensure
+    # each thread has been given a different random seed.
     seeds = [np.random.randint(2 ** 32) for _ in range(len(minibatches))]
 
     # Create a sort-of partial call
     compute_intersection_partial = ComputingIntersectionPartial(Lr1, Li1, Lrs, Lis, all_chrom1, all_chrom2,
-                                                                use_markov_shuffling, nb_threads,
-                                                                result_queue)
+                                                                use_markov_shuffling, keep_intact_in_shuffling, nb_threads)
 
     # Submit to the pool of processes
+    futures = list()
+    message("We will perform a total of " + str(len(minibatches)) + "batches of shufflings.")
     for i in range(len(minibatches)):
-        pool.submit(compute_intersection_partial, minibatch_len=minibatches[i], seed=seeds[i])
+        futures += [pool.submit(compute_intersection_partial, minibatch_len=minibatches[i], seed=seeds[i], id = i)]
+    pool.shutdown() # Release the resources as soon as you are done with those, we won't submit any more jobs to you
 
-    # Empty the queue whenever possible   
-    this_many_already_collected = 0
-    while this_many_already_collected < minibatch_nb:  # Continue until all batches have been generated
 
-        # If the queue is empty, try again next time
-        if not result_queue.empty():
-            partial_result = result_queue.get()
-            all_intersections += partial_result
-            this_many_already_collected += 1
-            del partial_result
+    # Transpose the results into all_intersections
+    for future in futures:
+        all_intersections += future.result()
 
-            message(
-                "--- Minibatch nb. : " + str(this_many_already_collected) + " / " + str(minibatch_nb) + " is complete.",
-                type='DEBUG')
 
-        time.sleep(0.01)  # Add a slight delay between collection attempts to not overload the CPU
 
-    del result_queue
+
+    ## Cleanup
+    del pool
+    time.sleep(1)
+    message("Pause for 1 seconds to let garbage collection run...", type = 'DEBUG')
+    gc.collect()
 
     message("Total number of shuffles, reminder : " + str(len(all_intersections)), type='DEBUG')
     message("Number of intersections in the first shuffle, for comparison : " + str(len(all_intersections[0])),
@@ -450,6 +458,7 @@ def compute_overlap_stats(bedA, bedsB,
 
     # The `all_intersections` objects contains all the computed overlaps, 
     # one per shuffle. All shuffles are concatenated.
+
 
     # --------------- Compute statistics on the intersections ---------------- #
 

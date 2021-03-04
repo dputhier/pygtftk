@@ -64,7 +64,7 @@ void arrayWiseIsLower(const T * array, T value, long array_size, bool * result_a
     p_result++;
   }
 
-  // TODO If the array is sorted, this can be done more efficiently with
+  // TODO: If the array is sorted, this can be done more efficiently with
   // std::lower_bound ; but the current code is already fast enough in most cases.
 
   return;
