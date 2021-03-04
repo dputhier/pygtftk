@@ -498,7 +498,7 @@ def chrom_info_as_dict(chrom_info_file):
         line = line.split("\t")
 
         try:
-            chrom_len[line[0]] = int(line[1])
+            chrom_len[str(line[0])] = int(line[1])
 
         except ValueError:
             continue

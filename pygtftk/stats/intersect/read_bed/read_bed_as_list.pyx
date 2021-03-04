@@ -62,7 +62,8 @@ def bed_to_lists_of_intervals(bed, chromsizes):
 
     Lr = dict()
     Li = dict()
-
+    
+    bed.chrom = bed.chrom.apply(str)
     all_chrom = np.unique(bed.chrom)
 
     for chrom in all_chrom:
