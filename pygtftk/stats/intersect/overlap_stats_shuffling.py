@@ -442,7 +442,7 @@ def compute_overlap_stats(bedA, bedsB,
 
     del result_queue
 
-    message("Total number of shuffles, reminder :" + str(len(all_intersections)), type='DEBUG')
+    message("Total number of shuffles, reminder : " + str(len(all_intersections)), type='DEBUG')
     message("Number of intersections in the first shuffle, for comparison : " + str(len(all_intersections[0])),
             type='DEBUG')
 
