@@ -3,21 +3,21 @@ and their associated functions."""
 
 import argparse
 import errno
+import glob
 import io
 import logging
+import os
 import re
 import shutil
 import subprocess
 import sys
+import textwrap
 from argparse import Action
+from importlib.machinery import SourceFileLoader
 from sys import platform
 
 import cloudpickle
-import glob
-import os
-import textwrap
 import yaml
-from importlib.machinery import SourceFileLoader
 
 import pygtftk
 import pygtftk.cmd_object
@@ -569,12 +569,15 @@ class CmdManager(object):
         # ----------------------------------------------------------------------
         # Command help display
         # ----------------------------------------------------------------------
-
-        cmd.desc = "  Description: \n     *" + textwrap.fill(
-            textwrap.dedent(
-                left_strip_str(
-                    cmd.desc)).strip(),
-            100, initial_indent='  ', subsequent_indent='     ')
+        cmd_desc_list = re.split('\n[ \t]*\n', cmd.desc)
+        cmd_desc_str = "  Description: "
+        for i in cmd_desc_list:
+            cmd_desc_str += "\n\n   " + textwrap.fill(
+                textwrap.dedent(
+                    left_strip_str(
+                        i)).strip(),
+                100, initial_indent='  ', subsequent_indent='     ')
+        cmd.desc = cmd_desc_str
 
         if cmd.notes is not None:
             cmd.notes = cmd.notes.lstrip("\n")

@@ -7,16 +7,31 @@
  gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
 
  Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
- lengths are considered). Then the probability of intersection under the null
- hypothesis (the peaks and this feature are independent) is deduced thanks to
- this Monte Carlo approach.
-
- The program will return statistics for both the number of intersections and the
+ lengths are considered). Then the probability of intersection under the null hypothesis (the peaks and this feature are independent) is deduced thanks to
+ this Monte Carlo approach. The program will return statistics for both the number of intersections and the
  total lengths (in basepairs) of all intersections.
 
- Authors : Quentin FERRE <quentin.q.ferre@gmail.com>,
- Guillaume CHARBONNIER <guillaume.charbonnier@outlook.com>,
- and Denis PUTHIER <denis.puthier@univ-amu.fr>.
+ The null hypothesis is:
+
+    - H0: The regions of the query (--peak-file) are located independently of the
+     reference (--inputfile or --more-bed) with respect to overlap.
+
+    - H1: The regions of the query (--peak-file) tend to overlap the
+     reference (--inputfile or --more-bed).
+
+ OLOGRAM can also calculate enrichment for n-wise combinations (e.g. [Query + A + B]  or [Query + B + C]) on sets of
+ regions defined by the user (--more-bed argument). Here is a quick example of command line to compute the overlaps
+ of all sets given in -\-more-bed with the set given in -p, and with each other :  for example quantify the enrichment
+ of the overlaps [Query + A + ...], [Query + B + ...] and [Query + A + B]
+
+ gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed -\-more-bed-multiple-overlap
+
+ For more informations, please see the full documentation.
+
+ Author : Quentin FERRE <quentin.q.ferre@gmail.com>,
+
+ Co-authors : Guillaume CHARBONNIER <guillaume.charbonnier@outlook.com> and
+ Denis PUTHIER <denis.puthier@univ-amu.fr>.
  """
 
 import argparse
@@ -62,46 +77,8 @@ from pygtftk.utils import sort_2_lists
 from pygtftk.utils import chr_size_note
 import gc
 
-__updated__ = ''' 2021-02-18 '''
-__doc__ = """
-
- OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
- annotates peaks (in bed format) using (i) genomic features extracted
- from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with
- particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
- gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
- 
- Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
- lengths are considered). Then the probability of intersection under the null hypothesis (the peaks and this feature are independent) is deduced thanks to
- this Monte Carlo approach. The program will return statistics for both the number of intersections and the
- total lengths (in basepairs) of all intersections.
- 
- The null hypothesis is:
- 
-     H0: The regions of the query (--peak-file) are located independently of the 
-     reference (--inputfile or --more-bed) with respect to overlap.
-     
-     H1: The regions of the query (--peak-file) tend to overlap the 
-     reference (--inputfile or --more-bed). 
-
- OLOGRAM can also calculate enrichment for n-wise combinations (e.g. [Query + A + B]
- or [Query + B + C]) on sets of regions defined by the user (--more-bed argument).
-
- Author : Quentin FERRE <quentin.q.ferre@gmail.com>,
- Co-authors : Guillaume CHARBONNIER <guillaume.charbonnier@outlook.com> and
- Denis PUTHIER <denis.puthier@univ-amu.fr>.
- """
-
+__updated__ = 'Sat Mar  6 00:16:46 CET 2021'
 __notes__ = chr_size_note() + """  
-
- Here is a quick example of command line :
-
- gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed -\-more-bed-multiple-overlap
-
- This will compute the overlspa of all sets given in --more-bed with the set given in -p, and with each other : for example quantify the enrichment
- of the overlaps [Query + A + ...], [Query + B + ...] and [Query + A + B]
-
- For more informations, please see the full documentation.
 
 
 
@@ -109,10 +86,6 @@ __notes__ = chr_size_note() + """
  However, this can be RAM-intensive. If needed, use more minibatches and/or merge them
  with the ologram_merge_runs command.
  
- -- Genome size is computed from the provided chromInfo file (-c). and should contain only ordinary 
- chromosomes. -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'.
- In this case the corresponding size of conventional chromosomes are used. ChrM is not used.
-
  -- The program produces a pdf file and a tsv file ('_stats_') containing intersection statistics
  for the shuffled BEDs under H0 giving the number of intersections (N) and total number of overlapping
  base pairs (S). It gives for N and S expectation and standard deviation (error bars)
@@ -124,14 +97,16 @@ __notes__ = chr_size_note() + """
  -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
  the excluded regions, but the same ones will be excluded from the peak_file and the GTF/more-bed files.
 
- -- Use -\-no-basic-feature if you want to perform enrichment analysis on custom, focused annotations only (-\-more-bed or -\-more-key).
+ -- Use -\-no-gtf if you want to perform enrichment analysis on custom, focused annotations only (-\-more-bed).
+
+ -- Use -\-no-basic-feature if you want to perform stats on GTF keys (-\-more-key) but not on basic features (genes, transcripts, exons...).
 
  -- Support for multiple overlaps is available. If the -\-more-bed-multiple-overlap argument is used, the query peak file will be 
  compared with the custom regions passed to the -\-more-bed argument, and with 
  them only. For example, you can put as query the binding sites of the Transcription
  Factor A, in -\-more-bed the factors B, C and D, and see whether A+B+D is an enriched combination.
 
- By default, interesections are counted as "inexact", meaning an overlap of [A + B + C] will be counted when looking for  [A + B + ...].
+ By default, intersections are counted as "inexact", meaning an overlap of [A + B + C] will be counted when looking for  [A + B + ...].
  
  -- Furthermore, you may use our MODL algorithm to find biological complexes of interest, by mining for frequent itemsets
  on the intersections on the true data. This is done with the -\-multiple-overlap-max-number-of-combinations argument.
@@ -562,6 +537,9 @@ def ologram(inputfile=None,
     # -------------------------------------------------------------------------
 
     peak_file_bn = os.path.basename(peak_file.name)
+    # NB the file name may have been changed
+    # When converted to a bed6 format
+    peak_file_bn = re.sub("_pygtftk_[^_]+_converted.bed6", "", peak_file_bn)
 
     # -------------------------------------------------------------------------
     # Load the peak file as pybedtools.BedTool object
@@ -1271,7 +1249,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
                         alpha=.5,
                         label_size=0)
         p += ylab('-log10(pvalue)') + xlab('log2(FC)')
-        p += ggtitle('Volcano plot (for both N and S statistics) - ' + peak_file_bn)
+        p += ggtitle('Query : ' + peak_file_bn + '\nVolcano plot (for both N and S statistics)')
         p += scale_fill_manual(values={'N': '#7570b3', 'S': '#e7298a'})
         p += theme_bw()
 
@@ -1367,12 +1345,14 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
                                      feature_order=feature_order,
                                      display_fit_quality=display_fit_quality,
                                      coord_flip=coord_flip)
-    p1 += ylab("Nb. of overlapping base pairs") + ggtitle('Total overlap length per region type - ' + peak_file_bn)
+    p1 += ylab("Nb. of overlapping base pairs") + ggtitle(
+        'Query : ' + peak_file_bn + '\nTotal overlap length per region type')
     p2, p2_feature_order = plot_this(statname='nb_intersections',
                                      feature_order=feature_order,
                                      display_fit_quality=display_fit_quality,
                                      coord_flip=coord_flip)
-    p2 += ylab("Number of intersections") + ggtitle('Total nb. of intersections per region type - ' + peak_file_bn)
+    p2 += ylab("Number of intersections") + ggtitle(
+        'Query : ' + peak_file_bn + '\nTotal nb. of intersections per region type')
     p3 = plot_volcano()
 
     # Graphical visualisation of the combinations for multiple overlap cases
