@@ -39,10 +39,11 @@ import numpy as np
 import pandas as pd
 import pybedtools
 from plotnine import (ggplot, aes, position_dodge, ggtitle,
-                      geom_bar, ylab, theme, element_blank,
-                      element_text, geom_errorbar, theme_bw,
-                      geom_label, save_as_pdf_pages, scale_fill_manual,
-                      geom_vline, xlab)
+                      geom_bar, ylab, element_blank,
+                      geom_errorbar, theme_bw,
+                      geom_label, save_as_pdf_pages, geom_vline, xlab, geom_tile, scale_fill_manual, theme,
+                      element_rect, element_text)
+
 from plotnine import coords
 from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
@@ -557,6 +558,12 @@ def ologram(inputfile=None,
     chrom_len = chrom_info_as_dict(chrom_info)
 
     # -------------------------------------------------------------------------
+    # Keep peak file name basename (for plotting later)
+    # -------------------------------------------------------------------------
+
+    peak_file_bn = os.path.basename(peak_file.name)
+
+    # -------------------------------------------------------------------------
     # Load the peak file as pybedtools.BedTool object
     # -------------------------------------------------------------------------
 
@@ -1057,13 +1064,13 @@ def ologram(inputfile=None,
 
     if pdf_file is not None:
         plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, more_bed_multiple_overlap,
-                     display_fit_quality, coord_flip)
+                     display_fit_quality, coord_flip, peak_file_bn)
         close_properly(pdf_file)
     close_properly(data_file)
 
 
 def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, should_plot_multiple_combis,
-                 display_fit_quality, coord_flip):
+                 display_fit_quality, coord_flip, peak_file_bn):
     """
     Main plotting function by Q. FERRE and D. PUTHIER.
     """
@@ -1092,7 +1099,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
     # or 'nb_intersections'
     # -------------------------------------------------------------------------
 
-    def plot_this(statname, feature_order=None, display_fit_quality=False, only_those_combis=None, coord_flip=False):
+    def plot_this(statname, feature_order=None, display_fit_quality=False,
+                  only_those_combis=None, coord_flip=False):
 
         # ------------------------- DATA PROCESSING -------------------------- #
 
@@ -1263,7 +1271,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
                         alpha=.5,
                         label_size=0)
         p += ylab('-log10(pvalue)') + xlab('log2(FC)')
-        p += ggtitle('Volcano plot (for both N and S statistics)')
+        p += ggtitle('Volcano plot (for both N and S statistics) - ' + peak_file_bn)
         p += scale_fill_manual(values={'N': '#7570b3', 'S': '#e7298a'})
         p += theme_bw()
 
@@ -1342,9 +1350,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
 
         df_melt["colors_for_plot"] = colors_for_plot
 
-        ### Plot
-        from plotnine import ggplot, aes, geom_tile, scale_fill_manual, theme, element_rect, element_text
-
         p = ggplot(df_melt, aes(x="combi", y="variable")) + geom_tile(
             aes(width=.9, height=.9, fill="colors_for_plot")) + scale_fill_manual(elements_palette,
                                                                                   guide=False) + theme(
@@ -1362,12 +1367,12 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
                                      feature_order=feature_order,
                                      display_fit_quality=display_fit_quality,
                                      coord_flip=coord_flip)
-    p1 += ylab("Nb. of overlapping base pairs") + ggtitle('Total overlap length per region type')
+    p1 += ylab("Nb. of overlapping base pairs") + ggtitle('Total overlap length per region type - ' + peak_file_bn)
     p2, p2_feature_order = plot_this(statname='nb_intersections',
                                      feature_order=feature_order,
                                      display_fit_quality=display_fit_quality,
                                      coord_flip=coord_flip)
-    p2 += ylab("Number of intersections") + ggtitle('Total nb. of intersections per region type')
+    p2 += ylab("Number of intersections") + ggtitle('Total nb. of intersections per region type - ' + peak_file_bn)
     p3 = plot_volcano()
 
     # Graphical visualisation of the combinations for multiple overlap cases
@@ -1526,7 +1531,7 @@ else:
 
         #ologram: shuffled overlapping bp fitting
         @test "ologram_7" {
-         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10`
+         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10 | cut -c 1-7`
           [ "$result" = "0.64821" ]
         }
 
