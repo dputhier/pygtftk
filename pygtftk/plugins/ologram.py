@@ -43,7 +43,7 @@ from plotnine import (ggplot, aes, position_dodge, ggtitle,
                       element_text, geom_errorbar, theme_bw,
                       geom_label, save_as_pdf_pages, scale_fill_manual,
                       geom_vline, xlab)
-
+from plotnine import coords
 from pygtftk import arg_formatter
 from pygtftk.bedtool_extension import BedTool
 from pygtftk.cmd_object import CmdObject
@@ -332,6 +332,11 @@ def make_parser():
                             type=arg_formatter.FormattedFile(mode='w', file_ext='txt'),
                             required=False)
 
+    parser_grp.add_argument('-r', '--coord-flip',
+                            help="The horizontal axis becomes vertical, and vertical becomes horizontal.",
+                            action="store_true",
+                            required=False)
+
     parser_grp.add_argument('-j', '--sort-features',
                             help="Whether to sort features in diagrams according to a computed statistic.",
                             choices=[None, "nb_intersections_expectation_shuffled",
@@ -346,8 +351,32 @@ def make_parser():
                                      "summed_bp_overlaps_log2_fold_change",
                                      "summed_bp_overlaps_true",
                                      "summed_bp_overlaps_pvalue"],
-                            default="summed_bp_overlaps_true",
+                            default=None,
                             type=str,
+                            required=False)
+
+    parser_grp.add_argument('-a', '--hide-undef',
+                            help="Do not display combinations if this column has undef value (typically summed_bp_overlaps_pvalue).",
+                            choices=[None, "nb_intersections_expectation_shuffled",
+                                     "nb_intersections_variance_shuffled",
+                                     "nb_intersections_negbinom_fit_quality",
+                                     "nb_intersections_log2_fold_change",
+                                     "nb_intersections_true",
+                                     "nb_intersections_pvalue",
+                                     "summed_bp_overlaps_expectation_shuffled",
+                                     "summed_bp_overlaps_variance_shuffled",
+                                     "summed_bp_overlaps_negbinom_fit_quality",
+                                     "summed_bp_overlaps_log2_fold_change",
+                                     "summed_bp_overlaps_true",
+                                     "summed_bp_overlaps_pvalue"],
+                            default=None,
+                            type=str,
+                            required=False)
+
+    parser_grp.add_argument('-g', '--pval-threshold',
+                            help="Hide combinations for which summed_bp_overlaps_pvalue is not lower or equal to --pval-threshold.",
+                            default=None,
+                            type=arg_formatter.ranged_num(0, 1, "float"),
                             required=False)
 
     # --------------------- Other input arguments----------------------------- #
@@ -402,7 +431,7 @@ def ologram(inputfile=None,
             multiple_overlap_max_number_of_combinations=None,
             multiple_overlap_custom_combis=None,
 
-            keep_intact_in_shuffling = None,
+            keep_intact_in_shuffling=None,
             use_markov_shuffling=False,
 
             no_pdf=None,
@@ -411,10 +440,13 @@ def ologram(inputfile=None,
             force_chrom_gtf=False,
             force_chrom_peak=False,
             force_chrom_more_bed=False,
+            coord_flip=False,
             pdf_file_alt=None,
             nb_threads=1,
             seed=42,
-            sort_features=False,
+            pval_threshold=None,
+            hide_undef=None,
+            sort_features=None,
             minibatch_nb=8,
             minibatch_size=25,
             display_fit_quality=False
@@ -748,7 +780,7 @@ def ologram(inputfile=None,
     overlap_partial = partial(compute_overlap_stats, chrom_len=chrom_len,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
                               bed_excl=bed_excl, use_markov_shuffling=use_markov_shuffling,
-                              keep_intact_in_shuffling = keep_intact_in_shuffling,
+                              keep_intact_in_shuffling=keep_intact_in_shuffling,
                               nb_threads=nb_threads)
 
     # Initialize result dict
@@ -927,12 +959,10 @@ def ologram(inputfile=None,
     # If multiple overlap was requested, process all the custom --more-bed
     if more_bed_multiple_overlap:
         hits['multiple_beds'] = overlap_partial(bedA=peak_file, bedsB=all_more_beds,
-                ft_type=all_bed_labels,
-                multiple_overlap_target_combi_size = multiple_overlap_target_combi_size,
-                multiple_overlap_max_number_of_combinations = multiple_overlap_max_number_of_combinations,
-                multiple_overlap_custom_combis = multiple_overlap_custom_combis)
-
-
+                                                ft_type=all_bed_labels,
+                                                multiple_overlap_target_combi_size=multiple_overlap_target_combi_size,
+                                                multiple_overlap_max_number_of_combinations=multiple_overlap_max_number_of_combinations,
+                                                multiple_overlap_custom_combis=multiple_overlap_custom_combis)
 
         # NOTE. In other cases, hits[feature_type] is a single dictionary giving
         # stats. In this case, it is a dictionary of dictionaries, one per set
@@ -982,6 +1012,21 @@ def ologram(inputfile=None,
     d = pd.read_csv(data_file.name, sep="\t", header=0)
 
     # -------------------------------------------------------------------------
+    # Delete lines with some undef values (see --hide-undef)
+    # or high pvalues (see --pval-threshold)
+    # -------------------------------------------------------------------------
+
+    if hide_undef is not None:
+        d = d.drop(d[d[hide_undef] == -1].index)
+        if len(d) == 0:
+            message("No value left after applying --hide-undef.")
+
+    if pval_threshold is not None:
+        d = d.drop(d[d["summed_bp_overlaps_pvalue"] > pval_threshold].index)
+        if len(d) == 0:
+            message("No value left after applying --hide-undef.")
+
+    # -------------------------------------------------------------------------
     # Rename the feature type.
     # When --more-keys is used the key and value are separated by ":".
     # This give rise to long name whose display in the plot is ugly.
@@ -1012,13 +1057,13 @@ def ologram(inputfile=None,
 
     if pdf_file is not None:
         plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, more_bed_multiple_overlap,
-                     display_fit_quality)
+                     display_fit_quality, coord_flip)
         close_properly(pdf_file)
     close_properly(data_file)
 
 
 def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, should_plot_multiple_combis,
-                 display_fit_quality):
+                 display_fit_quality, coord_flip):
     """
     Main plotting function by Q. FERRE and D. PUTHIER.
     """
@@ -1047,7 +1092,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
     # or 'nb_intersections'
     # -------------------------------------------------------------------------
 
-    def plot_this(statname, feature_order=None, display_fit_quality=False, only_those_combis = None):
+    def plot_this(statname, feature_order=None, display_fit_quality=False, only_those_combis=None, coord_flip=False):
 
         # ------------------------- DATA PROCESSING -------------------------- #
 
@@ -1059,11 +1104,11 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
             dms = dm
 
         # Collect true and shuffled number of the stat being plotted
-        data_ni = dms[['feature_type', statname + '_expectation_shuffled', statname + '_true']]      
+        data_ni = dms[['feature_type', statname + '_expectation_shuffled', statname + '_true']]
         maximum = data_ni[[statname + '_expectation_shuffled', statname + '_true']].max(axis=1)
 
         data_ni.columns = ['Feature', 'Shuffled', 'True']  # Rename columns
-      
+
         # For later purposes (p-value display), collect the fold change.
         fc = data_ni['True'] / (data_ni['Shuffled'] + 1)
         fc = fc.to_list()
@@ -1116,7 +1161,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         # green if significantly enriched, black otherwise. For display purposes,
         # p<0.05 counts as significant.
         signif_color = pd.Series(['#b3b3b3'] * len(text))
-        
+
         for i in range(len(text)):
 
             if text[i] < 0.05:  # If significant
@@ -1126,9 +1171,8 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
             if text[i] < 1E-10:  # Moreover, if very significant
                 if fc[i] < 1: signif_color[i] = '#cc6600'
                 if fc[i] > 1: signif_color[i] = '#3c9040'
-          
-           
-        text = [format_pvalue(p) for p in text] 
+
+        text = [format_pvalue(p) for p in text]
         text_pos = (maximum + 0.05 * max(maximum)).append(na_series)
         text_pos.index = range(len(text_pos))
 
@@ -1172,6 +1216,10 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
 
         # Remember the feature order for potential future use
         order_of_features = dmm.Feature.tolist()
+
+        # Flip coordinates based on user request
+        if coord_flip:
+            p += coords.coord_flip()
 
         return p, order_of_features
 
@@ -1221,7 +1269,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
 
         return p
 
-
     def list_of_combis_to_nested_list(list_of_combis):
         """
         Turns a list of strings representinf combinations (like ['A+B', 'A+B+C']) into
@@ -1235,8 +1282,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
             combin += [combi_clean]
         return combin
 
-
-
     def plot_multi_features(list_of_combis):
         """
         Turn a list of combinations (like ['A+B', 'A+B+C']) into a heatmap
@@ -1245,7 +1290,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         import itertools
         import pandas as pd
         import seaborn as sns
-   
+
         # Turn list of strings into nested list : remove '[]' and spaces and split combis
         combin = list_of_combis_to_nested_list(list_of_combis)
 
@@ -1313,9 +1358,15 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
     # -------------------------------------------------------------------------
 
     # Compute the plots for both statistics
-    p1, p1_feature_order = plot_this('summed_bp_overlaps', feature_order, display_fit_quality)
+    p1, p1_feature_order = plot_this(statname='summed_bp_overlaps',
+                                     feature_order=feature_order,
+                                     display_fit_quality=display_fit_quality,
+                                     coord_flip=coord_flip)
     p1 += ylab("Nb. of overlapping base pairs") + ggtitle('Total overlap length per region type')
-    p2, p2_feature_order = plot_this('nb_intersections', feature_order, display_fit_quality)
+    p2, p2_feature_order = plot_this(statname='nb_intersections',
+                                     feature_order=feature_order,
+                                     display_fit_quality=display_fit_quality,
+                                     coord_flip=coord_flip)
     p2 += ylab("Number of intersections") + ggtitle('Total nb. of intersections per region type')
     p3 = plot_volcano()
 
@@ -1326,9 +1377,9 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         # And re-do the histograms but with only one order after the other
         plots_histo_separated = list()
 
-        p1_unique_features = list(sorted(set(p1_feature_order))) # Features were duplicated in p1_feature_order due to the presence of "Shuffled" and "True"
+        p1_unique_features = list(sorted(set(
+            p1_feature_order)))  # Features were duplicated in p1_feature_order due to the presence of "Shuffled" and "True"
         split_combis = list_of_combis_to_nested_list(p1_unique_features)
-
 
         # How many elements in each combi ?
         orders = [len(x) for x in split_combis]
@@ -1336,7 +1387,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
 
         for order in unique_orders:
             combis_of_this_order = [p1_unique_features[i] for i in range(len(p1_unique_features)) if orders[i] == order]
-            
+
             p, porder = plot_this('summed_bp_overlaps', feature_order, display_fit_quality, combis_of_this_order)
             plots_histo_separated += [p]
 
@@ -1393,21 +1444,21 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
             for p in plots_histo_separated:
                 plots += [p + theme(figure_size=figsize)]
 
-
-        # NOTE : We must manually specify figure size with save_as_pdf_pages     
+        # NOTE : We must manually specify figure size with save_as_pdf_pages
         plot_process = multiprocessing.Process(target=save_as_pdf_pages,
-            name="Drawing", kwargs = {"filename":pdf_file.name,
-                                        "plots":plots,
-                                        "width":pdf_width,
-                                        "height":pdf_height})
+                                               name="Drawing", kwargs={"filename": pdf_file.name,
+                                                                       "plots": plots,
+                                                                       "width": pdf_width,
+                                                                       "height": pdf_height})
         plot_process.start()
 
         # Wait a maximum of 15 minutes for drawing
-        plot_process.join(60*15)
+        plot_process.join(60 * 15)
 
         # If the drawing thread is still active, terminate it
         if plot_process.is_alive():
-            message("Drawing the graph took longer than 15 minutes, aborted. The results are still available in text form.")
+            message(
+                "Drawing the graph took longer than 15 minutes, aborted. The results are still available in text form.")
             plot_process.terminate()
             plot_process.join()
 
