@@ -16,6 +16,8 @@ from multiprocessing import Pool
 import bisect
 import copy
 import hashlib
+import operator
+import ctypes
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -824,8 +826,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     import time  # Needed to re-import here for some reason ?
 
-    message("Pausing for 5 seconds to let RAM garbage collection run.")
-    time.sleep(5)
+    message("Pausing for 2 seconds to let RAM garbage collection run.")
+    time.sleep(2)
     gc.collect()
 
     start = time.time()
@@ -1075,8 +1077,6 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
                     jobs_in_progress += 1 # A job was submitted, increment jobs_in_progress
 
-                time.sleep(0.01)
-
 
             # If the queue is empty, wait a bit and try again, to not saturate the CPU with requests
             if (not result_queue.empty()):  
@@ -1092,11 +1092,9 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
                 jobs_in_progress -= 1 # A job was completed, decrement jobs_in_progress
 
-                time.sleep(0.01)
-
             else:
-                time.sleep(1)
-                message("Waiting for results in the result queue...", type = 'DEBUG')
+                time.sleep(0.01)
+                #message("Waiting for results in the result queue...", type = 'DEBUG')
                 #message("Combinations remaining: "+str([c for c in interesting_combis_human_readable if c not in combis_done]), type = 'DEBUG')
                 # Careful, `interesting_combis_human_readable` is not exposed in the current version of the code
 
@@ -1134,8 +1132,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     pool.shutdown()
     del pool
     del mana
-    time.sleep(1)
-    message("Pause for 1 second to let garbage collection run...", type = 'DEBUG')
+    message("Pause for 2 seconds to let garbage collection run...", type = 'DEBUG')
+    time.sleep(2)
     gc.collect()
 
     return all_results

@@ -446,8 +446,8 @@ def compute_overlap_stats(bedA, bedsB,
 
     ## Cleanup
     del pool
-    time.sleep(1)
-    message("Pause for 1 seconds to let garbage collection run...", type = 'DEBUG')
+    time.sleep(2)
+    message("Pause for 2 seconds to let garbage collection run...", type = 'DEBUG')
     gc.collect()
 
     message("Total number of shuffles, reminder :" + str(len(all_intersections)), type='DEBUG')
