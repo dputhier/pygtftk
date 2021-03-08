@@ -20,6 +20,9 @@
 *   OLOGRAM will now also produce separate histograms for each combination length.
 
 *   The --chrom-file argument now accepts "mm8_ens", "mm9_ens", "mm10_ens", "hg19_ens", "hg38_ens", "rn3_ens" and "rn4_ens" which correspond to internal chromosome info files in ensembl format (i.e. no 'chr' prefix).
+
+*   OLOGRAM has two new arguments (--hide-undef and --pval-threshold) to hide undefine or high p-values.
+
 ### Code changes
 
 *   Minor optimizations to overlap computing.
