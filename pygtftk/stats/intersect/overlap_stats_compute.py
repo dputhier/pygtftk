@@ -399,26 +399,20 @@ def which_combis_to_get_from(combi, all_possible_combis, exact):
 
     # The matching vector is a Python list, convert it to numpy array to save some RAM
     matching_vector = np.asarray(matching_vector, dtype= np.uint64)
-
-    message("Computed exactitude for combi "+str(combi)+"...", type="DEBUG")
+    message("Computed exactitude index for combi "+str(combi), type="DEBUG")
 
     return combi, matching_vector
 
 
 def index_all_these(combis_to_index, all_combis, exact):
     """
-    Helper function to run which_combis_to_get_from on a list of combis
+    Helper function to run the global numpy analogue of 
+    which_combis_to_get_from on a list of combis
     """
-    results = list()
-    for combi in combis_to_index:
-
-        res = which_combis_to_get_from(combi = combi, 
-                all_possible_combis = all_combis, exact = exact)
-
-        message("Finished indexing "+str(combi), type = "DEBUG")
-
-        results += [res]
-    return results        
+    mappings = [
+        oc.NPARRAY_which_combis_match_with(all_combis, combi, exact) for combi in combis_to_index
+        ]
+    return mappings
 
 
 
@@ -905,18 +899,21 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     ## ---------------- Compute the index of combis to be fetched
     # Relevant for partial matches.
 
-    message("Pausing for 5 seconds to let RAM garbage collection run.")
-    time.sleep(5)
+    message("Pausing for 2 seconds to let RAM garbage collection run.")
+    time.sleep(2)
     gc.collect()
 
     message("Computing index of exact/inexact combinations...")
 
-    # Compute the index for all combis found, but also for the interesting combis and all true combis. Relevant mostly for inexact combis.
+    # Compute the index against all combis found, but also against the interesting combis and all true combis. Relevant mostly for inexact combis.
+    # Also enforce type when creating the list
     all_combis = tuple(
-        set(list(overlaps_per_combi.keys()) + interesting_combis + list(true_intersections_per_combi.keys()))
+        HashableArray(
+            np.asarray(c, dtype=np.uint32) 
+        ) for c in set(list(overlaps_per_combi.keys()) + interesting_combis + list(true_intersections_per_combi.keys()))
     )
 
-    message("We will index " + str(len(interesting_combis))+"*"+str(len(all_combis)) + " combinations. This can be very long (minutes) for longer combinations.")
+    message("We will index " + str(len(interesting_combis))+"*"+str(len(all_combis)) + " combinations. This can be long (minutes) for longer combinations.")
 
 
     # NOTE We do not need to index all combis : the only ones that will ever be queried are the `interesting_combis`. Those need to 
@@ -924,54 +921,94 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # However but not every combination in `all_combis` : we do not care what we would need to get if we were to query a combination C
     # that is in `all_combis`, but not in `interesting_combis`
 
+    ## Create a shared array containing all combis, to be passed during multiprocessing
+    global shared_array_all_combis  # It must be a global variable to be shared by the processes
+
+    combi_nb = len(all_combis)
+    combi_size = len(all_combis[0])
+
+    shared_array_all_combis_base = multiprocessing.Array(ctypes.c_int, combi_nb*combi_size,
+        lock = False) # Must disable the lock to permit shared access. Fine since it is read-only.
+    shared_array_all_combis = np.frombuffer(shared_array_all_combis_base, dtype=ctypes.c_int)
+    shared_array_all_combis = shared_array_all_combis.reshape(combi_nb, combi_size)
+
+    # Now populate it with the combinations
+    for i in range(len(all_combis)):
+        shared_array_all_combis[i,:] = all_combis[i]
+
+
+
+    ## Initialize the multiprocessing
+    pool = ProcessPoolExecutor(nb_threads)
+    futures = list()
+
     # Divide the interesting combis into as many batches as threads, and remove empty batches
-    multiproc_batches_of_combis_exactitude = np.array_split(np.array(interesting_combis), nb_threads)
-    multiproc_batches_of_combis_exactitude = [batch_array for batch_array in multiproc_batches_of_combis_exactitude if (batch_array.ndim and batch_array.size)]
-  
-    # Convert all combis into tuples once and for all (all_combis will be a tuple of tuples)
-    all_combis = tuple(
-        [tuple(c) for c in all_combis]
+    batches_of_combis_to_index_id = np.array_split(
+        range(len(interesting_combis)), nb_threads
     )
-
-    # Prepare a partial call
-    index_all_these_partial = functools.partial(
-        index_all_these, all_combis = all_combis, exact = exact
-    )
+    batches_of_combis_to_index_id = [b for b in batches_of_combis_to_index_id if len(b)]
+    # NOTE Using batches turned out to be critical to performance, otherwise too
+    # much time is lost
 
 
-    # NOTE I use a ThreadPoolExecutor and not a ProcessPoolExecutor so memory
-    # can be shared, for the all_combis object
-    pool = ThreadPoolExecutor(8)
-    # Map and wait until the end of the computation
-    mappings = pool.map(index_all_these_partial, multiproc_batches_of_combis_exactitude)
-    pool.shutdown()
+    ## Now submit the jobs
+    while batches_of_combis_to_index_id :
 
-    # Unlist the result and re-convert all_combis back to a list of uint32 
-    # HashableArrays so the hashes are the same.
-    # NOTE We re-convert back instead of remembering both to save RAM at runtime
-    message("Index computed. Unpacking it (may take a few moments)")
-    all_combis = [
-        HashableArray(
-            np.asarray(c, dtype=np.uint32) 
-        ) for c in all_combis
-    ]
+        # Get the corresponding combis with the IDs
+        b = batches_of_combis_to_index_id.pop()
+        combis_to_index = list(
+                operator.itemgetter(*b)(interesting_combis)
+            )
+
+        # Submit
+        futures += [pool.submit(index_all_these, 
+            combis_to_index = combis_to_index, 
+            all_combis = shared_array_all_combis,
+            exact = exact)]
+
+    # Release the resources as soon as you are done with those, we won't submit any more jobs to you
+    pool.shutdown() 
+    message("Exactitude computation jobs submitted.")
+
+
+
+    ## Transpose the results into `mappings`
+    mappings = list()
+    for future in futures:
+        mappings.append(future.result())
+
+    # Unlist mappings
     mappings = [mapping for sublist in mappings for mapping in sublist]
-
     # Convert the mappings into a sparser object for storage    
-    final_mapping = CombinationExactMapping(all_combis, dict(mappings))
+    mappings = CombinationExactMapping(all_combis, dict(mappings))
+
+
+    ## Cleanup
+    del shared_array_all_combis
+    del shared_array_all_combis_base
+
+    # Need to reinitialize heap to clear memory
+    # TODO: supposedly no longer needed in Python 3.8, double check that
+    multiprocessing.heap.BufferWrapper._heap = multiprocessing.heap.Heap()
+    gc.collect()
+
     message("Index unpacked. Repartition of overlaps...")
+
+
+
+
 
 
 
     ## Finally, create a DictionayWithIndex object to hold all intersections
     # If exact = False, when querying this dictionary using get_all(c), all 
     # combis that are an inexact match for c will also count.
-    overlaps_per_combi = DictionaryWithIndex(overlaps_per_combi, final_mapping,
+    overlaps_per_combi = DictionaryWithIndex(overlaps_per_combi, mappings,
                                              data_default_factory=overlaps_per_combi.default_factory)
     # Overwrite original object to save memory !
 
     ## Do the same for the true intersections
-    true_intersections_per_combi = DictionaryWithIndex(true_intersections_per_combi, final_mapping,
+    true_intersections_per_combi = DictionaryWithIndex(true_intersections_per_combi, mappings,
                                                        data_default_factory=true_intersections_per_combi.default_factory)
     # We will pass those true_intersections to stats_single and resume as usual
 
@@ -979,8 +1016,13 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     message('All computed overlaps for the shuffles split by combination in : ' + str(stop - start) + ' s among ' + str(
         all_feature_labels) + '.', type='DEBUG')
 
+
+
+
     # ------------- Enrichment for each combination
     # Now call stats_single on each.
+
+    # TODO: More robust rewrite of multiprocessing using the new code written above
 
     ## Result queue
     mana = multiprocessing.Manager()
@@ -993,7 +1035,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     def combis_to_partials(combis):
         """
-        This is NOT a pure function and manipulates external objects. It's simply a helper to make the code more legible
+        This is NOT a pure function and manipulates external objects. It's simply a helper to make the code more legible.
         """
 
         jobs = list()
@@ -1037,12 +1079,16 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
 
     # Split the interesting_combis into batches of combis, one per process 
-    # (maybe 20 times that just to be safe and not send too many combis at once
-    # to the pool, with their accompanying all_overlaps)
-    multiproc_batches_of_combis = np.array_split(np.array(interesting_combis), 20*nb_threads)
-
+    # (maybe 300 combis per batch that just to be safe, and not send too many combis at once
+    # to the pool, with their accompanying all_overlaps).
+    # Indeed, multiprocessing is supposed to be  more efficient when nb_chunks >> nb_workers
+    number_of_batches = int(len(interesting_combis)/300)
+    multiproc_batches_of_combis = np.array_split(
+        range(len(interesting_combis)), number_of_batches
+    )
     # Remove empty batches
-    multiproc_batches_of_combis = [batch_array for batch_array in multiproc_batches_of_combis if (batch_array.ndim and batch_array.size)]
+    multiproc_batches_of_combis = [b for b in multiproc_batches_of_combis if len(b)]
+
 
 
     ## Submit to, and empty the queue whenever possible until all combinations have been processed   
@@ -1057,9 +1103,14 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
             # If there are less pools being used than there are available, we can submit a new batch of jobs
             if jobs_in_progress < nb_threads:
 
+                # Get the corresponding combis with the IDs
                 # Only if there are combinations left to be processed
-                try: current_batch = multiproc_batches_of_combis.pop()
-                except: current_batch = []
+                try: b = multiproc_batches_of_combis.pop()
+                except: b = []
+               
+                current_batch = list(
+                        operator.itemgetter(*b)(interesting_combis)
+                    )
 
                 # If the batch to be submitted is not empty...
                 # Now submit an entire batch of combis : prepare a list of partials and submit it to the queue
@@ -1102,7 +1153,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # OVERRIDE : if single-threaded, don't use multiprocessing to save RAM
     else:
 
-        # Make batches of 2-3 combis instead
+        # Makebatches of 2-3 combis instead       
         multiproc_batches_of_combis = np.array_split(np.array(interesting_combis), int(0.3*len(interesting_combis)))
 
         while len(combis_done) < len(interesting_combis):

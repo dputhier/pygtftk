@@ -494,3 +494,69 @@ cpdef bint does_combi_match_query(tuple combi, tuple query, bint exact = False):
             if query[i] and not combi[i]: return False
 
     return True
+
+
+
+
+
+## Multiprocessed exactitude computation
+
+ctypedef fused short_integer_any:
+    int 
+    unsigned int 
+
+
+cpdef list NPARRAY_which_combis_match_with(short_integer_any[:,:] combis_array, 
+                        short_integer_any[:] query,
+                        bint exact = False):
+    r"""
+    This is another version of which_combis_to_get_from, which instead takes
+    an array of combinations (combis_arrays) and returns the line numbers
+    of the combinations in combis_array that matched the query.
+
+    Example:
+
+    >>> from pygtftk.stats.intersect.overlap.overlap_regions import NPARRAY_which_combis_match_with
+    >>> import numpy as np
+    >>> query = np.array((1,1,0,0), dtype = np.uint32)
+    >>> combis_array = np.array([(1,0,1,1),(1,1,1,0),(1,1,2,1)], dtype = np.uint32)
+    >>> indexes = NPARRAY_which_combis_match_with(combis_array, query, exact = False)
+    >>> assert indexes == [1,2]
+
+    """
+
+    cdef Py_ssize_t niter = query.shape[0]
+    cdef Py_ssize_t ncombis = combis_array.shape[0]
+
+    cdef int i
+    cdef int j
+
+    cdef list results = []
+
+    # This signals when to stop each iteration and move on to the next combi
+    cdef bint badsignal = False
+   
+    if exact:
+        for j in range(ncombis):
+            badsignal = False
+
+            for i in range(niter):
+                if not combis_array[j,i]:
+                    if query[i]: 
+                        badsignal = True; break  #return False
+                else:
+                    if not combis_array[j,i]: 
+                        badsignal = True; break # return False
+            if not badsignal:
+                results.append(j)
+
+    if not exact:
+        for j in range(ncombis):
+            badsignal = False
+            for i in range(niter):
+                if query[i] and not combis_array[j,i]: 
+                    badsignal = True; break # return False
+            if not badsignal:
+                results.append(j)
+            
+    return results
