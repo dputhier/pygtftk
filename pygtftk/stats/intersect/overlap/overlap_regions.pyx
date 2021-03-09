@@ -501,9 +501,12 @@ cpdef bint does_combi_match_query(tuple combi, tuple query, bint exact = False):
 
 ## Multiprocessed exactitude computation
 
+# The Python and NumPy types should match, but better safe than sorry
 ctypedef fused short_integer_any:
-    int 
-    unsigned int 
+    int
+    unsigned int
+    np.npy_int32
+    np.npy_uint32
 
 
 cpdef list NPARRAY_which_combis_match_with(short_integer_any[:,:] combis_array, 
@@ -519,9 +522,11 @@ cpdef list NPARRAY_which_combis_match_with(short_integer_any[:,:] combis_array,
     >>> from pygtftk.stats.intersect.overlap.overlap_regions import NPARRAY_which_combis_match_with
     >>> import numpy as np
     >>> query = np.array((1,1,0,0), dtype = np.uint32)
-    >>> combis_array = np.array([(1,0,1,1),(1,1,1,0),(1,1,2,1)], dtype = np.uint32)
+    >>> combis_array = np.array([(1,0,1,1),(1,1,1,0),(1,1,2,1),(1,1,0,0)], dtype = np.uint32)
     >>> indexes = NPARRAY_which_combis_match_with(combis_array, query, exact = False)
     >>> assert indexes == [1,2]
+    >>> indexes_2 = NPARRAY_which_combis_match_with(combis_array, query, exact = True)
+    >>> assert indexes_2 == []
 
     """
 
@@ -535,28 +540,48 @@ cpdef list NPARRAY_which_combis_match_with(short_integer_any[:,:] combis_array,
 
     # This signals when to stop each iteration and move on to the next combi
     cdef bint badsignal = False
+
+    # Do not add the combination if it is completely equal to the query
+    # We must register at least one difference
+    cdef perfect_equality = True
    
     if exact:
         for j in range(ncombis):
             badsignal = False
+            perfect_equality = True
 
             for i in range(niter):
-                if not combis_array[j,i]:
-                    if query[i]: 
-                        badsignal = True; break  #return False
-                else:
-                    if not combis_array[j,i]: 
-                        badsignal = True; break # return False
-            if not badsignal:
+
+                #TODO: optimize by integrating in main loop
+                if combis_array[j,i] != query[i]: 
+                    perfect_equality = False
+
+                    if not combis_array[j,i]:
+                        if query[i]: 
+                            badsignal = True; break  #return False
+                    else:
+                        if not query[i]: 
+                            badsignal = True; break # return False
+
+            if (not badsignal) and (not perfect_equality):
                 results.append(j)
 
     if not exact:
         for j in range(ncombis):
             badsignal = False
+            perfect_equality = True
+    
             for i in range(niter):
+
                 if query[i] and not combis_array[j,i]: 
                     badsignal = True; break # return False
-            if not badsignal:
+
+                #TODO: optimize by integrating in main loop
+                else:
+                    if combis_array[j,i] != query[i]: 
+                        perfect_equality = False
+            
+            if (not badsignal) and (not perfect_equality):
                 results.append(j)
             
     return results

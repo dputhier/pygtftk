@@ -16,7 +16,6 @@ from multiprocessing import Pool
 import bisect
 import copy
 import hashlib
-import operator
 import ctypes
 
 import matplotlib.pyplot as plt
@@ -281,6 +280,19 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
 ## ------------ Helper objects
 
 
+def get_items_by_indices_in_list(indices, mylist):
+    r"""
+    Quick way to perform multiple indexing on a list.
+    Unlike the operator.itemgetter method, will always return a list
+
+    Example:
+    >>> assert get_items_by_indices_in_list(indices = [0], mylist = [1,2,3]) == [1]
+
+    """
+    accessed_mapping = map(mylist.__getitem__, indices)
+    return list(accessed_mapping)
+
+
 class HashableArray(np.ndarray):
     """
     A subclass of NumPy's ndarray that can be used as dictionary key.
@@ -408,10 +420,19 @@ def index_all_these(combis_to_index, all_combis, exact):
     """
     Helper function to run the global numpy analogue of 
     which_combis_to_get_from on a list of combis
+
+    NOTE : the oc.NPARRAY_which_combis_match_with already integrates a check
+    and will not return the same index as the query
     """
-    mappings = [
-        oc.NPARRAY_which_combis_match_with(all_combis, combi, exact) for combi in combis_to_index
-        ]
+    mappings = list()
+
+    for combi in combis_to_index:
+        matching_list = oc.NPARRAY_which_combis_match_with(all_combis, combi, exact)
+
+        matching_vector = np.asarray(matching_list, dtype= np.uint64)
+
+        mappings += [(combi, matching_vector)]
+
     return mappings
 
 
@@ -789,8 +810,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     # Should never happen, but just in case.
     if len(interesting_combis) == 0:
-        raise ValueError(
-            "No combination of interest found. Try disabling --multiple-overlap-max-number-of-combinations or increasing the number of shuffles.")
+        raise ValueError("No combination of interest found. Try disabling --multiple-overlap-max-number-of-combinations or increasing the number of shuffles.")
 
     ## Precompute the true intesections between bedA and bedsB once and for all
     message("Computing all true intersections...")
@@ -907,14 +927,19 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     # Compute the index against all combis found, but also against the interesting combis and all true combis. Relevant mostly for inexact combis.
     # Also enforce type when creating the list
-    all_combis = tuple(
-        HashableArray(
-            np.asarray(c, dtype=np.uint32) 
-        ) for c in set(list(overlaps_per_combi.keys()) + interesting_combis + list(true_intersections_per_combi.keys()))
+    all_combis = set(
+        list(overlaps_per_combi.keys()) + interesting_combis + list(true_intersections_per_combi.keys())
     )
+    all_combis = tuple(set(
+        [
+            HashableArray(
+                np.asarray(c, dtype=np.uint32) 
+            ) for c in all_combis
+        ]
+    ))
 
-    message("We will index " + str(len(interesting_combis))+"*"+str(len(all_combis)) + " combinations. This can be long (minutes) for longer combinations.")
 
+    message("We will index " + str(len(interesting_combis))+"*"+str(len(all_combis)) + " combinations. This can be very long (minutes, hour) for longer combinations.")
 
     # NOTE We do not need to index all combis : the only ones that will ever be queried are the `interesting_combis`. Those need to 
     # be fully indexed against `all_combis.
@@ -927,9 +952,9 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     combi_nb = len(all_combis)
     combi_size = len(all_combis[0])
 
-    shared_array_all_combis_base = multiprocessing.Array(ctypes.c_int, combi_nb*combi_size,
+    shared_array_all_combis_base = multiprocessing.Array(ctypes.c_uint, combi_nb*combi_size,
         lock = False) # Must disable the lock to permit shared access. Fine since it is read-only.
-    shared_array_all_combis = np.frombuffer(shared_array_all_combis_base, dtype=ctypes.c_int)
+    shared_array_all_combis = np.frombuffer(shared_array_all_combis_base, dtype=ctypes.c_uint)
     shared_array_all_combis = shared_array_all_combis.reshape(combi_nb, combi_size)
 
     # Now populate it with the combinations
@@ -951,14 +976,17 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # much time is lost
 
 
+
     ## Now submit the jobs
     while batches_of_combis_to_index_id :
 
         # Get the corresponding combis with the IDs
         b = batches_of_combis_to_index_id.pop()
-        combis_to_index = list(
-                operator.itemgetter(*b)(interesting_combis)
-            )
+        combis_to_index = get_items_by_indices_in_list(b, interesting_combis)
+        # Enforce type
+        combis_to_index = [
+            np.array(combi, dtype = np.uint32) for combi in combis_to_index
+        ]
 
         # Submit
         futures += [pool.submit(index_all_these, 
@@ -979,6 +1007,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     # Unlist mappings
     mappings = [mapping for sublist in mappings for mapping in sublist]
+
     # Convert the mappings into a sparser object for storage    
     mappings = CombinationExactMapping(all_combis, dict(mappings))
 
@@ -1108,9 +1137,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                 try: b = multiproc_batches_of_combis.pop()
                 except: b = []
                
-                current_batch = list(
-                        operator.itemgetter(*b)(interesting_combis)
-                    )
+                current_batch = get_items_by_indices_in_list(b, interesting_combis)
 
                 # If the batch to be submitted is not empty...
                 # Now submit an entire batch of combis : prepare a list of partials and submit it to the queue
