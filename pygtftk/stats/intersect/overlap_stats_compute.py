@@ -321,6 +321,12 @@ class HashableArray(np.ndarray):
         self.myhash = getattr(obj, 'myhash', myhash)  
 
     def __hash__(self):
+        # Custom attributes, such as myhash, are lost during multiprocessing.
+        # If that happens, recalculate the hash as needed and store it again
+        try:
+            return self.myhash
+        except AttributeError:
+            self.myhash = int(hashlib.sha1(bytes(self)).hexdigest(), 16)
         return self.myhash
 
     def __eq__(self, other):
@@ -427,8 +433,8 @@ def index_all_these(combis_to_index, all_combis, exact):
     mappings = list()
 
     for combi in combis_to_index:
+        
         matching_list = oc.NPARRAY_which_combis_match_with(all_combis, combi, exact)
-
         matching_vector = np.asarray(matching_list, dtype= np.uint64)
 
         mappings += [(combi, matching_vector)]
@@ -982,10 +988,13 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
         # Get the corresponding combis with the IDs
         b = batches_of_combis_to_index_id.pop()
-        combis_to_index = get_items_by_indices_in_list(b, interesting_combis)
+        combis_to_index = get_items_by_indices_in_list(b, interesting_combis)      
+
         # Enforce type
         combis_to_index = [
-            np.array(combi, dtype = np.uint32) for combi in combis_to_index
+            HashableArray(
+                np.array(combi, dtype = np.uint32)
+                ) for combi in combis_to_index
         ]
 
         # Submit
@@ -1111,7 +1120,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # (maybe 300 combis per batch that just to be safe, and not send too many combis at once
     # to the pool, with their accompanying all_overlaps).
     # Indeed, multiprocessing is supposed to be  more efficient when nb_chunks >> nb_workers
-    number_of_batches = int(len(interesting_combis)/300)
+    number_of_batches = int(len(interesting_combis)/300)+1 # Always at least 1
     multiproc_batches_of_combis = np.array_split(
         range(len(interesting_combis)), number_of_batches
     )
@@ -1181,7 +1190,9 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     else:
 
         # Makebatches of 2-3 combis instead       
-        multiproc_batches_of_combis = np.array_split(np.array(interesting_combis), int(0.3*len(interesting_combis)))
+        multiproc_batches_of_combis = np.array_split(
+            np.array(interesting_combis), int(0.3*len(interesting_combis))+1
+        )
 
         while len(combis_done) < len(interesting_combis):
 
