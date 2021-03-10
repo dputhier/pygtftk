@@ -80,7 +80,7 @@ def compute_stats_for_intersection(myintersect):
 ################################################################################
 
 def stats_single(all_intersections_for_this_combi, true_intersection,
-                 ft_type='some feature', nofit=False, this_combi_only=None):
+                 ft_type='some feature', nofit=False, this_combi_only=None, draw_histogram = False):
     """
     Compute statistics such as total number of overlapping base pairs for a given feature.
 
@@ -89,6 +89,7 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     :param ft_type: for debug messages, which feature/combi are we currently processing ?
     :param nofit: if True, does not do Negative Binomial fitting
     :param this_combi_only: a list of flags (e.g. [1,0,0,1]) corresponding to expected flags in the interescetions, one per file (see find_intersection() source and documentation). If not None, we will consider only intersections that have this flag for the number of true intersections and true overlapping basepairs
+    :param draw_histogram: if True, draws a temp file histogram for each combi
     """
 
     message('Processing overlaps for ' + ft_type, type='DEBUG')
@@ -96,13 +97,13 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     start = time.time()
     stats = [compute_stats_for_intersection(myintersect) for myintersect in all_intersections_for_this_combi]
 
-    stop = time.time()
-    message(ft_type + '- Statistics on overlaps computed in : ' + str(stop - start) + ' s.', type='DEBUG')
-
     # Unpack the stats.
     bp_overlaps = [s[0] for s in stats]  # Those are the individual overlap lengths, a list of lists
     summed_bp_overlaps = [sum(x) for x in bp_overlaps]  # Sum by shuffle
     intersect_nbs = [s[1] for s in stats]
+
+    stop = time.time()
+    message(ft_type + '- Statistics on overlaps computed in : ' + str(stop - start) + ' s.', type='DEBUG')
 
     # NOTE FOR IMPROVEMENT : it would be interesting to return the average size
     # of an overlap as well, per shuffle. Since our intersection algorithm returns
@@ -185,54 +186,59 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     message(ft_type + '- Negative Binomial distributions fitted in : ' + str(stop - start) + ' s.',
             type='DEBUG')
 
+
+    
     # --------------------------------------------------------------------------
     # Draft code for diagnostic plots of the distribution of each statistic in
     # the shuffles. Kept for potential future improvement.
     # --------------------------------------------------------------------------
 
-    # TODO: Drawing is computationally expensive, make it optional
+    # Drawing is computationally expensive, make it optional
+    if draw_histogram:
 
-
-    # This may return an error for very long ft_type strings, so wrap it in a try-except block
-    # TODO: Fix this properly
-
-    try:
-        hist_S = make_tmp_file(prefix='histogram_' + ft_type + '_S_sum_by_shuffle', suffix='.png')
-
-        ## Number of overlapping base pairs
-        # Sum by shuffle
-        plt.figure()
-        mean = expectation_fitted_summed_bp_overlaps
-        var = variance_fitted_summed_bp_overlaps
-        r = mean ** 2 / (var - mean)
-        p = 1 / (mean / r + 1)
-
-        # Plot the histogram.
-        BINS = 100
-        de = plt.hist(summed_bp_overlaps, bins=BINS)[1]
-        # Plot the PDF.
-        xmin, xmax = min(de), max(de)
-        x = np.linspace(xmin, xmax, BINS)
+        # This may return an error for very long ft_type strings, so wrap it in a try-except block
+        # TODO: Fix this properly
+        # TODO: currently, those files remain in /tmp because this function is subprocessed.
+        #I must prepare a temp file manager like make_tmp_file_pool() to keep them in the directory specified by -K
+        start = time.time()
         try:
-            d = [nbinom.cdf(x[i], r, p) - nbinom.cdf(x[i - 1], r, p) for i in range(1, len(x))]
-            d = np.array([0] + d) * len(summed_bp_overlaps)
+            hist_S = make_tmp_file(prefix='histogram_' + ft_type + '_S_sum_by_shuffle', suffix='.png')
+
+            ## Number of overlapping base pairs
+            # Sum by shuffle
+            plt.figure()
+            mean = expectation_fitted_summed_bp_overlaps
+            var = variance_fitted_summed_bp_overlaps
+            r = mean ** 2 / (var - mean)
+            p = 1 / (mean / r + 1)
+
+            # Plot the histogram.
+            BINS = 100
+            de = plt.hist(summed_bp_overlaps, bins=BINS)[1]
+            # Plot the PDF.
+            xmin, xmax = min(de), max(de)
+            x = np.linspace(xmin, xmax, BINS)
+            try:
+                d = [nbinom.cdf(x[i], r, p) - nbinom.cdf(x[i - 1], r, p) for i in range(1, len(x))]
+                d = np.array([0] + d) * len(summed_bp_overlaps)
+            except:
+                d = [0] * BINS
+
+            plt.plot(x, d, 'k', linewidth=2)
+            plt.savefig(hist_S.name)
+            plt.close()
         except:
-            d = [0] * BINS
+            pass
 
-        plt.plot(x, d, 'k', linewidth=2)
-        plt.savefig(hist_S.name)
-        plt.close()
-    except:
-        pass
+        stop = time.time()
+        message(ft_type + '- Drew histogram in : ' + str(stop - start) + ' s.',
+                type='DEBUG')
+  
 
-    """
-    TODO: currently, those files remain in /tmp because this function is subprocessed.
-    I must prepare a temp file manager like make_tmp_file_pool() to keep them in the directory specified by -K
-    """
+    
 
-    # Now return the result as a dictionary of statistics for this calculation.
-
-    # WARNING Be careful to use the same order as result_abort, in overlap_stats_shuffling.py !
+    ## Now return the result as a dictionary of statistics for this calculation.
+    # NOTE Be careful to use the same order as result_abort, in overlap_stats_shuffling.py !
     result = OrderedDict()
 
     # Number of intersections
@@ -345,7 +351,7 @@ class ComputingStatsCombiPartial(object):
     def __init__(self,
                  all_intersections_for_this_combi, ft_type, true_intersection, this_combi_only, nofit,
                  #result_queue,  # The result queue
-                 combi_human_readable):
+                 combi_human_readable, draw_histogram):
         # Parameters for compute_stats_single
         self.all_intersections_for_this_combi = all_intersections_for_this_combi
         self.ft_type = ft_type
@@ -357,13 +363,15 @@ class ComputingStatsCombiPartial(object):
 
         self.combi_human_readable = combi_human_readable
 
+        self.draw_histogram = draw_histogram
+
     # Callable
     def __call__(self):
 
         try:
             my_result = stats_single(self.all_intersections_for_this_combi,
                                     self.true_intersection, self.ft_type, 
-                                    self.nofit, self.this_combi_only)
+                                    self.nofit, self.this_combi_only, self.draw_histogram)
         except Exception as e:
             message("Exception during stats_single call"+e, type = "DEBUG")
 
@@ -692,6 +700,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                            multiple_overlap_target_combi_size=None,
                            multiple_overlap_max_number_of_combinations=None,
                            multiple_overlap_custom_combis=None,
+                           draw_histogram=False
                            ):
     """
     Instead of returning one set of overlap stats per query type (ie. exons, gens, bedfile1, bedfile2, etc...)
@@ -1060,7 +1069,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # ------------- Enrichment for each combination
     # Now call stats_single on each.
 
-    # TODO: More robust rewrite of multiprocessing using the new code written above
+    # TODO: A more robust rewrite of multiprocessing using the new code written above
 
     ## Result queue
     mana = multiprocessing.Manager()
@@ -1108,7 +1117,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                                                                     combi_human_readable,
                                                                     true_intersections_per_combi.get_simple_concatenation(combi_key),
                                                                     combi, nofit,
-                                                                    combi_human_readable)
+                                                                    combi_human_readable,
+                                                                    draw_histogram)
 
             # Add to the jobs to be executed, that will be returned
             jobs += [compute_stats_combi_partial]
@@ -1117,10 +1127,11 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
 
     # Split the interesting_combis into batches of combis, one per process 
-    # (maybe 300 combis per batch that just to be safe, and not send too many combis at once
+    # (maybe 300 combis maximum per batch that just to be safe, and not send too many combis at once
     # to the pool, with their accompanying all_overlaps).
-    # Indeed, multiprocessing is supposed to be  more efficient when nb_chunks >> nb_workers
-    number_of_batches = int(len(interesting_combis)/300)+1 # Always at least 1
+    # But always at least twice as many batchesas the number of workers
+    # Indeed, multiprocessing is supposed to be more efficient when nb_chunks >> nb_workers
+    number_of_batches = max(np.around(len(interesting_combis)/300), 2*nb_threads) 
     multiproc_batches_of_combis = np.array_split(
         range(len(interesting_combis)), number_of_batches
     )

@@ -298,7 +298,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-y', '--display-fit-quality',
-                            help="Display the negative binomial fit quality on the diagrams. ",
+                            help="Display the negative binomial fit quality on the diagrams. Also draws temporary file histograms for each combination (may take some time).",
                             action='store_true',
                             required=False)
 
@@ -766,7 +766,8 @@ def ologram(inputfile=None,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
                               bed_excl=bed_excl, use_markov_shuffling=use_markov_shuffling,
                               keep_intact_in_shuffling=keep_intact_in_shuffling,
-                              nb_threads=nb_threads)
+                              nb_threads=nb_threads, 
+                              draw_histogram=display_fit_quality)   # Draw histograms only if fit quality is also assessed. TODO: move to its own parameter
 
     # Initialize result dict
     hits = dict()

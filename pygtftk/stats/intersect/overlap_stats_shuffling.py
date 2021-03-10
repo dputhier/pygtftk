@@ -268,7 +268,8 @@ def compute_overlap_stats(bedA, bedsB,
                           ft_type,
                           multiple_overlap_target_combi_size=None,
                           multiple_overlap_max_number_of_combinations=None,
-                          multiple_overlap_custom_combis=None):
+                          multiple_overlap_custom_combis=None,
+                          draw_histogram=False):
     """
     This is the hub function to compute overlap statistics through Monte Carlo
     shuffling with integration of the inter-region lengths.
@@ -293,6 +294,7 @@ def compute_overlap_stats(bedA, bedsB,
     :param multiple_overlap_target_combi_size: For multiple overlaps, maximum number of sets in the output combinations.
     :param multiple_overlap_max_number_of_combinations: For multiple overlaps, maximum number of combinations to consider. This will use the MOLD mining algorithm. Do not ask for too many.
     :param multiple_overlap_custom_combis: For multiple overlaps, skips combination mining and computes stats directly for these combinations. Path to a file to be read as NumPy matrix.
+    :param draw_histogram: if True, draws a temp file histogram for each combi
 
     """
 
@@ -488,7 +490,8 @@ def compute_overlap_stats(bedA, bedsB,
                                             nb_threads=nb_threads, nofit=nofit,
                                             multiple_overlap_target_combi_size=multiple_overlap_target_combi_size,
                                             multiple_overlap_max_number_of_combinations=multiple_overlap_max_number_of_combinations,
-                                            multiple_overlap_custom_combis=multiple_overlap_custom_combis)
+                                            multiple_overlap_custom_combis=multiple_overlap_custom_combis,
+                                            draw_histogram=draw_histogram)
         # ft_type, in this case, should be a list of the respective names of all files in bedsB
 
         # NOTE : in this case, `result` is a dictionary of results giving one 'result'
