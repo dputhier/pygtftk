@@ -90,7 +90,7 @@ def ologram_merge_runs(inputfiles=None,
     runs_to_be_merged = []
 
 
-    for pos, infile in enumerate(inputfiles):
+    for _, infile in enumerate(inputfiles):
         message("Reading file : " + infile.name)
         # Read the dataset into a temporay dataframe
         run_as_df = pd.read_csv(infile, sep='\t', header=0, index_col='feature_type')
@@ -197,10 +197,12 @@ def ologram_merge_runs(inputfiles=None,
         # Recalculate the p values
         variance_fitted_intersect_nbs = merged_run.loc[combi, 'nb_intersections_variance_shuffled'] 
         variance_fitted_summed_bp_overlaps = merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled']
+
         pval_intersect_nb = nf.negbin_pval(true_intersect_nb, expectation_fitted_intersect_nbs,
                                             variance_fitted_intersect_nbs, ft_type=combi)
         pval_bp_overlaps = nf.negbin_pval(true_bp_overlaps, expectation_fitted_summed_bp_overlaps,
                                             variance_fitted_summed_bp_overlaps, ft_type=combi)
+                                            
         merged_run.loc[combi, 'nb_intersections_pvalue'] = '{0:.4g}'.format(pval_intersect_nb)
         merged_run.loc[combi, 'summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(pval_bp_overlaps)
 

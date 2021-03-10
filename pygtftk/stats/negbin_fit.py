@@ -139,7 +139,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     return result
 
 
-def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
+def negbin_pval(k, mean, var, precision=320, ft_type="Unknown"):
     r"""
     P-value for a negative binomial distribution of the given moments (mean, var).
 
@@ -167,18 +167,16 @@ def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
 
     if mean < 1:
         mean = 1
-        msg = "Computing log(p-val) for a Neg "
-        msg += "Binom with mean < 1 ; mean was set to 1 (" + ft_type + ")"
+        msg = "Computing log(p-val) for a Neg Binom with mean < 1 ; mean was set to 1 (" + ft_type + ")"
         message(msg, type='WARNING')
     # This is necessary, since r must be above 0.
 
     if mean >= var:
         var = mean + 1
-        msg = "Computing log(p-val) for a Neg "
-        msg += "Binom with mean >= var ; var was set to mean+1 (" + ft_type + ")"
+        msg = "Computing log(p-val) for a Neg Binom with mean >= var ; var was set to mean+1 (" + ft_type + ")"
         message(msg, type='WARNING')
 
-    # Floating point precision of mpmath. Should be at least 1000.
+    # Floating point precision of mpmath. Should be at least 320.
     mpmath.mp.dps = precision
 
     # Calculate r and p based on mean and var

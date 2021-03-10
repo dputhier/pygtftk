@@ -32,9 +32,9 @@ class BetaCalculator:
 
     """
 
-    def __init__(self, precision=1500,
+    def __init__(self, precision=320,
                  use_log=True,
-                 itermax=100000,
+                 itermax=50000,
                  ft_type="Unknown"):
         """
         :param precision: The number of significant digits in mpmath.
