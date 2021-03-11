@@ -285,6 +285,20 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
 
 ## ------------ Helper objects
 
+class Counter(object):
+    """
+    Multiprocessing-compatible counter that can be incremented.
+    """
+    def __init__(self, initval=0):
+        self.val = multiprocessing.Value('i', initval)
+        self.lock = multiprocessing.Lock()
+
+    def increment(self):
+        with self.lock: self.val.value += 1
+
+    def value(self):
+        with self.lock: return self.val.value
+
 
 def get_items_by_indices_in_list(indices, mylist):
     r"""
@@ -430,22 +444,37 @@ def which_combis_to_get_from(combi, all_possible_combis, exact):
     return combi, matching_vector
 
 
-def index_all_these(combis_to_index, all_combis, exact):
+def index_all_these(combis_to_index, exact):
     """
     Helper function to run the global numpy analogue of 
-    which_combis_to_get_from on a list of combis
+    which_combis_to_get_from on a list of combis.
+
+    This is not a pure function and relies on several external parameters
+    that will be named as globals later, before this function is called.
 
     NOTE : the oc.NPARRAY_which_combis_match_with already integrates a check
     and will not return the same index as the query
     """
     mappings = list()
 
+    # Recreate the all_combis arrays from the shared buffer
+    # This is a GLOBAL and was not passed to the worker
+    all_combis = np.frombuffer(shared_array_all_combis_base, dtype=ctypes.c_uint)
+    all_combis = all_combis.reshape(combi_nb, combi_size)
+
     for combi in combis_to_index:
-        
+      
+        # Call the exactitude computation
         matching_list = oc.NPARRAY_which_combis_match_with(all_combis, combi, exact)
         matching_vector = np.asarray(matching_list, dtype= np.uint64)
 
         mappings += [(combi, matching_vector)]
+
+
+        # Debug prints
+        message("Index combination "+str(combi), type = "DEBUG")
+        nb_combis_done.increment()
+        message("Combis done: "+str(nb_combis_done.value())+'/'+str(tot_number_interesting_combis), type = "DEBUG")
 
     return mappings
 
@@ -953,28 +982,50 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         ]
     ))
 
+    
+    # Reserve some globals
+    global tot_number_interesting_combis
+    global shared_array_all_combis_base  # It must be a global variable to be shared by the processes
 
-    message("We will index " + str(len(interesting_combis))+"*"+str(len(all_combis)) + " combinations. This can be very long (minutes, hour) for longer combinations.")
+    global combi_nb
+    global combi_size
+
+    global nb_combis_done
+
+    tot_number_interesting_combis = len(interesting_combis)
+    combi_nb = len(all_combis)
+    combi_size = len(all_combis[0])
+
+    message("We will index " + str(tot_number_interesting_combis)+"*"+str(len(all_combis)) + " combinations. This can be very long (minutes, hour) for longer combinations.")
+
+
 
     # NOTE We do not need to index all combis : the only ones that will ever be queried are the `interesting_combis`. Those need to 
     # be fully indexed against `all_combis.
     # However but not every combination in `all_combis` : we do not care what we would need to get if we were to query a combination C
     # that is in `all_combis`, but not in `interesting_combis`
 
+
     ## Create a shared array containing all combis, to be passed during multiprocessing
-    global shared_array_all_combis  # It must be a global variable to be shared by the processes
-
-    combi_nb = len(all_combis)
-    combi_size = len(all_combis[0])
-
+    # NOTE This must NOT be passed as an argument to the processes ! Instead it must
+    # be a global variable that they can call upon !
     shared_array_all_combis_base = multiprocessing.Array(ctypes.c_uint, combi_nb*combi_size,
         lock = False) # Must disable the lock to permit shared access. Fine since it is read-only.
+
+
+    nb_combis_done = Counter(0)
+
+
+    # Temporary reference to populate it, this WILL NOT BE PASSED
+    # Now populate it with the combinations
     shared_array_all_combis = np.frombuffer(shared_array_all_combis_base, dtype=ctypes.c_uint)
     shared_array_all_combis = shared_array_all_combis.reshape(combi_nb, combi_size)
-
-    # Now populate it with the combinations
     for i in range(len(all_combis)):
         shared_array_all_combis[i,:] = all_combis[i]
+
+    message("Shared array with all combinations populated...", type = "DEBUG")
+
+    del shared_array_all_combis # Now delete this array so the reference is free, just in case
 
 
 
@@ -990,7 +1041,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # NOTE Using batches turned out to be critical to performance, otherwise too
     # much time is lost
 
-
+    print("Send "+str(len(batches_of_combis_to_index_id))+' jobs')
 
     ## Now submit the jobs
     while batches_of_combis_to_index_id :
@@ -1008,30 +1059,29 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
         # Submit
         futures += [pool.submit(index_all_these, 
-            combis_to_index = combis_to_index, 
-            all_combis = shared_array_all_combis,
-            exact = exact)]
+                combis_to_index = combis_to_index, 
+                exact = exact)]
+
 
     # Release the resources as soon as you are done with those, we won't submit any more jobs to you
     pool.shutdown() 
     message("Exactitude computation jobs submitted.")
 
-
-
+    
     ## Transpose the results into `mappings`
     mappings = list()
     for future in futures:
         mappings.append(future.result())
-
+ 
     # Unlist mappings
     mappings = [mapping for sublist in mappings for mapping in sublist]
+
 
     # Convert the mappings into a sparser object for storage    
     mappings = CombinationExactMapping(all_combis, dict(mappings))
 
 
     ## Cleanup
-    del shared_array_all_combis
     del shared_array_all_combis_base
 
     # Need to reinitialize heap to clear memory
