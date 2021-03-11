@@ -314,7 +314,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-j', '--sort-features',
-                            help="Whether to sort features in diagrams according to a computed statistic.",
+                            help="Whether to sort features in diagrams according to a computed statistic. Default to sorting by total number of basepairs for this combination in the true data.",
                             choices=[None, "nb_intersections_expectation_shuffled",
                                      "nb_intersections_variance_shuffled",
                                      "nb_intersections_negbinom_fit_quality",
@@ -327,7 +327,7 @@ def make_parser():
                                      "summed_bp_overlaps_log2_fold_change",
                                      "summed_bp_overlaps_true",
                                      "summed_bp_overlaps_pvalue"],
-                            default=None,
+                            default="summed_bp_overlaps_true",
                             type=str,
                             required=False)
 
