@@ -448,9 +448,7 @@ def compute_overlap_stats(bedA, bedsB,
 
     ## Cleanup
     del pool
-    time.sleep(2)
-    message("Pause for 2 seconds to let garbage collection run...", type = 'DEBUG')
-    gc.collect()
+    time.sleep(0.5); gc.collect()
 
     message("Total number of shuffles, reminder : " + str(len(all_intersections)), type='DEBUG')
     message("Number of intersections in the first shuffle, for comparison : " + str(len(all_intersections[0])),
@@ -498,9 +496,9 @@ def compute_overlap_stats(bedA, bedsB,
         # object per interesting combination. This will be separated into the relevant
         # results objects in the main ologram.py code
 
-    # Just in case, explicitly free memory
-    del all_intersections
+    # Just in case, explicitly free memory.
     # Theoretically it should have been emptied (pop) by the multiple overlap function above
+    del all_intersections
     gc.collect()
 
     grand_stop = time.time()

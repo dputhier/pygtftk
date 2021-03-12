@@ -855,9 +855,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     import time  # Needed to re-import here for some reason ?
 
-    message("Pausing for 2 seconds to let RAM garbage collection run.")
-    time.sleep(2)
-    gc.collect()
+    time.sleep(0.1); gc.collect() # Garbage collect
 
     start = time.time()
 
@@ -934,9 +932,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     ## ---------------- Compute the index of combis to be fetched
     # Relevant for partial matches.
 
-    message("Pausing for 2 seconds to let RAM garbage collection run.")
-    time.sleep(2)
-    gc.collect()
+    time.sleep(0.1); gc.collect() # Garbage collect
 
     message("Computing index of exact/inexact combinations...")
 
@@ -1232,7 +1228,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     pool.shutdown()
     del pool
     del mana
-    message("Pause for 2 seconds to let garbage collection run...", type = 'DEBUG')
+    
+    message("Garbage collection...", type = 'DEBUG')
     time.sleep(2)
     gc.collect()
 

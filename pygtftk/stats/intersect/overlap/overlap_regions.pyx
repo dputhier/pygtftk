@@ -265,7 +265,7 @@ cdef melt_numpy_array(np.ndarray[np.int64_t, ndim = 2] m):
 
 
 cpdef find_intersection(tuple beds, all_chrom, return_flags = True, debug = False, nb_threads = 1):
-    """
+    r"""
     When given a fake bed (as a *list of tuples*, not a text file to avoid text
     overhead) return the intersection computed using our implemented algorithm.
 
@@ -401,7 +401,7 @@ cpdef find_intersection(tuple beds, all_chrom, return_flags = True, debug = Fals
 
     # Ensure memory is freed
     del ov_allchroms 
-    gc.collect()
+    #gc.collect()   # Do not garbage collect here, too slow. Move it to some place else in the future.
 
     return overlaps
 
