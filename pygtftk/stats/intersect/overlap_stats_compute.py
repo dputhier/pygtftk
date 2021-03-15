@@ -12,6 +12,7 @@ import multiprocessing
 import time
 from collections import OrderedDict, defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+import concurrent.futures as cf
 from multiprocessing import Pool
 import bisect
 import copy
@@ -110,6 +111,7 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     # details about the intersections like `bedtools intersect` would, this could
     # be computed without much hassle.
 
+
     # ------ Fitting of a Negative Binomial distribution on the shuffles ----- #
     start = time.time()
 
@@ -181,6 +183,7 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
                                           expectation_fitted_summed_bp_overlaps,
                                           variance_fitted_summed_bp_overlaps,
                                           ft_type=ft_type)
+
 
     stop = time.time()
     message(ft_type + '- Negative Binomial distributions fitted in : ' + str(stop - start) + ' s.',
@@ -1172,12 +1175,12 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         return jobs
 
 
-    # Split the interesting_combis into batches of combis, one per process 
-    # (maybe 300 combis maximum per batch that just to be safe, and not send too many combis at once
-    # to the pool, with their accompanying all_overlaps).
-    # But always at least twice as many batchesas the number of workers
+    # Split the interesting_combis into batches of combis, one per process. 
+    # (maybe 1000 combis maximum per batch that just to be safe, and to not send
+    # too many combis at once to the pool, with their accompanying all_overlaps)
+    # But always at least twice as many batches as the number of workers
     # Indeed, multiprocessing is supposed to be more efficient when nb_chunks >> nb_workers
-    number_of_batches = max(np.around(len(interesting_combis)/300), 2*nb_threads) 
+    number_of_batches = max(np.around(len(interesting_combis)/1000), 2*nb_threads) 
     multiproc_batches_of_combis = np.array_split(
         range(len(interesting_combis)), number_of_batches
     )
@@ -1189,6 +1192,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     ## Submit to, and empty the queue whenever possible until all combinations have been processed   
     combis_done = []
     jobs_in_progress = 0
+
+    futures = []
 
     if nb_threads > 1:
 
@@ -1213,13 +1218,20 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                     current_calls = combis_to_partials(current_batch)
 
                     try:
-                        pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue) 
+                        futures += [
+                            pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue)
+                        ]
+
                         message("Submitted a new batch of statistics computations.", type = 'DEBUG')
-                        # Rk : the submit() function returns a Future object. It is not kept here, but could be.
+                        jobs_in_progress += 1 # A job was submitted, increment jobs_in_progress
                     except Exception as e:
                         message("Exception when submitting a batch of stats computations: "+str(e), type = 'DEBUG')
 
-                    jobs_in_progress += 1 # A job was submitted, increment jobs_in_progress
+                        
+            # Remove a future and decrement the counter whenever completed
+            for future in cf.as_completed(futures):
+                futures.remove(future)
+                jobs_in_progress -= 1
 
 
             # If the queue is empty, wait a bit and try again, to not saturate the CPU with requests
@@ -1236,11 +1248,12 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
                 jobs_in_progress -= 1 # A job was completed, decrement jobs_in_progress
 
+
             else:
-                time.sleep(0.01)
-                #message("Waiting for results in the result queue...", type = 'DEBUG')
+                time.sleep(0.001)
                 #message("Combinations remaining: "+str([c for c in interesting_combis_human_readable if c not in combis_done]), type = 'DEBUG')
                 # Careful, `interesting_combis_human_readable` is not exposed in the current version of the code
+
 
 
     # OVERRIDE : if single-threaded, don't use multiprocessing to save RAM
