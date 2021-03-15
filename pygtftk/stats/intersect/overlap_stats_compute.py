@@ -595,8 +595,7 @@ def do_all_calls(my_calls, my_result_queue):
     for call in my_calls:
 
         try:
-            my_result = call()
-            my_result_queue.put(my_result)
+            my_result_queue.put(call())
         except Exception as e:
             message("Exception raised by do_all_calls(): "+str(e), type = "DEBUG")
 
@@ -1201,7 +1200,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
             # One cannot directly monitor this through `pool` object, so instead I set an external `jobs_in_progress` variable
             # If there are less pools being used than there are available, we can submit a new batch of jobs
-            if jobs_in_progress < nb_threads:
+            while jobs_in_progress < nb_threads:
 
                 # Get the corresponding combis with the IDs
                 # Only if there are combinations left to be processed
@@ -1227,15 +1226,18 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                     except Exception as e:
                         message("Exception when submitting a batch of stats computations: "+str(e), type = 'DEBUG')
 
+                    current_calls.clear()
+
                         
-            # Remove a future and decrement the counter whenever completed
-            for future in cf.as_completed(futures):
-                futures.remove(future)
-                jobs_in_progress -= 1
+            # Remove a future and decrement the jobs_in_progress counter whenever completed
+            for f in range(len(futures)):
+                if futures[f].done():
+                    del futures[f]
+                    gc.collect()
+                    jobs_in_progress -= 1
 
-
-            # If the queue is empty, wait a bit and try again, to not saturate the CPU with requests
-            if (not result_queue.empty()):  
+            # If the queue is not empty, get all results inside
+            while not result_queue.empty():  
 
                 combi_human_readable, result = result_queue.get()
                 combis_done += [combi_human_readable]
@@ -1246,13 +1248,12 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                 message("Finished statistics for combi: " + str(combi_human_readable), type='DEBUG')
                 message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + "done.")
 
-                jobs_in_progress -= 1 # A job was completed, decrement jobs_in_progress
 
-
-            else:
-                time.sleep(0.001)
-                #message("Combinations remaining: "+str([c for c in interesting_combis_human_readable if c not in combis_done]), type = 'DEBUG')
-                # Careful, `interesting_combis_human_readable` is not exposed in the current version of the code
+            # Wait a smidgen before trying again, to not saturate the CPU with requests
+            time.sleep(5)
+            
+            #message("Combinations remaining: "+str([c for c in interesting_combis_human_readable if c not in combis_done]), type = 'DEBUG')
+            # Careful, `interesting_combis_human_readable` is not exposed in the current version of the code
 
 
 
