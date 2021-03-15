@@ -50,18 +50,20 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
 
     >>> import numpy as np
     >>> import scipy.stats
+    >>> from pygtftk.stats.negbin_fit import check_negbin_adjustment
     >>> np.random.seed(42)
     >>> mean = 100 ; var = 200
     >>> r = mean**2 / (var-mean) ; p = 1/(mean/r + 1)
     >>> rv = scipy.stats.nbinom(r, p)
     >>> obs = rv.rvs(2000)
-    >>> fit = np.around(check_negbin_adjustment(obs, mean, var),2)
+    >>> fit = check_negbin_adjustment(obs, mean, var)
+    >>> fit = np.around(fit, 2)
     >>> assert fit > 0.95
 
     """
 
     # Force cast obs to integers, just in case.
-    obs = [int(x) for x in obs]
+    obs = np.array(obs, dtype = int)
 
     if mean == 0:
         mean = 1
@@ -83,11 +85,11 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     obs_range = max(obs) - min(obs)
     step_size = np.around(obs_range / bins_number)
     bin_size = max(1, int(step_size))  # If obs_range < bins_number, step size will be set to 1
-    bins = range(min(obs), max(obs), bin_size)
+    bins = np.arange(min(obs), max(obs), bin_size)
 
     # There can be a bug later in the count table generation if the range is only 1 or 2
     if obs_range < 3:
-        bins = range(min(obs), min(obs) + 3, bin_size)
+        bins = np.arange(min(obs), min(obs) + 3, bin_size)
 
     # Turn this binned distribution into frequencies
     obs_binned = np.digitize(obs, bins)
@@ -95,7 +97,9 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     # Remark : the last bin (maximum) will disappear. This is an acceptable loss on this kind of distribution.
     counts = []
     for binned_value in range(len(bins)):
-        count = sum(obs_binned == binned_value)
+        count = np.sum(
+            np.where(obs_binned == binned_value, True, False)
+        )
         counts.append(count)
     f_obs = np.array(counts)
 
@@ -117,8 +121,8 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     f_exp = np.array(f_exp) * len(obs)
 
     # Remove leading zero in f_exp and f_obs and cast to a np array of integers
-    f_exp = np.array(f_exp[1:]).astype(int)
-    f_obs = np.array(f_obs[1:]).astype(int)
+    f_exp = np.array(f_exp[1:], dtype = int)
+    f_obs = np.array(f_obs[1:], dtype = int)
 
     f_exp = f_exp + 1E-100  # The table of expected frequencies must have no zeros.
 
