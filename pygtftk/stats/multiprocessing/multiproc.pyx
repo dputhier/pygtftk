@@ -505,7 +505,7 @@ cdef class DictionaryOfOverlapsWithSharedNparrayStorage:
         cdef int i,b,z,y
 
         cdef (char*, np.npy_uint64, np.npy_uint64) curr
-        #NOTE using the above as opposed to `cdef tuple curr` brings no improvements yet.
+        # NOTE using the above as opposed to `cdef tuple curr` brings no improvements yet.
         # Presumably due to being converted to a Python tuple
         cdef tuple elem
 
@@ -516,10 +516,11 @@ cdef class DictionaryOfOverlapsWithSharedNparrayStorage:
         cdef char* chromname
                
         # Fetch indexes
-        try :
+        # If no overlaps match the given key, return the default factory
+        try:
             indexes = self.index[key]
         except:
-            indexes = self.data_default_factory()
+            indexes = list(self.data_default_factory())
 
         # Prepare result
         nb_results = len(indexes)

@@ -640,6 +640,7 @@ class DictionaryWithIndex():
 
         # For each other key to be added...
         for k in all_keys_to_get:
+
             buffer = self.data[k]
 
             # Merge all elements of the supplementary key to the original key
@@ -703,6 +704,7 @@ class SparseListOfLists:
     >>> l[0] = ['Ha']
     >>> l[1] = ['Ho']
     >>> assert [i for i in l] == [['Ha'],['Ho'],[]]
+    >>> assert list(l) == [i for i in l]
 
     """
 
@@ -783,6 +785,7 @@ class SparseListOfLists:
 
     def __repr__(self):
         return str([i.__repr__() for i in self])
+
 
 
 
