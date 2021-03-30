@@ -9,26 +9,25 @@
  Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
  lengths are considered). Then the probability of intersection under the null hypothesis (the peaks and this feature are independent) is deduced thanks to
  this Monte Carlo approach. The program will return statistics for both the number of intersections and the
- total lengths (in basepairs) of all intersections.
+ total lengths (in basepairs) of all intersections. For more informations, please see the full documentation.
 
  The null hypothesis is:
 
-    - H0: The regions of the query (--peak-file) are located independently of the
+- H0: The regions of the query (--peak-file) are located independently of the
      reference (--inputfile or --more-bed) with respect to overlap.
 
-    - H1: The regions of the query (--peak-file) tend to overlap the
+- H1: The regions of the query (--peak-file) tend to overlap the
      reference (--inputfile or --more-bed).
 
  OLOGRAM can also calculate enrichment for n-wise combinations (e.g. [Query + A + B]  or [Query + B + C]) on sets of
- regions defined by the user (--more-bed argument). Here is a quick example of command line to compute the overlaps
- of all sets given in -\-more-bed with the set given in -p, and with each other :  for example quantify the enrichment
- of the overlaps [Query + A + ...], [Query + B + ...] and [Query + A + B]
+ regions defined by the user (--more-bed argument). 
+ 
+ Here is a quick example of command line to compute the overlaps of all sets given in -\-more-bed with the set given in -p, and with each other:
 
- gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed -\-more-bed-multiple-overlap
+`gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed -\-more-bed-multiple-overlap`
 
- For more informations, please see the full documentation.
 
- Author : Quentin FERRE <quentin.q.ferre@gmail.com>,
+ Author : Quentin FERRE <quentin.q.ferre@gmail.com>
 
  Co-authors : Guillaume CHARBONNIER <guillaume.charbonnier@outlook.com> and
  Denis PUTHIER <denis.puthier@univ-amu.fr>.
@@ -80,8 +79,6 @@ import gc
 __updated__ = 'Sat Mar  6 00:16:46 CET 2021'
 __notes__ = chr_size_note() + """  
 
-
-
  -- OLOGRAM is multithreaded, notably processing one batch of shuffles per core.
  However, this can be RAM-intensive. If needed, use more minibatches and/or merge them
  with the ologram_merge_runs command.
@@ -90,9 +87,8 @@ __notes__ = chr_size_note() + """
  for the shuffled BEDs under H0 giving the number of intersections (N) and total number of overlapping
  base pairs (S). It gives for N and S expectation and standard deviation (error bars)
  in the shuffles compared to the actual values, as well as the p-value. It also gives, under the 
- 'fit' label for each statistic, the goodness of fit of the statistic under (H0).
-
- We also provide histograms with only combinations of a given order to focus the comparisons on comparable elements.
+ 'fit' label for each statistic, the goodness of fit of the statistic under (H0). We also provide 
+ histograms with only combinations of a given order to focus the comparisons on comparable elements.
 
  -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
  the excluded regions, but the same ones will be excluded from the peak_file and the GTF/more-bed files.
@@ -102,20 +98,22 @@ __notes__ = chr_size_note() + """
  -- Use -\-no-basic-feature if you want to perform stats on GTF keys (-\-more-key) but not on basic features (genes, transcripts, exons...).
 
  -- Support for multiple overlaps is available. If the -\-more-bed-multiple-overlap argument is used, the query peak file will be 
- compared with the custom regions passed to the -\-more-bed argument, and with 
- them only. For example, you can put as query the binding sites of the Transcription
+ compared with the custom regions passed to the -\-more-bed argument, and with them only. For example, you can put as query the binding sites of the Transcription
  Factor A, in -\-more-bed the factors B, C and D, and see whether A+B+D is an enriched combination.
 
- By default, intersections are counted as "inexact", meaning an overlap of [A + B + C] will be counted when looking for  [A + B + ...].
+ -- By default, multiple overlap intersections are counted as "inexact", meaning an overlap of [A + B + C] will be counted when looking for  [A + B + ...].
  
+ -- P-values of -1 or NaN mean the Neg. Binom. fitting was poor, but that does not mean they must always be discarded: in practice they 
+ are mostly present in high order combinations, that were so rare that they are not encountered in the shuffles even once.
+ In this case they would represent a very large enrichment.
+
  -- Furthermore, you may use our MODL algorithm to find biological complexes of interest, by mining for frequent itemsets
  on the intersections on the true data. This is done with the -\-multiple-overlap-max-number-of-combinations argument.
  This will not change the enrichment result, but will restrict the set of interesting combis for which enrichment is calculated
 
-
  -- If you manually specify the combinations to be studied with -\-multiple-overlap-custom-combis, use the following format for the text file : 
- The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed", "1 0 1 1" means Query + B + C). Data should be whitespace separated with one combination per line.
- 
+ The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed", "1 0 1 1" means Query + B + C). Elements should be whitespace separated, with one combination per line.
+
 """
 
 
@@ -767,7 +765,7 @@ def ologram(inputfile=None,
                               bed_excl=bed_excl, use_markov_shuffling=use_markov_shuffling,
                               keep_intact_in_shuffling=keep_intact_in_shuffling,
                               nb_threads=nb_threads, 
-                              draw_histogram=display_fit_quality)   # Draw histograms only if fit quality is also assessed. TODO: move to its own parameter
+                              draw_histogram=display_fit_quality)  # Draw histograms only if fit quality is also assessed. TODO: move to its own parameter
 
     # Initialize result dict
     hits = dict()
@@ -1294,7 +1292,6 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
             dict_current['combi'] = ' + '.join(combi)
 
             for e in all_elements:
-                current_elem = str(e)
                 if e in combi:
                     dict_current[e] = True
                 else:
@@ -1439,12 +1436,12 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
         plot_process.start()
 
         # Wait a maximum of 15 minutes for drawing
-        plot_process.join(60 * 15)
+        plot_process.join(60 * 10)
 
         # If the drawing thread is still active, terminate it
         if plot_process.is_alive():
             message(
-                "Drawing the graph took longer than 15 minutes, aborted. The results are still available in text form.")
+                "Drawing the graph took longer than 10 minutes, aborted. The results are still available in tab-separated-values form.")
             plot_process.terminate()
             plot_process.join()
 
@@ -1486,77 +1483,96 @@ else:
           [ "$result" = "16" ]
         }
 
-        #ologram: proper number of shuffled intersections
-        @test "ologram_3" {
-         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 2`
-          [ "$result" = "14.88" ]
-        }
-
         #ologram: overlapping bp
-        @test "ologram_4" {
+        @test "ologram_3" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 12`
           [ "$result" = "75" ]
         }
 
         #ologram: shuffled overlapping bp
-        @test "ologram_5" {
+        @test "ologram_4" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
           [ "$result" = "65.61" ]
         }
 
         #ologram: shuffled overlapping bp variance
-        @test "ologram_6" {
+        @test "ologram_5" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 9`
           [ "$result" = "17.69" ]
         }
 
         #ologram: shuffled overlapping bp fitting
-        @test "ologram_7" {
+        @test "ologram_6" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 10 | cut -c 1-7`
           [ "$result" = "0.64821" ]
         }
 
-    
+
         #ologram-modl: get example files
-        @test "ologram_8" {
+        @test "ologram_7" {
             result=`gtftk get_example -d simple_07 -f '*'`
         [ "$result" = "" ]
         }
 
         #ologram-modl: multiple overlaps
-        @test "ologram_9" {
-            result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap -mn 2 -ms 2`
+        @test "ologram_8" {
+            result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap -mn 10 -ms 10`
         [ "$result" = "" ]
         }
 
         #ologram-modl: check result, first combi
-        @test "ologram_10" {
+        @test "ologram_9" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep "simple_07_peaks_2" | cut -f 2`
-          [ "$result" = "6.0" ]
+          [ "$result" = "5.03" ]
+        }
+
+        @test "ologram_10" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep "simple_07_peaks_2" | cut -f 8`
+          [ "$result" = "21.63" ]
+        }
+
+        @test "ologram_11" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep "simple_07_peaks_2" | cut -f 9`
+          [ "$result" = "129.25" ]
+        }
+
+        @test "ologram_12" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep "simple_07_peaks_2" | cut -f 12`
+          [ "$result" = "73" ]
         }
 
 
         #ologram-modl: check result, second combi
-        @test "ologram_11" {
+        @test "ologram_13" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep -w "simple_07_peaks_1 + ..." | cut -f 2`
-          [ "$result" = "22.75" ]
+          [ "$result" = "24.35" ]
+        }
+
+        @test "ologram_14" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep -w "simple_07_peaks_1 + ..." | cut -f 8`
+          [ "$result" = "102.97" ]
+        }
+
+        @test "ologram_15" {
+         result=`cat ologram_output/00_ologram_stats.tsv | grep -w "simple_07_peaks_1 + ..." | cut -f 12`
+          [ "$result" = "163" ]
         }
 
 
         #ologram-modl: multiple overlaps and dict learning
-        @test "ologram_12" {
+        @test "ologram_16" {
             result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap --multiple-overlap-target-combi-size 3 --multiple-overlap-max-number-of-combinations 4`
         [ "$result" = "" ]
         }
 
         #ologram: single thread test
-        @test "ologram_13" {
+        @test "ologram_17" {
              result=`rm -Rf ologram_output; gtftk ologram -i simple_02.gtf -p simple_02_peaks.bed -c simple_02.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 1`
           [ "$result" = "" ]
         }
 
         #ologram: shuffled overlapping bp
-        @test "ologram_14" {
+        @test "ologram_18" {
          result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
           [ "$result" = "65.61" ]
         }

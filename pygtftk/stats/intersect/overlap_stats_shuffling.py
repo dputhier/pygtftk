@@ -330,7 +330,7 @@ def compute_overlap_stats(bedA, bedsB,
     # This means that when there is an exclusion to be done, this function must do in on bedB only.
     if bed_excl is not None:
         exclstart = time.time()
-        message('Performing exclusion on the second file. This may take a moment.', type='INFO')
+        message('Performing exclusion on the second files. This may take a moment.', type='INFO')
 
         bedsB = [read_bed.exclude_concatenate(bedB, bed_excl, nb_threads) for bedB in bedsB]
 
@@ -345,8 +345,11 @@ def compute_overlap_stats(bedA, bedsB,
         if (len(bedB) >= 2):
             bedsB_final += [bedB]
         else:
+            bedsB_final += [
+                pybedtools.BedTool("chr1\t1\t1\n" + str(bedB), from_string=True)
+            ]
             message(
-                'Less than 2 remaining regions in one of the second BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will discard this particular pair.',
+                'Less than 2 remaining regions in one of the second BED files. This is likely due to either : one of the considered features has very few peaks falling inside of it, or all the regions are in areas marked in the exclusion file. ologram will adding a ghost, null-length region to proceed.',
                 type='WARNING')
     bedsB = bedsB_final
 

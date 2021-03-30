@@ -284,7 +284,7 @@ class Library:
             for new_parent in new_parents_list:
 
                 # Only add the child if it accounts for at a proportion of at least min_inheritance of its parent
-                if unode.S/(new_parent.S+1E-100) >= min_inheritance:
+                if unode.s/(new_parent.s+1E-100) >= min_inheritance:
 
                     message('Adding ' + str(unode) + ' to ' + str(new_parent) + ' as distance of ' + str(
                         all_distances_less_flags[new_parent]), type='DEBUG')

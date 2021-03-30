@@ -17,6 +17,8 @@
 
 *   OLOGRAM now merges consecutive intersections, to prevent a bug that resulted in double countings.
 
+*   Fixed a bug in OLOGRAM where files with less than 2 regions were needlessly discarded.
+
 ### API/CLI Changes
 
 *   OLOGRAM will now also produce separate histograms for each combination length.
