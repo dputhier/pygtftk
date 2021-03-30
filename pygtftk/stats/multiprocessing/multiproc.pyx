@@ -352,17 +352,23 @@ class PYWRAPPER_DictionaryOfOverlapsWithSharedNparrayStorage:
 
     Example:
 
-    >>> import pyximport; pyximport.install(reload_support=True) # doctest: +ELLIPSIS
+    >>> import numpy
+    >>> import pyximport
+    >>> pyximport.install(setup_args={"include_dirs":numpy.get_include()}, reload_support=True) # doctest: +ELLIPSIS
     (None, ...
     >>> from pygtftk.stats.multiprocessing.multiproc import PYWRAPPER_DictionaryOfOverlapsWithSharedNparrayStorage
     >>> d = {'A':[[('chr1',1,1),('chr1',11,11)],[('chr1',111,111)]],'B':[[('chr2',2,2)],[('chr2',22,22)]],'C':[[],[('chr3',3,3)]]}
-    >>> da = PYWRAPPER_DictionaryOfOverlapsWithSharedNparrayStorage(d)
+    >>> da = PYWRAPPER_DictionaryOfOverlapsWithSharedNparrayStorage(d, data_default_factory = lambda: [[],[]])
     >>> buffer = da['A']
     >>> assert buffer == [[(b'chr1',1,1),(b'chr1',11,11)],[(b'chr1',111,111)]]
     >>> buffer = da['B']
     >>> assert buffer == [[(b'chr2',2,2)],[(b'chr2',22,22)]]
     >>> buffer = da['C']
     >>> assert buffer == [[],[(b'chr3',3,3)]]
+    >>> i = da.get_index()
+    >>> assert {'A': [(0, 2), (2, 3)], 'B': [(3, 4), (4, 5)], 'C': [(5, 5), (5, 6)]}
+    >>> buffer = da['D']
+    >>> assert buffer == [[],[]]
 
     """
     def __init__(self, root_dictionary_of_overlaps, data_default_factory = list):
@@ -515,18 +521,22 @@ cdef class DictionaryOfOverlapsWithSharedNparrayStorage:
 
         cdef char* chromname
                
-        # Fetch indexes
+        ## Fetch indexes
         # If no overlaps match the given key, return the default factory
         try:
             indexes = self.index[key]
         except:
-            indexes = list(self.data_default_factory())
+            # The only purpose of data_default_factory is to tell us how many 
+            # batches there were. If the key is not in the dictionary, it means
+            # it was never encountered in all the shuffles, so simply produce a
+            # tuple saying "don't get any lines" for each of them
+            indexes = [(0,0)] * len(self.data_default_factory())
 
         # Prepare result
         nb_results = len(indexes)
         result = [None]*nb_results
 
-        # Fetch the corresponding lines
+        ## Fetch the corresponding lines
         z = 0
         for elem in indexes:
 
