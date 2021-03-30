@@ -19,6 +19,7 @@ import bisect
 import copy
 import hashlib
 import ctypes
+import random
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1096,9 +1097,9 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     futures = list()
 
     # Divide the interesting combis into as many batches as threads, and remove empty batches
-    batches_of_combis_to_index_id = np.array_split(
-        range(len(interesting_combis)), nb_threads
-    )
+    combi_id = list(range(len(interesting_combis)))
+    random.shuffle(combi_id)    # Shuffle so that combis that are longer to process should be more uniformly spread
+    batches_of_combis_to_index_id = np.array_split(combi_id, nb_threads)
     batches_of_combis_to_index_id = [b for b in batches_of_combis_to_index_id if len(b)]
     # NOTE Using batches turned out to be critical to performance, otherwise too
     # much time is lost
@@ -1249,10 +1250,9 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     ## Divide the combis into as many threads
     # NOTE : we divide the IDs, not the combis themselves, to save RAM
-    multiproc_batches_of_combis = np.array_split(
-        range(len(interesting_combis)),
-        nb_threads
-    )
+    combi_id = list(range(len(interesting_combis)))
+    random.shuffle(combi_id)    # Shuffle so that combis that are longer to process should be more uniformly spread
+    multiproc_batches_of_combis = np.array_split(combi_id, nb_threads)
 
     combis_done = []
     processes = [None] * nb_threads
