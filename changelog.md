@@ -9,11 +9,13 @@
 
 *   Fixed merged statistics calculation in *ologram_merge_runs*.
 
-*   Fixed memory leak in OLOGRAM's multiprocessing. RAM usage should decrease by 25-70% in certain cases.
+*   Fixed memory leaks in OLOGRAM's multiprocessing. RAM usage should decrease by 25-70% in certain cases.
 
 *   Fixed a bug where OLOGRAM would needlessly store empty lists if certain combinations were not encountered.
 
 *   Fixed several bugs in OLOGRAM that could result in dead process hanging indefinitely, including a histgram drawing bug.
+
+*   OLOGRAM now merges consecutive intersections, to prevent a bug that resulted in double countings.
 
 ### API/CLI Changes
 
@@ -22,6 +24,8 @@
 *   The --chrom-file argument now accepts "mm8_ens", "mm9_ens", "mm10_ens", "hg19_ens", "hg38_ens", "rn3_ens" and "rn4_ens" which correspond to internal chromosome info files in ensembl format (i.e. no 'chr' prefix).
 
 *   OLOGRAM has two new arguments (--hide-undef and --pval-threshold) to hide undefine or high p-values.
+
+*   ologram_modl_treeify has a new argument (--min-inheritance) to add combinations only if they represent a given proportion of an existing parent.
 
 ### Code changes
 

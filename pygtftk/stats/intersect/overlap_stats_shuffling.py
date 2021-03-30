@@ -503,7 +503,7 @@ def compute_overlap_stats(bedA, bedsB,
 
     grand_stop = time.time()
 
-    message('--- Total time : ' + str(grand_stop - grand_start) + ' s for feature : ' + str(ft_type) + ' ---')
+    message('--- Total time : ' + str(grand_stop - grand_start) + ' s for feature(s) : ' + str(ft_type) + ' ---')
     message('Total time does not include BED reading, as it does not scale with batch size.', type='DEBUG')
 
     # This object may be one result or several. Will be treated later (see ologram.py).
