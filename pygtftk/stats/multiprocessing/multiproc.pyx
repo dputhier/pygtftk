@@ -36,6 +36,9 @@ from libc.stdlib cimport abort, malloc, free
 from cython.parallel import parallel, prange, threadid
 
 import time
+import gc
+import multiprocessing
+import ctypes
 
 # Import structures
 from pygtftk.stats.multiprocessing.multiproc_structs cimport *
@@ -324,3 +327,235 @@ prg.sum(queue, A.shape, None, # queue, global_size, local_size
 
 cl.enqueue_copy(queue, C_buf, C) # Transpose C_buf into C
 """
+
+
+
+
+
+
+
+
+
+
+# ------------------ Multiprocessing all_overlaps structure ------------------ #
+
+class PYWRAPPER_DictionaryOfOverlapsWithSharedNparrayStorage:
+    r"""
+    A special wrapper specifically designed to encore an all_overlaps dictionary 
+    of the conventional format (see below in the test) into a corresponding 
+    NumPy array attached to *shared memory* so it can be passed in multiprocessing.
+
+    NOTE: It is slow, but not THAT slow. In practice, better than pickling. Should take ~200ms to gather 10K combis.
+    The key later improvement will be to compute the intersection statistics directly in Cython instead of fetching
+    and passing the intersections.
+
+
+    Example:
+
+    >>> import pyximport; pyximport.install(reload_support=True) # doctest: +ELLIPSIS
+    (None, ...
+    >>> from pygtftk.stats.multiprocessing.multiproc import PYWRAPPER_DictionaryOfOverlapsWithSharedNparrayStorage
+    >>> d = {'A':[[('chr1',1,1),('chr1',11,11)],[('chr1',111,111)]],'B':[[('chr2',2,2)],[('chr2',22,22)]],'C':[[],[('chr3',3,3)]]}
+    >>> da = PYWRAPPER_DictionaryOfOverlapsWithSharedNparrayStorage(d)
+    >>> buffer = da['A']
+    >>> assert buffer == [[(b'chr1',1,1),(b'chr1',11,11)],[(b'chr1',111,111)]]
+    >>> buffer = da['B']
+    >>> assert buffer == [[(b'chr2',2,2)],[(b'chr2',22,22)]]
+    >>> buffer = da['C']
+    >>> assert buffer == [[],[(b'chr3',3,3)]]
+
+    """
+    def __init__(self, root_dictionary_of_overlaps, data_default_factory = list):
+
+        # Prepare a shared memory block of appropriate size
+        total_entries = 0
+        for value in root_dictionary_of_overlaps.values():
+            for batch in value:
+                for overlap in batch:
+                    total_entries += 1
+        
+        self.data_mem = multiprocessing.Array(ctypes.c_uint64, 3*total_entries,
+            lock = False) # Must disable the lock to permit shared access !
+        
+
+        ## Now create the main object
+        self._cython_container = DictionaryOfOverlapsWithSharedNparrayStorage(
+            root_dictionary_of_overlaps, data_default_factory, self.data_mem, total_entries
+            )
+
+        gc.collect() # I think this is already done before when creating _cython_container ?
+        
+
+
+    def __getitem__(self, key):
+        return self._cython_container.__getitem__(key)
+
+    def get_index(self):
+        return self._cython_container.get_index()
+    
+    def __del__(self):
+        del self.data_mem
+        gc.collect()
+    
+
+
+cdef class DictionaryOfOverlapsWithSharedNparrayStorage:
+    
+    # TODO: The fact that we use Cython means this can likely be considerably optimized, by
+    # not using Python structures. To be done later if time permits.
+    
+    cdef dict index
+    cdef np.npy_uint64[:,:] data
+    cdef dict chromtranslate
+    cdef np.npy_uint64[:] data_mem
+    cdef object data_default_factory
+
+
+    def __init__(self, root_dictionary_of_overlaps, data_default_factory,
+        external_mem, total_entries):
+        """
+        The root_dictionary_of_overlaps should always be of the form given in the 
+        example in the comments of the class
+
+        The index made will be of the form : {combi : [1->3],[4->6],[]} meaning
+        there were 3 batches that now live in the rows 1 to 3 and 4 to 6 of the data matrix.
+        """
+
+        self.index = dict()
+        self.data_default_factory = data_default_factory
+
+        # Allocate memory here based on the size of the dictionary, and create
+        # a reference to that memory
+        self.data_mem = external_mem
+        self.data = np.frombuffer(self.data_mem, dtype=ctypes.c_uint64).reshape(total_entries, 3)
+        
+        self.chromtranslate = dict()
+
+        # Now populate it
+        cdef int i, ck
+
+        cdef int start
+        cdef int end
+        cdef bytes chrom # NOTE: Strings need to be encoded, but mystring.encode() != mystring so be careful later
+             
+        i = 0
+        ck = 0      
+
+        for k,v in root_dictionary_of_overlaps.items():
+
+            # Now unpack the list of overlaps and record them
+            for batch in v:
+                
+                min_row_number = i
+
+                for overlap in batch:
+
+                    chrom = overlap[0].encode()
+                    start = overlap[1]
+                    end = overlap[2]
+
+                    # Translate chrom
+                    if chrom not in self.chromtranslate.keys():
+                        self.chromtranslate[chrom] = ck
+                        self.chromtranslate[ck] = chrom
+                        ck += 1
+                   
+                    self.data[i,0] = self.chromtranslate[chrom]
+                    self.data[i,1] = start
+                    self.data[i,2] = end
+
+                    i += 1
+
+                max_row_number = i
+                curr_batch_indexes = (min_row_number, max_row_number)
+
+                # Add to the index
+                if k not in self.index.keys():
+                    self.index[k] = [curr_batch_indexes]
+                else:
+                    self.index[k] += [curr_batch_indexes]
+
+            # Delete the original dictionary while unpacking to save memory
+            root_dictionary_of_overlaps[k] = None
+
+        gc.collect()
+
+
+    def __getitem__(self,key):
+        return self.get(key)
+
+    def get_index(self):
+        return self.index
+
+
+    cdef list get(self, key):
+        """
+        NOTE : this is not much faster than pure Python code due to the necessity
+        of returning Python objects.
+
+        It is mostly here to permit the use of a shared NumPy array.
+        """
+
+        cdef list result
+        cdef list indexes
+        cdef int nb_indexes
+
+        cdef int min_index
+        cdef int max_index
+        cdef int i,b,z,y
+
+        cdef (char*, np.npy_uint64, np.npy_uint64) curr
+        #NOTE using the above as opposed to `cdef tuple curr` brings no improvements yet.
+        # Presumably due to being converted to a Python tuple
+        cdef tuple elem
+
+        cdef np.npy_uint64 chro
+        cdef np.npy_uint64 start
+        cdef np.npy_uint64 end
+
+        cdef char* chromname
+               
+        # Fetch indexes
+        try :
+            indexes = self.index[key]
+        except:
+            indexes = self.data_default_factory()
+
+        # Prepare result
+        nb_results = len(indexes)
+        result = [None]*nb_results
+
+        # Fetch the corresponding lines
+        z = 0
+        for elem in indexes:
+
+            min_index = elem[0]
+            max_index = elem[1]
+  
+            nb_indexes = max_index - min_index
+ 
+            result[z] = [None] * nb_indexes
+            
+            y = 0
+            i = min_index
+            while i < max_index:
+                
+                chro = self.data[i,0]
+                start = self.data[i,1]
+                end = self.data[i,2]      
+
+                chromname = self.chromtranslate[chro]
+
+                curr = (chromname, start, end)
+                result[z][y] = curr
+
+                y += 1
+                i += 1
+
+            z +=1                    
+       
+        return result
+
+
+    # cdef return_directly_stats_for_all(key):
+    # TODO: perform the operations of get() but will then directly compute unpacked stats

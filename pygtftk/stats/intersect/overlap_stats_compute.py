@@ -1,9 +1,10 @@
 """
 Compute overlap statistics on shuffled sets.
-
 Called by overap_stats_shuffling.compute_overlap_stats(), hence the name.
 
-Those functions tend to take as input lists of shuffles and output statistics
+Those functions tend to take as input lists of shuffles and output statistics.
+
+Author : Quentin Ferré <quentin.q.ferre@gmail.com>
 """
 
 import functools
@@ -26,6 +27,8 @@ from scipy.stats import nbinom
 from pygtftk.stats import negbin_fit as nf
 from pygtftk.stats.intersect.modl import dict_learning as dl
 from pygtftk.stats.intersect.overlap import overlap_regions as oc
+from pygtftk.stats.multiprocessing import multiproc as mpc
+
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
@@ -75,13 +78,90 @@ def compute_stats_for_intersection(myintersect):
 
     return stats
 
+    # ------------------------ Notes for improvement ------------------------- #
+    # TODO: the true way to be fast would be to write this in Cython
+    # NOTE: careful, chromomosomes in the intersections are now encoded strings, 
+    # not raw strings. So be careful if stats are to be made on them.
+
 
 ################################################################################
 # ----------------------- Process sets of intersections ---------------------- #
 ################################################################################
 
+def merge_consecutive_intersections_in_all_overlaps_lists(aiqc):
+    r"""
+    Merges the consecutive intersections in a list-of-intersection-batches object.
+
+    This is an in-place operation: it will not return a new list, but change the original.
+
+    Example:
+
+    >>> all_intersections_queried_for_this_combi = [ [(b'chr1',1,100),(b'chr1',100,200),(b'chr1',200,300)], [(b'chr1',100,200),(b'chr1',200,300),(b'chr1',600,700)], [(b'chr1',100,200),(b'chr2',200,300)] ]
+    >>> expected = [ [(b'chr1',1,300)], [(b'chr1',100,300),(b'chr1',600,700)], [(b'chr1',100,200),(b'chr2',200,300)] ]
+    >>> merge_consecutive_intersections_in_all_overlaps_lists(all_intersections_queried_for_this_combi)
+    >>> assert all_intersections_queried_for_this_combi == expected
+
+    """
+  
+    # For each shuffle...
+    nb_shuffles = len(aiqc)
+
+    for s in range(nb_shuffles):
+        nb_intersections = len(aiqc[s])
+
+        # This will replace the old shuffles
+        new_list = []
+
+        was_written = True # Begin as if we had just written something
+
+        current_chrom = ""
+        current_start = -1
+        current_end = -1
+
+        pending_chrom = ""
+        pending_start = -1
+        pending_end = -1
+
+        for i in range(nb_intersections):
+
+            current_chrom = aiqc[s][i][0]
+            current_start = aiqc[s][i][1]
+            current_end = aiqc[s][i][2]
+
+            # If the end of the list has been reached...
+            try:
+                next_chrom = aiqc[s][i+1][0]
+                next_start = aiqc[s][i+1][1]
+                next_end = aiqc[s][i+1][2]
+            except:
+                next_chrom, next_start, next_end = None, None, None
+          
+
+            # Resume recording the current intersections if one was just written
+            if was_written:
+                pending_chrom = current_chrom
+                pending_start = current_start
+                pending_end = current_end
+                was_written = False
+
+            # If same chrom and my end == next beginning
+            if (current_chrom == next_chrom) and (current_end == next_start):
+                pending_end = next_end
+            # Otherwise just add the pending
+            else:
+                
+                new_list.append((pending_chrom, pending_start, pending_end))
+                was_written = True
+
+        # Record this new list. Overwrite the previous one to save memory.
+        aiqc[s] = new_list
+
+
+
+
 def stats_single(all_intersections_for_this_combi, true_intersection,
-                 ft_type='some feature', nofit=False, this_combi_only=None, draw_histogram = False):
+                 ft_type='some feature', nofit=False, this_combi_only=None, draw_histogram = False,
+                 was_directly_passed_stats = False):
     """
     Compute statistics such as total number of overlapping base pairs for a given feature.
 
@@ -92,10 +172,15 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     :param this_combi_only: a list of flags (e.g. [1,0,0,1]) corresponding to expected flags in the interescetions, one per file (see find_intersection() source and documentation). If not None, we will consider only intersections that have this flag for the number of true intersections and true overlapping basepairs
     :param draw_histogram: if True, draws a temp file histogram for each combi
     """
-
+ 
     message('Processing overlaps for ' + ft_type, type='DEBUG')
 
     start = time.time()
+
+    # Merge consecutive intersections to prevent double counts due to flags changing in the middle of an intersection (when a new set begins or ceases to overlap)
+    merge_consecutive_intersections_in_all_overlaps_lists(all_intersections_for_this_combi)
+
+    # Compute the statistics
     stats = [compute_stats_for_intersection(myintersect) for myintersect in all_intersections_for_this_combi]
 
     # Unpack the stats.
@@ -103,13 +188,29 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     summed_bp_overlaps = [sum(x) for x in bp_overlaps]  # Sum by shuffle
     intersect_nbs = [s[1] for s in stats]
 
+
+    # ------------------------------------------------------------------------ #
+    # NOTE To speed up later, the most efficient way would be to compute
+    # statistics directly in the Cython code.
+    # TODO: Use this if Cython returned directly the stats.
+    # if was_directly_passed_stats:
+    #     bp_overlaps, summed_bp_overlaps, intersect_nbs = all_intersections_for_this_combi
+    # ------------------------------------------------------------------------ #
+
+    ## True intersection statistics
+    true_intersect_nb = len(true_intersection)
+    true_bp_overlaps = sum([x[2] - x[1] for x in true_intersection])
+
+
     stop = time.time()
+
     message(ft_type + '- Statistics on overlaps computed in : ' + str(stop - start) + ' s.', type='DEBUG')
 
     # NOTE FOR IMPROVEMENT : it would be interesting to return the average size
     # of an overlap as well, per shuffle. Since our intersection algorithm returns
     # details about the intersections like `bedtools intersect` would, this could
     # be computed without much hassle.
+
 
 
     # ------ Fitting of a Negative Binomial distribution on the shuffles ----- #
@@ -122,8 +223,7 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
 
     else:
         # Renaming expectations and variances
-        expectation_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(
-            summed_bp_overlaps)
+        expectation_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = np.mean(summed_bp_overlaps), np.var(summed_bp_overlaps)
         expectation_fitted_intersect_nbs, variance_fitted_intersect_nbs = np.mean(intersect_nbs), np.var(intersect_nbs)
 
         # If we were passed an empty `all_intersections_for_this_combi` list, the expectations will be NaN.
@@ -159,8 +259,6 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     # -------------------------- True intersections -------------------------- #
     # Now, calculating the actual p-value for the number of intersections and the
     # total number of overlapping base pairs
-    true_intersect_nb = len(true_intersection)
-    true_bp_overlaps = sum([x[2] - x[1] for x in true_intersection])
 
     # Compute the p-values using the distribution fitted on the shuffles.
     # Do not do this for the Markov shuffling, as it is likely a multi-variable fit (see notes)
@@ -359,45 +457,6 @@ class HashableArray(np.ndarray):
         # Compare hashes
         return self.__hash__() == other.__hash__()
 
-class ComputingStatsCombiPartial(object):
-    """
-    This is a wrapper to compute statistics for one combination
-    """
-
-    # Remember the parameters
-    def __init__(self,
-                 all_intersections_for_this_combi, ft_type, true_intersection, this_combi_only, nofit,
-                 #result_queue,  # The result queue
-                 combi_human_readable, draw_histogram):
-        # Parameters for compute_stats_single
-        self.all_intersections_for_this_combi = all_intersections_for_this_combi
-        self.ft_type = ft_type
-        self.true_intersection = true_intersection
-        self.this_combi_only = this_combi_only
-        self.nofit = nofit
-
-        #self.result_queue = result_queue  # Result queue
-
-        self.combi_human_readable = combi_human_readable
-
-        self.draw_histogram = draw_histogram
-
-    # Callable
-    def __call__(self):
-
-        try:
-            my_result = stats_single(self.all_intersections_for_this_combi,
-                                    self.true_intersection, self.ft_type, 
-                                    self.nofit, self.this_combi_only, self.draw_histogram)
-        except Exception as e:
-            message("Exception during stats_single call"+e, type = "DEBUG")
-
-        # Put as tuple so we may extract it later and put it in dict, we know which combi was processed
-        #self.result_queue.put((self.combi_human_readable, my_result))
-        #del my_result
-        return (self.combi_human_readable, my_result)
-
-
 
 def which_combis_to_get_from(combi, all_possible_combis, exact):
     r"""
@@ -535,22 +594,37 @@ class DictionaryWithIndex():
     >>> all_combis = ['A','B','C']
     >>> mapping = {'A':[1,2]}
     >>> index = CombinationExactMapping(all_combis, mapping)
-    >>> d = {'A':[[1,1],[1],[1,1]],'B':[[2],[2,2],[2]],'C':[[3,3],[3],[3]]}
+    >>> d = { 'A':[[1,1],[1],[1,1]], 'B':[[2],[2,2],[2]], 'C':[[3,3],[3],[3]] }
     >>> di = DictionaryWithIndex(d, index)
     >>> assert di.get_all('A') == [[1,1,2,3,3], [1,2,2,3], [1,1,2,3]]
     >>> assert di.get_all('B') == [[2],[2,2],[2]]
 
     """
 
-    def __init__(self, data, index, data_default_factory=lambda: []):
+    def __init__(self, data, index, data_default_factory=lambda: [],
+        will_store_an_all_overlaps_object = False):
         """
         :param data: The dictionary to be wrapped
         :param index: a CombinationExactMapping object giving for each key in data the *other* keys to be also used when calling each key
         :param data_default_factory: A function producing the default value of data after wrapping. Defaults to `lambda:[]`
-        """
+        """      
+
         # Index and data should both be defaultdict to handle missing cases
-        self.data = defaultdict(data_default_factory, data)
         self.index = index
+
+        ## If we are storing all_overlaps, use a special dedicated structure
+        if will_store_an_all_overlaps_object:
+
+            self.using_cython_all_overlaps = True
+
+            # Store the data in a dedicated structure
+            # This is a Cython structure with an underlying NumPy array that can be
+            # accessed by several processes
+            self.data = mpc.PYWRAPPER_DictionaryOfOverlapsWithSharedNparrayStorage(
+                data, data_default_factory)
+        else:
+            self.using_cython_all_overlaps = False
+            self.data = defaultdict(data_default_factory, data)
 
         gc.collect()  # Force garbage collecting in case of large dictionaries
 
@@ -560,14 +634,17 @@ class DictionaryWithIndex():
 
         # Start with the value for the key itself
         # Important to use copy here to not modify the original
-        val_concat = copy.deepcopy(self.data[key])
+        # Rq : DictionaryOfOverlapsWithSharedNparrayStorage always returns a copy anyways, copy.deepcopy is not necessary here
+        if self.using_cython_all_overlaps: val_concat = self.data[key]
+        else: val_concat = copy.deepcopy(self.data[key])
 
         # For each other key to be added...
         for k in all_keys_to_get:
+            buffer = self.data[k]
 
             # Merge all elements of the supplementary key to the original key
             for i in range(len(self.data[key])):
-                val_concat[i] += self.data[k][i]
+                val_concat[i] += buffer[i]
 
         return val_concat
 
@@ -577,29 +654,13 @@ class DictionaryWithIndex():
         Simply concatenate the lists.
         """
         all_keys_to_get = self.index.get_all(key)
-        val_concat = copy.deepcopy(self.data[key])
+        if self.using_cython_all_overlaps: val_concat = self.data[key]
+        else: val_concat = copy.deepcopy(self.data[key])
         for k in all_keys_to_get: val_concat += self.data[k]
         return val_concat
 
     def __repr__(self):
         return "index="+self.index.__repr__()+";"+"data="+self.data.__repr__()
-
-
-
-def do_all_calls(my_calls, my_result_queue):
-    """
-    Helper function that simply runs all functools.partial calls in my_calls and 
-    puts the results in my_result_queue.
-    """
-
-    for call in my_calls:
-
-        try:
-            my_result = call()
-            my_result_queue.put(my_result)
-        except Exception as e:
-            message("Exception raised by do_all_calls(): "+str(e), type = "DEBUG")
-
 
 
 def get_index_if_present(mylist, x):
@@ -882,11 +943,13 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
 
 
-    # ------------- Splitting all the intersections for all shuffles
-    # Split the list of overlap regions per combis
+    # ----------- Splitting all the intersections for all shuffles ----------- #
+    
+    global overlaps_per_combi   # Reserve global
+
+    ## Split the list of overlap regions per combis
 
     import time  # Needed to re-import here for some reason ?
-
     time.sleep(0.1); gc.collect() # Garbage collect
 
     start = time.time()
@@ -961,7 +1024,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     # meaning (1,1,1,0) will be a match if we query (1,1,0,0) since it contains all its flags, but will not be a match for (1,0,0,1)
     # Iterate over all combinations, and if they match add contents of combi B to combi A
 
-    ## ---------------- Compute the index of combis to be fetched
+    ## -------------- Compute the index of combis to be fetched ------------- ##
     # Relevant for partial matches.
 
     time.sleep(0.1); gc.collect() # Garbage collect
@@ -998,7 +1061,6 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     message("We will index " + str(tot_number_interesting_combis)+"*"+str(len(all_combis)) + " combinations. This can be very long (minutes, hour) for longer combinations.")
 
 
-
     # NOTE We do not need to index all combis : the only ones that will ever be queried are the `interesting_combis`. Those need to 
     # be fully indexed against `all_combis.
     # However but not every combination in `all_combis` : we do not care what we would need to get if we were to query a combination C
@@ -1011,9 +1073,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     shared_array_all_combis_base = multiprocessing.Array(ctypes.c_uint, combi_nb*combi_size,
         lock = False) # Must disable the lock to permit shared access. Fine since it is read-only.
 
-
     nb_combis_done = Counter(0)
-
 
     # Temporary reference to populate it, this WILL NOT BE PASSED
     # Now populate it with the combinations
@@ -1039,8 +1099,6 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     batches_of_combis_to_index_id = [b for b in batches_of_combis_to_index_id if len(b)]
     # NOTE Using batches turned out to be critical to performance, otherwise too
     # much time is lost
-
-    print("Send "+str(len(batches_of_combis_to_index_id))+' jobs')
 
     ## Now submit the jobs
     while batches_of_combis_to_index_id :
@@ -1094,14 +1152,13 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
 
 
-
-
-    ## Finally, create a DictionayWithIndex object to hold all intersections
+    ## Finally, create a DictionaryWithIndex object to hold all intersections
     # If exact = False, when querying this dictionary using get_all(c), all 
     # combis that are an inexact match for c will also count.
     overlaps_per_combi = DictionaryWithIndex(overlaps_per_combi, mappings,
-                                             data_default_factory=overlaps_per_combi.default_factory)
-    # Overwrite original object to save memory !
+                                             data_default_factory=overlaps_per_combi.default_factory,
+                                             will_store_an_all_overlaps_object=True) # Use a special Numpy-array backed structure that permits multiprocessing
+    # NOTE: Ensure that we overwrite the original object to save memory !
 
     ## Do the same for the true intersections
     true_intersections_per_combi = DictionaryWithIndex(true_intersections_per_combi, mappings,
@@ -1115,29 +1172,26 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
 
 
-    # ------------- Enrichment for each combination
+    ## ------------------- Enrichment for each combination ------------------ ##
     # Now call stats_single on each.
 
-    # TODO: A more robust rewrite of multiprocessing using the new code written above
 
     ## Result queue
     mana = multiprocessing.Manager()
     result_queue = mana.Queue()
     all_results = dict()  # Final result dict, to be filled when emptying the queue
-    pool = ProcessPoolExecutor(nb_threads)  # Process pool
 
 
-    ## ---- Now prepare the jobs for submission
+    ## General idea : spawn a process per batch that will get the overlaps, process them, and move on to the next combi
 
-    def combis_to_partials(combis):
-        """
-        This is NOT a pure function and manipulates external objects. It's simply a helper to make the code more legible.
-        """
+    def compute_those_stats(combis, result_queue):
 
-        jobs = list()
+        # Quick way to do so only one combination at a time
+        for c in combis:
 
-        for combi in combis:
-
+            # ----- For each combination, get its full form, and process it
+            combi = interesting_combis[c]
+            
             # Convert the combi into a user-friendly string
             indices = [i for i in range(1, len(combi)) if combi[i] != 0]  # 0-based !
             combi_list = [all_feature_labels[i - 1] for i in indices]
@@ -1158,84 +1212,78 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                 np.array(combi, dtype = np.uint32)
             )
 
-            # Collect all shuffles for this combination, taking exactitude into account
+            ## Collect all shuffles for this combination, taking exactitude into account
+
+            # I have redone this using a new Cython object with a parallel-accessible array
+            # NOTE this is a bit slow, but should stillbe faster than pickling and will be distributed across the processes          
             list_overlaps_shuffled_for_this_combi = overlaps_per_combi.get_all(combi_key)
-
-            # Create a sort-of partial call
-            compute_stats_combi_partial = ComputingStatsCombiPartial(list_overlaps_shuffled_for_this_combi,
-                                                                    combi_human_readable,
-                                                                    true_intersections_per_combi.get_simple_concatenation(combi_key),
-                                                                    combi, nofit,
-                                                                    combi_human_readable,
-                                                                    draw_histogram)
-
-            # Add to the jobs to be executed, that will be returned
-            jobs += [compute_stats_combi_partial]
-        
-        return jobs
+            
 
 
-    # Split the interesting_combis into batches of combis, one per process. 
-    # (maybe 1000 combis maximum per batch that just to be safe, and to not send
-    # too many combis at once to the pool, with their accompanying all_overlaps)
-    # But always at least twice as many batches as the number of workers
-    # Indeed, multiprocessing is supposed to be more efficient when nb_chunks >> nb_workers
-    number_of_batches = max(np.around(len(interesting_combis)/1000), 2*nb_threads) 
+            # TODO: In the future, have Cython compute the statistics directly
+            # from the underlying NumPy array
+            # list_overlaps_shuffled_for_this_combi = overlaps_per_combi.return_directly_stats_for_all(combi_key)
+
+            true_intersections_for_this_combi = true_intersections_per_combi.get_simple_concatenation(combi_key)
+
+            # Compute the result
+            myresult = stats_single(list_overlaps_shuffled_for_this_combi,
+                true_intersections_for_this_combi,
+                combi_human_readable,
+                nofit, combi, draw_histogram)
+
+            # Recording the result
+            result_queue.put(
+                (combi_human_readable, myresult)
+            )
+
+            # Cleanup
+            del list_overlaps_shuffled_for_this_combi
+            del true_intersections_for_this_combi
+
+    
+
+
+    ## Divide the combis into as many threads
+    # NOTE : we divide the IDs, not the combis themselves, to save RAM
     multiproc_batches_of_combis = np.array_split(
-        range(len(interesting_combis)), number_of_batches
+        range(len(interesting_combis)),
+        nb_threads
     )
-    # Remove empty batches
-    multiproc_batches_of_combis = [b for b in multiproc_batches_of_combis if len(b)]
 
-
-
-    ## Submit to, and empty the queue whenever possible until all combinations have been processed   
     combis_done = []
-    jobs_in_progress = 0
-
-    futures = []
+    processes = [None] * nb_threads
 
     if nb_threads > 1:
+      
+        ## Submit the batches of computations
+        # For each thread...
+        for i in range(nb_threads):
 
+            # Get the corresponding combi IDs
+            try: b = multiproc_batches_of_combis.pop()
+            except: b = []
+     
+            # If the batch is not empty
+            if len(b):
+
+                processes[i] = multiprocessing.Process(
+                    target = functools.partial(
+                        compute_those_stats, combis = b, result_queue = result_queue
+                        )
+                )
+                processes[i].daemon = True # Prevent zombie processes
+                processes[i].start()
+                
+                message("Submitted a new batch of statistics computations.", type = 'DEBUG')
+
+                
+
+        ## Results collecting: empty the queue whenever possible until all combinations have been processed 
         while len(combis_done) < len(interesting_combis):
 
-            # One cannot directly monitor this through `pool` object, so instead I set an external `jobs_in_progress` variable
-            # If there are less pools being used than there are available, we can submit a new batch of jobs
-            if jobs_in_progress < nb_threads:
-
-                # Get the corresponding combis with the IDs
-                # Only if there are combinations left to be processed
-                try: b = multiproc_batches_of_combis.pop()
-                except: b = []
-               
-                current_batch = get_items_by_indices_in_list(b, interesting_combis)
-
-                # If the batch to be submitted is not empty...
-                # Now submit an entire batch of combis : prepare a list of partials and submit it to the queue
-                if current_batch != []:
-
-                    #message("Will send this batch of combinations: "+str(current_batch), type = "DEBUG")
-                    current_calls = combis_to_partials(current_batch)
-
-                    try:
-                        futures += [
-                            pool.submit(do_all_calls, my_calls = current_calls, my_result_queue = result_queue)
-                        ]
-
-                        message("Submitted a new batch of statistics computations.", type = 'DEBUG')
-                        jobs_in_progress += 1 # A job was submitted, increment jobs_in_progress
-                    except Exception as e:
-                        message("Exception when submitting a batch of stats computations: "+str(e), type = 'DEBUG')
-
-                        
-            # Remove a future and decrement the counter whenever completed
-            for future in cf.as_completed(futures):
-                futures.remove(future)
-                jobs_in_progress -= 1
-
-
-            # If the queue is empty, wait a bit and try again, to not saturate the CPU with requests
-            if (not result_queue.empty()):  
+            # If the queue is not empty, get all results inside
+            while not result_queue.empty():  
 
                 combi_human_readable, result = result_queue.get()
                 combis_done += [combi_human_readable]
@@ -1246,54 +1294,57 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                 message("Finished statistics for combi: " + str(combi_human_readable), type='DEBUG')
                 message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + "done.")
 
-                jobs_in_progress -= 1 # A job was completed, decrement jobs_in_progress
+            time.sleep(1) # Don't saturate the CPU by flooding with requests
 
+            #message("Combinations remaining: "+str([c for c in interesting_combis_human_readable if c not in combis_done]), type = 'DEBUG')
+            # Careful, `interesting_combis_human_readable` is not exposed in the current version of the code
 
-            else:
-                time.sleep(0.001)
-                #message("Combinations remaining: "+str([c for c in interesting_combis_human_readable if c not in combis_done]), type = 'DEBUG')
-                # Careful, `interesting_combis_human_readable` is not exposed in the current version of the code
 
 
 
     # OVERRIDE : if single-threaded, don't use multiprocessing to save RAM
+    # NOTE: for now, keeping it for comparison
     else:
 
         # Makebatches of 2-3 combis instead       
-        multiproc_batches_of_combis = np.array_split(
-            np.array(interesting_combis), int(0.3*len(interesting_combis))+1
-        )
+        multiproc_batches_of_combis = np.array_split( range(len(interesting_combis)), int(0.3*len(interesting_combis))+1 )
 
         while len(combis_done) < len(interesting_combis):
+            try: b = multiproc_batches_of_combis.pop()
+            except: b = []
+            if len(b):
+ 
+                compute_those_stats(combis = b, result_queue = result_queue)
 
-            # Only if there are combinations left to be processed
-            try: current_batch = multiproc_batches_of_combis.pop()
-            except: current_batch = []
 
-            if current_batch != []:
-                do_all_calls(my_calls = current_calls, my_result_queue = result_queue) 
-
-            # If the queue is empty, wait a bit and try again, to not saturate the CPU with requests
             while (not result_queue.empty()):  
-
                 combi_human_readable, result = result_queue.get()
                 combis_done += [combi_human_readable]
-
-                # Add the results to the final result dict
                 all_results[combi_human_readable] = result
-
                 message("Finished statistics for combi: " + str(combi_human_readable), type='DEBUG')
                 message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + "done.")
 
-    # Cleanup
-    del result_queue
 
-    pool.shutdown()
-    del pool
+
+
+    ## Cleanup
+    message("Garbage collection and cleanup...", type = 'DEBUG')
+    time.sleep(1)
+    # NOTE: less necessary, since this is the last chunk of code executed, but I do it out of precaution nevertheless.
+
+    for p in range(nb_threads): 
+        if processes[p] is not None:   # 'None' are potential excedent processes, if nb_threads was too large
+            processes[p].join()
+            processes[p].close()
+    processes.clear()   
+
+    del result_queue
     del mana
-    
-    message("Garbage collection...", type = 'DEBUG')
-    time.sleep(2)
+
+    del overlaps_per_combi
+
     gc.collect()
 
+
+    # Et voilà !
     return all_results
