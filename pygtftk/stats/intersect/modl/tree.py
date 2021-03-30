@@ -228,7 +228,7 @@ class Library:
 
     # ----- Assigning
 
-    def assign_nodes(self):
+    def assign_nodes(self, min_inheritance = 0):
 
         # Sort nodes in this list by total number of nonzero flags, for assignation purposes.
         def nb_nonzero_flags_node(node):
@@ -282,9 +282,13 @@ class Library:
 
             # Add current node as child to new_parent
             for new_parent in new_parents_list:
-                message('Adding ' + str(unode) + ' to ' + str(new_parent) + ' as distance of ' + str(
-                    all_distances_less_flags[new_parent]), type='DEBUG')
-                new_parent.add_child(unode)
+
+                # Only add the child if it accounts for at a proportion of at least min_inheritance of its parent
+                if unode.S/(new_parent.S+1E-100) >= min_inheritance:
+
+                    message('Adding ' + str(unode) + ' to ' + str(new_parent) + ' as distance of ' + str(
+                        all_distances_less_flags[new_parent]), type='DEBUG')
+                    new_parent.add_child(unode)
 
             # Now add the node to the list of assigned nodes
             self.assigned_nodes.append(unode)
