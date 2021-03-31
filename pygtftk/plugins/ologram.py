@@ -1580,7 +1580,7 @@ else:
 
         #ologram: custom combinations in multiple overlaps, including an impossible combi (the last ons is impossible, since the newest file is on chr 4 only)
         @test "ologram_19" {
-            result=`rm -Rf ologram_output; printf "chr4\t1\t1" > impossible.bed; printf "1 0 1 0\n1 1 1 0\n1 1 0 0\n1 0 0 0\n 1 0 0 1\n" > custom_combis.txt; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed impossible.bed --more-bed-multiple-overlap -mn 10 -ms 10 -moc custom_combis.txt`
+            result=`rm -Rf ologram_output; printf "chr4\t1\t1" > impossible.bed; printf "1 0 1 0\n1 1 1 0\n1 1 0 0\n1 0 0 0\n 1 0 0 1\n" > custom_combis.txt; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed impossible.bed --more-bed-multiple-overlap -mn 10 -ms 10 -moc custom_combis.txt; rm custom_combis.txt;`
           [ "$result" = "" ]
         }
 
