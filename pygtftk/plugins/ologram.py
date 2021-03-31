@@ -1,34 +1,34 @@
 #!/usr/bin/env python
 """
- OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram
- annotates peaks (in bed format) using (i) genomic features extracted
- from a GTF file (e.g promoter, tts, gene body, UTR...) (ii) genomic regions tagged with
- particular keys/values in a GTF file (e.g. gene_biotype "protein_coding",
- gene_biotype "LncRNA"...) or (iii) from a BED file (e.g. user-defined regions).
-
- Each pair {peak file, feature} is randomly shuffled independently across the genome (inter-region
- lengths are considered). Then the probability of intersection under the null hypothesis (the peaks and this feature are independent) is deduced thanks to
- this Monte Carlo approach. The program will return statistics for both the number of intersections and the
- total lengths (in basepairs) of all intersections. For more informations, please see the full documentation.
-
- The null hypothesis is:
-
-- H0: The regions of the query (--peak-file) are located independently of the
-     reference (--inputfile or --more-bed) with respect to overlap.
-
-- H1: The regions of the query (--peak-file) tend to overlap the
-     reference (--inputfile or --more-bed).
-
- OLOGRAM can also calculate enrichment for n-wise combinations (e.g. [Query + A + B]  or [Query + B + C]) on sets of
- regions defined by the user (--more-bed argument). 
+ OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. 
  
- Here is a quick example of command line to compute the overlaps of all sets given in -\-more-bed with the set given in -p, and with each other:
+ Ologram annotates peaks (in bed format) using (i) genomic features extracted
+ from a GTF file (e.g. promoter, gene body, UTR...), (ii) genomic regions tagged
+ with particular keys/values in a GTF (e.g. gene_biotype "protein_coding",
+ gene_biotype "LncRNA", ...) or (iii) from a BED file (user-defined regions).
 
-`gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed -\-more-bed-multiple-overlap`
+ Each pair {peak file, feature} is randomly shuffled independently across the 
+ chromosomes (inter-region lengths are considered). Then the probability of 
+ intersection under the null hypothesis is deduced with our Monte Carlo approach.
+ 
+ The null hypothesis is that the regions of the query (--peak-file) are located 
+ independently of the reference (--inputfile or --more-bed) and do not overlap 
+ more than by chance. We return statistics for both the number of intersections
+ and the total lengths (in basepairs) of all intersections. 
+ 
+ For more information, please see the full documentation.
+
+ OLOGRAM can also calculate enrichment for n-wise combinations (e.g. [Query + 
+ A + B]  or [Query + B + C]) on sets of regions defined by the user (--more-bed
+ argument). 
+ 
+ Here is a quick example of command line to compute the overlaps of all sets 
+ given in -\-more-bed with the set given in -p, and with each other:
+
+ `gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed -\-more-bed-multiple-overlap`
 
 
  Author : Quentin FERRE <quentin.q.ferre@gmail.com>
-
  Co-authors : Guillaume CHARBONNIER <guillaume.charbonnier@outlook.com> and
  Denis PUTHIER <denis.puthier@univ-amu.fr>.
  """
@@ -80,7 +80,7 @@ __updated__ = 'Sat Mar  6 00:16:46 CET 2021'
 __notes__ = chr_size_note() + """  
 
  -- OLOGRAM is multithreaded, notably processing one batch of shuffles per core.
- However, this can be RAM-intensive. If needed, use more minibatches and/or merge them
+ This can be RAM-intensive. If needed, use more minibatches and/or merge them
  with the ologram_merge_runs command.
  
  -- The program produces a pdf file and a tsv file ('_stats_') containing intersection statistics
@@ -91,7 +91,7 @@ __notes__ = chr_size_note() + """
  histograms with only combinations of a given order to focus the comparisons on comparable elements.
 
  -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
- the excluded regions, but the same ones will be excluded from the peak_file and the GTF/more-bed files.
+ the excluded regions. The same ones will be excluded from the peak_file and the GTF/more-bed files.
 
  -- Use -\-no-gtf if you want to perform enrichment analysis on custom, focused annotations only (-\-more-bed).
 
@@ -103,9 +103,9 @@ __notes__ = chr_size_note() + """
 
  -- By default, multiple overlap intersections are counted as "inexact", meaning an overlap of [A + B + C] will be counted when looking for  [A + B + ...].
  
- -- P-values of -1 or NaN mean the Neg. Binom. fitting was poor, but that does not mean they must always be discarded: in practice they 
- are mostly present in high order combinations, that were so rare that they are not encountered in the shuffles even once.
- In this case they would represent a very large enrichment.
+ -- P-values of -1 or NaN mean the Neg. Binom. fitting was poor, but that does not mean they must always be discarded: in practice,
+ this mostly happens for high order combinations which are so unlikely that they were not encountered in the shuffles even once.
+ In this case this would represent a very large enrichment.
 
  -- Furthermore, you may use our MODL algorithm to find biological complexes of interest, by mining for frequent itemsets
  on the intersections on the true data. This is done with the -\-multiple-overlap-max-number-of-combinations argument.
@@ -1573,8 +1573,21 @@ else:
 
         #ologram: shuffled overlapping bp
         @test "ologram_18" {
-         result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
+            result=`cat ologram_output/00_ologram_stats.tsv | grep gene | cut -f 8`
           [ "$result" = "65.61" ]
+        }
+
+
+        #ologram: custom combinations in multiple overlaps, including an impossible combi (the last ons is impossible, since the newest file is on chr 4 only)
+        @test "ologram_19" {
+            result=`rm -Rf ologram_output; printf "chr4\t1\t1" > impossible.bed; printf "1 0 1 0\n1 1 1 0\n1 1 0 0\n1 0 0 0\n 1 0 0 1\n" > custom_combis.txt; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed impossible.bed --more-bed-multiple-overlap -mn 10 -ms 10 -moc custom_combis.txt`
+          [ "$result" = "" ]
+        }
+
+        # ologram : impossible true S
+        @test "ologram_20" {
+            result=`cat ologram_output/00_ologram_stats.tsv | grep "impossible" | cut -f 12`
+          [ "$result" = "0" ]
         }
 
         '''
