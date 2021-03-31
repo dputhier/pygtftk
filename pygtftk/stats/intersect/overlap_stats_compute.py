@@ -770,7 +770,7 @@ class SparseListOfLists:
 
 
     def __len__(self):
-        return max(self.current_index - 1, 0)
+        return max(self.current_index, 0)
 
     def __iter__(self):
         self.reading_index = 0
@@ -810,19 +810,24 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     ## ------  Parameters for the finding of interesting combis
 
-    # If the combi size (`multiple_overlap_target_combi_size`) and the max number of combinations (`multiple_overlap_max_number_of_combinations`) were not set manually, they default to -1 meaning no restrictions.
+    # If the combi size (`multiple_overlap_target_combi_size`) and the max 
+    # number of combinations (`multiple_overlap_max_number_of_combinations`) 
+    # were not set manually, they default to -1 meaning no restrictions.
 
-    # Exactitude : should an intersection of A+B+C count towards looking for A+B ?
+    # Exactitude: should an intersection of A+B+C count towards looking for A+B ?
     # By default, yes, meaning we look for "inexact" combis.
     # We will look instead for exclusive combis if the user manually specifies 
-    # multiple_overlap_target_combi_size equal to the number of sets
+    # multiple_overlap_target_combi_size equal to the number of sets.
 
-    # Rk number of sets is len(bedsB) +1, let's not forget query !
+    # NOTE: number of sets is len(bedsB) +1, let's not forget query !
 
     if multiple_overlap_target_combi_size == (len(bedsB) + 1):
         exact = True
     else:
         exact = False
+
+
+
 
     # ------------- Override combinations
     # If custom_combis are set, skip all the combination mining above.
@@ -832,7 +837,10 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
         # Read NumPy matrix and cast to regular Python list
         interesting_combis_matrix = np.loadtxt(multiple_overlap_custom_combis.name, dtype=int)
+        interesting_combis_matrix = np.atleast_2d(interesting_combis_matrix)    # Ensure it is always 2D, even if only one element
+
         interesting_combis = [tuple(combi) for combi in interesting_combis_matrix]
+
 
 
 
@@ -1016,6 +1024,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         overlaps_per_combi.default_factory = eval(new_factory_expression)
 
         message("Splitting done for "+str(starting_index)+'/'+str(total_to_split), type = "DEBUG")
+
 
     # Cleanup
     del intersections_for_this_shuffle
@@ -1216,13 +1225,15 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                 np.array(combi, dtype = np.uint32)
             )
 
+
             ## Collect all shuffles for this combination, taking exactitude into account
 
             # I have redone this using a new Cython object with a parallel-accessible array
-            # NOTE this is a bit slow, but should stillbe faster than pickling and will be distributed across the processes          
-            list_overlaps_shuffled_for_this_combi = overlaps_per_combi.get_all(combi_key)
-            
-
+            # NOTE this is a bit slow, but should stillbe faster than pickling and will be distributed across the processes             
+            s = time.time()      
+            list_overlaps_shuffled_for_this_combi = overlaps_per_combi.get_all(combi_key)     
+            e = time.time()
+            message("Collected shuffled intersections for " + combi_human_readable + " in " + str(e-s) + "seconds.", type = "DEBUG")
 
             # TODO: In the future, have Cython compute the statistics directly
             # from the underlying NumPy array

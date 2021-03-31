@@ -187,6 +187,7 @@ cdef list apply_func_multiproc_cython(list python_list_of_numpy_arrays, list pyt
 
 # -------------------------------- Testing ----------------------------------- #
 
+"""
 # Example of function that operates on a 2D array. It doubles the values.
 # Remember to declare it as nogil and specify its return type!
 # Also be careful to not use a single Python command in it.
@@ -229,7 +230,7 @@ cdef FUNC_2DARRAY_RESULT example_func(long long* arr, long long* shape, long lon
     return result
 
 
-
+# Here is another example
 cdef printcustom(FUNC_2DARRAY_RESULT result):
     cdef long long[2] shape = result.result_shape
     cdef long long * arr = result.result_array
@@ -240,13 +241,6 @@ cdef printcustom(FUNC_2DARRAY_RESULT result):
 
 
 
-
-
-
-
-
-
-"""
 # TODO Make this a proper unitary test
 data = list()
 for d in range(10):
@@ -520,6 +514,7 @@ cdef class DictionaryOfOverlapsWithSharedNparrayStorage:
         cdef np.npy_uint64 end
 
         cdef char* chromname
+
                
         ## Fetch indexes
         # If no overlaps match the given key, return the default factory
@@ -531,6 +526,7 @@ cdef class DictionaryOfOverlapsWithSharedNparrayStorage:
             # it was never encountered in all the shuffles, so simply produce a
             # tuple saying "don't get any lines" for each of them
             indexes = [(0,0)] * len(self.data_default_factory())
+
 
         # Prepare result
         nb_results = len(indexes)
