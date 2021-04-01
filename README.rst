@@ -78,7 +78,7 @@ The package comes with a set of **UNIX commands** that can be accessed through t
 
 The newly released command, **OLOGRAM (OverLap Of Genomic Regions Analysis using Monte Carlo)** may be used to compute overlap statistics between user supplied regions (BED format) and annotation derived from :
 
-- Gene centric features enclosed in a GTF (e.g. exons, promoters, terminators…).
+- Gene centric features enclosed in a GTF (e.g. exons, promoters, terminators...).
 - Regions in a GTFs flagged with built-in keys/values (e.g. check the 'gene_biotype' as provided by ensembl GTFs of the regions in which peaks fall).
 - Same with custom keys/values through the gtftk CLI (e.g. adding a numeric value to a gene and discretizing this value to create gene classes).
 - User supplied BED files.
