@@ -76,7 +76,7 @@ from pygtftk.utils import sort_2_lists
 from pygtftk.utils import chr_size_note
 import gc
 
-__updated__ = 'Sat Mar  6 00:16:46 CET 2021'
+__updated__ = '2021-03-31'
 __notes__ = chr_size_note() + """  
 
  -- OLOGRAM is multithreaded, notably processing one batch of shuffles per core.
@@ -1584,7 +1584,7 @@ else:
           [ "$result" = "" ]
         }
 
-        # ologram : impossible true S
+        #ologram: impossible true S
         @test "ologram_20" {
             result=`cat ologram_output/00_ologram_stats.tsv | grep "impossible" | cut -f 12`
           [ "$result" = "0" ]

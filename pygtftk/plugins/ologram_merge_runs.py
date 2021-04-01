@@ -18,12 +18,10 @@ from pygtftk.utils import message
 
 from pygtftk.stats import negbin_fit as nf
 
-__updated__ = ''' 2021-02-18 '''
+__updated__ = ''' 2021-04-01 '''
 
 __notes__ = """
--- Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it. This treats each run as a "superbatch".
-
--- Statistics can be recalculated simply by averaging as runs are independant from one another.
+-- Statistics are recalculated by conflating the distributions with a weighting based on the number of runs (see source for the precise formula).
 """
 
 
@@ -126,7 +124,10 @@ def ologram_merge_runs(inputfiles=None,
     runs_already_merged = 0
 
     for run in runs_to_be_merged:
-        message("Treating a run...")
+        message("Treating a run... so far " + str(runs_already_merged) + " are complete.")
+
+        total_combis = run.shape[0]
+        i = 0
 
         for combi, row in run.iterrows():
             
@@ -160,17 +161,22 @@ def ologram_merge_runs(inputfiles=None,
             merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled'] = new_S_var       
 
 
-            # Used for the subsequent weighting
-            runs_already_merged = runs_already_merged + 1
-
             # True intersections stay the same every time
             merged_run.loc[combi, 'nb_intersections_true'] = row['nb_intersections_true']
             merged_run.loc[combi, 'summed_bp_overlaps_true'] = row['summed_bp_overlaps_true']
 
+            i += 1
+            message("Merged combi "+str(i)+" / "+str(total_combis)+" for this run.", type = "DEBUG")
+
+        # Used for the subsequent weighting
+        runs_already_merged = runs_already_merged + 1
+
     message("All runs read. Proceeding to merge statistics.")
 
 
+
     ## At the end, recalculate fold change and p-value    
+    i = 0
     for combi, row in merged_run.iterrows():      
 
         # Do not divide by zero ! Use the true value as fold change if needed
@@ -206,6 +212,8 @@ def ologram_merge_runs(inputfiles=None,
         merged_run.loc[combi, 'nb_intersections_pvalue'] = '{0:.4g}'.format(pval_intersect_nb)
         merged_run.loc[combi, 'summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(pval_bp_overlaps)
 
+        i+=1
+        message("Statistics done for combi "+str(i)+" / "+str(total_combis)+" for this run.", type = "DEBUG")
 
 
     ## Finally write the merged df to a file
@@ -234,16 +242,24 @@ else:
 
     # 'Bats' tests
     test = '''
-    #ologram: get example files
+    #ologram_merge_runs: get example files
     @test "ologram_merge_runs_0" {
          result=`gtftk get_example -d ologram_1 -f '*'`
       [ "$result" = "" ]
     }
 
-    #ologram: merge them
+    #ologram_merge_runs: merge them
+    # Note that this is an example of what not to do since those files were done for different queries.
+    # I treat them as the same query, since this is just to test the principle.
     @test "ologram_merge_runs_1" {
          result=`gtftk ologram_merge_runs -i H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merged_ologram_runs.tsv`
       [ "$result" = "" ]
+    }
+
+    #ologram_merge_runs: test value
+    @test "ologram_merge_runs_2" {
+        result=`cat merged_ologram_runs.tsv | grep "transcript" | cut -f 2`
+        [ "$result" = "87.36" ]
     }
     '''
 
