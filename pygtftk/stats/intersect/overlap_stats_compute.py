@@ -285,7 +285,7 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
 
 
     stop = time.time()
-    message(ft_type + '- Negative Binomial distributions fitted in : ' + str(stop - start) + ' s.',
+    message(ft_type + '- Negative Binomial distributions fitted in: ' + str(stop - start) + ' s.',
             type='DEBUG')
 
 
@@ -1306,7 +1306,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                 all_results[combi_human_readable] = result
 
                 message("Finished statistics for combi: " + str(combi_human_readable), type='DEBUG')
-                message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + "done.")
+                message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + " done.")
 
             time.sleep(1) # Don't saturate the CPU by flooding with requests
 
@@ -1336,7 +1336,7 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                 combis_done += [combi_human_readable]
                 all_results[combi_human_readable] = result
                 message("Finished statistics for combi: " + str(combi_human_readable), type='DEBUG')
-                message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + "done.")
+                message("Combination " + str(len(combis_done)) + "/" + str(len(interesting_combis)) + " done.")
 
 
 
