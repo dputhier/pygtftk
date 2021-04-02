@@ -72,7 +72,10 @@ def learn_dictionary_and_encode(data, n_atoms = 20, alpha = 0.5,
 
     dico.fit(data)  # Fit the data
 
-    V = dico.components_ # Get components
+    # Get components (the dictionary).
+    # NOTE: Use a try-except for future proofing, as sklearn (v 0.24) seems to deprecate 'components_' across the board and replace it with 'dictionary'
+    try: V = dico.components_
+    except: V = dico.dictionary  
     V_df = pd.DataFrame(V)
 
 
@@ -87,7 +90,8 @@ def learn_dictionary_and_encode(data, n_atoms = 20, alpha = 0.5,
             fit_algorithm = 'lars',  transform_algorithm = 'lasso_lars') 
 
         dico.fit(data)
-        V = dico.components_ 
+        try: V = dico.components_
+        except: V = dico.dictionary  
         V_df = pd.DataFrame(V)
                 
         # Only abort if it still does not work
