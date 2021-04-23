@@ -45,6 +45,8 @@
 
 *   OLOGRAM now has an argument to determine if certain sets within --more-beds should be kept intact during the shuffling.
 
+*   The get_attr_value_list command now accepts -k '*'.
+
 
 ## v1.2.7
 
