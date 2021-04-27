@@ -153,7 +153,7 @@ def negbin_pval(k, mean, var, precision=320, ft_type="Unknown"):
     NOTE : To prevent division by zero or negative r, if the mean is higher than
     or equal to the variance, set the variance to mean + epsilon and send a warning
 
-    :param k: the critical value.
+    :param k: the critical value for which the pvalue is computed.
     :param mean: The mean for the negative binomial model.
     :param var: The variance for the negative binomial model.
     :param precision: Floating point precision of mpmath. Should be at least 1000
