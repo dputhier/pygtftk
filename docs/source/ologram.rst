@@ -265,17 +265,21 @@ Here is an example:
   from pygtftk import utils
   utils.VERBOSITY = 2 # Ensure DEBUG messages are shown
 
+
+  # Simple example of custom error function
+  def my_error_function (X_true, X_rebuilt, encoded, dictionary):  return np.sum(X_rebuilt - X_true)
+
   combi_miner = Modl(flags_matrix, 
     multiple_overlap_target_combi_size = -1,            # Limit the size of the combinations
     multiple_overlap_max_number_of_combinations = 3,    # How many words to find ?
     nb_threads = 1,
-    step_1_factor_allowance = 2,                        # How many words to ask for in each step 1 rebuilding, as a multiplier of multiple_overlap_max_number_of_combinations
-    error_function = None,                              # Custom error function in step 2
-    smother = True,                                     # Should the smothering (quadratic reduction of abundance) be applied ?
-    normalize_words = True,                             # Normalize words by their summed squared in step 2 ?
-    step_2_alpha = None)                                # Override the alpha (sparsity control) used in step 2
-    discretization_threshold = 0                        # Discretization threshold D : in each atom, elements below D*maximum_for_this_atom will be discarded
-    step_1_alphas = None                                # Override the list of alphas used in step 1 (should be a list)
+    step_1_factor_allowance = 2,                        # (Defaults to 2) How many words to ask for in each step 1 rebuilding, as a multiplier of multiple_overlap_max_number_of_combinations.
+    error_function = None,                              # (OPTIONAL) Custom error function in step 2
+    smother = True,                                     # (Defaults to True) Should the smothering (quadratic reduction of abundance) be applied ?
+    normalize_words = True,                             # (Defaults to True) Normalize words by their summed squared in step 2 ?
+    step_2_alpha = None,                                # (OPTIONAL) Override the alpha (sparsity control) used in step 2.
+    discretization_threshold = 0                        # (Defaults to 1) Discretization threshold D : in each atom, elements below D*maximum_for_this_atom will be discarded.
+    step_1_alphas = None)                               # (OPTIONAL) Override the list of alphas used in step 1 (should be a list)
   interesting_combis = combi_miner.find_interesting_combinations()   
 
 
