@@ -167,7 +167,7 @@ class Modl:
     :param smother: Should the smothering which reduces each row's abudane to its square root to emphasize rarer combinations be applied ? Default is True
     :param normalize_words: Normalize the words by their summed squares in step 2. Default True.
     :param step_2_alpha: Override the alpha used in step 2.
-    :param discretization_threshold: discretization_threshold in step 1. See precise formula in the code. Optional.
+    :param discretization_threshold: discretization_threshold in step 1. In each atom, elements below D*maximum_for_this_atom will be discarded. Optional.
     :param step_1_alphas: A list to manually override the alphas to be used during step 1. Optional.
 
     Passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, encoded, dictionary). 
