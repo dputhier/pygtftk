@@ -89,26 +89,16 @@ def compute_stats_for_intersection(myintersect):
 # ----------------------- Process sets of intersections ---------------------- #
 ################################################################################
 
-def merge_consecutive_intersections_in_all_overlaps_lists(aiqc):
-    r"""
-    Merges the consecutive intersections in a list-of-intersection-batches object.
+def merge_consecutive_intersections_in_intersections_list(inter_list):
+    """
+    Merges the consecutive intersections in a list-of-intersections object.
 
-    This is an in-place operation: it will not return a new list, but change the original.
+    Note that this will discard the flags (4th element, np array) and any other element in the list of lists.
 
-    Example:
-
-    >>> all_intersections_queried_for_this_combi = [ [(b'chr1',1,100),(b'chr1',100,200),(b'chr1',200,300)], [(b'chr1',100,200),(b'chr1',200,300),(b'chr1',600,700)], [(b'chr1',100,200),(b'chr2',200,300)] ]
-    >>> expected = [ [(b'chr1',1,300)], [(b'chr1',100,300),(b'chr1',600,700)], [(b'chr1',100,200),(b'chr2',200,300)] ]
-    >>> merge_consecutive_intersections_in_all_overlaps_lists(all_intersections_queried_for_this_combi)
-    >>> assert all_intersections_queried_for_this_combi == expected
-
+    This is NOT an in-place operation, and returns the new list.
     """
   
-    # For each shuffle...
-    nb_shuffles = len(aiqc)
-
-    for s in range(nb_shuffles):
-        nb_intersections = len(aiqc[s])
+    nb_intersections = len(inter_list)
 
         # This will replace the old shuffles
         new_list = []
@@ -125,15 +115,15 @@ def merge_consecutive_intersections_in_all_overlaps_lists(aiqc):
 
         for i in range(nb_intersections):
 
-            current_chrom = aiqc[s][i][0]
-            current_start = aiqc[s][i][1]
-            current_end = aiqc[s][i][2]
+        current_chrom = inter_list[i][0]
+        current_start = inter_list[i][1]
+        current_end = inter_list[i][2]
 
             # If the end of the list has been reached...
             try:
-                next_chrom = aiqc[s][i+1][0]
-                next_start = aiqc[s][i+1][1]
-                next_end = aiqc[s][i+1][2]
+            next_chrom = inter_list[i+1][0]
+            next_start = inter_list[i+1][1]
+            next_end = inter_list[i+1][2]
             except:
                 next_chrom, next_start, next_end = None, None, None
           
@@ -150,13 +140,34 @@ def merge_consecutive_intersections_in_all_overlaps_lists(aiqc):
                 pending_end = next_end
             # Otherwise just add the pending
             else:
-                
                 new_list.append((pending_chrom, pending_start, pending_end))
                 was_written = True
 
-        # Record this new list. Overwrite the previous one to save memory.
-        aiqc[s] = new_list
+    return new_list
 
+
+def merge_consecutive_intersections_in_all_overlaps_lists(aiqc):
+    r"""
+    Merges the consecutive intersections in a list-of-intersection-batches object.
+
+    This is an in-place operation: it will not return a new list, but change the original !
+
+    Example:
+
+    >>> all_intersections_queried_for_this_combi = [ [(b'chr1',1,100),(b'chr1',100,200),(b'chr1',200,300)], [(b'chr1',100,200),(b'chr1',200,300),(b'chr1',600,700)], [(b'chr1',100,200),(b'chr2',200,300)] ]
+    >>> expected = [ [(b'chr1',1,300)], [(b'chr1',100,300),(b'chr1',600,700)], [(b'chr1',100,200),(b'chr2',200,300)] ]
+    >>> merge_consecutive_intersections_in_all_overlaps_lists(all_intersections_queried_for_this_combi)
+    >>> assert all_intersections_queried_for_this_combi == expected
+
+    """
+  
+    # For each shuffle...
+    nb_shuffles = len(aiqc)
+
+    for s in range(nb_shuffles):
+
+        # Record this new list. Overwrite the previous one to save memory.
+        aiqc[s] = merge_consecutive_intersections_in_intersections_list(aiqc[s])
 
 
 
@@ -170,7 +181,7 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     :param true_intersection: the result of overlap_stats_compute.compute_true_intersection(bedA, bedsB) where bedA is the query and bedB is the list of the bed files between whose shuffles the aforementioned intersections have been computed. Used here to calculate the true intersections between them and calculate a Neg Binom p-value.
     :param ft_type: for debug messages, which feature/combi are we currently processing ?
     :param nofit: if True, does not do Negative Binomial fitting
-    :param this_combi_only: a list of flags (e.g. [1,0,0,1]) corresponding to expected flags in the interescetions, one per file (see find_intersection() source and documentation). If not None, we will consider only intersections that have this flag for the number of true intersections and true overlapping basepairs
+    :param this_combi_only: a list of flags (e.g. [1,0,0,1]) corresponding to expected flags in the intersections, one per file (see find_intersection() source and documentation). If not None, we will consider only intersections that have this flag for the number of true intersections and true overlapping basepairs
     :param draw_histogram: if True, draws a temp file histogram for each combi
     """
  
