@@ -97,51 +97,51 @@ def merge_consecutive_intersections_in_intersections_list(inter_list):
 
     This is NOT an in-place operation, and returns the new list.
     """
-  
+
     nb_intersections = len(inter_list)
 
-        # This will replace the old shuffles
-        new_list = []
+    # This will replace the old shuffles
+    new_list = []
 
-        was_written = True # Begin as if we had just written something
+    was_written = True # Begin as if we had just written something
 
-        current_chrom = ""
-        current_start = -1
-        current_end = -1
+    current_chrom = ""
+    current_start = -1
+    current_end = -1
 
-        pending_chrom = ""
-        pending_start = -1
-        pending_end = -1
+    pending_chrom = ""
+    pending_start = -1
+    pending_end = -1
 
-        for i in range(nb_intersections):
+    for i in range(nb_intersections):
 
         current_chrom = inter_list[i][0]
         current_start = inter_list[i][1]
         current_end = inter_list[i][2]
 
-            # If the end of the list has been reached...
-            try:
+        # If the end of the list has been reached...
+        try:
             next_chrom = inter_list[i+1][0]
             next_start = inter_list[i+1][1]
             next_end = inter_list[i+1][2]
-            except:
-                next_chrom, next_start, next_end = None, None, None
-          
+        except:
+            next_chrom, next_start, next_end = None, None, None
 
-            # Resume recording the current intersections if one was just written
-            if was_written:
-                pending_chrom = current_chrom
-                pending_start = current_start
-                pending_end = current_end
-                was_written = False
 
-            # If same chrom and my end == next beginning
-            if (current_chrom == next_chrom) and (current_end == next_start):
-                pending_end = next_end
-            # Otherwise just add the pending
-            else:
-                new_list.append((pending_chrom, pending_start, pending_end))
-                was_written = True
+        # Resume recording the current intersections if one was just written
+        if was_written:
+            pending_chrom = current_chrom
+            pending_start = current_start
+            pending_end = current_end
+            was_written = False
+
+        # If same chrom and my end == next beginning
+        if (current_chrom == next_chrom) and (current_end == next_start):
+            pending_end = next_end
+        # Otherwise just add the pending
+        else:
+            new_list.append((pending_chrom, pending_start, pending_end))
+            was_written = True
 
     return new_list
 
@@ -208,6 +208,9 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     # if was_directly_passed_stats:
     #     bp_overlaps, summed_bp_overlaps, intersect_nbs = all_intersections_for_this_combi
     # ------------------------------------------------------------------------ #
+
+    # Merge consecutive intersections in the true one as well
+    true_intersection = merge_consecutive_intersections_in_intersections_list(true_intersection)
 
     ## True intersection statistics
     true_intersect_nb = len(true_intersection)
