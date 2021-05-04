@@ -173,11 +173,11 @@ This is done only on custom regions supplied as BEDs supplied with the `--more-b
 
 For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using --bed-excl or --bed-incl. This ensures the longer combinations have a reasonable chance of being randomly encountered in the shuffles. Conversely, if you do not filter the combinations, keep in mind that the longer ones may be enriched even though they are present only on a few base pairs, because at random they would be even rarer. As such, we recommend focusing comparisons on combinations of similar order (number of sets).
 
-**Exact combinations:** By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + ...]. For exact intersections (ie. [Query + A + B + nothing else]), set the --multiple-overlap-target-combi-size flag to the number of --more-bed plus one (for the query). You will know if the combinations are computed as inexact by the '...' in their name in the result file. 
+**Exact combinations:** By default, OLOGRAM will compute "inexact" combinations, meaning that when encountering an overlap of [Query + A + B + C] it will still count as an observation of [Query + A + B + ...] (meaning "Query + A + B + any other set"). For exact intersections (ie. [Query + A + B + nothing else]), set the --exact flag to True. You will know if the combinations are computed as inexact by the '...' in their name in the result file. 
 
 In any case, only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C is not.
 
-With inexact combinations, if A+B is very enriched and C is depleted, A+B+C will be enriched. It is more interesting to look at C's contribution to the enrichment. Relatedly, longer combinations are usually more enriched since they involve more theoretically independant sets. Combinations of similar orders should be compared.
+With inexact combinations, if A+B is very enriched and C is depleted, A+B+C will be enriched. It is more interesting to look at C's contribution to the enrichment. Relatedly, longer combinations are usually more enriched since they involve more theoretically independant sets. Relatedly, you should compare the enrichments of combinations of similar orders (number of sets in the combinations) since longer combinations tend to be more enriched under (H_0).
 
 
 
@@ -194,11 +194,11 @@ Comparing the query (-p) against two other BED files, analyzing multiple overlap
 .. code-block:: bash
 
   gtftk ologram -z -c simple_07.chromInfo -p simple_07_peaks.bed     # The query (-p) is the file to compare against.
-    --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed           # List of BED files giving the region sets to compare with.
-    # --more-bed `ls -d ./data/*`                                    # This example line would work instead if all your files are in the 'data' subdirectory
+    --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed           # List of BED files giving the region sets to compare with. TIP: You can use  --more-bed `ls -d ./data/*` if all your files are in the 'data' subdirectory
     -o results --force-chrom-peak --force-chrom-more-bed  
     -V 3 -k 8 -mn 10 -ms 10                                          # Verbosity, threads, number and size of minibatches
     --more-bed-multiple-overlap                                      # Toggle the computation of multiple overlaps on the --more-bed
+    --exact                                                          # OPTIONAL ARGUMENT. If present, an observation of A+B+C will not count as an observation of A+B.
     --multiple-overlap-max-number-of-combinations 10                 # OPTIONAL ARGUMENT. Use MODL to restrict to this many combinations.
     --multiple-overlap-target-combi-size 3                           # OPTIONAL ARGUMENT. Combis mined longer than this size will not be shown.
     --multiple-overlap-custom-combis test_combis.txt                 # OPTIONAL ARGUMENT. Will bypass the selection by the previous two arguments and work only on the combinations defined in this file.
@@ -250,9 +250,10 @@ This can work on any type of data, biological or not, that respects the conventi
 
 For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1. MODL will discard combinations rarer than 1/10000 occurences to reduce computing times. It will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. However, the latter can magnify the impact of the noise as well and can be disabled when using the manual API. To de-emphasize longer words, which can help in this case, we normalize words by their summed square in step 2.
 
-If you are passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity.  All are NumPY matrices.
+If you are passing a custom error function, it must have this signature: `error_function(X_true, X_rebuilt, encoded, dictionary)`. X_true is the real data, and X_rebuilt is the reconstruction to evaluate.
+encoded is the encoded version (U) which in our case is used to assess sparsity, while dictionary (V) is the matrix with one atom of the dictionaty per row (not used by default). Note that the dictionary is passed before MODL performs any normalization on it.  All are NumPy matrices.
 
-For more details, see code comments.
+**For more details, see code comments.**
 
 Here is an example:
 
@@ -273,6 +274,8 @@ Here is an example:
     smother = True,                                     # Should the smothering (quadratic reduction of abundance) be applied ?
     normalize_words = True,                             # Normalize words by their summed squared in step 2 ?
     step_2_alpha = None)                                # Override the alpha (sparsity control) used in step 2
+    discretization_threshold = 0                        # Discretization threshold D : in each atom, elements below D*maximum_for_this_atom will be discarded
+    step_1_alphas = None                                # Override the list of alphas used in step 1 (should be a list)
   interesting_combis = combi_miner.find_interesting_combinations()   
 
 
@@ -293,13 +296,27 @@ For more details about usage and implementation, please read the notes below.
   import numpy as np
   from pygtftk.stats.intersect.overlap_stats_compute import compute_true_intersection
 
+  # Some example paths
+  QUERY_PATH = "./input/query.bed"
+  MORE_BED_PATHS = ["./input/A.bed", "./input/B.bed", "./input/C.bed"]
+  EXCL_PATH = "./exclusion.bed"
+
   # Register the BED files as pybedtools.BedTool objects
-  bedA = pybedtools.BedTool(path_to_your_query)
-  bedsB = [pybedtools.BedTool(bedfilepath) for bedfilepath in list_of_all_paths_to_more_bed]
-      
+  bedA = pybedtools.BedTool(QUERY_PATH)
+  bedsB = [pybedtools.BedTool(bedfilepath).sort().merge() for bedfilepath in MORE_BED_PATHS] # Sort and merge for the bedsB
+
+  # OPTIONAL - Exclude some regions from the BEDs
+  bed_excl = pybedtools.BedTool(EXCL_PATH)
+  bedA = read_bed.exclude_concatenate(bedA, bed_excl)
+  bedsB = [read_bed.exclude_concatenate(bedB, bed_excl) for bedB in bedsB]
+
   # Use our custom intersection computing algorithm to get the matrix of overlaps
   true_intersection = compute_true_intersection(bedA, bedsB)
   flags_matrix = np.array([i[3] for i in true_intersection])
+
+  # If desired, run MODL or any other algorithm on this
+  my_algorithm.process(flags_matrix)
+  # See code block above for a MODL example
 
 The resulting flags_matrix is a NumPy array that can be edited, and on which MODL can be run.
 
