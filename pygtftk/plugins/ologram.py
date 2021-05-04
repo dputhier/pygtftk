@@ -7,9 +7,9 @@
  with particular keys/values in a GTF (e.g. gene_biotype "protein_coding",
  gene_biotype "LncRNA", ...) or (iii) from a BED file (user-defined regions).
 
- Each pair {peak file, feature} is randomly shuffled independently across the 
- chromosomes (inter-region lengths are considered). Then the probability of 
- intersection under the null hypothesis is deduced with our Monte Carlo approach.
+ Each set of regions is randomly shuffled independently across the chromosomes 
+ (inter-region lengths are considered). Then the probability of intersection 
+ under the null hypothesis is deduced with our Monte Carlo approach.
  
  The null hypothesis is that the regions of the query (--peak-file) are located 
  independently of the reference (--inputfile or --more-bed) and do not overlap 
@@ -20,15 +20,14 @@
 
  OLOGRAM can also calculate enrichment for n-wise combinations (e.g. [Query + 
  A + B]  or [Query + B + C]) on sets of regions defined by the user (--more-bed
- argument). 
- 
- Here is a quick example of command line to compute the overlaps of all sets 
- given in -\-more-bed with the set given in -p, and with each other:
+ argument). Here is an example of command line to compute the enrichments of the
+ overlaps of the sets given in -\-more-bed, with the query set (-p) and with each other:
 
- `gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed -\-more-bed-multiple-overlap`
+ `gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed C.bed -\-more-bed-multiple-overlap`
 
 
  Author : Quentin FERRE <quentin.q.ferre@gmail.com>
+
  Co-authors : Guillaume CHARBONNIER <guillaume.charbonnier@outlook.com> and
  Denis PUTHIER <denis.puthier@univ-amu.fr>.
  """
@@ -81,38 +80,69 @@ __notes__ = chr_size_note() + """
 
  -- OLOGRAM is multithreaded, notably processing one batch of shuffles per core.
  This can be RAM-intensive. If needed, use more minibatches and/or merge them
- with the ologram_merge_runs command.
+ with the ologram_merge_runs command (not to be confused with ologram_merge_stats,
+ which is simply a visual plugin).
  
- -- The program produces a pdf file and a tsv file ('_stats_') containing intersection statistics
- for the shuffled BEDs under H0 giving the number of intersections (N) and total number of overlapping
- base pairs (S). It gives for N and S expectation and standard deviation (error bars)
- in the shuffles compared to the actual values, as well as the p-value. It also gives, under the 
- 'fit' label for each statistic, the goodness of fit of the statistic under (H0). We also provide 
- histograms with only combinations of a given order to focus the comparisons on comparable elements.
+ -- The program produces a pdf file and a tsv file ('_stats_') containing 
+ intersection statistics for the shuffled BEDs under H0, giving the number of 
+ intersections (N) and total number of overlapping base pairs (S). It gives for 
+ N and S mean and standard deviation (error bars) in the shuffles compared to 
+ the actual values, as well as the p-value. It also gives the goodness of fit 
+ of each statistic under (H0).
 
- -- You can exclude regions from the shuffling. This is done by shuffling across a concatenated "sub-genome" obtained by removing
- the excluded regions. The same ones will be excluded from the peak_file and the GTF/more-bed files.
+ -- You can exclude regions from the shuffling with -\-bed-incl. This is done by 
+ shuffling across a concatenated "sub-genome" obtained by removing the excluded 
+ regions. The same ones will be excluded from the peak file and the GTF/more-bed
+ files.
 
- -- Use -\-no-gtf if you want to perform enrichment analysis on custom, focused annotations only (-\-more-bed).
+ -- Use -\-no-gtf if you want to perform enrichment analysis on custom, focused 
+ annotations only (-\-more-bed). Relatedly, use -\-no-basic-feature if you want 
+ to perform stats on GTF keys (-\-more-key) but not on basic features (genes, 
+ transcripts, exons...).
 
- -- Use -\-no-basic-feature if you want to perform stats on GTF keys (-\-more-key) but not on basic features (genes, transcripts, exons...).
+ -- Support for multiple overlaps is available. If the -\-more-bed-multiple-overlap
+ argument is used, the query peak file will be compared with the custom regions 
+ passed to the -\-more-bed argument, *and with them only*. For example, you can 
+ put as query the binding sites of the Transcription Factor A, in -\-more-bed 
+ the factors B, C and D, and see whether A+B+D is an enriched combination.
 
- -- Support for multiple overlaps is available. If the -\-more-bed-multiple-overlap argument is used, the query peak file will be 
- compared with the custom regions passed to the -\-more-bed argument, and with them only. For example, you can put as query the binding sites of the Transcription
- Factor A, in -\-more-bed the factors B, C and D, and see whether A+B+D is an enriched combination.
-
- -- By default, multiple overlap intersections are counted as "inexact", meaning an overlap of [A + B + C] will be counted when looking for  [A + B + ...].
+ -- By default, multiple overlap intersections are counted as "inexact", meaning 
+ an overlap of [A + B + C] will be counted when looking for [A + B + ...]. Add the
+ -\-exact argument to change that.
  
- -- P-values of -1 or NaN mean the Neg. Binom. fitting was poor, but that does not mean they must always be discarded: in practice,
- this mostly happens for high order combinations which are so unlikely that they were not encountered in the shuffles even once.
- In this case this would represent a very large enrichment.
+ -- If you work on multiple overlaps, we recommend the ologram_modl_treeify plugin
+ for visualizations.
 
- -- Furthermore, you may use our MODL algorithm to find biological complexes of interest, by mining for frequent itemsets
- on the intersections on the true data. This is done with the -\-multiple-overlap-max-number-of-combinations argument.
- This will not change the enrichment result, but will restrict the set of interesting combis for which enrichment is calculated
+ -- Combinations of longer order (containing more sets) will usually be rarer and
+ have lower p-values; as such we recommend comparing p-values between combinations
+ of the same order. 
+ 
+ -- P-values of -1 or NaN mean the Neg. Binom. fitting was poor, but that does 
+ not mean they must always be discarded: in practice, this mostly happens for 
+ high order combinations which are so unlikely that they were not encountered in
+ the shuffles even once. In this case, this would represent a very large enrichment!
 
- -- If you manually specify the combinations to be studied with -\-multiple-overlap-custom-combis, use the following format for the text file : 
- The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed", "1 0 1 1" means Query + B + C). Elements should be whitespace separated, with one combination per line.
+ Tangentially, other potential causes of poor fit are: the combination is too
+ rare (too few/small regions) and is rarely encountered in the shuffles, or the
+ shuffling was restricted to a too small region and the variance is lower than mean. 
+
+ -- Relatedly, in the output combinations are sorted by their true number of base 
+ pairs by default, since combinations that are very rare even in the true data 
+ will likely have high enrichment, but be less representative. 
+ 
+ -- Furthermore, you may use our MODL algorithm to find biological complexes of 
+ interest on the intersections on the true data.
+ This is done with the -\-multiple-overlap-max-number-of-combinations argument.
+ This will not change the enrichment result, but will restrict the displayed combinations.
+
+ -- If you manually specify the combinations to be studied with 
+ -\-multiple-overlap-custom-combis, use the following format for the text file: 
+ The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed",
+ "1 0 1 1" means Query + B + C). Elements should be whitespace separated, with
+ one combination per line.
+
+
+
 
 """
 
