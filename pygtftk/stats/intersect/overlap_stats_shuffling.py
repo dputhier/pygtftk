@@ -368,18 +368,19 @@ def compute_overlap_stats(bedA, bedsB,
 
         # Return a result dict full of -1
         result_abort = OrderedDict()
-        result_abort['nb_intersections_expectation_shuffled'] = 0;
+        result_abort['nb_intersections_expectation_shuffled'] = 0
         result_abort['nb_intersections_variance_shuffled'] = 0
-        result_abort['nb_intersections_negbinom_fit_quality'] = -1;
-        result_abort['nb_intersections_log2_fold_change'] = 0;
-        result_abort['nb_intersections_true'] = 0;
-        result_abort['nb_intersections_pvalue'] = -1;
-        result_abort['summed_bp_overlaps_expectation_shuffled'] = 0;
-        result_abort['summed_bp_overlaps_variance_shuffled'] = 0;
-        result_abort['summed_bp_overlaps_negbinom_fit_quality'] = -1;
-        result_abort['summed_bp_overlaps_log2_fold_change'] = 0;
-        result_abort['summed_bp_overlaps_true'] = 0;
+        result_abort['nb_intersections_negbinom_fit_quality'] = -1
+        result_abort['nb_intersections_log2_fold_change'] = 0
+        result_abort['nb_intersections_true'] = 0
+        result_abort['nb_intersections_pvalue'] = -1
+        result_abort['summed_bp_overlaps_expectation_shuffled'] = 0
+        result_abort['summed_bp_overlaps_variance_shuffled'] = 0
+        result_abort['summed_bp_overlaps_negbinom_fit_quality'] = -1
+        result_abort['summed_bp_overlaps_log2_fold_change'] = 0
+        result_abort['summed_bp_overlaps_true'] = 0
         result_abort['summed_bp_overlaps_pvalue'] = -1
+        result_abort['combination_order'] = 0
 
         # If it was a multiple overlap : return a nested dict, otherwise return a classical dict
         if was_more_than_one_bedB:

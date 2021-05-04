@@ -377,6 +377,14 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     result['summed_bp_overlaps_true'] = true_bp_overlaps
     result['summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(pval_bp_overlaps)
 
+
+    # Remember the order of the combinations (meaning the number of open sets)
+    # NOTE May be different when intra-set overlaps are introduced
+    my_order = np.sum(this_combi_only)
+    if my_order is None: my_order = 1
+    result['combination_order'] = str(my_order)
+
+
     #message(ft_type + '- Result dump : ' + str(result), type='DEBUG')
 
     return result
