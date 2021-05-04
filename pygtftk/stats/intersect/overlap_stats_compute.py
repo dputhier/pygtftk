@@ -797,8 +797,8 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                            multiple_overlap_target_combi_size=None,
                            multiple_overlap_max_number_of_combinations=None,
                            multiple_overlap_custom_combis=None,
-                           draw_histogram=False
-                           ):
+                           draw_histogram=False,
+                           exact=False):
     """
     Instead of returning one set of overlap stats per query type (ie. exons, gens, bedfile1, bedfile2, etc...)
     it will return one per multiple overlap (ie. here there was a peak for bedfile1+gene, or bedfile1+bedfile2+gene, etc.)
@@ -810,23 +810,11 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     ## ------  Parameters for the finding of interesting combis
 
-    # If the combi size (`multiple_overlap_target_combi_size`) and the max 
-    # number of combinations (`multiple_overlap_max_number_of_combinations`) 
-    # were not set manually, they default to -1 meaning no restrictions.
-
-    # Exactitude: should an intersection of A+B+C count towards looking for A+B ?
+    # Exactitude: should an intersection of A+B+C count towards looking for A+B?
+    # It depends on a user-specified parameter called `exact`.
     # By default, yes, meaning we look for "inexact" combis.
     # We will look instead for exclusive combis if the user manually specifies 
     # multiple_overlap_target_combi_size equal to the number of sets.
-
-    # NOTE: number of sets is len(bedsB) +1, let's not forget query !
-
-    if multiple_overlap_target_combi_size == (len(bedsB) + 1):
-        exact = True
-    else:
-        exact = False
-
-
 
 
     # ------------- Override combinations
@@ -867,6 +855,11 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
         df['COUNT'] = count[count_sort_ind] 
         with pd.option_context('display.max_rows', None, 'display.max_columns', None):   print(df)
         """
+
+
+        # If the combi size (`multiple_overlap_target_combi_size`) and the max 
+        # number of combinations (`multiple_overlap_max_number_of_combinations`) 
+        # were not set manually, they default to -1.
 
         # Default multiple_overlap_max_number_of_combinations is -1, meaning
         # MODL should not be applied and we should return all combinations

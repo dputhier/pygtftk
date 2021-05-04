@@ -214,7 +214,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-mocs', '--multiple-overlap-target-combi-size',
-                            help="Maximum number of sets in the output combinations. Default to -1 meaning no max number. Set it to number of --more-bed +1 to get exact (exclusive) combinations",
+                            help="Maximum number of sets in the output combinations. Default to -1 meaning no max number.",
                             default=-1,
                             type=int,
                             required=False)
@@ -230,6 +230,12 @@ def make_parser():
                             help="Path to a text ('*.txt') file that will be read as a NumPy matrix, overriding the combinations to be studied. See notes for the format of the text file.",
                             default=None,
                             type=arg_formatter.FormattedFile(mode='r', file_ext='txt'),
+                            required=False)
+
+    parser_grp.add_argument('-ex', '--exact',
+                            help="Determines whether an observations of A+B+C counts as an observation for A+B. If False (default), this does count. If True (the argument is present in the command line), we consider only exact matches.",
+                            default=False,
+                            action='store_true',
                             required=False)
 
     # --------------------- Backend ------------------------------------------ #
@@ -404,6 +410,7 @@ def ologram(inputfile=None,
             multiple_overlap_target_combi_size=None,
             multiple_overlap_max_number_of_combinations=None,
             multiple_overlap_custom_combis=None,
+            exact = False,
 
             keep_intact_in_shuffling=None,
             use_markov_shuffling=False,
@@ -946,7 +953,8 @@ def ologram(inputfile=None,
                                                 ft_type=all_bed_labels,
                                                 multiple_overlap_target_combi_size=multiple_overlap_target_combi_size,
                                                 multiple_overlap_max_number_of_combinations=multiple_overlap_max_number_of_combinations,
-                                                multiple_overlap_custom_combis=multiple_overlap_custom_combis)
+                                                multiple_overlap_custom_combis=multiple_overlap_custom_combis,
+                                                exact = exact)
 
         # NOTE. In other cases, hits[feature_type] is a single dictionary giving
         # stats. In this case, it is a dictionary of dictionaries, one per set

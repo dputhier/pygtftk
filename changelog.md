@@ -29,6 +29,8 @@
 
 *   ologram_modl_treeify has a new argument (--min-inheritance) to add combinations only if they represent a given proportion of an existing parent.
 
+*   In OLOGRAM-MODL, whether to use exact combinations or not (should A+B+C count as an observation of A+B ? Yes if not exact) is now controlled by an argument (--exact)
+
 ### Code changes
 
 *   Minor optimizations to overlap computing.
