@@ -318,11 +318,14 @@ For more details about usage and implementation, please read the notes below.
   my_algorithm.process(flags_matrix)
   # See code block above for a MODL example
 
-The resulting flags_matrix is a NumPy array that can be edited, and on which MODL can be run.
+The resulting flags_matrix is a NumPy array that can be edited, and on which MODL can be run. It is also possible to run any itemset miner you wish on this matrix. An implementation of apriori is provided in the `pygtftk.stats.intersect.modl.apriori.Apriori` class.
 
-Since the results of MODL only depend on the true intersections and not on the shuffles, you can run MODL with 1 shuffle or on a manually computed matrix as above to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv file, using MODL's selection as a starting point and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying).
+Note that by definition, in this intersections' matrix only regions where at least two sets are open are given. Regions where a single set was open will not be present.
+If you want a matrix of all contiguous elements where at least one set is open, and not just intersections, you may opt to instead use as "query" (bedA) a BED file covering all the chromosomes in the genome (e.g. if your genome has only 2 chromosomes of length 100 each, this "query" file would be "chr1 0 100 \n chr2 0 100"). 
+To have predictable binning based on length in the final matrix instead of one line per intersection, you may also subdivide fake "query "chr1 0 100" region into bins of, say, 10 bp instead: "chr1 0 10 \n chr1 11 20\n ...".
 
-It is also possible to run any itemset miner you wish on this matrix. An implementation of apriori is provided in the `pygtftk.stats.intersect.modl.apriori.Apriori` class.
+Since the results of MODL only depend on the true intersections and not on the shuffles, you can run also MODL with 1 shuffle or on a manually computed matrix as above to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv file, using MODL's selection as a starting point and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying).
+
 
 
 ologram_merge_stats
