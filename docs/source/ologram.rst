@@ -26,8 +26,10 @@ In the examples of this section, we will need the following example files:
 
 For more information about OLOGRAM and OLOGRAM-MODL, please see the appropriately titled papers in the Citing section.
 
-More examples can be found in https://github.com/qferre/ologram_supp_mat and https://github.com/qferre/ologram-modl_supp_mat 
+More examples can be found in <https://github.com/qferre/ologram_supp_mat> and more recently at <https://github.com/qferre/ologram-modl_supp_mat> 
 These contain example Snakemake workflows, that can be reused or from which commands can be extracted.
+
+Most of the commands presented in this section are demonstrated in the *ologram-modl_supp_mat* Git, along with certain perspectives.
 
 **Note for contributors** : To contribute to OLOGRAM, begin at *pygtftk/plugins/ologram.py* and unwrap function calls from there, to get a sense of how they interact. We have detailed comments to explain the role of every function.
 
