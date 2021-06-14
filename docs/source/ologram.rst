@@ -255,6 +255,12 @@ For a factor allowance of k and n final queried words, the matrix will be rebuil
 If you are passing a custom error function, it must have this signature: `error_function(X_true, X_rebuilt, encoded, dictionary)`. X_true is the real data, and X_rebuilt is the reconstruction to evaluate.
 encoded is the encoded version (U) which in our case is used to assess sparsity, while dictionary (V) is the matrix with one atom of the dictionaty per row (not used by default). Note that the dictionary is passed before MODL performs any normalization on it.  All are NumPy matrices.
 
+
+.. note:: An example of custom loss we recommend is: selecting the combinations (of reference sets) that best predict the query set using a Naive Bayes classifier. This is not yet implemented, but a fully functional example is available at <https://github.com/qferre/ologram-modl_supp_mat/blob/master/scripts/modl_perspective.py> as a Python script. To use it, simply replace the filepaths at the beginning with the paths to your own files, and run the script. The order in the selection will be the same as the order you gave in the script, not alphabetical. You can then run OLOGRAM without MODL, or pass the custom selection you just computed.
+
+
+
+
 **For more details, see code comments.**
 
 Here is an example:
