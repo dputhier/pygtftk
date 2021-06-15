@@ -5,11 +5,11 @@
 
 import argparse
 import gc
-import os
 import re
 import sys
 
 import ftputil
+import os
 from ftputil.error import FTPOSError
 
 import pygtftk

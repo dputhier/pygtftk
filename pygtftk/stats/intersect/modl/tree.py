@@ -142,8 +142,9 @@ class Library:
         for word in words:
             self.unassigned_nodes += [Node(word)]
 
-            word_size = len(
-                word)  # Remember the length of the word. TODO Throw exception if there are words of different lengths
+            # Remember the length of the word.
+            # TODO: Throw exception if there are words of different lengths
+            word_size = len(word)  
 
         # Finally, create root node, all unassigned nodes will branch from it later
         self.root_node = Node(word=tuple([0] * word_size))
@@ -227,7 +228,7 @@ class Library:
 
     # ----- Assigning
 
-    def assign_nodes(self):
+    def assign_nodes(self, min_inheritance = 0):
 
         # Sort nodes in this list by total number of nonzero flags, for assignation purposes.
         def nb_nonzero_flags_node(node):
@@ -281,9 +282,13 @@ class Library:
 
             # Add current node as child to new_parent
             for new_parent in new_parents_list:
-                message('Adding ' + str(unode) + ' to ' + str(new_parent) + ' as distance of ' + str(
-                    all_distances_less_flags[new_parent]), type='DEBUG')
-                new_parent.add_child(unode)
+
+                # Only add the child if it accounts for at a proportion of at least min_inheritance of its parent
+                if unode.s/(new_parent.s+1E-100) >= min_inheritance:
+
+                    message('Adding ' + str(unode) + ' to ' + str(new_parent) + ' as distance of ' + str(
+                        all_distances_less_flags[new_parent]), type='DEBUG')
+                    new_parent.add_child(unode)
 
             # Now add the node to the list of assigned nodes
             self.assigned_nodes.append(unode)
@@ -311,7 +316,7 @@ class Library:
 #
 #     # Aaaaand... start !
 #     candidates = get_candidates(library.root_node)
-#     # TODO : because nodes can have several parents, make the candidates list
+#     # TODO: because nodes can have several parents, make the candidates list
 #     # equal to a set of itself (hence unique words) each time !
 #     return candidates
 

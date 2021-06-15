@@ -127,7 +127,7 @@ def ologram_merge_stats(inputfiles=None,
         df_tmp = df_tmp.assign(**{"-log_10(pval)": -np.log10(df_tmp.summed_bp_overlaps_pvalue)})
 
         # Which p-values are signifcant ?
-        # TODO For now, draws all p-values. Add Benjamini-Hochberg correction, and distinguish between NaN and 0.
+        # TODO: For now, draws all p-values. Add Benjamini-Hochberg correction, and distinguish between NaN and 0.
         df_tmp = df_tmp.assign(**{"pval_signif": df_tmp.summed_bp_overlaps_pvalue > 0})
 
         # Add the df to the list to be subsequently merged

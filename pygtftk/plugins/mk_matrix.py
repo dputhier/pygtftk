@@ -4,13 +4,13 @@
 """
 
 import argparse
-import os
-import sys
-import zipfile
-
 import gc
+import sys
+
+import os
 import pandas as pd
 import pyBigWig
+import zipfile
 from pybedtools import BedTool
 
 import pygtftk
@@ -19,16 +19,14 @@ from pygtftk.arg_formatter import CheckChromFile
 from pygtftk.bwig.bw_coverage import bw_profile_mp
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
+from pygtftk.utils import chr_size_note
 from pygtftk.utils import close_properly
 from pygtftk.utils import make_tmp_file
 from pygtftk.utils import message
 
 __updated__ = "2018-01-20"
 
-__notes__ = """
- -- -\-chrom-info may also accept 'mm8', 'mm9', 'mm10', 'hg19', 'hg38', 'rn3' or 'rn4'. In this case the 
- corresponding size of conventional chromosomes are used. ChrM is not used.  
-"""
+__notes__ = chr_size_note()
 
 
 # NEED TO CHECK wether region names are uniq. Or force them to be ...

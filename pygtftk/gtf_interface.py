@@ -732,12 +732,13 @@ class GTF(object):
 
             tmp_file = make_tmp_file(prefix="merge_attr",
                                      suffix=".txt")
+
             if feat == "*":
                 self.extract_data(keys,
-                                  no_na=False,
+                                  no_na=True,
                                   hide_undef=False).write(tmp_file,
                                                           sep=sep)
-
+                tmp_file.close()
                 self = self.del_attr("*", new_key, force=True)
                 self = self.add_attr_column(tmp_file.name, new_key)
                 return self
@@ -846,6 +847,11 @@ class GTF(object):
         :param nb: The number of line to display.
         :param returned: If True, don't print but returns the message.
 
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> res = a_gtf.head(10, returned=True)
         """
 
         if not isinstance(nb, int):
@@ -884,6 +890,13 @@ class GTF(object):
         Print the nb last lines of the GTF object.
 
         :param nb: The number of line to display.
+
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> res = a_gtf.tail(10, returned=True)
         """
 
         nb_rec = len(self)
@@ -898,7 +911,7 @@ class GTF(object):
             if nb > nb_rec:
                 nb = nb_rec
 
-                gtf_sub = self.select_by_positions(list(range(nb_rec - nb, nb_rec)))
+            gtf_sub = self.select_by_positions(list(range(nb_rec - nb, nb_rec)))
 
             for i in gtf_sub:
                 msg += i.format() + "\n"
@@ -1169,7 +1182,7 @@ class GTF(object):
         :param as_dict_of_merged_list: if true returns a dict (where the key corresponds to values for the first requested key and the value to the list of other elements encountered throughout any line).
         :param as_list_of_list: if True returns a list for each line.
         :param nr: in case a as_list or as_list_of_list is chosen, return a non redondant list.
-        :param hide_undef: if hide_undef, then records for which the key does not exists (value = "?") are set to are discarded.
+        :param hide_undef: if hide_undef, then records for which the key does not exists (value = "?") are discarded.
         :param zero_based: If set to True, the start position will be start-1.
         :param default_val: The default value for the dict if as_dict is chosen.
 
@@ -3284,6 +3297,7 @@ class GTF(object):
         # for tracability
         region_bed = make_tmp_file("intergenic", ".bed")
         chrom_file_bo.saveas(region_bed.name)
+        region_bed.close()
 
         if feature_name is not None:
             tmp_file = make_tmp_file("intergenic", ".bed6")
@@ -3414,6 +3428,7 @@ class GTF(object):
                         n -= 1
 
                     intron_bed.write("\t".join(out_list) + "\n")
+            intron_bed.close()
 
             introns_bo = BedTool(intron_bed.name)
 
@@ -3838,6 +3853,7 @@ def prepare_gffutils_db(attr_to_keep=('gene_id', 'transcript_id',
                 gtf = gtf.del_attr(keys=attr_list_to_del)
             tmp_gtf = make_tmp_file(prefix='select_gtf_attributes', suffix='.gtf')
             gtf.write(tmp_gtf)
+            tmp_gtf.close()
             message('Temporary GTF file stored at:' + tmp_gtf.name)
             new_kwargs = kwargs
             new_kwargs['data'] = tmp_gtf.name

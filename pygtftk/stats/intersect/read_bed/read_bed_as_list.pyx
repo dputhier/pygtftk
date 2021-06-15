@@ -62,7 +62,8 @@ def bed_to_lists_of_intervals(bed, chromsizes):
 
     Lr = dict()
     Li = dict()
-
+    
+    bed.chrom = bed.chrom.apply(str)
     all_chrom = np.unique(bed.chrom)
 
     for chrom in all_chrom:
@@ -298,7 +299,7 @@ def exclude_concatenate(bedfile, exclusion, nb_threads = 8):
     all_chroms = sorted(occ.keys(), key = lambda k: occ[k])
     all_chroms.reverse()
 
-    # TODO : if RAM turns out to be critical, do not pass the entire
+    # TODO: if RAM turns out to be critical, do not pass the entire
     # 'exclusion' and 'bedfile' dataframes but subset by chromosome before.
     # In most use cases however it should be sufficient.
 

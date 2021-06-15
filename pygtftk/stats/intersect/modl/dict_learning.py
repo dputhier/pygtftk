@@ -167,8 +167,12 @@ class Modl:
     :param smother: Should the smothering which reduces each row's abudane to its square root to emphasize rarer combinations be applied ? Default is True
     :param normalize_words: Normalize the words by their summed squares in step 2. Default True.
     :param step_2_alpha: Override the alpha used in step 2.
+    :param discretization_threshold: discretization_threshold in step 1. In each atom, elements below D*maximum_for_this_atom will be discarded. Optional.
+    :param step_1_alphas: A list to manually override the alphas to be used during step 1. Optional.
 
-    Passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity
+    Passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, encoded, dictionary). 
+    X_true is the real data, X_rebuilt is the reconstruction to evaluate, code is the encoded version (in our case used 
+    to check sparsity), dictionary has one learned atom per row.
     
     >>> from pygtftk.stats.intersect.modl.dict_learning import Modl, test_data_for_modl
     >>> import numpy as np
@@ -188,7 +192,9 @@ class Modl:
                  error_function = None,
                  smother = True,
                  normalize_words = True,
-                 step_2_alpha = None):
+                 step_2_alpha = None,
+                 discretization_threshold = 0,
+                 step_1_alphas = None):
 
         # Matrix of overlap flags to work with
         self.original_data = flags_matrix
@@ -216,27 +222,17 @@ class Modl:
         self.queried_words_nb = multiple_overlap_max_number_of_combinations
         self.max_word_length = multiple_overlap_target_combi_size
 
-        # In step 1 of the reconstructions, how many words to ask for each time,
-        # as a proportion of multiple_overlap_max_number_of_combinations
-        self.step_1_factor_allowance = step_1_factor_allowance
+        # Step 1
+        self.step_1_factor_allowance = step_1_factor_allowance   # In step 1, how many words to ask for each time, as a proportion of multiple_overlap_max_number_of_combinations
+        self.step_1_alphas = step_1_alphas                       # Override the list of alphas in step 1?
+        self.discretization_threshold = discretization_threshold # When discretizing the words in step 1, what threshold?
 
-        # Remember the error function for step 2
-        self.error_function = error_function
-
-        # Do we normalize the words by their summed squared in step 2 ?
-        self.normalize_words = normalize_words
- 
-        # Override alpha in step 2 ?
-        self.step_2_alpha = step_2_alpha
+        # Step 2
+        self.error_function = error_function    # Remember the error function for step 2
+        self.normalize_words = normalize_words  # Do we normalize the words by their summed squared in step 2?        
+        self.step_2_alpha = step_2_alpha        # Override alpha in step 2?
 
         self.nb_threads = nb_threads
-
-
-
-
-
-
-
 
 
 
@@ -253,7 +249,7 @@ class Modl:
         N = min(3, self.data.shape[0])
         # Prepare N subsamples each time, to increase learned combi diversity
         # This is done like a cross validation, to ensure no line is forgotten      
-        kf = KFold(n_splits=N, shuffle=False, random_state=42)
+        kf = KFold(n_splits=N, shuffle=False)
         subsamples = []
         for indexes, _ in kf.split(self.data):
             subsamples += [self.data[indexes,:]]
@@ -272,7 +268,9 @@ class Modl:
 
         for sub in subsamples:
             words_this_round = modl_subroutines.generate_candidate_words(sub,
-                n_words = n_words_step_one, nb_threads = self.nb_threads)
+                n_words = n_words_step_one, nb_threads = self.nb_threads,
+                discretization_threshold = self.discretization_threshold,
+                alphas = self.step_1_alphas)
 
             # Merge the {word:usage} dicts that were found each time by
             # taking the SUM of usages where relevant

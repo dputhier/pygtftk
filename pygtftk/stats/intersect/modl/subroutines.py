@@ -46,7 +46,7 @@ def learn_dictionary_and_encode(data, n_atoms = 20, alpha = 0.5,
     """
 
 
-    # TODO Many operations here, such as recreating an object of a pandas 
+    # TODO: Many operations here, such as recreating an object of a pandas 
     # dataframe, might not be necessary ?
     
     data = np.array(data) # Force cast as array
@@ -72,7 +72,11 @@ def learn_dictionary_and_encode(data, n_atoms = 20, alpha = 0.5,
 
     dico.fit(data)  # Fit the data
 
-    V = dico.components_ # Get components
+    # Get components (the dictionary).
+    # NOTE: Use a try-except for future proofing, as sklearn (v 0.24) seems to 
+    # deprecate 'components_' across the board and replaced it with 'dictionary'
+    try: V = dico.components_
+    except: V = dico.dictionary  
     V_df = pd.DataFrame(V)
 
 
@@ -87,7 +91,8 @@ def learn_dictionary_and_encode(data, n_atoms = 20, alpha = 0.5,
             fit_algorithm = 'lars',  transform_algorithm = 'lasso_lars') 
 
         dico.fit(data)
-        V = dico.components_ 
+        try: V = dico.components_
+        except: V = dico.dictionary  
         V_df = pd.DataFrame(V)
                 
         # Only abort if it still does not work
@@ -115,7 +120,8 @@ def learn_dictionary_and_encode(data, n_atoms = 20, alpha = 0.5,
 #                        Step 1 of the MODL algorithm                          #
 # ---------------------------------------------------------------------------- #
 
-def generate_candidate_words(X, n_words, nb_threads = 1):
+def generate_candidate_words(X, n_words, nb_threads = 1,
+    discretization_threshold=0, alphas=None):
     """
     Given a data matrix, will generate a library of candidate words by trying many
     different Dictionary Learnings (different alphas only for now)
@@ -135,7 +141,9 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
    
     # A too low alpha can result in learning giberrish words, thay may still be used as there is no penalty for it.
     # To counter this, we begin with an alpha of 1/nb_features
-    alpha = 1/nb_features
+    # Rk: if alphas have been manually specified, use them instead
+    if alphas is None: alpha = 1/nb_features
+    else: alpha = alphas[0]
 
     # Remember all candidate words found at each step, and use a dictionary so we
     # can remember their total usage for later filtering
@@ -164,14 +172,19 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
         #stop_time = time.time() # Careful not to name it 'stop' and overwrite the stop flag :)
         #print('One DL step took ', str(stop_time-start_time), 'seconds.')
 
-
+        iternb += 1
         # Update alpha so DL will be more sparse in the next step
         # and look for higher-order combinations
-        iternb += 1
-        alpha += iternb/nb_features
         # We add iternb/nb_features to not take too long and not unduly favor high alphas (and longer words)
         
-        # TODO Also stop regardless after 2*k iterations ?
+        # Rk: if alphas have been manually specified, use them instead
+        if alphas is None: alpha += iternb/nb_features
+        else:
+            try: alpha = alphas[iternb]
+            except: stop = True # Stop if we reached the end of the list
+        
+        
+        # TODO: Also stop regardless after 2*k iterations ?
 
         # We stop once alpha is too high and preventing any word from being used
         # in the encoding U (which contained NaNs -- handled before -- or has a sum of 0)
@@ -205,7 +218,16 @@ def generate_candidate_words(X, n_words, nb_threads = 1):
                 # Remove padding
                 this_word = this_word[:-1]
 
-                this_word_binarized = ((this_word - 1/nb_features**2) > EPSILON).astype(int)
+                # Above 1/k**2 ?
+                first_thres = this_word - (1/nb_features**2) > EPSILON
+
+                # Above discretization_threshold * max ?
+                second_thres = this_word - (discretization_threshold * max(this_word)) > EPSILON
+
+                # Above both ?
+                this_word_binarized = np.logical_and(first_thres,second_thres).astype(int)
+
+
                 this_word_binarized = tuple(this_word_binarized.tolist())
 
                 this_word_usage = np.sum(U.values[:,i])
@@ -290,8 +312,8 @@ def build_best_dict_from_library(data, library, queried_words_nb,
     the function is monotonous.
 
     Instead of the reconstruction error, you may pass a different callable of the form
-    error_function(data, rebuilt_data, encoded) that returns an error value so there
-    can be a supervision but the submodularity might no longer hold.
+    error_function(data, rebuilt_data, encoded, dictionary) that returns an error value so there
+    can be a supervision, but the submodularity might no longer hold.
 
     >>> import numpy as np
     >>> from pygtftk.stats.intersect.modl import tree
@@ -364,10 +386,14 @@ def build_best_dict_from_library(data, library, queried_words_nb,
             Dt = Dt_corrected
             
             # Update dictionary to the one being currently tested
-            coder.components_ = Dt.astype('float64')
+            coder.dictionary = Dt.astype('float64')
+
+            # Just to be safe
+            assert np.allclose(coder.dictionary, Dt.astype('float64'))
 
 
             try:
+
                 encoded = coder.transform(data)
             
                 rebuilt_data = np.matmul(encoded, Dt)
@@ -377,13 +403,16 @@ def build_best_dict_from_library(data, library, queried_words_nb,
                 # Add an alpha that is nonzero so that using longer words is still
                 # an improvement even when other words cover it (and as a tiebreaker)
                 # but keep it low (1/k) so you don't re-encourage compromise
-                def manhattan_dist_with_sparsity(X_true, X_rebuilt, code):
+                def manhattan_dist_with_sparsity(X_true, X_rebuilt, encoded, dictionary):
+
+                    dictionary = None # This particular function ignores the dictionary
+
                     error_mat = np.abs(X_rebuilt-X_true)
                     error = np.sum(error_mat)
 
                     alpha = transform_alpha # Fetch the alpha used when calling the main function
 
-                    regul = np.sum(code) * alpha
+                    regul = np.sum(encoded) * alpha
 
                     final_error = error + regul
                     return final_error
@@ -393,7 +422,9 @@ def build_best_dict_from_library(data, library, queried_words_nb,
                 if error_function is None:
                     error_function = manhattan_dist_with_sparsity
 
-                error = error_function(data, rebuilt_data, encoded)
+                # To compute the error, pass respectively : true data, rebuilt data, encoded data, and current dictionary 
+                # TODO: currently, the dictionary passed is BEFORE normalization and all that jazz 
+                error = error_function(data, rebuilt_data, encoded, dict_being_tested)
 
             # On rare occasion, convergence errors can result in a ValueError
             except ValueError:

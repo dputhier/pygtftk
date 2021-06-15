@@ -318,6 +318,18 @@ class CheckChromFile(argparse.Action):
                 tmp_file_chr.write(chrom + "\t" + str(size[1]) + "\n")
             tmp_file_chr.close()
             values = open(tmp_file_chr.name, 'r')
+        elif values in ["mm8_ens", "mm9_ens", "mm10_ens", "hg19_ens", "hg38_ens", "rn3_ens", "rn4_ens"]:
+            chr_size = pybedtools.helpers.chromsizes(values.replace("_ens", ""))
+            ## Delete haplotype chromosome
+            ## unplaced contig and unlocalized contig
+            regexp = re.compile('(_random)|(^chrUn)|(_hap\d+)|(_alt)|(^chrM$)')
+            chr_size = {key: chr_size[key] for key in chr_size if not regexp.search(key)}
+            tmp_file_chr = make_tmp_file(prefix='chromsize', suffix='.txt')
+            for chrom, size in chr_size.items():
+                chrom = re.sub("^chr", "", chrom)
+                tmp_file_chr.write(chrom + "\t" + str(size[1]) + "\n")
+            tmp_file_chr.close()
+            values = open(tmp_file_chr.name, 'r')
         elif values == 'simple':
             chr_size = {'chr1': 300, 'chr2': 600}
             tmp_file_chr = make_tmp_file(prefix='chromsize', suffix='.txt')

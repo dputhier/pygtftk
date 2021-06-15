@@ -50,18 +50,20 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
 
     >>> import numpy as np
     >>> import scipy.stats
+    >>> from pygtftk.stats.negbin_fit import check_negbin_adjustment
     >>> np.random.seed(42)
     >>> mean = 100 ; var = 200
     >>> r = mean**2 / (var-mean) ; p = 1/(mean/r + 1)
     >>> rv = scipy.stats.nbinom(r, p)
     >>> obs = rv.rvs(2000)
-    >>> fit = np.around(check_negbin_adjustment(obs, mean, var),2)
+    >>> fit = check_negbin_adjustment(obs, mean, var)
+    >>> fit = np.around(fit, 2)
     >>> assert fit > 0.95
 
     """
 
     # Force cast obs to integers, just in case.
-    obs = [int(x) for x in obs]
+    obs = np.array(obs, dtype = int)
 
     if mean == 0:
         mean = 1
@@ -83,11 +85,11 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     obs_range = max(obs) - min(obs)
     step_size = np.around(obs_range / bins_number)
     bin_size = max(1, int(step_size))  # If obs_range < bins_number, step size will be set to 1
-    bins = range(min(obs), max(obs), bin_size)
+    bins = np.arange(min(obs), max(obs), bin_size)
 
     # There can be a bug later in the count table generation if the range is only 1 or 2
     if obs_range < 3:
-        bins = range(min(obs), min(obs) + 3, bin_size)
+        bins = np.arange(min(obs), min(obs) + 3, bin_size)
 
     # Turn this binned distribution into frequencies
     obs_binned = np.digitize(obs, bins)
@@ -95,7 +97,9 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     # Remark : the last bin (maximum) will disappear. This is an acceptable loss on this kind of distribution.
     counts = []
     for binned_value in range(len(bins)):
-        count = sum(obs_binned == binned_value)
+        count = np.sum(
+            np.where(obs_binned == binned_value, True, False)
+        )
         counts.append(count)
     f_obs = np.array(counts)
 
@@ -117,8 +121,8 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     f_exp = np.array(f_exp) * len(obs)
 
     # Remove leading zero in f_exp and f_obs and cast to a np array of integers
-    f_exp = np.array(f_exp[1:]).astype(int)
-    f_obs = np.array(f_obs[1:]).astype(int)
+    f_exp = np.array(f_exp[1:], dtype = int)
+    f_obs = np.array(f_obs[1:], dtype = int)
 
     f_exp = f_exp + 1E-100  # The table of expected frequencies must have no zeros.
 
@@ -139,7 +143,7 @@ def check_negbin_adjustment(obs, mean, var, bins_number=16):
     return result
 
 
-def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
+def negbin_pval(k, mean, var, precision=320, ft_type="Unknown"):
     r"""
     P-value for a negative binomial distribution of the given moments (mean, var).
 
@@ -149,7 +153,7 @@ def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
     NOTE : To prevent division by zero or negative r, if the mean is higher than
     or equal to the variance, set the variance to mean + epsilon and send a warning
 
-    :param k: the critical value.
+    :param k: the critical value for which the pvalue is computed.
     :param mean: The mean for the negative binomial model.
     :param var: The variance for the negative binomial model.
     :param precision: Floating point precision of mpmath. Should be at least 1000
@@ -167,18 +171,16 @@ def negbin_pval(k, mean, var, precision=1500, ft_type="Unknown"):
 
     if mean < 1:
         mean = 1
-        msg = "Computing log(p-val) for a Neg "
-        msg += "Binom with mean < 1 ; mean was set to 1 (" + ft_type + ")"
+        msg = "Computing log(p-val) for a Neg Binom with mean < 1 ; mean was set to 1 (" + ft_type + ")"
         message(msg, type='WARNING')
     # This is necessary, since r must be above 0.
 
     if mean >= var:
         var = mean + 1
-        msg = "Computing log(p-val) for a Neg "
-        msg += "Binom with mean >= var ; var was set to mean+1 (" + ft_type + ")"
+        msg = "Computing log(p-val) for a Neg Binom with mean >= var ; var was set to mean+1 (" + ft_type + ")"
         message(msg, type='WARNING')
 
-    # Floating point precision of mpmath. Should be at least 1000.
+    # Floating point precision of mpmath. Should be at least 320.
     mpmath.mp.dps = precision
 
     # Calculate r and p based on mean and var

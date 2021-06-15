@@ -2,12 +2,12 @@
 A module to compute bigwig coverage over a set of regions (bed).
 """
 
-import multiprocessing
 import os
 import sys
 from itertools import repeat
 from tempfile import NamedTemporaryFile
 
+import billiard as multiprocessing
 import numpy as np
 import pyBigWig
 from pybedtools import BedTool

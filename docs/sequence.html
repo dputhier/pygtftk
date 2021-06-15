@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,14 +17,13 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘sequence’ &#8212; gtftk 1.2.7 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <title>Commands from section ‘sequence’ &#8212; gtftk 1.2.8 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="coordinates.html" title="Commands from section ‘coordinates’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘sequence’</a></li> 
       </ul>
     </div>  
@@ -55,13 +55,13 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="commands-from-section-sequence">
+  <section id="commands-from-section-sequence">
 <h1>Commands from section ‘sequence’<a class="headerlink" href="#commands-from-section-sequence" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
 </pre></div>
 </div>
-<div class="section" id="get-tx-seq">
+<section id="get-tx-seq">
 <h2>get_tx_seq<a class="headerlink" href="#get-tx-seq" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get transcript sequences in fasta format.</p>
 <p><strong>Example:</strong> Get sequences of transcripts in 5’ to 3’ orientation</p>
@@ -83,14 +83,13 @@ cccccgttacgtag
   Usage: gtftk get_tx_seq [-i GTF] [-o FASTA] -g FASTA [-w] [-s SEP] [-l label] [-f] [-d] [-a assembly] [-c] [-n] [-e] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get transcripts sequences in a flexible fasta format from a GTF file.
+
+     Get transcripts sequences in a flexible fasta format from a GTF file.
 
   Notes:
      *  The sequences are returned in 5&#39; to 3&#39; orientation.
      *  If you want to use wildcards, use quotes :e.g. &#39;foo/bar*.fa&#39;.
      *  The first time a genome is used, an index (*.fa.gtftk) will be created in ~/.gtftk.
-
-  Version:
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -117,9 +116,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="get-feat-seq">
+<section id="get-feat-seq">
 <h2>get_feat_seq<a class="headerlink" href="#get-feat-seq" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get feature sequence (e.g exon, UTR…).</p>
 <p><strong>Example:</strong></p>
@@ -142,7 +141,8 @@ taatt
   Usage: gtftk get_feat_seq [-i GTF] [-o FASTA] -g FASTA [-s separator] [-l label] [-t feature_type] [-n] [-r] [-u] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get feature sequences (i.e. column 3) in a flexible fasta format from a GTF file.
+
+     Get feature sequences (i.e. column 3) in a flexible fasta format from a GTF file.
 
   Notes:
      *  The sequences are returned in 5&#39; to 3&#39; orientation.
@@ -150,8 +150,6 @@ taatt
      *  See get_tx_seq for mature RNA sequence.
      *  If --unique is used if a header was already encountered the record won&#39;t be print.  Take
      care to use unambiguous identifiers in the header.
-
-  Version:
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -175,8 +173,8 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -236,14 +234,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="coordinates.html" title="Commands from section ‘coordinates’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘sequence’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
   </body>
 </html>

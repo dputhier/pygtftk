@@ -63,11 +63,18 @@ def make_parser():
                             type=int,
                             required=False)
 
+    parser_grp.add_argument('-mh', '--min_inheritance',
+                            help="Optional. A combination will be added to a shorter parent in the tree only if it represents at least a proportion MH of its true base pairs (between 0 and 1).",
+                            default=-1,
+                            type=float,
+                            required=False)
+
 
     return parser
 
 
-def ologram_modl_treeify(inputfile=None, output=None, query_label="Query", top_s = -1):
+def ologram_modl_treeify(inputfile=None, output=None,
+    query_label="Query", top_s = -1, min_inheritance = 0):
     # -------------------------------------------------------------------------
     # Check graphviz is installed
     # to avoid ugly error messages.
@@ -100,7 +107,7 @@ def ologram_modl_treeify(inputfile=None, output=None, query_label="Query", top_s
     # Create a Library tree with the combinations, like in the MODL algorithm itself    
     L = tree.Library()
     L.build_nodes_for_words_from_ologram_result_df(df_res, query_label)
-    L.assign_nodes()
+    L.assign_nodes(min_inheritance = min_inheritance)
 
     # Now call the function to produce the visualisation
     with warnings.catch_warnings():

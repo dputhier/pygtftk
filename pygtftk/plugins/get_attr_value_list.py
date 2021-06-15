@@ -4,6 +4,7 @@ Get the list of values observed for an attributes.
 """
 
 import argparse
+import gc
 import os
 import sys
 
@@ -11,7 +12,6 @@ from pygtftk import arg_formatter
 from pygtftk.cmd_object import CmdObject
 from pygtftk.gtf_interface import GTF
 from pygtftk.utils import close_properly
-import gc
 
 __updated__ = "2018-02-11"
 
@@ -46,11 +46,9 @@ def make_parser():
                             type=str,
                             required=False)
 
-
     parser_grp.add_argument('-c', '--count',
                             help="Add the counts for each key (separator will be set to '\t' by default).",
                             action="store_true")
-
 
     parser_grp.add_argument('-p', '--print-key-name',
                             help="Also print the key name in the first column.",
@@ -70,6 +68,9 @@ def get_attr_value_list(
     """
 
     gtf = GTF(inputfile, check_ensembl_format=False)
+
+    if key_name == '*':
+        key_name = ",".join(gtf.get_attr_list(add_basic=True))
 
     if not count:
         for akey in key_name.split(","):

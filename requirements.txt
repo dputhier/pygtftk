@@ -7,6 +7,7 @@ ftputil >= 4.0.0
 graphviz
 matplotlib >= 3.3.1
 mpmath >= 1.1.0
+nose
 numpy >= 1.19.1
 pandas >= 1.1.2
 plotnine >= 0.7.1
@@ -15,7 +16,8 @@ pybigwig >= 0.3.17
 pyparsing >=2.2.0
 pyyaml
 requests >=2.23.0
-scikit-learn >= 0.23.2
+scikit-learn >= 0.24
 scipy >= 1.5.2
 seaborn
 setuptools
+billiard >=3.6.4.0
