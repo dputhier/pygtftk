@@ -851,7 +851,7 @@ class GTF(object):
         >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
-        >>> a_gtf.head(10)
+        >>> res = a_gtf.head(10, returned=True)
         """
 
         if not isinstance(nb, int):
@@ -896,7 +896,7 @@ class GTF(object):
         >>> from pygtftk.gtf_interface import GTF
         >>> a_file = get_example_file()[0]
         >>> a_gtf = GTF(a_file)
-        >>> a_gtf.tail(10)
+        >>> res = a_gtf.tail(10, returned=True)
         """
 
         nb_rec = len(self)
