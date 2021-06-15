@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,14 +17,13 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘information’ &#8212; gtftk 1.2.7 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <title>Commands from section ‘information’ &#8212; gtftk 1.2.8 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="gtftk_args.html" title="Help on gtftk Unix commands"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘information’</a></li> 
       </ul>
     </div>  
@@ -55,7 +55,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="commands-from-section-information">
+  <section id="commands-from-section-information">
 <h1>Commands from section ‘information’<a class="headerlink" href="#commands-from-section-information" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
@@ -64,15 +64,15 @@
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
 </pre></div>
 </div>
-<div class="section" id="apropos">
+<section id="apropos">
 <h2>apropos<a class="headerlink" href="#apropos" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Search in all command description files those related to a user-defined keyword.</p>
 <p><strong>Example:</strong> Search all commands related to promoters.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk apropos -k promoter
- |-- 17:25-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
+ |-- 14:54-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
+	- divergent.
 	- coverage.
 	- ologram.
-	- divergent.
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
@@ -80,9 +80,8 @@
   Usage: gtftk apropos -k keyword [-n] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Search in all command description files those related to a user-defined keyword.
 
-  Version:  2017-09-27
+     Search in all command description files those related to a user-defined keyword.
 
 Arguments:
  -k, --keyword                The keyword (default: None)
@@ -99,9 +98,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="retrieve">
+<section id="retrieve">
 <h2>retrieve<a class="headerlink" href="#retrieve" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Retrieves a GTF file from ensembl.</p>
 <p><strong>Example:</strong> List the available GTF files in ensembl FTP. Bacteria are not listed at the moment.</p>
@@ -117,9 +116,8 @@ Command-wise optional arguments:
   Usage: gtftk retrieve [-s SPECIES] [-o GTF.GZ] [-e {vertebrate,protists,fungi,plants,metazoa}] [-r RELEASE] [-l] [-hs] [-c] [-d] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Retrieve a GTF file from ensembl.
 
-  Version:  2018-01-31
+     Retrieve a GTF file from ensembl.
 
 Arguments:
  -s, --species-name           The species name. (default: homo_sapiens)
@@ -142,9 +140,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="get-example">
+<section id="get-example">
 <h2>get_example<a class="headerlink" href="#get-example" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get an example GTF file (or any other kind of example available in the installation directory). This command is only provided for demonstration purpose.</p>
 <p>We can see from the example below that this gtf file <strong>follows the ensembl format</strong> and contains the <strong>transcript and gene features</strong> (column 3).</p>
@@ -163,12 +161,11 @@ chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &qu
   Usage: gtftk get_example [-d {simple,mini_real,mini_real_noov_rnd_tx,tiny_real,hg38_chr1,simple_02,simple_03,simple_04,simple_05,simple_06,simple_07,mini_real_10M,control_list,ologram_1,ologram_2,mini_real_ens}] [-f {*,gtf,bed,bw,bam,join,join_mat,chromInfo,tsv,fa,fa.idx,genes,geneList,2.bw,genome}] [-o OUTPUT] [-l] [-a] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Print example files including GTF.
+
+     Print example files including GTF.
 
   Notes:
      *  Use format &#39;*&#39; to get all files from a dataset.
-
-  Version:  2018-01-20
 
 Arguments:
  -d, --dataset                Select a dataset. (default: simple)
@@ -189,9 +186,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="add-exon-nb">
+<section id="add-exon-nb">
 <h2>add_exon_nb<a class="headerlink" href="#add-exon-nb" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Add exon number transcript-wise (based on 5’ to 3’ orientation).</p>
 <p><strong>Example:</strong></p>
@@ -223,9 +220,8 @@ chr1	107	116	1	G0007T001
   Usage: gtftk add_exon_nb [-i GTF] [-o GTF] [-k exon_numbering_key] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Add exon number transcript-wise (based on 5&#39; to 3&#39; orientation).
 
-  Version:  2018-01-20
+     Add exon number transcript-wise (based on 5&#39; to 3&#39; orientation).
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -243,9 +239,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="count">
+<section id="count">
 <h2>count<a class="headerlink" href="#count" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Count the number of features (transcripts, genes, exons, introns).</p>
 <p><strong>Example:</strong></p>
@@ -261,9 +257,8 @@ CDS	20	example_gtf
   Usage: gtftk count [-i GTF] [-o TXT] [-d header] [-t TEXT] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Count the number of each features in the gtf file.
 
-  Version:  2018-01-20
+     Count the number of each features in the gtf file.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
@@ -282,9 +277,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="count-key-values">
+<section id="count-key-values">
 <h2>count_key_values<a class="headerlink" href="#count-key-values" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Count the number of values for a set of keys.</p>
 <p><strong>Example:</strong> Count the number of non-redondant entries for chromosomes and transcript_id.</p>
@@ -298,14 +293,13 @@ transcript_id	15
   Usage: gtftk count_key_values [-i GTF] [-o TXT] [-k keys] [-t TEXT] [-u] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Count the number of values/levels for a set of keys.
+
+     Count the number of values/levels for a set of keys.
 
   Notes:
      *  Use --uniq to get the count of non-redondant values.
      *  Not available values (&#39;.&#39;) are not taken into account.
      *  Use &quot;*&quot; as the key to get the counts for all keys.
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
@@ -325,9 +319,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="get-attr-list">
+<section id="get-attr-list">
 <h2>get_attr_list<a class="headerlink" href="#get-attr-list" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the list of attributes from a GTF file.</p>
 <p><strong>Example:</strong> Get the list of attributes in the “simple” dataset.</p>
@@ -343,9 +337,8 @@ ccds_id
   Usage: gtftk get_attr_list [-i GTF] [-o TXT] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get the list of attributes from a GTF file.
 
-  Version:  2018-01-20
+     Get the list of attributes from a GTF file.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -363,9 +356,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="get-attr-value-list">
+<section id="get-attr-value-list">
 <h2>get_attr_value_list<a class="headerlink" href="#get-attr-value-list" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the list of values observed for an attributes.</p>
 <p><strong>Example:</strong> Get the number of time each gene_id is used.</p>
@@ -387,9 +380,8 @@ G0010;4
   Usage: gtftk get_attr_value_list [-i GTF] [-o TXT] -k key_name [-s separator] [-c] [-p] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get the list of values observed for an attributes.
 
-  Version:  2018-02-11
+     Get the list of values observed for an attributes.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -410,9 +402,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="get-feature-list">
+<section id="get-feature-list">
 <h2>get_feature_list<a class="headerlink" href="#get-feature-list" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the list of features enclosed in the GTF.</p>
 <p><strong>Example:</strong> Get the list of features enclosed in the GTF.</p>
@@ -428,9 +420,8 @@ CDS
   Usage: gtftk get_feature_list [-i GTF] [-o TXT] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get the list of features enclosed in the GTF.
 
-  Version:  2018-02-11
+     Get the list of features enclosed in the GTF.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -448,9 +439,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="nb-exons">
+<section id="nb-exons">
 <h2>nb_exons<a class="headerlink" href="#nb-exons" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Count the number of exons and add it as a novel key/value. Output may also be in text format if requested.</p>
 <p><strong>Example:</strong></p>
@@ -467,10 +458,9 @@ chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &qu
   Usage: gtftk nb_exons [-i GTF] [-o TXT/GTF] [-f] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Returns the transcript name and number of exons with nb_exons as a novel key for each transcript
-     feature.
 
-  Version:  2018-01-20
+     Returns the transcript name and number of exons with nb_exons as a novel key for each transcript
+     feature.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -489,9 +479,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="nb-transcripts">
+<section id="nb-transcripts">
 <h2>nb_transcripts<a class="headerlink" href="#nb-transcripts" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Count the number of transcript per gene.</p>
 <p><strong>Example:</strong> Count the number of transcript per gene.</p>
@@ -513,9 +503,8 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;; nb_tx &quot;1&quot;;
   Usage: gtftk nb_transcripts [-i GTF] [-o GTF/TXT] [-f] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Compute the number of transcript per gene.
 
-  Version:  2018-01-20
+     Compute the number of transcript per gene.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -534,9 +523,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="seqid-list">
+<section id="seqid-list">
 <h2>seqid_list<a class="headerlink" href="#seqid-list" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Return the chromosome list.</p>
 <p><strong>Example:</strong> Return the chromosome list.</p>
@@ -549,9 +538,8 @@ chr1
   Usage: gtftk seqid_list [-i GTF] [-o TXT] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select the seqid/chromosomes
 
-  Version:  2018-01-20
+     Select the seqid/chromosomes
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -569,9 +557,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="tss-dist">
+<section id="tss-dist">
 <h2>tss_dist<a class="headerlink" href="#tss-dist" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Compute the distance between TSSs of pairs of gene transcripts. The tss_num_1 and tss_num_2 columns contains the TSSs number (for transcript_id_1 and transcript_id_2 respectively). Numering starts from 1 (most 5’ TSS  for a gene) to the number of different TSS coordinates. Two or more transcripts will have the same tss_num if they share a TSS.</p>
 <p><strong>Example:</strong> An example on the mini_real dataset.</p>
@@ -594,15 +582,14 @@ ENSG00000107829	ENST00000489578	ENST00000482428	63561	3	5
   Usage: gtftk tss_dist [-i GTF] [-o TXT] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Computes the distance between TSSs of pairs of gene transcripts.
+
+     Computes the distance between TSSs of pairs of gene transcripts.
 
   Notes:
      *  The tss_num_1/tss_num_1 columns contains the numbering of TSSs (transcript_id_1 and
      transcript_id_2 respectively) for each gene.
      *  Numering starts from 1 (most 5&#39; TSS) to the number of different TSS coordinates.
      *  Thus two or more transcripts will have the same tss_num if they share a TSS.
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
@@ -619,9 +606,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="feature-size">
+<section id="feature-size">
 <h2>feature_size<a class="headerlink" href="#feature-size" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the size and limits (start/end) of features enclosed in the GTF. If bed format is requested returns the limits in bed format and the size as a score. Otherwise output GTF file with ‘feat_size’ as a new key and size as value</p>
 <p><strong>Example:</strong> Add trancript size (mature RNA) to the gtf.</p>
@@ -638,12 +625,11 @@ chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot
   Usage: gtftk feature_size [-i GTF] [-o GTF/BED] [-t ft_type] [-n NAME] [-k KEY_NAME] [-s SEP] [-b] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get the size and limits (start/end) of features enclosed in the GTF. The feature can be of any
+
+     Get the size and limits (start/end) of features enclosed in the GTF. The feature can be of any
      type (as found in the 3rd column of the GTF) or &#39;mature_rna&#39; to get transcript size (i.e
      without introns). If bed format is requested returns the limits in bed format and the size as a
      score. Otherwise output GTF file with &#39;feat_size&#39; as a new key and size as value.
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -665,8 +651,8 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -738,14 +724,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="gtftk_args.html" title="Help on gtftk Unix commands"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘information’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
   </body>
 </html>

@@ -38,7 +38,7 @@ import warnings
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-import multiprocessing
+import billiard
 import os
 import re
 import sys
@@ -440,7 +440,7 @@ def ologram(inputfile=None,
             multiple_overlap_target_combi_size=None,
             multiple_overlap_max_number_of_combinations=None,
             multiple_overlap_custom_combis=None,
-            exact = False,
+            exact=False,
 
             keep_intact_in_shuffling=None,
             use_markov_shuffling=False,
@@ -483,7 +483,7 @@ def ologram(inputfile=None,
             type='WARNING')
 
     # Send a warning if nb_threads < available cpu cores
-    available_cores = multiprocessing.cpu_count()
+    available_cores = billiard.cpu_count()
     if nb_threads < available_cores:
         message(
             'Using only ' + str(nb_threads) + ' threads, but ' + str(
@@ -801,7 +801,7 @@ def ologram(inputfile=None,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
                               bed_excl=bed_excl, use_markov_shuffling=use_markov_shuffling,
                               keep_intact_in_shuffling=keep_intact_in_shuffling,
-                              nb_threads=nb_threads, 
+                              nb_threads=nb_threads,
                               draw_histogram=display_fit_quality)  # Draw histograms only if fit quality is also assessed. TODO: move to its own parameter
 
     # Initialize result dict
@@ -984,7 +984,7 @@ def ologram(inputfile=None,
                                                 multiple_overlap_target_combi_size=multiple_overlap_target_combi_size,
                                                 multiple_overlap_max_number_of_combinations=multiple_overlap_max_number_of_combinations,
                                                 multiple_overlap_custom_combis=multiple_overlap_custom_combis,
-                                                exact = exact)
+                                                exact=exact)
 
         # NOTE. In other cases, hits[feature_type] is a single dictionary giving
         # stats. In this case, it is a dictionary of dictionaries, one per set
@@ -1466,14 +1466,14 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
                 plots += [p + theme(figure_size=figsize)]
 
         # NOTE : We must manually specify figure size with save_as_pdf_pages
-        plot_process = multiprocessing.Process(target=save_as_pdf_pages,
+        plot_process = billiard.Process(target=save_as_pdf_pages,
                                                name="Drawing", kwargs={"filename": pdf_file.name,
                                                                        "plots": plots,
                                                                        "width": pdf_width,
                                                                        "height": pdf_height})
         plot_process.start()
 
-        # Wait a maximum of 15 minutes for drawing
+        # Wait a maximum of 10 minutes for drawing
         plot_process.join(60 * 10)
 
         # If the drawing thread is still active, terminate it

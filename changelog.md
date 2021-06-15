@@ -5,6 +5,8 @@
 
 ### Bug Fixes
 
+*   Fix gtf.tail() (#158).
+
 *   Fix merge_attr (#147).
 
 *   Fixed merged statistics calculation in *ologram_merge_runs*.
@@ -23,13 +25,15 @@
 
 *   OLOGRAM will now also produce separate histograms for each combination length.
 
-*   The --chrom-file argument now accepts "mm8_ens", "mm9_ens", "mm10_ens", "hg19_ens", "hg38_ens", "rn3_ens" and "rn4_ens" which correspond to internal chromosome info files in ensembl format (i.e. no 'chr' prefix).
+*   The --chrom-file argument now accepts "mm8_ens", "mm9_ens", "mm10_ens", "hg19_ens", "hg38_ens", "rn3_ens" and "rn4_ens" which correspond to internal chromosome info files in ensembl format (i.e. no 'chr' prefix) (#146).
 
 *   OLOGRAM has two new arguments (--hide-undef and --pval-threshold) to hide undefine or high p-values.
 
 *   ologram_modl_treeify has a new argument (--min-inheritance) to add combinations only if they represent a given proportion of an existing parent.
 
-*   In OLOGRAM-MODL, whether to use exact combinations or not (should A+B+C count as an observation of A+B ? Yes if not exact) is now controlled by an argument (--exact)
+*   In OLOGRAM-MODL, whether to use exact combinations or not (should A+B+C count as an observation of A+B ? Yes if not exact) is now controlled by an argument (--exact).
+
+*   Added an argument to OLOGRAM to hide bars with undefined p-values (#149).
 
 ### Code changes
 

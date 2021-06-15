@@ -304,3 +304,10 @@ html_theme_options = {
 # html_sidebars = {'**': ['localtoc.html', 'sourcelink.html', 'searchbox.html']}
 
 html_extra_path = ['_static']
+
+# Workaround for issue https://github.com/sphinx-contrib/googleanalytics/issues/2
+# Note that a warning still will be issued "unsupported object from its setup() function"
+# Remove this workaround when the issue has been resolved upstream
+import sphinx.application
+import sphinx.errors
+sphinx.application.ExtensionError = sphinx.errors.ExtensionError

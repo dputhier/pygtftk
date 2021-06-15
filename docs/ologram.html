@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,14 +17,13 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘ologram’ &#8212; gtftk 1.2.7 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <title>Commands from section ‘ologram’ &#8212; gtftk 1.2.8 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘ologram’</a></li> 
       </ul>
     </div>  
@@ -55,7 +55,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="commands-from-section-ologram">
+  <section id="commands-from-section-ologram">
 <h1>Commands from section ‘ologram’<a class="headerlink" href="#commands-from-section-ologram" title="Permalink to this headline">¶</a></h1>
 <p>In the examples of this section, we will need the following example files:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
@@ -77,11 +77,12 @@
 </pre></div>
 </div>
 <p>For more information about OLOGRAM and OLOGRAM-MODL, please see the appropriately titled papers in the Citing section.</p>
-<p>More examples can be found in <a class="reference external" href="https://github.com/qferre/ologram_supp_mat">https://github.com/qferre/ologram_supp_mat</a> and <a class="reference external" href="https://github.com/qferre/ologram-modl_supp_mat">https://github.com/qferre/ologram-modl_supp_mat</a>
+<p>More examples can be found in &lt;<a class="reference external" href="https://github.com/qferre/ologram_supp_mat">https://github.com/qferre/ologram_supp_mat</a>&gt; and more recently at &lt;<a class="reference external" href="https://github.com/qferre/ologram-modl_supp_mat">https://github.com/qferre/ologram-modl_supp_mat</a>&gt;
 These contain example Snakemake workflows, that can be reused or from which commands can be extracted.</p>
+<p>Most of the commands presented in this section are demonstrated in the <em>ologram-modl_supp_mat</em> Git, along with certain perspectives.</p>
 <p><strong>Note for contributors</strong> : To contribute to OLOGRAM, begin at <em>pygtftk/plugins/ologram.py</em> and unwrap function calls from there, to get a sense of how they interact. We have detailed comments to explain the role of every function.</p>
 <hr class="docutils" />
-<div class="section" id="ologram">
+<section id="ologram">
 <h2>ologram<a class="headerlink" href="#ologram" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> OLOGRAM – OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks
 (in bed format) using (i) genomic features extracted from a GTF file (e.g promoter, tts, gene body, UTR…)
@@ -102,8 +103,8 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:26-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 17:26-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
+ |-- 14:54-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 14:55-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
 </pre></div>
 </div>
 <br>
@@ -118,7 +119,7 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> We are now using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:27-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 14:56-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -137,8 +138,8 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:28-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
- |-- 17:28-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 14:56-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
+ |-- 14:56-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -153,8 +154,8 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 17:29-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
- |-- 17:29-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 14:57-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 14:57-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -171,41 +172,42 @@ The program will return statistics for both the number of intersections and the 
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gtftk ologram -ms <span class="m">40</span> -mn <span class="m">10</span> -p query.bed --more-bed A.bed B.bed C.bed -z -c hg38 -V <span class="m">3</span> --force-chrom-peak --force-chrom-more-bed
 </pre></div>
 </div>
-</div>
-<div class="section" id="ologram-multiple-overlaps">
+</section>
+<section id="ologram-multiple-overlaps">
 <h2>ologram (multiple overlaps)<a class="headerlink" href="#ologram-multiple-overlaps" title="Permalink to this headline">¶</a></h2>
-<p>While previously we computed paiwise enrichment (ie. Query+A, Query+B, …) , it is also possible to use the <strong>OLOGRAM-MODL</strong> Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n&gt;=2 sets) enrichment (ie. Query+A+B, Query+A+C, …) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes.</p>
+<p>It is also possible to use the <strong>OLOGRAM-MODL</strong> Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n&gt;=2 sets) enrichment (ie. Query+A+B, Query+A+C, …) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes.</p>
 <p>This is done only on custom regions supplied as BEDs supplied with the <cite>–more-bed</cite> argument. In most cases you may use the –no-gtf argument and only pass the regions of interest.</p>
-<p>For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using –bed-excl or –bed-incl to ensure the longer combinations have a reasonable chance of being randomly encountered in the shuffles. Conversely, if you do not filter the combinations, keep in mind that the longer ones may be enriched even though they are present only on a few base pairs, because at random they would be even rarer.</p>
-<p><strong>Exact combinations:</strong> By default, OLOGRAM will compute “inexact” combinations, meaning that when encountering an overlap of [Query + A + B + C] it will count towards [A + B + …]. For exact intersections (ie. [Query + A + B + nothing else]), set the –multiple-overlap-target-combi-size flag to the number of –more-bed plus one. You will know if the combinations are computed as inexact by the ‘…’ in their name in the result file. Intersections not including the query file are discarded.</p>
-<p>With inexact combinations, if A+B is very enriched and C is depleted, A+B+C will be enriched. It is more interesting to look at C’s contribution to the enrichment. Relatedly, longer combinations are usually more enriched since they involve more theoretically independant sets. Combinations of similar orders should be compared.</p>
+<p>For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using –bed-excl or –bed-incl. This ensures the longer combinations have a reasonable chance of being randomly encountered in the shuffles. Conversely, if you do not filter the combinations, keep in mind that the longer ones may be enriched even though they are present only on a few base pairs, because at random they would be even rarer. As such, we recommend focusing comparisons on combinations of similar order (number of sets).</p>
+<p><strong>Exact combinations:</strong> By default, OLOGRAM will compute “inexact” combinations, meaning that when encountering an overlap of [Query + A + B + C] it will still count as an observation of [Query + A + B + …] (meaning “Query + A + B + any other set”). For exact intersections (ie. [Query + A + B + nothing else]), set the –exact flag to True. You will know if the combinations are computed as inexact by the ‘…’ in their name in the result file.</p>
+<p>In any case, only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C is not.</p>
+<p>With inexact combinations, if A+B is very enriched and C is depleted, A+B+C will be enriched. It is more interesting to look at C’s contribution to the enrichment. Relatedly, longer combinations are usually more enriched since they involve more theoretically independant sets. Relatedly, you should compare the enrichments of combinations of similar orders (number of sets in the combinations) since longer combinations tend to be more enriched under (H_0).</p>
 <p><strong>Simple example:</strong></p>
 <p>Comparing the query (-p) against two other BED files, analyzing multiple overlaps.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -z -w -q -c simple_07.chromInfo -p simple_07_peaks.bed --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap
- |-- 17:30-WARNING : Converting to bed6 format (simple_07_peaks.bed).
- |-- 17:30-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
- |-- 17:30-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
- |-- 17:30-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 17:30-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
- |-- 17:30-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
- |-- 17:30-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
- |-- 17:30-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
+ |-- 14:58-WARNING : Converting to bed6 format (simple_07_peaks.bed).
+ |-- 14:58-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
+ |-- 14:58-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
+ |-- 14:58-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 14:58-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
+ |-- 14:58-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 14:58-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 14:58-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
 </pre></div>
 </div>
 <p><strong>Detailed example:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gtftk ologram -z -c simple_07.chromInfo -p simple_07_peaks.bed       <span class="c1"># The query (-p) is the file to compare against.</span>
-  --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed           <span class="c1"># List of files to compare with</span>
-  <span class="c1"># --more-bed `ls -d ./data/*`                                    # This should work instead if all your files are in the &#39;data&#39; subdirectory</span>
-  -o results --force-chrom-peak --force-chrom-more-bed
-    -o results --force-chrom-peak --force-chrom-more-bed
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gtftk ologram -z -c simple_07.chromInfo -p simple_07_peaks.bed     <span class="c1"># The query (-p) is the file to compare against.</span>
+  --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed           <span class="c1"># List of BED files giving the region sets to compare with. TIP: You can use  --more-bed `ls -d ./data/*` if all your files are in the &#39;data&#39; subdirectory</span>
   -o results --force-chrom-peak --force-chrom-more-bed
   -V <span class="m">3</span> -k <span class="m">8</span> -mn <span class="m">10</span> -ms <span class="m">10</span>                                          <span class="c1"># Verbosity, threads, number and size of minibatches</span>
-  --more-bed-multiple-overlap                                      <span class="c1"># Use multiple overlaps on the --more-bed</span>
+  --more-bed-multiple-overlap                                      <span class="c1"># Toggle the computation of multiple overlaps on the --more-bed</span>
+  --exact                                                          <span class="c1"># OPTIONAL ARGUMENT. If present, an observation of A+B+C will not count as an observation of A+B.</span>
   --multiple-overlap-max-number-of-combinations <span class="m">10</span>                 <span class="c1"># OPTIONAL ARGUMENT. Use MODL to restrict to this many combinations.</span>
   --multiple-overlap-target-combi-size <span class="m">3</span>                           <span class="c1"># OPTIONAL ARGUMENT. Combis mined longer than this size will not be shown.</span>
   --multiple-overlap-custom-combis test_combis.txt                 <span class="c1"># OPTIONAL ARGUMENT. Will bypass the selection by the previous two arguments and work only on the combinations defined in this file.</span>
+  --keep-intact-in-shuffling <span class="m">0</span>,1                                   <span class="c1"># BETA - OPTIONAL ARGUMENT. Gives the positions of the files in --more-bed that will be kept fixed in shuffling.</span>
 </pre></div>
 </div>
+<p>See the result of <cite>gtftk ologram -h</cite> below for more detailed informations about the arguments’ formats.</p>
 <br>
 <table>
 <tr>
@@ -217,19 +219,25 @@ The program will return statistics for both the number of intersections and the 
 </table>
 <br>
 <br><p>As the computation of multiple overlaps can be RAM-intensive, if you have a very large amount of candidate genomic feature sets (hundreds) we recommend selecting less candidates among them first by running a pairwise analysis.</p>
-<p><strong>MODL itemset mining algorithm:</strong> By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations. As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations.</p>
-</div>
-<div class="section" id="itemset-mining-details">
+<p><strong>MODL itemset mining algorithm:</strong> By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations. As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. Another possibility is to instead manually pass a text file containg the combinations you want to study</p>
+</section>
+<section id="itemset-mining-details">
 <h2>Itemset mining details<a class="headerlink" href="#itemset-mining-details" title="Permalink to this headline">¶</a></h2>
 <p>In broad strokes, the custom itemset algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as –more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).</p>
-<p>Unlike classical association rules mining algorithms, this focuses on mining relevant bio complexes/clusters and correlation groups (item sets), and you should not request more than 20-30 combinations. As a matrix factorization based algorithm, it is designed to be resistant
-to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).</p>
-<p>This itemset mining algorithm is a work-in-progress. Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the –multiple-overlap-max-number-of-combinations argument.</p>
+<p>Unlike classical association rules mining algorithms, this focuses on mining relevant biological complexes/clusters and correlation groups (item sets). As such, we do not recommend asking for more than 20-50 combinations to keep the running time reasonable and keep the found combinations still relevant.</p>
+<p>As a matrix factorization based algorithm, it is designed to be resistant to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).</p>
+<p>This itemset mining algorithm is a work-in-progress, and optional . Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the –multiple-overlap-max-number-of-combinations argument.</p>
+<p>MODL is mostly needed when the list of --more-bed is very long and you do not want to filter the results manually, and when you are working with noisy data which could obfuscate the interesting combinations. It is also possible to bypass it and provide a custom list of combinations to be considered.</p>
 <p><strong>MODL algorithm API:</strong> MODL can also be used independantly as a combination mining algorithm.</p>
 <p>This can work on any type of data, biological or not, that respects the conventional formatting for lists of transactions: the data needs to be a matrix with one line per transaction and one column per element. For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C.</p>
 <p>For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1. MODL will discard combinations rarer than 1/10000 occurences to reduce computing times. It will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. However, the latter can magnify the impact of the noise as well and can be disabled when using the manual API. To de-emphasize longer words, which can help in this case, we normalize words by their summed square in step 2.</p>
-<p>If you are passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity.  All are NumPY matrices.</p>
-<p>For more details, see code comments.</p>
+<p>If you are passing a custom error function, it must have this signature: <cite>error_function(X_true, X_rebuilt, encoded, dictionary)</cite>. X_true is the real data, and X_rebuilt is the reconstruction to evaluate.
+encoded is the encoded version (U) which in our case is used to assess sparsity, while dictionary (V) is the matrix with one atom of the dictionaty per row (not used by default). Note that the dictionary is passed before MODL performs any normalization on it.  All are NumPy matrices.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An example of custom loss we recommend is: selecting the combinations (of reference sets) that best predict the query set using a Naive Bayes classifier. This is not yet implemented, but a fully functional example is available at &lt;<a class="reference external" href="https://github.com/qferre/ologram-modl_supp_mat/blob/master/scripts/modl_perspective.py">https://github.com/qferre/ologram-modl_supp_mat/blob/master/scripts/modl_perspective.py</a>&gt; as a Python script. To use it, simply replace the filepaths at the beginning with the paths to your own files, and run the script. The order in the selection will be the same as the order you gave in the script, not alphabetical. You can then run OLOGRAM without MODL, or pass the custom selection you just computed.</p>
+</div>
+<p><strong>For more details, see code comments.</strong></p>
 <p>Here is an example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.modl.dict_learning</span> <span class="kn">import</span> <span class="n">Modl</span><span class="p">,</span> <span class="n">test_data_for_modl</span>
 <span class="n">flags_matrix</span> <span class="o">=</span> <span class="n">test_data_for_modl</span><span class="p">(</span><span class="n">nflags</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">number_of_sets</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">cor_groups</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
@@ -237,138 +245,111 @@ to noise which is a known problem in biological data. Its goal is to extract mea
 <span class="kn">from</span> <span class="nn">pygtftk</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="n">utils</span><span class="o">.</span><span class="n">VERBOSITY</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># Ensure DEBUG messages are shown</span>
 
+
+<span class="c1"># Simple example of custom error function</span>
+<span class="k">def</span> <span class="nf">my_error_function</span> <span class="p">(</span><span class="n">X_true</span><span class="p">,</span> <span class="n">X_rebuilt</span><span class="p">,</span> <span class="n">encoded</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">):</span>  <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">X_rebuilt</span> <span class="o">-</span> <span class="n">X_true</span><span class="p">)</span>
+
 <span class="n">combi_miner</span> <span class="o">=</span> <span class="n">Modl</span><span class="p">(</span><span class="n">flags_matrix</span><span class="p">,</span>
   <span class="n">multiple_overlap_target_combi_size</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>            <span class="c1"># Limit the size of the combinations</span>
   <span class="n">multiple_overlap_max_number_of_combinations</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>    <span class="c1"># How many words to find ?</span>
   <span class="n">nb_threads</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="n">step_1_factor_allowance</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>                        <span class="c1"># How many words to ask for in each step 1 rebuilding, as a multiplier of multiple_overlap_max_number_of_combinations</span>
-  <span class="n">error_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>                              <span class="c1"># Custom error function in step 2</span>
-  <span class="n">smother</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>                                     <span class="c1"># Should the smothering (quadratic reduction of abundance) be applied ?</span>
-  <span class="n">normalize_words</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>                             <span class="c1"># Normalize words by their summed squared in step 2 ?</span>
-  <span class="n">step_2_alpha</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>                                <span class="c1"># Override the alpha (sparsity control) used in step 2</span>
+  <span class="n">step_1_factor_allowance</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>                        <span class="c1"># (Defaults to 2) How many words to ask for in each step 1 rebuilding, as a multiplier of multiple_overlap_max_number_of_combinations.</span>
+  <span class="n">error_function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>                              <span class="c1"># (OPTIONAL) Custom error function in step 2</span>
+  <span class="n">smother</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>                                     <span class="c1"># (Defaults to True) Should the smothering (quadratic reduction of abundance) be applied ?</span>
+  <span class="n">normalize_words</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>                             <span class="c1"># (Defaults to True) Normalize words by their summed squared in step 2 ?</span>
+  <span class="n">step_2_alpha</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>                                <span class="c1"># (OPTIONAL) Override the alpha (sparsity control) used in step 2.</span>
+  <span class="n">discretization_threshold</span> <span class="o">=</span> <span class="mi">0</span>                        <span class="c1"># (Defaults to 1) Discretization threshold D : in each atom, elements below D*maximum_for_this_atom will be discarded.</span>
+  <span class="n">step_1_alphas</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>                               <span class="c1"># (OPTIONAL) Override the list of alphas used in step 1 (should be a list)</span>
 <span class="n">interesting_combis</span> <span class="o">=</span> <span class="n">combi_miner</span><span class="o">.</span><span class="n">find_interesting_combinations</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>For more details about usage and implementation, please read the notes below.</p>
 <p><strong>Arguments:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -h
-  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-e BED] [-bi BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-mo] [-mocs multiple_overlap_target_combi_size] [-monc multiple_overlap_max_number_of_combinations] [-moc multiple_overlap_custom_combis] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-pf pdf_file_alt] [-x] [-y] [-tp tsv_file_path] [-j {None,nb_intersections_expectation_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_expectation_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-z] [-f] [-w] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
+  Usage: gtftk ologram [-i GTF] [-c TXT] -p BED [-b [more_bed [more_bed ...]]] [-l more_bed_labels] [-kis keep_intact_in_shuffling] [-e BED] [-bi BED] [-u upstream] [-d downstream] [-m more_keys] [-n] [-mo] [-mocs multiple_overlap_target_combi_size] [-monc multiple_overlap_max_number_of_combinations] [-moc multiple_overlap_custom_combis] [-ex] [-k nb_threads] [-s seed] [-mn minibatch_nb] [-ms minibatch_size] [-ma] [-o DIR] [-pw pdf_width] [-ph pdf_height] [-pf pdf_file_alt] [-x] [-y] [-tp tsv_file_path] [-r] [-j {None,nb_intersections_expectation_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_expectation_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}]
+                        [-a {None,nb_intersections_expectation_shuffled,nb_intersections_variance_shuffled,nb_intersections_negbinom_fit_quality,nb_intersections_log2_fold_change,nb_intersections_true,nb_intersections_pvalue,summed_bp_overlaps_expectation_shuffled,summed_bp_overlaps_variance_shuffled,summed_bp_overlaps_negbinom_fit_quality,summed_bp_overlaps_log2_fold_change,summed_bp_overlaps_true,summed_bp_overlaps_pvalue}] [-g pval_threshold] [-z] [-f] [-w] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo. Ologram annotates peaks (in bed
-     format) using (i) genomic features extracted from a GTF file (e.g promoter, tts, gene body,
-     UTR...) (ii) genomic regions tagged with particular keys/values in a GTF file (e.g.
-     gene_biotype &quot;protein_coding&quot;, gene_biotype &quot;LncRNA&quot;...) or (iii) from a BED file (e.g. user-
-     defined regions).  Each pair {peak file, feature} is randomly shuffled independently across the
-     genome (inter-region lengths are considered). Then the probability of intersection under the
-     null hypothesis (the peaks and this feature are independent) is deduced thanks to this Monte
-     Carlo approach. The program will return statistics for both the number of intersections and the
-     total lengths (in basepairs) of all intersections.  The null hypothesis is:  H0: The regions of
-     the query (--peak-file) are located independently of the  reference (--inputfile or --more-bed)
-     with respect to overlap.  H1: The regions of the query (--peak-file) tend to overlap the
-     reference (--inputfile or --more-bed).   OLOGRAM can now also calculate enrichment for n-wise
-     combinations (e.g. [Query + A + B] or [Query + B + C]) on sets of regions defined by the user
-     (--more-bed argument).  Author : Quentin FERRE &lt;quentin.q.ferre@gmail.com&gt;, Co-authors :
-     Guillaume CHARBONNIER &lt;guillaume.charbonnier@outlook.com&gt; and Denis PUTHIER
+
+     OLOGRAM -- OverLap Of Genomic Regions Analysis using Monte Carlo.
+
+     Ologram annotates peaks (in bed format) using (i) genomic features extracted from a GTF file (e.g.
+     promoter, gene body, UTR...), (ii) genomic regions tagged with particular keys/values in a GTF
+     (e.g. gene_biotype &quot;protein_coding&quot;, gene_biotype &quot;LncRNA&quot;, ...) or (iii) from a BED file
+     (user-defined regions).
+
+     Each set of regions is randomly shuffled independently across the chromosomes  (inter-region
+     lengths are considered). Then the probability of intersection  under the null hypothesis is
+     deduced with our Monte Carlo approach.
+
+     The null hypothesis is that the regions of the query (--peak-file) are located  independently of
+     the reference (--inputfile or --more-bed) and do not overlap  more than by chance. We return
+     statistics for both the number of intersections and the total lengths (in basepairs) of all
+     intersections.
+
+     For more information, please see the full documentation.
+
+     OLOGRAM can also calculate enrichment for n-wise combinations (e.g. [Query +  A + B]  or [Query +
+     B + C]) on sets of regions defined by the user (--more-bed argument). Here is an example of
+     command line to compute the enrichments of the overlaps of the sets given in --more-bed, with
+     the query set (-p) and with each other:
+
+     `gtftk ologram -z -w -q -c hg38 -p query.bed --more-bed A.bed B.bed C.bed --more-bed-multiple-
+     overlap`
+
+     Author : Quentin FERRE &lt;quentin.q.ferre@gmail.com&gt;
+
+     Co-authors : Guillaume CHARBONNIER &lt;guillaume.charbonnier@outlook.com&gt; and Denis PUTHIER
      &lt;denis.puthier@univ-amu.fr&gt;.
 
   Notes:
-     *  OLOGRAM is multithreaded and can use many cores, most notably processing one batch of
-     shuffles per core. Note that this can be RAM-intensive, on top of the base pygtftk processing
-     of a full human GTF can require upwards of 8Gb. It is recommended you do not run other programs
-     in the meantime on a laptop.
-     *  You may pass custom sets of regions as BED files, especially for multiple overlaps,  with
-     the
-     *  more-bed arguments to look for enrichment in overlaps for custom annotations.
-     *  Genome size is computed from the provided chromInfo file (-c). It should thus only contain
-     ordinary chromosomes. --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39;
-     or &#39;rn4&#39;. In this case the corresponding size of conventional chromosomes are used. ChrM is not
-     used.
-     *  The program produces a pdf file and a tsv file (&#39;_stats_&#39;) containing intersection
-     statistics for the shuffled BEDs under H0 (peak_file and the considered genomic region are
-     independant): number of intersections (N = number of lines in the bed intersect) and total
-     number of overlapping base pairs (S).  The output figure gives, for both statistics,
-     expectation and standard deviation (error bars) in the shuffles compared to the actual values.
-     It also gives, under the &#39;fit&#39; label for each statistic, the goodness of fit of the statistic
-     under (H0) to a Negative Binomial assessed by a Cramer&#39;s V score (fit_quality gives 1-V ; as
-     per Cramer (1948) a good fit should have a fit quality above (1 - 0.25 = 0.75) if your nb. of
-     shuffles is in the hundreds, but closer to 0.9 if it is in the thousands or above.  The p-value
-     of the true intersection under the distribution characterized by the shuffles is also given,
-     under &#39;p_value&#39;. Finally, the log2 fold change between true and shuffles is also given.
-     *  If --more-keys is used additional region sets will be tested based on the associated key
-     value. As an example, if --more-keys is set to the &#39;gene_biotype&#39; (a key generally found in
-     ensembl GTF), the region related to &#39;protein_coding&#39;, &#39;lncRNA&#39; or any other values for that key
-     will be retrieved merged and tested for enrichment.
-     *  Use --no-basic-feature if you want to perform enrichment analysis on custom, focused
-     annotations only (--more-bed or --more-key).
-     *  The goal of the minibatches is to save RAM. You should increase the number of minibatches,
-     instead of their size. You may need to use very small minibatches if you have large sets of
-     regions.
-     *  You can exclude regions from the shuffling. This is done by shuffling across a concatenated
-     &quot;sub-genome&quot; obtained by removing the excluded regions, but the same ones will be excluded from
-     the peak_file and the GTF/more-bed files.
-     *  BETA : About --use-markov. This arguments control whether to use Markov model realisations
-     (of order 2) instead of independant shuffles for respectively region lengths and inter-region
-     lengths. This can better capture the structure of the genomic regions repartitions. This is not
-     recommended in the general case and can be *very* time-consuming (hours).
-     *  While they will be accepted by OLOGRAM, in BED files lines such as &quot;chr1 100 100&quot; or &quot;chr1
-     100&quot; would represent empty regions (of length 0) and as such are an error.
-     *  Support for multiple overlaps is available. Please see the documentation for more
-     information. If the --more-bed-multiple-overlap argument is used, the query peak file will be
-     compared with the custom regions passed to the --more-bed argument, and with  them only. For
-     example, you can put as query the  binding sites of the Transcription Factor A, in --more-bed
-     the factors B, C and D, and see whether A+B+D is an enriched combination.
-     *  By default, interesections are counted as &quot;inexact&quot;, meaning an overlap of [A + B + C] will
-     count towards [A + B + ...]. For exact intersections (ie. [A + B + nothing else]), set the
-     --multiple-overlap-target-combi-size flag to the number of --more-bed +1 (+1 for the query)
-     In any case, only intersections with the query are counted. ie. Query+A+B is counted, but A+B+C
-     is not. Intersection within sets are supported by the backend and may come in a future version.
-     We recommend using --multiple-overlap-target-combi-size only when not using MODL since
-     filtering is applied after the first step of candidate mining.
-     *  Furthermore, you may use our MODL algorithm to find biological complexes of interest, by
-     mining for frequent itemsets on the intersections on the true data. This is done with the
-     --multiple-overlap-max-number-of-combinations argument. This will not change the N,S and
-     enrichment result, but will restrict the set of interesting combis for which those are
-     calculated and displayed
-     *  MODL is designed to find complexes more than association rules, so we do not recommend
-     asking for more than 20-50 combinations to keep the running time reasonable and keep the found
-     combinations still relevant. Note that MODL is completely optional. It is mostly needed when
-     the list of --more-bed is very long and you do not want to filter the results manually, and
-     when you are working with noisy data which could obfuscate the interesting combinations. MODL
-     employs a form of subsampling on the original matrix and will discard combinations rarer than
-     1/10000 occurences to reduce computing times. This can magnify the noise however and can be
-     disabled when using MODL separately.   It will also reduce the abundance of all lines in the
-     matrix to their square roots to reduce the emphasis on the most frequent elements. This is done
-     as the matrix of intersections will usually have many redundant lines and as such can be
-     squished without changing the result. It is also possible to bypass it and provide a custom
-     list of combinations to be considered.
-     *  MODL can be used separately in Python. An example of how to compute an intersection matrix
-     manually from BED files is presented in the documentation.
-     *  For statistical reality reasons, with multiple sets the expected overlaps for the longer
-     combinations (A+B+C+D+... when they are all independant) can be very low. As a result, longer
-     combinations tend to be more enriched : this should be kept in mind when comparing enrichment
-     values.  This is especially true for small regions such as Transcriptional Regulator biding
-     sites where the total coverage of all sets considered is low.  Note that the fact that we are
-     using a Negative Binomial rather than empirical p-values helps alleviate this problem. If a
-     combination is so rare that it is not encoutered even once in the shuffles, it will have a
-     p-value of NaN. Furthermore, if C is depleted with query but always present with A and B, and A
-     and B are enriched themselves, A+B+C will be enriched.
-     *  A low number of intersecting basepairs can require using more shuffles, but very-low-average
-     Negative Binomial distributions are not really signficant. We recommend instead shuffling only
-     across a biologically relevant subsection of the genome (with --bed-incl) : for example, if
-     studying  Transcriptional Regulators, shuffling only on inferred Cis Regulatory Modules or
-     promoters. Or perhaps run a first pairwise  analysis to identify likely candidates, and then
-     shuffle only across a subgenome obtained by merging all regions in the query. This also allows
-     using fewer shuffles (dozens), because remembering intersections across many files will use
-     RAM.  If you nevertheless need to use many shuffles, look to the ologram_merge_run plugin.
-     *  We recommend running the ologram_modl_treeify plugin on the resulting tsv file if you use
-     multiple overlaps.
-     *  If you manually specify the combinations to be studied with --multiple-overlap-custom-
-     combis, use the following format for the text file :  The order is the same as --more-beds
-     (ie. if --more-bed is &quot;A.bed B.bed C.bed&quot;, &quot;1 0 1 1&quot; means Query + B + C). Data should be
-     whitespace separated with one combination per line.
-
-  Version:  2020-08-01
+     *  chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
+     case the  corresponding size of conventional chromosomes are used. To get the size of  the
+     chromosome in ensembl format (whithout chr prefix), use &#39;mm8_ens&#39;, &#39;mm9_ens&#39;,  &#39;mm10_ens&#39;,
+     &#39;hg19_ens&#39;, &#39;hg38_ens&#39;, &#39;rn3_ens&#39; or &#39;rn4_ens&#39;. ChrM is not used.
+     *  OLOGRAM is multithreaded, notably processing one batch of shuffles per core. This can be
+     RAM-intensive. If needed, use more minibatches and/or merge them with the ologram_merge_runs
+     command (not to be confused with ologram_merge_stats, which is simply a visual plugin).
+     *  The program produces a pdf file and a tsv file (&#39;_stats_&#39;) containing  intersection
+     statistics for the shuffled BEDs under H0, giving the number of  intersections (N) and total
+     number of overlapping base pairs (S). It gives for  N and S mean and standard deviation (error
+     bars) in the shuffles compared to  the actual values, as well as the p-value. It also gives the
+     goodness of fit  of each statistic under (H0).
+     *  You can exclude regions from the shuffling with --bed-incl. This is done by  shuffling
+     across a concatenated &quot;sub-genome&quot; obtained by removing the excluded  regions. The same ones
+     will be excluded from the peak file and the GTF/more-bed files.
+     *  Use --no-gtf if you want to perform enrichment analysis on custom, focused  annotations
+     only (--more-bed). Relatedly, use --no-basic-feature if you want  to perform stats on GTF
+     keys (--more-key) but not on basic features (genes,  transcripts, exons...).
+     *  Support for multiple overlaps is available. If the --more-bed-multiple-overlap argument is
+     used, the query peak file will be compared with the custom regions  passed to the --more-bed
+     argument, *and with them only*. For example, you can  put as query the binding sites of the
+     Transcription Factor A, in --more-bed  the factors B, C and D, and see whether A+B+D is an
+     enriched combination.
+     *  By default, multiple overlap intersections are counted as &quot;inexact&quot;, meaning  an overlap of
+     [A + B + C] will be counted when looking for [A + B + ...]. Add the --exact argument to change
+     that.
+     *  If you work on multiple overlaps, we recommend the ologram_modl_treeify plugin for
+     visualizations.
+     *  Combinations of longer order (containing more sets) will usually be rarer and have lower
+     p-values; as such we recommend comparing p-values between combinations of the same order.
+     *  P-values of -1 or NaN mean the Neg. Binom. fitting was poor, but that does  not mean they
+     must always be discarded: in practice, this mostly happens for  high order combinations which
+     are so unlikely that they were not encountered in the shuffles even once. In this case, this
+     would represent a very large enrichment!  Tangentially, other potential causes of poor fit are:
+     the combination is too rare (too few/small regions) and is rarely encountered in the shuffles,
+     or the shuffling was restricted to a too small region and the variance is lower than mean.
+     *  Relatedly, in the output combinations are sorted by their true number of base  pairs by
+     default, since combinations that are very rare even in the true data  will likely have high
+     enrichment, but be less representative.
+     *  Furthermore, you may use our MODL algorithm to find biological complexes of  interest on the
+     intersections on the true data. This is done with the --multiple-overlap-max-number-of-
+     combinations argument. This will not change the enrichment result, but will restrict the
+     displayed combinations.
+     *  If you manually specify the combinations to be studied with  --multiple-overlap-custom-
+     combis, use the following format for the text file:  The order is the same as --more-beds (ie.
+     if --more-bed is &quot;A.bed B.bed C.bed&quot;, &quot;1 0 1 1&quot; means Query + B + C). Elements should be
+     whitespace separated, with one combination per line.
 
 Arguments:
  -i, --inputfile                        Path to the GTF file. Defaults to STDIN (default: &lt;stdin&gt;)
@@ -376,6 +357,7 @@ Arguments:
  -p, --peak-file                        The file containing the peaks/regions to be annotated. (bed format). (default: None)
  -b, --more-bed                         A list of bed files to be considered as additional genomic annotations. (default: None)
  -l, --more-bed-labels                  A comma separated list of labels (see --more-bed). Optional. (default: None)
+ -kis, --keep-intact-in-shuffling       BETA - A comma separated list of sets number (starts at 0) to be kept intact (fixed) when shuffling, in the order given in --more-bed. (default: None)
  -e, --bed-excl                         Exclusion file. The chromosomes will be shortened by this much for the shuffles of peaks and features. (bed format). (default: None)
  -bi, --bed-incl                        Opposite of --bed-excl, will perform the same operation but keep only those regions. (default: None)
  -u, --upstream                         Extend the TSS and TTS of in 5&#39; by a given value. (default: 1000)
@@ -384,24 +366,28 @@ Arguments:
  -n, --no-basic-feature                 No statistics for basic features of GTF. Concentrates on --more-bed and --more-keys. (default: False)
  -mo, --more-bed-multiple-overlap       The more-beds specified will be considered all at once for multiple overlaps. (default: False)
  -mocs, --multiple-overlap-target-combi-size
-                                        Maximum number of sets in the output combinations. Default to -1 meaning no max number. Set it to number of --more-bed +1 to get exact (exclusive) combinations (default: -1)
+                                        Maximum number of sets in the output combinations. Default to -1 meaning no max number. (default: -1)
  -monc, --multiple-overlap-max-number-of-combinations
                                         Maximum number of combinations to consider by applying the MODL algorithm to the matrix of full overlaps. Defaults to -1, which means MODL is NOT applied and all combinations are returned (default: -1)
  -moc, --multiple-overlap-custom-combis
                                         Path to a text (&#39;*.txt&#39;) file that will be read as a NumPy matrix, overriding the combinations to be studied. See notes for the format of the text file. (default: None)
+ -ex, --exact                           Determines whether an observations of A+B+C counts as an observation for A+B. If False (default), this does count. If True (the argument is present in the command line), we consider only exact matches. (default: False)
  -k, --nb-threads                       Number of threads for multiprocessing. (default: 1)
  -s, --seed                             Numpy random seed. (default: 42)
  -mn, --minibatch-nb                    Number of minibatches of shuffles. (default: 10)
  -ms, --minibatch-size                  Size of each minibatch, in number of shuffles. (default: 20)
- -ma, --use-markov                      Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes. (default: False)
+ -ma, --use-markov-shuffling            Whether to use Markov model realisations (order 2) instead of independant shuffles. See notes. (default: False)
  -o, --outputdir                        Output directory name. (default: ologram_output)
  -pw, --pdf-width                       Output pdf file width (inches). (default: None)
  -ph, --pdf-height                      Output pdf file height (inches). (default: None)
  -pf, --pdf-file-alt                    Provide an alternative path for the main image. (default: None)
  -x, --no-pdf                           Do not produce any image file. (default: False)
- -y, --display-fit-quality              Display the negative binomial fit quality on the diagrams. (default: False)
+ -y, --display-fit-quality              Display the negative binomial fit quality on the diagrams. Also draws temporary file histograms for each combination (may take some time). (default: False)
  -tp, --tsv-file-path                   Provide an alternative path for text output file. (default: None)
- -j, --sort-features                    Whether to sort features in diagrams according to a computed statistic. (default: summed_bp_overlaps_true)
+ -r, --coord-flip                       The horizontal axis becomes vertical, and vertical becomes horizontal. (default: False)
+ -j, --sort-features                    Whether to sort features in diagrams according to a computed statistic. Default to sorting by total number of basepairs for this combination in the true data. (default: summed_bp_overlaps_true)
+ -a, --hide-undef                       Do not display combinations if this column has undef value (typically summed_bp_overlaps_pvalue). (default: None)
+ -g, --pval-threshold                   Hide combinations for which summed_bp_overlaps_pvalue is not lower or equal to --pval-threshold. (default: None)
  -z, --no-gtf                           No GTF file is provided as input. (default: False)
  -f, --force-chrom-gtf                  Discard silently, from GTF, genes outside chromosomes defined in --chrom-info. (default: False)
  -w, --force-chrom-peak                 Discard silently, from --peak-file, peaks outside chromosomes defined in --chrom-info. (default: False)
@@ -423,20 +409,36 @@ Command-wise optional arguments:
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.overlap_stats_compute</span> <span class="kn">import</span> <span class="n">compute_true_intersection</span>
 
+<span class="c1"># Some example paths</span>
+<span class="n">QUERY_PATH</span> <span class="o">=</span> <span class="s2">&quot;./input/query.bed&quot;</span>
+<span class="n">MORE_BED_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;./input/A.bed&quot;</span><span class="p">,</span> <span class="s2">&quot;./input/B.bed&quot;</span><span class="p">,</span> <span class="s2">&quot;./input/C.bed&quot;</span><span class="p">]</span>
+<span class="n">EXCL_PATH</span> <span class="o">=</span> <span class="s2">&quot;./exclusion.bed&quot;</span>
+
 <span class="c1"># Register the BED files as pybedtools.BedTool objects</span>
-<span class="n">bedA</span> <span class="o">=</span> <span class="n">pybedtools</span><span class="o">.</span><span class="n">BedTool</span><span class="p">(</span><span class="n">path_to_your_query</span><span class="p">)</span>
-<span class="n">bedsB</span> <span class="o">=</span> <span class="p">[</span><span class="n">pybedtools</span><span class="o">.</span><span class="n">BedTool</span><span class="p">(</span><span class="n">bedfilepath</span><span class="p">)</span> <span class="k">for</span> <span class="n">bedfilepath</span> <span class="ow">in</span> <span class="n">list_of_all_paths_to_more_bed</span><span class="p">]</span>
+<span class="n">bedA</span> <span class="o">=</span> <span class="n">pybedtools</span><span class="o">.</span><span class="n">BedTool</span><span class="p">(</span><span class="n">QUERY_PATH</span><span class="p">)</span>
+<span class="n">bedsB</span> <span class="o">=</span> <span class="p">[</span><span class="n">pybedtools</span><span class="o">.</span><span class="n">BedTool</span><span class="p">(</span><span class="n">bedfilepath</span><span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span><span class="o">.</span><span class="n">merge</span><span class="p">()</span> <span class="k">for</span> <span class="n">bedfilepath</span> <span class="ow">in</span> <span class="n">MORE_BED_PATHS</span><span class="p">]</span> <span class="c1"># Sort and merge for the bedsB</span>
+
+<span class="c1"># OPTIONAL - Exclude some regions from the BEDs</span>
+<span class="n">bed_excl</span> <span class="o">=</span> <span class="n">pybedtools</span><span class="o">.</span><span class="n">BedTool</span><span class="p">(</span><span class="n">EXCL_PATH</span><span class="p">)</span>
+<span class="n">bedA</span> <span class="o">=</span> <span class="n">read_bed</span><span class="o">.</span><span class="n">exclude_concatenate</span><span class="p">(</span><span class="n">bedA</span><span class="p">,</span> <span class="n">bed_excl</span><span class="p">)</span>
+<span class="n">bedsB</span> <span class="o">=</span> <span class="p">[</span><span class="n">read_bed</span><span class="o">.</span><span class="n">exclude_concatenate</span><span class="p">(</span><span class="n">bedB</span><span class="p">,</span> <span class="n">bed_excl</span><span class="p">)</span> <span class="k">for</span> <span class="n">bedB</span> <span class="ow">in</span> <span class="n">bedsB</span><span class="p">]</span>
 
 <span class="c1"># Use our custom intersection computing algorithm to get the matrix of overlaps</span>
 <span class="n">true_intersection</span> <span class="o">=</span> <span class="n">compute_true_intersection</span><span class="p">(</span><span class="n">bedA</span><span class="p">,</span> <span class="n">bedsB</span><span class="p">)</span>
 <span class="n">flags_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">true_intersection</span><span class="p">])</span>
+
+<span class="c1"># If desired, run MODL or any other algorithm on this</span>
+<span class="n">my_algorithm</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">flags_matrix</span><span class="p">)</span>
+<span class="c1"># See code block above for a MODL example</span>
 </pre></div>
 </div>
-<p>The resulting flags_matrix is a NumPy array that can be edited, and on which MODL can be run.</p>
-<p>Since the results of MODL only depend on the true intersections and not on the shuffles, you can run MODL with 1 shuffle or on a manually computed matrix as above to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv file, using MODL’s selection as a starting point and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying).</p>
-<p>It is also possible to run any itemset miner you wish on this matrix. An implementation of apriori is provided in the <cite>pygtftk.stats.intersect.modl.apriori.Apriori</cite> class.</p>
-</div>
-<div class="section" id="ologram-merge-stats">
+<p>The resulting flags_matrix is a NumPy array that can be edited, and on which MODL can be run. It is also possible to run any itemset miner you wish on this matrix. An implementation of apriori is provided in the <cite>pygtftk.stats.intersect.modl.apriori.Apriori</cite> class.</p>
+<p>Note that by definition, in this intersections’ matrix only regions where at least two sets are open are given. Regions where a single set was open will not be present.
+If you want a matrix of all contiguous elements where at least one set is open, and not just intersections, you may opt to instead use as “query” (bedA) a BED file covering all the chromosomes in the genome (e.g. if your genome has only 2 chromosomes of length 100 each, this “query” file would be “chr1 0 100 n chr2 0 100”).
+To have predictable binning based on length in the final matrix instead of one line per intersection, you may also subdivide fake “query “chr1 0 100” region into bins of, say, 10 bp instead: “chr1 0 10 n chr1 11 20n …”.</p>
+<p>Since the results of MODL only depend on the true intersections and not on the shuffles, you can run also MODL with 1 shuffle or on a manually computed matrix as above to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv file, using MODL’s selection as a starting point and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying).</p>
+</section>
+<section id="ologram-merge-stats">
 <h2>ologram_merge_stats<a class="headerlink" href="#ologram-merge-stats" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Several tsv files resulting from <em>OLOGRAM</em> analyses can be merged into a single diagram report using the merge_ologram_stats.</p>
 <p><strong>Example:</strong> For this example we will used the results obtained for 3 epigenetic marks on human chromosome 1.</p>
@@ -461,8 +463,10 @@ Command-wise optional arguments:
   Usage: gtftk ologram_merge_stats [-pw pdf_width] [-ph pdf_height] -o output [-l labels] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file] inputfiles [inputfiles ...]
 
   Description: 
-     *  Merge a set of OLOGRAM outputs into a single output. Build a heatmap from the results.  See the
-     /pygtftk/plugins/ologram.py file, as well as the documentation, for more information about
+
+     Merge a set of OLOGRAM outputs into a single output. Build a heatmap from the results.
+
+     See the /pygtftk/plugins/ologram.py file, as well as the documentation, for more information about
      OLOGRAM.
 
   Notes:
@@ -472,8 +476,6 @@ Command-wise optional arguments:
      *  Squares without a diamond mean the p-value was NaN due to poor fitting. This is mostly the
      case for higher-order combis in multiple overlaps that were so rare that they are not
      encountered in the shuffles.
-
-  Version:  2019-05-27
 
 Arguments:
  inputfiles                   Complete paths to the OLOGRAM output files
@@ -493,8 +495,8 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
-<div class="section" id="ologram-modl-treeify">
+</section>
+<section id="ologram-modl-treeify">
 <h2>ologram_modl_treeify<a class="headerlink" href="#ologram-modl-treeify" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Visualize n-wise enrichment results (OLOGRAM-MODL) as a tree of combinations. Works on the result (tsv file) of an OLOGRAM analysis called with –more-bed-multiple-overlap. On the graph, S designated the total number of basepairs in which this combinations is encountered in the real data. Fold change gives the ratio with the number of basepairs in the shuffles, with the associated Negative Binomial p-value.</p>
 <p>This recommended representation is useful to find master regulators, by showing which additions to a combinations increase its enrichment, and allowing to see whether overlaps that contain the element X also contain the element Y (looking at how a child combination accounts for the S of its parent in an inexact counting).</p>
@@ -502,6 +504,7 @@ Command-wise optional arguments:
 <p>The tsv result file can be edited before passing it to the command, for example by keeping only the combinations you are interested in.
 You can either (1) run OLOGRAM-MODl with no filtering and get a tree of all combinations, (2) use MODL to get a pre-selection that can be tailored, or (3) take the run with all combinations from the possibility 1 and use the -t argument to take the most frequent combinations.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_modl_treeify -i multiple_overlap_trivial_ologram_stats.tsv -o treeified.pdf -l ThisWasTheNameOfTheQuery
+ |-- 14:58-ERROR-ologram_modl_treeify : gtftk ologram_modl_treeify needs graphviz to be installed on your system.
 </pre></div>
 </div>
 <br>
@@ -515,11 +518,13 @@ You can either (1) run OLOGRAM-MODl with no filtering and get a tree of all comb
 </table>
 <br>
 <br><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_modl_treeify -h
-  Usage: gtftk ologram_modl_treeify -i inputfile -o output [-l query_label] [-t top_s] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
+  Usage: gtftk ologram_modl_treeify -i inputfile -o output [-l query_label] [-t top_s] [-mh min_inheritance] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree for easier visualisation  See
-     the /pygtftk/plugins/ologram.py file, as well as the documentation, for more information about
+
+     Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree for easier visualisation
+
+     See the /pygtftk/plugins/ologram.py file, as well as the documentation, for more information about
      OLOGRAM.
 
   Notes:
@@ -533,13 +538,12 @@ You can either (1) run OLOGRAM-MODl with no filtering and get a tree of all comb
      *  For a quick filtering, it is possible to show only the top T combinations sorted by total
      basepairs in real data.
 
-  Version:  2020-06-17
-
 Arguments:
  -i, --inputfile              Complete path to the OLOGRAM output file (default: None)
  -o, --output                 Pdf file name (default: None)
  -l, --query-label            Name of the query for display (default: Query)
  -t, --top-s                  Optional. Only the top t combinations sorted by total basepairs in real data will be displayed. (default: -1)
+ -mh, --min_inheritance       Optional. A combination will be added to a shorter parent in the tree only if it represents at least a proportion MH of its true base pairs (between 0 and 1). (default: -1)
 
 Command-wise optional arguments:
  -h, --help                   Show this help message and exit.
@@ -552,17 +556,17 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
-<div class="section" id="ologram-merge-runs">
+</section>
+<section id="ologram-merge-runs">
 <h2>ologram_merge_runs<a class="headerlink" href="#ologram-merge-runs" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Merge several runs of OLOGRAM into a single run, by treating each a “superbatch” of shuffles.</p>
 <p>OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a “batch of batches” and merge and recalculate stats on the merged superbatch automatically using this command.</p>
-<p>Around 100 shuffles is usually enough, since a Negative Binomial under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways.</p>
+<p>Around 100 shuffles is usually enough to robustly fit a Negative Binomial distribution. In terms of precision, a Negative Binomial mean under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make several OLOGRAM runs</span>
 <span class="nv">N_RUNS</span> <span class="o">=</span> <span class="m">100</span>
-<span class="k">for</span> i in <span class="o">{</span><span class="m">1</span>..<span class="nv">$N_RUNS</span><span class="o">}</span>
+<span class="k">for</span> i <span class="k">in</span> <span class="o">{</span><span class="m">1</span>..<span class="nv">$N_RUNS</span><span class="o">}</span>
 <span class="k">do</span>
-  ologram ...
+  gtftk ologram ...     <span class="c1"># Replacing this with a complete OLOGRAM command</span>
 <span class="k">done</span>
 
 <span class="c1"># Merge those runs</span>
@@ -574,15 +578,14 @@ gtftk ologram_merge_runs --inputfiles <span class="sb">`</span>ls ./results/*.ts
   Usage: gtftk ologram_merge_runs [-i inputfiles [inputfiles ...]] -o output [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it.  This
-     treats each run as a &quot;superbatch&quot;.
+
+     Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it.
+
+     This treats each run as a &quot;superbatch&quot;.
 
   Notes:
-     *  Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it. This
-     treats each run as a &quot;superbatch&quot;.
-     *  Statistics can be recalculated simply by averaging as runs are independant from one another.
-
-  Version:  2020-07-30
+     *  Statistics are recalculated by conflating the distributions with a weighting based on the
+     number of runs (see source for the precise formula).
 
 Arguments:
  -i, --inputfiles             Complete paths to the OLOGRAM output text files (default: None)
@@ -599,8 +602,21 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p><em>This section contains more specific notes about the use and interpetation of OLOGRAM</em>.</p>
+<p>– The goal of the minibatches is to save RAM. You should increase the number of minibatches, instead of their size.</p>
+<p>– If --more-keys is used additional region sets will be tested based on the associated key value. As an example, if --more-keys is set to the ‘gene_biotype’ (a key generally found in ensembl GTF), the region related to ‘protein_coding’, ‘lncRNA’ or any other values for that key will be retrieved merged and tested for enrichment.</p>
+<p>– For statistical reality reasons, with multiple sets the expected overlaps for the longer combinations (A+B+C+D+… when they are all independant) can be very low. As a result, longer combinations tend to be more enriched: this should be kept in mind when comparing enrichment values between combinations of a different order.</p>
+<p>This is especially true when the total genomic coverage of the sets is low. We recommend instead shuffling only across a biologically relevant subsection of the genome (with --bed-incl) : for example, if studying  Transcriptional Regulators, shuffling only on inferred Cis Regulatory Modules or promoters.</p>
+<p>Our Negative Binomial model helps alleviate this problem. Even so, if a combination is so rare that it is not encoutered even once in the shuffles, it will have a p-value of NaN. Furthermore, if C is depleted with query but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched.</p>
+<p>– BETA - When using –more-bed (and only that), you can give a list of bed files that should be kept fixated during the shuffles using the –keep-intact-in-shuffling argument.</p>
+<p>– RAM will be the biggest limiting factor. While 100 total shuffles should be enough to fit a Negative Binomial distribution in most cases, if needed try running more batches of fewer shuffles instead of the other way around.</p>
+<p>– If you have many (30+) BED files in –more-bed, consider running a pairwise analysis first to divide them in groups of 10-20, and study the multiple overlaps within those groups. This is also more likely to be biologically significant, as for example Transcription Factor complexes usually have 2-8 members.</p>
+<p>– We recommend running the ologram_modl_treeify plugin on the resulting tsv file if you use multiple overlaps.</p>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -618,6 +634,7 @@ Command-wise optional arguments:
 <li><a class="reference internal" href="#ologram-merge-stats">ologram_merge_stats</a></li>
 <li><a class="reference internal" href="#ologram-modl-treeify">ologram_modl_treeify</a></li>
 <li><a class="reference internal" href="#ologram-merge-runs">ologram_merge_runs</a></li>
+<li><a class="reference internal" href="#notes">Notes</a></li>
 </ul>
 </li>
 </ul>
@@ -664,14 +681,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘ologram’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
   </body>
 </html>
