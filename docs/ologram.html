@@ -103,40 +103,8 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 11:27-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 11:28-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
-Traceback (most recent call last):
-  File &quot;/Users/puthier/anaconda3/bin/gtftk&quot;, line 4, in &lt;module&gt;
-    __import__(&#39;pkg_resources&#39;).run_script(&#39;pygtftk==1.2.8&#39;, &#39;gtftk&#39;)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pkg_resources/__init__.py&quot;, line 665, in run_script
-    self.require(requires)[0].run_script(script_name, ns)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pkg_resources/__init__.py&quot;, line 1463, in run_script
-    exec(code, namespace, namespace)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 110, in &lt;module&gt;
-    args = main()
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 94, in main
-    CmdManager.run(args)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/cmd_manager.py&quot;, line 955, in run
-    fun(**args)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/ologram.py&quot;, line 1081, in ologram
-    plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, more_bed_multiple_overlap,
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/ologram.py&quot;, line 1474, in plot_results
-    plot_process.start()
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/process.py&quot;, line 121, in start
-    self._popen = self._Popen(self)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/context.py&quot;, line 224, in _Popen
-    return _default_context.get_context().Process._Popen(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/context.py&quot;, line 283, in _Popen
-    return Popen(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_spawn_posix.py&quot;, line 32, in __init__
-    super().__init__(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_fork.py&quot;, line 19, in __init__
-    self._launch(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_spawn_posix.py&quot;, line 47, in _launch
-    reduction.dump(process_obj, fp)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/reduction.py&quot;, line 60, in dump
-    ForkingPickler(file, protocol).dump(obj)
-AttributeError: Can&#39;t pickle local object &#39;as_labeller.&lt;locals&gt;._labeller&#39;
+ |-- 12:19-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 12:20-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
 </pre></div>
 </div>
 <br>
@@ -151,39 +119,7 @@ AttributeError: Can&#39;t pickle local object &#39;as_labeller.&lt;locals&gt;._l
 <br>
 <br><p><strong>Example:</strong> We are now using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 11:29-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
-Traceback (most recent call last):
-  File &quot;/Users/puthier/anaconda3/bin/gtftk&quot;, line 4, in &lt;module&gt;
-    __import__(&#39;pkg_resources&#39;).run_script(&#39;pygtftk==1.2.8&#39;, &#39;gtftk&#39;)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pkg_resources/__init__.py&quot;, line 665, in run_script
-    self.require(requires)[0].run_script(script_name, ns)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pkg_resources/__init__.py&quot;, line 1463, in run_script
-    exec(code, namespace, namespace)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 110, in &lt;module&gt;
-    args = main()
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 94, in main
-    CmdManager.run(args)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/cmd_manager.py&quot;, line 955, in run
-    fun(**args)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/ologram.py&quot;, line 1081, in ologram
-    plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, more_bed_multiple_overlap,
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/ologram.py&quot;, line 1474, in plot_results
-    plot_process.start()
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/process.py&quot;, line 121, in start
-    self._popen = self._Popen(self)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/context.py&quot;, line 224, in _Popen
-    return _default_context.get_context().Process._Popen(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/context.py&quot;, line 283, in _Popen
-    return Popen(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_spawn_posix.py&quot;, line 32, in __init__
-    super().__init__(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_fork.py&quot;, line 19, in __init__
-    self._launch(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_spawn_posix.py&quot;, line 47, in _launch
-    reduction.dump(process_obj, fp)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/reduction.py&quot;, line 60, in dump
-    ForkingPickler(file, protocol).dump(obj)
-AttributeError: Can&#39;t pickle local object &#39;as_labeller.&lt;locals&gt;._labeller&#39;
+ |-- 12:21-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -202,40 +138,8 @@ AttributeError: Can&#39;t pickle local object &#39;as_labeller.&lt;locals&gt;._l
 </div>
 <p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 11:30-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
- |-- 11:30-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
-Traceback (most recent call last):
-  File &quot;/Users/puthier/anaconda3/bin/gtftk&quot;, line 4, in &lt;module&gt;
-    __import__(&#39;pkg_resources&#39;).run_script(&#39;pygtftk==1.2.8&#39;, &#39;gtftk&#39;)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pkg_resources/__init__.py&quot;, line 665, in run_script
-    self.require(requires)[0].run_script(script_name, ns)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pkg_resources/__init__.py&quot;, line 1463, in run_script
-    exec(code, namespace, namespace)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 110, in &lt;module&gt;
-    args = main()
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 94, in main
-    CmdManager.run(args)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/cmd_manager.py&quot;, line 955, in run
-    fun(**args)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/ologram.py&quot;, line 1081, in ologram
-    plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, more_bed_multiple_overlap,
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/ologram.py&quot;, line 1474, in plot_results
-    plot_process.start()
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/process.py&quot;, line 121, in start
-    self._popen = self._Popen(self)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/context.py&quot;, line 224, in _Popen
-    return _default_context.get_context().Process._Popen(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/context.py&quot;, line 283, in _Popen
-    return Popen(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_spawn_posix.py&quot;, line 32, in __init__
-    super().__init__(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_fork.py&quot;, line 19, in __init__
-    self._launch(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_spawn_posix.py&quot;, line 47, in _launch
-    reduction.dump(process_obj, fp)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/reduction.py&quot;, line 60, in dump
-    ForkingPickler(file, protocol).dump(obj)
-AttributeError: Can&#39;t pickle local object &#39;as_labeller.&lt;locals&gt;._labeller&#39;
+ |-- 12:22-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
+ |-- 12:22-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -250,40 +154,8 @@ AttributeError: Can&#39;t pickle local object &#39;as_labeller.&lt;locals&gt;._l
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 11:31-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
- |-- 11:31-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
-Traceback (most recent call last):
-  File &quot;/Users/puthier/anaconda3/bin/gtftk&quot;, line 4, in &lt;module&gt;
-    __import__(&#39;pkg_resources&#39;).run_script(&#39;pygtftk==1.2.8&#39;, &#39;gtftk&#39;)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pkg_resources/__init__.py&quot;, line 665, in run_script
-    self.require(requires)[0].run_script(script_name, ns)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pkg_resources/__init__.py&quot;, line 1463, in run_script
-    exec(code, namespace, namespace)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 110, in &lt;module&gt;
-    args = main()
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/EGG-INFO/scripts/gtftk&quot;, line 94, in main
-    CmdManager.run(args)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/cmd_manager.py&quot;, line 955, in run
-    fun(**args)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/ologram.py&quot;, line 1081, in ologram
-    plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, more_bed_multiple_overlap,
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/ologram.py&quot;, line 1474, in plot_results
-    plot_process.start()
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/process.py&quot;, line 121, in start
-    self._popen = self._Popen(self)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/context.py&quot;, line 224, in _Popen
-    return _default_context.get_context().Process._Popen(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/context.py&quot;, line 283, in _Popen
-    return Popen(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_spawn_posix.py&quot;, line 32, in __init__
-    super().__init__(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_fork.py&quot;, line 19, in __init__
-    self._launch(process_obj)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/popen_spawn_posix.py&quot;, line 47, in _launch
-    reduction.dump(process_obj, fp)
-  File &quot;/Users/puthier/anaconda3/lib/python3.8/multiprocessing/reduction.py&quot;, line 60, in dump
-    ForkingPickler(file, protocol).dump(obj)
-AttributeError: Can&#39;t pickle local object &#39;as_labeller.&lt;locals&gt;._labeller&#39;
+ |-- 12:23-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 12:23-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -312,11 +184,11 @@ AttributeError: Can&#39;t pickle local object &#39;as_labeller.&lt;locals&gt;._l
 <p><strong>Simple example:</strong></p>
 <p>Comparing the query (-p) against two other BED files, analyzing multiple overlaps.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -z -w -q -c simple_07.chromInfo -p simple_07_peaks.bed --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap
- |-- 11:32-WARNING : Converting to bed6 format (simple_07_peaks.bed).
- |-- 11:32-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
- |-- 11:32-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
- |-- 11:32-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 11:32-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
+ |-- 12:24-WARNING : Converting to bed6 format (simple_07_peaks.bed).
+ |-- 12:24-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
+ |-- 12:24-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
+ |-- 12:24-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 12:24-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
 concurrent.futures.process._RemoteTraceback: 
 &quot;&quot;&quot;
 Traceback (most recent call last):
