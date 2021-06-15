@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -17,13 +18,12 @@
       })();
     </script>
     <title>Commands from section ‘annotation’ &#8212; gtftk 1.2.8 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -55,7 +55,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="commands-from-section-annotation">
+  <section id="commands-from-section-annotation">
 <h1>Commands from section ‘annotation’<a class="headerlink" href="#commands-from-section-annotation" title="Permalink to this headline">¶</a></h1>
 <p>In the example of this section we will need the following example files:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
@@ -68,7 +68,7 @@
 </pre></div>
 </div>
 <hr class="docutils" />
-<div class="section" id="closest-genes">
+<section id="closest-genes">
 <h2>closest_genes<a class="headerlink" href="#closest-genes" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Find the n closest genes for each transcript.</p>
 <p><strong>Example:</strong></p>
@@ -126,9 +126,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="overlapping">
+<section id="overlapping">
 <h2>overlapping<a class="headerlink" href="#overlapping" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Find transcripts whose body/TSS/TTS region extended in 5’ and 3’ (-u/-d) overlaps with any transcript from another gene. Strandness is not considered by default. Used –invert-match to find those that do not overlap. If –annotate-gtf is used, all lines of the input GTF file will be printed and a new key containing the list of overlapping transcripts will be added to the transcript features/lines (key will be ‘overlapping_*’ with * one of body/TSS/TTS). The –annotate-gtf and –invert-match arguments are mutually exclusive.</p>
 <p><strong>Example:</strong> Find transcript whose promoter overlap transcript from other genes.</p>
@@ -188,9 +188,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="divergent">
+<section id="divergent">
 <h2>divergent<a class="headerlink" href="#divergent" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Find transcript with divergent promoters. These transcripts will be defined here
 as those whose promoter region (defined by -u/-d) overlaps with the tss of
@@ -254,9 +254,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="convergent">
+<section id="convergent">
 <h2>convergent<a class="headerlink" href="#convergent" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Find transcript with convergent tts. These transcripts will be defined here
 as those whose tts region (defined by -u/-d) overlaps with the tts of
@@ -312,9 +312,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="exon-sizes">
+<section id="exon-sizes">
 <h2>exon_sizes<a class="headerlink" href="#exon-sizes" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Add a new key to transcript features containing a comma-separated list of exon sizes.</p>
 <p><strong>Example:</strong></p>
@@ -361,9 +361,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="intron-sizes">
+<section id="intron-sizes">
 <h2>intron_sizes<a class="headerlink" href="#intron-sizes" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Add a new key to transcript features containing a comma-separated list of intron sizes.</p>
 <p><strong>Example:</strong></p>
@@ -410,8 +410,8 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -482,7 +482,7 @@ Command-wise optional arguments:
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
       Last updated on Jun 15, 2021.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
   </body>
 </html>

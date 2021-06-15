@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -17,13 +18,12 @@
       })();
     </script>
     <title>Commands from section ‘selection’ &#8212; gtftk 1.2.8 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -55,7 +55,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="commands-from-section-selection">
+  <section id="commands-from-section-selection">
 <h1>Commands from section ‘selection’<a class="headerlink" href="#commands-from-section-selection" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
@@ -67,7 +67,7 @@
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
 </pre></div>
 </div>
-<div class="section" id="select-by-key">
+<section id="select-by-key">
 <h2>select_by_key<a class="headerlink" href="#select-by-key" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Extract lines from the gtf based on key and values.</p>
 <p><strong>Example:</strong> Select some gene_id.</p>
@@ -179,9 +179,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="select-by-regexp">
+<section id="select-by-regexp">
 <h2>select_by_regexp<a class="headerlink" href="#select-by-regexp" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Select lines by testing values of a particular key with a regular expression</p>
 <p><strong>Example:</strong> Select lines corresponding to gene_names matching the regular expression ‘G.*9$’.</p>
@@ -225,9 +225,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="select-by-intron-size">
+<section id="select-by-intron-size">
 <h2>select_by_intron_size<a class="headerlink" href="#select-by-intron-size" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Delete genes containing an intron whose size is below s. If -m is selected, any gene whose sum of intronic region length is above s is deleted. Monoexonic genes are kept.</p>
 <p><strong>Example:</strong> Some genes having transcripts containing an intron whose size is below 80 nucleotides</p>
@@ -265,9 +265,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="select-by-max-exon-nb">
+<section id="select-by-max-exon-nb">
 <h2>select_by_max_exon_nb<a class="headerlink" href="#select-by-max-exon-nb" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> For each gene select the transcript with the highest number of exons.</p>
 <p><strong>Example:</strong> Select lines corresponding to gene_names matching the regular expression ‘BCL.*’.</p>
@@ -308,9 +308,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="select-by-loc">
+<section id="select-by-loc">
 <h2>select_by_loc<a class="headerlink" href="#select-by-loc" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Select transcripts/gene overlapping a given locations. A transcript is defined here as the genomic region from TSS to TTS including introns. This function will return the transcript and all its associated elements (exons, utr…) even if only a fraction (e.g intron) of the transcript is overlapping the feature. If -/-ft-type is set to ‘gene’ returns the gene and all its associated elements.</p>
 <p><strong>Example:</strong> Select transcripts at a given location.</p>
@@ -352,9 +352,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="select-by-nb-exon">
+<section id="select-by-nb-exon">
 <h2>select_by_nb_exon<a class="headerlink" href="#select-by-nb-exon" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Select transcripts based on the number of exons.</p>
 <p><strong>Example:</strong></p>
@@ -393,9 +393,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="select-by-numeric-value">
+<section id="select-by-numeric-value">
 <h2>select_by_numeric_value<a class="headerlink" href="#select-by-numeric-value" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Select lines from a GTF file based on a boolean test on numeric values.</p>
 <p><strong>Example:</strong></p>
@@ -432,15 +432,15 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="random-list">
+<section id="random-list">
 <h2>random_list<a class="headerlink" href="#random-list" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Select a random list of genes or transcripts.</p>
 <p><strong>Example:</strong> Select randomly 3 transcripts.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_list -n 3 -i simple.gtf | gtftk count
 transcript	3
-exon	3
+exon	4
 CDS	3
 </pre></div>
 </div>
@@ -471,9 +471,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="random-tx">
+<section id="random-tx">
 <h2>random_tx<a class="headerlink" href="#random-tx" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Select randomly up to m transcript for each gene.</p>
 <p><strong>Example:</strong> Select randomly 1 transcript per gene (<em>-m 1</em>).</p>
@@ -487,7 +487,7 @@ G0005	G0005T001
 G0006	G0006T001
 G0007	G0007T001
 G0008	G0008T001
-G0009	G0009T001
+G0009	G0009T002
 G0010	G0010T001
 </pre></div>
 </div>
@@ -516,9 +516,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="rm-dup-tss">
+<section id="rm-dup-tss">
 <h2>rm_dup_tss<a class="headerlink" href="#rm-dup-tss" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> If several transcripts of a gene share the same tss, select only one.</p>
 <p><strong>Example:</strong> Use rm_dup_tss to select transcripts that will be used for mk_matrix -k 5 (see later).</p>
@@ -561,9 +561,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="select-by-go">
+<section id="select-by-go">
 <h2>select_by_go<a class="headerlink" href="#select-by-go" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Select genes from a GTF file using a Gene Ontology ID (e.g <a class="reference external" href="GO:0050789">GO:0050789</a>).</p>
 <p><strong>Example:</strong> Select genes with transcription factor activity from the GTF. They could be used subsequently to test their epigenetic features (see later).</p>
@@ -599,9 +599,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="select-by-tx-size">
+<section id="select-by-tx-size">
 <h2>select_by_tx_size<a class="headerlink" href="#select-by-tx-size" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Select transcript based on their size (i.e size of mature/spliced transcript).</p>
 <p><strong>Example:</strong></p>
@@ -636,9 +636,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="select-most-5p-tx">
+<section id="select-most-5p-tx">
 <h2>select_most_5p_tx<a class="headerlink" href="#select-most-5p-tx" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Select the most 5’ transcript of each gene.</p>
 <p><strong>Example:</strong></p>
@@ -683,9 +683,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="short-long">
+<section id="short-long">
 <h2>short_long<a class="headerlink" href="#short-long" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the shortest or longest transcript of each gene</p>
 <p><strong>Example:</strong></p>
@@ -732,8 +732,8 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -812,7 +812,7 @@ Command-wise optional arguments:
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
       Last updated on Jun 15, 2021.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
   </body>
 </html>

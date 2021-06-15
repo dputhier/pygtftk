@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -17,13 +18,12 @@
       })();
     </script>
     <title>Commands from section ‘information’ &#8212; gtftk 1.2.8 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -55,7 +55,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="commands-from-section-information">
+  <section id="commands-from-section-information">
 <h1>Commands from section ‘information’<a class="headerlink" href="#commands-from-section-information" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
@@ -64,15 +64,15 @@
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &#39;*&#39;
 </pre></div>
 </div>
-<div class="section" id="apropos">
+<section id="apropos">
 <h2>apropos<a class="headerlink" href="#apropos" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Search in all command description files those related to a user-defined keyword.</p>
 <p><strong>Example:</strong> Search all commands related to promoters.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk apropos -k promoter
- |-- 12:18-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
-	- ologram.
-	- coverage.
+ |-- 14:54-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
 	- divergent.
+	- coverage.
+	- ologram.
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
@@ -98,9 +98,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="retrieve">
+<section id="retrieve">
 <h2>retrieve<a class="headerlink" href="#retrieve" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Retrieves a GTF file from ensembl.</p>
 <p><strong>Example:</strong> List the available GTF files in ensembl FTP. Bacteria are not listed at the moment.</p>
@@ -140,9 +140,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="get-example">
+<section id="get-example">
 <h2>get_example<a class="headerlink" href="#get-example" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get an example GTF file (or any other kind of example available in the installation directory). This command is only provided for demonstration purpose.</p>
 <p>We can see from the example below that this gtf file <strong>follows the ensembl format</strong> and contains the <strong>transcript and gene features</strong> (column 3).</p>
@@ -186,9 +186,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="add-exon-nb">
+<section id="add-exon-nb">
 <h2>add_exon_nb<a class="headerlink" href="#add-exon-nb" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Add exon number transcript-wise (based on 5’ to 3’ orientation).</p>
 <p><strong>Example:</strong></p>
@@ -239,9 +239,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="count">
+<section id="count">
 <h2>count<a class="headerlink" href="#count" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Count the number of features (transcripts, genes, exons, introns).</p>
 <p><strong>Example:</strong></p>
@@ -277,9 +277,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="count-key-values">
+<section id="count-key-values">
 <h2>count_key_values<a class="headerlink" href="#count-key-values" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Count the number of values for a set of keys.</p>
 <p><strong>Example:</strong> Count the number of non-redondant entries for chromosomes and transcript_id.</p>
@@ -319,9 +319,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="get-attr-list">
+<section id="get-attr-list">
 <h2>get_attr_list<a class="headerlink" href="#get-attr-list" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the list of attributes from a GTF file.</p>
 <p><strong>Example:</strong> Get the list of attributes in the “simple” dataset.</p>
@@ -356,9 +356,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="get-attr-value-list">
+<section id="get-attr-value-list">
 <h2>get_attr_value_list<a class="headerlink" href="#get-attr-value-list" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the list of values observed for an attributes.</p>
 <p><strong>Example:</strong> Get the number of time each gene_id is used.</p>
@@ -402,9 +402,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="get-feature-list">
+<section id="get-feature-list">
 <h2>get_feature_list<a class="headerlink" href="#get-feature-list" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the list of features enclosed in the GTF.</p>
 <p><strong>Example:</strong> Get the list of features enclosed in the GTF.</p>
@@ -439,9 +439,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="nb-exons">
+<section id="nb-exons">
 <h2>nb_exons<a class="headerlink" href="#nb-exons" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Count the number of exons and add it as a novel key/value. Output may also be in text format if requested.</p>
 <p><strong>Example:</strong></p>
@@ -479,9 +479,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="nb-transcripts">
+<section id="nb-transcripts">
 <h2>nb_transcripts<a class="headerlink" href="#nb-transcripts" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Count the number of transcript per gene.</p>
 <p><strong>Example:</strong> Count the number of transcript per gene.</p>
@@ -523,9 +523,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="seqid-list">
+<section id="seqid-list">
 <h2>seqid_list<a class="headerlink" href="#seqid-list" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Return the chromosome list.</p>
 <p><strong>Example:</strong> Return the chromosome list.</p>
@@ -557,9 +557,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="tss-dist">
+<section id="tss-dist">
 <h2>tss_dist<a class="headerlink" href="#tss-dist" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Compute the distance between TSSs of pairs of gene transcripts. The tss_num_1 and tss_num_2 columns contains the TSSs number (for transcript_id_1 and transcript_id_2 respectively). Numering starts from 1 (most 5’ TSS  for a gene) to the number of different TSS coordinates. Two or more transcripts will have the same tss_num if they share a TSS.</p>
 <p><strong>Example:</strong> An example on the mini_real dataset.</p>
@@ -606,9 +606,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="feature-size">
+<section id="feature-size">
 <h2>feature_size<a class="headerlink" href="#feature-size" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the size and limits (start/end) of features enclosed in the GTF. If bed format is requested returns the limits in bed format and the size as a score. Otherwise output GTF file with ‘feat_size’ as a new key and size as value</p>
 <p><strong>Example:</strong> Add trancript size (mature RNA) to the gtf.</p>
@@ -651,8 +651,8 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -731,7 +731,7 @@ Command-wise optional arguments:
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
       Last updated on Jun 15, 2021.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
   </body>
 </html>

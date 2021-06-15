@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -17,13 +18,12 @@
       })();
     </script>
     <title>Commands from section ‘Editing’ &#8212; gtftk 1.2.8 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -55,7 +55,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="commands-from-section-editing">
+  <section id="commands-from-section-editing">
 <h1>Commands from section ‘Editing’<a class="headerlink" href="#commands-from-section-editing" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
@@ -64,7 +64,7 @@
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d mini_real -f &quot;*&quot;
 </pre></div>
 </div>
-<div class="section" id="add-prefix">
+<section id="add-prefix">
 <h2>add_prefix<a class="headerlink" href="#add-prefix" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Add a prefix (or suffix) to one of the attribute value (<em>e.g.</em> gene_id)</p>
 <p><strong>Example:</strong></p>
@@ -100,9 +100,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="del-attr">
+<section id="del-attr">
 <h2>del_attr<a class="headerlink" href="#del-attr" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Delete an attribute and its corresponding values.</p>
 <p><strong>Example:</strong></p>
@@ -215,9 +215,9 @@ Command-wise optional arguments:
 <p class="admonition-title">Note</p>
 <p>In version 1.0.9 gene_id can not be deleted. This will be fixed in next version.</p>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="join-attr">
+<section id="join-attr">
 <h2>join_attr<a class="headerlink" href="#join-attr" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Add attributes from a file. This command can be used to import additional key/values into the gtf (e.g CPAT for coding potential, DESeq for differential analysis…). The imported file can be in 2 formats (2 columns or matrix):</p>
 <ul class="simple">
@@ -305,9 +305,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="join-multi-file">
+<section id="join-multi-file">
 <h2>join_multi_file<a class="headerlink" href="#join-multi-file" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Join attributes from mutiple files.</p>
 <p><strong>Example:</strong> Add key/value to gene features.</p>
@@ -366,9 +366,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="merge-attr">
+<section id="merge-attr">
 <h2>merge_attr<a class="headerlink" href="#merge-attr" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Merge a set of attributes into a destination attribute.</p>
 <p><strong>Example:</strong> Merge gene_id and transcript_id into a new key associated to transcript features.</p>
@@ -416,9 +416,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="discretize-key">
+<section id="discretize-key">
 <h2>discretize_key<a class="headerlink" href="#discretize-key" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Create a new key by discretizing a numeric key. This can be helpful to create new classes of features on the fly.
 The default is to create equally spaced interval. The intervals can also be created by computing the percentiles (-p) which will provide balanced classes most suitable generally.</p>
@@ -431,7 +431,7 @@ G0009	0.5555	0.7
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i simple.gtf -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
- |-- 12:18-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
+ |-- 14:53-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; S1 &quot;0.2322&quot;; S2 &quot;0.4&quot;; S1_d &quot;A&quot;;
@@ -450,7 +450,7 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 <p>The <em>profile</em> command that could be used to asses the associated epigenetic marks of these 10 gene classes.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
- |-- 12:18-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
+ |-- 14:53-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
   96 A
   83 B
   89 C
@@ -502,8 +502,8 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -574,7 +574,7 @@ Command-wise optional arguments:
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
       Last updated on Jun 15, 2021.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
   </body>
 </html>

@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -17,13 +18,12 @@
       })();
     </script>
     <title>Commands from section ‘coordinates’ &#8212; gtftk 1.2.8 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -55,13 +55,13 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="commands-from-section-coordinates">
+  <section id="commands-from-section-coordinates">
 <h1>Commands from section ‘coordinates’<a class="headerlink" href="#commands-from-section-coordinates" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will require the following datasets:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk get_example -q -d simple -f &#39;*&#39;
 </pre></div>
 </div>
-<div class="section" id="midpoints">
+<section id="midpoints">
 <h2>midpoints<a class="headerlink" href="#midpoints" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the genomic midpoint of each feature: genes, transcripts, exons or introns. Output is currently in bed format only.</p>
 <p><strong>Example:</strong> Get the midpoints of all transcripts and exons.</p>
@@ -99,9 +99,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="get-5p-3p-coords">
+<section id="get-5p-3p-coords">
 <h2>get_5p_3p_coords<a class="headerlink" href="#get-5p-3p-coords" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Get the 5p or 3p coordinates for each feature (e.g TSS or TTS for a transcript).
 Output is bed format.</p>
@@ -147,9 +147,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="intergenic">
+<section id="intergenic">
 <h2>intergenic<a class="headerlink" href="#intergenic" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Extract intergenic regions. This command requires a chromInfo file to compute
 the bed file boundaries. The command will print the coordinates of genomic
@@ -200,9 +200,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="intronic">
+<section id="intronic">
 <h2>intronic<a class="headerlink" href="#intronic" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Returns a bed file containing the intronic regions. If by_transcript is false
 (default), returns merged genic regions with no exonic overlap (“strict” mode).
@@ -247,9 +247,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="splicing-site">
+<section id="splicing-site">
 <h2>splicing_site<a class="headerlink" href="#splicing-site" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Compute the locations of donor and acceptor splice sites. This command will return a single position, which corresponds to the most 5’ and/or the most 3’ intronic region. If the gtf file does not contain exon numbering you can compute it using the
 add_exon_nb command. The score column of the bed file contains the number of the closest exon relative to the splice site.</p>
@@ -299,9 +299,9 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="shift">
+<section id="shift">
 <h2>shift<a class="headerlink" href="#shift" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Shift coordinates in 3’ or 5’ direction.</p>
 <p><strong>Example:</strong></p>
@@ -358,8 +358,8 @@ Command-wise optional arguments:
  -W, --write-message-to-file  Store all message into a file. (default: None)
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -430,7 +430,7 @@ Command-wise optional arguments:
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
       Last updated on Jun 15, 2021.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
   </body>
 </html>
