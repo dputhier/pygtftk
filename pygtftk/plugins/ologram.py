@@ -38,7 +38,7 @@ import warnings
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-import multiprocessing
+import billiard as multiprocessing
 import os
 import re
 import sys
@@ -440,7 +440,7 @@ def ologram(inputfile=None,
             multiple_overlap_target_combi_size=None,
             multiple_overlap_max_number_of_combinations=None,
             multiple_overlap_custom_combis=None,
-            exact = False,
+            exact=False,
 
             keep_intact_in_shuffling=None,
             use_markov_shuffling=False,
@@ -801,7 +801,7 @@ def ologram(inputfile=None,
                               minibatch_size=minibatch_size, minibatch_nb=minibatch_nb,
                               bed_excl=bed_excl, use_markov_shuffling=use_markov_shuffling,
                               keep_intact_in_shuffling=keep_intact_in_shuffling,
-                              nb_threads=nb_threads, 
+                              nb_threads=nb_threads,
                               draw_histogram=display_fit_quality)  # Draw histograms only if fit quality is also assessed. TODO: move to its own parameter
 
     # Initialize result dict
@@ -984,7 +984,7 @@ def ologram(inputfile=None,
                                                 multiple_overlap_target_combi_size=multiple_overlap_target_combi_size,
                                                 multiple_overlap_max_number_of_combinations=multiple_overlap_max_number_of_combinations,
                                                 multiple_overlap_custom_combis=multiple_overlap_custom_combis,
-                                                exact = exact)
+                                                exact=exact)
 
         # NOTE. In other cases, hits[feature_type] is a single dictionary giving
         # stats. In this case, it is a dictionary of dictionaries, one per set
