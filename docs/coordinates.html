@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘coordinates’ &#8212; gtftk 1.2.7 documentation</title>
+    <title>Commands from section ‘coordinates’ &#8212; gtftk 1.2.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="ologram.html" title="Commands from section ‘ologram’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘coordinates’</a></li> 
       </ul>
     </div>  
@@ -78,9 +78,8 @@ chr1	27	29	G0006T001|transcript	.	-
   Usage: gtftk midpoints [-i GTF/BED] [-o BED] [-t ft_type] [-n NAME] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get the midpoint coordinates for the requested feature. Output is bed format.
 
-  Version:  2018-01-20
+     Get the midpoint coordinates for the requested feature. Output is bed format.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -120,12 +119,11 @@ chr1	179	180	G0002T001|G0002|transcript	.	+
   Usage: gtftk get_5p_3p_coords [-i GTF] [-o BED] [-t ft_type] [-v] [-p transpose] [-n NAME] [-m more_names] [-s SEP] [-e] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
+
+     Get the 5p or 3p coordinate for each feature (e.g TSS or TTS for a transcript).
 
   Notes:
      *  Output is in BED format.
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -175,15 +173,16 @@ chr2	0	600	region_10	0	.
   Usage: gtftk intergenic [-i GTF] [-o BED] -c CHROMINFO [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Extract intergenic regions. This command requires a chromInfo file to compute the bed file
+
+     Extract intergenic regions. This command requires a chromInfo file to compute the bed file
      boundaries. The command will print the coordinates of genomic regions without any transcript
      features.
 
   Notes:
-     *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
-     case the  corresponding size of conventional chromosomes are used. ChrM is not used.
-
-  Version:  2018-01-20
+     *  chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
+     case the  corresponding size of conventional chromosomes are used. To get the size of  the
+     chromosome in ensembl format (whithout chr prefix), use &#39;mm8_ens&#39;, &#39;mm9_ens&#39;,  &#39;mm10_ens&#39;,
+     &#39;hg19_ens&#39;, &#39;hg38_ens&#39;, &#39;rn3_ens&#39; or &#39;rn4_ens&#39;. ChrM is not used.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -223,11 +222,10 @@ chr1	68	70
   Usage: gtftk intronic [-i GTF] [-o BED] [-b] [-n NAME] [-s SEP] [-w] [-F] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Returns a bed file containing the intronic regions. If by_transcript is false (default), returns
+
+     Returns a bed file containing the intronic regions. If by_transcript is false (default), returns
      merged genic regions with no exonic overlap (&quot;strict&quot; mode). Otherwise, the intronic regions
      corresponding to each transcript are returned (may contain exonic overlap and redundancy).
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -274,15 +272,14 @@ chr1	72	73	acceptor|G0004T001E003|G0004T001|G0004	3	+
   Usage: gtftk splicing_site [-i GTF] [-o BED] [-k exon_numbering_key] [-n NAME] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Compute the locations of donor and acceptor splice sites.
+
+     Compute the locations of donor and acceptor splice sites.
 
   Notes:
      *  This will return a single position, which corresponds to the most 5&#39; and/or the most 3&#39;
      intronic region. If the gtf file does not contain exon numbering you can compute it using the
      add_exon_nb command. The score column of the bed file contains the number of the closest exon
      relative to the splice site.
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -321,9 +318,14 @@ chr1	gtftk	gene	115	128	.	+	.	gene_id &quot;G0001&quot;;
   Usage: gtftk shift [-i GTF] [-o GTF] -s shift_value [-d] [-a] -c CHROMINFO [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Transpose coordinates in 3&#39; or 5&#39; direction.
+
+     Transpose coordinates in 3&#39; or 5&#39; direction.
 
   Notes:
+     *  chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
+     case the  corresponding size of conventional chromosomes are used. To get the size of  the
+     chromosome in ensembl format (whithout chr prefix), use &#39;mm8_ens&#39;, &#39;mm9_ens&#39;,  &#39;mm10_ens&#39;,
+     &#39;hg19_ens&#39;, &#39;hg38_ens&#39;, &#39;rn3_ens&#39; or &#39;rn4_ens&#39;. ChrM is not used.
      *  By default shift is not strand specific. Meaning that if -\shift-value is set to 10, all
      coordinates will be moved 10 bases in 5&#39; direction relative to the forward/watson/plus/top
      strand.
@@ -336,10 +338,6 @@ chr1	gtftk	gene	115	128	.	+	.	gene_id &quot;G0001&quot;;
      rise, ultimately, to several exons from the same transcript having the same starts or ends.
      *  One can forced features to go outside the genome and ultimatly dissapear with large
      --shift-value by using -a.
-     *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
-     case the  corresponding size of conventional chromosomes are used. ChrM is not used.
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -425,14 +423,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="ologram.html" title="Commands from section ‘ologram’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘coordinates’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>

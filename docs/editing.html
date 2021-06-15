@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘Editing’ &#8212; gtftk 1.2.7 documentation</title>
+    <title>Commands from section ‘Editing’ &#8212; gtftk 1.2.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="information.html" title="Commands from section ‘information’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘Editing’</a></li> 
       </ul>
     </div>  
@@ -78,9 +78,8 @@ chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &qu
   Usage: gtftk add_prefix [-i GTF] [-o GTF] [-k KEY] [-t TEXT] [-s] [-f target_feature] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Add a prefix to target values. By default add &#39;chr&#39; to seqid/chromosome key.
 
-  Version:  2018-01-20
+     Add a prefix to target values. By default add &#39;chr&#39; to seqid/chromosome key.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -185,15 +184,14 @@ chr1	gtftk	CDS	184	186	.	+	.	gene_id &quot;G0010&quot;; ccds_id &quot;CDS_G0010T
   Usage: gtftk del_attr [-i GTF] [-o GTF] -k KEY [-r] [-v] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Delete one or several attributes from the gtf file.
+
+     Delete one or several attributes from the gtf file.
 
   Notes:
      *  You may also use &#39;complex&#39; regexp such as : &quot;(_id)|(_b.*pe)&quot;
      *  Example: gtftk get_example -d mini_real | gtftk del_attr -k &quot;(^.*_id$|^.*_biotype$)&quot; -r -v
      *  TODO: currently a segfault is thrown when no keys are left after deletion (libgtftk issue
      #98).
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -283,9 +281,8 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
   Usage: gtftk join_attr [-i GTF] [-o GTF] -k KEY -j JOIN_FILE [-H] [-m] [-n NEW_KEY] [-t target_feature] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Join attributes from a tabulated file.
 
-  Version:  2018-02-05
+     Join attributes from a tabulated file.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -348,9 +345,8 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
   Usage: gtftk join_multi_file [-i GTF] [-o GTF] -k KEY [-t target_feature] [-m matrix_files [matrix_files ...]] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Join attributes from mutiple files.
 
-  Version:  2018-02-05
+     Join attributes from mutiple files.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -399,9 +395,8 @@ chr1	gtftk	transcript	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &qu
   Usage: gtftk join_multi_file [-i GTF] [-o GTF] -k KEY [-t target_feature] [-m matrix_files [matrix_files ...]] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Join attributes from mutiple files.
 
-  Version:  2018-02-05
+     Join attributes from mutiple files.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -436,7 +431,7 @@ G0009	0.5555	0.7
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i simple.gtf -j simple.join_mat -k gene_id -m | gtftk discretize_key -k S1 -d S1_d -n 2 -l A,B  | gtftk select_by_key -k feature -v gene
- |-- 17:25-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
+ |-- 11:26-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;]
 chr1	gtftk	gene	125	138	.	+	.	gene_id &quot;G0001&quot;;
 chr1	gtftk	gene	180	189	.	+	.	gene_id &quot;G0002&quot;;
 chr1	gtftk	gene	50	61	.	-	.	gene_id &quot;G0003&quot;; S1 &quot;0.2322&quot;; S2 &quot;0.4&quot;; S1_d &quot;A&quot;;
@@ -455,7 +450,7 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
 <p>The <em>profile</em> command that could be used to asses the associated epigenetic marks of these 10 gene classes.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t gene | gtftk discretize_key -k exprs -p -d exprs_class -n 10 -l A,B,C,D,E,F,G,H,I,J  | gtftk tabulate -k exprs_class -Hn | sort | uniq -c
- |-- 17:25-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
+ |-- 11:26-INFO-discretize_key : Categories: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;, &#39;H&#39;, &#39;I&#39;, &#39;J&#39;]
   96 A
   83 B
   89 C
@@ -473,7 +468,8 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
   Usage: gtftk discretize_key [-i GTF] [-o GTF] -k src_key -d dest_key -n KEY [-l labels] [-p] [-g] [-u] [-r precision] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Create a new key by discretizing a numeric key. This can be helpful to create new classes on the
+
+     Create a new key by discretizing a numeric key. This can be helpful to create new classes on the
      fly that can be used subsequently.
 
   Notes:
@@ -482,8 +478,6 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;;
      *  Non-numeric value for source key will be translated into &#39;NA&#39;.
      *  The default is to create equally spaced interval. The interval can also be created by
      computing the percentiles (-p).
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -573,14 +567,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="information.html" title="Commands from section ‘information’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘Editing’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>

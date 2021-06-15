@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘annotation’ &#8212; gtftk 1.2.7 documentation</title>
+    <title>Commands from section ‘annotation’ &#8212; gtftk 1.2.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="conversion.html" title="Commands from section ‘conversion’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘annotation’</a></li> 
       </ul>
     </div>  
@@ -91,15 +91,14 @@ G0010	G0002	4
   Usage: gtftk closest_genes [-i GTF] [-o GTF/TXT] [-r {tss,tts,gene}] [-nb nb_neighbors] [-t {tss,tts,gene}] [-s] [-S] [-f] [-H] [-k] [-id {gene_id,gene_name}] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Find the n closest genes for each genes.
+
+     Find the n closest genes for each genes.
 
   Notes:
      *  The reference region for each gene can be the TSS (the most 5&#39;), the TTS (The most 3&#39;) or
      the whole gene.
      *  The reference region for each closest gene can be the TSS, the whole gene or the TTS.
      *  The closest genes can be searched in a stranded or unstranded fashion.
-
-  Version:  2018-02-11
 
 optional arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -151,7 +150,8 @@ G0006T002	G0005T001
   Usage: gtftk overlapping [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-t {transcript,promoter,tts}] [-s] [-S] [-n] [-a] [-k key_name] [-b] [-@] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Find transcripts whose body/TSS/TTS region extended in 5&#39; and 3&#39; (-u/-d) overlaps with any
+
+     Find transcripts whose body/TSS/TTS region extended in 5&#39; and 3&#39; (-u/-d) overlaps with any
      transcript from another gene. Strandness is not considered by default. Used --invert-match to
      find those that do not overlap. If --annotate-gtf is used, all lines of the input GTF file will
      be printed and a new key containing the list of overlapping transcripts will be added to the
@@ -161,8 +161,6 @@ G0006T002	G0005T001
   Notes:
      *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
      case the  corresponding size of conventional chromosomes are used. ChrM is not used.
-
-  Version:  2018-01-24
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -218,7 +216,8 @@ G0004T001	G0003T001	4
   Usage: gtftk divergent [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-n] [-S] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Find transcripts with divergent promoters. These transcripts will be defined here as those whose
+
+     Find transcripts with divergent promoters. These transcripts will be defined here as those whose
      promoter region (defined by -u/-d) overlaps with the tss of another gene in reverse/antisens
      orientation. This may be useful to select coding genes in head-to-head orientation or LUAT as
      described in &quot;Divergent transcription is associated with promoters of transcriptional
@@ -229,10 +228,10 @@ G0004T001	G0003T001	4
      promoter. The tss to tss distance is also provided as an additional key (dist_to_divergent).
 
   Notes:
-     *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
-     case the  corresponding size of conventional chromosomes are used. ChrM is not used.
-
-  Version:  2018-01-24
+     *  chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
+     case the  corresponding size of conventional chromosomes are used. To get the size of  the
+     chromosome in ensembl format (whithout chr prefix), use &#39;mm8_ens&#39;, &#39;mm9_ens&#39;,  &#39;mm10_ens&#39;,
+     &#39;hg19_ens&#39;, &#39;hg38_ens&#39;, &#39;rn3_ens&#39; or &#39;rn4_ens&#39;. ChrM is not used.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -280,7 +279,8 @@ G0010T001	G0008T001	24
   Usage: gtftk convergent [-i GTF] [-o GTF] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Find transcripts with convergent tts. These transcripts will be defined here as those whose tts
+
+     Find transcripts with convergent tts. These transcripts will be defined here as those whose tts
      region (defined by -u/-d) overlaps with the tts of another gene in reverse/antisens
      orientation. The output is a GTF with an additional key (&#39;convergent&#39;) whose value is set to
      &#39;.&#39; if the gene has no convergent transcript in its tts region. If the gene has an antisens
@@ -289,10 +289,10 @@ G0010T001	G0008T001	24
      provided as an additional key (dist_to_convergent).
 
   Notes:
-     *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
-     case the  corresponding size of conventional chromosomes are used. ChrM is not used.
-
-  Version:  2018-01-20
+     *  chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
+     case the  corresponding size of conventional chromosomes are used. To get the size of  the
+     chromosome in ensembl format (whithout chr prefix), use &#39;mm8_ens&#39;, &#39;mm9_ens&#39;,  &#39;mm10_ens&#39;,
+     &#39;hg19_ens&#39;, &#39;hg38_ens&#39;, &#39;rn3_ens&#39; or &#39;rn4_ens&#39;. ChrM is not used.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -342,9 +342,8 @@ G0010T001	11
   Usage: gtftk exon_sizes [-i GTF] [-o TXT] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Add a new key to transcript features containing a comma-separated list of exon sizes.
 
-  Version:  2018-01-24
+     Add a new key to transcript features containing a comma-separated list of exon sizes.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
@@ -392,9 +391,8 @@ G0010T001	0
   Usage: gtftk intron_sizes [-i GTF] [-o GTF] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Add a new key to transcript features containing a comma-separated list of intron-size.
 
-  Version:  2018-01-24
+     Add a new key to transcript features containing a comma-separated list of intron-size.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
@@ -477,14 +475,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="conversion.html" title="Commands from section ‘conversion’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘annotation’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>

@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Help on Python package (pygtftk) &#8212; gtftk 1.2.7 documentation</title>
+    <title>Help on Python package (pygtftk) &#8212; gtftk 1.2.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Help on Python package (pygtftk)</a></li> 
       </ul>
     </div>  
@@ -407,7 +407,7 @@ start, end, score or frame.</p>
 <li><p><strong>as_dict_of_merged_list</strong> – if true returns a dict (where the key corresponds to values for the first requested key and the value to the list of other elements encountered throughout any line).</p></li>
 <li><p><strong>as_list_of_list</strong> – if True returns a list for each line.</p></li>
 <li><p><strong>nr</strong> – in case a as_list or as_list_of_list is chosen, return a non redondant list.</p></li>
-<li><p><strong>hide_undef</strong> – if hide_undef, then records for which the key does not exists (value = “?”) are set to are discarded.</p></li>
+<li><p><strong>hide_undef</strong> – if hide_undef, then records for which the key does not exists (value = “?”) are discarded.</p></li>
 <li><p><strong>zero_based</strong> – If set to True, the start position will be start-1.</p></li>
 <li><p><strong>default_val</strong> – The default value for the dict if as_dict is chosen.</p></li>
 </ul>
@@ -2186,7 +2186,7 @@ this one.</p>
 <p>Author : Quentin Ferré &lt;<a class="reference external" href="mailto:quentin&#46;q&#46;ferre&#37;&#52;&#48;gmail&#46;com">quentin<span>&#46;</span>q<span>&#46;</span>ferre<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</p>
 <dl class="py class">
 <dt id="pygtftk.stats.intersect.overlap_stats_shuffling.ComputingIntersectionPartial">
-<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">ComputingIntersectionPartial</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Lr1</span></em>, <em class="sig-param"><span class="n">Li1</span></em>, <em class="sig-param"><span class="n">Lrs</span></em>, <em class="sig-param"><span class="n">Lis</span></em>, <em class="sig-param"><span class="n">all_chrom1</span></em>, <em class="sig-param"><span class="n">all_chrom2</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em>, <em class="sig-param"><span class="n">result_queue</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.ComputingIntersectionPartial" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">ComputingIntersectionPartial</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Lr1</span></em>, <em class="sig-param"><span class="n">Li1</span></em>, <em class="sig-param"><span class="n">Lrs</span></em>, <em class="sig-param"><span class="n">Lis</span></em>, <em class="sig-param"><span class="n">all_chrom1</span></em>, <em class="sig-param"><span class="n">all_chrom2</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">keep_intact_in_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.ComputingIntersectionPartial" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is a replacer for a wrapper for compute_all_intersections_minibatch, needed for multiprocessing below
 This was needed because the argument that changes in multiproessing in minibatch_len, and it’s not the leftmost argument, 
 so functools.partial cannot be used</p>
@@ -2194,7 +2194,7 @@ so functools.partial cannot be used</p>
 
 <dl class="py function">
 <dt id="pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_all_intersections_minibatch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Lr1</span></em>, <em class="sig-param"><span class="n">Li1</span></em>, <em class="sig-param"><span class="n">Lrs</span></em>, <em class="sig-param"><span class="n">Lis</span></em>, <em class="sig-param"><span class="n">all_chrom1</span></em>, <em class="sig-param"><span class="n">all_chrom2</span></em>, <em class="sig-param"><span class="n">minibatch_size</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">42</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_all_intersections_minibatch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Lr1</span></em>, <em class="sig-param"><span class="n">Li1</span></em>, <em class="sig-param"><span class="n">Lrs</span></em>, <em class="sig-param"><span class="n">Lis</span></em>, <em class="sig-param"><span class="n">all_chrom1</span></em>, <em class="sig-param"><span class="n">all_chrom2</span></em>, <em class="sig-param"><span class="n">minibatch_size</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">keep_intact_in_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">42</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_all_intersections_minibatch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main processing function. Computes a minibatch of shuffles for the given parameters.</p>
 <p>This function will be called by the hub function <cite>compute_overlap_stats</cite> to
 create a batch of shuffled “fake” BED files.
@@ -2214,6 +2214,7 @@ set, but can contain [Lr2, Lr3, …] if there is more than one.</p>
 <li><p><strong>all_chrom2</strong> – An output from the bed_to_lists_of_intervals() function calls.</p></li>
 <li><p><strong>minibatch_size</strong> – The size of the batchs for shuffling.</p></li>
 <li><p><strong>use_markov_shuffling</strong> – Use a classical or a order-2 Markov shuffling.</p></li>
+<li><p><strong>keep_intact_in_shuffling</strong> – Among the Lrs (and Lis), those whose number/order is here will be kept intact during the shuffling (won’t be shuffled)</p></li>
 <li><p><strong>nb_threads</strong> – number of threads.</p></li>
 </ul>
 </dd>
@@ -2222,7 +2223,7 @@ set, but can contain [Lr2, Lr3, …] if there is more than one.</p>
 
 <dl class="py function">
 <dt id="pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_overlap_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bedA</span></em>, <em class="sig-param"><span class="n">bedsB</span></em>, <em class="sig-param"><span class="n">chrom_len</span></em>, <em class="sig-param"><span class="n">minibatch_size</span></em>, <em class="sig-param"><span class="n">minibatch_nb</span></em>, <em class="sig-param"><span class="n">bed_excl</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em>, <em class="sig-param"><span class="n">ft_type</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_custom_combis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_shuffling.</code><code class="sig-name descname">compute_overlap_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bedA</span></em>, <em class="sig-param"><span class="n">bedsB</span></em>, <em class="sig-param"><span class="n">chrom_len</span></em>, <em class="sig-param"><span class="n">minibatch_size</span></em>, <em class="sig-param"><span class="n">minibatch_nb</span></em>, <em class="sig-param"><span class="n">bed_excl</span></em>, <em class="sig-param"><span class="n">use_markov_shuffling</span></em>, <em class="sig-param"><span class="n">keep_intact_in_shuffling</span></em>, <em class="sig-param"><span class="n">nb_threads</span></em>, <em class="sig-param"><span class="n">ft_type</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_custom_combis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">draw_histogram</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">exact</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.compute_overlap_stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the hub function to compute overlap statistics through Monte Carlo
 shuffling with integration of the inter-region lengths.</p>
 <p>The function will generate shuffled BEDs from bedA and bedB independantly,
@@ -2240,11 +2241,14 @@ regions given in A and B are independant).</p>
 <li><p><strong>minibatch_nb</strong> – The number of minibatchs.</p></li>
 <li><p><strong>bed_excl</strong> – The regions to be excluded.</p></li>
 <li><p><strong>use_markov_shuffling</strong> – Use a classical or a order-2 Markov shuffling.</p></li>
+<li><p><strong>keep_intact_in_shuffling</strong> – those numbers in bedsB will be kept intact/fixed during the shuffliing</p></li>
 <li><p><strong>nb_threads</strong> – Number of threads.</p></li>
 <li><p><strong>ft_type</strong> – The name of the feature.</p></li>
 <li><p><strong>multiple_overlap_target_combi_size</strong> – For multiple overlaps, maximum number of sets in the output combinations.</p></li>
 <li><p><strong>multiple_overlap_max_number_of_combinations</strong> – For multiple overlaps, maximum number of combinations to consider. This will use the MOLD mining algorithm. Do not ask for too many.</p></li>
 <li><p><strong>multiple_overlap_custom_combis</strong> – For multiple overlaps, skips combination mining and computes stats directly for these combinations. Path to a file to be read as NumPy matrix.</p></li>
+<li><p><strong>draw_histogram</strong> – if True, draws a temp file histogram for each combi</p></li>
+<li><p><strong>exact</strong> – if True, when performing the statistics, an observation of A+B+C counts as an observation of A+B</p></li>
 </ul>
 </dd>
 </dl>
@@ -2253,18 +2257,36 @@ regions given in A and B are independant).</p>
 </div>
 <div class="section" id="module-pygtftk.stats.intersect.overlap_stats_compute">
 <span id="the-pygtftk-stats-intersect-overlap-stats-compute-module"></span><h2>The pygtftk.stats.intersect.overlap_stats_compute module<a class="headerlink" href="#module-pygtftk.stats.intersect.overlap_stats_compute" title="Permalink to this headline">¶</a></h2>
-<p>Compute overlap statistics on shuffled sets.</p>
-<p>Called by overap_stats_shuffling.compute_overlap_stats(), hence the name.</p>
-<p>Those functions tend to take as input lists of shuffles and output statistics</p>
+<p>Compute overlap statistics on shuffled sets.
+Called by overap_stats_shuffling.compute_overlap_stats(), hence the name.</p>
+<p>Those functions tend to take as input lists of shuffles and output statistics.</p>
+<p>Author : Quentin Ferré &lt;<a class="reference external" href="mailto:quentin&#46;q&#46;ferre&#37;&#52;&#48;gmail&#46;com">quentin<span>&#46;</span>q<span>&#46;</span>ferre<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</p>
 <dl class="py class">
-<dt id="pygtftk.stats.intersect.overlap_stats_compute.ComputingStatsCombiPartial">
-<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">ComputingStatsCombiPartial</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">all_intersections_for_this_combi</span></em>, <em class="sig-param"><span class="n">ft_type</span></em>, <em class="sig-param"><span class="n">true_intersection</span></em>, <em class="sig-param"><span class="n">this_combi_only</span></em>, <em class="sig-param"><span class="n">nofit</span></em>, <em class="sig-param"><span class="n">result_queue</span></em>, <em class="sig-param"><span class="n">combi_human_readable</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.ComputingStatsCombiPartial" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is a wrapper to compute statistics for one combination</p>
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.CombinationExactMapping">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">CombinationExactMapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">all_combis</span></em>, <em class="sig-param"><span class="n">mapping</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.CombinationExactMapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper containing a list of all combinations and a vector giving, for each
+combination, the ID of all other combinations that are a match for it.</p>
+<p>For example, if working with inexact combinations, [1,1,1] is a match when querying [1,1,0]</p>
+<p>This is done to save RAM when working with very long combinations.</p>
+<p>Example :</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_combis</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">):[</span><span class="mi">1</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">CombinationExactMapping</span><span class="p">(</span><span class="n">all_combis</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">cm</span><span class="o">.</span><span class="n">get_all</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">cm</span><span class="o">.</span><span class="n">get_all</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span> <span class="o">==</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.Counter">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">Counter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">initval</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.Counter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiprocessing-compatible counter that can be incremented.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex">
-<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">DictionaryWithIndex</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">index</em>, <em class="sig-param">data_default_factory=&lt;function DictionaryWithIndex.&lt;lambda&gt;&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">DictionaryWithIndex</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">index</em>, <em class="sig-param">data_default_factory=&lt;function DictionaryWithIndex.&lt;lambda&gt;&gt;</em>, <em class="sig-param">will_store_an_all_overlaps_object=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex" title="Permalink to this definition">¶</a></dt>
 <dd><p>A wrapper allowing to query a dictionary so that an item can also return values from several other items.
 The dictionary will return concatenated values from several keys when asked for.</p>
 <p>It will return values from itself PLUS everything in the index</p>
@@ -2272,10 +2294,13 @@ The dictionary will return concatenated values from several keys when asked for.
 the final result will be a list with the same number elements, whose i-th element for i in 1..n
 will be the concatenated i-th elements of all candidate lists</p>
 <p>Example :</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:[</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;C&#39;</span><span class="p">]}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span><span class="s1">&#39;B&#39;</span><span class="p">:[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]],</span><span class="s1">&#39;C&#39;</span><span class="p">:[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">]]}</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_combis</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;C&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">CombinationExactMapping</span><span class="p">(</span><span class="n">all_combis</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;A&#39;</span><span class="p">:[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;B&#39;</span><span class="p">:[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]],</span> <span class="s1">&#39;C&#39;</span><span class="p">:[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">]]</span> <span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">di</span> <span class="o">=</span> <span class="n">DictionaryWithIndex</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">di</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">di</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]]</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -2283,6 +2308,51 @@ will be the concatenated i-th elements of all candidate lists</p>
 <code class="sig-name descname">get_simple_concatenation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex.get_simple_concatenation" title="Permalink to this definition">¶</a></dt>
 <dd><p>For the true overlaps. Do not merge individual shuffles, there are no shuffles to be merged.
 Simply concatenate the lists.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.HashableArray">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">HashableArray</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.HashableArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>A subclass of NumPy’s ndarray that can be used as dictionary key.
+A dictionary of such arrays will consume less RAM than a tuple, especially when pickled.</p>
+<p>This is however immutable, and should not be used on arrays that you intend to modify.</p>
+<p>NOTE It is hashed at creation, so creation can take a bit of time.
+Use a tuple if that is unacceptable.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.SparseListOfLists">
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">SparseListOfLists</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">starting_index</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.SparseListOfLists" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Container for a list of this type :</dt><dd><dl class="simple">
+<dt>[</dt><dd><p>[elements], [], [], [], [other_elements], [], [], …</p>
+</dd>
+</dl>
+<p>]</p>
+</dd>
+</dl>
+<p>Meaning, a list of lists where many of the lists inside will be empty.
+This helps save RAM.</p>
+<p>Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">SparseListOfLists</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">put</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="s1">&#39;Hello&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">put</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span> <span class="o">==</span> <span class="p">[[],[</span><span class="s1">&#39;Hello&#39;</span><span class="p">],[]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;Hello&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Ha&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Ho&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span> <span class="o">==</span> <span class="p">[[</span><span class="s1">&#39;Ha&#39;</span><span class="p">],[</span><span class="s1">&#39;Ho&#39;</span><span class="p">],[]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.SparseListOfLists.put">
+<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">element</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.SparseListOfLists.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an element at the tail of the SparseListOfLists</p>
 </dd></dl>
 
 </dd></dl>
@@ -2304,8 +2374,62 @@ bedA is a pybedtools.BedTool object and bedsB is a list of such objects.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.get_index_if_present">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">get_index_if_present</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mylist</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.get_index_if_present" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locate the leftmost value exactly equal to x in a sorted list, otherwise returns None</p>
+<p>Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">get_index_if_present</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">get_index_if_present</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.get_items_by_indices_in_list">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">get_items_by_indices_in_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">indices</span></em>, <em class="sig-param"><span class="n">mylist</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.get_items_by_indices_in_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quick way to perform multiple indexing on a list.
+Unlike the operator.itemgetter method, will always return a list</p>
+<p>Example:
+&gt;&gt;&gt; assert get_items_by_indices_in_list(indices = [0], mylist = [1,2,3]) == [1]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.index_all_these">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">index_all_these</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">combis_to_index</span></em>, <em class="sig-param"><span class="n">exact</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.index_all_these" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to run the global numpy analogue of 
+which_combis_to_get_from on a list of combis.</p>
+<p>This is not a pure function and relies on several external parameters
+that will be named as globals later, before this function is called.</p>
+<p>NOTE : the oc.NPARRAY_which_combis_match_with already integrates a check
+and will not return the same index as the query</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.merge_consecutive_intersections_in_all_overlaps_lists">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">merge_consecutive_intersections_in_all_overlaps_lists</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">aiqc</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.merge_consecutive_intersections_in_all_overlaps_lists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merges the consecutive intersections in a list-of-intersection-batches object.</p>
+<p>This is an in-place operation: it will not return a new list, but change the original !</p>
+<p>Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_intersections_queried_for_this_combi</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">),(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">),(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">)],</span> <span class="p">[(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">),(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">),(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">600</span><span class="p">,</span><span class="mi">700</span><span class="p">)],</span> <span class="p">[(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">),(</span><span class="sa">b</span><span class="s1">&#39;chr2&#39;</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">)]</span> <span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expected</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">300</span><span class="p">)],</span> <span class="p">[(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">300</span><span class="p">),(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">600</span><span class="p">,</span><span class="mi">700</span><span class="p">)],</span> <span class="p">[(</span><span class="sa">b</span><span class="s1">&#39;chr1&#39;</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">),(</span><span class="sa">b</span><span class="s1">&#39;chr2&#39;</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">)]</span> <span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">merge_consecutive_intersections_in_all_overlaps_lists</span><span class="p">(</span><span class="n">all_intersections_queried_for_this_combi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">all_intersections_queried_for_this_combi</span> <span class="o">==</span> <span class="n">expected</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pygtftk.stats.intersect.overlap_stats_compute.merge_consecutive_intersections_in_intersections_list">
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">merge_consecutive_intersections_in_intersections_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inter_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.merge_consecutive_intersections_in_intersections_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merges the consecutive intersections in a list-of-intersections object.</p>
+<p>Note that this will discard the flags (4th element, np array) and any other element in the list of lists.</p>
+<p>This is NOT an in-place operation, and returns the new list.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pygtftk.stats.intersect.overlap_stats_compute.stats_multiple_overlap">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">stats_multiple_overlap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">all_overlaps</span></em>, <em class="sig-param"><span class="n">bedA</span></em>, <em class="sig-param"><span class="n">bedsB</span></em>, <em class="sig-param"><span class="n">all_feature_labels</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">nofit</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_custom_combis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.stats_multiple_overlap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">stats_multiple_overlap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">all_overlaps</span></em>, <em class="sig-param"><span class="n">bedA</span></em>, <em class="sig-param"><span class="n">bedsB</span></em>, <em class="sig-param"><span class="n">all_feature_labels</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">nofit</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiple_overlap_custom_combis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">draw_histogram</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">exact</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.stats_multiple_overlap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instead of returning one set of overlap stats per query type (ie. exons, gens, bedfile1, bedfile2, etc…)
 it will return one per multiple overlap (ie. here there was a peak for bedfile1+gene, or bedfile1+bedfile2+gene, etc.)</p>
 <p>Only do so for “common/interesting combis”, found by dict learning on original data.</p>
@@ -2318,7 +2442,7 @@ it will return one per multiple overlap (ie. here there was a peak for bedfile1+
 
 <dl class="py function">
 <dt id="pygtftk.stats.intersect.overlap_stats_compute.stats_single">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">stats_single</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">all_intersections_for_this_combi</span></em>, <em class="sig-param"><span class="n">true_intersection</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'some feature'</span></em>, <em class="sig-param"><span class="n">nofit</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">this_combi_only</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.stats_single" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">stats_single</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">all_intersections_for_this_combi</span></em>, <em class="sig-param"><span class="n">true_intersection</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'some feature'</span></em>, <em class="sig-param"><span class="n">nofit</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">this_combi_only</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">draw_histogram</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">was_directly_passed_stats</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.stats_single" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute statistics such as total number of overlapping base pairs for a given feature.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2327,7 +2451,8 @@ it will return one per multiple overlap (ie. here there was a peak for bedfile1+
 <li><p><strong>true_intersection</strong> – the result of overlap_stats_compute.compute_true_intersection(bedA, bedsB) where bedA is the query and bedB is the list of the bed files between whose shuffles the aforementioned intersections have been computed. Used here to calculate the true intersections between them and calculate a Neg Binom p-value.</p></li>
 <li><p><strong>ft_type</strong> – for debug messages, which feature/combi are we currently processing ?</p></li>
 <li><p><strong>nofit</strong> – if True, does not do Negative Binomial fitting</p></li>
-<li><p><strong>this_combi_only</strong> – a list of flags (e.g. [1,0,0,1]) corresponding to expected flags in the interescetions, one per file (see find_intersection() source and documentation). If not None, we will consider only intersections that have this flag for the number of true intersections and true overlapping basepairs</p></li>
+<li><p><strong>this_combi_only</strong> – a list of flags (e.g. [1,0,0,1]) corresponding to expected flags in the intersections, one per file (see find_intersection() source and documentation). If not None, we will consider only intersections that have this flag for the number of true intersections and true overlapping basepairs</p></li>
+<li><p><strong>draw_histogram</strong> – if True, draws a temp file histogram for each combi</p></li>
 </ul>
 </dd>
 </dl>
@@ -2337,11 +2462,17 @@ it will return one per multiple overlap (ie. here there was a peak for bedfile1+
 <dt id="pygtftk.stats.intersect.overlap_stats_compute.which_combis_to_get_from">
 <code class="sig-prename descclassname">pygtftk.stats.intersect.overlap_stats_compute.</code><code class="sig-name descname">which_combis_to_get_from</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">combi</span></em>, <em class="sig-param"><span class="n">all_possible_combis</span></em>, <em class="sig-param"><span class="n">exact</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.which_combis_to_get_from" title="Permalink to this definition">¶</a></dt>
 <dd><p>To build an index later, determine the supplementary combis : meaning, for each
-combi, which other combi needs to be queried.</p>
+combination, which other combinations needs to be queried.</p>
 <p>Relevant if we desire inexact or exact combis;
 Reminded : a combi A is a “inexact” match for combi B if all flags of combi B
 are also present in combi A, along with potentially others.</p>
-<p>Returns an index giving the supplementary combis</p>
+<p>Returns an index giving the supplementary combinations.</p>
+<p>Example :</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_combis</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="n">which_combis_to_get_from</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">all_combis</span><span class="p">,</span> <span class="n">exact</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -2387,12 +2518,14 @@ fits above 0.9 should be considered good.</p>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.negbin_fit</span> <span class="kn">import</span> <span class="n">check_negbin_adjustment</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mean</span> <span class="o">=</span> <span class="mi">100</span> <span class="p">;</span> <span class="n">var</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">mean</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">var</span><span class="o">-</span><span class="n">mean</span><span class="p">)</span> <span class="p">;</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">mean</span><span class="o">/</span><span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rv</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">nbinom</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">check_negbin_adjustment</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">check_negbin_adjustment</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">fit</span> <span class="o">&gt;</span> <span class="mf">0.95</span>
 </pre></div>
 </div>
@@ -2409,7 +2542,7 @@ This can be used with any dataset, not just a negative-binomial-compliant one.</
 
 <dl class="py function">
 <dt id="pygtftk.stats.negbin_fit.negbin_pval">
-<code class="sig-prename descclassname">pygtftk.stats.negbin_fit.</code><code class="sig-name descname">negbin_pval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">mean</span></em>, <em class="sig-param"><span class="n">var</span></em>, <em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">1500</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'Unknown'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.negbin_fit.negbin_pval" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.negbin_fit.</code><code class="sig-name descname">negbin_pval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">mean</span></em>, <em class="sig-param"><span class="n">var</span></em>, <em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">320</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'Unknown'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.negbin_fit.negbin_pval" title="Permalink to this definition">¶</a></dt>
 <dd><p>P-value for a negative binomial distribution of the given moments (mean, var).</p>
 <p>This is the two-sided p-value : it will return the minimum of the left-sided
 and right-sided p-value</p>
@@ -2418,7 +2551,7 @@ or equal to the variance, set the variance to mean + epsilon and send a warning<
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>k</strong> – the critical value.</p></li>
+<li><p><strong>k</strong> – the critical value for which the pvalue is computed.</p></li>
 <li><p><strong>mean</strong> – The mean for the negative binomial model.</p></li>
 <li><p><strong>var</strong> – The variance for the negative binomial model.</p></li>
 <li><p><strong>precision</strong> – Floating point precision of mpmath. Should be at least 1000</p></li>
@@ -2442,7 +2575,7 @@ or equal to the variance, set the variance to mean + epsilon and send a warning<
 <span id="the-pygtftk-stats-beta-module"></span><h2>The pygtftk.stats.beta module<a class="headerlink" href="#module-pygtftk.stats.beta" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pygtftk.stats.beta.BetaCalculator">
-<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.beta.</code><code class="sig-name descname">BetaCalculator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">1500</span></em>, <em class="sig-param"><span class="n">use_log</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">itermax</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'Unknown'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.BetaCalculator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.beta.</code><code class="sig-name descname">BetaCalculator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">320</span></em>, <em class="sig-param"><span class="n">use_log</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">itermax</span><span class="o">=</span><span class="default_value">50000</span></em>, <em class="sig-param"><span class="n">ft_type</span><span class="o">=</span><span class="default_value">'Unknown'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.BetaCalculator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computing the beta distribution in Python using mpmath.</p>
 <p>Using routines from the GNU Scientific Library (<cite>beta_inc.c</cite>):
 &lt;Copyright (C) 2007 Brian Gough and Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman&gt;</p>
@@ -2619,7 +2752,7 @@ rules mining algorithms, this focuses on mining complexes and correlation groups
 <p>This code is available under the GNU GPL license.</p>
 <dl class="py class">
 <dt id="pygtftk.stats.intersect.modl.dict_learning.Modl">
-<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.modl.dict_learning.</code><code class="sig-name descname">Modl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flags_matrix</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">step_1_factor_allowance</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">error_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">smother</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">normalize_words</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">step_2_alpha</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.Modl" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pygtftk.stats.intersect.modl.dict_learning.</code><code class="sig-name descname">Modl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flags_matrix</span></em>, <em class="sig-param"><span class="n">multiple_overlap_target_combi_size</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">multiple_overlap_max_number_of_combinations</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">step_1_factor_allowance</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">error_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">smother</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">normalize_words</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">step_2_alpha</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">discretization_threshold</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">step_1_alphas</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.Modl" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class encapsulates the MODL approach :</p>
 <p>Takes as input a matrix of flags, with one flag per intersection,
 and returns the list of interesting combis.</p>
@@ -2636,10 +2769,14 @@ and returns the list of interesting combis.</p>
 <li><p><strong>smother</strong> – Should the smothering which reduces each row’s abudane to its square root to emphasize rarer combinations be applied ? Default is True</p></li>
 <li><p><strong>normalize_words</strong> – Normalize the words by their summed squares in step 2. Default True.</p></li>
 <li><p><strong>step_2_alpha</strong> – Override the alpha used in step 2.</p></li>
+<li><p><strong>discretization_threshold</strong> – discretization_threshold in step 1. In each atom, elements below D*maximum_for_this_atom will be discarded. Optional.</p></li>
+<li><p><strong>step_1_alphas</strong> – A list to manually override the alphas to be used during step 1. Optional.</p></li>
 </ul>
 </dd>
 </dl>
-<p>Passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, code). X_true is the real data, X_rebuilt is the reconstruction to evaluate, and code is the encoded version which in our case is used to assess sparsity</p>
+<p>Passing a custom error function, it must have the signature error_function(X_true, X_rebuilt, encoded, dictionary). 
+X_true is the real data, X_rebuilt is the reconstruction to evaluate, code is the encoded version (in our case used 
+to check sparsity), dictionary has one learned atom per row.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.modl.dict_learning</span> <span class="kn">import</span> <span class="n">Modl</span><span class="p">,</span> <span class="n">test_data_for_modl</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
@@ -2712,8 +2849,8 @@ with the Sparse Coder of adding the word X to a set S is no higher than adding X
 set T that contains S. Also, more words cannot make the sparse coder do a worse job so
 the function is monotonous.</p>
 <p>Instead of the reconstruction error, you may pass a different callable of the form
-error_function(data, rebuilt_data, encoded) that returns an error value so there
-can be a supervision but the submodularity might no longer hold.</p>
+error_function(data, rebuilt_data, encoded, dictionary) that returns an error value so there
+can be a supervision, but the submodularity might no longer hold.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.modl</span> <span class="kn">import</span> <span class="n">tree</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.intersect.modl</span> <span class="kn">import</span> <span class="n">subroutines</span> <span class="k">as</span> <span class="n">modl_subroutines</span>
@@ -2730,7 +2867,7 @@ can be a supervision but the submodularity might no longer hold.</p>
 
 <dl class="py function">
 <dt id="pygtftk.stats.intersect.modl.subroutines.generate_candidate_words">
-<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.subroutines.</code><code class="sig-name descname">generate_candidate_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">n_words</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.subroutines.generate_candidate_words" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pygtftk.stats.intersect.modl.subroutines.</code><code class="sig-name descname">generate_candidate_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">n_words</span></em>, <em class="sig-param"><span class="n">nb_threads</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">discretization_threshold</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">alphas</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.subroutines.generate_candidate_words" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a data matrix, will generate a library of candidate words by trying many
 different Dictionary Learnings (different alphas only for now)</p>
 </dd></dl>
@@ -3529,14 +3666,14 @@ are found at the beginning or end of the string, they are deleted.</p>
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Help on Python package (pygtftk)</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>

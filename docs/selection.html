@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘selection’ &#8212; gtftk 1.2.7 documentation</title>
+    <title>Commands from section ‘selection’ &#8212; gtftk 1.2.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="editing.html" title="Commands from section ‘Editing’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘selection’</a></li> 
       </ul>
     </div>  
@@ -145,9 +145,8 @@ chr1	gtftk	exon	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &quot;G00
   Usage: gtftk select_by_key [-i GTF] [-o GTF] [-k KEY] [-v VALUE] [-f FILE] [-c COL] [-n] [-b] [-m NAME] [-s SEP] [-l] [-t] [-g] [-e] [-d] [-a] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select lines from a GTF file based on attributes and associated values.
 
-  Version:  2018-01-31
+     Select lines from a GTF file based on attributes and associated values.
 
 optional arguments:
  -v, --value                  A comma-separated list of values. (default: None)
@@ -201,13 +200,12 @@ chr1	gtftk	CDS	3	8	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T00
   Usage: gtftk select_by_regexp [-i GTF] [-o GTF] [-k KEY] [-r regexp] [-n] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select lines from a GTF file based on a regexp.
+
+     Select lines from a GTF file based on a regexp.
 
   Notes:
      *  The default is to try to select feature from conventional human chromosome (chr1..chr22,
      chrX and chrY) with --key set to chrom and --regexp set to &quot;^chr[0-9XY]+$&quot;.
-
-  Version:  2018-01-20
 
 optional arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -242,13 +240,12 @@ MCAM	ENST00000526992	159,98
   Usage: gtftk select_by_regexp [-i GTF] [-o GTF] [-k KEY] [-r regexp] [-n] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select lines from a GTF file based on a regexp.
+
+     Select lines from a GTF file based on a regexp.
 
   Notes:
      *  The default is to try to select feature from conventional human chromosome (chr1..chr22,
      chrX and chrY) with --key set to chrom and --regexp set to &quot;^chr[0-9XY]+$&quot;.
-
-  Version:  2018-01-20
 
 optional arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -292,10 +289,9 @@ chr1	gtftk	transcript	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &qu
   Usage: gtftk select_by_max_exon_nb [-i GTF] [-o GTF] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  For each gene select the transcript with the highest number of exons. If ties, select the first
-     encountered.
 
-  Version:  2018-02-11
+     For each gene select the transcript with the highest number of exons. If ties, select the first
+     encountered.
 
 optional arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -328,15 +324,14 @@ chr1	gtftk	transcript	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;
   Usage: gtftk select_by_loc [-i GTF] [-o GTF] (-l LOC | -f BEDFILE) [-t {transcript,gene}] [-n] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select transcripts/gene overlapping a given locations.
+
+     Select transcripts/gene overlapping a given locations.
 
   Notes:
      *  A transcript is defined here as the genomic region from TSS to TTS including introns.
      *  This function will return the transcript and all its associated elements (exons, utr...)
      even if only a fraction (e.g intron) of the transcript is overlapping the feature.
      *  If -/-ft-type is set to &#39;gene&#39; returns the gene and all its associated elements.
-
-  Version:  2018-01-20
 
 optional arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -378,9 +373,8 @@ chr1	gtftk	transcript	210	222	.	-	.	gene_id &quot;G0008&quot;; transcript_id &qu
   Usage: gtftk select_by_nb_exon [-i GTF] [-o GTF] [-m min_exon_number] [-M max_exon_number] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select transcripts based on the number of exons.
 
-  Version:  2018-01-20
+     Select transcripts based on the number of exons.
 
 optional arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -418,9 +412,8 @@ chr1	gtftk	exon	3	14	.	-	.	gene_id &quot;G0009&quot;; transcript_id &quot;G0009T
   Usage: gtftk select_by_numeric_value [-i GTF] [-o GTF] -t test [-n na_omit] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select lines from a GTF file based on a boolean test on numeric values.
 
-  Version:  2018-01-20
+     Select lines from a GTF file based on a boolean test on numeric values.
 
 optional arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -447,7 +440,7 @@ Command-wise optional arguments:
 <p><strong>Example:</strong> Select randomly 3 transcripts.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_list -n 3 -i simple.gtf | gtftk count
 transcript	3
-exon	7
+exon	6
 CDS	3
 </pre></div>
 </div>
@@ -456,10 +449,9 @@ CDS	3
   Usage: gtftk random_list [-i GTF] [-o GTF] [-n NUMBER] [-t {gene,transcript}] [-s SEED] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select a random list of genes or transcripts. Note that if transcripts are requested the &#39;gene&#39;
-     feature is not returned.
 
-  Version:  2018-01-20
+     Select a random list of genes or transcripts. Note that if transcripts are requested the &#39;gene&#39;
+     feature is not returned.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -487,13 +479,13 @@ Command-wise optional arguments:
 <p><strong>Example:</strong> Select randomly 1 transcript per gene (<em>-m 1</em>).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk random_tx -m 1 -i simple.gtf | gtftk select_by_key -k feature -v gene,transcript| gtftk tabulate -k gene_id,transcript_id
 gene_id	transcript_id
-G0001	G0001T001
+G0001	G0001T002
 G0002	G0002T001
 G0003	G0003T001
-G0004	G0004T002
+G0004	G0004T001
 G0005	G0005T001
 G0006	G0006T001
-G0007	G0007T001
+G0007	G0007T002
 G0008	G0008T001
 G0009	G0009T001
 G0010	G0010T001
@@ -504,9 +496,8 @@ G0010	G0010T001
   Usage: gtftk random_tx [-i GTF] [-o GTF] [-m MAX] [-s SEED] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select randomly up to m transcript for each gene.
 
-  Version:  2018-01-30
+     Select randomly up to m transcript for each gene.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -549,12 +540,11 @@ chr1	gtftk	transcript	176	186	.	+	.	gene_id &quot;G0010&quot;; transcript_id &qu
   Usage: gtftk rm_dup_tss [-i GTF] [-o GTF] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  If several transcripts of a gene share the same TSS, select one transcript per TSS.
+
+     If several transcripts of a gene share the same TSS, select one transcript per TSS.
 
   Notes:
      *  The alphanumeric order of transcript_id is used to select the representative of a TSS.
-
-  Version:  2018-01-20
 
 Argument:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -585,9 +575,8 @@ Command-wise optional arguments:
   Usage: gtftk select_by_go [-i GTF] [-o GTF] [-g go_id] (-l | -s species) [-n] [-p1 http_proxy] [-p2 https_proxy] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select lines/genes from a GTF file using a Gene Ontology ID (e.g GO:0097194).
 
-  Version:  2018-01-20
+     Select lines/genes from a GTF file using a Gene Ontology ID (e.g GO:0097194).
 
 optional arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -627,9 +616,8 @@ G0001	G0001T001	14
   Usage: gtftk select_by_tx_size [-i GTF] [-o GTF] [-m min_size] [-M max_size] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select transcript based on their size (i.e size of mature/spliced transcript).
 
-  Version:  2018-01-20
+     Select transcript based on their size (i.e size of mature/spliced transcript).
 
 optional arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -673,12 +661,11 @@ G0010	G0010T001
   Usage: gtftk select_most_5p_tx [-i GTF] [-o GTF] [-g] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select the most 5&#39; transcript of each gene.
+
+     Select the most 5&#39; transcript of each gene.
 
   Notes:
      *  If several transcript share the samemost 5&#39; TSS, only one transcript is selected.
-
-  Version:  2018-01-20
 
 optional arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -721,13 +708,12 @@ G0010	G0010T001
   Usage: gtftk short_long [-i GTF] [-o GTF] [-l] [-g] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select the shortest mature transcript (i.e without introns) for each gene or the longest if the -l
+
+     Select the shortest mature transcript (i.e without introns) for each gene or the longest if the -l
      arguments is used.
 
   Notes:
      *
-
-  Version:  2018-01-25
 
 Argument:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -819,14 +805,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="editing.html" title="Commands from section ‘Editing’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘selection’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>

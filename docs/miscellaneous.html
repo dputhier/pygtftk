@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘miscellaneous’ &#8212; gtftk 1.2.7 documentation</title>
+    <title>Commands from section ‘miscellaneous’ &#8212; gtftk 1.2.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="coverage.html" title="Commands from section ‘coverage’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘miscellaneous’</a></li> 
       </ul>
     </div>  
@@ -69,13 +69,13 @@
 <p><strong>Description:</strong> Returns a list of gene matched for expression based on reference values. Based on a reference gene list (or more generally IDs) this command tries to extract a set of other genes/IDs matched for signal/expression. The –reference-gene-file contains the list of reference IDs while the –inputfile contains a tuple gene/signal for all genes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk control_list -i mini_real_counts_ENCFF630HEX.tsv -r mini_real_control_1.txt -D -V 2 -s -l -p 1 -ju -if example_13.png -pf png
- |-- 17:26-INFO-control_list : 0 duplicate lines have been deleted in reference file.
- |-- 17:26-INFO-control_list : Found 50 genes of the reference in the provided signal file
- |-- 17:26-INFO-control_list : All reference genes were found.
- |-- 17:26-INFO-control_list : Searching for genes with matched signal.
- |-- 17:26-INFO-control_list : Preparing a dataframe for plotting.
- |-- 17:26-INFO-control_list : Saving diagram to file : example_13.png
- |-- 17:26-INFO-control_list : Be patient. This may be long for large datasets.
+ |-- 11:27-INFO-control_list : 0 duplicate lines have been deleted in reference file.
+ |-- 11:27-INFO-control_list : Found 50 genes of the reference in the provided signal file
+ |-- 11:27-INFO-control_list : All reference genes were found.
+ |-- 11:27-INFO-control_list : Searching for genes with matched signal.
+ |-- 11:27-INFO-control_list : Preparing a dataframe for plotting.
+ |-- 11:27-INFO-control_list : Saving diagram to file : example_13.png
+ |-- 11:27-INFO-control_list : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_13.png"><img alt="_images/example_13.png" src="_images/example_13.png" /></a>
@@ -84,7 +84,8 @@
   Usage: gtftk control_list --in-file TXT --reference-gene-file TXT [--out-dir DIR] [--log2] [--pseudo-count pseudo_count] [-pw page_width] [-ph page_height] [-pf {pdf,png}] [-dpi dpi] [--skip-first] [--rug] [--jitter] [-if user_img_file] [-c set_colors] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Based on a reference gene list (or more generally IDs) this command tries to extract a set of
+
+     Based on a reference gene list (or more generally IDs) this command tries to extract a set of
      other genes/IDs matched for signal/expression. The --reference-gene-file contains the list of
      reference IDs while the -\inputfile contains a tuple gene/signal for all genes.
 
@@ -93,8 +94,6 @@
      (including reference IDs) and the second column contains the expression/signal values. This
      file should contain no header.
      *  Think about discarding any unwanted IDs from --infile before calling control_list.
-
-  Version:  2018-01-20
 
 optional arguments:
  --in-file, -i                A two columns tab-file. See notes. (default: None)
@@ -152,9 +151,8 @@ G0010T001	G0010
   Usage: gtftk col_from_tab [-i TXT] [-o TXT] -c columns [-n] [-u] [-s SEP] [-H] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select columns from a tabulated file based on their names.
 
-  Version:  2018-01-20
+     Select columns from a tabulated file based on their names.
 
 Arguments:
  -i, --inputfile              The tabulated file. Default to STDIN (default: &lt;stdin&gt;)
@@ -237,14 +235,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="coverage.html" title="Commands from section ‘coverage’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘miscellaneous’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>

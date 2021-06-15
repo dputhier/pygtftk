@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘coverage’ &#8212; gtftk 1.2.7 documentation</title>
+    <title>Commands from section ‘coverage’ &#8212; gtftk 1.2.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="sequence.html" title="Commands from section ‘sequence’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘coverage’</a></li> 
       </ul>
     </div>  
@@ -87,7 +87,7 @@ chr1	2202732	2212733	ENST00000469733|FAAP20	-	1.0	1.0	1.0
 chr1	2493646	2503647	ENST00000462379|PLCH2	+	1.227377	1.062994	1.068393
 chr1	3064167	3074168	ENST00000511072|PRDM16	+	1.0	1.0	1.0
 chr1	3630449	3640450	ENST00000469643|WRAP73	-	1.0	1.0	1.0
-chr1	6414902	6424903	ENST00000377836|HES2	-	1.9511049999999999	1.682232	1.439256
+chr1	6414902	6424903	ENST00000377836|HES2	-	1.951105	1.682232	1.439256
 chr1	9178749	9188750	ENST00000437157|MIR34AHG	-	1.331067	1.272973	1.436956
 </pre></div>
 </div>
@@ -96,22 +96,23 @@ chr1	9178749	9188750	ENST00000437157|MIR34AHG	-	1.331067	1.272973	1.436956
   Usage: gtftk coverage [-i GTF/BED] [-o TXT] -c CHROMINFO [-u UPSTREAM] [-d DOWNSTREAM] [-w nb_window] [-k nb_proc] [-f ft_type] [-l labels] [-m name_column] [-p pseudo_count] [-n n_highest] [-x] [-zn] [-a key_name] [-s {mean,sum}] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file] bw_list [bw_list ...]
 
   Description: 
-     *  Takes a GTF as input to compute bigwig coverage in regions of interest (promoter, transcript body,
+
+     Takes a GTF as input to compute bigwig coverage in regions of interest (promoter, transcript body,
      intron, intron_by_tx, tts...) or a BED6 to focus on user-defined regions. If --n-highest is
      used the program will compute the coverage of each bigwig based on the average value of the n
      windows (--nb-window) with the highest coverage values.
 
   Notes:
+     *  chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
+     case the  corresponding size of conventional chromosomes are used. To get the size of  the
+     chromosome in ensembl format (whithout chr prefix), use &#39;mm8_ens&#39;, &#39;mm9_ens&#39;,  &#39;mm10_ens&#39;,
+     &#39;hg19_ens&#39;, &#39;hg38_ens&#39;, &#39;rn3_ens&#39; or &#39;rn4_ens&#39;. ChrM is not used.
      *  Regions were signal can be computed (if GTF file as input): promoter/tss, tts, introns,
      intron_by_tx, intergenic regions or any feature available in the GTF file (transcript, exon,
      gene...).
      *  If --matrix-out is selected, the signal for each bigwig will be provided in a dedicated
      column. Otherwise, signal for each bigwig is provided through a dedicated line.
      *  If bed is used as input, each region should have its own name (column 4).
-     *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
-     case the  corresponding size of conventional chromosomes are used. ChrM is not used.
-
-  Version:  2018-02-05
 
 Arguments:
  bw_list                      A list of Bigwig file (last argument).
@@ -170,13 +171,14 @@ Will will create tree example datasets:</p>
   Usage: gtftk mk_matrix [-i GTF/BED] -y bigwiglist [bigwiglist ...] -o GTF/TXT [-l labels] [-t {promoter,tts,transcript,user_regions,single_nuc}] [-p pseudo_count] [-u upstream] [-d downstream] -c chrom_info [-w bin_nb] [-k nb_proc] [-b bin_around_frac] [-zn] [-nst] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Create a matrix storing the bigwig coverage computed from binned regions.
+
+     Create a matrix storing the bigwig coverage computed from binned regions.
 
   Notes:
-     *  --chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
-     case the  corresponding size of conventional chromosomes are used. ChrM is not used.
-
-  Version:  2018-01-20
+     *  chrom-info may also accept &#39;mm8&#39;, &#39;mm9&#39;, &#39;mm10&#39;, &#39;hg19&#39;, &#39;hg38&#39;, &#39;rn3&#39; or &#39;rn4&#39;. In this
+     case the  corresponding size of conventional chromosomes are used. To get the size of  the
+     chromosome in ensembl format (whithout chr prefix), use &#39;mm8_ens&#39;, &#39;mm9_ens&#39;,  &#39;mm10_ens&#39;,
+     &#39;hg19_ens&#39;, &#39;hg38_ens&#39;, &#39;rn3_ens&#39; or &#39;rn4_ens&#39;. ChrM is not used.
 
 Arguments:
  -i, --inputfile              A GTF file or bed file. A GTF if &lt;stdin&gt;. (default: &lt;stdin&gt;)
@@ -214,19 +216,22 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 <p><strong>Basic profiles</strong></p>
 <p>A simple overlayed profile of all epigenetic marks around promoter. Here <em>—group-by</em> is, by default set to <em>bwig</em> and <em>—facet-var</em> is set to None. Thus a single plot with several lines corresponding to bwig coverage is obtained.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -o profile_prom -pf png -if  example_01.png
- |-- 17:24-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:25-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/profile.py:815: FutureWarning: Index.ravel returning ndarray is deprecated; in a future version this will return a view on self.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_01.png"><img alt="_images/example_01.png" src="_images/example_01.png" style="width: 75%;" /></a>
 <p>Changing colors and applying color order can be done using the following syntax:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -c &#39;red,blue,violet&#39; -d H3K79me,H3K4me3,H3K36me3 -o profile_prom -pf png -if  example_01b.png
- |-- 17:24-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:25-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/profile.py:815: FutureWarning: Index.ravel returning ndarray is deprecated; in a future version this will return a view on self.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_01b.png"><img alt="_images/example_01b.png" src="_images/example_01b.png" style="width: 75%;" /></a>
 <p>Transcript coverage is obtained using the <em>mini_real_tx.zip</em> matrix. This provides a simple overlayed profile of all epigenetic marks along the transcript body extended in 5’ and 3’ regions:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -o profile_tx -pf png -if  example_02.png
- |-- 17:24-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+ |-- 11:25-WARNING-profile : --group-by not set. Choosing &#39;bwig&#39;.
+/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/profile.py:815: FutureWarning: Index.ravel returning ndarray is deprecated; in a future version this will return a view on self.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_02.png"><img alt="_images/example_02.png" src="_images/example_02.png" style="width: 75%;" /></a>
@@ -234,111 +239,118 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 <p>Faceted plot of epigenetic profiles. The groups (i.e colors/lines) can be set to bwig classes and the facets to transcript classes. Things can be simply done by providing an additional file containing the transcript and their associated classes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -f tx_classes -g bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_05.png -e -V 2 -fc 2
- |-- 17:24-DEBUG-profile : Using pandas version 1.1.3
- |-- 17:24-DEBUG-profile : Pandas location /Users/puthier/anaconda3/envs/pygtftk_37/lib/python3.7/site-packages/pandas/__init__.py
- |-- 17:24-DEBUG-profile : Using numpy version 1.19.1
- |-- 17:24-DEBUG-profile : Pandas numpy /Users/puthier/anaconda3/envs/pygtftk_37/lib/python3.7/site-packages/numpy/__init__.py
- |-- 17:24-DEBUG-profile : Using plotnine version 0.7.1
- |-- 17:24-DEBUG-profile : Pandas plotnine /Users/puthier/anaconda3/envs/pygtftk_37/lib/python3.7/site-packages/plotnine/__init__.py
- |-- 17:24-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_p4vznr5l
- |-- 17:24-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_p4vznr5l
- |-- 17:24-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_p4vznr5l/mini_real_promoter
- |-- 17:24-INFO-profile : Getting configuration info from input file.
- |-- 17:24-INFO-profile : Reading transcript file.
- |-- 17:24-INFO-profile : Deleting duplicates in transcript-file.
- |-- 17:24-INFO-profile : Checking how many transcripts where found in the transcript list.
- |-- 17:24-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
- |-- 17:24-DEBUG-profile : Color order : [&#39;H3K79me&#39;, &#39;H3K4me3&#39;, &#39;H3K36me3&#39;]
- |-- 17:24-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
- |-- 17:24-INFO-profile : Searching coverage columns.
- |-- 17:24-INFO-profile : Melting.
- |-- 17:24-INFO-profile : Ceiling
- |-- 17:24-INFO-profile : Computing column ordering.
- |-- 17:24-INFO-profile : Preparing diagram
- |-- 17:24-INFO-profile : Theming and ordering. Please be patient...
- |-- 17:24-INFO-profile : Preparing x axis
- |-- 17:24-INFO-profile : facet_col 2
- |-- 17:24-INFO-profile : Page width set to 6
- |-- 17:24-INFO-profile : Page height set to 5.0
- |-- 17:24-INFO-profile : Saving diagram to file : example_05.png
- |-- 17:24-INFO-profile : Be patient. This may be long for large datasets.
- |-- 17:24-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_p4vznr5l
+ |-- 11:25-DEBUG-profile : Using pandas version 1.2.4
+ |-- 11:25-DEBUG-profile : Pandas location /Users/puthier/anaconda3/lib/python3.8/site-packages/pandas/__init__.py
+ |-- 11:25-DEBUG-profile : Using numpy version 1.20.3
+ |-- 11:25-DEBUG-profile : Pandas numpy /Users/puthier/anaconda3/lib/python3.8/site-packages/numpy/__init__.py
+ |-- 11:25-DEBUG-profile : Using plotnine version 0.8.0
+ |-- 11:25-DEBUG-profile : Pandas plotnine /Users/puthier/anaconda3/lib/python3.8/site-packages/plotnine/__init__.py
+ |-- 11:25-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_c3jcq4ih
+ |-- 11:25-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_c3jcq4ih
+ |-- 11:25-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_c3jcq4ih/mini_real_promoter
+ |-- 11:25-INFO-profile : Getting configuration info from input file.
+ |-- 11:25-INFO-profile : Reading transcript file.
+ |-- 11:25-INFO-profile : Deleting duplicates in transcript-file.
+ |-- 11:25-INFO-profile : Checking how many transcripts where found in the transcript list.
+ |-- 11:25-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
+ |-- 11:25-DEBUG-profile : Color order : [&#39;H3K4me3&#39;, &#39;H3K36me3&#39;, &#39;H3K79me&#39;]
+ |-- 11:25-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
+ |-- 11:25-INFO-profile : Searching coverage columns.
+ |-- 11:25-INFO-profile : Melting.
+ |-- 11:25-INFO-profile : Ceiling
+/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/profile.py:815: FutureWarning: Index.ravel returning ndarray is deprecated; in a future version this will return a view on self.
+ |-- 11:25-INFO-profile : Computing column ordering.
+ |-- 11:25-INFO-profile : Preparing diagram
+ |-- 11:25-INFO-profile : Theming and ordering. Please be patient...
+ |-- 11:25-INFO-profile : Preparing x axis
+ |-- 11:25-INFO-profile : facet_col 2
+ |-- 11:25-INFO-profile : Page width set to 6
+ |-- 11:25-INFO-profile : Page height set to 5.0
+ |-- 11:25-INFO-profile : Saving diagram to file : example_05.png
+ |-- 11:25-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 11:25-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_c3jcq4ih
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_05.png"><img alt="_images/example_05.png" src="_images/example_05.png" style="width: 75%;" /></a>
 <p>Alternatively, the groups can be set to chromosomes or transcript classes:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -g tx_classes -f bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_06.png -V 2 -nm ranging
- |-- 17:24-DEBUG-profile : Using pandas version 1.1.3
- |-- 17:24-DEBUG-profile : Pandas location /Users/puthier/anaconda3/envs/pygtftk_37/lib/python3.7/site-packages/pandas/__init__.py
- |-- 17:24-DEBUG-profile : Using numpy version 1.19.1
- |-- 17:24-DEBUG-profile : Pandas numpy /Users/puthier/anaconda3/envs/pygtftk_37/lib/python3.7/site-packages/numpy/__init__.py
- |-- 17:24-DEBUG-profile : Using plotnine version 0.7.1
- |-- 17:24-DEBUG-profile : Pandas plotnine /Users/puthier/anaconda3/envs/pygtftk_37/lib/python3.7/site-packages/plotnine/__init__.py
- |-- 17:24-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_wuv6mlzp
- |-- 17:24-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_wuv6mlzp
- |-- 17:24-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_wuv6mlzp/mini_real_promoter
- |-- 17:24-INFO-profile : Getting configuration info from input file.
- |-- 17:24-INFO-profile : Reading transcript file.
- |-- 17:24-INFO-profile : Deleting duplicates in transcript-file.
- |-- 17:24-INFO-profile : Checking how many transcripts where found in the transcript list.
- |-- 17:24-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
- |-- 17:24-DEBUG-profile : Color order : [&#39;protein_coding&#39;, &#39;lincRNA&#39;, &#39;antisense&#39;]
- |-- 17:24-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
- |-- 17:24-INFO-profile : Searching coverage columns.
- |-- 17:24-INFO-profile : Melting.
- |-- 17:24-INFO-profile : Ceiling
- |-- 17:24-INFO-profile : Normalizing (ranging)
- |-- 17:24-INFO-profile : Computing column ordering.
- |-- 17:24-INFO-profile : Preparing diagram
- |-- 17:24-INFO-profile : Theming and ordering. Please be patient...
- |-- 17:24-INFO-profile : Preparing x axis
- |-- 17:24-INFO-profile : facet_col 3
- |-- 17:24-INFO-profile : Page width set to 9
- |-- 17:24-INFO-profile : Page height set to 2.0
- |-- 17:24-INFO-profile : Saving diagram to file : example_06.png
- |-- 17:24-INFO-profile : Be patient. This may be long for large datasets.
- |-- 17:24-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_wuv6mlzp
+ |-- 11:25-DEBUG-profile : Using pandas version 1.2.4
+ |-- 11:25-DEBUG-profile : Pandas location /Users/puthier/anaconda3/lib/python3.8/site-packages/pandas/__init__.py
+ |-- 11:25-DEBUG-profile : Using numpy version 1.20.3
+ |-- 11:25-DEBUG-profile : Pandas numpy /Users/puthier/anaconda3/lib/python3.8/site-packages/numpy/__init__.py
+ |-- 11:25-DEBUG-profile : Using plotnine version 0.8.0
+ |-- 11:25-DEBUG-profile : Pandas plotnine /Users/puthier/anaconda3/lib/python3.8/site-packages/plotnine/__init__.py
+ |-- 11:25-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_g83embpn
+ |-- 11:25-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_g83embpn
+ |-- 11:25-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_g83embpn/mini_real_promoter
+ |-- 11:25-INFO-profile : Getting configuration info from input file.
+ |-- 11:25-INFO-profile : Reading transcript file.
+ |-- 11:25-INFO-profile : Deleting duplicates in transcript-file.
+ |-- 11:25-INFO-profile : Checking how many transcripts where found in the transcript list.
+ |-- 11:25-INFO-profile : Keeping 804 transcript out of 833 in input transcript list.
+ |-- 11:25-DEBUG-profile : Color order : [&#39;lincRNA&#39;, &#39;antisense&#39;, &#39;protein_coding&#39;]
+ |-- 11:25-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#00bb00&#39;, &#39;#cccccc&#39;]
+ |-- 11:25-INFO-profile : Searching coverage columns.
+ |-- 11:25-INFO-profile : Melting.
+ |-- 11:25-INFO-profile : Ceiling
+ |-- 11:25-INFO-profile : Normalizing (ranging)
+/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/profile.py:815: FutureWarning: Index.ravel returning ndarray is deprecated; in a future version this will return a view on self.
+ |-- 11:25-INFO-profile : Computing column ordering.
+ |-- 11:25-INFO-profile : Preparing diagram
+ |-- 11:25-INFO-profile : Theming and ordering. Please be patient...
+ |-- 11:25-INFO-profile : Preparing x axis
+ |-- 11:25-INFO-profile : facet_col 3
+ |-- 11:25-INFO-profile : Page width set to 9
+ |-- 11:25-INFO-profile : Page height set to 2.0
+ |-- 11:25-INFO-profile : Saving diagram to file : example_06.png
+ |-- 11:25-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 11:25-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_g83embpn
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_06.png"><img alt="_images/example_06.png" src="_images/example_06.png" style="width: 75%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_promoter.zip -g chrom -f bwig  -t tx_classes.txt -o profile_prom  -pf png -if  example_06b.png -V 2 -nm ranging
- |-- 17:24-DEBUG-profile : Using pandas version 1.1.3
- |-- 17:24-DEBUG-profile : Pandas location /Users/puthier/anaconda3/envs/pygtftk_37/lib/python3.7/site-packages/pandas/__init__.py
- |-- 17:24-DEBUG-profile : Using numpy version 1.19.1
- |-- 17:24-DEBUG-profile : Pandas numpy /Users/puthier/anaconda3/envs/pygtftk_37/lib/python3.7/site-packages/numpy/__init__.py
- |-- 17:24-DEBUG-profile : Using plotnine version 0.7.1
- |-- 17:24-DEBUG-profile : Pandas plotnine /Users/puthier/anaconda3/envs/pygtftk_37/lib/python3.7/site-packages/plotnine/__init__.py
- |-- 17:24-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_7trzmg6b
- |-- 17:24-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_7trzmg6b
- |-- 17:24-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_7trzmg6b/mini_real_promoter
- |-- 17:24-INFO-profile : Getting configuration info from input file.
- |-- 17:24-DEBUG-profile : Color order : [&#39;chr14&#39;, &#39;chr3&#39;, &#39;chr9&#39;, &#39;chr21&#39;, &#39;chr10&#39;, &#39;chr6&#39;, &#39;chr11&#39;, &#39;chr1&#39;, &#39;chr19&#39;, &#39;chrX&#39;, &#39;chr12&#39;, &#39;chr18&#39;, &#39;chr22&#39;, &#39;chr15&#39;, &#39;chr16&#39;, &#39;chr13&#39;, &#39;chr8&#39;, &#39;chr7&#39;, &#39;chr2&#39;, &#39;chr20&#39;, &#39;chr5&#39;, &#39;chr4&#39;, &#39;chr17&#39;]
- |-- 17:24-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#6c007c&#39;, &#39;#850096&#39;, &#39;#2500a5&#39;, &#39;#0000ca&#39;, &#39;#0041dd&#39;, &#39;#0086dd&#39;, &#39;#009fca&#39;, &#39;#00aaa1&#39;, &#39;#00a76f&#39;, &#39;#009c00&#39;, &#39;#00bb00&#39;, &#39;#00da00&#39;, &#39;#00f900&#39;, &#39;#88ff00&#39;, &#39;#dbf400&#39;, &#39;#f7db00&#39;, &#39;#ffb500&#39;, &#39;#ff6100&#39;, &#39;#f60000&#39;, &#39;#da0000&#39;, &#39;#cc1313&#39;, &#39;#cccccc&#39;]
- |-- 17:24-INFO-profile : Searching coverage columns.
- |-- 17:24-INFO-profile : Melting.
- |-- 17:24-INFO-profile : Ceiling
- |-- 17:24-INFO-profile : Normalizing (ranging)
- |-- 17:24-INFO-profile : Computing column ordering.
- |-- 17:24-INFO-profile : Preparing diagram
- |-- 17:24-INFO-profile : Theming and ordering. Please be patient...
- |-- 17:24-INFO-profile : Preparing x axis
- |-- 17:24-INFO-profile : facet_col 3
- |-- 17:24-INFO-profile : Page width set to 9
- |-- 17:24-INFO-profile : Page height set to 2.0
- |-- 17:24-INFO-profile : Saving diagram to file : example_06b.png
- |-- 17:24-INFO-profile : Be patient. This may be long for large datasets.
- |-- 17:24-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_7trzmg6b
+ |-- 11:25-DEBUG-profile : Using pandas version 1.2.4
+ |-- 11:25-DEBUG-profile : Pandas location /Users/puthier/anaconda3/lib/python3.8/site-packages/pandas/__init__.py
+ |-- 11:25-DEBUG-profile : Using numpy version 1.20.3
+ |-- 11:25-DEBUG-profile : Pandas numpy /Users/puthier/anaconda3/lib/python3.8/site-packages/numpy/__init__.py
+ |-- 11:25-DEBUG-profile : Using plotnine version 0.8.0
+ |-- 11:25-DEBUG-profile : Pandas plotnine /Users/puthier/anaconda3/lib/python3.8/site-packages/plotnine/__init__.py
+ |-- 11:25-DEBUG-profile : Creating directory : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_awse_1_l
+ |-- 11:25-DEBUG-profile : Uncompressing : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_awse_1_l
+ |-- 11:25-DEBUG-profile : Reading : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_awse_1_l/mini_real_promoter
+ |-- 11:25-INFO-profile : Getting configuration info from input file.
+ |-- 11:25-DEBUG-profile : Color order : [&#39;chr1&#39;, &#39;chr12&#39;, &#39;chrX&#39;, &#39;chr22&#39;, &#39;chr20&#39;, &#39;chr14&#39;, &#39;chr7&#39;, &#39;chr15&#39;, &#39;chr21&#39;, &#39;chr5&#39;, &#39;chr11&#39;, &#39;chr2&#39;, &#39;chr10&#39;, &#39;chr8&#39;, &#39;chr16&#39;, &#39;chr3&#39;, &#39;chr13&#39;, &#39;chr18&#39;, &#39;chr17&#39;, &#39;chr6&#39;, &#39;chr19&#39;, &#39;chr4&#39;, &#39;chr9&#39;]
+ |-- 11:25-DEBUG-profile : Profile color : [&#39;#000000&#39;, &#39;#6c007c&#39;, &#39;#850096&#39;, &#39;#2500a5&#39;, &#39;#0000ca&#39;, &#39;#0041dd&#39;, &#39;#0086dd&#39;, &#39;#009fca&#39;, &#39;#00aaa1&#39;, &#39;#00a76f&#39;, &#39;#009c00&#39;, &#39;#00bb00&#39;, &#39;#00da00&#39;, &#39;#00f900&#39;, &#39;#88ff00&#39;, &#39;#dbf400&#39;, &#39;#f7db00&#39;, &#39;#ffb500&#39;, &#39;#ff6100&#39;, &#39;#f60000&#39;, &#39;#da0000&#39;, &#39;#cc1313&#39;, &#39;#cccccc&#39;]
+ |-- 11:25-INFO-profile : Searching coverage columns.
+ |-- 11:25-INFO-profile : Melting.
+ |-- 11:25-INFO-profile : Ceiling
+ |-- 11:25-INFO-profile : Normalizing (ranging)
+/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/profile.py:815: FutureWarning: Index.ravel returning ndarray is deprecated; in a future version this will return a view on self.
+ |-- 11:25-INFO-profile : Computing column ordering.
+ |-- 11:25-INFO-profile : Preparing diagram
+ |-- 11:25-INFO-profile : Theming and ordering. Please be patient...
+ |-- 11:25-INFO-profile : Preparing x axis
+ |-- 11:25-INFO-profile : facet_col 3
+ |-- 11:25-INFO-profile : Page width set to 9
+ |-- 11:25-INFO-profile : Page height set to 2.0
+ |-- 11:25-INFO-profile : Saving diagram to file : example_06b.png
+ |-- 11:25-INFO-profile : Be patient. This may be long for large datasets.
+ |-- 11:25-DEBUG-profile : Deleting temp file : /var/folders/zy/wl3dj2_n76zfc8sdvny1q06c0000gn/T/profile_matrix__pygtftk_awse_1_l
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_06b.png"><img alt="_images/example_06b.png" src="_images/example_06b.png" style="width: 75%;" /></a>
 <p>Note that facets may also be associated to epigenetic marks. In this case each the –group-by can be set to <em>tx_classes</em> or <em>chrom</em>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -g tx_classes -t tx_classes.txt -f bwig  -o profile_tx -pf png -if  example_07.png -w -nm ranging
- |-- 17:24-WARNING-profile : PlotnineError error, can not show group number: Aesthetics {&#39;ha&#39;} specified two times.
+/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/profile.py:815: FutureWarning: Index.ravel returning ndarray is deprecated; in a future version this will return a view on self.
+/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/profile.py:890: FutureWarning: Index.ravel returning ndarray is deprecated; in a future version this will return a view on self.
+ |-- 11:25-WARNING-profile : PlotnineError error, can not show group number: Aesthetics {&#39;ha&#39;} specified two times.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_07.png"><img alt="_images/example_07.png" src="_images/example_07.png" style="width: 75%;" /></a>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk profile -D -i mini_real_tx.zip -g chrom -f bwig  -o profile_tx -pf png -if  example_08.png  -w -nm ranging
- |-- 17:25-WARNING-profile : PlotnineError error, can not show group number: Aesthetics {&#39;ha&#39;} specified two times.
+/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/profile.py:815: FutureWarning: Index.ravel returning ndarray is deprecated; in a future version this will return a view on self.
+/Users/puthier/anaconda3/lib/python3.8/site-packages/pygtftk-1.2.8-py3.8-macosx-10.9-x86_64.egg/pygtftk/plugins/profile.py:890: FutureWarning: Index.ravel returning ndarray is deprecated; in a future version this will return a view on self.
+ |-- 11:26-WARNING-profile : PlotnineError error, can not show group number: Aesthetics {&#39;ha&#39;} specified two times.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_08.png"><img alt="_images/example_08.png" src="_images/example_08.png" style="width: 75%;" /></a>
@@ -346,7 +358,8 @@ this command are <em>—group-by</em>, that defines the variable controling the 
   Usage: gtftk profile -i MATRIX [-o DIR] [-t transcript_file] [-s {mean,median,sum,min,max}] [-e] [-c profile_colors] [-d color_order] [-g {bwig,tx_classes,chrom}] [-f {bwig,tx_classes,chrom}] [-pw page_width] [-ph page_height] [-pf {pdf,png}] [-lw line_width] [-bc border_color] [-x x_lab] [-at axis_text] [-st strip_text] [-u subset_bwig] [-fc facet_col] [-w] [-if user_img_file] [-ul upper_limit] [-nm {none,ranging}] [-tl] [-ti title] [-dpi dpi] [-th {538,bw,grey,gray,linedraw,light,dark,minimal,classic,void,test,matplotlib,seaborn}] [-m palette] [-l] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Produces bigWig coverage profiles using calls to plotnine graphic package.
+
+     Produces bigWig coverage profiles using calls to plotnine graphic package.
 
   Notes:
      *  Think about using normalized bigWig files as input to mk_matrix. This will limit the
@@ -355,8 +368,6 @@ this command are <em>—group-by</em>, that defines the variable controling the 
 
   References:
      *  [1] Numerical Ecology - second Edition - P. Legendre, L. Legendre (1998) Elsevier.
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              A zip file containing a matrix as produced by mk_matrix. (default: None)
@@ -462,14 +473,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="sequence.html" title="Commands from section ‘sequence’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘coverage’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>

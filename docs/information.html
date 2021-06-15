@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><script type="text/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-139058009-1']);
@@ -16,7 +16,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘information’ &#8212; gtftk 1.2.7 documentation</title>
+    <title>Commands from section ‘information’ &#8212; gtftk 1.2.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="gtftk_args.html" title="Help on gtftk Unix commands"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘information’</a></li> 
       </ul>
     </div>  
@@ -69,10 +69,10 @@
 <p><strong>Description:</strong> Search in all command description files those related to a user-defined keyword.</p>
 <p><strong>Example:</strong> Search all commands related to promoters.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk apropos -k promoter
- |-- 17:25-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
+ |-- 11:26-INFO-apropos : &gt;&gt; Keyword &#39;promoter&#39; was found in the following command:
 	- coverage.
-	- ologram.
 	- divergent.
+	- ologram.
 </pre></div>
 </div>
 <p><strong>Arguments:</strong></p>
@@ -80,9 +80,8 @@
   Usage: gtftk apropos -k keyword [-n] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Search in all command description files those related to a user-defined keyword.
 
-  Version:  2017-09-27
+     Search in all command description files those related to a user-defined keyword.
 
 Arguments:
  -k, --keyword                The keyword (default: None)
@@ -117,9 +116,8 @@ Command-wise optional arguments:
   Usage: gtftk retrieve [-s SPECIES] [-o GTF.GZ] [-e {vertebrate,protists,fungi,plants,metazoa}] [-r RELEASE] [-l] [-hs] [-c] [-d] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Retrieve a GTF file from ensembl.
 
-  Version:  2018-01-31
+     Retrieve a GTF file from ensembl.
 
 Arguments:
  -s, --species-name           The species name. (default: homo_sapiens)
@@ -163,12 +161,11 @@ chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &qu
   Usage: gtftk get_example [-d {simple,mini_real,mini_real_noov_rnd_tx,tiny_real,hg38_chr1,simple_02,simple_03,simple_04,simple_05,simple_06,simple_07,mini_real_10M,control_list,ologram_1,ologram_2,mini_real_ens}] [-f {*,gtf,bed,bw,bam,join,join_mat,chromInfo,tsv,fa,fa.idx,genes,geneList,2.bw,genome}] [-o OUTPUT] [-l] [-a] [-q] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Print example files including GTF.
+
+     Print example files including GTF.
 
   Notes:
      *  Use format &#39;*&#39; to get all files from a dataset.
-
-  Version:  2018-01-20
 
 Arguments:
  -d, --dataset                Select a dataset. (default: simple)
@@ -223,9 +220,8 @@ chr1	107	116	1	G0007T001
   Usage: gtftk add_exon_nb [-i GTF] [-o GTF] [-k exon_numbering_key] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Add exon number transcript-wise (based on 5&#39; to 3&#39; orientation).
 
-  Version:  2018-01-20
+     Add exon number transcript-wise (based on 5&#39; to 3&#39; orientation).
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -261,9 +257,8 @@ CDS	20	example_gtf
   Usage: gtftk count [-i GTF] [-o TXT] [-d header] [-t TEXT] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Count the number of each features in the gtf file.
 
-  Version:  2018-01-20
+     Count the number of each features in the gtf file.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
@@ -298,14 +293,13 @@ transcript_id	15
   Usage: gtftk count_key_values [-i GTF] [-o TXT] [-k keys] [-t TEXT] [-u] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Count the number of values/levels for a set of keys.
+
+     Count the number of values/levels for a set of keys.
 
   Notes:
      *  Use --uniq to get the count of non-redondant values.
      *  Not available values (&#39;.&#39;) are not taken into account.
      *  Use &quot;*&quot; as the key to get the counts for all keys.
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
@@ -343,9 +337,8 @@ ccds_id
   Usage: gtftk get_attr_list [-i GTF] [-o TXT] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get the list of attributes from a GTF file.
 
-  Version:  2018-01-20
+     Get the list of attributes from a GTF file.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -387,9 +380,8 @@ G0010;4
   Usage: gtftk get_attr_value_list [-i GTF] [-o TXT] -k key_name [-s separator] [-c] [-p] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get the list of values observed for an attributes.
 
-  Version:  2018-02-11
+     Get the list of values observed for an attributes.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -428,9 +420,8 @@ CDS
   Usage: gtftk get_feature_list [-i GTF] [-o TXT] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get the list of features enclosed in the GTF.
 
-  Version:  2018-02-11
+     Get the list of features enclosed in the GTF.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -467,10 +458,9 @@ chr1	gtftk	transcript	125	138	.	+	.	gene_id &quot;G0001&quot;; transcript_id &qu
   Usage: gtftk nb_exons [-i GTF] [-o TXT/GTF] [-f] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Returns the transcript name and number of exons with nb_exons as a novel key for each transcript
-     feature.
 
-  Version:  2018-01-20
+     Returns the transcript name and number of exons with nb_exons as a novel key for each transcript
+     feature.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -513,9 +503,8 @@ chr1	gtftk	gene	176	186	.	+	.	gene_id &quot;G0010&quot;; nb_tx &quot;1&quot;;
   Usage: gtftk nb_transcripts [-i GTF] [-o GTF/TXT] [-f] [-a key_name] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Compute the number of transcript per gene.
 
-  Version:  2018-01-20
+     Compute the number of transcript per gene.
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -549,9 +538,8 @@ chr1
   Usage: gtftk seqid_list [-i GTF] [-o TXT] [-s SEP] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Select the seqid/chromosomes
 
-  Version:  2018-01-20
+     Select the seqid/chromosomes
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -594,15 +582,14 @@ ENSG00000107829	ENST00000489578	ENST00000482428	63561	3	5
   Usage: gtftk tss_dist [-i GTF] [-o TXT] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Computes the distance between TSSs of pairs of gene transcripts.
+
+     Computes the distance between TSSs of pairs of gene transcripts.
 
   Notes:
      *  The tss_num_1/tss_num_1 columns contains the numbering of TSSs (transcript_id_1 and
      transcript_id_2 respectively) for each gene.
      *  Numering starts from 1 (most 5&#39; TSS) to the number of different TSS coordinates.
      *  Thus two or more transcripts will have the same tss_num if they share a TSS.
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN. (default: &lt;stdin&gt;)
@@ -638,12 +625,11 @@ chr1	gtftk	transcript	65	76	.	+	.	gene_id &quot;G0004&quot;; transcript_id &quot
   Usage: gtftk feature_size [-i GTF] [-o GTF/BED] [-t ft_type] [-n NAME] [-k KEY_NAME] [-s SEP] [-b] [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
-     *  Get the size and limits (start/end) of features enclosed in the GTF. The feature can be of any
+
+     Get the size and limits (start/end) of features enclosed in the GTF. The feature can be of any
      type (as found in the 3rd column of the GTF) or &#39;mature_rna&#39; to get transcript size (i.e
      without introns). If bed format is requested returns the limits in bed format and the size as a
      score. Otherwise output GTF file with &#39;feat_size&#39; as a new key and size as value.
-
-  Version:  2018-01-20
 
 Arguments:
  -i, --inputfile              Path to the GTF file. Default to STDIN (default: &lt;stdin&gt;)
@@ -738,14 +724,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="gtftk_args.html" title="Help on gtftk Unix commands"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.2.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘information’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Oct 15, 2020.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Last updated on Jun 15, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>
