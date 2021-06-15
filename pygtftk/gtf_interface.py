@@ -10,16 +10,16 @@ When using gtfk a GTF object methods may return:
 """
 
 import gc
+import glob
 import io
+import os
 import re
 import sys
+import textwrap
 from collections import OrderedDict
 from collections import defaultdict
 
-import glob
 import numpy as np
-import os
-import textwrap
 from cffi import FFI
 from nose.plugins.skip import SkipTest
 from pybedtools.bedtool import BedTool
@@ -847,6 +847,11 @@ class GTF(object):
         :param nb: The number of line to display.
         :param returned: If True, don't print but returns the message.
 
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> a_gtf.head(10)
         """
 
         if not isinstance(nb, int):
@@ -885,6 +890,13 @@ class GTF(object):
         Print the nb last lines of the GTF object.
 
         :param nb: The number of line to display.
+
+
+        >>> from  pygtftk.utils import get_example_file
+        >>> from pygtftk.gtf_interface import GTF
+        >>> a_file = get_example_file()[0]
+        >>> a_gtf = GTF(a_file)
+        >>> a_gtf.tail(10)
         """
 
         nb_rec = len(self)
@@ -899,7 +911,7 @@ class GTF(object):
             if nb > nb_rec:
                 nb = nb_rec
 
-                gtf_sub = self.select_by_positions(list(range(nb_rec - nb, nb_rec)))
+            gtf_sub = self.select_by_positions(list(range(nb_rec - nb, nb_rec)))
 
             for i in gtf_sub:
                 msg += i.format() + "\n"
