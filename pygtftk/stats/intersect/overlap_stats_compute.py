@@ -571,7 +571,7 @@ def index_all_these(combis_to_index, exact):
 
         # Debug prints
         message("Index combination "+str(combi), type = "DEBUG")
-        nb_combis_done.increment()
+        dummy.nb_combis_done.increment()
         message("Combis done: "+str(dummy.nb_combis_done.value())+'/'+str(dummy.tot_number_interesting_combis), type = "DEBUG")
 
     return mappings
