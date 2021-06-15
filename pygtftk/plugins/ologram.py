@@ -38,7 +38,7 @@ import warnings
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-import billiard as multiprocessing
+import billiard
 import os
 import re
 import sys
@@ -483,7 +483,7 @@ def ologram(inputfile=None,
             type='WARNING')
 
     # Send a warning if nb_threads < available cpu cores
-    available_cores = multiprocessing.cpu_count()
+    available_cores = billiard.cpu_count()
     if nb_threads < available_cores:
         message(
             'Using only ' + str(nb_threads) + ' threads, but ' + str(
@@ -1466,14 +1466,14 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
                 plots += [p + theme(figure_size=figsize)]
 
         # NOTE : We must manually specify figure size with save_as_pdf_pages
-        plot_process = multiprocessing.Process(target=save_as_pdf_pages,
+        plot_process = billiard.Process(target=save_as_pdf_pages,
                                                name="Drawing", kwargs={"filename": pdf_file.name,
                                                                        "plots": plots,
                                                                        "width": pdf_width,
                                                                        "height": pdf_height})
         plot_process.start()
 
-        # Wait a maximum of 15 minutes for drawing
+        # Wait a maximum of 10 minutes for drawing
         plot_process.join(60 * 10)
 
         # If the drawing thread is still active, terminate it

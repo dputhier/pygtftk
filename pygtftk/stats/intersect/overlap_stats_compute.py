@@ -529,6 +529,18 @@ def which_combis_to_get_from(combi, all_possible_combis, exact):
     return combi, matching_vector
 
 
+
+
+from pygtftk.stats.intersect import dummy
+# Store all the global variables into a dummy Python module.
+def initProcessMultiproc(shared_array_all_combis_base, combi_nb, combi_size, nb_combis_done, tot_number_interesting_combis):
+    dummy.shared_array_all_combis_base = shared_array_all_combis_base
+    dummy.combi_nb = combi_nb
+    dummy.combi_size = combi_size
+    dummy.nb_combis_done = nb_combis_done
+    dummy.tot_number_interesting_combis = tot_number_interesting_combis
+
+
 def index_all_these(combis_to_index, exact):
     """
     Helper function to run the global numpy analogue of 
@@ -536,6 +548,7 @@ def index_all_these(combis_to_index, exact):
 
     This is not a pure function and relies on several external parameters
     that will be named as globals later, before this function is called.
+    Those parameters are stored in the "dummy" module.
 
     NOTE : the oc.NPARRAY_which_combis_match_with already integrates a check
     and will not return the same index as the query
@@ -544,8 +557,8 @@ def index_all_these(combis_to_index, exact):
 
     # Recreate the all_combis arrays from the shared buffer
     # This is a GLOBAL and was not passed to the worker
-    all_combis = np.frombuffer(shared_array_all_combis_base, dtype=ctypes.c_uint)
-    all_combis = all_combis.reshape(combi_nb, combi_size)
+    all_combis = np.frombuffer(dummy.shared_array_all_combis_base, dtype=ctypes.c_uint)
+    all_combis = all_combis.reshape(dummy.combi_nb, dummy.combi_size)
 
     for combi in combis_to_index:
       
@@ -559,7 +572,7 @@ def index_all_these(combis_to_index, exact):
         # Debug prints
         message("Index combination "+str(combi), type = "DEBUG")
         nb_combis_done.increment()
-        message("Combis done: "+str(nb_combis_done.value())+'/'+str(tot_number_interesting_combis), type = "DEBUG")
+        message("Combis done: "+str(dummy.nb_combis_done.value())+'/'+str(dummy.tot_number_interesting_combis), type = "DEBUG")
 
     return mappings
 
@@ -1074,13 +1087,13 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
     
     # Reserve some globals
-    global tot_number_interesting_combis
     global shared_array_all_combis_base  # It must be a global variable to be shared by the processes
 
     global combi_nb
     global combi_size
 
     global nb_combis_done
+    global tot_number_interesting_combis
 
     tot_number_interesting_combis = len(interesting_combis)
     combi_nb = len(all_combis)
@@ -1116,8 +1129,17 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
 
 
 
+
+
+
     ## Initialize the multiprocessing
-    pool = ProcessPoolExecutor(nb_threads)
+    pool = ProcessPoolExecutor(nb_threads,
+    
+        # For the shared variables
+        initializer=initProcessMultiproc,
+        initargs=(shared_array_all_combis_base, combi_nb, combi_size, nb_combis_done, tot_number_interesting_combis)
+    
+    )
     futures = list()
 
     # Divide the interesting combis into as many batches as threads, and remove empty batches

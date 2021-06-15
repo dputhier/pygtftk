@@ -1,0 +1,1 @@
+# Used as a dummy to hold multiprocessing shared variables
