@@ -8,7 +8,7 @@ yum install bzip2-devel -y
 yum install xz xz-devel -y
 
 # Compile wheels
-for PYBIN in $(ls --color=none -d1 /opt/python/*/bin| grep -P "(36)|(37)|(38)"); do
+for PYBIN in $(ls --color=none -d1 /opt/python/*/bin| grep -P "38"); do
     echo "${PYBIN}"
     echo ""
     "${PYBIN}/pip" install -U pip
