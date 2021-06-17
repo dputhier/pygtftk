@@ -921,8 +921,11 @@ class GTF(object):
              - File connection: {b}
              """.format(b=self.fn))
 
-        print(msg)
-
+        if returned:
+            return msg
+        else:
+            print(msg)
+            
     def __repr__(self):
         """
         Returns a printable representation of the GTF object.
