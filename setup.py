@@ -11,19 +11,19 @@ Authors: D. Puthier and F. Lopez
 # A set of builtin packages
 # -------------------------------------------------------------------------
 
+import glob
+import hashlib
+import os
+import platform
 import re
 import shutil
 import subprocess
 import sys
 from subprocess import DEVNULL
-
-import glob
-import hashlib
-import numpy as np
-import os
-import platform
-from Cython.Distutils import build_ext
 from tempfile import NamedTemporaryFile
+
+import numpy as np
+from Cython.Distutils import build_ext
 
 # -------------------------------------------------------------------------
 # Python compiler version
@@ -344,7 +344,8 @@ setup(name="pygtftk",
                   'sphinx >=1.5.2',
                   'sphinxcontrib-programoutput >=0.8',
                   'sphinx_bootstrap_theme >=0.4.9',
-                  'sphinxcontrib-googleanalytics'],
+                  'sphinxcontrib-googleanalytics',
+                  'twine >=3.4.1'],
           'gffutils': ['gffutils']},
       install_requires=pack_required,
       ext_modules=[lib_pygtftk] + [cython_ologram_1, cython_ologram_2, cython_ologram_3, cython_ologram_4])
