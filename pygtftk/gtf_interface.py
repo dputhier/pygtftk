@@ -885,12 +885,12 @@ class GTF(object):
         else:
             print(msg)
 
-    def tail(self, nb=6):
+    def tail(self, nb=6, returned=False):
         """
         Print the nb last lines of the GTF object.
 
         :param nb: The number of line to display.
-
+        :param returned: If True, don't print but returns the message.
 
         >>> from  pygtftk.utils import get_example_file
         >>> from pygtftk.gtf_interface import GTF
