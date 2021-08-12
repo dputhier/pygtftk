@@ -234,7 +234,8 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     # Fitting can be disabled from the main function (for now, mainly relevant if we used a Markov model instead of a classical one.)
     if nofit:
         ps = pn = -1
-
+        expectation_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = -1
+        expectation_fitted_intersect_nbs, variance_fitted_intersect_nbs = -1
 
     else:
         # Renaming expectations and variances
@@ -278,24 +279,29 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     # Compute the p-values using the distribution fitted on the shuffles.
     # Do not do this for the Markov shuffling, as it is likely a multi-variable fit (see notes)
     # We can only use a Neg Binom p-val if we can fit it, and that is not the case for
-    # the Markov shuffle or if the expectation is too small : we must use an empirical p-value
+    # the Markov shuffle or if the expectation is too small.
 
+
+    # To be used if the fitting is bad: add the empirical p-value (proportion of shuffles with values as extreme)
+    empirical_pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
+    empirical_pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
+
+
+
+    # Return -1 for the p-value if the fitting was bad.
     if (ps == -1) | (pn == -1):
-        # NOTE : maybe re-use the empirical p-value later. For now return -1
-        # pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
-        # pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
         pval_intersect_nb = -1
         pval_bp_overlaps = -1
 
     else:
         pval_intersect_nb = nf.negbin_pval(true_intersect_nb,
-                                           expectation_fitted_intersect_nbs,
-                                           variance_fitted_intersect_nbs,
-                                           ft_type=ft_type)
+                                        expectation_fitted_intersect_nbs,
+                                        variance_fitted_intersect_nbs,
+                                        ft_type=ft_type)
         pval_bp_overlaps = nf.negbin_pval(true_bp_overlaps,
-                                          expectation_fitted_summed_bp_overlaps,
-                                          variance_fitted_summed_bp_overlaps,
-                                          ft_type=ft_type)
+                                        expectation_fitted_summed_bp_overlaps,
+                                        variance_fitted_summed_bp_overlaps,
+                                        ft_type=ft_type)
 
 
     stop = time.time()
@@ -398,6 +404,10 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     if my_order is None: my_order = 1
     result['combination_order'] = str(my_order)
 
+    # Also put the empirical p-value (proportion of shuffles where a value as extreme is found)
+    # NOTE Added as last columns so it does not bother the existing column tests
+    result['nb_intersections_empirical_pvalue']   = '{0:.4g}'.format(empirical_pval_intersect_nb)
+    result['summed_bp_overlaps_empirical_pvalue'] = '{0:.4g}'.format(empirical_pval_bp_overlaps)
 
     #message(ft_type + '- Result dump : ' + str(result), type='DEBUG')
 

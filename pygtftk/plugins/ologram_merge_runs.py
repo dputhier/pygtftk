@@ -2,7 +2,12 @@
 """
 Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it.
 
-This treats each run as a "superbatch".
+
+This treats each run as a "superbatch". The command takes as input a path to a 
+directory containing all the results' TSV you wish to merge.
+
+Example of command line:
+    gtftk ologram_merge_runs --inputfiles `ls output/ologram_results/*.tsv` -o final_result.tsv
 """
 
 import argparse
@@ -22,6 +27,8 @@ __updated__ = ''' 2021-04-01 '''
 
 __notes__ = """
 -- Statistics are recalculated by conflating the distributions with a weighting based on the number of runs (see source for the precise formula).
+
+-- This implicitly assumes you are combining runs with the *same number* of shuffles in each.
 """
 
 
@@ -143,6 +150,11 @@ def ologram_merge_runs(inputfiles=None,
             current_S_mean = row['summed_bp_overlaps_expectation_shuffled']
             current_S_var = row['summed_bp_overlaps_variance_shuffled'] 
 
+            previous_nb_intersections_empirical_pval = merged_run.loc[combi, 'nb_intersections_empirical_pvalue'] 
+            previous_summed_bp_overlaps_empirical_pval = merged_run.loc[combi,'summed_bp_overlaps_empirical_pvalue']
+            current_nb_intersections_empirical_pval = row['nb_intersections_empirical_pvalue']
+            current_summed_bp_overlaps_empirical_pval = row['summed_bp_overlaps_empirical_pvalue']
+
 
             # Get the new moments
             new_S_mean, new_S_var = get_conflated_moments(
@@ -164,6 +176,12 @@ def ologram_merge_runs(inputfiles=None,
             # True intersections stay the same every time
             merged_run.loc[combi, 'nb_intersections_true'] = row['nb_intersections_true']
             merged_run.loc[combi, 'summed_bp_overlaps_true'] = row['summed_bp_overlaps_true']
+
+
+            # Empirical p-values are combined by proportion (simply a weighted average)
+            merged_run.loc[combi, 'nb_intersections_empirical_pvalue'] = (runs_already_merged * previous_nb_intersections_empirical_pval + current_nb_intersections_empirical_pval) / (runs_already_merged + 1)
+            merged_run.loc[combi, 'summed_bp_overlaps_empirical_pvalue'] = (runs_already_merged * previous_summed_bp_overlaps_empirical_pval + current_summed_bp_overlaps_empirical_pval) / (runs_already_merged + 1)
+
 
             i += 1
             message("Merged combi "+str(i)+" / "+str(total_combis)+" for this run.", type = "DEBUG")
