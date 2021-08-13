@@ -75,7 +75,7 @@ from pygtftk.utils import sort_2_lists
 from pygtftk.utils import chr_size_note
 import gc
 
-__updated__ = '2021-03-31'
+__updated__ = ''' 2021-08-13 '''
 __notes__ = chr_size_note() + """  
 
  -- OLOGRAM is multithreaded, notably processing one batch of shuffles per core.

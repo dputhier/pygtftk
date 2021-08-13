@@ -215,7 +215,7 @@ def empirical_p_val(x, data):
     lower = len(np.where(arr < x)[0])
     signif = min(higher, lower)
 
-    return signif / len(arr)
+    return float(signif / len(arr))
 
 
 '''

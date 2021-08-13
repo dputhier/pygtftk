@@ -416,9 +416,9 @@ ologram_merge_runs
 
 **Description:** Merge several runs of OLOGRAM into a single run, by treating each a "superbatch" of shuffles.
 
-OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a "batch of batches" and merge and recalculate stats on the merged superbatch automatically using this command.
+OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100-200 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a "batch of batches" and merge and recalculate stats on the merged superbatch automatically using this command.
 
-Around 100 shuffles is usually enough to robustly fit a Negative Binomial distribution. In terms of precision, a Negative Binomial mean under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways. 
+Around 100-200 shuffles is usually enough to robustly fit a Negative Binomial distribution. In terms of precision, a Negative Binomial mean under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways. 
 
 .. code-block:: bash
 
