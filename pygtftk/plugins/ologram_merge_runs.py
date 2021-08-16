@@ -293,7 +293,7 @@ else:
     # Note that this is an example of what not to do since those files were done for different queries.
     # I treat them as the same query, since this is just to test the principle.
     @test "ologram_merge_runs_1" {
-         result=`gtftk ologram_merge_runs -i H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merged_ologram_runs.tsv`
+         result=`gtftk ologram_merge_runs -i H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merged_ologram_runs.tsv -V 0`
       [ "$result" = "" ]
     }
 
