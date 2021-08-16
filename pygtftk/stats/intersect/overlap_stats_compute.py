@@ -172,8 +172,9 @@ def merge_consecutive_intersections_in_all_overlaps_lists(aiqc):
 
 
 def stats_single(all_intersections_for_this_combi, true_intersection,
-                 ft_type='some feature', nofit=False, this_combi_only=None, draw_histogram = False,
-                 was_directly_passed_stats = False):
+                 ft_type='some feature', nofit=False, 
+                 this_combi_only=None, draw_histogram=False):
+                 #was_directly_passed_stats = False):
     """
     Compute statistics such as total number of overlapping base pairs for a given feature.
 
@@ -335,20 +336,31 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
             p = 1 / (mean / r + 1)
 
             # Plot the histogram.
-            BINS = 100
+            BINS = 200  #TODO: put it higher conditionally 
             de = plt.hist(summed_bp_overlaps, bins=BINS)[1]
             # Plot the PDF.
             xmin, xmax = min(de), max(de)
             x = np.linspace(xmin, xmax, BINS)
+
+            # Steps should always be the same between bins, except for rounding errors
+            steps = [0] + [x[i] - x[i - 1] for i in range(1, len(x))]
+
             try:
                 d = [nbinom.cdf(x[i], r, p) - nbinom.cdf(x[i - 1], r, p) for i in range(1, len(x))]
+
+                # Position the 'd' correctly : move one pace right, and
+                # put it in te middle of each bar
+                x = [x[i] - steps[i]/2 for i in range(len(x))]
+
                 d = np.array([0] + d) * len(summed_bp_overlaps)
+            
             except:
                 d = [0] * BINS
 
-            plt.plot(x, d, 'k', linewidth=2)
+            plt.plot(x, d, 'k', linewidth=1.2)
             plt.savefig(hist_S.name)
             plt.close()
+
         except:
             pass
 

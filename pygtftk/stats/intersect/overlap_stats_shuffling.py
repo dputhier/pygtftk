@@ -441,7 +441,7 @@ def compute_overlap_stats(bedA, bedsB,
 
     # Submit to the pool of processes
     futures = list()
-    message("We will perform a total of " + str(len(minibatches)) + "batches of shufflings.")
+    message("We will perform a total of " + str(len(minibatches)) + " batches of " + str(minibatch_size) + " shufflings.")
     for i in range(len(minibatches)):
         futures += [pool.submit(compute_intersection_partial, minibatch_len=minibatches[i], seed=seeds[i], id = i)]
     pool.shutdown() # Release the resources as soon as you are done with those, we won't submit any more jobs to you
@@ -484,7 +484,8 @@ def compute_overlap_stats(bedA, bedsB,
         true_intersection = osc.compute_true_intersection(bedA, bedsB)
 
         result = osc.stats_single(all_intersections_for_this_combi=all_intersections,
-                                  true_intersection=true_intersection, ft_type=ft_type, nofit=nofit)
+                                  true_intersection=true_intersection, ft_type=ft_type,
+                                  nofit=nofit, draw_histogram=draw_histogram)
 
     # Otherwise we must call osc.stats_multiple_overlap() which will split `all_intersections` into
     # one object per relevant combination (see function documentation and source for more details)

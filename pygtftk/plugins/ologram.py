@@ -1204,7 +1204,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
             fit_qual_text.index = range(len(fit_qual_text))
 
             text_with_fit = list()
-            for t, f in zip(text.tolist(), fit_qual_text.tolist()):
+            for t, f in zip(text, fit_qual_text.tolist()):
                 text_with_fit += [t + "\n" + 'fit={0:.2g}'.format(f)]
             text = pd.Series(text_with_fit)
 
