@@ -383,6 +383,7 @@ def compute_overlap_stats(bedA, bedsB,
         result_abort['combination_order'] = 0
         result_abort['nb_intersections_empirical_pvalue'] = -1
         result_abort['summed_bp_overlaps_empirical_pvalue'] = -1
+        result_abort['ad_hoc_beta_summed_bp_overlaps_pvalue'] = -1
 
         # If it was a multiple overlap : return a nested dict, otherwise return a classical dict
         if was_more_than_one_bedB:

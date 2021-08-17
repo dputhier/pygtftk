@@ -26,6 +26,7 @@ import numpy as np
 from scipy.stats import nbinom
 
 from pygtftk.stats import negbin_fit as nf
+from pygtftk.stats import beta as pbeta
 from pygtftk.stats.intersect.modl import dict_learning as dl
 from pygtftk.stats.intersect.overlap import overlap_regions as oc
 from pygtftk.stats.multiprocessing import multiproc as mpc
@@ -420,6 +421,15 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     # NOTE Added as last columns so it does not bother the existing column tests
     result['nb_intersections_empirical_pvalue']   = '{0:.4g}'.format(empirical_pval_intersect_nb)
     result['summed_bp_overlaps_empirical_pvalue'] = '{0:.4g}'.format(empirical_pval_bp_overlaps)
+
+    # Use an ad-hoc beta approximation for the beta-binomial
+    try:
+        beta_pval_bp_overlaps = pbeta.beta_pval(true_bp_overlaps, summed_bp_overlaps)
+    except:
+        # Return -1 if any problem
+        # TODO Remove this band-aid
+        beta_pval_bp_overlaps = -1
+    result['ad_hoc_beta_summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(beta_pval_bp_overlaps)
 
     #message(ft_type + '- Result dump : ' + str(result), type='DEBUG')
 

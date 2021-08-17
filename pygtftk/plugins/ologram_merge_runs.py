@@ -173,6 +173,10 @@ def ologram_merge_runs(inputfiles=None,
             current_nb_intersections_empirical_pval = row['nb_intersections_empirical_pvalue']
             current_summed_bp_overlaps_empirical_pval = row['summed_bp_overlaps_empirical_pvalue']
 
+            previous_beta_pval = merged_run.loc[combi,'ad_hoc_beta_summed_bp_overlaps_pvalue']
+            current_beta_pval = row['ad_hoc_beta_summed_bp_overlaps_pvalue']
+            
+
 
             # Get the new moments
             new_S_mean, new_S_var = get_conflated_moments(
@@ -205,6 +209,8 @@ def ologram_merge_runs(inputfiles=None,
             merged_run.loc[combi, 'nb_intersections_empirical_pvalue'] = niep
             merged_run.loc[combi, 'summed_bp_overlaps_empirical_pvalue'] = sboep
 
+            # Beta p-values cannot be recalculated, so they too get weighetd-averaged
+            merged_run.loc[combi, 'ad_hoc_beta_summed_bp_overlaps_pvalue'] = (runs_already_merged * previous_beta_pval + current_beta_pval) / (runs_already_merged + 1)
 
             i += 1
             message("Merged combi "+str(i)+" / "+str(total_combis)+" for this run.", type = "DEBUG")
@@ -252,6 +258,7 @@ def ologram_merge_runs(inputfiles=None,
                                             
         merged_run.loc[combi, 'nb_intersections_pvalue'] = '{0:.4g}'.format(pval_intersect_nb)
         merged_run.loc[combi, 'summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(pval_bp_overlaps)
+
 
         i+=1
         message("Statistics done for combi "+str(i)+" / "+str(total_combis)+" for this run.", type = "DEBUG")
