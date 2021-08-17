@@ -200,6 +200,7 @@ def fit_beta(obs):
     >>> import numpy.testing as npt
     >>> from pygtftk.stats.beta import fit_beta
     >>> a, b = 1., 2.
+    >>> np.random.seed(seed=42)
     >>> obs = beta.rvs(a, b, size=10000)
     >>> ahat, bhat, mhat, chat = fit_beta(obs)
     >>> npt.assert_allclose((ahat, bhat), (a,b), rtol = 0.05)
@@ -259,16 +260,17 @@ def beta_pval(k, obs,
     >>> from scipy.stats import beta
     >>> import numpy.testing as npt
     >>> a, b = 1., 2.
+    >>> np.random.seed(seed=42)
     >>> obs = beta.rvs(1, 2, size=10000)
     >>> k = 0.6
     >>> p = 1 - beta.cdf(k,a,b)
-    >>> phat = beta_pval(k, obs)    # Test the combined package
+    >>> phat = beta_pval(k, obs)                        # Test the combined package
     >>> x = 0.9999
     >>> cp = beta.cdf(x,a,b)
     >>> mybetacalc = BetaCalculator()
     >>> cphat = mybetacalc.betaincreg(a=a, b=b, x=x)    # Test just the p-value
-    >>> npt.assert_allclose(p, phat, rtol=0.1) # Beta approximation is too imprecise for extreme p-values, however.
-    >>> npt.assert_allclose((ahat, bhat), (a,b), rtol = 0.05)
+    >>> npt.assert_allclose(p, phat, rtol=0.1)          # Beta approximation is too imprecise for extreme p-values, however.
+    >>> npt.assert_allclose(float(cp), float(cphat), rtol=0.05)
     
     """
 
