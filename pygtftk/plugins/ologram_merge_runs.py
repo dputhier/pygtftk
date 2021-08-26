@@ -173,8 +173,8 @@ def ologram_merge_runs(inputfiles=None,
             current_nb_intersections_empirical_pval = row['nb_intersections_empirical_pvalue']
             current_summed_bp_overlaps_empirical_pval = row['summed_bp_overlaps_empirical_pvalue']
 
-            previous_beta_pval = merged_run.loc[combi,'ad_hoc_beta_summed_bp_overlaps_pvalue']
-            current_beta_pval = row['ad_hoc_beta_summed_bp_overlaps_pvalue']
+            previous_beta_pval = merged_run.loc[combi,'beta_summed_bp_overlaps_pvalue_ad_hoc_for_deep_sampling_only']
+            current_beta_pval = row['beta_summed_bp_overlaps_pvalue_ad_hoc_for_deep_sampling_only']
             
 
 
@@ -210,7 +210,7 @@ def ologram_merge_runs(inputfiles=None,
             merged_run.loc[combi, 'summed_bp_overlaps_empirical_pvalue'] = sboep
 
             # Beta p-values cannot be recalculated, so they too get weighetd-averaged
-            merged_run.loc[combi, 'ad_hoc_beta_summed_bp_overlaps_pvalue'] = (runs_already_merged * previous_beta_pval + current_beta_pval) / (runs_already_merged + 1)
+            merged_run.loc[combi, 'beta_summed_bp_overlaps_pvalue_ad_hoc_for_deep_sampling_only'] = (runs_already_merged * previous_beta_pval + current_beta_pval) / (runs_already_merged + 1)
 
             i += 1
             message("Merged combi "+str(i)+" / "+str(total_combis)+" for this run.", type = "DEBUG")

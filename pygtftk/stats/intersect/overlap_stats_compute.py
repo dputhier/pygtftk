@@ -429,7 +429,7 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
         # Return -1 if any problem
         # TODO Remove this band-aid
         beta_pval_bp_overlaps = -1
-    result['ad_hoc_beta_summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(beta_pval_bp_overlaps)
+    result['beta_summed_bp_overlaps_pvalue_ad_hoc_for_deep_sampling_only'] = '{0:.4g}'.format(beta_pval_bp_overlaps)
 
     #message(ft_type + '- Result dump : ' + str(result), type='DEBUG')
 

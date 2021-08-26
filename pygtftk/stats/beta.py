@@ -198,10 +198,11 @@ def fit_beta(obs):
 
     >>> from scipy.stats import beta
     >>> import numpy.testing as npt
+    >>> import numpy as np
     >>> from pygtftk.stats.beta import fit_beta
     >>> a, b = 1., 2.
     >>> np.random.seed(seed=42)
-    >>> obs = beta.rvs(a, b, size=10000)
+    >>> obs = beta.rvs(a, b, size=10000)  # You need at least 10K for a good estimate (!)
     >>> ahat, bhat, mhat, chat = fit_beta(obs)
     >>> npt.assert_allclose((ahat, bhat), (a,b), rtol = 0.05)
 
