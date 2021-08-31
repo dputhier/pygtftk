@@ -31,7 +31,7 @@ These contain example Snakemake workflows, that can be reused or from which comm
 
 Most of the commands presented in this section are demonstrated in the *ologram-modl_supp_mat* Git, along with certain perspectives.
 
-**Note for contributors** : To contribute to OLOGRAM, begin at *pygtftk/plugins/ologram.py* and unwrap function calls from there, to get a sense of how they interact. We have detailed comments to explain the role of every function.
+**Note for contributors** : To contribute to OLOGRAM, begin at *pygtftk/plugins/ologram.py* and unwrap function calls from there, to get a sense of how they interact. We have detailed comments to explain the role of every function. *A detailed table with the role of each file is presented at the end of this document.*
 
 
 
@@ -171,6 +171,9 @@ ologram (multiple overlaps)
 
 It is also possible to use the **OLOGRAM-MODL** Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n>=2 sets) enrichment (ie. Query+A+B, Query+A+C, ...) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes. 
 
+.. note:: The null hypothesis of the statistical test is:
+	- H0: Considering the genomic regions in the query set (--peak-file) and in the reference sets (--more-bed), the regions in one set are located independently of the regions in any another set. They are not assumed to be uniformly distributed, we keep inter-region lengths.
+              
 This is done only on custom regions supplied as BEDs supplied with the `--more-bed` argument. In most cases you may use the --no-gtf argument and only pass the regions of interest.
 
 For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using --bed-excl or --bed-incl. This ensures the longer combinations have a reasonable chance of being randomly encountered in the shuffles. Conversely, if you do not filter the combinations, keep in mind that the longer ones may be enriched even though they are present only on a few base pairs, because at random they would be even rarer. As such, we recommend focusing comparisons on combinations of similar order (number of sets).
@@ -232,7 +235,7 @@ As the computation of multiple overlaps can be RAM-intensive, if you have a very
 
 
 Itemset mining details
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+======================
 
 In broad strokes, the custom itemset algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
 
@@ -416,9 +419,9 @@ ologram_merge_runs
 
 **Description:** Merge several runs of OLOGRAM into a single run, by treating each a "superbatch" of shuffles.
 
-OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a "batch of batches" and merge and recalculate stats on the merged superbatch automatically using this command.
+OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100-200 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a "batch of batches" and merge and recalculate stats on the merged superbatch automatically using this command.
 
-Around 100 shuffles is usually enough to robustly fit a Negative Binomial distribution. In terms of precision, a Negative Binomial mean under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways. 
+Around 100-200 shuffles is usually enough to robustly fit a Negative Binomial distribution. In terms of precision, a Negative Binomial mean under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways. 
 
 .. code-block:: bash
 
@@ -455,13 +458,87 @@ Notes
 -- For statistical reality reasons, with multiple sets the expected overlaps for the longer combinations (A+B+C+D+... when they are all independant) can be very low. As a result, longer combinations tend to be more enriched: this should be kept in mind when comparing enrichment values between combinations of a different order. 
 
 This is especially true when the total genomic coverage of the sets is low. We recommend instead shuffling only across a biologically relevant subsection of the genome (with -\-bed-incl) : for example, if studying  Transcriptional Regulators, shuffling only on inferred Cis Regulatory Modules or promoters.
+                          If the shuffling is restricted to a sub-genome, and features outside are discarded. In essence it mostly means switching to a smaller genome. Of course, since the shuffling is done only here, (H_0) becomes ‘... the features are independent and can only be located on the sub-genome’. This bears mentioning. In practice, this means shuffling only across shortened chromosomes.
 
 Our Negative Binomial model helps alleviate this problem. Even so, if a combination is so rare that it is not encoutered even once in the shuffles, it will have a p-value of NaN. Furthermore, if C is depleted with query but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched.
 
 -- BETA - When using --more-bed (and only that), you can give a list of bed files that should be kept fixated during the shuffles using the --keep-intact-in-shuffling argument.
 
--- RAM will be the biggest limiting factor. While 100 total shuffles should be enough to fit a Negative Binomial distribution in most cases, if needed try running more batches of fewer shuffles instead of the other way around.
+-- RAM will be the biggest limiting factor. While 100 total shuffles should be enough to fit a Negative Binomial distribution in most cases, if needed try running more batches of fewer shuffles instead of the other way around. The alternative is running them independantly and merging them afterwards with *ologram_merge_runs*.
 
 -- If you have many (30+) BED files in --more-bed, consider running a pairwise analysis first to divide them in groups of 10-20, and study the multiple overlaps within those groups. This is also more likely to be biologically significant, as for example Transcription Factor complexes usually have 2-8 members.
 
 -- We recommend running the ologram_modl_treeify plugin on the resulting tsv file if you use multiple overlaps.
+
+
+-- Our Negative Binomial model is only an approximation for the underlying true distribution, which is likely close to a Beta Binomial. For instance, the Neg. Binom. approximation fails with too few regions in the sets (at least 1K), and will likely slightly overestimate the p-values in other cases. However, precision is usually good for even very significant p-values, dropping only at the very significant level (<1E-5), hence there is only a very small risk of false positives. Also, even if they are overestimated, the order of p-values is unchanged (as a Neg. Binom. is a special case of Beta) meaning if a combination 1 has a higher Neg. Binom. p-value than combination 2, its true p-value is also likely higher than the p-value of 2.
+
+The Neg. Binom. is still the better option, as fitting the proper distribution (approximated as Beta) is more difficult. As such, an ad-hoc p-value based on the Beta distribution is given, but it will only better than the Neg. Binom. on massive numbers of shuffles (thousands). We also added the empirical p-value as a new column (ie. number of shuffles in which a value as extreme is observed) if you believe the model to be inadequate.
+
+-- Our model rests upon certain assumptions (ie. exchangeable variables, sufficient nb. of regions, etc.). The null hypothesis can be rejected if any assumption is rejected, or merely because the approximation holds only asymptotically. The fitting test is the key for that: if, when performing the shuffles, it is found that the distribution of S under our shuffling model does not follow a Neg. Binom., it will be said. Then if the hypothesis is rejected (low p-val) but the fitting was good, it is then reasnobale to assume the combination is enriched. Admittedly, the fitting test does not test the tails of the distribution, but it shows if the general shape is close enough.
+
+
+------------------------------------------------------------------------------------------------------------------
+
+
+OLOGRAM file structure
+~~~~~~~~~~~~~~~~~~~~~~
+
+Below is a detailed list of the source code files of OLOGRAM-MODL, with their roles. All paths are relative to the root of the *pygtftk* Git repository. The "Plugin" group designates plugins that can be called directly from the command line. A file extension of "pyx" designates a Cython file, "py" a Python file, and "cpp" a C++ file.
+
+
+.. list-table:: OLOGRAM-MODL files.
+   :widths: 10 40 50
+   :header-rows: 1
+
+   * - Group
+     - File path
+     - Description
+   * - Plugin
+     - pygtftk/plugins/ologram.py
+     - *Root file.* Parses the arguments and calls the other functions.
+   * - Utility
+     - docs/source/ologram.rst
+     - Documentation source.
+   * - Root
+     - pygtftk/stats/intersect/overlap_stats_shuffling.py
+     - *Main function*. Called directly by the *ologram.py* plugin. All other functions calls are descended from this one.
+   * - Root
+     - pygtftk/stats/intersect/overlap_stats_compute.py
+     - Functions to compute overlap statistics on (shuffled) region sets. 
+   * - Algorithm
+     - pygtftk/stats/intersect/create_shuffles.pyx
+     - Shuffle BED files and generate new "fake" BED files.
+   * - Algorithm
+     - pygtftk/stats/intersect/overlap/overlap_regions.pyx
+     - Compute the overlaps between two sets of genomic regions, supporting multiple overlaps.
+   * - Utility 
+     - Turn a BED file into a list of intervals.
+     - pygtftk/stats/intersect/read_bed/read_bed_as_list.pyx
+   * - Utility
+     - pygtftk/stats/intersect/read_bed/exclude.cpp
+     - Exclude certain regions from a set to create concatenated sub-chromosomes.
+   * - Utility
+     - pygtftk/stats/multiprocessing/multiproc.pyx
+     - Helper functions and structures for multiprocessing.
+   * - Statistics
+     - pygtftk/stats/negbin_fit.py
+     - Utility functions relative to the negative binomial distribution, including verifying its good fit.
+   * - MODL
+     - pygtftk/stats/intersect/modl/dict_learning.py
+     - Contains the MODL algorithm, an itemset mining algorithm described in this paper.
+   * - MODL
+     - pygtftk/stats/intersect/modl/subroutines.py
+     - Subroutines of the MODL algorithm. Those are pure functions and can be used independently.
+   * - Utility
+     - pygtftk/stats/intersect/modl/tree.py
+     - A graph-based representation of combinations of elements.
+   * - Plugin
+     - pygtftk/plugins/ologram_merge_runs.py
+     - Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it.
+   * - Plugin
+     - pygtftk/plugins/ologram_merge_stats.py
+     - Merge a set of OLOGRAM outputs calculated on different queries into a single output, preserving labels. Build a heatmap from the results.
+   * - Plugin
+     - pygtftk/plugins/ologram_modl_treeify.py
+     - Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree for easier visualisation.
