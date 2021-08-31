@@ -1,6 +1,59 @@
 
 # Changelog
 
+
+## v1.4.0
+
+### Bug Fixes
+
+* Fix a bug in histogram drawing (OLOGRAM).
+
+### API/CLI Changes
+
+
+### Code changes
+
+* OLOGRAM doc has been  updated.
+
+* Added test for Beta distribution fitting.
+
+### New Features
+
+* OLOGRAM now gives the p-value for S as fitted through a Beta distribution. However, Beta distributions are harder to fit, since
+unavoidable small errors in the estimation of the skewness and kurtosis will propagate. In practice it is preferable to approximate this with a Negative Binomial. This will be explained in the manuscript.  
+
+
+## v1.3.0
+
+
+### Bug Fixes
+
+*   Fix an issue with manylinux (creation of pip releases). Another trial (see 1.2.9).
+
+### API/CLI Changes
+
+*
+
+### Code changes
+
+### New Features
+
+
+## v1.2.9
+
+### Bug Fixes
+
+*   Fix an issue with manylinux (creation of pip releases).
+
+### API/CLI Changes
+
+*
+
+### Code changes
+
+### New Features
+
+
 ## v1.2.8
 
 ### Bug Fixes
