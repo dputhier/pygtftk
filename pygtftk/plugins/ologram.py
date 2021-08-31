@@ -12,7 +12,7 @@
  under the null hypothesis is deduced with our Monte Carlo approach.
  
  The null hypothesis is that the regions of the query (--peak-file) are located 
- independently of the reference (--inputfile or --more-bed) and do not overlap 
+ independently of the reference (--inputfile or --more-bed) and of each other, and do not overlap 
  more than by chance. We return statistics for both the number of intersections
  and the total lengths (in basepairs) of all intersections. 
  
@@ -75,7 +75,7 @@ from pygtftk.utils import sort_2_lists
 from pygtftk.utils import chr_size_note
 import gc
 
-__updated__ = '2021-03-31'
+__updated__ = ''' 2021-08-13 '''
 __notes__ = chr_size_note() + """  
 
  -- OLOGRAM is multithreaded, notably processing one batch of shuffles per core.
@@ -123,8 +123,21 @@ __notes__ = chr_size_note() + """
  the shuffles even once. In this case, this would represent a very large enrichment!
 
  Tangentially, other potential causes of poor fit are: the combination is too
- rare (too few/small regions) and is rarely encountered in the shuffles, or the
- shuffling was restricted to a too small region and the variance is lower than mean. 
+ rare (too few/small regions) and is rarely encountered in the shuffles, there are
+ too few regions in the set (<200) or the shuffling was restricted to a too 
+ small region and the variance is lower than mean. 
+
+ -- The Negative Binomial is an approximation, but differences only appear for 
+ very low p-values, and even then order is conserved (if one feature is more 
+ enriched than another, their p-values will be in the correct order, just
+ slightly inflated). An ad-hoc beta fitted p-value has been added instead if 
+ you wish, but it will only be more accurate than Neg Binom if you do >10.000 
+ shufffles at least. Empirical p-val is also accesible.
+
+ -- Our model rests upon certain assumptions. The null hypothesis can be rejected
+ if any assumption is rejected. The fitting test is the key for that: if the 
+ fitting was good, we can assume the combination is indeed enriched. Admittedly,
+ the fitting test does not test the tails, but shows if the general shape is close enough.
 
  -- Relatedly, in the output combinations are sorted by their true number of base 
  pairs by default, since combinations that are very rare even in the true data 
@@ -140,9 +153,6 @@ __notes__ = chr_size_note() + """
  The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed",
  "1 0 1 1" means Query + B + C). Elements should be whitespace separated, with
  one combination per line.
-
-
-
 
 """
 
@@ -1204,7 +1214,7 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
             fit_qual_text.index = range(len(fit_qual_text))
 
             text_with_fit = list()
-            for t, f in zip(text.tolist(), fit_qual_text.tolist()):
+            for t, f in zip(text, fit_qual_text.tolist()):
                 text_with_fit += [t + "\n" + 'fit={0:.2g}'.format(f)]
             text = pd.Series(text_with_fit)
 

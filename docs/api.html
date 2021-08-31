@@ -17,7 +17,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Help on Python package (pygtftk) &#8212; gtftk 1.3.0 documentation</title>
+    <title>Help on Python package (pygtftk) &#8212; gtftk 1.4.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.4.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Help on Python package (pygtftk)</a></li> 
       </ul>
     </div>  
@@ -2460,7 +2460,7 @@ it will return one per multiple overlap (ie. here there was a peak for bedfile1+
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.overlap_stats_compute.stats_single">
-<span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">stats_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_intersections_for_this_combi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_intersection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'some</span> <span class="pre">feature'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nofit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">this_combi_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_histogram</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">was_directly_passed_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.stats_single" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">stats_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_intersections_for_this_combi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_intersection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'some</span> <span class="pre">feature'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nofit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">this_combi_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_histogram</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.stats_single" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute statistics such as total number of overlapping base pairs for a given feature.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2651,6 +2651,59 @@ The goal of the method is to calculate the successive ‘d’ terms,
 separately for odd and even.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pygtftk.stats.beta.beta_pval">
+<span class="sig-prename descclassname"><span class="pre">pygtftk.stats.beta.</span></span><span class="sig-name descname"><span class="pre">beta_pval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">320</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.beta_pval" title="Permalink to this definition">¶</a></dt>
+<dd><p>P-value for the given critical value against a beta distribution fitted to
+the given list of observations.</p>
+<p>This is the two-sided p-value : it will return the minimum of the left-sided
+and right-sided p-value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> – the critical value whose p-value will be calculated</p></li>
+<li><p><strong>obs</strong> – the list of observations to which the beta distribution will be fitted</p></li>
+<li><p><strong>precision</strong> – Floating point precision of mpmath. Should be at least 1000</p></li>
+</ul>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.beta</span> <span class="kn">import</span> <span class="n">beta_pval</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">beta</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy.testing</span> <span class="k">as</span> <span class="nn">npt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="mf">0.6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">phat</span> <span class="o">=</span> <span class="n">beta_pval</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">obs</span><span class="p">)</span>                        <span class="c1"># Test the combined package</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">0.9999</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cp</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mybetacalc</span> <span class="o">=</span> <span class="n">BetaCalculator</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cphat</span> <span class="o">=</span> <span class="n">mybetacalc</span><span class="o">.</span><span class="n">betaincreg</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>    <span class="c1"># Test just the p-value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">npt</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">phat</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>          <span class="c1"># Beta approximation is too imprecise for extreme p-values, however.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">npt</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">cp</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">cphat</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pygtftk.stats.beta.fit_beta">
+<span class="sig-prename descclassname"><span class="pre">pygtftk.stats.beta.</span></span><span class="sig-name descname"><span class="pre">fit_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.fit_beta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits a four-parameter Beta distribution to the given list of observations
+using method-of-moments fitting.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">beta</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy.testing</span> <span class="k">as</span> <span class="nn">npt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pygtftk.stats.beta</span> <span class="kn">import</span> <span class="n">fit_beta</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>  <span class="c1"># You need at least 10K for a good estimate (!)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ahat</span><span class="p">,</span> <span class="n">bhat</span><span class="p">,</span> <span class="n">mhat</span><span class="p">,</span> <span class="n">chat</span> <span class="o">=</span> <span class="n">fit_beta</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">npt</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">((</span><span class="n">ahat</span><span class="p">,</span> <span class="n">bhat</span><span class="p">),</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">),</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -3684,13 +3737,13 @@ are found at the beginning or end of the string, they are deleted.</p>
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.4.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Help on Python package (pygtftk)</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Jun 17, 2021.
+      Last updated on Aug 31, 2021.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
   </body>

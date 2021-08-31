@@ -2,7 +2,13 @@
 """
 Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it.
 
-This treats each run as a "superbatch".
+This treats each run as a "superbatch". The command takes as input the list of 
+paths of all the results' TSV you wish to merge.
+It also takes as input the number of shuffles originally performed in the 
+individual runs (by default, is assumed to be 200).
+
+Example of command line:
+    gtftk ologram_merge_runs --inputfiles `ls output/ologram_results/*.tsv` --ori-shuffles 200 -o final_result.tsv
 """
 
 import argparse
@@ -18,10 +24,15 @@ from pygtftk.utils import message
 
 from pygtftk.stats import negbin_fit as nf
 
-__updated__ = ''' 2021-04-01 '''
+__updated__ = ''' 2021-08-13 '''
 
 __notes__ = """
--- Statistics are recalculated by conflating the distributions with a weighting based on the number of runs (see source for the precise formula).
+-- This implicitly assumes you are combining runs with the *same number* of shuffles in each.
+
+-- The fit quality for the Neg. Binoms. will be indicated as "-1" since it cannot be evaluated here.
+
+-- On the technical side, statistics are recalculated by conflating the distributions with a weighting 
+based on the number of runs. See the source code for the precise formula.
 """
 
 
@@ -36,8 +47,15 @@ def make_parser():
                             type=arg_formatter.FormattedFile(mode='r', file_ext=('txt')),
                             nargs='+')
 
+    parser_grp.add_argument('-os', '--ori-shuffles',
+                            help="How many shuffles were performed in the individual runs that will be merged?",
+                            default=200,
+                            type=int,
+                            required=False)
+
+
     parser_grp.add_argument('-o', '--output',
-                            help="Merged output file.",
+                            help="Destination path for the merged output file.",
                             default=None,
                             nargs=None,
                             type=arg_formatter.FormattedFile(mode='w', file_ext=('txt')),
@@ -50,13 +68,17 @@ def make_parser():
 def get_conflated_moments(mean1, mean2, var1, var2, n1, n2):
     r"""
     Get the variance and mean of the conflated distribution of 1 and 2. 
-    'mean' and 'var' are their individual means and vairances, and 'n' are the sample sizes.
+    'mean' and 'var' are their individual means and variances, and 'n' are the sample sizes.
 
     Example:
 
-    >>> assert get_conflated_moments(0,1,0,1,0,1) == (1,1)
-    >>> assert get_conflated_moments(1,1,0,0,1,1) == (1,1)
-    >>> assert get_conflated_moments(0,20,0,0,1,1) == (10, 200)
+    >>> import numpy as np
+    >>> assert get_conflated_moments(0,1, 0,1, 0,1) == (1,1)
+    >>> assert get_conflated_moments(1,1, 0,0, 1,1) == (1,0)
+    >>> assert get_conflated_moments(0,20, 0,0, 1,1) == (10, 200)
+    >>> assert get_conflated_moments(1,1, 0,0, 100,100) == (1,0)
+    >>> assert get_conflated_moments(0,20,0,0,2,2) == (10, 100*4/3)
+    >>> assert np.isclose(get_conflated_moments(0,0,100,100,200,200), (0, 99.75)).all()
 
     """
 
@@ -79,6 +101,7 @@ def get_conflated_moments(mean1, mean2, var1, var2, n1, n2):
 
 
 def ologram_merge_runs(inputfiles=None,
+                        ori_shuffles = 200,
                         output=None):
 
     # -------------------------------------------------------------------------
@@ -119,6 +142,8 @@ def ologram_merge_runs(inputfiles=None,
         merged_run.loc[combi, 'nb_intersections_variance_shuffled'] = 0
         merged_run.loc[combi, 'summed_bp_overlaps_expectation_shuffled'] = 0
         merged_run.loc[combi, 'summed_bp_overlaps_variance_shuffled'] = 0
+        merged_run.loc[combi, 'nb_intersections_empirical_pvalue'] = 0
+        merged_run.loc[combi, 'summed_bp_overlaps_empirical_pvalue'] = 0
 
     # Process each run
     runs_already_merged = 0
@@ -143,16 +168,25 @@ def ologram_merge_runs(inputfiles=None,
             current_S_mean = row['summed_bp_overlaps_expectation_shuffled']
             current_S_var = row['summed_bp_overlaps_variance_shuffled'] 
 
+            previous_nb_intersections_empirical_pval = merged_run.loc[combi, 'nb_intersections_empirical_pvalue'] 
+            previous_summed_bp_overlaps_empirical_pval = merged_run.loc[combi,'summed_bp_overlaps_empirical_pvalue']
+            current_nb_intersections_empirical_pval = row['nb_intersections_empirical_pvalue']
+            current_summed_bp_overlaps_empirical_pval = row['summed_bp_overlaps_empirical_pvalue']
+
+            previous_beta_pval = merged_run.loc[combi,'beta_summed_bp_overlaps_pvalue_ad_hoc_for_deep_sampling_only']
+            current_beta_pval = row['beta_summed_bp_overlaps_pvalue_ad_hoc_for_deep_sampling_only']
+            
+
 
             # Get the new moments
             new_S_mean, new_S_var = get_conflated_moments(
                 mean1 = previous_merged_S_mean, mean2 = current_S_mean,
                 var1 = previous_merged_S_var, var2 = current_S_var,
-                n1 = runs_already_merged, n2 = 1)
+                n1 = runs_already_merged*ori_shuffles, n2 = 1*ori_shuffles)
             new_N_mean, new_N_var = get_conflated_moments(
                 mean1 = previous_merged_N_mean, mean2 = current_N_mean,
                 var1 = previous_merged_N_var, var2 = current_N_var,
-                n1 = runs_already_merged, n2 = 1)
+                n1 = runs_already_merged*ori_shuffles, n2 = 1*ori_shuffles)
 
             # Overwrite the moments
             merged_run.loc[combi, 'nb_intersections_expectation_shuffled'] = new_N_mean
@@ -164,6 +198,19 @@ def ologram_merge_runs(inputfiles=None,
             # True intersections stay the same every time
             merged_run.loc[combi, 'nb_intersections_true'] = row['nb_intersections_true']
             merged_run.loc[combi, 'summed_bp_overlaps_true'] = row['summed_bp_overlaps_true']
+
+            # So does combination order
+            merged_run.loc[combi, 'combination_order'] = row['nb_intersections_true']
+
+
+            # Empirical p-values are combined by proportion (simply a weighted average)
+            niep = (runs_already_merged * previous_nb_intersections_empirical_pval + current_nb_intersections_empirical_pval) / (runs_already_merged + 1)
+            sboep = (runs_already_merged * previous_summed_bp_overlaps_empirical_pval + current_summed_bp_overlaps_empirical_pval) / (runs_already_merged + 1)
+            merged_run.loc[combi, 'nb_intersections_empirical_pvalue'] = niep
+            merged_run.loc[combi, 'summed_bp_overlaps_empirical_pvalue'] = sboep
+
+            # Beta p-values cannot be recalculated, so they too get weighetd-averaged
+            merged_run.loc[combi, 'beta_summed_bp_overlaps_pvalue_ad_hoc_for_deep_sampling_only'] = (runs_already_merged * previous_beta_pval + current_beta_pval) / (runs_already_merged + 1)
 
             i += 1
             message("Merged combi "+str(i)+" / "+str(total_combis)+" for this run.", type = "DEBUG")
@@ -194,10 +241,10 @@ def ologram_merge_runs(inputfiles=None,
         if sbp_fc != 0: sbp_fc = np.log2(sbp_fc)  # Apply log transformation
         merged_run.loc[combi, 'summed_bp_overlaps_log2_fold_change'] = '{:.5f}'.format(sbp_fc)
 
-        # Fit qualities are not applicable here
+        # Fit qualities are not applicable here. They are given as -1, meaning "not evaluated"
+        merged_run.loc[combi, 'summed_bp_overlaps_negbinom_fit_quality'] = -1
+        merged_run.loc[combi, 'nb_intersections_negbinom_fit_quality'] = -1
         # TODO: Recalculate them somehow ?
-        merged_run.loc[combi,'summed_bp_overlaps_negbinom_fit_quality'] = np.nan
-        merged_run.loc[combi,'nb_intersections_negbinom_fit_quality'] = np.nan
 
         
         # Recalculate the p values
@@ -211,6 +258,7 @@ def ologram_merge_runs(inputfiles=None,
                                             
         merged_run.loc[combi, 'nb_intersections_pvalue'] = '{0:.4g}'.format(pval_intersect_nb)
         merged_run.loc[combi, 'summed_bp_overlaps_pvalue'] = '{0:.4g}'.format(pval_bp_overlaps)
+
 
         i+=1
         message("Statistics done for combi "+str(i)+" / "+str(total_combis)+" for this run.", type = "DEBUG")
@@ -252,7 +300,7 @@ else:
     # Note that this is an example of what not to do since those files were done for different queries.
     # I treat them as the same query, since this is just to test the principle.
     @test "ologram_merge_runs_1" {
-         result=`gtftk ologram_merge_runs -i H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merged_ologram_runs.tsv`
+         result=`gtftk ologram_merge_runs -i H3K4me3_ologram_stats.tsv H3K36me3_ologram_stats.tsv H3K79me2_ologram_stats.tsv -o merged_ologram_runs.tsv -V 0`
       [ "$result" = "" ]
     }
 

@@ -33,7 +33,7 @@ from pygtftk.utils import message
 def compute_all_intersections_minibatch(Lr1, Li1, Lrs, Lis,
                                         all_chrom1, all_chrom2,
                                         minibatch_size,
-                                        use_markov_shuffling, 
+                                        use_markov_shuffling,
                                         keep_intact_in_shuffling,
                                         nb_threads, seed=42):
     """
@@ -381,6 +381,9 @@ def compute_overlap_stats(bedA, bedsB,
         result_abort['summed_bp_overlaps_true'] = 0
         result_abort['summed_bp_overlaps_pvalue'] = -1
         result_abort['combination_order'] = 0
+        result_abort['nb_intersections_empirical_pvalue'] = -1
+        result_abort['summed_bp_overlaps_empirical_pvalue'] = -1
+        result_abort['beta_summed_bp_overlaps_pvalue_ad_hoc_for_deep_sampling_only'] = -1
 
         # If it was a multiple overlap : return a nested dict, otherwise return a classical dict
         if was_more_than_one_bedB:
@@ -439,7 +442,7 @@ def compute_overlap_stats(bedA, bedsB,
 
     # Submit to the pool of processes
     futures = list()
-    message("We will perform a total of " + str(len(minibatches)) + "batches of shufflings.")
+    message("We will perform a total of " + str(len(minibatches)) + " batches of " + str(minibatch_size) + " shufflings.")
     for i in range(len(minibatches)):
         futures += [pool.submit(compute_intersection_partial, minibatch_len=minibatches[i], seed=seeds[i], id = i)]
     pool.shutdown() # Release the resources as soon as you are done with those, we won't submit any more jobs to you
@@ -482,7 +485,8 @@ def compute_overlap_stats(bedA, bedsB,
         true_intersection = osc.compute_true_intersection(bedA, bedsB)
 
         result = osc.stats_single(all_intersections_for_this_combi=all_intersections,
-                                  true_intersection=true_intersection, ft_type=ft_type, nofit=nofit)
+                                  true_intersection=true_intersection, ft_type=ft_type,
+                                  nofit=nofit, draw_histogram=draw_histogram)
 
     # Otherwise we must call osc.stats_multiple_overlap() which will split `all_intersections` into
     # one object per relevant combination (see function documentation and source for more details)

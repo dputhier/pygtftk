@@ -26,6 +26,7 @@ import numpy as np
 from scipy.stats import nbinom
 
 from pygtftk.stats import negbin_fit as nf
+from pygtftk.stats import beta as pbeta
 from pygtftk.stats.intersect.modl import dict_learning as dl
 from pygtftk.stats.intersect.overlap import overlap_regions as oc
 from pygtftk.stats.multiprocessing import multiproc as mpc
@@ -172,8 +173,9 @@ def merge_consecutive_intersections_in_all_overlaps_lists(aiqc):
 
 
 def stats_single(all_intersections_for_this_combi, true_intersection,
-                 ft_type='some feature', nofit=False, this_combi_only=None, draw_histogram = False,
-                 was_directly_passed_stats = False):
+                 ft_type='some feature', nofit=False, 
+                 this_combi_only=None, draw_histogram=False):
+                 #was_directly_passed_stats = False):
     """
     Compute statistics such as total number of overlapping base pairs for a given feature.
 
@@ -234,7 +236,8 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     # Fitting can be disabled from the main function (for now, mainly relevant if we used a Markov model instead of a classical one.)
     if nofit:
         ps = pn = -1
-
+        expectation_fitted_summed_bp_overlaps, variance_fitted_summed_bp_overlaps = -1
+        expectation_fitted_intersect_nbs, variance_fitted_intersect_nbs = -1
 
     else:
         # Renaming expectations and variances
@@ -278,24 +281,29 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     # Compute the p-values using the distribution fitted on the shuffles.
     # Do not do this for the Markov shuffling, as it is likely a multi-variable fit (see notes)
     # We can only use a Neg Binom p-val if we can fit it, and that is not the case for
-    # the Markov shuffle or if the expectation is too small : we must use an empirical p-value
+    # the Markov shuffle or if the expectation is too small.
 
+
+    # To be used if the fitting is bad: add the empirical p-value (proportion of shuffles with values as extreme)
+    empirical_pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
+    empirical_pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
+
+
+
+    # Return -1 for the p-value if the fitting was bad.
     if (ps == -1) | (pn == -1):
-        # NOTE : maybe re-use the empirical p-value later. For now return -1
-        # pval_intersect_nb = nf.empirical_p_val(true_intersect_nb, intersect_nbs)
-        # pval_bp_overlaps = nf.empirical_p_val(true_bp_overlaps, summed_bp_overlaps)
         pval_intersect_nb = -1
         pval_bp_overlaps = -1
 
     else:
         pval_intersect_nb = nf.negbin_pval(true_intersect_nb,
-                                           expectation_fitted_intersect_nbs,
-                                           variance_fitted_intersect_nbs,
-                                           ft_type=ft_type)
+                                        expectation_fitted_intersect_nbs,
+                                        variance_fitted_intersect_nbs,
+                                        ft_type=ft_type)
         pval_bp_overlaps = nf.negbin_pval(true_bp_overlaps,
-                                          expectation_fitted_summed_bp_overlaps,
-                                          variance_fitted_summed_bp_overlaps,
-                                          ft_type=ft_type)
+                                        expectation_fitted_summed_bp_overlaps,
+                                        variance_fitted_summed_bp_overlaps,
+                                        ft_type=ft_type)
 
 
     stop = time.time()
@@ -329,20 +337,31 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
             p = 1 / (mean / r + 1)
 
             # Plot the histogram.
-            BINS = 100
+            BINS = 200  #TODO: put it higher conditionally 
             de = plt.hist(summed_bp_overlaps, bins=BINS)[1]
             # Plot the PDF.
             xmin, xmax = min(de), max(de)
             x = np.linspace(xmin, xmax, BINS)
+
+            # Steps should always be the same between bins, except for rounding errors
+            steps = [0] + [x[i] - x[i - 1] for i in range(1, len(x))]
+
             try:
                 d = [nbinom.cdf(x[i], r, p) - nbinom.cdf(x[i - 1], r, p) for i in range(1, len(x))]
+
+                # Position the 'd' correctly : move one pace right, and
+                # put it in te middle of each bar
+                x = [x[i] - steps[i]/2 for i in range(len(x))]
+
                 d = np.array([0] + d) * len(summed_bp_overlaps)
+            
             except:
                 d = [0] * BINS
 
-            plt.plot(x, d, 'k', linewidth=2)
+            plt.plot(x, d, 'k', linewidth=1.2)
             plt.savefig(hist_S.name)
             plt.close()
+
         except:
             pass
 
@@ -398,6 +417,19 @@ def stats_single(all_intersections_for_this_combi, true_intersection,
     if my_order is None: my_order = 1
     result['combination_order'] = str(my_order)
 
+    # Also put the empirical p-value (proportion of shuffles where a value as extreme is found)
+    # NOTE Added as last columns so it does not bother the existing column tests
+    result['nb_intersections_empirical_pvalue']   = '{0:.4g}'.format(empirical_pval_intersect_nb)
+    result['summed_bp_overlaps_empirical_pvalue'] = '{0:.4g}'.format(empirical_pval_bp_overlaps)
+
+    # Use an ad-hoc beta approximation for the beta-binomial
+    try:
+        beta_pval_bp_overlaps = pbeta.beta_pval(true_bp_overlaps, summed_bp_overlaps)
+    except:
+        # Return -1 if any problem
+        # TODO Remove this band-aid
+        beta_pval_bp_overlaps = -1
+    result['beta_summed_bp_overlaps_pvalue_ad_hoc_for_deep_sampling_only'] = '{0:.4g}'.format(beta_pval_bp_overlaps)
 
     #message(ft_type + '- Result dump : ' + str(result), type='DEBUG')
 

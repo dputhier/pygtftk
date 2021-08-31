@@ -211,29 +211,29 @@ def empirical_p_val(x, data):
     """
     arr = np.array(data)
 
-    higher = len(np.where(arr >= x)[0])
-    lower = len(np.where(arr < x)[0])
+    higher = len(np.where(arr > x)[0])
+    lower = len(np.where(arr <= x)[0])
     signif = min(higher, lower)
 
-    return signif / len(arr)
+    return float(signif / len(arr))
 
 
 '''
 import numpy as np
 
 import pandas as pd
-import pybedtools
+#import pybedtools
 import scipy
 import scipy.stats
 from scipy import optimize
 
-import pymc3 as pm
-import theano.tensor as tt
-import theano
+#import pymc3 as pm
+#import theano.tensor as tt
+#import theano
 
-from multiprocessing import Pool
-import functools as ft
-import time, sys
+#from multiprocessing import Pool
+#import functools as ft
+#import time, sys
 
 # This code is completely useless as simply calculating r and p from the
 # mean and variance of the observed data is just as efficient.
@@ -257,7 +257,11 @@ def fit_negbin_mle(obs):
 
         # Calculating likelihood = sum of PMF
         def log_of_fact(n):
-            return (n * np.log(n) - n) + (1/6) * (8*(n**3) + 4*(n**2) + (1/30)) + (0.5*np.log(np.pi))
+            n = n + 1E-300
+            term_one = (n * np.log(n) - n)
+            term_two = (1/6) * (8*(n**3) + 4*(n**2) + (1/30))
+            term_thee = 0
+            return term_one + term_two + (0.5*np.log(np.pi))
         # NOTE : using a worse approximation of factorials resulted in errors
         def log_of_binom(n,p): return log_of_fact(n) - log_of_fact(p) - log_of_fact(n-p)
         def custom_nb_logpmf(k): return log_of_binom(k+r-1,k) + k*np.log(1-p) + r*np.log(p)
@@ -267,22 +271,18 @@ def fit_negbin_mle(obs):
         return -1 * result # NOTE Don't forget we want to maximize log-likelihood, so minimize -1*log-likelihood !
 
     E = np.mean(obs)
-    V = np.var(obs)
+    V = np.var(obs, ddof=1)
 
     initial_guess = [np.log(E),np.log(V)]
-    #initial_guess = [1,1]
     # WARNING : when artificially deluding it (ie setting initial guesses at [1,1]), it returns a result where fitted mean == fitted var !
 
     fitted = optimize.minimize(negbinom_likelihood_numpy,
                         initial_guess, method='Nelder-Mead', # NOTE Must use Nelder-mead
-                        args=(obs))
+                        args=(obs),
+                        options = {'maxiter':1000})
     fitted_log_E, fitted_log_V = fitted.x
 
     return np.exp(fitted_log_E), np.exp(fitted_log_V)
-
-
-
-
 
 
 

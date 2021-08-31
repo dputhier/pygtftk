@@ -17,7 +17,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘ologram’ &#8212; gtftk 1.3.0 documentation</title>
+    <title>Commands from section ‘ologram’ &#8212; gtftk 1.4.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.4.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘ologram’</a></li> 
       </ul>
     </div>  
@@ -80,7 +80,7 @@
 <p>More examples can be found in &lt;<a class="reference external" href="https://github.com/qferre/ologram_supp_mat">https://github.com/qferre/ologram_supp_mat</a>&gt; and more recently at &lt;<a class="reference external" href="https://github.com/qferre/ologram-modl_supp_mat">https://github.com/qferre/ologram-modl_supp_mat</a>&gt;
 These contain example Snakemake workflows, that can be reused or from which commands can be extracted.</p>
 <p>Most of the commands presented in this section are demonstrated in the <em>ologram-modl_supp_mat</em> Git, along with certain perspectives.</p>
-<p><strong>Note for contributors</strong> : To contribute to OLOGRAM, begin at <em>pygtftk/plugins/ologram.py</em> and unwrap function calls from there, to get a sense of how they interact. We have detailed comments to explain the role of every function.</p>
+<p><strong>Note for contributors</strong> : To contribute to OLOGRAM, begin at <em>pygtftk/plugins/ologram.py</em> and unwrap function calls from there, to get a sense of how they interact. We have detailed comments to explain the role of every function. <em>A detailed table with the role of each file is presented at the end of this document.</em></p>
 <hr class="docutils" />
 <section id="ologram">
 <h2>ologram<a class="headerlink" href="#ologram" title="Permalink to this headline">¶</a></h2>
@@ -103,8 +103,16 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> Perform a basic annotation. We are searching whether H3K4me3 peaks tends to be enriched in some specific genomic elements. The bars in the bar plot diagram will be ordered according to ‘summed_bp_overlaps_pvalue’.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -i hg38_chr1.gtf.gz -p ENCFF112BHN_H3K4me3_chr1.bed -c hg38_chr1.genome -u 1500 -d 1500 -D  -pf example_pa_01.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 13:23-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 13:24-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
+ |-- 15:03-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:225: RuntimeWarning: invalid value encountered in sqrt
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:237: RuntimeWarning: invalid value encountered in sqrt
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:225: RuntimeWarning: invalid value encountered in sqrt
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:237: RuntimeWarning: invalid value encountered in sqrt
+ |-- 15:03-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 (start_codon)
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:225: RuntimeWarning: invalid value encountered in sqrt
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:237: RuntimeWarning: invalid value encountered in sqrt
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:225: RuntimeWarning: invalid value encountered in sqrt
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:237: RuntimeWarning: invalid value encountered in sqrt
 </pre></div>
 </div>
 <br>
@@ -119,7 +127,7 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> We are now using the gene_biotype key (note that a list of keys can be provided). This will tell us whether H3K4me3 tends to be located in particular transcripts (protein coding, LncRNAs…). The –no-basic-feature argument tells ologram not to test basic genomic elements (gene, transcripts…).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk select_by_key -i mini_real.gtf.gz -k gene_biotype -v protein_coding,lincRNA,antisense,processed_transcript  |  gtftk ologram  -m gene_biotype -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n  -pf example_pa_02.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 13:24-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 15:04-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -138,8 +146,12 @@ The program will return statistics for both the number of intersections and the 
 </div>
 <p><strong>Example:</strong> A more complex example where the key is created on the fly. Expression data are loaded as a novel key using the join_attr command and associated to gene features. This novel key (exprs) is then discretized to created 6 classes of genes with increasing expression (based on percentiles, -p) which are tested for enrichment in H3K36me3.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk join_attr -i mini_real.gtf.gz -H -j mini_real_counts_ENCFF630HEX.tsv -k gene_name -n exprs -t exon | gtftk discretize_key -k exprs -p -d exprs_class -n 6  -u | gtftk ologram -p ENCFF119BYM_H3K36me3_K562_sub.bed -c hg38 -D -n -m exprs_class -pf example_pa_03.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 13:25-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
- |-- 13:25-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 15:04-INFO-discretize_key : Categories: [&#39;[0.0_183.0]&#39;, &#39;(183.0_549.0]&#39;, &#39;(549.0_1018.0]&#39;, &#39;(1018.0_1631.0]&#39;, &#39;(1631.0_3139.0]&#39;, &#39;(3139.0_41703.0]&#39;]
+ |-- 15:04-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:225: RuntimeWarning: invalid value encountered in sqrt
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:237: RuntimeWarning: invalid value encountered in sqrt
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:225: RuntimeWarning: invalid value encountered in sqrt
+/Users/puthier/anaconda3/envs/python_dev_388/lib/python3.8/site-packages/pygtftk-1.4.0-py3.8-macosx-10.9-x86_64.egg/pygtftk/stats/beta.py:237: RuntimeWarning: invalid value encountered in sqrt
 </pre></div>
 </div>
 <br>
@@ -154,8 +166,8 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p><strong>Example:</strong> Using the add_exon_nb, we add the exon number transcript-wise (numbering from 5’ to 3’) and discretize this novel key into 5 classes tested for enrichment.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk add_exon_nb -k exon_nbr -i mini_real.gtf.gz | gtftk discretize_key -p -d exon_nbr_cat -n 5  -k exon_nbr | gtftk ologram -p ENCFF112BHN_H3K4me3_K562_sub.bed -c hg38 -D -n -m exon_nbr_cat -pf example_pa_04.pdf -k 8 -j summed_bp_overlaps_pvalue
- |-- 13:26-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
- |-- 13:26-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 15:05-INFO-discretize_key : Categories: [&#39;[1.0_2.0]&#39;, &#39;(2.0_4.0]&#39;, &#39;(4.0_6.0]&#39;, &#39;(6.0_12.0]&#39;, &#39;(12.0_107.0]&#39;]
+ |-- 15:05-WARNING-ologram : Using only 8 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
 </pre></div>
 </div>
 <br>
@@ -176,6 +188,11 @@ The program will return statistics for both the number of intersections and the 
 <section id="ologram-multiple-overlaps">
 <h2>ologram (multiple overlaps)<a class="headerlink" href="#ologram-multiple-overlaps" title="Permalink to this headline">¶</a></h2>
 <p>It is also possible to use the <strong>OLOGRAM-MODL</strong> Multiple Overlap Dictionary Learning) plugin to find multiple overlaps (ie. between n&gt;=2 sets) enrichment (ie. Query+A+B, Query+A+C, …) in order to highlight combinations of genomic regions, such as Transcriptional Regulator complexes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The null hypothesis of the statistical test is:
+- H0: Considering the genomic regions in the query set (–peak-file) and in the reference sets (–more-bed), the regions in one set are located independently of the regions in any another set. They are not assumed to be uniformly distributed, we keep inter-region lengths.</p>
+</div>
 <p>This is done only on custom regions supplied as BEDs supplied with the <cite>–more-bed</cite> argument. In most cases you may use the –no-gtf argument and only pass the regions of interest.</p>
 <p>For statistical reasons, we recommend shuffling across a relevant subsection of the genome only (ie. enhancers only) using –bed-excl or –bed-incl. This ensures the longer combinations have a reasonable chance of being randomly encountered in the shuffles. Conversely, if you do not filter the combinations, keep in mind that the longer ones may be enriched even though they are present only on a few base pairs, because at random they would be even rarer. As such, we recommend focusing comparisons on combinations of similar order (number of sets).</p>
 <p><strong>Exact combinations:</strong> By default, OLOGRAM will compute “inexact” combinations, meaning that when encountering an overlap of [Query + A + B + C] it will still count as an observation of [Query + A + B + …] (meaning “Query + A + B + any other set”). For exact intersections (ie. [Query + A + B + nothing else]), set the –exact flag to True. You will know if the combinations are computed as inexact by the ‘…’ in their name in the result file.</p>
@@ -184,14 +201,14 @@ The program will return statistics for both the number of intersections and the 
 <p><strong>Simple example:</strong></p>
 <p>Comparing the query (-p) against two other BED files, analyzing multiple overlaps.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram -z -w -q -c simple_07.chromInfo -p simple_07_peaks.bed --more-bed simple_07_peaks.1.bed simple_07_peaks.2.bed --more-bed-multiple-overlap
- |-- 13:26-WARNING : Converting to bed6 format (simple_07_peaks.bed).
- |-- 13:26-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
- |-- 13:26-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
- |-- 13:26-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
- |-- 13:26-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
- |-- 13:26-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
- |-- 13:26-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
- |-- 13:26-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
+ |-- 15:06-WARNING : Converting to bed6 format (simple_07_peaks.bed).
+ |-- 15:06-WARNING : Converting to bed6 format (simple_07_peaks.1.bed).
+ |-- 15:06-WARNING : Converting to bed6 format (simple_07_peaks.2.bed).
+ |-- 15:06-WARNING-ologram : Using only 1 threads, but 16 cores are available. Consider changing the --nb-threads parameter.
+ |-- 15:06-WARNING-ologram : --more-bed-labels was not set, automatically defaulting to --more-bed file names.
+ |-- 15:06-WARNING-ologram : [Query + simple_07_peaks_1 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 15:06-WARNING-ologram : [Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ]: there may be a poor fit for this feature. Check fit quality in the results. This is likely due to there being too few regions.
+ |-- 15:06-WARNING-ologram : Computing log(p-val) for a Neg Binom with mean &gt;= var ; var was set to mean+1 ([Query + simple_07_peaks_1 + simple_07_peaks_2 + ... ])
 </pre></div>
 </div>
 <p><strong>Detailed example:</strong></p>
@@ -220,9 +237,8 @@ The program will return statistics for both the number of intersections and the 
 <br>
 <br><p>As the computation of multiple overlaps can be RAM-intensive, if you have a very large amount of candidate genomic feature sets (hundreds) we recommend selecting less candidates among them first by running a pairwise analysis.</p>
 <p><strong>MODL itemset mining algorithm:</strong> By default, OLOGRAM-MODL will compute the enrichment of all n-wise combinations that are encountered in the real data it was passed. This however can add up to 2**N combinations and make the result hard to read. Furthermore, in biological data noise is a real problem and can obscure the relevant combinations. As such, we also give the option to use a custom itemset mining algorithm on the true overlaps to identify interesting combinations. Another possibility is to instead manually pass a text file containg the combinations you want to study</p>
-</section>
 <section id="itemset-mining-details">
-<h2>Itemset mining details<a class="headerlink" href="#itemset-mining-details" title="Permalink to this headline">¶</a></h2>
+<h3>Itemset mining details<a class="headerlink" href="#itemset-mining-details" title="Permalink to this headline">¶</a></h3>
 <p>In broad strokes, the custom itemset algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as –more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).</p>
 <p>Unlike classical association rules mining algorithms, this focuses on mining relevant biological complexes/clusters and correlation groups (item sets). As such, we do not recommend asking for more than 20-50 combinations to keep the running time reasonable and keep the found combinations still relevant.</p>
 <p>As a matrix factorization based algorithm, it is designed to be resistant to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).</p>
@@ -283,9 +299,9 @@ encoded is the encoded version (U) which in our case is used to assess sparsity,
      deduced with our Monte Carlo approach.
 
      The null hypothesis is that the regions of the query (--peak-file) are located  independently of
-     the reference (--inputfile or --more-bed) and do not overlap  more than by chance. We return
-     statistics for both the number of intersections and the total lengths (in basepairs) of all
-     intersections.
+     the reference (--inputfile or --more-bed) and of each other, and do not overlap  more than by
+     chance. We return statistics for both the number of intersections and the total lengths (in
+     basepairs) of all intersections.
 
      For more information, please see the full documentation.
 
@@ -338,7 +354,17 @@ encoded is the encoded version (U) which in our case is used to assess sparsity,
      are so unlikely that they were not encountered in the shuffles even once. In this case, this
      would represent a very large enrichment!  Tangentially, other potential causes of poor fit are:
      the combination is too rare (too few/small regions) and is rarely encountered in the shuffles,
-     or the shuffling was restricted to a too small region and the variance is lower than mean.
+     there are too few regions in the set (&lt;200) or the shuffling was restricted to a too  small
+     region and the variance is lower than mean.
+     *  The Negative Binomial is an approximation, but differences only appear for  very low
+     p-values, and even then order is conserved (if one feature is more  enriched than another,
+     their p-values will be in the correct order, just slightly inflated). An ad-hoc beta fitted
+     p-value has been added instead if  you wish, but it will only be more accurate than Neg Binom
+     if you do &gt;10.000  shufffles at least. Empirical p-val is also accesible.
+     *  Our model rests upon certain assumptions. The null hypothesis can be rejected if any
+     assumption is rejected. The fitting test is the key for that: if the  fitting was good, we can
+     assume the combination is indeed enriched. Admittedly, the fitting test does not test the
+     tails, but shows if the general shape is close enough.
      *  Relatedly, in the output combinations are sorted by their true number of base  pairs by
      default, since combinations that are very rare even in the true data  will likely have high
      enrichment, but be less representative.
@@ -437,6 +463,7 @@ Command-wise optional arguments:
 If you want a matrix of all contiguous elements where at least one set is open, and not just intersections, you may opt to instead use as “query” (bedA) a BED file covering all the chromosomes in the genome (e.g. if your genome has only 2 chromosomes of length 100 each, this “query” file would be “chr1 0 100 n chr2 0 100”).
 To have predictable binning based on length in the final matrix instead of one line per intersection, you may also subdivide fake “query “chr1 0 100” region into bins of, say, 10 bp instead: “chr1 0 10 n chr1 11 20n …”.</p>
 <p>Since the results of MODL only depend on the true intersections and not on the shuffles, you can run also MODL with 1 shuffle or on a manually computed matrix as above to pre-select interesting combinations, and then run the full analysis on many shuffles. We then recommend selecting the combinations that interest you in the resulting tsv file, using MODL’s selection as a starting point and adding or removing some combinations based on your own needs (eg. adding all the highest fold changes, or all particular combinations containing the Transcription Factor X that you are studying).</p>
+</section>
 </section>
 <section id="ologram-merge-stats">
 <h2>ologram_merge_stats<a class="headerlink" href="#ologram-merge-stats" title="Permalink to this headline">¶</a></h2>
@@ -559,8 +586,8 @@ Command-wise optional arguments:
 <section id="ologram-merge-runs">
 <h2>ologram_merge_runs<a class="headerlink" href="#ologram-merge-runs" title="Permalink to this headline">¶</a></h2>
 <p><strong>Description:</strong> Merge several runs of OLOGRAM into a single run, by treating each a “superbatch” of shuffles.</p>
-<p>OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a “batch of batches” and merge and recalculate stats on the merged superbatch automatically using this command.</p>
-<p>Around 100 shuffles is usually enough to robustly fit a Negative Binomial distribution. In terms of precision, a Negative Binomial mean under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways.</p>
+<p>OLOGRAM remembers all intersections occuring inside all minibatches, so as to calculate statistics. If you are using a large number of shuffles and/or very large files, this may cost a lot of RAM. In practice, you will seldom need more than 100-200 shuffles. But optionally, if you require increased precision, you can run OLOGRAM several times, treat each run as a “batch of batches” and merge and recalculate stats on the merged superbatch automatically using this command.</p>
+<p>Around 100-200 shuffles is usually enough to robustly fit a Negative Binomial distribution. In terms of precision, a Negative Binomial mean under 1/100 (meaning this combination was not seen at least once in 100 shuffles) would not mean much anyways.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make several OLOGRAM runs</span>
 <span class="nv">N_RUNS</span> <span class="o">=</span> <span class="m">100</span>
 <span class="k">for</span> i <span class="k">in</span> <span class="o">{</span><span class="m">1</span>..<span class="nv">$N_RUNS</span><span class="o">}</span>
@@ -574,21 +601,30 @@ gtftk ologram_merge_runs --inputfiles <span class="sb">`</span>ls ./results/*.ts
 </div>
 <p>Other commands such as ologram_modl_treeify can now be called on the resulting tsv, which respects the OLOGRAM format.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk ologram_merge_runs -h
-  Usage: gtftk ologram_merge_runs [-i inputfiles [inputfiles ...]] -o output [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
+  Usage: gtftk ologram_merge_runs [-i inputfiles [inputfiles ...]] [-os ori_shuffles] -o output [-h] [-V [verbosity]] [-D] [-C] [-K tmp_dir] [-A] [-L logger_file] [-W write_message_to_file]
 
   Description: 
 
      Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it.
 
-     This treats each run as a &quot;superbatch&quot;.
+     This treats each run as a &quot;superbatch&quot;. The command takes as input the list of  paths of all the
+     results&#39; TSV you wish to merge. It also takes as input the number of shuffles originally
+     performed in the  individual runs (by default, is assumed to be 200).
+
+     Example of command line: gtftk ologram_merge_runs --inputfiles `ls output/ologram_results/*.tsv`
+     --ori-shuffles 200 -o final_result.tsv
 
   Notes:
-     *  Statistics are recalculated by conflating the distributions with a weighting based on the
-     number of runs (see source for the precise formula).
+     *  This implicitly assumes you are combining runs with the *same number* of shuffles in each.
+     *  The fit quality for the Neg. Binoms. will be indicated as &quot;-1&quot; since it cannot be evaluated
+     here.
+     *  On the technical side, statistics are recalculated by conflating the distributions with a
+     weighting  based on the number of runs. See the source code for the precise formula.
 
 Arguments:
  -i, --inputfiles             Complete paths to the OLOGRAM output text files (default: None)
- -o, --output                 Merged output file. (default: None)
+ -os, --ori-shuffles          How many shuffles were performed in the individual runs that will be merged? (default: 200)
+ -o, --output                 Destination path for the merged output file. (default: None)
 
 Command-wise optional arguments:
  -h, --help                   Show this help message and exit.
@@ -608,12 +644,103 @@ Command-wise optional arguments:
 <p>– The goal of the minibatches is to save RAM. You should increase the number of minibatches, instead of their size.</p>
 <p>– If --more-keys is used additional region sets will be tested based on the associated key value. As an example, if --more-keys is set to the ‘gene_biotype’ (a key generally found in ensembl GTF), the region related to ‘protein_coding’, ‘lncRNA’ or any other values for that key will be retrieved merged and tested for enrichment.</p>
 <p>– For statistical reality reasons, with multiple sets the expected overlaps for the longer combinations (A+B+C+D+… when they are all independant) can be very low. As a result, longer combinations tend to be more enriched: this should be kept in mind when comparing enrichment values between combinations of a different order.</p>
-<p>This is especially true when the total genomic coverage of the sets is low. We recommend instead shuffling only across a biologically relevant subsection of the genome (with --bed-incl) : for example, if studying  Transcriptional Regulators, shuffling only on inferred Cis Regulatory Modules or promoters.</p>
+<dl class="simple">
+<dt>This is especially true when the total genomic coverage of the sets is low. We recommend instead shuffling only across a biologically relevant subsection of the genome (with --bed-incl)<span class="classifier">for example, if studying  Transcriptional Regulators, shuffling only on inferred Cis Regulatory Modules or promoters.</span></dt><dd><p>If the shuffling is restricted to a sub-genome, and features outside are discarded. In essence it mostly means switching to a smaller genome. Of course, since the shuffling is done only here, (H_0) becomes ‘… the features are independent and can only be located on the sub-genome’. This bears mentioning. In practice, this means shuffling only across shortened chromosomes.</p>
+</dd>
+</dl>
 <p>Our Negative Binomial model helps alleviate this problem. Even so, if a combination is so rare that it is not encoutered even once in the shuffles, it will have a p-value of NaN. Furthermore, if C is depleted with query but always present with A and B, and A and B are enriched themselves, A+B+C will be enriched.</p>
 <p>– BETA - When using –more-bed (and only that), you can give a list of bed files that should be kept fixated during the shuffles using the –keep-intact-in-shuffling argument.</p>
-<p>– RAM will be the biggest limiting factor. While 100 total shuffles should be enough to fit a Negative Binomial distribution in most cases, if needed try running more batches of fewer shuffles instead of the other way around.</p>
+<p>– RAM will be the biggest limiting factor. While 100 total shuffles should be enough to fit a Negative Binomial distribution in most cases, if needed try running more batches of fewer shuffles instead of the other way around. The alternative is running them independantly and merging them afterwards with <em>ologram_merge_runs</em>.</p>
 <p>– If you have many (30+) BED files in –more-bed, consider running a pairwise analysis first to divide them in groups of 10-20, and study the multiple overlaps within those groups. This is also more likely to be biologically significant, as for example Transcription Factor complexes usually have 2-8 members.</p>
 <p>– We recommend running the ologram_modl_treeify plugin on the resulting tsv file if you use multiple overlaps.</p>
+<p>– Our Negative Binomial model is only an approximation for the underlying true distribution, which is likely close to a Beta Binomial. For instance, the Neg. Binom. approximation fails with too few regions in the sets (at least 1K), and will likely slightly overestimate the p-values in other cases. However, precision is usually good for even very significant p-values, dropping only at the very significant level (&lt;1E-5), hence there is only a very small risk of false positives. Also, even if they are overestimated, the order of p-values is unchanged (as a Neg. Binom. is a special case of Beta) meaning if a combination 1 has a higher Neg. Binom. p-value than combination 2, its true p-value is also likely higher than the p-value of 2.</p>
+<p>The Neg. Binom. is still the better option, as fitting the proper distribution (approximated as Beta) is more difficult. As such, an ad-hoc p-value based on the Beta distribution is given, but it will only better than the Neg. Binom. on massive numbers of shuffles (thousands). We also added the empirical p-value as a new column (ie. number of shuffles in which a value as extreme is observed) if you believe the model to be inadequate.</p>
+<p>– Our model rests upon certain assumptions (ie. exchangeable variables, sufficient nb. of regions, etc.). The null hypothesis can be rejected if any assumption is rejected, or merely because the approximation holds only asymptotically. The fitting test is the key for that: if, when performing the shuffles, it is found that the distribution of S under our shuffling model does not follow a Neg. Binom., it will be said. Then if the hypothesis is rejected (low p-val) but the fitting was good, it is then reasnobale to assume the combination is enriched. Admittedly, the fitting test does not test the tails of the distribution, but it shows if the general shape is close enough.</p>
+</section>
+<hr class="docutils" />
+<section id="ologram-file-structure">
+<h2>OLOGRAM file structure<a class="headerlink" href="#ologram-file-structure" title="Permalink to this headline">¶</a></h2>
+<p>Below is a detailed list of the source code files of OLOGRAM-MODL, with their roles. All paths are relative to the root of the <em>pygtftk</em> Git repository. The “Plugin” group designates plugins that can be called directly from the command line. A file extension of “pyx” designates a Cython file, “py” a Python file, and “cpp” a C++ file.</p>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">OLOGRAM-MODL files.</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 40%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Group</p></th>
+<th class="head"><p>File path</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Plugin</p></td>
+<td><p>pygtftk/plugins/ologram.py</p></td>
+<td><p><em>Root file.</em> Parses the arguments and calls the other functions.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Utility</p></td>
+<td><p>docs/source/ologram.rst</p></td>
+<td><p>Documentation source.</p></td>
+</tr>
+<tr class="row-even"><td><p>Root</p></td>
+<td><p>pygtftk/stats/intersect/overlap_stats_shuffling.py</p></td>
+<td><p><em>Main function</em>. Called directly by the <em>ologram.py</em> plugin. All other functions calls are descended from this one.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Root</p></td>
+<td><p>pygtftk/stats/intersect/overlap_stats_compute.py</p></td>
+<td><p>Functions to compute overlap statistics on (shuffled) region sets.</p></td>
+</tr>
+<tr class="row-even"><td><p>Algorithm</p></td>
+<td><p>pygtftk/stats/intersect/create_shuffles.pyx</p></td>
+<td><p>Shuffle BED files and generate new “fake” BED files.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Algorithm</p></td>
+<td><p>pygtftk/stats/intersect/overlap/overlap_regions.pyx</p></td>
+<td><p>Compute the overlaps between two sets of genomic regions, supporting multiple overlaps.</p></td>
+</tr>
+<tr class="row-even"><td><p>Utility</p></td>
+<td><p>Turn a BED file into a list of intervals.</p></td>
+<td><p>pygtftk/stats/intersect/read_bed/read_bed_as_list.pyx</p></td>
+</tr>
+<tr class="row-odd"><td><p>Utility</p></td>
+<td><p>pygtftk/stats/intersect/read_bed/exclude.cpp</p></td>
+<td><p>Exclude certain regions from a set to create concatenated sub-chromosomes.</p></td>
+</tr>
+<tr class="row-even"><td><p>Utility</p></td>
+<td><p>pygtftk/stats/multiprocessing/multiproc.pyx</p></td>
+<td><p>Helper functions and structures for multiprocessing.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Statistics</p></td>
+<td><p>pygtftk/stats/negbin_fit.py</p></td>
+<td><p>Utility functions relative to the negative binomial distribution, including verifying its good fit.</p></td>
+</tr>
+<tr class="row-even"><td><p>MODL</p></td>
+<td><p>pygtftk/stats/intersect/modl/dict_learning.py</p></td>
+<td><p>Contains the MODL algorithm, an itemset mining algorithm described in this paper.</p></td>
+</tr>
+<tr class="row-odd"><td><p>MODL</p></td>
+<td><p>pygtftk/stats/intersect/modl/subroutines.py</p></td>
+<td><p>Subroutines of the MODL algorithm. Those are pure functions and can be used independently.</p></td>
+</tr>
+<tr class="row-even"><td><p>Utility</p></td>
+<td><p>pygtftk/stats/intersect/modl/tree.py</p></td>
+<td><p>A graph-based representation of combinations of elements.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Plugin</p></td>
+<td><p>pygtftk/plugins/ologram_merge_runs.py</p></td>
+<td><p>Merge a set of OLOGRAM runs into a single run and recalculates statistics based on it.</p></td>
+</tr>
+<tr class="row-even"><td><p>Plugin</p></td>
+<td><p>pygtftk/plugins/ologram_merge_stats.py</p></td>
+<td><p>Merge a set of OLOGRAM outputs calculated on different queries into a single output, preserving labels. Build a heatmap from the results.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Plugin</p></td>
+<td><p>pygtftk/plugins/ologram_modl_treeify.py</p></td>
+<td><p>Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree for easier visualisation.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 
@@ -628,12 +755,15 @@ Command-wise optional arguments:
   <ul>
 <li><a class="reference internal" href="#">Commands from section ‘ologram’</a><ul>
 <li><a class="reference internal" href="#ologram">ologram</a></li>
-<li><a class="reference internal" href="#ologram-multiple-overlaps">ologram (multiple overlaps)</a></li>
+<li><a class="reference internal" href="#ologram-multiple-overlaps">ologram (multiple overlaps)</a><ul>
 <li><a class="reference internal" href="#itemset-mining-details">Itemset mining details</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#ologram-merge-stats">ologram_merge_stats</a></li>
 <li><a class="reference internal" href="#ologram-modl-treeify">ologram_modl_treeify</a></li>
 <li><a class="reference internal" href="#ologram-merge-runs">ologram_merge_runs</a></li>
 <li><a class="reference internal" href="#notes">Notes</a></li>
+<li><a class="reference internal" href="#ologram-file-structure">OLOGRAM file structure</a></li>
 </ul>
 </li>
 </ul>
@@ -680,13 +810,13 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="annotation.html" title="Commands from section ‘annotation’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.4.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘ologram’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Jun 17, 2021.
+      Last updated on Aug 31, 2021.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
   </body>

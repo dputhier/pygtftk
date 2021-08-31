@@ -1,7 +1,11 @@
-import mpmath
 
 from pygtftk.utils import message
 
+
+import mpmath
+import numpy as np
+import scipy
+import scipy.stats
 
 class BetaCalculator:
     r"""
@@ -184,3 +188,116 @@ class BetaCalculator:
         Non-regularized incomplete beta. See betaincreg().
         """
         return self.betaincreg(a, b, x) * self.beta(a, b)
+
+
+
+def fit_beta(obs):
+    r"""
+    Fits a four-parameter Beta distribution to the given list of observations
+    using method-of-moments fitting.
+
+    >>> from scipy.stats import beta
+    >>> import numpy.testing as npt
+    >>> import numpy as np
+    >>> from pygtftk.stats.beta import fit_beta
+    >>> a, b = 1., 2.
+    >>> np.random.seed(seed=42)
+    >>> obs = beta.rvs(a, b, size=10000)  # You need at least 10K for a good estimate (!)
+    >>> ahat, bhat, mhat, chat = fit_beta(obs)
+    >>> npt.assert_allclose((ahat, bhat), (a,b), rtol = 0.05)
+
+    """
+
+    mean = np.mean(obs)
+    var = np.var(obs, ddof = 1)
+    skewness = scipy.stats.skew(obs)
+    kurtosis = scipy.stats.kurtosis(obs) # Note that we use Disher's definition, so it is really 'excess kurtosis', meaning kurtosis-3
+
+    # First, estimate alpha and beta
+    i = kurtosis - skewness**2 +2
+    j = 1.5*skewness**2 - kurtosis
+    nu = 3*i/j
+
+    if skewness == 0:
+        alpha = beta = (1.5*kurtosis +3) / (-kurtosis)
+
+    else:
+        term = 1/np.sqrt(
+            1 + (16*(nu+1))/((nu+2)**2 * skewness**2)
+        )
+
+        if skewness <0:
+            alpha = 0.5*nu*(1+term)
+            beta = 0.5*nu*(1-term)
+        if skewness >0:
+            alpha = 0.5*nu*(1-term)
+            beta = 0.5*nu*(1+term)
+
+    # To estimate the spread = c-a
+    spread = 0.5*np.sqrt(var)*np.sqrt(
+        ((2+nu)**2)*(skewness**2)+16*(1+nu)
+    )
+
+    a = mean - (alpha/nu)*spread
+    c = spread + a
+
+    return alpha, beta, a, c
+
+
+def beta_pval(k, obs,
+            precision=320):
+    r"""
+    P-value for the given critical value against a beta distribution fitted to
+    the given list of observations.
+
+    This is the two-sided p-value : it will return the minimum of the left-sided
+    and right-sided p-value
+
+    :param k: the critical value whose p-value will be calculated
+    :param obs: the list of observations to which the beta distribution will be fitted
+    :param precision: Floating point precision of mpmath. Should be at least 1000  
+
+    >>> from pygtftk.stats.beta import beta_pval
+    >>> from scipy.stats import beta
+    >>> import numpy.testing as npt
+    >>> a, b = 1., 2.
+    >>> np.random.seed(seed=42)
+    >>> obs = beta.rvs(1, 2, size=10000)
+    >>> k = 0.6
+    >>> p = 1 - beta.cdf(k,a,b)
+    >>> phat = beta_pval(k, obs)                        # Test the combined package
+    >>> x = 0.9999
+    >>> cp = beta.cdf(x,a,b)
+    >>> mybetacalc = BetaCalculator()
+    >>> cphat = mybetacalc.betaincreg(a=a, b=b, x=x)    # Test just the p-value
+    >>> npt.assert_allclose(p, phat, rtol=0.1)          # Beta approximation is too imprecise for extreme p-values, however.
+    >>> npt.assert_allclose(float(cp), float(cphat), rtol=0.05)
+    
+    """
+
+    # Floating point precision of mpmath. Should be at least 320.
+    mpmath.mp.dps = precision
+
+    # Fit the distribution parameters
+    alpha, beta, a, c = fit_beta(obs)
+
+    # x is k normalized to be between 0 and 1
+    x = mpmath.mpf((k-a)/(c-a))
+
+    # Sanity checks: x must be between 0 and 1 included, and alpha and beta must be strictly positive
+    alpha = max(1E-320, alpha)
+    beta = max(1E-320, beta)
+    x = max(0,x)
+    x = min(1,x)
+
+    # Custom p-value calculation (see 'beta.py' for details)
+    mybetacalc = BetaCalculator(use_log=True, precision=precision)
+    # For Beta, this is simply the *regularized* incomplete beta function
+    incomplete_beta = mybetacalc.betaincreg(a=alpha, b=beta, x=x)
+
+    # Take the minimum of CDF and SF
+    pval = 1 - (incomplete_beta)
+    twosided_pval = min(pval, 1 - pval)
+
+    # Convert back to Python float and return
+    return float(twosided_pval)
