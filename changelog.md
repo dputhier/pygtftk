@@ -2,6 +2,25 @@
 # Changelog
 
 
+## v1.5.0
+
+### Bug Fixes
+
+* 
+
+### API/CLI Changes
+
+
+### Code changes
+
+* OLOGRAM README has been  updated (add bedtools, graphviz and unzip dependency).
+
+### New Features
+
+
+# Changelog
+
+
 ## v1.4.0
 
 ### Bug Fixes
