@@ -118,7 +118,6 @@ At the moment, the gtftk program has been tested on:
   - Linux (Ubuntu 12.04 and 18.04)
   - OSX (Yosemite, El Capitan, Mojave).
 
-
 Installation
 -------------
 
@@ -146,7 +145,7 @@ This is not the preferred way for installation. Choose conda whenever possible. 
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
     cd pygtftk
-    # Check your Python version (>=3.5,<3.7)
+    # Check your Python version (>=3.8,<3.9)
     pip install -r requirements.txt
     python setup.py install
 
