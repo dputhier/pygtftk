@@ -368,7 +368,7 @@ config_dir = os.path.join(os.path.expanduser("~"),
                           config_dir_hash)
 
 if os.path.exists(config_dir):
-    shutil.rmtree(config_dir)
+    # shutil.rmtree(config_dir)
     sys.stderr.write("Deleting old configuration directory at: " + config_dir + "\n")
 
 # ----------------------------------------------------------------------

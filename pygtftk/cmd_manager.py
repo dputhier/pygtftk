@@ -305,11 +305,14 @@ class GetSysInfo(argparse._StoreTrueAction):
         from pybedtools import __version__ as pybedtools_ver
         from pyBigWig import __version__ as bigwig_ver
         from pygtftk import __path__ as pygtftk_path
+        from pygtftk.cmd_manager import CmdManager
         import subprocess
         from pygtftk.utils import chomp
         info_sys = []
         info_sys += ['\n- pygtftk version : ' + __version__]
-        info_sys += ['- pygtftk path : ' + pygtftk_path[0]]
+        info_sys += ['- pygtftk installation path : ' + pygtftk_path[0]]
+        info_sys += ['- pygtftk config directory : ' + CmdManager.config_dir]
+        info_sys += ['- pygtftk personal plugins : ' + os.path.join(CmdManager.config_dir, 'plugins')]
         info_sys += ['- python version : ' + str(sys.version_info)]
         info_sys += ['- python path : ' + str(sys.prefix)]
         info_sys += ['- pandas version : ' + pandas_ver]
@@ -427,6 +430,11 @@ class CmdManager(object):
                         nargs=0,
                         help="Get the list of plugins.",
                         action=ListPlugins)
+
+    parser.add_argument('-i', '--update-plugins',
+                        nargs=0,
+                        help="Read the ~/.gtftk folder and update the plugin list.",
+                        action=UpdatePlugin)
 
     # -------------------------------------------------------------------------
     # The sub parser
@@ -753,7 +761,7 @@ class CmdManager(object):
         plugins_system = [os.path.join(plugin_dir_base, x) for x in plugins]
 
         plugins = plugins_user + plugins_system
-
+        print(plugins_user)
         for plug in plugins:
             if plug.endswith(".py") and plug != "__init__.py":
 
@@ -798,13 +806,13 @@ class CmdManager(object):
 
         if CmdManager.reload:
 
-            shutil.rmtree(CmdManager.config_dir, ignore_errors=True)
+            # shutil.rmtree(CmdManager.config_dir, ignore_errors=True)
             self.check_config_file()
             self._find_plugins()
             self.dump_plugins()
         else:
             if not os.path.exists(CmdManager.dumped_plugin_path):
-                shutil.rmtree(CmdManager.config_dir, ignore_errors=True)
+                # shutil.rmtree(CmdManager.config_dir, ignore_errors=True)
                 self.check_config_file()
                 self._find_plugins()
                 self.dump_plugins()
