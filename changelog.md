@@ -15,6 +15,8 @@
 
 * OLOGRAM README has been  updated (add bedtools, graphviz and unzip dependency).
 
+* Replace operatorPrecedence with infixNotation when using pyparsing (see #166).
+
 ### New Features
 
 
