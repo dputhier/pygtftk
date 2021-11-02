@@ -761,7 +761,7 @@ class CmdManager(object):
         plugins_system = [os.path.join(plugin_dir_base, x) for x in plugins]
 
         plugins = plugins_user + plugins_system
-        print(plugins_user)
+        
         for plug in plugins:
             if plug.endswith(".py") and plug != "__init__.py":
 
