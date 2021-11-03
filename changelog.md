@@ -1,12 +1,33 @@
 
 # Changelog
 
+## v1.5.1
+
+### Bug Fixes
+
+* Fix "Index.ravel() returning a np.ndarray is deprecated" in pandas.
+
+* Fix pillow requirements (8.4.0). 
+
+* Add requirement for libjpeg-devel installation in build_wheels.sh (pillow requirement).
+
+* Force --no-cache when building docker image for manylinux package.
+
+### API/CLI Changes
+
+
+### Code changes
+
+
+
+### New Features
+
+
 
 ## v1.5.0
 
 ### Bug Fixes
 
-* 
 
 ### API/CLI Changes
 
@@ -18,9 +39,6 @@
 * Replace operatorPrecedence with infixNotation when using pyparsing (see #166).
 
 ### New Features
-
-
-# Changelog
 
 
 ## v1.4.0
