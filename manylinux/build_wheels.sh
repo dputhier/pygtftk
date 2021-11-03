@@ -6,6 +6,7 @@ set -e
 yum install zlib-devel -y
 yum install bzip2-devel -y
 yum install xz xz-devel -y
+yum install -y libjpeg-devel
 
 # Compile wheels
 for PYBIN in $(ls --color=none -d1 /opt/python/*/bin| grep -P "38"); do
