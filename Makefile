@@ -221,7 +221,7 @@ release_pip_unix:
 	cd manylinux                                                ; \
 	docker rmi -f manylinux                                     ; \
 	docker rm -f imanylinux || true  							; \
-	docker build -t manylinux .                                 ; \
+	docker build --no-cache -t manylinux .                                 ; \
 	docker create  -t --name imanylinux  manylinux /bin/bash    ; \
 	docker cp  imanylinux:/tmp/ /tmp                            ; \
 	rm -rf ../wheels                                            ; \
