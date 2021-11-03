@@ -812,7 +812,7 @@ def profile(inputfile=None,
     # handle
     # -------------------------------------------------------------------------
 
-    dm.columns = [x[1] if len(x) > 1 and x[1] != '' else x[0] for x in dm.columns.ravel()]
+    dm.columns = [x[1] if len(x) > 1 and x[1] != '' else x[0] for x in np.array(dm.columns).ravel()]
 
     # -------------------------------------------------------------------------
     #
