@@ -1,22 +1,22 @@
 """A set of useful functions."""
 
 import datetime
+import glob
 import io
+import os
+import random
 import re
+import string
 import sys
 import time
 from collections import defaultdict, OrderedDict
+from distutils.spawn import find_executable
 from subprocess import PIPE
 from subprocess import Popen
-
-import glob
-import os
-import random
-import string
-from distutils.spawn import find_executable
-from pyparsing import Literal, CaselessLiteral, oneOf, nums, Word, Combine, Optional, operatorPrecedence, opAssoc, \
-    Forward, ParseException
 from tempfile import NamedTemporaryFile, mkdtemp
+
+from pyparsing import Literal, CaselessLiteral, oneOf, nums, Word, Combine, Optional, infixNotation, opAssoc, \
+    Forward, ParseException
 
 import pygtftk
 
@@ -1214,9 +1214,9 @@ def check_boolean_exprs(exprs=None, operand=(), send_error=True):
     group_1 = identifier + comparison_operator + value
     group_2 = value + comparison_operator + identifier
     comparison = group_1 | group_2
-    boolean_expr = operatorPrecedence(comparison,
-                                      [(and_operator, 2, opAssoc.LEFT),
-                                       (or_operator, 2, opAssoc.LEFT)])
+    boolean_expr = infixNotation(comparison,
+                                 [(and_operator, 2, opAssoc.LEFT),
+                                  (or_operator, 2, opAssoc.LEFT)])
 
     boolean_expr_par = lparen + boolean_expr + rparen
 

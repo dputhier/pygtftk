@@ -101,6 +101,12 @@ Documentation about OLOGRAM (OverLap Of Genomic Regions Analysis using Monte Car
 
 **NB:** The readthedoc version won't be maintained and will be closed in the near future. This choice was motivated by the impossibility to maintain a dynamic documentation (using sphinx/sphinxcontrib-programoutput) given the computing time provided by readthedoc server.
 
+Note that example dataset are available to test the various subcommands (see `documentation page <https://dputhier.github.io/pygtftk/information.html#get-example>`_).
+
+    gtftk get_example  -h
+    # E.g. to get all file from the 'simple' dataset
+    gtftk get_example -d simple -f "*"
+
 
 System requirements
 --------------------
@@ -112,14 +118,13 @@ At the moment, the gtftk program has been tested on:
   - Linux (Ubuntu 12.04 and 18.04)
   - OSX (Yosemite, El Capitan, Mojave).
 
-
 Installation
 -------------
 
 Installation through conda package building
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Installation through **conda** should be the **preferred install solution**. The pygtftk package and gtftk command line tool require external dependencies with some version constrains.
+Installation through **conda** should be the **preferred install solution**. The pygtftk package and gtftk command line tool require external dependencies (bedtools ">v2.23.1", graphviz, unzip) with some version constrains.
 
 If conda is not available on your system, first install miniconda from the official `web site <http://conda.pydata.org/miniconda.html>`_ and make sure you have bioconda and conda-forge channels set up in the order below. ::
 
@@ -140,7 +145,7 @@ This is not the preferred way for installation. Choose conda whenever possible. 
 
     git clone git@github.com:dputhier/pygtftk.git pygtftk
     cd pygtftk
-    # Check your Python version (>=3.5,<3.7)
+    # Check your Python version (>=3.8,<3.9)
     pip install -r requirements.txt
     python setup.py install
 
