@@ -7,8 +7,8 @@ Maybe you will be interested in helping us in the future by sharing your own com
 Just do the following things to declare a new command named **'print_gtf'**:
 
 - Write a script using the template provided below. This script can be run as a stand-alone script or as a gtftk plugin.
-- For testing you may add this script to the pygtftk personal plugin directorie (use gtftk -s to get the exact path).
-- Call *gtftk -i* to update the plugin list. A new command should be available upon *gtftk -h*.
+- Add this script to the gtftk/plugins or ~/.gtftk/plugins/ directories.
+- Call *gtftk -u* to update the plugin list. A new command should be available upon *gtftk -h*.
 - You can propose new commands by sending us pull requests.
 
 
