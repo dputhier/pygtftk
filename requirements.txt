@@ -15,7 +15,7 @@ pybedtools >= 0.8.1
 pybigwig >= 0.3.17
 pyparsing >=2.2.0
 pyyaml
-pillow >=8.4.0
+pillow >=7.0.0,<=8.3.2
 requests >=2.23.0
 scikit-learn >= 0.24
 scipy >= 1.5.2

@@ -47,9 +47,6 @@ Documentation              |documentation|_
 .. |downloads| image:: https://anaconda.org/bioconda/pygtftk/badges/downloads.svg
 .. _downloads: https://anaconda.org/bioconda/pygtftk
 
-.. |hits| image:: http://hits.dwyl.io/dputhier/pygtftk.svg
-.. _hits: http://hits.dwyl.io/dputhier/pygtftk
-
 .. |reference| image:: https://img.shields.io/reference-yes-green.svg
 .. _reference: http://hits.dwyl.io/dputhier/pygtftk
 
@@ -143,7 +140,7 @@ Installation through setup.py
 
 This is not the preferred way for installation. Choose conda whenever possible. We have observed several issues with dependencies that still need to be fixed. ::
 
-    git clone git@github.com:dputhier/pygtftk.git pygtftk
+    git clone http://git@github.com:dputhier/pygtftk.git pygtftk
     cd pygtftk
     # Check your Python version (>=3.8,<3.9)
     pip install -r requirements.txt
