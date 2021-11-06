@@ -10,7 +10,6 @@ Latest conda               |latestconda|
 Downloads                  |downloads|_
 Codacy                     |codacy|_
 Contribution               |contrib|_
-Github hits                |hits|_
 Issues                     |issues|_
 Citing pygtftk             |citing_pygtftk|_
 Citing OLOGRAM             |citing_ologram|_
