@@ -1,13 +1,28 @@
 
 # Changelog
 
+## v1.5.2
+
+### Bug Fixes
+
+* Force pillow version betwwen 7.0.0 and 8.3.2
+
+### API/CLI Changes
+
+
+### Code changes
+
+
+### New Features
+
+
 ## v1.5.1
 
 ### Bug Fixes
 
 * Fix "Index.ravel() returning a np.ndarray is deprecated" in pandas.
 
-* Fix pillow requirements (8.4.0). 
+* Fix pillow requirements (8.4.0).
 
 * Add requirement for libjpeg-devel installation in build_wheels.sh (pillow requirement).
 
@@ -17,7 +32,6 @@
 
 
 ### Code changes
-
 
 
 ### New Features
@@ -59,7 +73,7 @@
 ### New Features
 
 * OLOGRAM now gives the p-value for S as fitted through a Beta distribution. However, Beta distributions are harder to fit, since
-unavoidable small errors in the estimation of the skewness and kurtosis will propagate. In practice it is preferable to approximate this with a Negative Binomial. This will be explained in the manuscript.  
+unavoidable small errors in the estimation of the skewness and kurtosis will propagate. In practice it is preferable to approximate this with a Negative Binomial. This will be explained in the manuscript.
 
 
 ## v1.3.0
@@ -516,8 +530,8 @@ verbosity level.
 ### New Features
 
 *   Added -j/--sort-features to ologram. Controls the feature sorting in
-    barplot diagram. Changed doc accordingly.
-    
+	barplot diagram. Changed doc accordingly.
+
 *   The positional argument 'bigwiglist' in mk_matrix has been replaced by -y.
 
 *   The verbosity argument now must take a value (0-4).
