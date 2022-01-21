@@ -13,6 +13,7 @@ import gc
 import multiprocessing
 import time
 from collections import OrderedDict
+import concurrent.futures as cf
 from concurrent.futures import ProcessPoolExecutor
 
 import numpy as np
@@ -448,10 +449,13 @@ def compute_overlap_stats(bedA, bedsB,
     pool.shutdown() # Release the resources as soon as you are done with those, we won't submit any more jobs to you
 
 
+
     # Transpose the results into all_intersections
     for future in futures:
-        all_intersections += future.result()
-
+        try:
+            all_intersections += future.result()
+        except cf.process.BrokenProcessPool:
+            message('A process in the process pool was terminated abruptly while the future was running or pending. This likely means you ran out of RAM. Try restarting the command with fewer threads or smaller minibatches', type="ERROR")
 
 
 
