@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 """
 This is the doc about the command that will appear when gtftk my_command -h
 is called...
