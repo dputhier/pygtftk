@@ -54,13 +54,13 @@ __url__ = 'https://github.com/dputhier/pygtftk'
 __url_source__ = 'https://github.com/dputhier/pygtftk'
 __url_tracker__ = 'https://github.com/dputhier/pygtftk'
 __keywords__ = 'genomics bioinformatics GTF BED'
-__python_requires__ = '>=3.8,<3.9'
+__python_requires__ = '>=3.9,<3.10'
 __classifiers__ = ("License :: OSI Approved :: MIT License",
                    "Operating System :: MacOS",
                    "Operating System :: POSIX :: Linux",
                    "Development Status :: 4 - Beta",
                    "Environment :: Console",
-                   "Programming Language :: Python :: 3.8",
+                   "Programming Language :: Python :: 3.9",
                    "Intended Audience :: Science/Research",
                    "Natural Language :: English",
                    "Topic :: Scientific/Engineering :: Bio-Informatics",
