@@ -84,6 +84,9 @@ target/
 # VSCode
 .vscode
 
+# PyCharm
+.idea
+
 # pyenv
 .python-version
 
