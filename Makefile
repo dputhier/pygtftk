@@ -237,10 +237,10 @@ release_pip_osx:
 	@ echo "# Creating osx compliant package (pip)          #"
 	@ echo "#-----------------------------------------------#"
 	@ mkdir -p wheels
-	@ conda create -n  python_dev_38 python=3.8 -y; \
-	conda activate python_dev_38                          ; \
+	@ conda create -n  python_dev_39 python=3.9 -y; \
+	conda activate python_dev_39                          ; \
 	pip install -r requirements.txt ; \
-	rm -rf dist build; python3.8 setup.py bdist_wheel             ; \
+	rm -rf dist build; python3.9 setup.py bdist_wheel             ; \
 	cp dist/*whl wheels                                          ; \
 	rm -rf dist build
 

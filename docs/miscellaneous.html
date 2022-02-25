@@ -17,7 +17,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Commands from section ‘miscellaneous’ &#8212; gtftk 1.5.3 documentation</title>
+    <title>Commands from section ‘miscellaneous’ &#8212; gtftk 1.6.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="coverage.html" title="Commands from section ‘coverage’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.6.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘miscellaneous’</a></li> 
       </ul>
     </div>  
@@ -69,13 +69,13 @@
 <p><strong>Description:</strong> Returns a list of gene matched for expression based on reference values. Based on a reference gene list (or more generally IDs) this command tries to extract a set of other genes/IDs matched for signal/expression. The –reference-gene-file contains the list of reference IDs while the –inputfile contains a tuple gene/signal for all genes.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ gtftk control_list -i mini_real_counts_ENCFF630HEX.tsv -r mini_real_control_1.txt -D -V 2 -s -l -p 1 -ju -if example_13.png -pf png
- |-- 15:53-INFO-control_list : 0 duplicate lines have been deleted in reference file.
- |-- 15:53-INFO-control_list : Found 50 genes of the reference in the provided signal file
- |-- 15:53-INFO-control_list : All reference genes were found.
- |-- 15:53-INFO-control_list : Searching for genes with matched signal.
- |-- 15:53-INFO-control_list : Preparing a dataframe for plotting.
- |-- 15:53-INFO-control_list : Saving diagram to file : example_13.png
- |-- 15:53-INFO-control_list : Be patient. This may be long for large datasets.
+ |-- 0:20-INFO-control_list : 0 duplicate lines have been deleted in reference file.
+ |-- 0:20-INFO-control_list : Found 50 genes of the reference in the provided signal file
+ |-- 0:20-INFO-control_list : All reference genes were found.
+ |-- 0:20-INFO-control_list : Searching for genes with matched signal.
+ |-- 0:20-INFO-control_list : Preparing a dataframe for plotting.
+ |-- 0:20-INFO-control_list : Saving diagram to file : example_13.png
+ |-- 0:20-INFO-control_list : Be patient. This may be long for large datasets.
 </pre></div>
 </div>
 <a class="reference external image-reference" href="_static/example_13.png"><img alt="_images/example_13.png" src="_images/example_13.png" /></a>
@@ -184,8 +184,9 @@ Command-wise optional arguments:
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Commands from section ‘miscellaneous’</a><ul>
 <li><a class="reference internal" href="#control-list">control_list</a></li>
 <li><a class="reference internal" href="#col-from-tab">col_from_tab</a></li>
@@ -193,12 +194,17 @@ Command-wise optional arguments:
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="coverage.html"
-                        title="previous chapter">Commands from section ‘coverage’</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="api.html"
-                        title="next chapter">Help on Python package (pygtftk)</a></p>
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="coverage.html"
+                          title="previous chapter">Commands from section ‘coverage’</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="api.html"
+                          title="next chapter">Help on Python package (pygtftk)</a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -210,7 +216,7 @@ Command-wise optional arguments:
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -235,14 +241,14 @@ Command-wise optional arguments:
         <li class="right" >
           <a href="coverage.html" title="Commands from section ‘coverage’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.6.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Commands from section ‘miscellaneous’</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Nov 06, 2021.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+      Last updated on Feb 25, 2022.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
     </div>
   </body>
 </html>
