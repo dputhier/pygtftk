@@ -1,6 +1,22 @@
 
 # Changelog
 
+## v1.6.1
+
+### Bug Fixes
+
+
+### API/CLI Changes
+
+* Fix #174.
+
+* Fix #173.
+
+### Code changes
+
+### New Features
+
+
 ## v1.6.0
 
 ### Bug Fixes
