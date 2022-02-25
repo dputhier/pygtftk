@@ -5,10 +5,10 @@ In this section we will require the following datasets:
 
 
 .. command-output:: gtftk get_example -q -d mini_real -f '*'
-	:shell:
+    :shell:
 
 .. command-output:: gtftk get_example -q -d simple -f '*'
-	:shell:
+    :shell:
 
 
 control_list
@@ -20,7 +20,7 @@ control_list
 **Example:**
 
 .. command-output:: gtftk control_list -i mini_real_counts_ENCFF630HEX.tsv -r mini_real_control_1.txt -D -V 2 -s -l -p 1 -ju -if example_13.png -pf png
-	:shell:
+    :shell:
 
 
 .. image:: _static/example_13.png
@@ -30,7 +30,7 @@ control_list
 **Arguments:**
 
 .. command-output:: gtftk control_list -h
-	:shell:
+    :shell:
 
 
 col_from_tab
@@ -42,10 +42,14 @@ col_from_tab
 **Example:**
 
 .. command-output:: gtftk select_by_key -t -i simple.gtf | gtftk tabulate -k '*' -x | gtftk col_from_tab -c transcript_id,gene_id
-	:shell:
+    :shell:
 
+Here we select a set of columns and add a new column with name 'bla' and content 'toto'. The output field separator is set to ",".
+
+.. command-output:: gtftk select_by_key -t -i simple.gtf | gtftk tabulate -k '*' -x | gtftk col_from_tab -c transcript_id,gene_id -m bla:toto -r ","
+    :shell:
 
 **Arguments:**
 
 .. command-output:: gtftk col_from_tab -h
-	:shell:
+    :shell:
