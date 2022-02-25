@@ -59,6 +59,12 @@ def compute_true_intersection(bedA, bedsB):
     beds = tuple([bedA] + bedsB)  # Process all beds at once
     all_chrom = set([line[0] for line in bedA])  # Work only on all chromosomes of bedA
 
+
+    # Sanity check: if all_chrom is an empty list, throw an error
+    if not all_chrom:
+        msg = "Trying to call `find_intersection` with an empty `all_chrom`. This likely means there are no common chromosomes between your query and reference sets, or that one of the query or references is empty."
+        message(msg, type="ERROR")
+
     true_intersection = oc.find_intersection(beds, all_chrom, return_flags=True)
 
     return true_intersection
@@ -1210,7 +1216,11 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
     ## Transpose the results into `mappings`
     mappings = list()
     for future in futures:
-        mappings.append(future.result())
+
+        try:
+            mappings.append(future.result())
+        except cf.process.BrokenProcessPool:
+            message('A process in the process pool was terminated abruptly while the future was running or pending. This likely means you ran out of RAM. Try restarting the command with fewer threads or smaller minibatches', type="ERROR")
  
     # Unlist mappings
     mappings = [mapping for sublist in mappings for mapping in sublist]

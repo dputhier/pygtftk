@@ -17,7 +17,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <title>Help on Python package (pygtftk) &#8212; gtftk 1.5.3 documentation</title>
+    <title>Help on Python package (pygtftk) &#8212; gtftk 1.6.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.6.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Help on Python package (pygtftk)</a></li> 
       </ul>
     </div>  
@@ -70,7 +70,7 @@
 </div></blockquote>
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.gtf_interface.GTF">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.gtf_interface.</span></span><span class="sig-name descname"><span class="pre">GTF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_ensembl_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.gtf_interface.</span></span><span class="sig-name descname"><span class="pre">GTF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_ensembl_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.gtf_interface.GTF" title="Permalink to this definition">¶</a></dt>
 <dd><p>An interface to a GTF file. This object returns a GTF, TAB
 or FASTA object.</p>
 <dl class="py method">
@@ -1535,7 +1535,7 @@ using select_by_key.</p>
 <p>Class declaration of the FASTA object (may be returned by GTF object methods).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.fasta_interface.FASTA">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.fasta_interface.</span></span><span class="sig-name descname"><span class="pre">FASTA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intron</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rev_comp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.fasta_interface.FASTA" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.fasta_interface.</span></span><span class="sig-name descname"><span class="pre">FASTA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intron</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rev_comp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.fasta_interface.FASTA" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class representation of a fasta file connection. A end product
 from a GTF object.</p>
 <dl class="py method">
@@ -1595,7 +1595,7 @@ from a GTF object.</p>
 <p>Class declaration of the TAB object (may be returned by a GTF instance).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.tab_interface.TAB">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.tab_interface.</span></span><span class="sig-name descname"><span class="pre">TAB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.tab_interface.</span></span><span class="sig-name descname"><span class="pre">TAB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.tab_interface.TAB" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class representation of a tabulated matrix. An end product
 from a GTF object.</p>
 <dl class="py method">
@@ -1715,7 +1715,7 @@ returned respectively:</p>
 </div></blockquote>
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.Line.FastaSequence">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.Line.</span></span><span class="sig-name descname"><span class="pre">FastaSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'transcript'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rev_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FastaSequence" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.Line.</span></span><span class="sig-name descname"><span class="pre">FastaSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'transcript'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rev_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FastaSequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class representating a fasta file line.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pygtftk.Line.FastaSequence.format">
@@ -1757,7 +1757,7 @@ returned respectively:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.Line.Feature">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.Line.</span></span><span class="sig-name descname"><span class="pre">Feature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.Line.</span></span><span class="sig-name descname"><span class="pre">Feature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class representation of a genomic feature. Corresponds to a GTF line.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pygtftk.Line.Feature.add_attr">
@@ -1838,7 +1838,7 @@ to write to a gtf file.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pygtftk.Line.Feature.from_list">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.from_list" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.Feature.from_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a Feature object from a list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Params alist</dt>
@@ -2142,7 +2142,7 @@ key/values to add as a name.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.Line.FieldSet">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.Line.</span></span><span class="sig-name descname"><span class="pre">FieldSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FieldSet" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.Line.</span></span><span class="sig-name descname"><span class="pre">FieldSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.Line.FieldSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class representating a set of Fields obtained from a splitted line.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pygtftk.Line.FieldSet.format">
@@ -2203,7 +2203,7 @@ this one.</p>
 <p>Author : Quentin Ferré &lt;<a class="reference external" href="mailto:quentin&#46;q&#46;ferre&#37;&#52;&#48;gmail&#46;com">quentin<span>&#46;</span>q<span>&#46;</span>ferre<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.overlap_stats_shuffling.ComputingIntersectionPartial">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_shuffling.</span></span><span class="sig-name descname"><span class="pre">ComputingIntersectionPartial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Lr1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Li1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lrs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_chrom1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_chrom2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_markov_shuffling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_intact_in_shuffling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_threads</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.ComputingIntersectionPartial" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_shuffling.</span></span><span class="sig-name descname"><span class="pre">ComputingIntersectionPartial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Lr1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Li1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lrs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_chrom1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_chrom2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_markov_shuffling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_intact_in_shuffling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_threads</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_shuffling.ComputingIntersectionPartial" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is a replacer for a wrapper for compute_all_intersections_minibatch, needed for multiprocessing below
 This was needed because the argument that changes in multiproessing in minibatch_len, and it’s not the leftmost argument, 
 so functools.partial cannot be used</p>
@@ -2280,7 +2280,7 @@ Called by overap_stats_shuffling.compute_overlap_stats(), hence the name.</p>
 <p>Author : Quentin Ferré &lt;<a class="reference external" href="mailto:quentin&#46;q&#46;ferre&#37;&#52;&#48;gmail&#46;com">quentin<span>&#46;</span>q<span>&#46;</span>ferre<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.overlap_stats_compute.CombinationExactMapping">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">CombinationExactMapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_combis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.CombinationExactMapping" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">CombinationExactMapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_combis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.CombinationExactMapping" title="Permalink to this definition">¶</a></dt>
 <dd><p>A wrapper containing a list of all combinations and a vector giving, for each
 combination, the ID of all other combinations that are a match for it.</p>
 <p>For example, if working with inexact combinations, [1,1,1] is a match when querying [1,1,0]</p>
@@ -2297,13 +2297,13 @@ combination, the ID of all other combinations that are a match for it.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.overlap_stats_compute.Counter">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">Counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.Counter" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">Counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.Counter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multiprocessing-compatible counter that can be incremented.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">DictionaryWithIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data</span></em>, <em class="sig-param"><span class="pre">index</span></em>, <em class="sig-param"><span class="pre">data_default_factory=&lt;function</span> <span class="pre">DictionaryWithIndex.&lt;lambda&gt;&gt;</span></em>, <em class="sig-param"><span class="pre">will_store_an_all_overlaps_object=False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">DictionaryWithIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_default_factory=&lt;function</span> <span class="pre">DictionaryWithIndex.&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">will_store_an_all_overlaps_object=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.DictionaryWithIndex" title="Permalink to this definition">¶</a></dt>
 <dd><p>A wrapper allowing to query a dictionary so that an item can also return values from several other items.
 The dictionary will return concatenated values from several keys when asked for.</p>
 <p>It will return values from itself PLUS everything in the index</p>
@@ -2331,7 +2331,7 @@ Simply concatenate the lists.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.overlap_stats_compute.HashableArray">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">HashableArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.HashableArray" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">HashableArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.HashableArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>A subclass of NumPy’s ndarray that can be used as dictionary key.
 A dictionary of such arrays will consume less RAM than a tuple, especially when pickled.</p>
 <p>This is however immutable, and should not be used on arrays that you intend to modify.</p>
@@ -2341,7 +2341,7 @@ Use a tuple if that is unacceptable.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.overlap_stats_compute.SparseListOfLists">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">SparseListOfLists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starting_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.SparseListOfLists" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.overlap_stats_compute.</span></span><span class="sig-name descname"><span class="pre">SparseListOfLists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starting_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.overlap_stats_compute.SparseListOfLists" title="Permalink to this definition">¶</a></dt>
 <dd><dl>
 <dt>Container for a list of this type :</dt><dd><dl class="simple">
 <dt>[</dt><dd><p>[elements], [], [], [], [other_elements], [], [], …</p>
@@ -2593,7 +2593,7 @@ or equal to the variance, set the variance to mean + epsilon and send a warning<
 <span id="the-pygtftk-stats-beta-module"></span><h2>The pygtftk.stats.beta module<a class="headerlink" href="#module-pygtftk.stats.beta" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.stats.beta.BetaCalculator">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.beta.</span></span><span class="sig-name descname"><span class="pre">BetaCalculator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">320</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itermax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Unknown'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.BetaCalculator" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.beta.</span></span><span class="sig-name descname"><span class="pre">BetaCalculator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">320</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itermax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Unknown'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.beta.BetaCalculator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computing the beta distribution in Python using mpmath.</p>
 <p>Using routines from the GNU Scientific Library (<cite>beta_inc.c</cite>):
 &lt;Copyright (C) 2007 Brian Gough and Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman&gt;</p>
@@ -2717,7 +2717,7 @@ For example, (1,0,0) is a parent of (1,0,1) but not the other way around.</p>
 <p>Author : Quentin Ferré &lt;<a class="reference external" href="mailto:quentin&#46;q&#46;ferre&#37;&#52;&#48;gmail&#46;com">quentin<span>&#46;</span>q<span>&#46;</span>ferre<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.modl.tree.Library">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.modl.tree.</span></span><span class="sig-name descname"><span class="pre">Library</span></span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.Library" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.modl.tree.</span></span><span class="sig-name descname"><span class="pre">Library</span></span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.Library" title="Permalink to this definition">¶</a></dt>
 <dd><p>A tree (or more accurately, graph) based representation of combinations of elements.</p>
 <p>Combinations are represented as tuples. For example, if the possible elements are {A,B,C,D}, the combination A+C is represented as (1,0,1,0).</p>
 <p>Nodes will be assigned under the following principle : each node X that contains all flags of a node Y.
@@ -2750,14 +2750,14 @@ So the build_nodes_for_words function can also take a pandas dataframe that is a
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.modl.tree.Node">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.modl.tree.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">word</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.Node" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.modl.tree.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">word</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.Node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a node of the tree. Each node is a word. 
 A word must be a tuple such as (1,1,0,0) meaning A+B if the possibilities are {A,B,C,D}</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.modl.tree.apply_recursively_to_all_nodes">
-<span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.modl.tree.</span></span><span class="sig-name descname"><span class="pre">apply_recursively_to_all_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">node</span></em>, <em class="sig-param"><span class="pre">function</span></em>, <em class="sig-param"><span class="pre">global_results</span></em>, <em class="sig-param"><span class="pre">no_duplicates=True</span></em>, <em class="sig-param"><span class="pre">stop_condition=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.apply_recursively_to_all_nodes" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.modl.tree.</span></span><span class="sig-name descname"><span class="pre">apply_recursively_to_all_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_duplicates=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_condition=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.tree.apply_recursively_to_all_nodes" title="Permalink to this definition">¶</a></dt>
 <dd><p>General utility function to recursively apply a function to all nodes of a tree.
 Also pass a global_results dict to be added to.</p>
 <p>Since nodes can have several parents, by default this will remember which nodes
@@ -2823,7 +2823,7 @@ rules mining algorithms, this focuses on mining complexes and correlation groups
 <p>This code is available under the GNU GPL license.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pygtftk.stats.intersect.modl.dict_learning.Modl">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.modl.dict_learning.</span></span><span class="sig-name descname"><span class="pre">Modl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flags_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_overlap_target_combi_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_overlap_max_number_of_combinations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_1_factor_allowance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smother</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_words</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_2_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discretization_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_1_alphas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.Modl" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.stats.intersect.modl.dict_learning.</span></span><span class="sig-name descname"><span class="pre">Modl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flags_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_overlap_target_combi_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_overlap_max_number_of_combinations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_1_factor_allowance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smother</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_words</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_2_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discretization_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_1_alphas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.stats.intersect.modl.dict_learning.Modl" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class encapsulates the MODL approach :</p>
 <p>Takes as input a matrix of flags, with one flag per intersection,
 and returns the list of interesting combis.</p>
@@ -2986,12 +2986,12 @@ Sort in lexicographic order</p>
 <p>A set of useful functions.</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="pygtftk.utils.GTFtkError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.utils.</span></span><span class="sig-name descname"><span class="pre">GTFtkError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.GTFtkError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.utils.</span></span><span class="sig-name descname"><span class="pre">GTFtkError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pygtftk.utils.GTFtkError" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pygtftk.utils.GTFtkInteractiveError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">pygtftk.utils.</span></span><span class="sig-name descname"><span class="pre">GTFtkInteractiveError</span></span><a class="headerlink" href="#pygtftk.utils.GTFtkInteractiveError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pygtftk.utils.</span></span><span class="sig-name descname"><span class="pre">GTFtkInteractiveError</span></span><a class="headerlink" href="#pygtftk.utils.GTFtkInteractiveError" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -3676,8 +3676,9 @@ are found at the beginning or end of the string, they are deleted.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Help on Python package (pygtftk)</a><ul>
 <li><a class="reference internal" href="#module-pygtftk.gtf_interface">The GTF class</a></li>
 <li><a class="reference internal" href="#module-pygtftk.fasta_interface">The FASTA class</a></li>
@@ -3695,12 +3696,17 @@ are found at the beginning or end of the string, they are deleted.</p>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="miscellaneous.html"
-                        title="previous chapter">Commands from section ‘miscellaneous’</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="bwig_coverage.html"
-                        title="next chapter">The pygtftk.bwig.bw_coverage module</a></p>
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="miscellaneous.html"
+                          title="previous chapter">Commands from section ‘miscellaneous’</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="bwig_coverage.html"
+                          title="next chapter">The pygtftk.bwig.bw_coverage module</a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -3712,7 +3718,7 @@ are found at the beginning or end of the string, they are deleted.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -3737,14 +3743,14 @@ are found at the beginning or end of the string, they are deleted.</p>
         <li class="right" >
           <a href="miscellaneous.html" title="Commands from section ‘miscellaneous’"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">gtftk 1.6.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Help on Python package (pygtftk)</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, F. Lopez and D. Puthier.
-      Last updated on Nov 06, 2021.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+      Last updated on Feb 25, 2022.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
     </div>
   </body>
 </html>
