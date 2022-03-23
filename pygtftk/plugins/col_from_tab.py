@@ -48,9 +48,21 @@ def make_parser():
                             action="store_true")
 
     parser_grp.add_argument('-s', '--separator',
-                            help="The separator to be used for separating name elements (see -n).",
+                            help="The separator of input columns.",
                             default="\t",
                             metavar="SEP",
+                            type=str)
+
+    parser_grp.add_argument('-r', '--output-separator',
+                            help="The separator to be used for separating output columns.",
+                            default="\t",
+                            metavar="OUT_SEP",
+                            type=str)
+
+    parser_grp.add_argument('-m', '--more-col',
+                            help="Add a named (last) column with a given value (e.g. -m col_name:value).",
+                            default=None,
+                            metavar="MORE_COL",
                             type=str)
 
     parser_grp.add_argument('-H', '--no-header',
@@ -67,7 +79,9 @@ def col_from_tab(inputfile=None,
                  invert_match=False,
                  no_header=False,
                  unique=False,
-                 separator=None):
+                 more_col=None,
+                 output_separator="\t",
+                 separator="\t"):
     """Select columns from a tabulated file based on their names."""
 
     line_set = dict()
@@ -76,6 +90,11 @@ def col_from_tab(inputfile=None,
         columns = columns.split(",")
     else:
         columns = [columns]
+
+    if more_col:
+        more_col_name, more_col_value = more_col.split(":")
+    else:
+        more_col_name = more_col_value = None
 
     for p, line in enumerate(inputfile):
 
@@ -113,10 +132,16 @@ def col_from_tab(inputfile=None,
                                 type="ERROR")
 
             if not no_header:
-                out = separator.join([line[k] for k in pos_list])
-                write_properly(out, outputfile)
+                header_list = [line[k] for k in pos_list]
+                if more_col:
+                    header_list += [more_col_name]
+                header = output_separator.join(header_list)
+                write_properly(header, outputfile)
         else:
-            out = separator.join([line[k] for k in pos_list])
+            out_list = [line[k] for k in pos_list]
+            if more_col:
+                out_list += [more_col_value]
+            out = output_separator.join(out_list)
             if unique:
                 if out not in line_set:
                     write_properly(out, outputfile)
@@ -156,7 +181,30 @@ else:
      result=`gtftk get_example | gtftk tabulate -k all -x |gtftk col_from_tab -c start,end,seqid| awk 'BEGIN{FS=OFS="\\t"}{print NF}'| sort | uniq`
       [ "$result" -eq 3 ]
     }
+
+    #col_from_tab
+    @test "col_from_tab_4" {
+     result=`gtftk get_example | gtftk tabulate -k all -x  |  gtftk col_from_tab -c feature,start,end -m "bla:toto"| cut -f 4 | head -n 1`
+      [ "$result" = "bla" ]
+    }
+
+    #col_from_tab
+    @test "col_from_tab_5" {
+     result=`gtftk get_example | gtftk tabulate -k all -x  |  gtftk col_from_tab -n -c feature,start,end -m "bla:toto"| cut -f 10| tail -n 1`
+      [ "$result" = "toto" ]
+    }       
     
+    #col_from_tab
+    @test "col_from_tab_6" {
+     result=`gtftk get_example | gtftk tabulate -k all -x  |  gtftk col_from_tab -n -c feature,start,end -m "bla:toto" -r "|" | head -n 1`
+      [ "$result" = "seqid|source|score|strand|phase|gene_id|transcript_id|exon_id|ccds_id|bla" ]
+    }           
+
+    #col_from_tab
+    @test "col_from_tab_7" {
+     result=`gtftk get_example | gtftk tabulate -k all -x  |  gtftk col_from_tab -n -c feature,start,end -m "bla:toto" -r "|" | tail -n 1`
+      [ "$result" = "chr1|gtftk|.|+|.|G0010|G0010T001|?|CDS_G0010T001|toto" ]
+    }   
     """
     from pygtftk.cmd_object import CmdObject
 
