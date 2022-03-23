@@ -1,2 +1,2 @@
-__base_version__='1.6.0'
-__version__='1.6.0'
+__base_version__='1.6.1'
+__version__='1.6.1'

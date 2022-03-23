@@ -1,6 +1,37 @@
 
 # Changelog
 
+## v1.6.1
+
+### Bug Fixes
+
+
+### API/CLI Changes
+
+* Fix #174.
+
+* Fix #173.
+
+### Code changes
+
+### New Features
+
+
+## v1.6.0
+
+### Bug Fixes
+
+
+### API/CLI Changes
+
+* Pygtftk now depends on Python 3.9.
+
+### Code changes
+
+
+### New Features
+
+
 ## v1.5.2
 
 ### Bug Fixes
