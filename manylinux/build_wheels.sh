@@ -7,11 +7,14 @@ yum install zlib-devel -y
 yum install bzip2-devel -y
 yum install xz xz-devel -y
 yum install -y libjpeg-devel
+yum install -y openblas
+yum install -y openblas-devel
 
 # Compile wheels
-for PYBIN in $(ls --color=none -d1 /opt/python/*/bin| grep -P "38"); do
+for PYBIN in $(ls --color=none -d1 /opt/python/*/bin| grep -P "39"); do
     echo "${PYBIN}"
     echo ""
+    "${PYBIN}/python3" -m pip install --upgrade pip
     "${PYBIN}/pip" install -U pip
     "${PYBIN}/pip" install numpy>=1.10.0
     "${PYBIN}/pip" install cython
