@@ -1,4 +1,4 @@
-==================        =================
+=================        =================
 Pip package                |Pippackage|_
 Bioconda package           |bioconda|_
 License                    |license|_
@@ -68,7 +68,7 @@ Documentation              |documentation|_
 Python GTF toolkit (pygtftk)
 =============================
 
-The **Python GTF toolkit (pygtftk) package** is intended to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python  >=3.8,<3.9 and relies on **libgtftk**, a library of functions **written in C**.
+The **Python GTF toolkit (pygtftk) package** is intended to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python 3.9 and relies on **libgtftk**, a library of functions **written in C**.
 
 The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to **filter, convert, or extract data from GTF files**.
 
