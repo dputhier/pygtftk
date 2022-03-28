@@ -16,8 +16,8 @@ Citing OLOGRAM             |citing_ologram|_
 Documentation              |documentation|_
 ==================        =================
 
-.. |codacy| image:: https://api.codacy.com/project/badge/Grade/0a977718b4d44992a794cf5ddef7822e
-.. _codacy: https://www.codacy.com/app/dputhier/pygtftk?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dputhier/pygtftk&amp;utm_campaign=Badge_Grade
+.. |codacy| image:: https://app.codacy.com/project/badge/Grade/0e5b6b1af3a84af7a2d57e0465204e7f
+.. _codacy: https://www.codacy.com/gh/dputhier/pygtftk/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dputhier/pygtftk&amp;utm_campaign=Badge_Grade
 
 .. |bioconda| image:: https://anaconda.org/bioconda/pygtftk/badges/version.svg
 .. _bioconda: https://anaconda.org/bioconda/pygtftk
