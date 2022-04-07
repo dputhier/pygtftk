@@ -3,7 +3,7 @@
 This is the doc about the command that will appear when gtftk my_command -h
 is called...
 """
-
+import os
 import sys
 import argparse
 from pygtftk.cmd_object import CmdObject
@@ -48,8 +48,7 @@ def make_parser():
                            default=sys.stdout,
                            metavar="GTF",
                            type=arg_formatter.FormattedFile(mode='w', file_ext=('gtf')))
-
-    return parser
+   return parser
 
 #-------------------------------------------------------------------------
 # Now we declare a main function, as would be done
@@ -82,6 +81,14 @@ if __name__ == '__main__':
     message("I am in main")
     main()
 else:
+    test = """
+
+       # coverage: load dataset
+       @test "coverage_0" {
+        result=`gtftk get_example -f '*' -d simple`
+         [ "$result" = "" ]
+       }  
+    """
 
     # Just declare a new command object
     # That will call the command manager.
@@ -96,4 +103,5 @@ else:
                     fun=os.path.abspath(__file__),
                     group="ologram",
                     desc=__doc__,
-                    notes=__notes__)
+                    notes=__notes__,
+                    test=test)
