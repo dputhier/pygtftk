@@ -1,10 +1,11 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
 import numpy as np
 import pandas
 import pandas as pd
 import plotly.express as px
+import plotly.io as pio
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output
 
 from pygtftk.utils import sort_2_lists
@@ -19,11 +20,16 @@ coord_flip = False
 feature_order = None
 only_those_combis = None
 
+# Diagram template
+###################
+pio.templates.default = "ggplot2"
+
 ####################################################################################################
 # loading table
 #####################################################################################################
 
-d = pd.read_csv("~/Documents/projet_bioinfo/pygtftk/ologram_output/00_ologram_stats.tsv", sep="\t", header=0)
+d = pd.read_csv("/Users/puthier/Documents/git/project_dev/pygtftk/pygtftk/data/hg38_chr1/H3K36me3_ologram_stats.tsv",
+                sep="\t", header=0)
 
 d["feature_type"] = [x.replace(":", "\n") for x in d["feature_type"]]
 
@@ -73,11 +79,11 @@ text_s = dms.loc[data_ni_s.index, 'summed_bp_overlaps_pvalue']
 
 def format_p_value(x):
     if x == 0.0:
-        r = '1e-320'  # If the p-value is ~0 (precision limit), say so
+        r = 'p<1e-320'  # If the p-value is ~0 (precision limit), say so
     elif x == -1:
-        r = 'NA'  # If the p-value was -1, we write 'Not applicable'
+        r = 'p=NA'  # If the p-value was -1, we write 'Not applicable'
     else:
-        r = '' + '{0:.2g}'.format(x)  # Add 'p=' before and format the p value
+        r = '' + 'p={0:.2g}'.format(x)  # Add 'p=' before and format the p value
     return r
 
 
@@ -124,14 +130,14 @@ dmm_n = dmm_n.assign(Neg_binom=dms['nb_intersections_negbinom_fit_quality'])
 
 dmm = dmm_n.append(dmm_s)
 dmm['Pval_2'] = dmm['Pval_2'].astype('string')
-print(dmm.dtypes)
+# print(dmm.dtypes)
 # Order the categories in order to the p-value
 ###############################################
 
 dmm = dmm.sort_values(by='Pval_1')
 # dmm_2 = dmm
-print(dmm)
-print(dmm.dtypes)
+# print(dmm)
+# print(dmm.dtypes)
 
 # print(dmm.columns.tolist())
 
@@ -227,28 +233,25 @@ volcano_plot.update_traces(textposition='top center')
 
 # volcano_plot.add_annotation(x='log2(FC)', y='-log10(pvalue)', text=name, showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=2)
 
-dcc_dropdown_options = [{"label": x, "value": x} for x in results_stat][0]
 
 app.layout = html.Div([
     dcc.Dropdown(
-        id="dropdown",
-        placeholder='Statistic',
-        options=dcc_dropdown_options,
+        id="statistics_dropdown",
+        options=results_stat,
         value=results_stat[0],
         clearable=False, ),
-    #    dcc.Graph(id="bar-chart"),
     dcc.Checklist(
-        id="checklist",
+        id="Feature_checklist",
         options=[{"label": x, "value": x} for x in feature_type],
-        value=feature_type[3:], ),
+        value=feature_type[0:], ),
     dcc.Input(
         id="bar_text_font_size",
         placeholder='P-value font size',
         type='text',
-        value='', ),
+        value='14', ),
     #    dcc.Graph(id="chek"),
     dcc.Graph(id="barplot"),
-
+    html.Hr(),
     dcc.Graph(id="scatter-plot", figure=volcano_plot),
     html.P("Legend position"),
     dcc.RadioItems(
@@ -311,24 +314,73 @@ app.layout = html.Div([
 #                  color="Type", error_y='Variance', barmode="group", text='Pval_1')
 #    return plot
 
+####################################################################################################
+# Dynamic plots
+#####################################################################################################
 
 @app.callback(
     Output('barplot', "figure"),
-    [Input("dropdown", "value"),
-     Input("checklist", "value"),
+    [Input("statistics_dropdown", "value"),
+     Input("Feature_checklist", "value"),
      Input("bar_text_font_size", "value")])
-def update_graph(dropdown, checklist, bar_text_font_size):
-    print(bar_text_font_size)
-    dmm_3 = dmm[dmm["Statistic"] == dropdown]
-    mask = dmm_3.Feature.isin(checklist)
-    plot = px.bar(dmm_3[mask], x='Feature', y="Value",
-                  color="Type", error_y='Variance', barmode="group", text="Pval_1")
-    if bar_text_font_size:
-        bar_text_font_size = int(bar_text_font_size)
-    else:
-        bar_text_font_size = 9
-    plot.update_traces(textfont_size=bar_text_font_size, textposition='outside')
-    return plot
+def update_graph(statistics_dropdown, checklist, bar_text_font_size):
+    # font size should be an int
+    #############################
+    if bar_text_font_size == '':
+        bar_text_font_size = 14
+    bar_text_font_size = int(bar_text_font_size)
+
+    # Subset the dataset based on user selection
+    # (N or S statistics)
+    ############################################
+    print("Selected Stat:" + statistics_dropdown)
+
+    dmm_displayed = dmm[dmm["Statistic"] == statistics_dropdown]
+
+    # Subset the dataset based on user selection
+    # (the feature to display)
+    ###########################################
+    mask = dmm_displayed.Feature.isin(checklist)
+
+    # Ensure "Shuffled" appear first.
+    # This is important, later, to display the p-values
+    ###################################################
+    dmm_displayed = dmm_displayed.sort_values(by=["Type"])
+
+    # Prepare a bar diagram
+    #######################
+    fig = px.bar(dmm_displayed[mask],
+                 x='Feature',
+                 y="Value",
+                 color="Type",
+                 error_y='Variance',
+                 barmode="group",
+                 title=statistics_dropdown)
+
+    # Add p_value
+    # Not that simple to ensure proper ordering...
+    ###############################################
+    # p-value to display
+    pval_displayed = dmm_displayed[mask][dmm_displayed["Type"] == "Shuffled"]["Pval_2"].tolist()
+    # x coordinates
+    x_coord = range(len(pval_displayed))
+    # y coordinates
+    feature_ordering = dmm_displayed[mask][dmm_displayed["Type"] == "Shuffled"]["Feature"].tolist()
+    y_val_shuffled = dict(zip(feature_ordering,
+                              dmm_displayed[mask][dmm_displayed["Type"] == "Shuffled"]["Value"].tolist()))
+    y_val_true = dict(zip(dmm_displayed[mask][dmm_displayed["Type"] == "True"]["Feature"].tolist(),
+                          dmm_displayed[mask][dmm_displayed["Type"] == "True"]["Value"].tolist()))
+
+    y_coord = [max(y_val_shuffled[x], y_val_true[x]) for x in feature_ordering]
+
+    for x_val, y_val, label in zip(x_coord, y_coord, pval_displayed):
+        fig.add_annotation(x=x_val, y=y_val, text=label, showarrow=False,
+                           font={'size': int(bar_text_font_size), 'color': 'black'},
+                           yshift=20)
+
+    fig.update_xaxes(tickangle=-45)
+
+    return fig
 
 
 app.run_server(debug=True)
