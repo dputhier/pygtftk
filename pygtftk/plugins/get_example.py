@@ -3,12 +3,11 @@
  Print example files including GTF.
 """
 import argparse
+import gc
 import glob
 import os
 import shutil
 import sys
-
-import gc
 
 import pygtftk
 from pygtftk.cmd_object import CmdObject
@@ -50,6 +49,7 @@ def make_parser():
                                 "control_list",
                                 "ologram_1",
                                 "ologram_2",
+                                "ologram_3",
                                 "mini_real_ens"],
                             default="simple",
                             required=False)
