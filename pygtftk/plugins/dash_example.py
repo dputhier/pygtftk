@@ -113,7 +113,7 @@ def loading_and_preparing_ologram_table(table_path):
 
 
 # user_table_path = "/Users/puthier/Documents/git/project_dev/pygtftk/pygtftk/data/hg38_chr1/H3K36me3_ologram_stats.tsv"
-user_table_path = "/Users/puthier/Downloads/SRX1583885-Irf1_ologram_stats.tsv"
+user_table_path = "~/Documents/projet_bioinfo/pygtftk/ologram_output/00_ologram_stats.tsv"
 dmm = loading_and_preparing_ologram_table(user_table_path)
 
 ####################################################################################################
@@ -150,63 +150,63 @@ navbar_barplot = dbc.NavbarSimple(
         dbc.Button(
             "Statistics",
             id="barplot-button-statistics",
-            className="mb-4",
+            className="mb-1",
             color="primary",
             n_clicks=0,
         ),
         dbc.Button(
             "Features",
             id="barplot-button-feature",
-            className="mb-4",
+            className="mb-1",
             color="primary",
             n_clicks=0,
         ),
         dbc.Button(
             "Font size",
             id="barplot-button-fontsize",
-            className="mb-4",
+            className="mb-1",
             color="primary",
             n_clicks=0,
         ),
         dbc.Button(
             "Themes",
             id="barplot-button-theme",
-            className="mb-4",
+            className="mb-1",
             color="primary",
             n_clicks=0,
         ),
         dbc.Button(
             "Thick Angle",
             id="barplot-button-tickangle",
-            className="mb-4",
+            className="mb-1",
             color="primary",
             n_clicks=0,
         ),
         dbc.Button(
             "Colors",
             id="barplot-button-color",
-            className="mb-4",
+            className="mb-1",
             color="primary",
             n_clicks=0,
         ),
         dbc.Button(
             "Orientation",
             id="barplot-button-orientation",
-            className="mb-4",
+            className="mb-1",
             color="primary",
             n_clicks=0,
         ),
         dbc.Button(
             "Ordering",
             id="barplot-button-ordering",
-            className="mb-4",
+            className="mb-1",
             color="primary",
             n_clicks=0,
         ),
         dbc.Button(
             "Clear",
             id="barplot-button-clear",
-            className="mb-4",
+            className="mb-1",
             color="primary",
             n_clicks=0,
         ),
@@ -221,7 +221,8 @@ barplot_statistics_menu = dcc.Dropdown(
     id="barplot_statistics_menu",
     options=available_statistics,
     value=available_statistics[0],
-    clearable=False)
+    clearable=False
+)
 
 barplot_feature_menu = dbc.Checklist(
     id="barplot_feature_menu",
@@ -414,8 +415,6 @@ def update_graph(barplot_statistics_menu,
         y = "Value"
         x = 'Feature'
 
-    print(height)
-    print(width)
     # error_y='Variance',
     fig = px.bar(dmm_displayed[mask],
                  x=x,
@@ -472,6 +471,7 @@ def update_graph(barplot_statistics_menu,
 ####################################################################################################
 # Update functions for Menu / settings
 ####################################################################################################
+
 @app.callback(
     Output("barplot_feature_menu_collapse", "is_open"),
     [Input("barplot-button-feature", "n_clicks")],
