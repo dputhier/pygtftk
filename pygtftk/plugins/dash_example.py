@@ -21,10 +21,10 @@ pio.templates.default = "simple_white"
 
 
 ####################################################################################################
-# Function to load and prepare ologram table
+# Function to load and prepare ologram table (barplot)
 ####################################################################################################
 
-def loading_and_preparing_ologram_table(table_path):
+def loading_and_preparing_ologram_table_barplot(table_path):
     ####################################################################################################
     # loading table
     #####################################################################################################
@@ -114,7 +114,68 @@ def loading_and_preparing_ologram_table(table_path):
 
 # user_table_path = "/Users/puthier/Documents/git/project_dev/pygtftk/pygtftk/data/hg38_chr1/H3K36me3_ologram_stats.tsv"
 user_table_path = "~/Documents/projet_bioinfo/pygtftk/ologram_output/00_ologram_stats.tsv"
-dmm = loading_and_preparing_ologram_table(user_table_path)
+dmm = loading_and_preparing_ologram_table_barplot(user_table_path)
+
+
+####################################################################################################
+# Function to load and prepare ologram table (volcano plot)
+####################################################################################################
+
+def loading_and_preparing_ologram_table_volcano(table_path):
+    ####################################################################################################
+    # loading table
+    #####################################################################################################
+
+    d = pd.read_csv(table_path,
+                    sep="\t", header=0)
+
+    d["feature_type"] = [x.replace(":", "\n") for x in d["feature_type"]]
+
+    # Preparing a dataframe containing N statistics
+    #################################################
+    mat_n = d[['feature_type',
+               'nb_intersections_log2_fold_change',
+               'nb_intersections_pvalue']]
+
+    # Unavailable p-value are discarded
+    ####################################
+
+    mat_n = mat_n.drop(mat_n[mat_n.nb_intersections_pvalue == -1].index)
+
+    # Pval set to 0 are changed to  1e-320
+    mat_n.loc[mat_n['nb_intersections_pvalue'] == 0, 'nb_intersections_pvalue'] = 1e-320
+    mat_n = mat_n.assign(minus_log10_pvalue=list(-np.log10(list(mat_n.nb_intersections_pvalue))))
+    mat_n.columns = ['Feature', 'log2(FC)', 'p-value', '-log10(pvalue)']
+    mat_n = mat_n.assign(Statistic=['Total nb. of intersections per region type'] * mat_n.shape[0])
+
+    # Preparing a dataframe containing S statistics
+    #################################################
+
+    mat_s = d[['feature_type',
+               'summed_bp_overlaps_log2_fold_change',
+               'summed_bp_overlaps_pvalue']]
+    # Unavailable p-value are discarded
+
+    mat_s = mat_s.drop(mat_s[mat_s.summed_bp_overlaps_pvalue == -1].index)
+    # Pval set to 0 are changed to  1e-320
+    mat_s.loc[mat_s['summed_bp_overlaps_pvalue'] == 0, 'summed_bp_overlaps_pvalue'] = 1e-320
+    mat_s = mat_s.assign(minus_log10_pvalue=list(-np.log10(list(mat_s.summed_bp_overlaps_pvalue))))
+    mat_s.columns = ['Feature', 'log2(FC)', 'p-value', '-log10(pvalue)']
+    mat_s = mat_s.assign(Statistic=['Total overlap length per region type'] * mat_s.shape[0])
+
+    ####################################################################################################
+    # Preparing table for volcano
+    #####################################################################################################
+
+    df_volc = mat_n.append(mat_s)
+    df_volc = df_volc.assign(Size=['3'] * df_volc.shape[0])
+
+    return df_volc
+
+
+# user_table_path = "/Users/puthier/Documents/git/project_dev/pygtftk/pygtftk/data/hg38_chr1/H3K36me3_ologram_stats.tsv"
+user_table_path = "~/Documents/projet_bioinfo/pygtftk/ologram_output/00_ologram_stats.tsv"
+df_volc = loading_and_preparing_ologram_table_volcano(user_table_path)
 
 ####################################################################################################
 # App Layout
@@ -199,13 +260,6 @@ navbar_barplot = dbc.NavbarSimple(
         dbc.Button(
             "Ordering",
             id="barplot-button-ordering",
-            className="mb-1",
-            color="primary",
-            n_clicks=0,
-        ),
-        dbc.Button(
-            "Clear",
-            id="barplot-button-clear",
             className="mb-1",
             color="primary",
             n_clicks=0,
@@ -365,7 +419,7 @@ barplot_layout = html.Div(children=[
      Input("barplot_ordering_menu", "value"),
      Input("barplot_sorting_menu", "value")])
 def update_graph(barplot_statistics_menu,
-                 checklist,
+                 barplot_feature_menu,
                  bar_text_font_size,
                  barplot_theme_menu,
                  barplot_tickangle_menu,
@@ -387,7 +441,7 @@ def update_graph(barplot_statistics_menu,
     # Subset the dataset based on user selection
     # (the feature to display)
     ###########################################
-    mask = dmm_displayed.Feature.isin(checklist)
+    mask = dmm_displayed.Feature.isin(barplot_feature_menu)
 
     # Ensure "Shuffled" appear first.
     # This is important, later, to display the p-values
@@ -469,7 +523,7 @@ def update_graph(barplot_statistics_menu,
 
 
 ####################################################################################################
-# Update functions for Menu / settings
+# Update functions for Menu / settings (barplot)
 ####################################################################################################
 
 @app.callback(
@@ -653,6 +707,348 @@ original_table_layout = html.Div(children=[
     )]
 )
 
+####################################################################################################
+# Volcano Layout
+####################################################################################################
+print(df_volc)
+available_statistics_volc = df_volc.Statistic.unique()
+feature_type_volc = df_volc.Feature.unique()
+results_volc = df_volc.Statistic
+
+navbar_volcano = dbc.NavbarSimple(
+    children=[
+        dbc.Button(
+            "Statistics",
+            id="volcano-button-statistics",
+            className="mb-1",
+            color="primary",
+            n_clicks=0,
+        ),
+        dbc.Button(
+            "Features",
+            id="volcano-button-feature",
+            className="mb-1",
+            color="primary",
+            n_clicks=0,
+        ),
+        dbc.Button(
+            "Font size",
+            id="volcano-button-fontsize",
+            className="mb-1",
+            color="primary",
+            n_clicks=0,
+        ),
+        dbc.Button(
+            "Themes",
+            id="volcano-button-theme",
+            className="mb-1",
+            color="primary",
+            n_clicks=0,
+        ),
+        dbc.Button(
+            "Thick Angle",
+            id="volcano-button-tickangle",
+            className="mb-1",
+            color="primary",
+            n_clicks=0,
+        ),
+        dbc.Button(
+            "Colors",
+            id="volcano-button-color",
+            className="mb-1",
+            color="primary",
+            n_clicks=0,
+        ),
+        dbc.Button(
+            "Orientation",
+            id="volcano-button-orientation",
+            className="mb-1",
+            color="primary",
+            n_clicks=0,
+        ),
+    ],
+    brand="Menu",
+    brand_href="#",
+    color="primary",
+    dark=True,
+)
+
+volcano_statistics_menu = dbc.Checklist(
+    id="volcano_statistics_menu",
+    options=[{"label": x, "value": x} for x in available_statistics_volc],
+    value=available_statistics_volc
+)
+
+volcano_feature_menu = dbc.Checklist(
+    id="volcano_feature_menu",
+    options=[{"label": x, "value": x} for x in feature_type_volc],
+    value=feature_type_volc
+)
+
+volcano_fontsize_menu = dcc.Input(
+    id="volcano_fontsize_menu",
+    type='number',
+    value=9,
+    debounce=True,
+    min=1,
+    step=1)
+
+volcano_theme_menu = dcc.Dropdown(
+    id="volcano_theme_menu",
+    options=list(pio.templates),
+    value="simple_white",
+    clearable=False)
+
+volcano_tickangle_menu = dcc.Input(
+    id="volcano_tickangle_menu",
+    type='number',
+    value=-45,
+    debounce=True,
+    min=-360,
+    max=360,
+    step=1)
+
+volcano_N_menu = dbc.Input(
+    type="color",
+    id="volcano_N_menu",
+    value="#FBBD04",
+    style={"width": 75, "height": 50},
+)
+
+volcano_S_menu = dbc.Input(
+    type="color",
+    id="volcano_S_menu",
+    value="#018CBA",
+    style={"width": 75, "height": 50},
+)
+
+volcano_orientation_menu = dbc.RadioItems(
+    options=[
+        {"label": "Vertical", "value": 'v'},
+        {"label": "Horizontal", "value": 'h'},
+    ],
+    value='h',
+    id="volcano_orientation_menu",
+)
+
+volcano_collapsed_menu = html.Div(
+    id="volcano_collapsed_menu",
+    children=[
+        dbc.Collapse(
+            dbc.Card(dbc.CardBody(html.Div(children=[volcano_feature_menu]))),
+            id="volcano_feature_menu_collapse",
+            is_open=False,
+        ),
+        dbc.Collapse(
+            dbc.Card(dbc.CardBody(html.Div(children=[volcano_statistics_menu]))),
+            id="volcano_statistics_menu_collapse",
+            is_open=False,
+        ),
+        dbc.Collapse(
+            dbc.Card(dbc.CardBody(html.Div(children=[volcano_fontsize_menu]))),
+            id="volcano_fontsize_menu_collapse",
+            is_open=False,
+        ),
+        dbc.Collapse(
+            dbc.Card(dbc.CardBody(html.Div(children=[volcano_theme_menu]))),
+            id="volcano_theme_menu_collapse",
+            is_open=False,
+        ),
+        dbc.Collapse(
+            dbc.Card(dbc.CardBody(html.Div(children=[volcano_tickangle_menu]))),
+            id="volcano_tickangle_menu_collapse",
+            is_open=False,
+        ),
+        dbc.Collapse(
+            dbc.Card(dbc.CardBody(
+                html.Div(children=[volcano_N_menu, volcano_S_menu]))),
+            id="volcano_color_menu_collapse",
+            is_open=False,
+        ),
+        dbc.Collapse(
+            dbc.Card(dbc.CardBody(html.Div(children=[volcano_orientation_menu]))),
+            id="volcano_orientation_menu_collapse",
+            is_open=False,
+        ),
+    ])
+
+volcano_layout = html.Div(children=[
+    navbar_volcano,
+    volcano_collapsed_menu,
+    dcc.Graph(id="volcano"),
+
+], id="html_div_volcano")
+
+
+####################################################################################################
+# Update functions for volcano
+####################################################################################################
+
+@app.callback(
+    Output('volcano', "figure"),
+    [Input("volcano_statistics_menu", "value"),
+     Input("volcano_feature_menu", "value"),
+     Input("volcano_fontsize_menu", "value"),
+     Input("volcano_theme_menu", "value"),
+     Input("volcano_tickangle_menu", "value"),
+     Input("volcano_N_menu", "value"),
+     Input("volcano_S_menu", "value"),
+     Input("volcano_orientation_menu", "value"),
+     ])
+def update_graph_volcano(volcano_statistics_menu,
+                         volcano_feature_menu,
+                         bar_text_font_size,
+                         volcano_theme_menu,
+                         volcano_tickangle_menu,
+                         volcano_N_menu,
+                         volcano_S_menu,
+                         volcano_orientation_menu):
+    # Apply user-defined theming
+    ################################
+    pio.templates.default = volcano_theme_menu
+
+    # Subset the dataset based on user selection
+    # (N or S statistics)
+    ############################################
+
+    df_volc_displayed = df_volc[df_volc.Statistic.isin(volcano_statistics_menu)]
+
+    # Subset the dataset based on user selection
+    # (the feature to display)
+    ###########################################
+    print("BLBAB")
+    print(df_volc_displayed.Feature)
+    print(volcano_feature_menu)
+    mask_1 = df_volc_displayed.Feature.isin(volcano_feature_menu)
+    print(mask_1)
+    # Prepare a scatter plot diagram
+    ################################
+
+    orientation = volcano_orientation_menu
+
+    if orientation == 'h':
+        height = 500
+        x = "Value"
+        y = 'Feature'
+        width = 500
+
+    else:
+        width = 500
+        height = 500
+        y = "Value"
+        x = 'Feature'
+
+    fig = px.scatter(df_volc_displayed[mask_1],
+                     x='log2(FC)',
+                     y='-log10(pvalue)',
+                     color='Statistic',
+                     hover_name='Feature')
+
+    fig.update_traces(marker_coloraxis='coloraxis',
+                      selector=dict(type='scatter'))
+
+    x_coord = df_volc_displayed[mask_1]["log2(FC)"].tolist()
+    y_coord = df_volc_displayed[mask_1]["-log10(pvalue)"].tolist()
+    xy_label = df_volc_displayed[mask_1].Feature.tolist()
+
+    for x_val, y_val, label in zip(x_coord, y_coord, xy_label):
+        fig.add_annotation(x=x_val, y=y_val, text=label, showarrow=True)
+
+    fig.update_xaxes(zeroline=True,
+                     zerolinewidth=2,
+                     zerolinecolor='LightPink')
+
+    fig.update_yaxes(zeroline=True,
+                     zerolinewidth=2,
+                     zerolinecolor='LightPink')
+
+    fig.update_traces(textposition='top center')
+
+    fig.update_xaxes(tickangle=volcano_tickangle_menu)
+
+    return fig
+
+
+####################################################################################################
+# Update functions for Menu / settings (Volcano)
+####################################################################################################
+
+@app.callback(
+    Output("volcano_feature_menu_collapse", "is_open"),
+    [Input("volcano-button-feature", "n_clicks")],
+    [State("volcano_feature_menu_collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("volcano_statistics_menu_collapse", "is_open"),
+    [Input("volcano-button-statistics", "n_clicks")],
+    [State("volcano_statistics_menu_collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("volcano_fontsize_menu_collapse", "is_open"),
+    [Input("volcano-button-fontsize", "n_clicks")],
+    [State("volcano_fontsize_menu_collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("volcano_theme_menu_collapse", "is_open"),
+    [Input("volcano-button-theme", "n_clicks")],
+    [State("volcano_theme_menu_collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("volcano_tickangle_menu_collapse", "is_open"),
+    [Input("volcano-button-tickangle", "n_clicks")],
+    [State("volcano_tickangle_menu_collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("volcano_color_menu_collapse", "is_open"),
+    [Input("volcano-button-color", "n_clicks")],
+    [State("volcano_color_menu_collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("volcano_orientation_menu_collapse", "is_open"),
+    [Input("volcano-button-orientation", "n_clicks")],
+    [State("volcano_orientation_menu_collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
 
 ####################################################################################################
 # Update functions for Tabs
@@ -665,7 +1061,7 @@ def switch_tab(active_tab):
     if active_tab == "tab-1":
         return barplot_layout
     elif active_tab == "tab-2":
-        return html.P("Bla")
+        return volcano_layout
     elif active_tab == "tab-3":
         return table_layout
     elif active_tab == "tab-4":
@@ -674,4 +1070,4 @@ def switch_tab(active_tab):
         return html.P("This shouldn't ever be displayed...")
 
 
-app.run_server(debug=True)
+app.run_server(debug=True, port=8071)
