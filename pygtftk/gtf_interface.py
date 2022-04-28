@@ -30,10 +30,10 @@ from pyparsing import Literal
 from pyparsing import Optional
 from pyparsing import ParseResults
 from pyparsing import Word
+from pyparsing import infixNotation
 from pyparsing import nums
 from pyparsing import oneOf
 from pyparsing import opAssoc
-from pyparsing import operatorPrecedence
 
 import pygtftk
 import pygtftk.utils
@@ -925,7 +925,7 @@ class GTF(object):
             return msg
         else:
             print(msg)
-            
+
     def __repr__(self):
         """
         Returns a printable representation of the GTF object.
@@ -2063,9 +2063,9 @@ class GTF(object):
         group_1 = identifier + comparison_operator + value
         group_2 = value + comparison_operator + identifier
         comparison = group_1 | group_2
-        boolean_expr = operatorPrecedence(comparison,
-                                          [(and_operator, 2, opAssoc.LEFT),
-                                           (or_operator, 2, opAssoc.LEFT)])
+        boolean_expr = infixNotation(comparison,
+                                     [(and_operator, 2, opAssoc.LEFT),
+                                      (or_operator, 2, opAssoc.LEFT)])
 
         boolean_expr_par = lparen + boolean_expr + rparen
 

@@ -13,7 +13,7 @@ pandas >= 1.1.2
 plotnine >= 0.7.1
 pybedtools >= 0.8.1
 pybigwig >= 0.3.17
-pyparsing >=2.2.0
+pyparsing >=2.4.7
 pyyaml
 requests >=2.23.0
 scikit-learn >= 0.24
