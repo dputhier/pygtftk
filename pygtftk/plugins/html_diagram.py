@@ -78,7 +78,7 @@ def html_diagram(inputfile=None,
     ####################################################################################################
     # Instanciate a Dash app
     ####################################################################################################
-    app = dash.Dash(external_stylesheets=[dbc.themes.YETI])
+    app = dash.Dash(name=__name__,server=True,external_stylesheets=[dbc.themes.YETI])
     app.config.suppress_callback_exceptions = True
 
     ####################################################################################################
