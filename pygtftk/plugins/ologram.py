@@ -278,6 +278,12 @@ def make_parser():
                             action='store_true',
                             required=False)
 
+    parser_grp.add_argument('-mugnb', '--modl-use-gaussian-naive-bayes',
+                            default=0,
+                            type=float,
+                            required=False)
+
+
     # --------------------- Backend ------------------------------------------ #
 
     parser_grp.add_argument('-k', '--nb-threads',
@@ -451,6 +457,7 @@ def ologram(inputfile=None,
             multiple_overlap_max_number_of_combinations=None,
             multiple_overlap_custom_combis=None,
             exact=False,
+            modl_use_gaussian_naive_bayes=0,
 
             keep_intact_in_shuffling=None,
             use_markov_shuffling=False,
@@ -994,7 +1001,8 @@ def ologram(inputfile=None,
                                                 multiple_overlap_target_combi_size=multiple_overlap_target_combi_size,
                                                 multiple_overlap_max_number_of_combinations=multiple_overlap_max_number_of_combinations,
                                                 multiple_overlap_custom_combis=multiple_overlap_custom_combis,
-                                                exact=exact)
+                                                exact=exact,
+                                                modl_use_gaussian_naive_bayes=modl_use_gaussian_naive_bayes)
 
         # NOTE. In other cases, hits[feature_type] is a single dictionary giving
         # stats. In this case, it is a dictionary of dictionaries, one per set
