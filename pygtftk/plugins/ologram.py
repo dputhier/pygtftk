@@ -1646,6 +1646,17 @@ else:
           [ "$result" = "0" ]
         }
 
+        #ologram: modl naive bayes classifier, and verification of result
+        @test "ologram_20" {
+            result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.copy.bed simple_07_peaks.1.bed simple_07_peaks.2.bed simple_07_fullgenome.bed --more-bed-multiple-overlap --multiple-overlap-max-number-of-combinations 1 --modl-use-gaussian-naive-bayes 1 -V 3`
+          [ "$result" = "0" ]
+        }
+
+        @test "ologram_21" {
+            result=`cat ologram_output/00_ologram_stats.tsv | cut -f 1 | grep "Query"`
+          [ "$result" = "[Query + simple_07_peaks_copy + simple_07_fullgenome + ... ]" ]
+        }
+
         '''
 
     cmd = CmdObject(name="ologram",
