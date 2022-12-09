@@ -205,6 +205,7 @@ Comparing the query (-p) against two other BED files, analyzing multiple overlap
     --more-bed-multiple-overlap                                      # Toggle the computation of multiple overlaps on the --more-bed
     --exact                                                          # OPTIONAL ARGUMENT. If present, an observation of A+B+C will not count as an observation of A+B.
     --multiple-overlap-max-number-of-combinations 10                 # OPTIONAL ARGUMENT. Use MODL to restrict to this many combinations.
+    --modl-use-gaussian-naive-bayes  1                               # OPTIONAL ARGUMENT. MODL will instead try to find combinations that best predict the query (based on a Gaussian Naive Bayes classifier) 
     --multiple-overlap-target-combi-size 3                           # OPTIONAL ARGUMENT. Combis mined longer than this size will not be shown.
     --multiple-overlap-custom-combis test_combis.txt                 # OPTIONAL ARGUMENT. Will bypass the selection by the previous two arguments and work only on the combinations defined in this file.
     --keep-intact-in-shuffling 0,1                                   # BETA - OPTIONAL ARGUMENT. Gives the positions of the files in --more-bed that will be kept fixed in shuffling.
@@ -239,34 +240,39 @@ Itemset mining details
 
 In broad strokes, the custom itemset algorithm MODL (Multiple Overlap Dictionary Learning) will perform many matrix factorizations on the matrix of true overlaps to identify relevant correlation groups of genomic regions. Then a greedy algorithm based on how much these words improve the reconstruction will select the utmost best words. MODL is only used to filter the output of OLOGRAM : once it returns a list of interesting combination, OLOGRAM will compute their enrichment as usual, but for them only. Each combination is of the form [Query + A + B + C] where A, B and C are BED files given as --more-bed. You can also manually specify the combinations to be studied with the format defined in OLOGRAM notes (below).
 
-Unlike classical association rules mining algorithms, this focuses on mining relevant biological complexes/clusters and correlation groups (item sets). As such, we do not recommend asking for more than 20-50 combinations to keep the running time reasonable and keep the found combinations still relevant.
+Unlike classical association rule mining algorithms, this focuses on mining relevant biological complexes/clusters and correlation groups (item sets). As such, we do not recommend asking for more than 20-50 combinations to keep the running time reasonable and keep the found combinations still relevant. As a matrix factorization based algorithm, it is designed to be resistant to noise which is a known problem in biological data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).
 
-As a matrix factorization based algorithm, it is designed to be resistant to noise which is a known problem in biological data. Its goal is to extract meaningful frequent combinations from noisy data. As a result however, it is biased in favor of the most abundant combinations in the data, and may return correlation groups if you ask for too few words (ie. if AB, BC and AC are complexes, ABC might be returned).
-
-This itemset mining algorithm is a work-in-progress, and optional . Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
+This itemset mining algorithm is a work-in-progress, and optional. Whether you use MODL will not change the results for each combination, it only changes which combinations are displayed. If you want the enrichment of all combinations, ignore it. To use MODL, use the --multiple-overlap-max-number-of-combinations argument.
 
 MODL is mostly needed when the list of -\-more-bed is very long and you do not want to filter the results manually, and when you are working with noisy data which could obfuscate the interesting combinations. It is also possible to bypass it and provide a custom list of combinations to be considered.
 
- 
+
+**Gaussian Naive Bayes:**
+
+We have recently added the -\-modl-use-gaussian-naive-bayes argument (aka. "-mugnb"). If set to a nonzero value, **MODL will instead try to find combinations that best predict the query (based on a Gaussian Naive Bayes classifier)**. This is perspective application of MODL using a supervised loss, based on the performance of a Naive Bayes classifier : when running MODL, instead of minimizing the reconstruction error in step 2, we take a Naive Bayes classifier and tell it, at each position, which combinations are present. We select in a greedy way (ie. take the best at each step) the combinations that help the classifier predict whether the query set is present or not.
+
+The -mugnb argument is a float number, herafter referred to as "K". It defaults at 0 meaning this is not used. Its recommended value if 1. This has better submodularity guaranteees than the classical version, but can require parameter tuning (changing the value of K to change subsampling weights) so this is currently in beta. In most cases, we recommend that you use it and leave the value at 1.
+
+
+The minority class (query present) has to be oversampled, based on K (the value of the command line argument), then the weights in the code are automatically set to :
+
+.. code-block:: python
+  # Subsampling parameters
+  KEEP_N_TIMES_QUERY = 100 * K          # For each '1' line with the query, how many '0' lines without it do we keep?
+  QUERY_WEIGHT = 100 * K               # In the Naive Bayes classifier, how much more do we weigh the presence of the query?
+
 
 **MODL algorithm API:** MODL can also be used independantly as a combination mining algorithm. 
 
-This can work on any type of data, biological or not, that respects the conventional formatting for lists of transactions: the data needs to be a matrix with one line per transaction and one column per element. For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C.
-
-For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1. MODL will discard combinations rarer than 1/10000 occurences to reduce computing times. It will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. However, the latter can magnify the impact of the noise as well and can be disabled when using the manual API. To de-emphasize longer words, which can help in this case, we normalize words by their summed square in step 2.
+This can work on any data formatted as a matrix with one line per transaction and one column per element. For example, if you have three possible elements A, B and C, a line of [1,0,1] means a transaction containing A and C. For a factor allowance of k and n final queried words, the matrix will be rebuilt with k*n words in step 1. MODL will discard combinations rarer than 1/10000 occurences to reduce computing times. It will also reduce the abundance of all unique lines in the matrix to their square roots to reduce the emphasis on the most frequent elements. However, the latter can magnify the impact of the noise as well and can be disabled when using the manual API. To de-emphasize longer words, which can help in this case, we normalize words by their summed square in step 2.
 
 If you are passing a custom error function, it must have this signature: `error_function(X_true, X_rebuilt, encoded, dictionary)`. X_true is the real data, and X_rebuilt is the reconstruction to evaluate.
-encoded is the encoded version (U) which in our case is used to assess sparsity, while dictionary (V) is the matrix with one atom of the dictionaty per row (not used by default). Note that the dictionary is passed before MODL performs any normalization on it.  All are NumPy matrices.
-
-
-.. note:: An example of custom loss we recommend is: selecting the combinations (of reference sets) that best predict the query set using a Naive Bayes classifier. This is not yet implemented, but a fully functional example is available at <https://github.com/qferre/ologram-modl_supp_mat/blob/master/scripts/modl_perspective.py> as a Python script. To use it, simply replace the filepaths at the beginning with the paths to your own files, and run the script. The order in the selection will be the same as the order you gave in the script, not alphabetical. You can then run OLOGRAM without MODL, or pass the custom selection you just computed.
-
-
-
+encoded is the encoded version (U) which in our case is used to assess sparsity, while dictionary (V) is the matrix with one atom of the dictionaty per row (not used by default). Note that the dictionary is passed before MODL performs any normalization on it. All are NumPy matrices.
 
 **For more details, see code comments.**
 
-Here is an example:
+
+Here is an example so you can use any error function you want:
 
 .. code-block:: python
 

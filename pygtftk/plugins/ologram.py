@@ -119,7 +119,7 @@ __notes__ = chr_size_note() + """
  -\-exact argument to change that.
  
  -- If you work on multiple overlaps, we recommend the ologram_modl_treeify plugin
- for visualizations. ; please read the notes !!
+ for visualizations ; please read the tool's notes!
 
  -- Combinations of longer order (containing more sets) will usually be rarer and
  have lower p-values; as such we recommend comparing p-values between combinations
@@ -136,11 +136,10 @@ __notes__ = chr_size_note() + """
  small region and the variance is lower than mean. 
 
  -- The Negative Binomial is an approximation, but differences only appear for 
- very low p-values, and even then order is conserved (if one feature is more 
- enriched than another, their p-values will be in the correct order, just
- slightly inflated). An ad-hoc beta fitted p-value has been added instead if 
+ very low p-values, and even then their p-values will be in the correct order, just
+ slightly inflated. A beta fitted p-value has been added instead if 
  you wish, but it will only be more accurate than Neg Binom if you do >10.000 
- shufffles at least. Empirical p-val is also accesible.
+ shufffles at least.
 
  -- Our model rests upon certain assumptions. The null hypothesis can be rejected
  if any assumption is rejected. The fitting test is the key for that: if the 
@@ -156,11 +155,19 @@ __notes__ = chr_size_note() + """
  This is done with the -\-multiple-overlap-max-number-of-combinations argument.
  This will not change the enrichment result, but will restrict the displayed combinations.
 
+ -- MODL can instead try to find combinations (of reference sets) that best predict
+ the query set, based on a Gaussian Naive Bayes classifier. To do so, put a nonzero
+ value to the -\-modl-use-gaussian-naive-bayes argument. This is currently in beta.
+ It may requires some tuning of the parameters (changing the value of argument to change subsampling weights)
+ but leaving the argument as 1 and using it is recommended in most cases. Read the doc for more info.
+
  -- If you manually specify the combinations to be studied with 
  -\-multiple-overlap-custom-combis, use the following format for the text file: 
  The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed",
  "1 0 1 1" means Query + B + C). Elements should be whitespace separated, with
  one combination per line.
+
+ -- You can compare sets with the ologram_merge_stats command; please read its notes !
 
 """
 
@@ -287,6 +294,7 @@ def make_parser():
                             required=False)
 
     parser_grp.add_argument('-mugnb', '--modl-use-gaussian-naive-bayes',
+                            help="""If this is not 0, MODL will instead try to find combinations that best predict the query (based on a Gaussian Naive Bayes classifier). Use a value of "1" is recommended, or another value to change the weight multiplier (see documentation).""",
                             default=0,
                             type=float,
                             required=False)

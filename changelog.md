@@ -7,6 +7,18 @@
 ### Bug Fixes
 
 * Fixed an issue in OLOGRAM where the drawing of the PDF file could raise an exception, by remooving the unneccessary billard module.
+
+### API/CLI Changes
+
+### Code changes
+
+* Improved documentation for OLOGRAM.
+
+### New Features
+
+* OLOGRAM-MODL now supports the use of a Naive Bayes classifier (trying to predict the query) as selection criteria, instead of simply reconstruction error. This has better submodularity gurantees.
+
+
 ## v1.6.1
 
 ### Bug Fixes
@@ -85,7 +97,7 @@
 
 ### Code changes
 
-* OLOGRAM README has been  updated (add bedtools, graphviz and unzip dependency).
+* OLOGRAM README has been updated (add bedtools, graphviz and unzip dependency).
 
 * Replace operatorPrecedence with infixNotation when using pyparsing (see #166).
 
