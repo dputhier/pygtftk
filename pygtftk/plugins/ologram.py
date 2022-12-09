@@ -12,15 +12,23 @@
  under the null hypothesis is deduced with our Monte Carlo approach.
  
  The null hypothesis is that the regions of the query (--peak-file) are located 
- independently of the reference (--inputfile or --more-bed) and of each other, and do not overlap 
- more than by chance. We return statistics for both the number of intersections
- and the total lengths (in basepairs) of all intersections. 
+ independently of the reference (--inputfile or --more-bed) and of each other, 
+ and do not overlap more than by chance. We return statistics for both the 
+ number of intersections and the total lengths (in basepairs) of all intersections. 
+
+ In other words, the tool determines whether the query overlaps the reference(s)
+ more than would be expected by chance, assuming that both query and reference 
+ can only be found in the inclusion region (–bed-incl). This means that if query
+ and reference overlap only due to both being only present in the bed-incl, 
+ their enrichment would be zero.
  
  For more information, please see the full documentation.
 
  OLOGRAM can also calculate enrichment for n-wise combinations (e.g. [Query + 
  A + B]  or [Query + B + C]) on sets of regions defined by the user (--more-bed
- argument). Here is an example of command line to compute the enrichments of the
+ argument). 
+ 
+ Here is a quick, reusable example of command line to compute the enrichments of the
  overlaps of the sets given in -\-more-bed, with the query set (-p) and with each other:
 
  `gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed C.bed -\-more-bed-multiple-overlap`
@@ -45,6 +53,7 @@ import sys
 import time
 import copy
 import warnings
+import multiprocessing
 from functools import partial
 import matplotlib.cbook
 
@@ -78,10 +87,9 @@ import gc
 __updated__ = ''' 2021-08-13 '''
 __notes__ = chr_size_note() + """  
 
- -- OLOGRAM is multithreaded, notably processing one batch of shuffles per core.
+ -- OLOGRAM is multithreaded, processing one batch of shuffles per core.
  This can be RAM-intensive. If needed, use more minibatches and/or merge them
- with the ologram_merge_runs command (not to be confused with ologram_merge_stats,
- which is simply a visual plugin).
+ with the -\-ologram_merge_runs command.
  
  -- The program produces a pdf file and a tsv file ('_stats_') containing 
  intersection statistics for the shuffled BEDs under H0, giving the number of 
@@ -111,7 +119,7 @@ __notes__ = chr_size_note() + """
  -\-exact argument to change that.
  
  -- If you work on multiple overlaps, we recommend the ologram_modl_treeify plugin
- for visualizations.
+ for visualizations. ; please read the notes !!
 
  -- Combinations of longer order (containing more sets) will usually be rarer and
  have lower p-values; as such we recommend comparing p-values between combinations
