@@ -1,6 +1,12 @@
 
 # Changelog
 
+
+## v1.6.2
+
+### Bug Fixes
+
+* Fixed an issue in OLOGRAM where the drawing of the PDF file could raise an exception, by remooving the unneccessary billard module.
 ## v1.6.1
 
 ### Bug Fixes
