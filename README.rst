@@ -6,7 +6,8 @@ Platforms                  |platform|_
 Languages                  |lang|_
 Build status               |build|_
 Repository size            |size|_
-Latest conda               |latestconda|
+Latest conda               |latestconda|_
+latest commit              |last_commit|_
 Downloads                  |downloads|_
 Codacy                     |codacy|_
 Contribution               |contrib|_
@@ -67,6 +68,9 @@ Documentation              |documentation|_
 
 .. |citing_ologram_modl| image:: https://img.shields.io/badge/citing__ologram--modl-https%3A%2F%2Fdoi.org%2F10.1093%2Fnargab%2Flqab114--modl-blue
 .. _citing_ologram_modl: https://doi.org/10.1093/nargab/lqab114
+
+.. |last_commit| image:: https://img.shields.io/github/last-commit/dputhier/pygtftk
+.. _last_commit: https://github.com/dputhier/pygtftk/commits/master
 
 
 Python GTF toolkit (pygtftk)
