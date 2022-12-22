@@ -1,4 +1,4 @@
-=================        =================
+==================        =================
 Pip package                |Pippackage|_
 Bioconda package           |bioconda|_
 License                    |license|_
