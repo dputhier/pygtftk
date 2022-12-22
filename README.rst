@@ -1,4 +1,4 @@
-==================        =================
+===================        =================
 Pip package                |Pippackage|_
 Bioconda package           |bioconda|_
 License                    |license|_
@@ -13,8 +13,9 @@ Contribution               |contrib|_
 Issues                     |issues|_
 Citing pygtftk             |citing_pygtftk|_
 Citing OLOGRAM             |citing_ologram|_
+Citing OLOGRAM-MODL        |citing_ologram_modl|_
 Documentation              |documentation|_
-==================        =================
+===================        =================
 
 .. |codacy| image:: https://app.codacy.com/project/badge/Grade/0e5b6b1af3a84af7a2d57e0465204e7f
 .. _codacy: https://www.codacy.com/gh/dputhier/pygtftk/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dputhier/pygtftk&amp;utm_campaign=Badge_Grade
@@ -63,6 +64,9 @@ Documentation              |documentation|_
 
 .. |citing_ologram| image:: https://img.shields.io/badge/citing__ologram-https%3A%2F%2Fdoi.org%2F10.1093%2Fbioinformatics%2Fbtz810-blue
 .. _citing_ologram: https://doi.org/10.1093/bioinformatics/btz810
+
+.. |citing_ologram_modl| image:: https://img.shields.io/badge/citing__ologram--modl-https%3A%2F%2Fdoi.org%2F10.1093%2Fnargab%2Flqab114--modl-blue
+.. _citing_ologram_modl: https://doi.org/10.1093/nargab/lqab114
 
 
 Python GTF toolkit (pygtftk)
