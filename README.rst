@@ -1,4 +1,4 @@
-==================        =================
+===================        =================
 Pip package                |Pippackage|_
 Bioconda package           |bioconda|_
 License                    |license|_
@@ -6,15 +6,17 @@ Platforms                  |platform|_
 Languages                  |lang|_
 Build status               |build|_
 Repository size            |size|_
-Latest conda               |latestconda|
+Latest conda               |latestconda|_
+latest commit              |last_commit|_
 Downloads                  |downloads|_
 Codacy                     |codacy|_
 Contribution               |contrib|_
 Issues                     |issues|_
 Citing pygtftk             |citing_pygtftk|_
 Citing OLOGRAM             |citing_ologram|_
+Citing OLOGRAM-MODL        |citing_ologram_modl|_
 Documentation              |documentation|_
-==================        =================
+===================        =================
 
 .. |codacy| image:: https://app.codacy.com/project/badge/Grade/0e5b6b1af3a84af7a2d57e0465204e7f
 .. _codacy: https://www.codacy.com/gh/dputhier/pygtftk/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dputhier/pygtftk&amp;utm_campaign=Badge_Grade
@@ -64,11 +66,17 @@ Documentation              |documentation|_
 .. |citing_ologram| image:: https://img.shields.io/badge/citing__ologram-https%3A%2F%2Fdoi.org%2F10.1093%2Fbioinformatics%2Fbtz810-blue
 .. _citing_ologram: https://doi.org/10.1093/bioinformatics/btz810
 
+.. |citing_ologram_modl| image:: https://img.shields.io/badge/citing__ologram--modl-https%3A%2F%2Fdoi.org%2F10.1093%2Fnargab%2Flqab114--modl-blue
+.. _citing_ologram_modl: https://doi.org/10.1093/nargab/lqab114
+
+.. |last_commit| image:: https://img.shields.io/github/last-commit/dputhier/pygtftk
+.. _last_commit: https://github.com/dputhier/pygtftk/commits/master
+
 
 Python GTF toolkit (pygtftk)
 =============================
 
-The **Python GTF toolkit (pygtftk) package** is intended to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python  >=3.8,<3.9 and relies on **libgtftk**, a library of functions **written in C**.
+The **Python GTF toolkit (pygtftk) package** is intended to ease handling of GTF/GFF2.0 files (Gene Transfer Format). It currently does not support GFF3 file format. The pygtftk package is compatible with Python 3.9 and relies on **libgtftk**, a library of functions **written in C**.
 
 The package comes with a set of **UNIX commands** that can be accessed through the **gtftk  program**. The gtftk program proposes several atomic tools to **filter, convert, or extract data from GTF files**.
 
