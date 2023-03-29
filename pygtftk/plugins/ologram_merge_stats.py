@@ -26,9 +26,10 @@ __updated__ = ''' 2019-05-27 '''
 
 __notes__ = """
 -- By default, labels in the diagram are derived from the name of the enclosing folder. E.g. if file is a/b/c/00_ologram_stats.tsv, 'c' will be used as label.
+
 -- Otherwise use -\-labels to set the labels.
 
--- Squares without a diamond mean the p-value was NaN due to poor fitting. This is mostly the case for higher-order combis in multiple overlaps that were so rare that they are not encountered in the shuffles.
+-- Squares without a diamond mean the p-value was NaN due to poor fitting. Such p-values are usualy encountered in higher-order combinations that are so unlikely that they were never encountered in the shuffles, not even once. As such, their presence in the true data is likely very statistically significant (but an exact p-value can not be given, although it's likely close to zero).
 """
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree for easier visualisation
+Turns a result of OLOGRAM-MODL multiple overlap (tsv file) in a tree of combinations for easier visualisation. Works on the result (tsv file) of an OLOGRAM analysis called with --more-bed-multiple-overlap.
 
 See the /pygtftk/plugins/ologram.py file, as well as the documentation, for more information about OLOGRAM.
 """
@@ -27,9 +27,11 @@ __notes__ = """
  a combination, with its number of overlapping basepairs in true data (S) and the corresponding 
  fold change and p-value compared to the shuffles.
 
- -- Result tsv files can be manually edited (ie. removing combinations) before passing them to this plugin
+ -- Result tsv files can be manually edited (ie. removing combinations you do not want) before passing them to this plugin for formatting.
 
- -- For a quick filtering, it is possible to show only the top T combinations sorted by total basepairs in real data.
+ -- P-values of NaN (-1 in the original tsv) are due to poor fitting. Such p-values are usualy encountered in higher-order combinations that are so unlikely that they were never encountered in the shuffles, not even once. As such, their presence in the true data is likely very statistically significant (but an exact p-value can not be given, although it's likely close to zero).
+
+ -- For a quick filtering, it is possible to show only the top T combinations sorted by total basepairs in real data (the S statistic).
 """
 
 

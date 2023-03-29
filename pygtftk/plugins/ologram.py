@@ -12,15 +12,23 @@
  under the null hypothesis is deduced with our Monte Carlo approach.
  
  The null hypothesis is that the regions of the query (--peak-file) are located 
- independently of the reference (--inputfile or --more-bed) and of each other, and do not overlap 
- more than by chance. We return statistics for both the number of intersections
- and the total lengths (in basepairs) of all intersections. 
+ independently of the reference (--inputfile or --more-bed) and of each other, 
+ and do not overlap more than by chance. We return statistics for both the 
+ number of intersections and the total lengths (in basepairs) of all intersections. 
+
+ In other words, the tool determines whether the query overlaps the reference(s)
+ more than would be expected by chance, assuming that both query and reference 
+ can only be found in the inclusion region (–bed-incl). This means that if query
+ and reference overlap only due to both being only present in the bed-incl, 
+ their enrichment would be zero.
  
  For more information, please see the full documentation.
 
  OLOGRAM can also calculate enrichment for n-wise combinations (e.g. [Query + 
  A + B]  or [Query + B + C]) on sets of regions defined by the user (--more-bed
- argument). Here is an example of command line to compute the enrichments of the
+ argument). 
+ 
+ Here is a quick, reusable example of command line to compute the enrichments of the
  overlaps of the sets given in -\-more-bed, with the query set (-p) and with each other:
 
  `gtftk ologram -z -w -q -c hg38 -p query.bed -\-more-bed A.bed B.bed C.bed -\-more-bed-multiple-overlap`
@@ -45,6 +53,7 @@ import sys
 import time
 import copy
 import warnings
+import multiprocessing
 from functools import partial
 import matplotlib.cbook
 
@@ -78,10 +87,9 @@ import gc
 __updated__ = ''' 2021-08-13 '''
 __notes__ = chr_size_note() + """  
 
- -- OLOGRAM is multithreaded, notably processing one batch of shuffles per core.
+ -- OLOGRAM is multithreaded, processing one batch of shuffles per core.
  This can be RAM-intensive. If needed, use more minibatches and/or merge them
- with the ologram_merge_runs command (not to be confused with ologram_merge_stats,
- which is simply a visual plugin).
+ with the -\-ologram_merge_runs command.
  
  -- The program produces a pdf file and a tsv file ('_stats_') containing 
  intersection statistics for the shuffled BEDs under H0, giving the number of 
@@ -111,7 +119,7 @@ __notes__ = chr_size_note() + """
  -\-exact argument to change that.
  
  -- If you work on multiple overlaps, we recommend the ologram_modl_treeify plugin
- for visualizations.
+ for visualizations ; please read the tool's notes!
 
  -- Combinations of longer order (containing more sets) will usually be rarer and
  have lower p-values; as such we recommend comparing p-values between combinations
@@ -128,11 +136,10 @@ __notes__ = chr_size_note() + """
  small region and the variance is lower than mean. 
 
  -- The Negative Binomial is an approximation, but differences only appear for 
- very low p-values, and even then order is conserved (if one feature is more 
- enriched than another, their p-values will be in the correct order, just
- slightly inflated). An ad-hoc beta fitted p-value has been added instead if 
+ very low p-values, and even then their p-values will be in the correct order, just
+ slightly inflated. A beta fitted p-value has been added instead if 
  you wish, but it will only be more accurate than Neg Binom if you do >10.000 
- shufffles at least. Empirical p-val is also accesible.
+ shufffles at least.
 
  -- Our model rests upon certain assumptions. The null hypothesis can be rejected
  if any assumption is rejected. The fitting test is the key for that: if the 
@@ -148,11 +155,19 @@ __notes__ = chr_size_note() + """
  This is done with the -\-multiple-overlap-max-number-of-combinations argument.
  This will not change the enrichment result, but will restrict the displayed combinations.
 
+ -- MODL can instead try to find combinations (of reference sets) that best predict
+ the query set, based on a Gaussian Naive Bayes classifier. To do so, put a nonzero
+ value to the -\-modl-use-gaussian-naive-bayes argument. This is currently in beta.
+ It may requires some tuning of the parameters (changing the value of argument to change subsampling weights)
+ but leaving the argument as 1 and using it is recommended in most cases. Read the doc for more info.
+
  -- If you manually specify the combinations to be studied with 
  -\-multiple-overlap-custom-combis, use the following format for the text file: 
  The order is the same as -\-more-beds (ie. if -\-more-bed is "A.bed B.bed C.bed",
  "1 0 1 1" means Query + B + C). Elements should be whitespace separated, with
  one combination per line.
+
+ -- You can compare sets with the ologram_merge_stats command; please read its notes !
 
 """
 
@@ -277,6 +292,13 @@ def make_parser():
                             default=False,
                             action='store_true',
                             required=False)
+
+    parser_grp.add_argument('-mugnb', '--modl-use-gaussian-naive-bayes',
+                            help="""If this is not 0, MODL will instead try to find combinations that best predict the query (based on a Gaussian Naive Bayes classifier). Use a value of "1" is recommended, or another value to change the weight multiplier (see documentation).""",
+                            default=0,
+                            type=float,
+                            required=False)
+
 
     # --------------------- Backend ------------------------------------------ #
 
@@ -451,6 +473,7 @@ def ologram(inputfile=None,
             multiple_overlap_max_number_of_combinations=None,
             multiple_overlap_custom_combis=None,
             exact=False,
+            modl_use_gaussian_naive_bayes=0,
 
             keep_intact_in_shuffling=None,
             use_markov_shuffling=False,
@@ -994,7 +1017,8 @@ def ologram(inputfile=None,
                                                 multiple_overlap_target_combi_size=multiple_overlap_target_combi_size,
                                                 multiple_overlap_max_number_of_combinations=multiple_overlap_max_number_of_combinations,
                                                 multiple_overlap_custom_combis=multiple_overlap_custom_combis,
-                                                exact=exact)
+                                                exact=exact,
+                                                modl_use_gaussian_naive_bayes=modl_use_gaussian_naive_bayes)
 
         # NOTE. In other cases, hits[feature_type] is a single dictionary giving
         # stats. In this case, it is a dictionary of dictionaries, one per set
@@ -1476,22 +1500,23 @@ def plot_results(d, data_file, pdf_file, pdf_width, pdf_height, feature_order, s
                 plots += [p + theme(figure_size=figsize)]
 
         # NOTE : We must manually specify figure size with save_as_pdf_pages
-        plot_process = billiard.Process(target=save_as_pdf_pages,
+        plot_process = multiprocessing.Process(target=save_as_pdf_pages,
                                                name="Drawing", kwargs={"filename": pdf_file.name,
                                                                        "plots": plots,
                                                                        "width": pdf_width,
                                                                        "height": pdf_height})
         plot_process.start()
 
-        # Wait a maximum of 10 minutes for drawing
-        plot_process.join(60 * 10)
+        plot_process.join(timeout=60*10)
 
         # If the drawing thread is still active, terminate it
         if plot_process.is_alive():
             message(
-                "Drawing the graph took longer than 10 minutes, aborted. The results are still available in tab-separated-values form.")
+                "Drawing the PDF diagram took longer than 10 minutes, so it was aborted. The results are still available in tab-separated-values form.")
             plot_process.terminate()
             plot_process.join()
+
+
 
     gc.disable()
 
@@ -1636,6 +1661,17 @@ else:
         @test "ologram_20" {
             result=`cat ologram_output/00_ologram_stats.tsv | grep "impossible" | cut -f 12`
           [ "$result" = "0" ]
+        }
+
+        #ologram: modl naive bayes classifier, and verification of result
+        @test "ologram_20" {
+            result=`rm -Rf ologram_output; gtftk ologram -z -p simple_07_peaks.bed -c simple_07.chromInfo -u 2 -d 2 -K ologram_output --no-date -k 8 --more-bed simple_07_peaks.copy.bed simple_07_peaks.1.bed simple_07_peaks.2.bed simple_07_fullgenome.bed --more-bed-multiple-overlap --multiple-overlap-max-number-of-combinations 1 --modl-use-gaussian-naive-bayes 1 -V 3`
+          [ "$result" = "0" ]
+        }
+
+        @test "ologram_21" {
+            result=`cat ologram_output/00_ologram_stats.tsv | cut -f 1 | grep "Query"`
+          [ "$result" = "[Query + simple_07_peaks_copy + simple_07_fullgenome + ... ]" ]
         }
 
         '''

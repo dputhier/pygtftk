@@ -28,6 +28,7 @@ from scipy.stats import nbinom
 from pygtftk.stats import negbin_fit as nf
 from pygtftk.stats import beta as pbeta
 from pygtftk.stats.intersect.modl import dict_learning as dl
+from pygtftk.stats.intersect.modl import subroutines as dlsr
 from pygtftk.stats.intersect.overlap import overlap_regions as oc
 from pygtftk.stats.multiprocessing import multiproc as mpc
 
@@ -871,7 +872,11 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
                            multiple_overlap_max_number_of_combinations=None,
                            multiple_overlap_custom_combis=None,
                            draw_histogram=False,
-                           exact=False):
+                           exact=False,
+                           modl_use_gaussian_naive_bayes=0,
+                           # For now what is below needed only for GNB, but you never know, might be useful later
+                           bed_excl = None,
+                           chrom_len = None):
     """
     Instead of returning one set of overlap stats per query type (ie. exons, gens, bedfile1, bedfile2, etc...)
     it will return one per multiple overlap (ie. here there was a peak for bedfile1+gene, or bedfile1+bedfile2+gene, etc.)
@@ -956,7 +961,11 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
             combi_miner = dl.Modl(flags_matrix,
                                   multiple_overlap_target_combi_size,
                                   multiple_overlap_max_number_of_combinations,
-                                  nb_threads)  # Critical nb_threads for this
+                                  nb_threads = nb_threads)  # Critical nb_threads for this
+
+
+
+            # --------------- Variant mining algorithms
 
             """
             # NOTE for improvement : any combination mining algorihm could be slotted here instead !
@@ -964,6 +973,33 @@ def stats_multiple_overlap(all_overlaps, bedA, bedsB, all_feature_labels, nb_thr
             combi_miner = Apriori(flags_matrix, min_support)
             """
 
+            # OPTIONAL : For MODL, instead of reconstuction error, use the accuracy of a naive Gaussian Bayes classifier trying to predict the presence of the query
+            # NOTE modl_use_gaussian_naive_bayes is a multiplier. It's zero by default, meaning GNB is not used.
+            if modl_use_gaussian_naive_bayes != 0:
+
+                message('Using a Naive Gaussian Bayes classifier as the criteria for submodular selection, with subsampling weight of '+str(modl_use_gaussian_naive_bayes))
+
+                # TODO : stopgap measure. We default to 100, so just take use_gaussian_naive_bayes as the multiplier for 100.
+                KEEP_N_TIMES_QUERY = modl_use_gaussian_naive_bayes * 100
+                QUERY_WEIGHT = modl_use_gaussian_naive_bayes * 100
+
+                # Redo the true intersection here with the fake full genome
+                flags_matrix, flags_matrix_with_query = dlsr.prepare_matrix_for_gnb(KEEP_N_TIMES_QUERY,
+                    bedA, bedsB, chrom_len, bed_excl)
+
+                # Prepare a partial with the error function that maximizes the predictivity
+                custom_error_function_partial = functools.partial(dlsr.custom_error_function_bnb,
+                    flags_matrix=flags_matrix, QUERY_WEIGHT=QUERY_WEIGHT)
+
+                # Now create the combination miner
+                combi_miner = dl.Modl(flags_matrix_with_query,
+                    multiple_overlap_target_combi_size = multiple_overlap_target_combi_size,
+                    multiple_overlap_max_number_of_combinations = multiple_overlap_max_number_of_combinations,       # How many words to find ?
+                    error_function = custom_error_function_partial,                                                  # Custom error function in step 2
+                    nb_threads = nb_threads)
+
+
+            ### Now apply the mining algorithm and return the results!
             interesting_combis = combi_miner.find_interesting_combinations()
 
             # TODO: Other possibility, simply take the most common combis

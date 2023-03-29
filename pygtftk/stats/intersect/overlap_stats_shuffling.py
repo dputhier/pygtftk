@@ -271,7 +271,8 @@ def compute_overlap_stats(bedA, bedsB,
                           multiple_overlap_max_number_of_combinations=None,
                           multiple_overlap_custom_combis=None,
                           draw_histogram=False,
-                          exact = False):
+                          exact=False,
+                          modl_use_gaussian_naive_bayes=0):
     """
     This is the hub function to compute overlap statistics through Monte Carlo
     shuffling with integration of the inter-region lengths.
@@ -294,10 +295,11 @@ def compute_overlap_stats(bedA, bedsB,
     :param nb_threads: Number of threads.
     :param ft_type: The name of the feature.
     :param multiple_overlap_target_combi_size: For multiple overlaps, maximum number of sets in the output combinations.
-    :param multiple_overlap_max_number_of_combinations: For multiple overlaps, maximum number of combinations to consider. This will use the MOLD mining algorithm. Do not ask for too many.
+    :param multiple_overlap_max_number_of_combinations: For multiple overlaps, maximum number of combinations to consider. This will use the MODL mining algorithm. Do not ask for too many.
     :param multiple_overlap_custom_combis: For multiple overlaps, skips combination mining and computes stats directly for these combinations. Path to a file to be read as NumPy matrix.
     :param draw_histogram: if True, draws a temp file histogram for each combi
     :param exact: if True, when performing the statistics, an observation of A+B+C counts as an observation of A+B
+    :param modl_use_gaussian_naive_bayes: If not 0 and if MODL is used, use a GNB classifier to predict the query instead of minimizing reconstruction error.
 
     """
 
@@ -503,7 +505,10 @@ def compute_overlap_stats(bedA, bedsB,
                                             multiple_overlap_target_combi_size=multiple_overlap_target_combi_size,
                                             multiple_overlap_max_number_of_combinations=multiple_overlap_max_number_of_combinations,
                                             multiple_overlap_custom_combis=multiple_overlap_custom_combis,
-                                            draw_histogram=draw_histogram, exact=exact)
+                                            draw_histogram=draw_histogram, exact=exact,
+                                            modl_use_gaussian_naive_bayes=modl_use_gaussian_naive_bayes,
+                                            bed_excl=bed_excl,
+                                            chrom_len=chrom_len)
         # ft_type, in this case, should be a list of the respective names of all files in bedsB
 
         # NOTE : in this case, `result` is a dictionary of results giving one 'result'
